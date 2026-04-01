@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 1. Nav highlight
   const path = window.location.pathname;
-  const navLinks = document.querySelectorAll('.nav-link');
+  const navLinks = document.querySelectorAll('.navbar-links a');
   navLinks.forEach(link => link.classList.remove('active'));
   navLinks.forEach(link => {
     const href = link.getAttribute('href');
