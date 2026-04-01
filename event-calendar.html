@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Calendar — tMIC</title>
+  <link rel="stylesheet" href="css/event-calendar.css">
+  <script src="js/event-calendar.js" defer></script>
+</head>
+<body>
+
+<!-- ===== TOP NAV ===== -->
+<header class="topnav">
+  <div class="topnav-logo">t<span class="logo-t">MIC</span></div>
+  <div class="topnav-search-wrap">
+    <svg class="topnav-search-icon" width="15" height="15" viewBox="0 0 15 15" fill="none">
+      <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <input class="topnav-search" type="text" placeholder="Company, Symbols, Analysts, Keywords">
+  </div>
+  <div class="topnav-user">
+    <img class="topnav-avatar" src="https://i.pravatar.cc/40?img=12" alt="User Avatar">
+    <span class="topnav-name">RniouGer Chiu</span>
+  </div>
+</header>
+
+<!-- ===== BANNER CAROUSEL ===== -->
+<div class="banner-wrap" id="bannerWrap">
+  <div class="banner-slide active" id="slide-0">
+    <span class="banner-label">Tip</span>
+    <span class="banner-text">
+      試著用自然語言提問！試著輸入：
+      <a class="banner-link" href="#tutorial">NVIDIA 最新財報表現如何？</a>
+    </span>
+    <div class="banner-dots">
+      <button class="banner-dot active" data-idx="0"></button>
+      <button class="banner-dot" data-idx="1"></button>
+    </div>
+  </div>
+  <div class="banner-slide" id="slide-1">
+    <span class="banner-label">Breaking News</span>
+    <span class="banner-text">
+      <a class="banner-link" href="#tutorial">Nvidia Stock Pullback and AI's Energy Challenge in 2026</a>
+    </span>
+    <div class="banner-dots">
+      <button class="banner-dot" data-idx="0"></button>
+      <button class="banner-dot active" data-idx="1"></button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== APP BODY ===== -->
+<div class="app-body">
+
+  <!-- ===== SIDEBAR ===== -->
+  <nav class="sidebar">
+
+    <!-- Quick Links -->
+    <div class="sidebar-quick">
+      <a href="#" class="sidebar-quick-link">
+        <svg class="ni" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M7 6.5V10M7 4V5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        About tMIC
+      </a>
+      <a href="#" class="sidebar-quick-link">
+        <svg class="ni" viewBox="0 0 14 14" fill="none"><path d="M7 1.5l1.5 3.3L12.5 5l-2.5 2.6.6 3.7L7 9.6l-3.6 1.7.6-3.7L1.5 5l3.8-.7z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        Explore MIC Picks
+      </a>
+      <a href="#" class="sidebar-quick-link">
+        <svg class="ni" viewBox="0 0 14 14" fill="none"><rect x="2" y="1" width="10" height="12" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M4.5 5h5M4.5 7.5h5M4.5 10h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Summary Report
+        <span class="badge-new">NEW</span>
+      </a>
+      <a href="#" class="sidebar-quick-link">
+        <svg class="ni" viewBox="0 0 14 14" fill="none"><rect x="1" y="3" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 5l6 4 6-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Subscribe Newsletters
+      </a>
+    </div>
+
+    <!-- Main Navigation -->
+    <div class="sidebar-section-label">主要導航菜單</div>
+    <ul class="sidebar-nav">
+      <li>
+        <a href="#">
+          <svg class="ni" viewBox="0 0 14 14" fill="none"><path d="M7 1.5L1 6.5H2.5V12.5H5.5V9H8.5V12.5H11.5V6.5H13L7 1.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          Home
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <svg class="ni" viewBox="0 0 14 14" fill="none"><path d="M1 10L4.5 6L7 8L10 3.5L13 5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Stock Analysis
+        </a>
+      </li>
+      <li>
+        <a href="news.html">
+          <svg class="ni" viewBox="0 0 14 14" fill="none"><rect x="2" y="1.5" width="10" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M4.5 4.5h5M4.5 7h5M4.5 9.5h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Market News
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <svg class="ni" viewBox="0 0 14 14" fill="none"><path d="M2 11H4V7H2V11ZM5.5 11H7.5V4H5.5V11ZM9 11H11V8H9V11Z" fill="currentColor"/></svg>
+          Market Data
+        </a>
+      </li>
+      <li>
+        <a href="event-calendar.html" class="active">
+          <svg class="ni" viewBox="0 0 14 14" fill="none"><rect x="1" y="2.5" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 6H13M4.5 1V4M9.5 1V4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          Event Calendar
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <svg class="ni" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5.5" height="5.5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="7.5" y="1" width="5.5" height="5.5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="1" y="7.5" width="5.5" height="5.5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="7.5" y="7.5" width="5.5" height="5.5" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>
+          Sectors
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <svg class="ni" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M7 3.5v1M7 9.5v1M5.2 6.8c0-.9.8-1.6 1.8-1.6s1.8.7 1.8 1.6-.8 1.6-1.8 1.6-1.8.7-1.8 1.6.8 1.6 1.8 1.6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Dividends
+        </a>
+      </li>
+      <li>
+        <a href="earnings.html">
+          <svg class="ni" viewBox="0 0 14 14" fill="none"><path d="M1 9L4.5 5L7.5 7.5L13 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 2H13V5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Earnings
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <svg class="ni" viewBox="0 0 14 14" fill="none"><path d="M7 13C7 13 2.5 10 2.5 6.2 2.5 3.5 4.5 1.5 7 1.5s4.5 2 4.5 4.7C11.5 10 7 13 7 13z" stroke="currentColor" stroke-width="1.3"/><path d="M7 12V7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          ESG
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <svg class="ni" viewBox="0 0 14 14" fill="none"><path d="M1 5h12M1 9h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="4" cy="5" r="1.5" fill="currentColor"/><circle cx="10" cy="9" r="1.5" fill="currentColor"/></svg>
+          Slider
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <svg class="ni" viewBox="0 0 14 14" fill="none"><path d="M7 1L2 3.5V7c0 3 2.5 5.3 5 6 2.5-.7 5-3 5-6V3.5L7 1Z" stroke="currentColor" stroke-width="1.3"/><path d="M7 5V8M7 9.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Threat Intelligence
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-divider"></div>
+
+    <!-- Target Company Group -->
+    <div class="sidebar-section-label">Target Company Group</div>
+    <ul class="sidebar-nav">
+      <li>
+        <a href="#">
+          <svg class="ni" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><circle cx="7" cy="7" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M7 1V3M7 11V13M1 7H3M11 7H13" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          Explore Target Company Groups
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-divider"></div>
+
+    <!-- Supply Chain Ecosystems -->
+    <div class="sidebar-section-label">Supply Chain Ecosystems</div>
+    <ul class="sidebar-nav">
+      <li>
+        <a href="#">
+          <svg class="ni" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="1.5" fill="currentColor"/><circle cx="2" cy="3" r="1.5" fill="currentColor"/><circle cx="12" cy="3" r="1.5" fill="currentColor"/><circle cx="2" cy="11" r="1.5" fill="currentColor"/><circle cx="12" cy="11" r="1.5" fill="currentColor"/><path d="M3 3.5L5.5 6M11 3.5L8.5 6M3 10.5L5.5 8M11 10.5L8.5 8" stroke="currentColor" stroke-width="1.2"/></svg>
+          Supply Chain Maps
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <svg class="ni" viewBox="0 0 14 14" fill="none"><path d="M7 1.5L1 4.5L7 7.5L13 4.5L7 1.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M1 7.5L7 10.5L13 7.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M1 10.5L7 13.5L13 10.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          My Ecosystems
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <svg class="ni" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="2" stroke="currentColor" stroke-width="1.3"/><circle cx="7" cy="2" r="1" fill="currentColor"/><circle cx="7" cy="12" r="1" fill="currentColor"/><circle cx="2" cy="7" r="1" fill="currentColor"/><circle cx="12" cy="7" r="1" fill="currentColor"/><path d="M7 4V5M7 9V10M4 7H5M9 7H10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Network Views
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <svg class="ni" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M7 6.5V10M7 4V5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          About Supply Chain Ecosystems
+        </a>
+      </li>
+    </ul>
+
+    <!-- Bottom -->
+    <div class="sidebar-bottom">
+      <a href="#">
+        <svg class="ni" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.3"/><path d="M9.5 9.5L13 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        FIND &amp; COMPARE
+      </a>
+      <a href="#">
+        <svg class="ni" viewBox="0 0 14 14" fill="none"><path d="M1.5 2H12.5L8.5 7V12.5L5.5 11V7L1.5 2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        Stock Screener
+      </a>
+    </div>
+
+  </nav><!-- /sidebar -->
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content">
+    <div class="page-pad">
+
+      <div class="section-eyebrow">Market Data</div>
+
+      <!-- Market Tabs -->
+      <div class="market-tabs-card">
+        <div class="market-tabs">
+          <button class="market-tab active">Earnings Calendar</button>
+          <button class="market-tab">Bonds</button>
+          <button class="market-tab">Commodities</button>
+          <button class="market-tab">Countries</button>
+          <button class="market-tab">Cryptocurrency</button>
+          <button class="market-tab">Currencies</button>
+          <button class="market-tab">Dividend Aristocrats</button>
+          <button class="market-tab">Dividend Champions</button>
+          <button class="market-tab">Dividends</button>
+          <button class="market-tab">Emerging Markets</button>
+          <button class="market-tab">ETF Strategies</button>
+          <button class="market-tab">Global &amp; Regional</button>
+          <button class="market-tab">Growth vs. Value</button>
+          <button class="market-tab">Key Market Data</button>
+          <button class="market-tab">More ›</button>
+        </div>
+      </div>
+
+      <!-- Earnings Calendar Card -->
+      <div class="cal-card">
+        <div class="cal-header">
+          <div class="cal-eyebrow">Earnings Calendar</div>
+          <div class="cal-month-nav">
+            <button class="cal-arrow" id="calPrev" aria-label="Previous month">&#8249;</button>
+            <span class="cal-month-label" id="calMonthLabel">April 2026</span>
+            <button class="cal-arrow" id="calNext" aria-label="Next month">&#8250;</button>
+          </div>
+          <div class="cal-controls">
+            <input class="cal-search" type="text" placeholder="Company Search">
+            <div class="toggle-group">
+              <button class="toggle-btn active">Monthly View</button>
+            </div>
+            <div class="toggle-group">
+              <button class="toggle-btn active" id="btnUSD">USD</button>
+              <button class="toggle-btn" id="btnNTD">NTD</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Week Grid -->
+        <div class="week-grid">
+
+          <!-- Sun Mar 29 -->
+          <div class="week-cell">
+            <div class="week-cell-head">SUN</div>
+            <div class="week-cell-body">
+              <div class="cell-date">Mar 29</div>
+              <div class="cell-empty">No Reports</div>
+            </div>
+          </div>
+
+          <!-- Mon Mar 30 -->
+          <div class="week-cell">
+            <div class="week-cell-head">MON</div>
+            <div class="week-cell-body">
+              <div class="cell-date">Mar 30</div>
+              <div class="cell-count">50</div>
+              <div class="cell-count-label">Companies</div>
+              <div class="cell-co-list">
+                <span class="cell-co">WBA</span>
+                <span class="cell-co">JEF</span>
+                <span class="cell-co">CTAS</span>
+                <span class="cell-co">LEN</span>
+                <span class="cell-co">RPM</span>
+                <span class="cell-co">MO</span>
+                <span class="cell-co">SNX</span>
+                <span class="cell-co">AYI</span>
+                <span class="cell-co">NVT</span>
+                <span class="cell-co">HELE</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tue Mar 31 -->
+          <div class="week-cell">
+            <div class="week-cell-head">TUE</div>
+            <div class="week-cell-body">
+              <div class="cell-date">Mar 31</div>
+              <div class="cell-count">58</div>
+              <div class="cell-count-label">Companies</div>
+              <div class="cell-co-list">
+                <span class="cell-co">PAYX</span>
+                <span class="cell-co">MKC</span>
+                <span class="cell-co">ACN</span>
+                <span class="cell-co">NKE</span>
+                <span class="cell-co">STZ</span>
+                <span class="cell-co">WGO</span>
+                <span class="cell-co">DLTR</span>
+                <span class="cell-co">FIVE</span>
+                <span class="cell-co">COST</span>
+                <span class="cell-co">CASY</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Wed Apr 1 — TODAY -->
+          <div class="week-cell today">
+            <div class="week-cell-head">WED</div>
+            <div class="week-cell-body">
+              <div class="cell-date">Apr 1</div>
+              <div class="cell-count">19</div>
+              <div class="cell-count-label">Companies</div>
+              <div class="cell-co-list">
+                <span class="cell-co">TLK</span>
+                <span class="cell-co">CAG</span>
+                <span class="cell-co">LW</span>
+                <span class="cell-co">MSM</span>
+                <span class="cell-co">UNF</span>
+                <span class="cell-co">CALM</span>
+                <span class="cell-co">PENG</span>
+                <span class="cell-co">TLRY</span>
+                <span class="cell-co">PSMT</span>
+                <span class="cell-co">BNED</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Thu Apr 2 -->
+          <div class="week-cell">
+            <div class="week-cell-head">THU</div>
+            <div class="week-cell-body">
+              <div class="cell-date">Apr 2</div>
+              <div class="cell-count">26</div>
+              <div class="cell-count-label">Companies</div>
+              <div class="cell-co-list">
+                <span class="cell-co">AZZ</span>
+                <span class="cell-co">GMS</span>
+                <span class="cell-co">CIEN</span>
+                <span class="cell-co">LNTH</span>
+                <span class="cell-co">AIR</span>
+                <span class="cell-co">SCSC</span>
+                <span class="cell-co">ORN</span>
+                <span class="cell-co">STRT</span>
+                <span class="cell-co">AMSF</span>
+                <span class="cell-co">HOFT</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fri Apr 3 -->
+          <div class="week-cell">
+            <div class="week-cell-head">FRI</div>
+            <div class="week-cell-body">
+              <div class="cell-date">Apr 3</div>
+              <div class="cell-empty">No Reports</div>
+            </div>
+          </div>
+
+          <!-- Sat Apr 4 -->
+          <div class="week-cell">
+            <div class="week-cell-head">SAT</div>
+            <div class="week-cell-body">
+              <div class="cell-date">Apr 4</div>
+              <div class="cell-empty">No Reports</div>
+            </div>
+          </div>
+
+        </div><!-- /week-grid -->
+      </div><!-- /cal-card -->
+
+      <!-- Detail Section -->
+      <div class="detail-card">
+        <div class="detail-header">
+          <div class="detail-eyebrow">01 April, 2026 &nbsp;·&nbsp; 19 Companies</div>
+          <div class="detail-tabs">
+            <button class="detail-tab active" data-tab="eps">EPS</button>
+            <button class="detail-tab" data-tab="revenue">Revenue</button>
+            <button class="detail-tab locked" disabled>
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><rect x="2" y="5.5" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M4 5.5V4C4 2.9 4.9 2 6 2s2 .9 2 2v1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+              Analysts Revisions &amp; Ratings
+            </button>
+          </div>
+        </div>
+
+        <!-- EPS Table -->
+        <div class="table-wrap" id="tabEps">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th rowspan="2">Symbol</th>
+                <th rowspan="2">Company</th>
+                <th rowspan="2">Report</th>
+                <th rowspan="2">Mkt Cap</th>
+                <th colspan="3" class="th-group">Current Quarter EPS Estimates</th>
+                <th rowspan="2">Actual</th>
+                <th rowspan="2">Beat / Miss</th>
+                <th colspan="2" class="th-group">Last Quarter EPS</th>
+                <th colspan="2" class="th-group"># Beats &amp; Missed (L2Y)</th>
+              </tr>
+              <tr class="sub-head">
+                <th class="sub-group-inner">Normalized</th>
+                <th>YoY Growth</th>
+                <th>GAAP</th>
+                <th class="sub-group-inner">GAAP</th>
+                <th>Beat / Miss</th>
+                <th class="sub-group-inner">Beats</th>
+                <th>Missed</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="td-symbol">TLK</td>
+                <td class="td-company">PT Telekomunikasi Indonesia Tbk</td>
+                <td><span class="td-report">Pre</span></td>
+                <td class="td-mktcap">$17.2B</td>
+                <td class="td-num">$0.42</td>
+                <td class="td-num pos">+3.2%</td>
+                <td class="td-num">$0.38</td>
+                <td class="td-num">$0.43</td>
+                <td class="td-num"><span class="beat">Beat</span></td>
+                <td class="td-num">$0.41</td>
+                <td class="td-num"><span class="beat">Beat</span></td>
+                <td class="td-num td-beats-num">4</td>
+                <td class="td-num td-miss-num">2</td>
+              </tr>
+              <tr>
+                <td class="td-symbol">CAG</td>
+                <td class="td-company">Conagra Brands, Inc.</td>
+                <td><span class="td-report">Pre</span></td>
+                <td class="td-mktcap">$10.8B</td>
+                <td class="td-num">$0.61</td>
+                <td class="td-num neg">−8.4%</td>
+                <td class="td-num">$0.58</td>
+                <td class="td-num">$0.56</td>
+                <td class="td-num"><span class="miss">Miss</span></td>
+                <td class="td-num">$0.68</td>
+                <td class="td-num"><span class="miss">Miss</span></td>
+                <td class="td-num td-beats-num">3</td>
+                <td class="td-num td-miss-num">5</td>
+              </tr>
+              <tr>
+                <td class="td-symbol">LW</td>
+                <td class="td-company">Lamb Weston Holdings, Inc.</td>
+                <td><span class="td-report">Pre</span></td>
+                <td class="td-mktcap">$4.2B</td>
+                <td class="td-num">$0.48</td>
+                <td class="td-num neg">−22.3%</td>
+                <td class="td-num">$0.44</td>
+                <td class="td-num td-na">—</td>
+                <td class="td-num td-na">—</td>
+                <td class="td-num">$0.76</td>
+                <td class="td-num"><span class="miss">Miss</span></td>
+                <td class="td-num td-beats-num">2</td>
+                <td class="td-num td-miss-num">6</td>
+              </tr>
+              <tr>
+                <td class="td-symbol">MSM</td>
+                <td class="td-company">MSC Industrial Direct Co., Inc.</td>
+                <td><span class="td-report">Post</span></td>
+                <td class="td-mktcap">$3.1B</td>
+                <td class="td-num">$1.08</td>
+                <td class="td-num neg">−5.2%</td>
+                <td class="td-num">$1.02</td>
+                <td class="td-num td-na">—</td>
+                <td class="td-num td-na">—</td>
+                <td class="td-num">$1.12</td>
+                <td class="td-num"><span class="beat">Beat</span></td>
+                <td class="td-num td-beats-num">5</td>
+                <td class="td-num td-miss-num">3</td>
+              </tr>
+              <tr>
+                <td class="td-symbol">UNF</td>
+                <td class="td-company">UniFirst Corporation</td>
+                <td><span class="td-report">Pre</span></td>
+                <td class="td-mktcap">$1.5B</td>
+                <td class="td-num">$1.95</td>
+                <td class="td-num pos">+2.8%</td>
+                <td class="td-num">$1.88</td>
+                <td class="td-num td-na">—</td>
+                <td class="td-num td-na">—</td>
+                <td class="td-num">$1.86</td>
+                <td class="td-num"><span class="beat">Beat</span></td>
+                <td class="td-num td-beats-num">6</td>
+                <td class="td-num td-miss-num">2</td>
+              </tr>
+              <tr>
+                <td class="td-symbol">CALM</td>
+                <td class="td-company">Cal-Maine Foods, Inc.</td>
+                <td><span class="td-report">Pre</span></td>
+                <td class="td-mktcap">$3.8B</td>
+                <td class="td-num">$5.42</td>
+                <td class="td-num pos">+187.3%</td>
+                <td class="td-num">$5.10</td>
+                <td class="td-num td-na">—</td>
+                <td class="td-num td-na">—</td>
+                <td class="td-num">$6.15</td>
+                <td class="td-num"><span class="beat">Beat</span></td>
+                <td class="td-num td-beats-num">7</td>
+                <td class="td-num td-miss-num">1</td>
+              </tr>
+              <tr>
+                <td class="td-symbol">PENG</td>
+                <td class="td-company">Penguin Solutions, Inc.</td>
+                <td><span class="td-report">Post</span></td>
+                <td class="td-mktcap">$0.4B</td>
+                <td class="td-num">$0.28</td>
+                <td class="td-num neg">−12.5%</td>
+                <td class="td-num">$0.25</td>
+                <td class="td-num td-na">—</td>
+                <td class="td-num td-na">—</td>
+                <td class="td-num">$0.31</td>
+                <td class="td-num"><span class="beat">Beat</span></td>
+                <td class="td-num td-beats-num">3</td>
+                <td class="td-num td-miss-num">5</td>
+              </tr>
+              <tr>
+                <td class="td-symbol">TLRY</td>
+                <td class="td-company">Tilray Brands, Inc.</td>
+                <td><span class="td-report">Post</span></td>
+                <td class="td-mktcap">$1.2B</td>
+                <td class="td-num">−$0.05</td>
+                <td class="td-num pos">+16.7%</td>
+                <td class="td-num">−$0.08</td>
+                <td class="td-num td-na">—</td>
+                <td class="td-num td-na">—</td>
+                <td class="td-num">−$0.06</td>
+                <td class="td-num"><span class="miss">Miss</span></td>
+                <td class="td-num td-beats-num">2</td>
+                <td class="td-num td-miss-num">6</td>
+              </tr>
+            </tbody>
+          </table>
+        </div><!-- /tabEps -->
+
+        <!-- Revenue Table (hidden by default) -->
+        <div class="table-wrap" id="tabRevenue" style="display:none">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th rowspan="2">Symbol</th>
+                <th rowspan="2">Company</th>
+                <th rowspan="2">Report</th>
+                <th rowspan="2">Mkt Cap</th>
+                <th colspan="3" class="th-group">Current Quarter Revenue Estimates</th>
+                <th rowspan="2">Actual</th>
+                <th rowspan="2">Beat / Miss</th>
+                <th colspan="2" class="th-group">Last Quarter Revenue</th>
+              </tr>
+              <tr class="sub-head">
+                <th class="sub-group-inner">Consensus</th>
+                <th>YoY Growth</th>
+                <th>High Est.</th>
+                <th class="sub-group-inner">Actual</th>
+                <th>Beat / Miss</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="td-symbol">TLK</td>
+                <td class="td-company">PT Telekomunikasi Indonesia Tbk</td>
+                <td><span class="td-report">Pre</span></td>
+                <td class="td-mktcap">$17.2B</td>
+                <td class="td-num">$3.28B</td>
+                <td class="td-num pos">+4.1%</td>
+                <td class="td-num">$3.41B</td>
+                <td class="td-num">$3.31B</td>
+                <td class="td-num"><span class="beat">Beat</span></td>
+                <td class="td-num">$3.15B</td>
+                <td class="td-num"><span class="beat">Beat</span></td>
+              </tr>
+              <tr>
+                <td class="td-symbol">CAG</td>
+                <td class="td-company">Conagra Brands, Inc.</td>
+                <td><span class="td-report">Pre</span></td>
+                <td class="td-mktcap">$10.8B</td>
+                <td class="td-num">$2.96B</td>
+                <td class="td-num neg">−3.8%</td>
+                <td class="td-num">$3.04B</td>
+                <td class="td-num">$2.91B</td>
+                <td class="td-num"><span class="miss">Miss</span></td>
+                <td class="td-num">$3.08B</td>
+                <td class="td-num"><span class="miss">Miss</span></td>
+              </tr>
+              <tr>
+                <td class="td-symbol">LW</td>
+                <td class="td-company">Lamb Weston Holdings, Inc.</td>
+                <td><span class="td-report">Pre</span></td>
+                <td class="td-mktcap">$4.2B</td>
+                <td class="td-num">$1.51B</td>
+                <td class="td-num neg">−9.2%</td>
+                <td class="td-num">$1.58B</td>
+                <td class="td-num td-na">—</td>
+                <td class="td-num td-na">—</td>
+                <td class="td-num">$1.66B</td>
+                <td class="td-num"><span class="miss">Miss</span></td>
+              </tr>
+              <tr>
+                <td class="td-symbol">CALM</td>
+                <td class="td-company">Cal-Maine Foods, Inc.</td>
+                <td><span class="td-report">Pre</span></td>
+                <td class="td-mktcap">$3.8B</td>
+                <td class="td-num">$1.08B</td>
+                <td class="td-num pos">+94.6%</td>
+                <td class="td-num">$1.14B</td>
+                <td class="td-num td-na">—</td>
+                <td class="td-num td-na">—</td>
+                <td class="td-num">$1.11B</td>
+                <td class="td-num"><span class="beat">Beat</span></td>
+              </tr>
+              <tr>
+                <td class="td-symbol">TLRY</td>
+                <td class="td-company">Tilray Brands, Inc.</td>
+                <td><span class="td-report">Post</span></td>
+                <td class="td-mktcap">$1.2B</td>
+                <td class="td-num">$209.4M</td>
+                <td class="td-num neg">−5.1%</td>
+                <td class="td-num">$218.0M</td>
+                <td class="td-num td-na">—</td>
+                <td class="td-num td-na">—</td>
+                <td class="td-num">$220.6M</td>
+                <td class="td-num"><span class="miss">Miss</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div><!-- /tabRevenue -->
+
+      </div><!-- /detail-card -->
+
+    </div><!-- /page-pad -->
+  </main>
+
+</div><!-- /app-body -->
+
+</body>
+</html>
