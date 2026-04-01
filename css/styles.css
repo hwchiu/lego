@@ -40,53 +40,63 @@ body {
 a { color: var(--color-primary); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-/* === Navbar === */
-.navbar {
+/* === Page Layout === */
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* === Sidebar === */
+.sidebar {
+  width: 220px;
+  min-width: 220px;
+  background: var(--color-bg);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
   position: sticky;
   top: 0;
-  z-index: 100;
-  background: var(--color-bg);
-  border-bottom: 1px solid var(--color-border);
-  padding: 0 32px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  gap: 32px;
+  height: 100vh;
+  overflow-y: auto;
 }
-.navbar-logo {
+.sidebar-logo {
   font-size: 20px;
   font-weight: 700;
   color: var(--color-primary);
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  margin-bottom: 32px;
+  padding: 0 8px;
 }
-.navbar-links {
-  display: flex;
-  gap: 4px;
+.sidebar-links {
   list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
 }
-.navbar-links a {
-  padding: 6px 14px;
+.sidebar-links a {
+  display: block;
+  padding: 8px 12px;
   border-radius: var(--radius-button);
   color: var(--color-text-secondary);
   font-size: 15px;
   transition: background 0.2s, color 0.2s;
 }
-.navbar-links a:hover { background: var(--color-bg-section); color: var(--color-text); text-decoration: none; }
-.navbar-links a.active { background: var(--color-primary); color: #fff; }
-.navbar-right {
-  margin-left: auto;
+.sidebar-links a:hover { background: var(--color-bg-section); color: var(--color-text); text-decoration: none; }
+.sidebar-links a.active { background: var(--color-primary); color: #fff; }
+.sidebar-bottom {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
 }
 .search-box {
   padding: 6px 12px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-button);
   font-size: 14px;
-  width: 200px;
+  width: 100%;
   outline: none;
   font-family: var(--font-stack);
 }
@@ -100,8 +110,17 @@ a:hover { text-decoration: underline; }
   font-size: 14px;
   cursor: pointer;
   font-family: var(--font-stack);
+  width: 100%;
 }
 .btn-login:hover { opacity: 0.9; }
+
+/* === Main Content === */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
 
 /* === Footer === */
 .footer {

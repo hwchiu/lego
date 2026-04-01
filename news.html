@@ -9,18 +9,22 @@
 </head>
 <body>
 
-  <nav class="navbar">
-    <div class="navbar-logo">🏦 FinScope</div>
-    <ul class="navbar-links">
-      <li><a href="index.html">首頁</a></li>
-      <li><a href="news.html" class="active">新聞</a></li>
-      <li><a href="earnings.html">財報</a></li>
-    </ul>
-    <div class="navbar-right">
-      <input class="search-box" placeholder="搜尋股票、新聞...">
-      <button class="btn-login">登入</button>
-    </div>
-  </nav>
+  <div class="layout">
+
+    <nav class="sidebar">
+      <div class="sidebar-logo">FinScope</div>
+      <ul class="sidebar-links">
+        <li><a href="index.html">首頁</a></li>
+        <li><a href="news.html" class="active">新聞</a></li>
+        <li><a href="earnings.html">財報</a></li>
+      </ul>
+      <div class="sidebar-bottom">
+        <input class="search-box" placeholder="搜尋股票、新聞...">
+        <button class="btn-login">登入</button>
+      </div>
+    </nav>
+
+    <div class="main-content">
 
   <div class="container">
 
@@ -28,11 +32,11 @@
 
     <div class="pill-tabs" id="news-tabs">
       <button class="pill-tab active" data-filter="all">全部</button>
-      <button class="pill-tab" data-filter="us">🇺🇸 美股</button>
-      <button class="pill-tab" data-filter="tw">🇹🇼 台股</button>
-      <button class="pill-tab" data-filter="industry">🏭 產業</button>
-      <button class="pill-tab" data-filter="macro">📈 總經</button>
-      <button class="pill-tab" data-filter="intl">🌐 國際</button>
+      <button class="pill-tab" data-filter="us">美股</button>
+      <button class="pill-tab" data-filter="tw">台股</button>
+      <button class="pill-tab" data-filter="industry">產業</button>
+      <button class="pill-tab" data-filter="macro">總經</button>
+      <button class="pill-tab" data-filter="intl">國際</button>
     </div>
 
     <div class="grid-2" id="news-grid">
@@ -159,6 +163,9 @@
       <li><a href="#">隱私政策</a></li>
     </ul>
   </footer>
+
+    </div><!-- /.main-content -->
+  </div><!-- /.layout -->
 
 </body>
 </html>

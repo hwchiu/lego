@@ -9,18 +9,22 @@
 </head>
 <body>
 
-  <nav class="navbar">
-    <div class="navbar-logo">🏦 FinScope</div>
-    <ul class="navbar-links">
-      <li><a href="index.html" class="active">首頁</a></li>
-      <li><a href="news.html">新聞</a></li>
-      <li><a href="earnings.html">財報</a></li>
-    </ul>
-    <div class="navbar-right">
-      <input class="search-box" placeholder="搜尋股票、新聞...">
-      <button class="btn-login">登入</button>
-    </div>
-  </nav>
+  <div class="layout">
+
+    <nav class="sidebar">
+      <div class="sidebar-logo">FinScope</div>
+      <ul class="sidebar-links">
+        <li><a href="index.html" class="active">首頁</a></li>
+        <li><a href="news.html">新聞</a></li>
+        <li><a href="earnings.html">財報</a></li>
+      </ul>
+      <div class="sidebar-bottom">
+        <input class="search-box" placeholder="搜尋股票、新聞...">
+        <button class="btn-login">登入</button>
+      </div>
+    </nav>
+
+    <div class="main-content">
 
   <div class="container">
 
@@ -55,7 +59,7 @@
     <div class="grid-3">
 
       <div class="card">
-        <div class="card-header">📰 最新新聞</div>
+        <div class="card-header">最新新聞</div>
         <div class="card-body">
           <div class="news-item">
             <div class="news-item-title">蘋果發布新一代 AI 處理器，股價盤後上漲 3%</div>
@@ -82,7 +86,7 @@
       </div>
 
       <div class="card">
-        <div class="card-header">📊 精選分析</div>
+        <div class="card-header">精選分析</div>
         <div class="card-body">
           <div class="news-item">
             <div class="news-item-title">AI 半導體產業 2026 年展望</div>
@@ -109,26 +113,26 @@
       </div>
 
       <div class="card">
-        <div class="card-header">📅 即將公布財報</div>
+        <div class="card-header">即將公布財報</div>
         <div class="card-body">
           <div class="news-item">
-            <div class="news-item-title">🍎 蘋果 AAPL</div>
+            <div class="news-item-title">蘋果 AAPL</div>
             <div class="news-item-meta">4/3</div>
           </div>
           <div class="news-item">
-            <div class="news-item-title">🏭 台積電 2330</div>
+            <div class="news-item-title">台積電 2330</div>
             <div class="news-item-meta">4/5</div>
           </div>
           <div class="news-item">
-            <div class="news-item-title">💻 微軟 MSFT</div>
+            <div class="news-item-title">微軟 MSFT</div>
             <div class="news-item-meta">4/7</div>
           </div>
           <div class="news-item">
-            <div class="news-item-title">🏭 鴻海 2317</div>
+            <div class="news-item-title">鴻海 2317</div>
             <div class="news-item-meta">4/10</div>
           </div>
           <div class="news-item">
-            <div class="news-item-title">🟢 NVIDIA NVDA</div>
+            <div class="news-item-title">NVIDIA NVDA</div>
             <div class="news-item-meta">4/12</div>
           </div>
         </div>
@@ -147,6 +151,9 @@
       <li><a href="#">隱私政策</a></li>
     </ul>
   </footer>
+
+    </div><!-- /.main-content -->
+  </div><!-- /.layout -->
 
 </body>
 </html>
