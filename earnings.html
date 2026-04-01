@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>財報 — FinScope</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-logo">🏦 FinScope</div>
+  <ul class="navbar-links">
+    <li><a href="index.html">首頁</a></li>
+    <li><a href="news.html">新聞</a></li>
+    <li><a href="earnings.html" class="active">財報</a></li>
+  </ul>
+  <div class="navbar-right">
+    <input class="search-box" placeholder="搜尋股票、新聞...">
+    <button class="btn-login">登入</button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <h1 class="page-title">財報日曆</h1>
+
+  <div class="filter-row">
+    <button class="pill-tab active" data-filter-type="time" data-filter="this-week">本週</button>
+    <button class="pill-tab" data-filter-type="time" data-filter="next-week">下週</button>
+    <button class="pill-tab" data-filter-type="time" data-filter="month">本月</button>
+    <select class="filter-select" id="market-filter">
+      <option value="all">全部市場</option>
+      <option value="us">🇺🇸 美股</option>
+      <option value="tw">🇹🇼 台股</option>
+    </select>
+  </div>
+
+  <div class="mini-calendar">
+    <div class="mini-calendar-title">📅 2026 年 4 月</div>
+    <div class="calendar-grid">
+      <!-- Header row -->
+      <div class="calendar-day">一</div>
+      <div class="calendar-day">二</div>
+      <div class="calendar-day">三</div>
+      <div class="calendar-day">四</div>
+      <div class="calendar-day">五</div>
+      <div class="calendar-day">六</div>
+      <div class="calendar-day">日</div>
+      <!-- Week 1: Apr 1 (Wed) – Apr 5 (Sun) -->
+      <div class="calendar-day"></div>
+      <div class="calendar-day"></div>
+      <div class="calendar-day">1</div>
+      <div class="calendar-day">2</div>
+      <div class="calendar-day has-us" data-date="4/3">3</div>
+      <div class="calendar-day">4</div>
+      <div class="calendar-day has-tw" data-date="4/5">5</div>
+      <!-- Week 2: Apr 6 (Mon) – Apr 12 (Sun) -->
+      <div class="calendar-day">6</div>
+      <div class="calendar-day has-us" data-date="4/7">7</div>
+      <div class="calendar-day">8</div>
+      <div class="calendar-day">9</div>
+      <div class="calendar-day has-tw" data-date="4/10">10</div>
+      <div class="calendar-day">11</div>
+      <div class="calendar-day has-us" data-date="4/12">12</div>
+      <!-- Week 3: Apr 13 (Mon) – Apr 19 (Sun) -->
+      <div class="calendar-day">13</div>
+      <div class="calendar-day">14</div>
+      <div class="calendar-day has-tw" data-date="4/15">15</div>
+      <div class="calendar-day">16</div>
+      <div class="calendar-day">17</div>
+      <div class="calendar-day">18</div>
+      <div class="calendar-day">19</div>
+      <!-- Week 4: Apr 20 (Mon) – Apr 26 (Sun) -->
+      <div class="calendar-day">20</div>
+      <div class="calendar-day">21</div>
+      <div class="calendar-day">22</div>
+      <div class="calendar-day">23</div>
+      <div class="calendar-day">24</div>
+      <div class="calendar-day">25</div>
+      <div class="calendar-day">26</div>
+      <!-- Week 5: Apr 27 (Mon) – Apr 30 (Thu) -->
+      <div class="calendar-day">27</div>
+      <div class="calendar-day">28</div>
+      <div class="calendar-day">29</div>
+      <div class="calendar-day">30</div>
+      <div class="calendar-day"></div>
+      <div class="calendar-day"></div>
+      <div class="calendar-day"></div>
+    </div>
+    <div class="calendar-legend">
+      <span class="legend-us">美股</span>
+      <span class="legend-tw">台股</span>
+      <span class="legend-multi">多家公布</span>
+    </div>
+  </div>
+
+  <div class="grid-2" id="earnings-grid">
+
+    <div class="earnings-card" data-market="us" data-date="4/3" data-week="this-week">
+      <div class="earnings-card-top">
+        <span class="earnings-card-company">🍎 AAPL</span>
+        <span class="result-tag result-beat">✓ 優於預期</span>
+      </div>
+      <div class="earnings-card-data">
+        預估 EPS: $1.52<br>
+        實際 EPS: <strong style="color: #2e7d32">$1.65</strong><br>
+        預估營收: $94.3B
+      </div>
+      <div class="chart-placeholder">📊 EPS 趨勢圖</div>
+    </div>
+
+    <div class="earnings-card" data-market="tw" data-date="4/5" data-week="this-week">
+      <div class="earnings-card-top">
+        <span class="earnings-card-company">🏭 2330</span>
+        <span class="result-tag result-pending">⏳ 即將公布</span>
+      </div>
+      <div class="earnings-card-data">
+        預估 EPS: NT$9.2<br>
+        實際 EPS: —<br>
+        預估營收: NT$592B
+      </div>
+      <div class="chart-placeholder">📊 EPS 趨勢圖</div>
+    </div>
+
+    <div class="earnings-card" data-market="us" data-date="4/7" data-week="next-week">
+      <div class="earnings-card-top">
+        <span class="earnings-card-company">💻 MSFT</span>
+        <span class="result-tag result-pending">⏳ 即將公布</span>
+      </div>
+      <div class="earnings-card-data">
+        預估 EPS: $2.83<br>
+        實際 EPS: —<br>
+        預估營收: $60.9B
+      </div>
+      <div class="chart-placeholder">📊 EPS 趨勢圖</div>
+    </div>
+
+    <div class="earnings-card" data-market="tw" data-date="4/10" data-week="next-week">
+      <div class="earnings-card-top">
+        <span class="earnings-card-company">🏭 2317</span>
+        <span class="result-tag result-miss">✗ 低於預期</span>
+      </div>
+      <div class="earnings-card-data">
+        預估 EPS: NT$3.1<br>
+        實際 EPS: <strong style="color: #c62828">NT$2.8</strong><br>
+        預估營收: NT$1.5T
+      </div>
+      <div class="chart-placeholder">📊 EPS 趨勢圖</div>
+    </div>
+
+    <div class="earnings-card" data-market="us" data-date="4/12" data-week="next-week">
+      <div class="earnings-card-top">
+        <span class="earnings-card-company">🟢 NVDA</span>
+        <span class="result-tag result-beat">✓ 優於預期</span>
+      </div>
+      <div class="earnings-card-data">
+        預估 EPS: $5.59<br>
+        實際 EPS: <strong style="color: #2e7d32">$6.12</strong><br>
+        預估營收: $24.6B
+      </div>
+      <div class="chart-placeholder">📊 EPS 趨勢圖</div>
+    </div>
+
+    <div class="earnings-card" data-market="tw" data-date="4/15" data-week="month">
+      <div class="earnings-card-top">
+        <span class="earnings-card-company">📱 2454</span>
+        <span class="result-tag result-pending">⏳ 即將公布</span>
+      </div>
+      <div class="earnings-card-data">
+        預估 EPS: NT$28.5<br>
+        實際 EPS: —<br>
+        預估營收: NT$152B
+      </div>
+      <div class="chart-placeholder">📊 EPS 趨勢圖</div>
+    </div>
+
+    <div class="empty-state" id="earnings-empty" style="display:none">目前沒有符合條件的資料</div>
+
+  </div>
+
+</div>
+
+<footer class="footer">
+  <span>© 2026 FinScope. All rights reserved.</span>
+  <ul class="footer-links">
+    <li><a href="#">關於我們</a></li>
+    <li><a href="#">聯繫我們</a></li>
+    <li><a href="#">隱私政策</a></li>
+  </ul>
+</footer>
+
+</body>
+</html>
