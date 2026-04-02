@@ -30,7 +30,7 @@ export default function TopNav() {
           src="https://i.pravatar.cc/40?img=12"
           alt="User Avatar"
         />
-        <span className="topnav-name">RniouGer Chiu</span>
+        <span className="topnav-name">Sherry YEP King</span>
       </div>
     </header>
   );
