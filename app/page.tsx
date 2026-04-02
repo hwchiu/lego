@@ -7,7 +7,7 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/event-calendar');
+    router.replace('/watchlist');
   }, [router]);
 
   return null;

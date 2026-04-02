@@ -75,13 +75,13 @@ export default function TopNav() {
           <div className="search-dropdown">
             {/* Section 1: Data Categories — only visible when user has typed */}
             {showCategories && (
-              <div className="search-dropdown-section">
+              <div className="search-dropdown-section search-dropdown-section--cats">
                 <div className="search-dropdown-section-label">Data Category</div>
-                <div className="search-category-list">
+                <div className="search-category-tabs">
                   {DATA_CATEGORIES.map((cat) => (
                     <button
                       key={cat}
-                      className={`search-category-btn${activeCategory === cat ? ' active' : ''}`}
+                      className={`search-category-tab${activeCategory === cat ? ' active' : ''}`}
                       onMouseDown={(e) => {
                         e.preventDefault();
                         setActiveCategory(activeCategory === cat ? null : cat);

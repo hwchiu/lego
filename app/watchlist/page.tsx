@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
+import { SP500_COMPANIES } from '@/app/data/sp500';
 
 // ── Stock Index data ─────────────────────────────────────────────────────────
 interface StockIndex {
@@ -328,12 +329,37 @@ function UserAvatar() {
 }
 
 // ── Main page ─────────────────────────────────────────────────────────────────
+type FeedTab = 'Latest' | 'Analysis' | 'News' | 'Warnings' | 'Transcripts' | 'Press Releases';
+
 export default function WatchlistPage() {
   const [activeTab, setActiveTab] = useState<'Summary' | 'Health Score' | 'Ratings' | 'Holdings'>(
     'Summary',
   );
-  const [feedTab, setFeedTab] = useState<'Latest' | 'Analysis' | 'News' | 'Warnings'>('Latest');
+  const [feedTab, setFeedTab] = useState<FeedTab>('Latest');
   const [quarter, setQuarter] = useState({ year: 2026, q: 1 });
+  const [splitLayout, setSplitLayout] = useState(false);
+
+  // Modal states
+  const [showManageAlerts, setShowManageAlerts] = useState(false);
+  const [showEditWatchlist, setShowEditWatchlist] = useState(false);
+  const [showAddSymbol, setShowAddSymbol] = useState(false);
+
+  // Manage Alerts toggles
+  const [newsAlert, setNewsAlert] = useState(true);
+  const [transcriptAlert, setTranscriptAlert] = useState(false);
+
+  // Edit Watchlist state
+  const [watchlistName, setWatchlistName] = useState('Watchlist 1');
+  const [editWatchlistName, setEditWatchlistName] = useState('Watchlist 1');
+  const [symbolOrder, setSymbolOrder] = useState<string[]>(holdingsData.map((h) => h.symbol));
+  const [editSymbolOrder, setEditSymbolOrder] = useState<string[]>(
+    holdingsData.map((h) => h.symbol),
+  );
+  const dragItem = useRef<number | null>(null);
+  const dragOverItem = useRef<number | null>(null);
+
+  // Add Symbol state
+  const [addSymbolQuery, setAddSymbolQuery] = useState('');
 
   const prevQ = quarterOffset(quarter, -1);
   const nextQ = quarterOffset(quarter, 1);
@@ -341,6 +367,49 @@ export default function WatchlistPage() {
   const totalValue = holdingsData.reduce((sum, h) => sum + h.price * h.shares, 0);
   const totalGain = holdingsData.reduce((sum, h) => sum + h.todayGain, 0);
   const totalGainPct = (totalGain / (totalValue - totalGain)) * 100;
+
+  // Sorted holdings based on symbolOrder
+  const sortedHoldings = [...symbolOrder]
+    .map((sym) => holdingsData.find((h) => h.symbol === sym))
+    .filter(Boolean) as Holding[];
+
+  // Drag handlers for Edit Watchlist symbol reorder
+  function handleDragStart(index: number) {
+    dragItem.current = index;
+  }
+  function handleDragEnter(index: number) {
+    dragOverItem.current = index;
+  }
+  function handleDragEnd() {
+    if (dragItem.current === null || dragOverItem.current === null) return;
+    const copy = [...editSymbolOrder];
+    const dragged = copy.splice(dragItem.current, 1)[0];
+    copy.splice(dragOverItem.current, 0, dragged);
+    setEditSymbolOrder(copy);
+    dragItem.current = null;
+    dragOverItem.current = null;
+  }
+
+  // Add Symbol search suggestions
+  const addSuggestions =
+    addSymbolQuery.trim().length > 0
+      ? SP500_COMPANIES.filter(
+          (c) =>
+            c.symbol.toLowerCase().includes(addSymbolQuery.toLowerCase()) ||
+            c.name.toLowerCase().includes(addSymbolQuery.toLowerCase()),
+        ).slice(0, 12)
+      : [];
+
+  function handleEditWatchlistClick() {
+    setEditWatchlistName(watchlistName);
+    setEditSymbolOrder([...symbolOrder]);
+    setShowEditWatchlist(true);
+  }
+
+  function handleAddSymbolClose() {
+    setShowAddSymbol(false);
+    setAddSymbolQuery('');
+  }
 
   return (
     <>
@@ -408,7 +477,7 @@ export default function WatchlistPage() {
               <div className="wl-portfolio-left">
                 {/* Title row */}
                 <div className="wl-portfolio-title-row">
-                  <span className="wl-portfolio-title">Watchlist 1</span>
+                  <span className="wl-portfolio-title">{watchlistName}</span>
                   <svg viewBox="0 0 14 14" fill="none" width="14" height="14" className="wl-portfolio-chevron">
                     <path
                       d="M3 5L7 9L11 5"
@@ -489,7 +558,7 @@ export default function WatchlistPage() {
 
               {/* Action buttons */}
               <div className="wl-action-btns">
-                <button className="wl-action-btn">
+                <button className="wl-action-btn" onClick={() => setShowAddSymbol(true)}>
                   <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
                     <path
                       d="M7 2V12M2 7H12"
@@ -500,7 +569,7 @@ export default function WatchlistPage() {
                   </svg>
                   Add Symbol
                 </button>
-                <button className="wl-action-btn">
+                <button className="wl-action-btn" onClick={handleEditWatchlistClick}>
                   <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
                     <path
                       d="M9 2.5L11.5 5L5 11.5H2.5V9L9 2.5Z"
@@ -510,6 +579,24 @@ export default function WatchlistPage() {
                     />
                   </svg>
                   Edit Watchlist
+                </button>
+                <button className="wl-action-btn" onClick={() => setShowManageAlerts(true)}>
+                  {/* Alarm / bell icon */}
+                  <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                    <path
+                      d="M7 1.5a4 4 0 0 1 4 4v2.5l1 1.5H2L3 8V5.5a4 4 0 0 1 4-4Z"
+                      stroke="currentColor"
+                      strokeWidth="1.3"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M5.5 11.5a1.5 1.5 0 0 0 3 0"
+                      stroke="currentColor"
+                      strokeWidth="1.3"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  Manage Alerts
                 </button>
                 <button className="wl-action-btn">
                   <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
@@ -527,30 +614,13 @@ export default function WatchlistPage() {
                       strokeLinecap="round"
                     />
                   </svg>
-                  Manage Alerts
-                </button>
-                <button className="wl-action-btn">
-                  <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                    <path
-                      d="M7 1.5v8M4 6.5L7 10l3-3.5"
-                      stroke="currentColor"
-                      strokeWidth="1.3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M2 11h10"
-                      stroke="currentColor"
-                      strokeWidth="1.3"
-                      strokeLinecap="round"
-                    />
-                  </svg>
                   Download
                 </button>
-                <button className="wl-action-btn">
+                <button className="wl-action-btn" onClick={() => setSplitLayout((v) => !v)}>
+                  {/* Layout icon — two-column grid */}
                   <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                    <rect x="1.5" y="1.5" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.3" />
-                    <rect x="3" y="3" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.3" />
+                    <rect x="1.5" y="1.5" width="4.5" height="11" rx="1" stroke="currentColor" strokeWidth="1.3" />
+                    <rect x="8" y="1.5" width="4.5" height="11" rx="1" stroke="currentColor" strokeWidth="1.3" />
                   </svg>
                   Layout
                 </button>
@@ -576,152 +646,315 @@ export default function WatchlistPage() {
               </button>
             </div>
 
-            {/* ── Holdings Table ─────────────────────────────────────── */}
-            <div className="wl-table-wrap">
-              <table className="wl-table">
-                <thead>
-                  <tr>
-                    <th className="wl-th wl-th--sticky">
-                      Symbol
-                      <svg viewBox="0 0 14 14" fill="none" width="10" height="10" style={{ marginLeft: 4 }}>
-                        <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </th>
-                    <th className="wl-th">Price</th>
-                    <th className="wl-th">Change</th>
-                    <th className="wl-th">Change %</th>
-                    <th className="wl-th">Shares</th>
-                    <th className="wl-th">Cost</th>
-                    <th className="wl-th">Today&apos;s Gain</th>
-                    <th className="wl-th">Today&apos;s % Gain</th>
-                    <th className="wl-th">Revenue</th>
-                    <th className="wl-th">Revenue QoQ</th>
-                    <th className="wl-th">Revenue YoY</th>
-                    <th className="wl-th">Gross Margin</th>
-                    <th className="wl-th">DOI</th>
-                    <th className="wl-th">Next Earning Release</th>
-                    <th className="wl-th">Last Qtr Revenue</th>
-                    <th className="wl-th">Last Qtr Gross Margin</th>
-                    <th className="wl-th">Last Qtr DOI</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {holdingsData.map((h) => (
-                    <tr key={h.symbol} className="wl-tr">
-                      <td className="wl-td wl-td--sticky wl-symbol">{h.symbol}</td>
-                      <td className="wl-td">{h.price.toFixed(2)}</td>
-                      <td className={`wl-td ${h.change >= 0 ? 'pos' : 'neg'}`}>
-                        {h.change >= 0 ? '+' : ''}
-                        {h.change.toFixed(2)}
-                      </td>
-                      <td className={`wl-td ${h.changePct >= 0 ? 'pos' : 'neg'}`}>
-                        {h.changePct >= 0 ? '+' : ''}
-                        {h.changePct.toFixed(2)}%
-                      </td>
-                      <td className="wl-td">{h.shares}</td>
-                      <td className="wl-td">{h.cost.toFixed(2)}</td>
-                      <td className={`wl-td ${h.todayGain >= 0 ? 'pos' : 'neg'}`}>
-                        {h.todayGain >= 0 ? '+' : ''}
-                        {h.todayGain.toFixed(2)}
-                      </td>
-                      <td className={`wl-td ${h.todayGainPct >= 0 ? 'pos' : 'neg'}`}>
-                        {h.todayGainPct >= 0 ? '+' : ''}
-                        {h.todayGainPct.toFixed(2)}%
-                      </td>
-                      <td className="wl-td">{h.revenue}</td>
-                      <td className={`wl-td ${h.revenueQoQ.startsWith('+') ? 'pos' : 'neg'}`}>
-                        {h.revenueQoQ}
-                      </td>
-                      <td className={`wl-td ${h.revenueYoY.startsWith('+') ? 'pos' : 'neg'}`}>
-                        {h.revenueYoY}
-                      </td>
-                      <td className="wl-td">{h.grossMargin}</td>
-                      <td className="wl-td">{h.doi}</td>
-                      <td className="wl-td">{h.nextEarning}</td>
-                      <td className="wl-td">{h.lastQtrRevenue}</td>
-                      <td className="wl-td">{h.lastQtrGrossMargin}</td>
-                      <td className="wl-td">{h.lastQtrDOI}</td>
+            {/* ── Holdings Table + Feed (layout-aware wrapper) ──────── */}
+            <div className={`wl-content-area${splitLayout ? ' wl-content-area--split' : ''}`}>
+              {/* ── Holdings Table ─────────────────────────────────────── */}
+              <div className="wl-table-wrap">
+                <table className="wl-table">
+                  <thead>
+                    <tr>
+                      <th className="wl-th wl-th--sticky">
+                        Symbol
+                        <svg viewBox="0 0 14 14" fill="none" width="10" height="10" style={{ marginLeft: 4 }}>
+                          <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </th>
+                      <th className="wl-th">Price</th>
+                      <th className="wl-th">Change</th>
+                      <th className="wl-th">Change %</th>
+                      <th className="wl-th">Shares</th>
+                      <th className="wl-th">Cost</th>
+                      <th className="wl-th">Today&apos;s Gain</th>
+                      <th className="wl-th">Today&apos;s % Gain</th>
+                      <th className="wl-th">Revenue</th>
+                      <th className="wl-th">Revenue QoQ</th>
+                      <th className="wl-th">Revenue YoY</th>
+                      <th className="wl-th">Gross Margin</th>
+                      <th className="wl-th">DOI</th>
+                      <th className="wl-th">Next Earning Release</th>
+                      <th className="wl-th">Last Qtr Revenue</th>
+                      <th className="wl-th">Last Qtr Gross Margin</th>
+                      <th className="wl-th">Last Qtr DOI</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* ── Content feed section ───────────────────────────────── */}
-            <section className="wl-feed-section">
-              {/* Feed tabs */}
-              <div className="wl-feed-tabs">
-                {(['Latest', 'Analysis', 'News', 'Warnings'] as const).map((t) => (
-                  <button
-                    key={t}
-                    className={`wl-feed-tab${feedTab === t ? ' active' : ''}`}
-                    onClick={() => setFeedTab(t)}
-                  >
-                    {t}
-                    {t === 'News' && <span className="wl-free-badge">FREE</span>}
-                  </button>
-                ))}
+                  </thead>
+                  <tbody>
+                    {sortedHoldings.map((h) => (
+                      <tr key={h.symbol} className="wl-tr">
+                        <td className="wl-td wl-td--sticky wl-symbol">{h.symbol}</td>
+                        <td className="wl-td">{h.price.toFixed(2)}</td>
+                        <td className={`wl-td ${h.change >= 0 ? 'pos' : 'neg'}`}>
+                          {h.change >= 0 ? '+' : ''}
+                          {h.change.toFixed(2)}
+                        </td>
+                        <td className={`wl-td ${h.changePct >= 0 ? 'pos' : 'neg'}`}>
+                          {h.changePct >= 0 ? '+' : ''}
+                          {h.changePct.toFixed(2)}%
+                        </td>
+                        <td className="wl-td">{h.shares}</td>
+                        <td className="wl-td">{h.cost.toFixed(2)}</td>
+                        <td className={`wl-td ${h.todayGain >= 0 ? 'pos' : 'neg'}`}>
+                          {h.todayGain >= 0 ? '+' : ''}
+                          {h.todayGain.toFixed(2)}
+                        </td>
+                        <td className={`wl-td ${h.todayGainPct >= 0 ? 'pos' : 'neg'}`}>
+                          {h.todayGainPct >= 0 ? '+' : ''}
+                          {h.todayGainPct.toFixed(2)}%
+                        </td>
+                        <td className="wl-td">{h.revenue}</td>
+                        <td className={`wl-td ${h.revenueQoQ.startsWith('+') ? 'pos' : 'neg'}`}>
+                          {h.revenueQoQ}
+                        </td>
+                        <td className={`wl-td ${h.revenueYoY.startsWith('+') ? 'pos' : 'neg'}`}>
+                          {h.revenueYoY}
+                        </td>
+                        <td className="wl-td">{h.grossMargin}</td>
+                        <td className="wl-td">{h.doi}</td>
+                        <td className="wl-td">{h.nextEarning}</td>
+                        <td className="wl-td">{h.lastQtrRevenue}</td>
+                        <td className="wl-td">{h.lastQtrGrossMargin}</td>
+                        <td className="wl-td">{h.lastQtrDOI}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
 
-              {/* Feed list */}
-              <div className="wl-feed-list">
-                {feedItems.map((item, idx) => (
-                  <div key={item.id} className={`wl-feed-item${idx < feedItems.length - 1 ? ' wl-feed-item--bordered' : ''}`}>
-                    {item.avatar === 'alpha' ? <AlphaAvatar /> : <UserAvatar />}
-                    <div className="wl-feed-body">
-                      <div className="wl-feed-title">{item.title}</div>
-                      <div className="wl-feed-meta">
-                        <span className="wl-feed-tickers">
-                          {item.tickers.map((t, i) => (
-                            <span key={t}>
-                              {i > 0 && ', '}
-                              <a href="#" className="wl-feed-ticker">
-                                {t}
-                              </a>
-                            </span>
-                          ))}
-                        </span>
-                        <span className="wl-feed-dot">•</span>
-                        <span className="wl-feed-source">{item.source}</span>
-                        <span className="wl-feed-dot">•</span>
-                        <span className="wl-feed-time">{item.time}</span>
-                        {item.comments !== undefined && (
-                          <>
-                            <span className="wl-feed-dot">•</span>
-                            <span className="wl-feed-comments">
-                              <svg viewBox="0 0 14 14" fill="none" width="12" height="12">
-                                <path
-                                  d="M1.5 2h11A.5.5 0 0 1 13 2.5v7a.5.5 0 0 1-.5.5H4L1.5 12.5V2.5A.5.5 0 0 1 2 2h-.5z"
-                                  stroke="currentColor"
-                                  strokeWidth="1.2"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
-                              {item.comments} Comments
-                            </span>
-                          </>
-                        )}
-                        <span className="wl-feed-dot">•</span>
-                        <span className="wl-feed-save">
-                          <svg viewBox="0 0 14 14" fill="none" width="12" height="12">
-                            <path
-                              d="M3 1.5h8v11L7 10 3 12.5V1.5Z"
-                              stroke="currentColor"
-                              strokeWidth="1.2"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                          Save
-                        </span>
+              {/* ── Content feed section ───────────────────────────────── */}
+              <section className="wl-feed-section">
+                {/* Feed tabs */}
+                <div className="wl-feed-tabs">
+                  {(['Latest', 'Analysis', 'News', 'Warnings', 'Transcripts', 'Press Releases'] as const).map((t) => (
+                    <button
+                      key={t}
+                      className={`wl-feed-tab${feedTab === t ? ' active' : ''}`}
+                      onClick={() => setFeedTab(t)}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Feed list */}
+                <div className="wl-feed-list">
+                  {feedItems.map((item, idx) => (
+                    <div key={item.id} className={`wl-feed-item${idx < feedItems.length - 1 ? ' wl-feed-item--bordered' : ''}`}>
+                      {item.avatar === 'alpha' ? <AlphaAvatar /> : <UserAvatar />}
+                      <div className="wl-feed-body">
+                        <div className="wl-feed-title">{item.title}</div>
+                        <div className="wl-feed-meta">
+                          <span className="wl-feed-tickers">
+                            {item.tickers.map((t, i) => (
+                              <span key={t}>
+                                {i > 0 && ', '}
+                                <a href="#" className="wl-feed-ticker">
+                                  {t}
+                                </a>
+                              </span>
+                            ))}
+                          </span>
+                          <span className="wl-feed-dot">•</span>
+                          <span className="wl-feed-source">{item.source}</span>
+                          <span className="wl-feed-dot">•</span>
+                          <span className="wl-feed-time">{item.time}</span>
+                          {item.comments !== undefined && (
+                            <>
+                              <span className="wl-feed-dot">•</span>
+                              <span className="wl-feed-comments">
+                                <svg viewBox="0 0 14 14" fill="none" width="12" height="12">
+                                  <path
+                                    d="M1.5 2h11A.5.5 0 0 1 13 2.5v7a.5.5 0 0 1-.5.5H4L1.5 12.5V2.5A.5.5 0 0 1 2 2h-.5z"
+                                    stroke="currentColor"
+                                    strokeWidth="1.2"
+                                    strokeLinejoin="round"
+                                  />
+                                </svg>
+                                {item.comments} Comments
+                              </span>
+                            </>
+                          )}
+                          <span className="wl-feed-dot">•</span>
+                          <span className="wl-feed-save">
+                            <svg viewBox="0 0 14 14" fill="none" width="12" height="12">
+                              <path
+                                d="M3 1.5h8v11L7 10 3 12.5V1.5Z"
+                                stroke="currentColor"
+                                strokeWidth="1.2"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                            Save
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </section>
+                  ))}
+                </div>
+              </section>
+            </div>
+
           </div>
         </main>
       </div>
+
+      {/* ── Manage Alerts Modal ───────────────────────────────────────────── */}
+      {showManageAlerts && (
+        <div className="wl-modal-overlay" onClick={() => setShowManageAlerts(false)}>
+          <div className="wl-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="wl-modal-header">
+              <span className="wl-modal-title">Manage Alerts</span>
+              <div className="wl-modal-header-actions">
+                <button className="wl-modal-cancel-btn" onClick={() => setShowManageAlerts(false)}>
+                  Close
+                </button>
+              </div>
+            </div>
+            <div className="wl-modal-body">
+              <div className="wl-toggle-row">
+                <div className="wl-toggle-info">
+                  <span className="wl-toggle-name">News Alert</span>
+                  <span className="wl-toggle-desc">Breaking News in real time</span>
+                </div>
+                <label className="wl-toggle-switch">
+                  <input
+                    type="checkbox"
+                    checked={newsAlert}
+                    onChange={(e) => setNewsAlert(e.target.checked)}
+                  />
+                  <span className="wl-toggle-track" />
+                </label>
+              </div>
+              <div className="wl-toggle-row">
+                <div className="wl-toggle-info">
+                  <span className="wl-toggle-name">Transcript Alert</span>
+                </div>
+                <label className="wl-toggle-switch">
+                  <input
+                    type="checkbox"
+                    checked={transcriptAlert}
+                    onChange={(e) => setTranscriptAlert(e.target.checked)}
+                  />
+                  <span className="wl-toggle-track" />
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Edit Watchlist Modal ──────────────────────────────────────────── */}
+      {showEditWatchlist && (
+        <div className="wl-modal-overlay" onClick={() => setShowEditWatchlist(false)}>
+          <div className="wl-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="wl-modal-header">
+              <span className="wl-modal-title">Edit Watchlist</span>
+              <div className="wl-modal-header-actions">
+                <button
+                  className="wl-modal-done-btn"
+                  onClick={() => {
+                    setWatchlistName(editWatchlistName.trim() || watchlistName);
+                    setSymbolOrder([...editSymbolOrder]);
+                    setShowEditWatchlist(false);
+                  }}
+                >
+                  Done
+                </button>
+              </div>
+            </div>
+            <div className="wl-modal-body">
+              <div className="wl-modal-field">
+                <label className="wl-modal-field-label">Watchlist Name:</label>
+                <input
+                  className="wl-modal-input"
+                  type="text"
+                  value={editWatchlistName}
+                  onChange={(e) => setEditWatchlistName(e.target.value)}
+                />
+              </div>
+              <div>
+                <div className="wl-modal-section-title">Symbol Order</div>
+                <div className="wl-drag-list">
+                  {editSymbolOrder.map((sym, idx) => (
+                    <div
+                      key={sym}
+                      className="wl-drag-item"
+                      draggable
+                      onDragStart={() => handleDragStart(idx)}
+                      onDragEnter={() => handleDragEnter(idx)}
+                      onDragEnd={handleDragEnd}
+                      onDragOver={(e) => e.preventDefault()}
+                    >
+                      <svg className="wl-drag-handle" viewBox="0 0 14 14" fill="none" width="14" height="14">
+                        <path d="M3 4h8M3 7h8M3 10h8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                      </svg>
+                      <span className="wl-drag-symbol">{sym}</span>
+                      <span className="wl-drag-rank">#{idx + 1}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Add Symbol Modal ──────────────────────────────────────────────── */}
+      {showAddSymbol && (
+        <div className="wl-modal-overlay" onClick={() => setShowAddSymbol(false)}>
+          <div className="wl-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="wl-modal-header">
+              <span className="wl-modal-title">Add Symbols to Follow</span>
+              <div className="wl-modal-header-actions">
+                <button className="wl-modal-cancel-btn" onClick={handleAddSymbolClose}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+            <div className="wl-modal-body">
+              <div className="wl-add-search-wrap">
+                <svg className="wl-add-search-icon" width="15" height="15" viewBox="0 0 15 15" fill="none">
+                  <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M10.5 10.5L14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+                <input
+                  className="wl-add-search-input"
+                  type="text"
+                  placeholder="Add Symbols (e.g AAPL, TSLA, etc...)"
+                  value={addSymbolQuery}
+                  onChange={(e) => setAddSymbolQuery(e.target.value)}
+                  autoFocus
+                />
+              </div>
+              <div className="wl-add-hint">
+                Enter symbols separated by commas to add to your portfolio.
+              </div>
+              {addSuggestions.length > 0 && (
+                <div className="wl-add-suggestions">
+                  {addSuggestions.map((c) => (
+                    <button
+                      key={c.symbol}
+                      className="wl-add-suggestion-item"
+                      onClick={() => setAddSymbolQuery((q) => {
+                        const parts = q.split(',').map((s) => s.trim()).filter(Boolean);
+                        parts[parts.length - 1] = c.symbol;
+                        return parts.join(', ') + ', ';
+                      })}
+                    >
+                      <span className="wl-add-suggestion-symbol">{c.symbol}</span>
+                      <span className="wl-add-suggestion-name">{c.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              <button
+                className="wl-modal-submit-btn"
+                onClick={handleAddSymbolClose}
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
