@@ -63,7 +63,7 @@ export const sidebarIcons: Record<string, string> = {
   filter:
     '<path d="M1.5 2H12.5L8.5 7V12.5L5.5 11V7L1.5 2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>',
   watchlist:
-    '<path d="M2 2h10v1.5L8 8v4.5l-2-1.5V8L2 3.5V2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M5 5.5h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>',
+    '<path d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="7" cy="7" r="1.8" fill="currentColor"/>',
 };
 
 export const quickLinks: NavItem[] = [
