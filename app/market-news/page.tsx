@@ -6,7 +6,7 @@ import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import NewsCategoryTabs from '@/app/components/news/NewsCategoryTabs';
 import NewsCard from '@/app/components/news/NewsCard';
-import NewsInsights from '@/app/components/news/NewsInsights';
+import CompanyRankingTable from '@/app/components/news/CompanyRankingTable';
 import { newsItems, NewsCategory } from '@/app/data/news';
 
 const PAGE_SIZE = 8;
@@ -40,8 +40,10 @@ export default function MarketNewsPage() {
           <div className="page-pad">
             <div className="section-eyebrow">Market News</div>
             <h1 className="news-page-title">Top Market News</h1>
-            <NewsInsights />
             <NewsCategoryTabs active={activeCategory} onChange={setActiveCategory} />
+            <div className="company-ranking-below-tabs">
+              <CompanyRankingTable />
+            </div>
             <div className="news-pager-layout">
               <button
                 className="news-pager-arrow"

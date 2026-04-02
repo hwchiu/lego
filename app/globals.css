@@ -1100,6 +1100,12 @@ input, select { font-family: var(--font); }
   .news-insights-segment { grid-template-columns: 1fr; }
 }
 
+/* ===== COMPANY RANKING BELOW CATEGORY TABS ===== */
+.company-ranking-below-tabs {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
 .insight-block {
   background: var(--c-white);
   border: 1px solid var(--c-border);
