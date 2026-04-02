@@ -19,14 +19,24 @@ export default async function EventCalendarPage() {
   ]);
 
   // Parse the JSON-encoded companies field back to string[]
-  const parsedDays = earningsDays.map((d) => ({
-    dayLabel: d.dayLabel,
-    dateLabel: d.dateLabel,
-    isToday: d.isToday,
-    isOutOfMonth: d.isOutOfMonth,
-    companyCount: d.companyCount ?? undefined,
-    companies: d.companies ? (JSON.parse(d.companies) as string[]) : undefined,
-  })) satisfies WeekDay[];
+  const parsedDays = earningsDays.map((d) => {
+    let companies: string[] | undefined;
+    if (d.companies) {
+      try {
+        companies = JSON.parse(d.companies) as string[];
+      } catch {
+        companies = undefined;
+      }
+    }
+    return {
+      dayLabel: d.dayLabel,
+      dateLabel: d.dateLabel,
+      isToday: d.isToday,
+      isOutOfMonth: d.isOutOfMonth,
+      companyCount: d.companyCount ?? undefined,
+      companies,
+    };
+  }) satisfies WeekDay[];
 
   // Split into week view (7 days, dateLabels like "Mar 29" to "Apr 4") vs month data
   const weekDays = parsedDays.slice(0, 7);

@@ -45,4 +45,4 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 # Run migrations then start the server
-CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy || { echo 'ERROR: Database migration failed. Check DATABASE_URL and DB accessibility.'; exit 1; } && node server.js"]
