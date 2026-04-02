@@ -7,6 +7,7 @@ export interface WeekDay {
   isToday?: boolean;
   companies?: string[];
   companyCount?: number;
+  isEmpty?: boolean;  // placeholder cell for month grid padding
 }
 
 export interface EpsRow {
