@@ -2,3 +2,14 @@
 node_modules/
 .next/
 out/
+
+# Prisma generated client (rebuilt by `npm run postinstall`)
+/app/generated/prisma
+
+# SQLite database files — not committed; run `npm run db:setup` to create locally
+prisma/*.db
+prisma/*.db-journal
+
+# Environment variables
+.env.local
+.env*.local

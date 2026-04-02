@@ -1,9 +1,22 @@
 import CompanyRankingTable from './CompanyRankingTable';
 
-export default function NewsInsights() {
+interface NewsTag {
+  symbol: string;
+  name: string;
+}
+
+interface NewsItemWithTags {
+  tags: NewsTag[];
+}
+
+interface NewsInsightsProps {
+  newsItems: NewsItemWithTags[];
+}
+
+export default function NewsInsights({ newsItems }: NewsInsightsProps) {
   return (
     <div className="news-insights-segment">
-      <CompanyRankingTable />
+      <CompanyRankingTable newsItems={newsItems} />
     </div>
   );
 }

@@ -1,9 +1,20 @@
 'use client';
 
-import { newsItems } from '@/app/data/news';
+interface NewsTagItem {
+  symbol: string;
+  name: string;
+}
+
+interface NewsItemWithTags {
+  tags: NewsTagItem[];
+}
+
+interface CompanyRankingTableProps {
+  newsItems: NewsItemWithTags[];
+}
 
 // Compute top-5 companies by mention count across all news items
-function computeTopCompanies() {
+function computeTopCompanies(newsItems: NewsItemWithTags[]) {
   const countMap: Record<string, { name: string; count: number }> = {};
   for (const item of newsItems) {
     for (const tag of item.tags) {
@@ -25,8 +36,8 @@ function getMockChange(index: number): number {
   return values[index % values.length];
 }
 
-export default function CompanyRankingTable() {
-  const companies = computeTopCompanies();
+export default function CompanyRankingTable({ newsItems }: CompanyRankingTableProps) {
+  const companies = computeTopCompanies(newsItems);
 
   return (
     <div className="insight-block">

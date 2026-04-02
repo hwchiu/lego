@@ -5,7 +5,6 @@ import { useState } from 'react';
 import CalendarControls from '@/app/components/calendar/CalendarControls';
 import MonthGrid from '@/app/components/calendar/MonthGrid';
 import WeekGrid from '@/app/components/calendar/WeekGrid';
-import { weekDays, aprilMonthData } from '@/app/data/earnings';
 import type { WeekDay } from '@/app/data/earnings';
 import { DAY_LABELS } from '@/app/lib/calendarUtils';
 
@@ -14,13 +13,23 @@ const MONTH_SHORT = [
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
 ];
 
-function buildMonthDays(year: number, month: number): WeekDay[] {
+interface EarningsCalendarSectionProps {
+  weekDays: WeekDay[];
+  monthData: WeekDay[];
+}
+
+function buildMonthDays(
+  year: number,
+  month: number,
+  weekDays: WeekDay[],
+  monthData: WeekDay[],
+): WeekDay[] {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDay = new Date(year, month, 1).getDay(); // 0 = Sunday
   const days: WeekDay[] = [];
 
-  // Build a Map for O(1) lookup by dateLabel (aprilMonthData entries supplement weekDays)
-  const dayDataMap = new Map([...weekDays, ...aprilMonthData].map((wd) => [wd.dateLabel, wd]));
+  // Build a Map for O(1) lookup by dateLabel (monthData entries supplement weekDays)
+  const dayDataMap = new Map([...weekDays, ...monthData].map((wd) => [wd.dateLabel, wd]));
 
   // Leading padding cells from previous month
   const prevMonthIdx = month === 0 ? 11 : month - 1;
@@ -74,7 +83,7 @@ function buildMonthDays(year: number, month: number): WeekDay[] {
   return days;
 }
 
-export default function EarningsCalendarSection() {
+export default function EarningsCalendarSection({ weekDays, monthData }: EarningsCalendarSectionProps) {
   const [year, setYear] = useState(2026);
   const [month, setMonth] = useState(3); // April = index 3
   const [isMonthlyView, setIsMonthlyView] = useState(false);
@@ -97,7 +106,7 @@ export default function EarningsCalendarSection() {
     }
   };
 
-  const monthDays = buildMonthDays(year, month);
+  const monthDays = buildMonthDays(year, month, weekDays, monthData);
 
   return (
     <div className="cal-card">

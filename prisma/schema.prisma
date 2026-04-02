@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Earnings calendar (weekly + monthly views)
+// ---------------------------------------------------------------------------
+
+model EarningsDay {
+  id           Int      @id @default(autoincrement())
+  dayLabel     String   // SUN, MON, ...
+  dateLabel    String   @unique // "Apr 1", "Mar 30", etc.
+  isToday      Boolean  @default(false)
+  isOutOfMonth Boolean  @default(false)
+  companyCount Int?
+  companies    String?  // JSON-encoded array of ticker strings
+}
+
+// ---------------------------------------------------------------------------
+// EPS detail table rows
+// ---------------------------------------------------------------------------
+
+model EpsRow {
+  id             Int     @id @default(autoincrement())
+  symbol         String
+  company        String
+  report         String  // Pre | Post | During-Market
+  mktCap         String
+  epsNormalized  String
+  epsYoY         String
+  epsYoYPositive Boolean
+  epsGaap        String
+  epsActual      String?
+  epsBeatMiss    String? // Beat | Miss | null
+  lastQGaap      String
+  lastQBeatMiss  String?
+  beatsL2Y       Int
+  missedL2Y      Int
+}
+
+// ---------------------------------------------------------------------------
+// Revenue detail table rows
+// ---------------------------------------------------------------------------
+
+model RevenueRow {
+  id             Int     @id @default(autoincrement())
+  symbol         String
+  company        String
+  report         String
+  mktCap         String
+  revConsensus   String
+  revYoY         String
+  revYoYPositive Boolean
+  revHighEst     String
+  revActual      String?
+  revBeatMiss    String?
+  lastQActual    String
+  lastQBeatMiss  String?
+}
+
+// ---------------------------------------------------------------------------
+// News items + company tags
+// ---------------------------------------------------------------------------
+
+model NewsItem {
+  id          String    @id  // "news-1", "news-2", etc.
+  source      String
+  title       String
+  category    String
+  publishedAt DateTime
+  url         String
+  tags        NewsTag[]
+}
+
+model NewsTag {
+  id         Int      @id @default(autoincrement())
+  newsItemId String
+  symbol     String
+  name       String
+  change     Float
+  newsItem   NewsItem @relation(fields: [newsItemId], references: [id], onDelete: Cascade)
+}
+
+// ---------------------------------------------------------------------------
+// Banner slides
+// ---------------------------------------------------------------------------
+
+model BannerSlide {
+  id           Int     @id @default(autoincrement())
+  label        String  // "Tip" | "Breaking News"
+  labelVariant String  // "tip" | "breaking"
+  prefix       String?
+  linkText     String
+  linkHref     String
+  sortOrder    Int     @default(0)
+}

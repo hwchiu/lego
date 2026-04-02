@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/data/prod.db
+    volumes:
+      # Persist the SQLite database across container restarts
+      - db-data:/data
+    restart: unless-stopped
+
+volumes:
+  db-data:

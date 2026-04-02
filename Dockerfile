@@ -1,43 +1,48 @@
-# Stage 1: Build
-FROM node:20-alpine AS builder
+# Stage 1: Install dependencies
+FROM node:20-alpine AS deps
 
 WORKDIR /app
 
 COPY package.json package-lock.json ./
 RUN npm ci
 
+# Stage 2: Build the Next.js app
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# Generate Prisma client
+RUN npx prisma generate
+
 RUN npm run build
 
-# Stage 2: Serve with Nginx
-FROM nginx:alpine
+# Stage 3: Production runner
+FROM node:20-alpine AS runner
 
-# Remove default nginx static assets
-RUN rm -rf /usr/share/nginx/html/*
+WORKDIR /app
 
-# Copy built static files to nginx, serving under /lego path
-COPY --from=builder /app/out /usr/share/nginx/html/lego
+ENV NODE_ENV=production
+# DATABASE_URL must be supplied at runtime, e.g.:
+#   docker run -e DATABASE_URL=file:/data/prod.db ...
+# or via docker-compose environment / volume mount
 
-# Nginx config to handle basePath /lego and client-side routing
-RUN printf 'server {\n\
-    listen 80;\n\
-    server_name _;\n\
-    root /usr/share/nginx/html;\n\
-\n\
-    location /lego/ {\n\
-        index index.html;\n\
-        try_files $uri $uri/ /lego/404.html;\n\
-    }\n\
-\n\
-    location = /lego {\n\
-        return 301 /lego/;\n\
-    }\n\
-\n\
-    location = / {\n\
-        return 301 /lego/;\n\
-    }\n\
-}\n' > /etc/nginx/conf.d/default.conf
+# Copy only what Next.js needs to serve the app
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
-EXPOSE 80
+# Copy Prisma schema + migrations so the container can run migrate deploy
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 3000
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+# Run migrations then start the server
+CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]

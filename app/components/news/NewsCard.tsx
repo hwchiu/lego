@@ -1,15 +1,31 @@
 'use client';
 
 import { useState } from 'react';
-import type { NewsItem } from '@/app/data/news';
 
-function formatPublishedAt(date: Date): string {
+interface NewsTag {
+  symbol: string;
+  name: string;
+  change: number;
+}
+
+interface NewsItem {
+  id: string;
+  source: string;
+  title: string;
+  category: string;
+  publishedAt: Date | string;
+  url: string;
+  tags: NewsTag[];
+}
+
+function formatPublishedAt(date: Date | string): string {
+  const d = typeof date === 'string' ? new Date(date) : date;
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const yesterday = new Date(today.getTime() - 86400000);
-  const itemDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const itemDay = new Date(d.getFullYear(), d.getMonth(), d.getDate());
 
-  const timeStr = date.toLocaleTimeString('en-US', {
+  const timeStr = d.toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
@@ -20,7 +36,7 @@ function formatPublishedAt(date: Date): string {
   } else if (itemDay.getTime() === yesterday.getTime()) {
     return `Yesterday ${timeStr}`;
   } else {
-    const dateStr = date.toLocaleDateString('en-US', {
+    const dateStr = d.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
