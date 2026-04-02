@@ -10,6 +10,7 @@ export interface NavItem {
 export interface SubNavItem {
   label: string;
   href: string;
+  dividerBefore?: boolean; // render a thin divider line above this item
 }
 
 export interface SidebarSection {
@@ -61,6 +62,8 @@ export const sidebarIcons: Record<string, string> = {
     '<circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.3"/><path d="M9.5 9.5L13 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>',
   filter:
     '<path d="M1.5 2H12.5L8.5 7V12.5L5.5 11V7L1.5 2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>',
+  watchlist:
+    '<path d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="7" cy="7" r="1.8" fill="currentColor"/>',
 };
 
 export const quickLinks: NavItem[] = [
@@ -72,6 +75,17 @@ export const quickLinks: NavItem[] = [
 
 export const mainNav: NavItem[] = [
   { label: 'Home', href: '#', icon: 'home' },
+  {
+    label: 'Watchlist',
+    href: '#',
+    icon: 'watchlist',
+    subItems: [
+      { label: 'Watchlist1', href: '#' },
+      { label: 'Watchlist-TSM', href: '#' },
+      { label: 'Watchlist2', href: '#' },
+      { label: 'Customized Watchlist', href: '#', dividerBefore: true },
+    ],
+  },
   { label: 'Stock Analysis', href: '#', icon: 'stockAnalysis' },
   { label: 'Market News', href: '/market-news', icon: 'news', subItems: [
     { label: 'Top Market News', href: '/market-news' },

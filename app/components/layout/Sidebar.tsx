@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -73,9 +73,12 @@ function SubMenu({
   return (
     <div className="sidebar-submenu" style={{ top }} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       {items.map((item) => (
-        <Link key={item.label} href={item.href} className="sidebar-submenu-item">
-          {item.label}
-        </Link>
+        <React.Fragment key={item.label}>
+          {item.dividerBefore && <div className="sidebar-submenu-divider" />}
+          <Link href={item.href} className="sidebar-submenu-item">
+            {item.label}
+          </Link>
+        </React.Fragment>
       ))}
     </div>
   );
@@ -232,7 +235,7 @@ export default function Sidebar() {
         ))}
       </div>
 
-      <NavSection label="主要導航菜單" items={mainNav} collapsed={collapsed} pathname={pathname} />
+      <NavSection label="Main Navigation" items={mainNav} collapsed={collapsed} pathname={pathname} />
       <div className="sidebar-divider" />
       <NavSection label="Target Company Group" items={targetCompanyNav} collapsed={collapsed} pathname={pathname} />
       <div className="sidebar-divider" />
