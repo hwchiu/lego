@@ -1,6 +1,7 @@
 'use client';
 
-import { WeekDay } from '@/app/data/earnings';
+import type { WeekDay } from '@/app/data/earnings';
+import { truncateCompanies } from '@/app/lib/calendarUtils';
 
 function WeekCell({ day }: { day: WeekDay }) {
   const hasReports = day.companies && day.companies.length > 0;
@@ -12,13 +13,11 @@ function WeekCell({ day }: { day: WeekDay }) {
         <div className="cell-date">{day.dateLabel}</div>
         {hasReports ? (
           <>
-            <div className="cell-count">{day.companyCount}</div>
-            <div className="cell-count-label">Companies</div>
-            <div className="cell-co-list">
-              {day.companies!.map((co) => (
-                <span key={co} className="cell-co">{co}</span>
-              ))}
+            <div className="cell-count-row">
+              <span className="cell-count">{day.companyCount}</span>
+              <span className="cell-count-label">Companies</span>
             </div>
+            <div className="cell-co-text">{truncateCompanies(day.companies!)}</div>
           </>
         ) : (
           <div className="cell-empty">No Reports</div>
