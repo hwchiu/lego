@@ -186,6 +186,11 @@ input, select { font-family: var(--font); }
   flex-direction: column;
   scrollbar-width: thin;
   scrollbar-color: rgba(255,255,255,0.08) transparent;
+  transition: width 0.22s ease, min-width 0.22s ease;
+}
+.sidebar.collapsed {
+  width: 52px;
+  min-width: 52px;
 }
 .sidebar::-webkit-scrollbar { width: 4px; }
 .sidebar::-webkit-scrollbar-track { background: transparent; }
@@ -196,6 +201,49 @@ input, select { font-family: var(--font); }
   padding: 14px 10px 10px;
   border-bottom: 1px solid rgba(255,255,255,0.07);
 }
+.sidebar.collapsed .sidebar-quick {
+  padding: 10px 4px;
+}
+
+/* Collapse header row */
+.sidebar-collapse-header {
+  display: flex;
+  align-items: center;
+  min-height: 30px;
+  margin-bottom: 2px;
+}
+.sidebar-collapse-header .sidebar-quick-link {
+  flex: 1;
+  min-width: 0;
+}
+.sidebar.collapsed .sidebar-collapse-header {
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+/* Toggle button */
+.sidebar-toggle-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: rgba(255,255,255,0.32);
+  transition: background 0.15s, color 0.15s;
+}
+.sidebar-toggle-btn:hover {
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.72);
+}
+.sidebar.collapsed .sidebar-toggle-btn {
+  width: 32px;
+  height: 32px;
+}
+
 .sidebar-quick-link {
   display: flex;
   align-items: center;
@@ -305,6 +353,35 @@ input, select { font-family: var(--font); }
 .sidebar-bottom a:hover {
   background: rgba(255,255,255,0.06);
   color: rgba(255,255,255,0.75);
+}
+
+/* ===== SIDEBAR COLLAPSED STATE ===== */
+.sidebar.collapsed .sidebar-quick-link {
+  justify-content: center;
+  padding: 6px 0;
+}
+.sidebar.collapsed .sidebar-section-label { display: none; }
+.sidebar.collapsed .sidebar-nav {
+  padding: 2px 4px 8px;
+}
+.sidebar.collapsed .sidebar-nav a {
+  justify-content: center;
+  padding: 7px 0;
+  gap: 0;
+}
+.sidebar.collapsed .sidebar-nav a.active::before {
+  display: none;
+}
+.sidebar.collapsed .sidebar-divider {
+  margin: 4px 8px;
+}
+.sidebar.collapsed .sidebar-bottom {
+  padding: 8px 4px 14px;
+}
+.sidebar.collapsed .sidebar-bottom a {
+  justify-content: center;
+  padding: 7px 0;
+  gap: 0;
 }
 
 /* ===== MAIN CONTENT ===== */
