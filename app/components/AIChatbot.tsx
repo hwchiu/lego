@@ -8,16 +8,19 @@ interface ChatMessage {
   text: string;
 }
 
-const BOT_GREETING = '我是你的AI Chatbot Mic! Feel like asking a question today?';
+const BOT_GREETING = "Hi, I'm Mic, your AI assistant! Feel like asking a question today?";
+
+// Avatar image for the Mic bot
+const BOT_AVATAR_URL = 'https://i.pravatar.cc/40?img=47';
 
 // Simple canned responses for simulation
 const BOT_REPLIES = [
-  '好問題！根據目前的市場數據，半導體產業正處於強勢上升週期。',
-  '目前 NVIDIA 的新聞提及次數在所有科技公司中排名第一，顯示市場對 AI 晶片的高度關注。',
-  '根據最新消息，台積電與蘋果的 2nm 獨家合作預計將進一步鞏固其晶圓代工龍頭地位。',
-  '從地緣政治角度來看，中美貿易關係對半導體供應鏈的影響持續是市場焦點。',
-  '我目前沒有足夠資訊回答這個問題，建議參考最新的市場報告。',
-  '這是個很有意思的觀點！市場分析師普遍認為 AI 算力需求將在 2026 年持續增長。',
+  'Great question! Based on current market data, the semiconductor industry is in a strong upswing cycle.',
+  "NVIDIA currently ranks #1 among all tech companies in news mentions, reflecting intense market focus on AI chips.",
+  'According to the latest reports, TSMC and Apple\'s exclusive 2nm partnership is expected to further solidify its foundry leadership.',
+  'From a geopolitical perspective, US-China trade relations continue to be a major market focus for semiconductor supply chains.',
+  "I don't have enough information to answer that question. I recommend consulting the latest market reports.",
+  'That\'s a fascinating perspective! Market analysts widely expect AI compute demand to continue growing through 2026.',
 ];
 
 export default function AIChatbot() {
@@ -101,15 +104,20 @@ export default function AIChatbot() {
       {open && (
         <div className="chatbot-dialog" role="dialog" aria-label="AI Chatbot Mic">
           <div className="chatbot-dialog-header">
-            <div className="chatbot-dialog-avatar">🤖</div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={BOT_AVATAR_URL}
+              alt="Mic avatar"
+              className="chatbot-dialog-avatar"
+            />
             <div>
               <div className="chatbot-dialog-name">Mic</div>
-              <div className="chatbot-dialog-status">AI Chatbot · 線上</div>
+              <div className="chatbot-dialog-status">AI Chatbot · Online</div>
             </div>
             <button
               className="chatbot-dialog-close"
               onClick={() => setOpen(false)}
-              aria-label="關閉"
+              aria-label="Close"
             >
               <svg viewBox="0 0 16 16" fill="none" width="14" height="14" aria-hidden="true">
                 <path d="M3 3L13 13M13 3L3 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
@@ -123,7 +131,14 @@ export default function AIChatbot() {
                 key={msg.id}
                 className={`chatbot-bubble-wrap${msg.role === 'user' ? ' chatbot-bubble-wrap--user' : ''}`}
               >
-                {msg.role === 'bot' && <div className="chatbot-bot-avatar">🤖</div>}
+              {msg.role === 'bot' && (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={BOT_AVATAR_URL}
+                    alt="Mic"
+                    className="chatbot-bot-avatar"
+                  />
+                )}
                 <div className={`chatbot-bubble${msg.role === 'user' ? ' chatbot-bubble--user' : ''}`}>
                   {msg.text}
                 </div>
@@ -131,7 +146,12 @@ export default function AIChatbot() {
             ))}
             {typing && (
               <div className="chatbot-bubble-wrap">
-                <div className="chatbot-bot-avatar">🤖</div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={BOT_AVATAR_URL}
+                  alt="Mic"
+                  className="chatbot-bot-avatar"
+                />
                 <div className="chatbot-bubble chatbot-bubble--typing">
                   <span className="chatbot-dot" />
                   <span className="chatbot-dot" />
@@ -147,7 +167,7 @@ export default function AIChatbot() {
               ref={inputRef}
               className="chatbot-input"
               type="text"
-              placeholder="輸入訊息…"
+              placeholder="Type a message…"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -157,7 +177,7 @@ export default function AIChatbot() {
               className="chatbot-send-btn"
               onClick={sendMessage}
               disabled={!input.trim() || typing}
-              aria-label="送出"
+              aria-label="Send"
             >
               <svg viewBox="0 0 20 20" fill="none" width="16" height="16" aria-hidden="true">
                 <path

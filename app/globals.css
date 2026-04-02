@@ -1345,8 +1345,10 @@ input, select { font-family: var(--font); }
 }
 
 .chatbot-dialog-avatar {
-  font-size: 20px;
-  line-height: 1;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
   flex-shrink: 0;
 }
 
@@ -1404,8 +1406,10 @@ input, select { font-family: var(--font); }
 }
 
 .chatbot-bot-avatar {
-  font-size: 18px;
-  line-height: 1;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
   flex-shrink: 0;
   padding-bottom: 2px;
 }

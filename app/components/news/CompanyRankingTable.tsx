@@ -31,16 +31,15 @@ export default function CompanyRankingTable() {
   return (
     <div className="insight-block">
       <div className="insight-block-title">
-        <span className="insight-block-icon">🔥</span>
-        公司熱度排行
+        Company Heat Ranking
       </div>
       <table className="company-rank-table">
         <thead>
           <tr>
             <th className="crt-th crt-th-no">#No</th>
-            <th className="crt-th">公司名稱</th>
-            <th className="crt-th crt-th-num">新聞提及次數</th>
-            <th className="crt-th crt-th-num">變化</th>
+            <th className="crt-th">Company</th>
+            <th className="crt-th crt-th-num">Mentions</th>
+            <th className="crt-th crt-th-num">Change</th>
           </tr>
         </thead>
         <tbody>
