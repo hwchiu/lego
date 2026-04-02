@@ -27,8 +27,8 @@ function buildMonthDays(year: number, month: number): WeekDay[] {
   const prevYear = month === 0 ? year - 1 : year;
   const daysInPrevMonth = new Date(prevYear, prevMonthIdx + 1, 0).getDate();
   for (let i = 0; i < firstDay; i++) {
-    const d = daysInPrevMonth - firstDay + 1 + i;
-    const dateLabel = `${MONTH_SHORT[prevMonthIdx]} ${d}`;
+    const prevMonthDay = daysInPrevMonth - firstDay + 1 + i;
+    const dateLabel = `${MONTH_SHORT[prevMonthIdx]} ${prevMonthDay}`;
     const existing = dayDataMap.get(dateLabel);
     days.push({
       dayLabel: DAY_LABELS[i],
