@@ -400,6 +400,17 @@ export default function WatchlistPage() {
         ).slice(0, 12)
       : [];
 
+  function handleEditWatchlistClick() {
+    setEditWatchlistName(watchlistName);
+    setEditSymbolOrder([...symbolOrder]);
+    setShowEditWatchlist(true);
+  }
+
+  function handleAddSymbolClose() {
+    setShowAddSymbol(false);
+    setAddSymbolQuery('');
+  }
+
   return (
     <>
       <TopNav />
@@ -558,7 +569,7 @@ export default function WatchlistPage() {
                   </svg>
                   Add Symbol
                 </button>
-                <button className="wl-action-btn" onClick={() => { setEditWatchlistName(watchlistName); setEditSymbolOrder([...symbolOrder]); setShowEditWatchlist(true); }}>
+                <button className="wl-action-btn" onClick={handleEditWatchlistClick}>
                   <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
                     <path
                       d="M9 2.5L11.5 5L5 11.5H2.5V9L9 2.5Z"
@@ -893,7 +904,7 @@ export default function WatchlistPage() {
             <div className="wl-modal-header">
               <span className="wl-modal-title">Add Symbols to Follow</span>
               <div className="wl-modal-header-actions">
-                <button className="wl-modal-cancel-btn" onClick={() => { setShowAddSymbol(false); setAddSymbolQuery(''); }}>
+                <button className="wl-modal-cancel-btn" onClick={handleAddSymbolClose}>
                   Cancel
                 </button>
               </div>
@@ -936,7 +947,7 @@ export default function WatchlistPage() {
               )}
               <button
                 className="wl-modal-submit-btn"
-                onClick={() => { setShowAddSymbol(false); setAddSymbolQuery(''); }}
+                onClick={handleAddSymbolClose}
               >
                 Submit
               </button>
