@@ -59,7 +59,7 @@ input, select { font-family: var(--font); }
   flex-shrink: 0;
   user-select: none;
 }
-.topnav-logo .logo-t { color: var(--c-accent); }
+.topnav-logo .logo-i { color: var(--c-accent); }
 .topnav-search-wrap {
   flex: 1;
   max-width: 500px;
@@ -841,11 +841,79 @@ input, select { font-family: var(--font); }
 }
 .news-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
+}
+@media (max-width: 1100px) {
+  .news-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 860px) {
   .news-grid { grid-template-columns: 1fr; }
+}
+
+/* ===== NEWS PAGINATION ===== */
+.news-pager-layout {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+}
+.news-pager-content {
+  flex: 1;
+  min-width: 0;
+}
+.news-pager-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  min-width: 32px;
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: var(--c-text-3);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s, color 0.15s;
+}
+.news-pager-arrow:hover:not(:disabled) {
+  background: var(--c-border);
+  color: var(--c-text);
+}
+.news-pager-arrow:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+.news-pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 20px;
+}
+.news-pagination-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--c-border-2);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-text-3);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.news-pagination-btn:hover {
+  background: var(--c-border);
+  color: var(--c-text);
+}
+.news-pagination-btn.active {
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+  color: #fff;
+  font-weight: 600;
 }
 
 /* ===== NEWS CARD ===== */
