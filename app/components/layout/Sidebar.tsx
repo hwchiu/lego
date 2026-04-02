@@ -50,7 +50,17 @@ function ChevronIcon({ direction }: { direction: 'left' | 'right' }) {
   );
 }
 
-function SubMenu({ items, anchorRef }: { items: SubNavItem[]; anchorRef: React.RefObject<HTMLLIElement | null> }) {
+function SubMenu({
+  items,
+  anchorRef,
+  onMouseEnter,
+  onMouseLeave,
+}: {
+  items: SubNavItem[];
+  anchorRef: React.RefObject<HTMLLIElement | null>;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+}) {
   const [top, setTop] = useState(0);
 
   useEffect(() => {
@@ -61,7 +71,7 @@ function SubMenu({ items, anchorRef }: { items: SubNavItem[]; anchorRef: React.R
   }, [anchorRef]);
 
   return (
-    <div className="sidebar-submenu" style={{ top }}>
+    <div className="sidebar-submenu" style={{ top }} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       {items.map((item) => (
         <Link key={item.label} href={item.href} className="sidebar-submenu-item">
           {item.label}
@@ -96,6 +106,7 @@ function NavItemRow({
 }) {
   const [open, setOpen] = useState(false);
   const liRef = useRef<HTMLLIElement>(null);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasSubMenu = item.subItems && item.subItems.length > 0;
 
   // An item is active if the current path matches its href, or if any of its sub-items match
@@ -105,12 +116,32 @@ function NavItemRow({
       pathname.startsWith(item.href + '/') ||
       (hasSubMenu && item.subItems!.some((s) => pathname === s.href || pathname.startsWith(s.href + '/'))));
 
+  const openSubmenu = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+    if (hasSubMenu) setOpen(true);
+  };
+
+  const scheduleClose = () => {
+    if (hasSubMenu) {
+      closeTimerRef.current = setTimeout(() => setOpen(false), 200);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    };
+  }, []);
+
   return (
     <li
       ref={liRef}
       className="sidebar-nav-item"
-      onMouseEnter={() => hasSubMenu && setOpen(true)}
-      onMouseLeave={() => hasSubMenu && setOpen(false)}
+      onMouseEnter={openSubmenu}
+      onMouseLeave={scheduleClose}
     >
       <Link
         href={item.href}
@@ -138,7 +169,14 @@ function NavItemRow({
           </svg>
         )}
       </Link>
-      {open && hasSubMenu && <SubMenu items={item.subItems!} anchorRef={liRef} />}
+      {open && hasSubMenu && (
+        <SubMenu
+          items={item.subItems!}
+          anchorRef={liRef}
+          onMouseEnter={openSubmenu}
+          onMouseLeave={scheduleClose}
+        />
+      )}
     </li>
   );
 }

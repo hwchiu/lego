@@ -4,7 +4,7 @@ export default function TopNav() {
   return (
     <header className="topnav">
       <div className="topnav-logo">
-        t<span className="logo-t">MIC</span>
+        M<span className="logo-i">i</span>C
       </div>
       <div className="topnav-search-wrap">
         <svg
