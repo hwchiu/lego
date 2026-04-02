@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'tMIC — Event Calendar',
+  title: 'tMIC',
   description: 'Market Intelligence Center — Earnings Calendar & Financial Data',
 };
 
