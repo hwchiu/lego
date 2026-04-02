@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import {
   quickLinks,
@@ -10,6 +10,7 @@ import {
   bottomLinks,
   sidebarIcons,
   NavItem,
+  SubNavItem,
 } from '@/app/data/navigation';
 
 function NavIcon({ iconKey }: { iconKey: string }) {
@@ -48,6 +49,27 @@ function ChevronIcon({ direction }: { direction: 'left' | 'right' }) {
   );
 }
 
+function SubMenu({ items, anchorRef }: { items: SubNavItem[]; anchorRef: React.RefObject<HTMLLIElement | null> }) {
+  const [top, setTop] = useState(0);
+
+  useEffect(() => {
+    if (anchorRef.current) {
+      const rect = anchorRef.current.getBoundingClientRect();
+      setTop(rect.top);
+    }
+  }, [anchorRef]);
+
+  return (
+    <div className="sidebar-submenu" style={{ top }}>
+      {items.map((item) => (
+        <Link key={item.label} href={item.href} className="sidebar-submenu-item">
+          {item.label}
+        </Link>
+      ))}
+    </div>
+  );
+}
+
 function QuickLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
   return (
     <Link
@@ -59,6 +81,55 @@ function QuickLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
       {!collapsed && item.label}
       {!collapsed && item.badge && <span className="badge-new">{item.badge}</span>}
     </Link>
+  );
+}
+
+function NavItemRow({
+  item,
+  collapsed,
+}: {
+  item: NavItem;
+  collapsed: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const liRef = useRef<HTMLLIElement>(null);
+  const hasSubMenu = item.subItems && item.subItems.length > 0;
+
+  return (
+    <li
+      ref={liRef}
+      className="sidebar-nav-item"
+      onMouseEnter={() => hasSubMenu && setOpen(true)}
+      onMouseLeave={() => hasSubMenu && setOpen(false)}
+    >
+      <Link
+        href={item.href}
+        className={item.active ? 'active' : ''}
+        title={collapsed ? item.label : undefined}
+      >
+        <NavIcon iconKey={item.icon} />
+        {!collapsed && item.label}
+        {!collapsed && hasSubMenu && (
+          <svg
+            className="sidebar-submenu-arrow"
+            viewBox="0 0 14 14"
+            fill="none"
+            width="10"
+            height="10"
+            aria-hidden="true"
+          >
+            <path
+              d="M5 2.5L9.5 7L5 11.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )}
+      </Link>
+      {open && hasSubMenu && <SubMenu items={item.subItems!} anchorRef={liRef} />}
+    </li>
   );
 }
 
@@ -76,16 +147,7 @@ function NavSection({
       {!collapsed && label && <div className="sidebar-section-label">{label}</div>}
       <ul className="sidebar-nav">
         {items.map((item) => (
-          <li key={item.label}>
-            <Link
-              href={item.href}
-              className={item.active ? 'active' : ''}
-              title={collapsed ? item.label : undefined}
-            >
-              <NavIcon iconKey={item.icon} />
-              {!collapsed && item.label}
-            </Link>
-          </li>
+          <NavItemRow key={item.label} item={item} collapsed={collapsed} />
         ))}
       </ul>
     </>

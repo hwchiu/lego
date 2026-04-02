@@ -1,11 +1,15 @@
-import { ReactNode } from 'react';
-
 export interface NavItem {
   label: string;
   href: string;
   icon: string; // SVG path data identifier — rendered by component
   active?: boolean;
   badge?: string;
+  subItems?: SubNavItem[];
+}
+
+export interface SubNavItem {
+  label: string;
+  href: string;
 }
 
 export interface SidebarSection {
@@ -69,7 +73,11 @@ export const quickLinks: NavItem[] = [
 export const mainNav: NavItem[] = [
   { label: 'Home', href: '#', icon: 'home' },
   { label: 'Stock Analysis', href: '#', icon: 'stockAnalysis' },
-  { label: 'Market News', href: '#', icon: 'news' },
+  { label: 'Market News', href: '/market-news', icon: 'news', subItems: [
+    { label: 'Top Market News', href: '/market-news' },
+    { label: 'AI News', href: '/market-news/ai-news' },
+    { label: 'News Watchlist', href: '/market-news/watchlist' },
+  ] },
   { label: 'Market Data', href: '#', icon: 'marketData' },
   { label: 'Event Calendar', href: '/event-calendar', icon: 'calendar', active: true },
   { label: 'Sectors', href: '#', icon: 'sectors' },
