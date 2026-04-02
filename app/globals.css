@@ -1088,3 +1088,405 @@ input, select { font-family: var(--font); }
   border: none;
   display: block;
 }
+
+/* ===== NEWS INSIGHTS SEGMENT ===== */
+.news-insights-segment {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 24px;
+}
+@media (max-width: 900px) {
+  .news-insights-segment { grid-template-columns: 1fr; }
+}
+
+.insight-block {
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.insight-block-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-text);
+  letter-spacing: -0.1px;
+}
+
+.insight-block-icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+/* ===== COMPANY RANKING TABLE ===== */
+.company-rank-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.crt-th {
+  padding: 7px 8px;
+  text-align: left;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--c-text-4);
+  border-bottom: 1px solid var(--c-border);
+}
+
+.crt-th-no { width: 36px; text-align: center; }
+.crt-th-num { text-align: right; }
+
+.crt-row {
+  border-bottom: 1px solid var(--c-border);
+}
+.crt-row:last-child { border-bottom: none; }
+.crt-row:hover td { background: #fafafa; }
+
+.crt-td {
+  padding: 9px 8px;
+  vertical-align: middle;
+  color: var(--c-text);
+}
+
+.crt-td-no {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--c-text-4);
+  width: 36px;
+}
+
+.crt-td-num { text-align: right; }
+
+.crt-company-name {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--c-text);
+}
+
+.crt-company-symbol {
+  font-size: 11px;
+  color: var(--c-text-4);
+  margin-top: 1px;
+}
+
+.crt-count-bar-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  position: relative;
+}
+
+.crt-count-bar {
+  height: 6px;
+  background: linear-gradient(90deg, #4fc3f7, #0284c7);
+  border-radius: 3px;
+  min-width: 4px;
+  flex-shrink: 0;
+}
+
+.crt-count-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-text);
+  min-width: 16px;
+  text-align: right;
+}
+
+.crt-change {
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.crt-change.pos { color: var(--c-pos); }
+.crt-change.neg { color: var(--c-neg); }
+
+/* ===== GEO MAP ===== */
+.insight-block--map {
+  min-height: 320px;
+}
+
+.geo-map-reset-btn {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid var(--c-border-2);
+  border-radius: var(--radius-sm);
+  color: var(--c-text-3);
+  font-size: 14px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.geo-map-reset-btn:hover {
+  background: var(--c-bg);
+  color: var(--c-text);
+}
+
+.geo-map-wrap {
+  flex: 1;
+  position: relative;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: #dce8f0;
+  min-height: 240px;
+}
+
+.geo-map-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  user-select: none;
+}
+
+.geo-pin-group {
+  cursor: default;
+  transition: opacity 0.15s;
+}
+.geo-pin-group:hover { opacity: 0.85; }
+
+.geo-map-hint {
+  position: absolute;
+  bottom: 6px;
+  right: 8px;
+  font-size: 10px;
+  color: rgba(0,0,0,0.35);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ===== AI CHATBOT ===== */
+.chatbot-fab {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 18px 0 14px;
+  height: 46px;
+  background: var(--c-dark);
+  color: var(--c-white);
+  border: none;
+  border-radius: 23px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.28);
+  transition: background 0.18s, box-shadow 0.18s, transform 0.15s;
+  white-space: nowrap;
+}
+
+.chatbot-fab:hover {
+  background: #243040;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.34);
+  transform: translateY(-1px);
+}
+
+.chatbot-fab--open {
+  background: var(--c-text-2);
+}
+
+.chatbot-fab-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.1px;
+}
+
+.chatbot-dialog {
+  position: fixed;
+  bottom: 84px;
+  right: 28px;
+  z-index: 499;
+  width: 340px;
+  max-width: calc(100vw - 40px);
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 48px rgba(0,0,0,0.22);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: chatbot-slide-up 0.2s ease;
+}
+
+@keyframes chatbot-slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.chatbot-dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--c-dark);
+  color: var(--c-white);
+  flex-shrink: 0;
+}
+
+.chatbot-dialog-avatar {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.chatbot-dialog-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--c-white);
+}
+
+.chatbot-dialog-status {
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 1px;
+}
+
+.chatbot-dialog-close {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.55);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, background 0.15s;
+}
+.chatbot-dialog-close:hover {
+  color: var(--c-white);
+  background: rgba(255,255,255,0.1);
+}
+
+.chatbot-dialog-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 320px;
+  min-height: 180px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-border-2) transparent;
+}
+
+.chatbot-bubble-wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 7px;
+}
+
+.chatbot-bubble-wrap--user {
+  flex-direction: row-reverse;
+}
+
+.chatbot-bot-avatar {
+  font-size: 18px;
+  line-height: 1;
+  flex-shrink: 0;
+  padding-bottom: 2px;
+}
+
+.chatbot-bubble {
+  max-width: 78%;
+  padding: 8px 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  background: var(--c-bg);
+  color: var(--c-text);
+  border-radius: 4px 16px 16px 16px;
+  word-break: break-word;
+}
+
+.chatbot-bubble--user {
+  background: var(--c-dark);
+  color: var(--c-white);
+  border-radius: 16px 4px 16px 16px;
+}
+
+.chatbot-bubble--typing {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 11px 14px;
+}
+
+.chatbot-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--c-text-3);
+  animation: chatbot-dot-bounce 1.2s infinite;
+}
+.chatbot-dot:nth-child(2) { animation-delay: 0.2s; }
+.chatbot-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes chatbot-dot-bounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
+  40% { transform: translateY(-6px); opacity: 1; }
+}
+
+.chatbot-dialog-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--c-border);
+  flex-shrink: 0;
+}
+
+.chatbot-input {
+  flex: 1;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--c-border-2);
+  border-radius: 18px;
+  font-size: 13px;
+  color: var(--c-text);
+  background: var(--c-bg);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.chatbot-input:focus { border-color: var(--c-dark); background: var(--c-white); }
+.chatbot-input::placeholder { color: var(--c-text-4); }
+.chatbot-input:disabled { opacity: 0.6; }
+
+.chatbot-send-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--c-dark);
+  color: var(--c-white);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, opacity 0.15s;
+}
+.chatbot-send-btn:hover:not(:disabled) { background: var(--c-text-2); }
+.chatbot-send-btn:disabled { opacity: 0.35; cursor: default; }
