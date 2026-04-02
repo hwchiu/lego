@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import {
   quickLinks,
   mainNav,
-  targetCompanyNav,
   supplyChainNav,
   bottomLinks,
   sidebarIcons,
@@ -237,9 +236,7 @@ export default function Sidebar() {
 
       <NavSection label="Main Navigation" items={mainNav} collapsed={collapsed} pathname={pathname} />
       <div className="sidebar-divider" />
-      <NavSection label="Target Company Group" items={targetCompanyNav} collapsed={collapsed} pathname={pathname} />
-      <div className="sidebar-divider" />
-      <NavSection label="Supply Chain Ecosystems" items={supplyChainNav} collapsed={collapsed} pathname={pathname} />
+      <NavSection label="Supply Chain Analysis" items={supplyChainNav} collapsed={collapsed} pathname={pathname} />
 
       <div className="sidebar-bottom">
         {bottomLinks.map((item) => (
