@@ -9,11 +9,13 @@ function MonthCell({ day }: { day: WeekDay }) {
   }
 
   const hasReports = day.companies && day.companies.length > 0;
-  // Extract the day number from dateLabel (e.g., "Apr 1" -> "1")
+  // Extract the day number from dateLabel (e.g., "Apr 1" -> "1", "Mar 30" -> "30")
   const dayNum = day.dateLabel.split(' ')[1];
 
   return (
-    <div className={`week-cell month-cell ${day.isToday ? 'today' : ''}`}>
+    <div
+      className={`week-cell month-cell${day.isToday ? ' today' : ''}${day.isOutOfMonth ? ' month-cell-out' : ''}`}
+    >
       <div className="week-cell-head">{dayNum}</div>
       <div className="week-cell-body">
         {hasReports ? (
