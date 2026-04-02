@@ -18,7 +18,7 @@ export default function EventCalendarPage() {
         <Sidebar />
         <main className="main-content">
           <div className="page-pad">
-            <div className="section-eyebrow">Market Data</div>
+            <div className="section-eyebrow">Event Category</div>
             <MarketTabs />
             <div className="cal-card">
               <CalendarControls />
