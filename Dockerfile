@@ -26,7 +26,7 @@ RUN printf 'server {\n\
 \n\
     location /lego/ {\n\
         index index.html;\n\
-        try_files $uri $uri/ /lego/404.html;\n\
+        try_files $uri $uri/index.html $uri/ /lego/404.html;\n\
     }\n\
 \n\
     location = /lego {\n\
