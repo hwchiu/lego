@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from 'react-simple-maps';
+import rawContent from '@/content/geo-pins.md';
+import { extractJson } from '@/app/lib/parseContent';
 
 interface GeoPin {
   country: string;
@@ -11,19 +13,7 @@ interface GeoPin {
   count: number;
 }
 
-// 10 major countries with approximate centroids and mock news counts
-const GEO_PINS: GeoPin[] = [
-  { country: 'US', code: 'US', lat: 39.5, lng: -98.35, count: 8 },
-  { country: 'China', code: 'CN', lat: 35.86, lng: 104.19, count: 12 },
-  { country: 'Japan', code: 'JP', lat: 36.2, lng: 138.25, count: 7 },
-  { country: 'Taiwan', code: 'TW', lat: 23.97, lng: 120.97, count: 9 },
-  { country: 'S. Korea', code: 'KR', lat: 35.91, lng: 127.77, count: 5 },
-  { country: 'Germany', code: 'DE', lat: 51.17, lng: 10.45, count: 4 },
-  { country: 'UK', code: 'GB', lat: 55.38, lng: -3.44, count: 3 },
-  { country: 'India', code: 'IN', lat: 20.59, lng: 78.96, count: 6 },
-  { country: 'Israel', code: 'IL', lat: 31.05, lng: 34.85, count: 2 },
-  { country: 'Australia', code: 'AU', lat: -25.27, lng: 133.78, count: 2 },
-];
+const GEO_PINS: GeoPin[] = extractJson<GeoPin[]>(rawContent);
 
 // World TopoJSON from public CDN
 const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';

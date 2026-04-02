@@ -1,6 +1,8 @@
 'use client';
 
 import { newsItems } from '@/app/data/news';
+import rawContent from '@/content/company-changes.md';
+import { extractJson } from '@/app/lib/parseContent';
 
 // Compute top-5 companies by mention count across all news items
 function computeTopCompanies() {
@@ -19,10 +21,11 @@ function computeTopCompanies() {
     .slice(0, 5);
 }
 
-// Seeded mock changes so they are stable across renders (one per company rank slot)
+// Seeded mock changes loaded from markdown (one per company rank slot)
+const MOCK_CHANGES: number[] = extractJson<number[]>(rawContent);
+
 function getMockChange(index: number): number {
-  const values = [12.4, -5.2, 8.7, -3.1, 21.5, 6.3, -9.8];
-  return values[index % values.length];
+  return MOCK_CHANGES[index % MOCK_CHANGES.length];
 }
 
 export default function CompanyRankingTable() {
