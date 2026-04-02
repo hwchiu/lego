@@ -97,7 +97,7 @@ export default function AIChatbot() {
             <circle cx="15.5" cy="11" r="1.2" fill="currentColor" />
           </svg>
         )}
-        <span className="chatbot-fab-label">AI Chatbot</span>
+
       </button>
 
       {/* Chat dialog */}

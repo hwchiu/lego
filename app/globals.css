@@ -1104,6 +1104,7 @@ input, select { font-family: var(--font); }
 .company-ranking-below-tabs {
   margin-top: 20px;
   margin-bottom: 20px;
+  max-width: 480px;
 }
 
 .insight-block {
