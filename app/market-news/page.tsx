@@ -6,6 +6,7 @@ import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import NewsCategoryTabs from '@/app/components/news/NewsCategoryTabs';
 import NewsCard from '@/app/components/news/NewsCard';
+import NewsInsights from '@/app/components/news/NewsInsights';
 import { newsItems, NewsCategory } from '@/app/data/news';
 
 const PAGE_SIZE = 8;
@@ -96,6 +97,7 @@ export default function MarketNewsPage() {
                 </svg>
               </button>
             </div>
+            <NewsInsights />
           </div>
         </main>
       </div>

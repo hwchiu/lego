@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import AIChatbot from '@/app/components/AIChatbot';
 
 export const metadata: Metadata = {
   title: 'tMIC',
@@ -13,7 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-TW">
-      <body>{children}</body>
+      <body>
+        {children}
+        <AIChatbot />
+      </body>
     </html>
   );
 }
