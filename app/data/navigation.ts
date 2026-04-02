@@ -79,7 +79,7 @@ export const mainNav: NavItem[] = [
     { label: 'News Watchlist', href: '/market-news/watchlist' },
   ] },
   { label: 'Market Data', href: '#', icon: 'marketData' },
-  { label: 'Event Calendar', href: '/event-calendar', icon: 'calendar', active: true },
+  { label: 'Event Calendar', href: '/event-calendar', icon: 'calendar' },
   { label: 'Sectors', href: '#', icon: 'sectors' },
   { label: 'Dividends', href: '#', icon: 'dividends' },
   { label: 'Earnings', href: '#', icon: 'earnings' },

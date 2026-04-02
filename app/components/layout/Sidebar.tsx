@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   quickLinks,
   mainNav,
@@ -87,13 +88,22 @@ function QuickLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
 function NavItemRow({
   item,
   collapsed,
+  pathname,
 }: {
   item: NavItem;
   collapsed: boolean;
+  pathname: string;
 }) {
   const [open, setOpen] = useState(false);
   const liRef = useRef<HTMLLIElement>(null);
   const hasSubMenu = item.subItems && item.subItems.length > 0;
+
+  // An item is active if the current path matches its href, or if any of its sub-items match
+  const isActive =
+    item.href !== '#' &&
+    (pathname === item.href ||
+      pathname.startsWith(item.href + '/') ||
+      (hasSubMenu && item.subItems!.some((s) => pathname === s.href || pathname.startsWith(s.href + '/'))));
 
   return (
     <li
@@ -104,7 +114,7 @@ function NavItemRow({
     >
       <Link
         href={item.href}
-        className={item.active ? 'active' : ''}
+        className={isActive ? 'active' : ''}
         title={collapsed ? item.label : undefined}
       >
         <NavIcon iconKey={item.icon} />
@@ -137,17 +147,19 @@ function NavSection({
   label,
   items,
   collapsed,
+  pathname,
 }: {
   label?: string;
   items: NavItem[];
   collapsed: boolean;
+  pathname: string;
 }) {
   return (
     <>
       {!collapsed && label && <div className="sidebar-section-label">{label}</div>}
       <ul className="sidebar-nav">
         {items.map((item) => (
-          <NavItemRow key={item.label} item={item} collapsed={collapsed} />
+          <NavItemRow key={item.label} item={item} collapsed={collapsed} pathname={pathname} />
         ))}
       </ul>
     </>
@@ -156,6 +168,7 @@ function NavSection({
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const pathname = usePathname();
   const toggleLabel = collapsed ? '展開選單' : '收合選單';
   // When expanded, quickLinks[0] renders inside the collapse header row,
   // so only the remaining items are listed below.
@@ -181,11 +194,11 @@ export default function Sidebar() {
         ))}
       </div>
 
-      <NavSection label="主要導航菜單" items={mainNav} collapsed={collapsed} />
+      <NavSection label="主要導航菜單" items={mainNav} collapsed={collapsed} pathname={pathname} />
       <div className="sidebar-divider" />
-      <NavSection label="Target Company Group" items={targetCompanyNav} collapsed={collapsed} />
+      <NavSection label="Target Company Group" items={targetCompanyNav} collapsed={collapsed} pathname={pathname} />
       <div className="sidebar-divider" />
-      <NavSection label="Supply Chain Ecosystems" items={supplyChainNav} collapsed={collapsed} />
+      <NavSection label="Supply Chain Ecosystems" items={supplyChainNav} collapsed={collapsed} pathname={pathname} />
 
       <div className="sidebar-bottom">
         {bottomLinks.map((item) => (

@@ -59,6 +59,65 @@ function LinkIcon() {
   );
 }
 
+// Eye icon SVG for News Glance
+function EyeIcon() {
+  return (
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+      <path
+        d="M1 7C1 7 3 3 7 3C11 3 13 7 13 7C13 7 11 11 7 11C3 11 1 7 1 7Z"
+        stroke="currentColor"
+        strokeWidth="1.3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="7" cy="7" r="1.8" stroke="currentColor" strokeWidth="1.3" />
+    </svg>
+  );
+}
+
+// Close icon SVG
+function CloseIcon() {
+  return (
+    <svg viewBox="0 0 14 14" fill="none" width="14" height="14" aria-hidden="true">
+      <path
+        d="M2 2L12 12M12 2L2 12"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+interface NewsGlanceModalProps {
+  url: string;
+  title: string;
+  onClose: () => void;
+}
+
+function NewsGlanceModal({ url, title, onClose }: NewsGlanceModalProps) {
+  return (
+    <div className="news-glance-overlay" onClick={onClose}>
+      <div className="news-glance-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="news-glance-header">
+          <span className="news-glance-title">{title}</span>
+          <button className="news-glance-close" onClick={onClose} title="Close">
+            <CloseIcon />
+          </button>
+        </div>
+        <div className="news-glance-body">
+          <iframe
+            src={url}
+            title={title}
+            className="news-glance-iframe"
+            sandbox="allow-scripts allow-popups allow-forms"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface NewsCardProps {
   item: NewsItem;
 }
@@ -66,52 +125,65 @@ interface NewsCardProps {
 export default function NewsCard({ item }: NewsCardProps) {
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [glanceOpen, setGlanceOpen] = useState(false);
 
   const handleCopyLink = () => {
-    const url = item.url.startsWith('http') ? item.url : `${window.location.origin}${item.url === '#' ? window.location.pathname + '#' + item.id : item.url}`;
-    navigator.clipboard.writeText(url).catch(() => {});
+    navigator.clipboard.writeText(item.url).catch(() => {});
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="news-card">
-      <div className="news-card-source">{item.source}</div>
-      <h3 className="news-card-title">{item.title}</h3>
-      <div className="news-card-meta">
-        <div className="news-card-tags">
-          {item.tags.map((tag) => (
-            <span key={tag.symbol} className="news-tag-group">
-              <a href="#" className="news-tag">
-                ${tag.symbol}
-              </a>
-              <span className={tag.change >= 0 ? 'news-price pos' : 'news-price neg'}>
-                {tag.change >= 0 ? '+' : ''}
-                {tag.change.toFixed(1)}%
+    <>
+      <div className="news-card">
+        <div className="news-card-source">{item.source}</div>
+        <h3 className="news-card-title">{item.title}</h3>
+        <div className="news-card-meta">
+          <div className="news-card-tags">
+            {item.tags.map((tag) => (
+              <span key={tag.symbol} className="news-tag-group">
+                <a href="#" className="news-tag">
+                  ${tag.symbol}
+                </a>
+                <span className={tag.change >= 0 ? 'news-price pos' : 'news-price neg'}>
+                  {tag.change >= 0 ? '+' : ''}
+                  {tag.change.toFixed(1)}%
+                </span>
               </span>
-            </span>
-          ))}
+            ))}
+          </div>
+          <span className="news-card-time">{formatPublishedAt(item.publishedAt)}</span>
         </div>
-        <span className="news-card-time">{formatPublishedAt(item.publishedAt)}</span>
+        <div className="news-card-actions">
+          <button
+            className={`news-action-btn${saved ? ' news-action-btn--active' : ''}`}
+            onClick={() => setSaved(!saved)}
+            title={saved ? 'Saved' : 'Save'}
+          >
+            <SaveIcon />
+            {saved ? 'Saved' : 'Save'}
+          </button>
+          <button
+            className={`news-action-btn${copied ? ' news-action-btn--active' : ''}`}
+            onClick={handleCopyLink}
+            title="Copy Link"
+          >
+            <LinkIcon />
+            {copied ? 'Copied!' : 'Copy Link'}
+          </button>
+          <button
+            className="news-action-btn"
+            onClick={() => setGlanceOpen(true)}
+            title="News Glance"
+          >
+            <EyeIcon />
+            News Glance
+          </button>
+        </div>
       </div>
-      <div className="news-card-actions">
-        <button
-          className={`news-action-btn${saved ? ' news-action-btn--active' : ''}`}
-          onClick={() => setSaved(!saved)}
-          title={saved ? 'Saved' : 'Save'}
-        >
-          <SaveIcon />
-          {saved ? 'Saved' : 'Save'}
-        </button>
-        <button
-          className={`news-action-btn${copied ? ' news-action-btn--active' : ''}`}
-          onClick={handleCopyLink}
-          title="Copy Link"
-        >
-          <LinkIcon />
-          {copied ? 'Copied!' : 'Copy Link'}
-        </button>
-      </div>
-    </div>
+      {glanceOpen && (
+        <NewsGlanceModal url={item.url} title={item.title} onClose={() => setGlanceOpen(false)} />
+      )}
+    </>
   );
 }

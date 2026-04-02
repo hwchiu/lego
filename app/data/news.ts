@@ -26,11 +26,11 @@ export type NewsCategory =
 
 export const newsCategories: { key: NewsCategory; label: string }[] = [
   { key: 'all', label: 'All News' },
-  { key: 'semiconductor', label: 'Semiconductor (半導體)' },
+  { key: 'semiconductor', label: 'Semiconductor' },
   { key: 'tech', label: 'Tech' },
   { key: 'investment', label: 'Investment' },
   { key: 'ai', label: 'AI & Computing' },
-  { key: 'supplyChain', label: 'Supply Chain (供應鏈)' },
+  { key: 'supplyChain', label: 'Supply Chain' },
   { key: 'earnings', label: 'Earnings & Revenue' },
   { key: 'policy', label: 'Policy & Regulation' },
 ];
@@ -56,7 +56,7 @@ export const newsItems: NewsItem[] = [
       { symbol: 'INTC', name: 'Intel', change: 22.1 },
     ],
     publishedAt: ts(0, 14, 22),
-    url: '#',
+    url: 'https://www.bloomberg.com/news/articles/nvidia-intel-ai-partnership',
   },
   {
     id: 'news-2',
@@ -65,7 +65,7 @@ export const newsItems: NewsItem[] = [
     category: 'tech',
     tags: [{ symbol: 'AAPL', name: 'Apple', change: 3.7 }],
     publishedAt: ts(0, 11, 45),
-    url: '#',
+    url: 'https://www.reuters.com/technology/apple-m5-chip-ai-gpu-macbook-pro-ipad-pro',
   },
   {
     id: 'news-3',
@@ -74,7 +74,7 @@ export const newsItems: NewsItem[] = [
     category: 'earnings',
     tags: [{ symbol: 'NVDA', name: 'NVIDIA', change: 5.2 }],
     publishedAt: ts(0, 9, 10),
-    url: '#',
+    url: 'https://www.cnbc.com/2026/04/01/semiconductor-revenue-790-billion-nvidia-100b-annual-sales.html',
   },
   {
     id: 'news-4',
@@ -83,7 +83,7 @@ export const newsItems: NewsItem[] = [
     category: 'investment',
     tags: [{ symbol: 'INTC', name: 'Intel', change: -1.4 }],
     publishedAt: ts(1, 16, 30),
-    url: '#',
+    url: 'https://www.wsj.com/articles/intel-ai-accelerator-nvidia-investment-analysts-upgrade',
   },
   {
     id: 'news-5',
@@ -92,7 +92,7 @@ export const newsItems: NewsItem[] = [
     category: 'ai',
     tags: [{ symbol: 'NVDA', name: 'NVIDIA', change: 6.1 }],
     publishedAt: ts(1, 13, 55),
-    url: '#',
+    url: 'https://techcrunch.com/2026/04/01/nvidia-blackwell-ultra-gpus-hyperscalers-ahead-of-schedule',
   },
   {
     id: 'news-6',
@@ -101,7 +101,7 @@ export const newsItems: NewsItem[] = [
     category: 'supplyChain',
     tags: [{ symbol: 'TSM', name: 'TSMC', change: 4.8 }],
     publishedAt: ts(1, 8, 20),
-    url: '#',
+    url: 'https://asia.nikkei.com/Business/Tech/Semiconductors/Intel-NVIDIA-deal-sparks-rally-asian-chip-suppliers',
   },
   {
     id: 'news-7',
@@ -113,16 +113,16 @@ export const newsItems: NewsItem[] = [
       { symbol: 'TSM', name: 'TSMC', change: 3.9 },
     ],
     publishedAt: ts(1, 7, 0),
-    url: '#',
+    url: 'https://www.ft.com/content/apple-silicon-tsmc-2nm-exclusive-deal-a-series',
   },
   {
     id: 'news-8',
-    source: 'Barron\'s',
+    source: "Barron's",
     title: 'Semiconductor ETF SMH Hits All-Time High as AI Chip Demand Outpaces Supply Through 2026',
     category: 'investment',
     tags: [{ symbol: 'SMH', name: 'VanEck Semi ETF', change: 3.2 }],
     publishedAt: ts(0, 15, 40),
-    url: '#',
+    url: 'https://www.barrons.com/articles/semiconductor-etf-smh-all-time-high-ai-chip-demand',
   },
   {
     id: 'news-9',
@@ -131,7 +131,7 @@ export const newsItems: NewsItem[] = [
     category: 'policy',
     tags: [{ symbol: 'INTC', name: 'Intel', change: 7.6 }],
     publishedAt: ts(0, 10, 5),
-    url: '#',
+    url: 'https://www.theverge.com/2026/4/2/intel-foundry-services-3b-us-government-contract-defense-chips',
   },
   {
     id: 'news-10',
@@ -140,7 +140,7 @@ export const newsItems: NewsItem[] = [
     category: 'earnings',
     tags: [{ symbol: 'NVDA', name: 'NVIDIA', change: 9.7 }],
     publishedAt: ts(2, 18, 15),
-    url: '#',
+    url: 'https://seekingalpha.com/article/nvidia-data-center-revenue-142-q1-fy2026-raises-outlook',
   },
   {
     id: 'news-11',
@@ -149,7 +149,7 @@ export const newsItems: NewsItem[] = [
     category: 'ai',
     tags: [{ symbol: 'AAPL', name: 'Apple', change: -0.8 }],
     publishedAt: ts(2, 12, 30),
-    url: '#',
+    url: 'https://www.macrumors.com/2026/03/31/apple-on-device-ai-iphone-18-m5-neural-engine',
   },
   {
     id: 'news-12',
@@ -158,6 +158,6 @@ export const newsItems: NewsItem[] = [
     category: 'semiconductor',
     tags: [{ symbol: 'INTC', name: 'Intel', change: 4.3 }],
     publishedAt: ts(2, 9, 45),
-    url: '#',
+    url: 'https://www.reuters.com/technology/intel-18a-process-node-mass-production-q3-2026',
   },
 ];
