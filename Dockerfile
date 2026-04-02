@@ -25,7 +25,8 @@ RUN printf 'server {\n\
     root /usr/share/nginx/html;\n\
 \n\
     location /lego/ {\n\
-        try_files $uri $uri/ /lego/index.html;\n\
+        index index.html;\n\
+        try_files $uri $uri/ /lego/404.html;\n\
     }\n\
 \n\
     location = /lego {\n\
