@@ -157,10 +157,10 @@ export default function TopNav() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className="topnav-avatar"
-          src="https://i.pravatar.cc/40?img=12"
+          src="https://avatars.githubusercontent.com/hwchiu"
           alt="User Avatar"
         />
-        <span className="topnav-name">Sherry Wang</span>
+        <span className="topnav-name">HungWei Chiu</span>
       </div>
     </header>
   );
