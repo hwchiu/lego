@@ -40,13 +40,14 @@ export default function MarketNewsPage() {
           <div className="page-pad">
             <div className="section-eyebrow">Market News</div>
             <h1 className="news-page-title">Top Market News</h1>
+            <NewsInsights />
             <NewsCategoryTabs active={activeCategory} onChange={setActiveCategory} />
             <div className="news-pager-layout">
               <button
                 className="news-pager-arrow"
                 onClick={() => goTo(page - 1)}
                 disabled={page === 0}
-                aria-label="上一頁"
+                aria-label="Previous page"
               >
                 <svg viewBox="0 0 24 24" fill="none" width="20" height="20" aria-hidden="true">
                   <path
@@ -71,7 +72,7 @@ export default function MarketNewsPage() {
                         key={i}
                         className={`news-pagination-btn${page === i ? ' active' : ''}`}
                         onClick={() => goTo(i)}
-                        aria-label={`第 ${i + 1} 頁`}
+                        aria-label={`Page ${i + 1}`}
                         aria-current={page === i ? 'page' : undefined}
                       >
                         {i + 1}
@@ -84,7 +85,7 @@ export default function MarketNewsPage() {
                 className="news-pager-arrow"
                 onClick={() => goTo(page + 1)}
                 disabled={page >= totalPages - 1}
-                aria-label="下一頁"
+                aria-label="Next page"
               >
                 <svg viewBox="0 0 24 24" fill="none" width="20" height="20" aria-hidden="true">
                   <path
@@ -97,7 +98,6 @@ export default function MarketNewsPage() {
                 </svg>
               </button>
             </div>
-            <NewsInsights />
           </div>
         </main>
       </div>
