@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import rawContent from '@/content/chatbot.md';
+import { extractJson } from '@/app/lib/parseContent';
 
 interface ChatMessage {
   id: number;
@@ -8,20 +10,15 @@ interface ChatMessage {
   text: string;
 }
 
-const BOT_GREETING = "Hi, I'm Mic, your AI assistant! Feel like asking a question today?";
+interface ChatbotData {
+  greeting: string;
+  replies: string[];
+}
+
+const { greeting: BOT_GREETING, replies: BOT_REPLIES } = extractJson<ChatbotData>(rawContent);
 
 // Avatar image for the Mic bot
 const BOT_AVATAR_URL = 'https://i.pravatar.cc/40?img=47';
-
-// Simple canned responses for simulation
-const BOT_REPLIES = [
-  'Great question! Based on current market data, the semiconductor industry is in a strong upswing cycle.',
-  "NVIDIA currently ranks #1 among all tech companies in news mentions, reflecting intense market focus on AI chips.",
-  'According to the latest reports, TSMC and Apple\'s exclusive 2nm partnership is expected to further solidify its foundry leadership.',
-  'From a geopolitical perspective, US-China trade relations continue to be a major market focus for semiconductor supply chains.',
-  "I don't have enough information to answer that question. I recommend consulting the latest market reports.",
-  'That\'s a fascinating perspective! Market analysts widely expect AI compute demand to continue growing through 2026.',
-];
 
 export default function AIChatbot() {
   const [open, setOpen] = useState(false);
