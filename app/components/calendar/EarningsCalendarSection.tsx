@@ -5,7 +5,7 @@ import { useState } from 'react';
 import CalendarControls from '@/app/components/calendar/CalendarControls';
 import MonthGrid from '@/app/components/calendar/MonthGrid';
 import WeekGrid from '@/app/components/calendar/WeekGrid';
-import { weekDays } from '@/app/data/earnings';
+import { weekDays, aprilMonthData } from '@/app/data/earnings';
 import type { WeekDay } from '@/app/data/earnings';
 import { DAY_LABELS } from '@/app/lib/calendarUtils';
 
@@ -19,12 +19,24 @@ function buildMonthDays(year: number, month: number): WeekDay[] {
   const firstDay = new Date(year, month, 1).getDay(); // 0 = Sunday
   const days: WeekDay[] = [];
 
-  // Build a Map for O(1) lookup by dateLabel
-  const dayDataMap = new Map(weekDays.map((wd) => [wd.dateLabel, wd]));
+  // Build a Map for O(1) lookup by dateLabel (aprilMonthData entries supplement weekDays)
+  const dayDataMap = new Map([...weekDays, ...aprilMonthData].map((wd) => [wd.dateLabel, wd]));
 
-  // Padding cells before the 1st of the month
+  // Leading padding cells from previous month
+  const prevMonthIdx = month === 0 ? 11 : month - 1;
+  const prevYear = month === 0 ? year - 1 : year;
+  const daysInPrevMonth = new Date(prevYear, prevMonthIdx + 1, 0).getDate();
   for (let i = 0; i < firstDay; i++) {
-    days.push({ dayLabel: '', dateLabel: '', isEmpty: true });
+    const prevMonthDay = daysInPrevMonth - firstDay + 1 + i;
+    const dateLabel = `${MONTH_SHORT[prevMonthIdx]} ${prevMonthDay}`;
+    const existing = dayDataMap.get(dateLabel);
+    days.push({
+      dayLabel: DAY_LABELS[i],
+      dateLabel,
+      isOutOfMonth: true,
+      companies: existing?.companies,
+      companyCount: existing?.companyCount,
+    });
   }
 
   // One cell per day of the month
@@ -37,6 +49,23 @@ function buildMonthDays(year: number, month: number): WeekDay[] {
       dayLabel: DAY_LABELS[dayOfWeek],
       dateLabel,
       isToday: existing?.isToday,
+      companies: existing?.companies,
+      companyCount: existing?.companyCount,
+    });
+  }
+
+  // Trailing padding cells from next month
+  const lastDayOfWeek = (firstDay + daysInMonth - 1) % 7;
+  const trailingCount = lastDayOfWeek === 6 ? 0 : 6 - lastDayOfWeek;
+  const nextMonthIdx = month === 11 ? 0 : month + 1;
+  for (let i = 1; i <= trailingCount; i++) {
+    const dateLabel = `${MONTH_SHORT[nextMonthIdx]} ${i}`;
+    const dayOfWeek = (lastDayOfWeek + i) % 7;
+    const existing = dayDataMap.get(dateLabel);
+    days.push({
+      dayLabel: DAY_LABELS[dayOfWeek],
+      dateLabel,
+      isOutOfMonth: true,
       companies: existing?.companies,
       companyCount: existing?.companyCount,
     });

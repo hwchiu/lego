@@ -7,7 +7,8 @@ export interface WeekDay {
   isToday?: boolean;
   companies?: string[];
   companyCount?: number;
-  isEmpty?: boolean;  // placeholder cell for month grid padding
+  isEmpty?: boolean;      // placeholder cell for month grid padding
+  isOutOfMonth?: boolean; // previous/next month day shown as padding
 }
 
 export interface EpsRow {
@@ -69,8 +70,142 @@ export const weekDays: WeekDay[] = [
     companyCount: 26,
     companies: ['AZZ', 'GMS', 'CIEN', 'LNTH', 'AIR', 'SCSC', 'ORN', 'STRT', 'AMSF', 'HOFT'],
   },
-  { dayLabel: 'FRI', dateLabel: 'Apr 3' },
+  {
+    dayLabel: 'FRI',
+    dateLabel: 'Apr 3',
+    companyCount: 12,
+    companies: ['STZ', 'WGO', 'DLTR', 'FIVE', 'COST', 'CASY', 'GIS', 'TSN', 'CPB', 'SJM'],
+  },
   { dayLabel: 'SAT', dateLabel: 'Apr 4' },
+];
+
+// Full April 2026 earnings data for the monthly view (Mon–Fri, excluding Apr 1–2 already in weekDays)
+export const aprilMonthData: WeekDay[] = [
+  // Week of Apr 6
+  {
+    dayLabel: 'MON',
+    dateLabel: 'Apr 6',
+    companyCount: 34,
+    companies: ['AAPL', 'MSFT', 'JPM', 'WFC', 'BAC', 'GS', 'MS', 'C', 'V', 'MA'],
+  },
+  {
+    dayLabel: 'TUE',
+    dateLabel: 'Apr 7',
+    companyCount: 41,
+    companies: ['TSLA', 'NVDA', 'META', 'GOOGL', 'UNH', 'JNJ', 'PFE', 'ABBV', 'MRK', 'LLY'],
+  },
+  {
+    dayLabel: 'WED',
+    dateLabel: 'Apr 8',
+    companyCount: 28,
+    companies: ['CVX', 'XOM', 'COP', 'SLB', 'CAT', 'DE', 'MMM', 'HON', 'GE', 'BA'],
+  },
+  {
+    dayLabel: 'THU',
+    dateLabel: 'Apr 9',
+    companyCount: 37,
+    companies: ['LMT', 'RTX', 'NOC', 'GD', 'WMT', 'TGT', 'HD', 'LOW', 'MCD', 'SBUX'],
+  },
+  {
+    dayLabel: 'FRI',
+    dateLabel: 'Apr 10',
+    companyCount: 15,
+    companies: ['NKE', 'DIS', 'NFLX', 'CMCSA', 'T', 'VZ', 'AMT', 'PLD', 'SPG', 'O'],
+  },
+  // Week of Apr 13
+  {
+    dayLabel: 'MON',
+    dateLabel: 'Apr 13',
+    companyCount: 52,
+    companies: ['JPM', 'GS', 'WFC', 'MS', 'C', 'BLK', 'AXP', 'SCHW', 'CB', 'PGR'],
+  },
+  {
+    dayLabel: 'TUE',
+    dateLabel: 'Apr 14',
+    companyCount: 63,
+    companies: ['BAC', 'USB', 'PNC', 'TFC', 'CFG', 'RF', 'HBAN', 'KEY', 'FITB', 'MTB'],
+  },
+  {
+    dayLabel: 'WED',
+    dateLabel: 'Apr 15',
+    companyCount: 48,
+    companies: ['NFLX', 'JNJ', 'UAL', 'AA', 'ASML', 'STT', 'FAST', 'CSX', 'ACN', 'SYK'],
+  },
+  {
+    dayLabel: 'THU',
+    dateLabel: 'Apr 16',
+    companyCount: 71,
+    companies: ['TSM', 'IBKR', 'UNH', 'PPG', 'DHI', 'ABT', 'ISRG', 'TRV', 'USB', 'CMA'],
+  },
+  {
+    dayLabel: 'FRI',
+    dateLabel: 'Apr 17',
+    companyCount: 22,
+    companies: ['AXP', 'SLB', 'RF', 'HBAN', 'ERIE', 'HSY', 'BKR', 'CFG', 'ALLY', 'FHN'],
+  },
+  // Week of Apr 20
+  {
+    dayLabel: 'MON',
+    dateLabel: 'Apr 20',
+    companyCount: 45,
+    companies: ['HAL', 'VZ', 'ZION', 'NDAQ', 'FITB', 'EQT', 'FCX', 'KMI', 'OKE', 'WMB'],
+  },
+  {
+    dayLabel: 'TUE',
+    dateLabel: 'Apr 21',
+    companyCount: 58,
+    companies: ['GOOGL', 'GE', 'LMT', 'RTX', 'PCAR', 'PHM', 'VLO', 'F', 'GM', 'MMC'],
+  },
+  {
+    dayLabel: 'WED',
+    dateLabel: 'Apr 22',
+    companyCount: 67,
+    companies: ['META', 'BA', 'T', 'IBM', 'TSLA', 'TXN', 'NOW', 'LRCX', 'CDNS', 'ADSK'],
+  },
+  {
+    dayLabel: 'THU',
+    dateLabel: 'Apr 23',
+    companyCount: 79,
+    companies: ['AMZN', 'MSFT', 'INTC', 'MRK', 'ABBV', 'MO', 'MMM', 'CAT', 'UNP', 'CMG'],
+  },
+  {
+    dayLabel: 'FRI',
+    dateLabel: 'Apr 24',
+    companyCount: 31,
+    companies: ['EQIX', 'PSA', 'XOM', 'CVX', 'SHW', 'HON', 'AON', 'BX', 'KKR', 'APO'],
+  },
+  // Week of Apr 27
+  {
+    dayLabel: 'MON',
+    dateLabel: 'Apr 27',
+    companyCount: 44,
+    companies: ['AAPL', 'WM', 'ROP', 'ODFL', 'BDX', 'PKG', 'ITW', 'MAS', 'VMC', 'MLM'],
+  },
+  {
+    dayLabel: 'TUE',
+    dateLabel: 'Apr 28',
+    companyCount: 56,
+    companies: ['AMD', 'SNAP', 'V', 'MA', 'PFE', 'BMY', 'GILD', 'AMGN', 'BIIB', 'REGN'],
+  },
+  {
+    dayLabel: 'WED',
+    dateLabel: 'Apr 29',
+    companyCount: 62,
+    companies: ['NVDA', 'META', 'AMZN', 'GOOGL', 'MSFT', 'QCOM', 'AVGO', 'AMAT', 'KLAC', 'MCHP'],
+  },
+  {
+    dayLabel: 'THU',
+    dateLabel: 'Apr 30',
+    companyCount: 53,
+    companies: ['AAPL', 'AMZN', 'INTC', 'MA', 'MCD', 'CME', 'HST', 'CAR', 'IRM', 'DLR'],
+  },
+  // May 1 (trailing out-of-month cell, Friday)
+  {
+    dayLabel: 'FRI',
+    dateLabel: 'May 1',
+    companyCount: 18,
+    companies: ['ANET', 'DXCM', 'RBLX', 'DASH', 'COIN', 'SQ', 'PYPL', 'BILL', 'HOOD', 'SOFI'],
+  },
 ];
 
 export const epsData: EpsRow[] = [
