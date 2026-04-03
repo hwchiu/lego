@@ -11,7 +11,7 @@ import { CATEGORIES, DataItem } from '@/app/data/dataExplore';
 
 function formatDate(iso: string): string {
   const d = new Date(iso);
-  return d.toLocaleDateString('zh-TW', { year: 'numeric', month: 'short', day: 'numeric' });
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 function getAllItems(): (DataItem & { categorySlug: string; categoryLabel: string })[] {
@@ -68,7 +68,7 @@ function CategoryCard({ slug, label, icon, color, description, count }: Category
         <div className="de-category-card-label">{label}</div>
         <div className="de-category-card-desc">{description}</div>
         <div className="de-category-card-footer">
-          <span className="de-category-card-count" style={{ color }}>{count} 筆資料</span>
+          <span className="de-category-card-count" style={{ color: 'var(--c-text-2)' }}>{count} records</span>
           <span className="de-category-card-arrow"><ArrowIcon /></span>
         </div>
       </div>
@@ -101,7 +101,7 @@ function RecentItemCard({ item }: RecentItemCardProps) {
         ))}
       </div>
       <div className="de-recent-card-source">
-        <span className="de-recent-card-source-label">來源：</span>
+        <span className="de-recent-card-source-label">Source: </span>
         {item.url && item.url !== '#' ? (
           <a href={item.url} target="_blank" rel="noopener noreferrer" className="de-recent-card-source-link">
             {item.source}
@@ -153,20 +153,21 @@ export default function DataExplorePage() {
             <div className="de-hero">
               <div className="de-hero-inner">
                 <div className="section-eyebrow">Data Explore</div>
-                <h1 className="de-hero-title">資料探索</h1>
+                <h1 className="de-hero-title">Data Explore</h1>
                 <p className="de-hero-sub">
-                  彙整 TSMC 及其供應鏈與客戶的最新產業資訊，涵蓋 ESG、法規政策、國際標準、
-                  產業動態、公司營運與資本市場，共 <strong>{totalCount}</strong> 筆精選資料。
+                  Curated intelligence on TSMC and its supply chain ecosystem, covering ESG, regulatory policy,
+                  international standards, industry trends, company operations, and capital markets —{' '}
+                  <strong>{totalCount}</strong> selected records.
                 </p>
                 <div className="de-hero-search-wrap">
                   <span className="de-hero-search-icon"><SearchIcon /></span>
                   <input
                     className="de-hero-search"
                     type="search"
-                    placeholder="搜尋資料標題、標籤或分類…"
+                    placeholder="Search by title, tag, or category…"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    aria-label="搜尋資料"
+                    aria-label="Search data"
                   />
                 </div>
               </div>
@@ -178,8 +179,8 @@ export default function DataExplorePage() {
               {!searchQuery.trim() && (
                 <section className="de-section">
                   <div className="de-section-header">
-                    <h2 className="de-section-title">資料分類</h2>
-                    <span className="de-section-sub">點選分類瀏覽完整資料</span>
+                    <h2 className="de-section-title">Categories</h2>
+                    <span className="de-section-sub">Browse all data by category</span>
                   </div>
                   <div className="de-categories-grid">
                     {CATEGORIES.map((cat) => (
@@ -201,14 +202,14 @@ export default function DataExplorePage() {
               <section className="de-section">
                 <div className="de-section-header">
                   <h2 className="de-section-title">
-                    {searchQuery.trim() ? `搜尋結果：「${searchQuery}」` : '最新資料'}
+                    {searchQuery.trim() ? `Search results: "${searchQuery}"` : 'Latest Data'}
                   </h2>
                   {searchQuery.trim() && (
-                    <span className="de-section-sub">共 {recentItems.length} 筆結果</span>
+                    <span className="de-section-sub">{recentItems.length} results found</span>
                   )}
                 </div>
                 {recentItems.length === 0 ? (
-                  <div className="de-empty">找不到符合「{searchQuery}」的資料</div>
+                  <div className="de-empty">No results found for &ldquo;{searchQuery}&rdquo;</div>
                 ) : (
                   <div className="de-recent-grid">
                     {recentItems.map((item) => (

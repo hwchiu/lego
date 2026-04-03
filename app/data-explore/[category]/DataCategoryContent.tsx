@@ -5,13 +5,13 @@ import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
-import { CATEGORIES_MAP, CATEGORIES, DataItem } from '@/app/data/dataExplore';
+import { CATEGORIES_MAP, DataItem } from '@/app/data/dataExplore';
 
 // ── helpers ────────────────────────────────────────────────────────────────────
 
 function formatDate(iso: string): string {
   const d = new Date(iso);
-  return d.toLocaleDateString('zh-TW', { year: 'numeric', month: 'short', day: 'numeric' });
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 // ── sub-components ─────────────────────────────────────────────────────────────
@@ -147,9 +147,9 @@ export default function DataCategoryContent({ params }: { params: { category: st
           <main className="main-content">
             <div className="page-pad">
               <div className="de-not-found">
-                <div className="de-not-found-title">找不到此資料分類</div>
+                <div className="de-not-found-title">Category not found</div>
                 <Link href="/data-explore" className="de-back-btn">
-                  <BackArrowIcon /> 返回資料探索
+                  <BackArrowIcon /> Back to Data Explore
                 </Link>
               </div>
             </div>
@@ -173,7 +173,7 @@ export default function DataCategoryContent({ params }: { params: { category: st
               <div className="de-cat-hero-inner">
                 <Link href="/data-explore" className="de-back-btn">
                   <BackArrowIcon />
-                  資料探索
+                  Data Explore
                 </Link>
                 <div className="de-cat-hero-meta">
                   <span className="de-cat-hero-icon" style={{ color: cat.color }}>
@@ -187,10 +187,10 @@ export default function DataCategoryContent({ params }: { params: { category: st
                 <p className="de-cat-hero-desc">{cat.description}</p>
                 <div className="de-cat-hero-stats">
                   <span className="de-cat-stat" style={{ color: cat.color }}>
-                    {cat.items.length} 筆資料
+                    {cat.items.length} records
                   </span>
                   <span className="de-cat-stat-divider">·</span>
-                  <span className="de-cat-stat">{allTags.length} 個標籤</span>
+                  <span className="de-cat-stat">{allTags.length} tags</span>
                 </div>
               </div>
             </div>
@@ -204,15 +204,15 @@ export default function DataCategoryContent({ params }: { params: { category: st
                   <input
                     className="de-filter-search"
                     type="search"
-                    placeholder="搜尋此分類資料…"
+                    placeholder="Search within this category…"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    aria-label="搜尋資料"
+                    aria-label="Search data"
                   />
                 </div>
                 {filteredItems.length !== cat.items.length && (
                   <span className="de-filter-count">
-                    顯示 {filteredItems.length} / {cat.items.length} 筆
+                    Showing {filteredItems.length} / {cat.items.length} records
                   </span>
                 )}
               </div>
@@ -224,7 +224,7 @@ export default function DataCategoryContent({ params }: { params: { category: st
                   style={activeTag === null ? { background: cat.color, color: '#fff', borderColor: cat.color } : {}}
                   onClick={() => setActiveTag(null)}
                 >
-                  全部
+                  All
                 </button>
                 {allTags.map((tag) => (
                   <button
@@ -242,25 +242,10 @@ export default function DataCategoryContent({ params }: { params: { category: st
                 ))}
               </div>
 
-              {/* ── Related Categories ── */}
-              <div className="de-related-cats">
-                {CATEGORIES.filter((c) => c.slug !== cat.slug).map((c) => (
-                  <Link
-                    key={c.slug}
-                    href={`/data-explore/${c.slug}`}
-                    className="de-related-cat-chip"
-                    style={{ borderColor: `${c.color}40`, color: c.color }}
-                  >
-                    <span>{c.icon}</span>
-                    <span>{c.label}</span>
-                  </Link>
-                ))}
-              </div>
-
               {/* ── Data Items ── */}
               <section className="de-section">
                 {filteredItems.length === 0 ? (
-                  <div className="de-empty">找不到符合條件的資料</div>
+                  <div className="de-empty">No results match the current filters</div>
                 ) : (
                   <div className="de-items-list">
                     {filteredItems.map((item) => (

@@ -15,6 +15,7 @@ export interface SubNavItem {
   dividerBefore?: boolean; // render a thin divider line above this item
   watchlistId?: string; // if set, label is dynamically overridden by WatchlistContext
   iconRight?: 'add'; // optional right-aligned icon
+  icon?: string; // optional left icon key (same pool as NavItem.icon)
 }
 
 export interface SidebarSection {
@@ -64,6 +65,17 @@ export const sidebarIcons: Record<string, string> = {
   // Collaboration Playground — two overlapping circles with a shared center dot
   collaborationPlayground:
     '<circle cx="5" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/><circle cx="9" cy="9" r="3" stroke="currentColor" stroke-width="1.3"/><circle cx="7" cy="7" r="1.2" fill="currentColor"/>',
+  // Sub-menu icons
+  financialData:
+    '<rect x="1.5" y="3" width="11" height="8" rx="1" stroke="currentColor" stroke-width="1.3"/><path d="M4 6.5h6M4 8.5h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>',
+  mAndA:
+    '<path d="M2 10L5 7L8 9.5L12 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="2" stroke="currentColor" stroke-width="1.2"/><path d="M11 10V12M10 11H12" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>',
+  supplier:
+    '<rect x="1.5" y="6" width="5" height="6" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="7.5" y="1.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M4 6V4.5C4 3.4 5 2.5 6 2.5H7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>',
+  customer:
+    '<circle cx="7" cy="4.5" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M2 12.5C2 10 4.2 8.5 7 8.5C9.8 8.5 12 10 12 12.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>',
+  competitor:
+    '<circle cx="4.5" cy="7" r="3" stroke="currentColor" stroke-width="1.2"/><circle cx="9.5" cy="7" r="3" stroke="currentColor" stroke-width="1.2" stroke-dasharray="1.5 1.5"/>',
 };
 
 export const quickLinks: NavItem[] = [
@@ -91,9 +103,12 @@ export const mainNav: NavItem[] = [
   { label: 'Event Calendar', href: '/event-calendar', icon: 'calendar' },
   {
     label: 'Market Data',
-    href: '#',
+    href: '/market-data',
     icon: 'marketData',
-    subItems: [{ label: 'Financial Data', href: '#' }],
+    subItems: [
+      { label: 'M&A', href: '/market-data/ma', icon: 'mAndA' },
+      { label: 'Financial Data', href: '#', icon: 'financialData' },
+    ],
   },
   { label: 'Data Explore', href: '/data-explore', icon: 'dataExplore' },
 ];
@@ -106,9 +121,9 @@ export const supplyChainNav: NavItem[] = [
     badge: 'NEW',
     badgeColor: '#BF3030',
     subItems: [
-      { label: 'Supplier', href: '/supply-chain-maps/supplier' },
-      { label: 'Customer', href: '/supply-chain-maps/customer' },
-      { label: 'Competitor', href: '/supply-chain-maps/competitor' },
+      { label: 'Supplier', href: '/supply-chain-maps/supplier', icon: 'supplier' },
+      { label: 'Customer', href: '/supply-chain-maps/customer', icon: 'customer' },
+      { label: 'Competitor', href: '/supply-chain-maps/competitor', icon: 'competitor' },
     ],
   },
   { label: 'My Ecosystems', href: '#', icon: 'layers' },

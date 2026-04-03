@@ -79,6 +79,17 @@ function SubMenu({
           <React.Fragment key={item.label}>
             {item.dividerBefore && <div className="sidebar-submenu-divider" />}
             <Link href={item.href} className="sidebar-submenu-item">
+              {item.icon && (
+                <svg
+                  className="sidebar-submenu-item-icon"
+                  viewBox="0 0 14 14"
+                  fill="none"
+                  width="13"
+                  height="13"
+                  aria-hidden="true"
+                  dangerouslySetInnerHTML={{ __html: sidebarIcons[item.icon] ?? '' }}
+                />
+              )}
               <span className="sidebar-submenu-label">{displayLabel}</span>
               {item.iconRight === 'add' && (
                 <svg
@@ -242,7 +253,7 @@ function NavSection({
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
-  const toggleLabel = collapsed ? '展開選單' : '收合選單';
+  const toggleLabel = collapsed ? 'Expand menu' : 'Collapse menu';
   // When expanded, quickLinks[0] renders inside the collapse header row,
   // so only the remaining items are listed below.
   // When collapsed, the header shows only the toggle button, so all quickLinks render here.
