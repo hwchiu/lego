@@ -3811,7 +3811,7 @@ input, select { font-family: var(--font); }
   background: var(--c-white);
   border: 1px solid var(--c-border);
   border-radius: var(--radius-lg);
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* SVG element */
@@ -4248,4 +4248,92 @@ input, select { font-family: var(--font); }
   color: var(--c-text-4);
   margin-left: auto;
   padding-left: 8px;
+}
+
+/* ── Supplier page company header ────────────────────────────────────────── */
+.rmap-company-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.rmap-risk-light {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.06);
+}
+.rmap-risk-light--green { background: #16a34a; box-shadow: 0 0 6px rgba(22,163,74,0.5); }
+.rmap-risk-light--yellow { background: #ca8a04; box-shadow: 0 0 6px rgba(202,138,4,0.5); }
+.rmap-risk-light--red { background: #dc2626; box-shadow: 0 0 6px rgba(220,38,38,0.5); }
+.rmap-company-header-name {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--c-dark);
+  letter-spacing: -0.3px;
+}
+.rmap-company-header-full {
+  font-size: 13px;
+  color: var(--c-text-3);
+  font-weight: 400;
+}
+
+/* ── Summary cards row ───────────────────────────────────────────────────── */
+.rmap-summary-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.rmap-summary-card {
+  padding: 16px 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.rmap-summary-card-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--c-text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.rmap-summary-card-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--c-dark);
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+.rmap-summary-card-sub {
+  font-size: 11px;
+  color: var(--c-text-4);
+}
+.rmap-summary-card--add {
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  border: 2px dashed var(--c-border-2);
+  background: var(--c-bg);
+  transition: border-color 0.15s, background 0.15s;
+}
+.rmap-summary-card--add:hover {
+  border-color: var(--c-border-2);
+  background: var(--c-white);
+}
+.rmap-summary-card-add-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--c-text-3);
+}
+
+/* ── Supplier page nav tabs (blue underline) ─────────────────────────────── */
+.rmap-supplier-tabs {
+  margin-bottom: 16px;
+}
+.rmap-tab-blue {
+  border-bottom-color: #2196F3 !important;
+  color: var(--c-text) !important;
 }

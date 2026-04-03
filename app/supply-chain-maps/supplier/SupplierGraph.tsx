@@ -403,17 +403,6 @@ export default function SupplierGraph() {
 
   return (
     <div className="rmap-graph-wrap">
-      <div className="rmap-legend">
-        <span className="rmap-legend-dot rmap-legend-dot--center" />
-        <span className="rmap-legend-text">中心公司 (TSMC)</span>
-        <span className="rmap-legend-dot rmap-legend-dot--supplier" />
-        <span className="rmap-legend-text">Tier 1 供應商</span>
-        <span className="rmap-legend-dot" style={{ background: '#aaa' }} />
-        <span className="rmap-legend-text">Tier 2 供應商</span>
-        <span className="rmap-legend-dash" />
-        <span className="rmap-legend-text">供應關係（可拖曳移動節點）</span>
-      </div>
-
       <div className="rmap-svg-container">
         <svg
           ref={svgRef}
@@ -506,10 +495,6 @@ export default function SupplierGraph() {
         <FilterBar relationType={relationType} onRelationChange={setRelationType} />
         <DetailPanel node={selectedNode} onClose={() => setSelectedNode(null)} />
       </div>
-
-      <p className="rmap-source-note">
-        * 資料來源：TSMC Annual Report、公開財報（FY2023–FY2024）。點擊節點查看詳細資訊，拖曳節點可移動位置。
-      </p>
     </div>
   );
 }
