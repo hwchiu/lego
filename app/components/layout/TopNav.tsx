@@ -24,6 +24,9 @@ const RECENT_HISTORY = [
   },
 ];
 
+// Notification count — sourced from content/notifications.md
+const NOTIFICATION_COUNT = 6;
+
 export default function TopNav() {
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
@@ -151,6 +154,60 @@ export default function TopNav() {
             </div>
           </div>
         )}
+      </div>
+
+      {/* ── Header action buttons ────────────────────────────────── */}
+      <div className="topnav-actions">
+        {/* User Manual */}
+        <button className="topnav-action-btn" title="User Manual" aria-label="User Manual">
+          {/* Book / manual icon */}
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <rect x="2" y="1" width="9" height="12" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
+            <path d="M5 4h4M5 6.5h4M5 9h2.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+            <path d="M11 3v10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+            <path d="M11 3c0-1 2-1 2 0v10c0 1-2 1-2 0" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+          </svg>
+          <span className="topnav-action-label">User Manual</span>
+        </button>
+
+        {/* Language / English */}
+        <button className="topnav-action-btn" title="Language" aria-label="Switch Language">
+          {/* Globe / multilingual icon */}
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3" />
+            <path
+              d="M8 1.5C8 1.5 5.5 4.5 5.5 8C5.5 11.5 8 14.5 8 14.5M8 1.5C8 1.5 10.5 4.5 10.5 8C10.5 11.5 8 14.5 8 14.5M1.5 8H14.5M2 5h12M2 11h12"
+              stroke="currentColor"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+            />
+          </svg>
+          <span className="topnav-action-label">English</span>
+        </button>
+
+        {/* Notification bell */}
+        <button className="topnav-action-btn topnav-action-btn--icon-only" title="Notifications" aria-label="Notifications">
+          <span className="topnav-notif-wrap">
+            {/* Bell icon */}
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path
+                d="M8 2a4.5 4.5 0 0 1 4.5 4.5v2.8l1.1 1.7H2.4L3.5 9.3V6.5A4.5 4.5 0 0 1 8 2Z"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M6.2 13a1.8 1.8 0 0 0 3.6 0"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinecap="round"
+              />
+            </svg>
+            {NOTIFICATION_COUNT > 0 && (
+              <span className="topnav-notif-badge">{NOTIFICATION_COUNT}</span>
+            )}
+          </span>
+        </button>
       </div>
 
       <div className="topnav-user">
