@@ -197,7 +197,6 @@ export default function CollaborationPlaygroundPage() {
                     {isFullscreen ? (
                       <svg viewBox="0 0 16 16" width="15" height="15" fill="none" aria-hidden="true">
                         <path d="M6 2H2v4M10 2h4v4M6 14H2v-4M10 14h4v-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-                        <path d="M2 6l4-4M10 2l4 4M2 10l4 4M14 10l-4 4" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeDasharray="2 10" opacity="0" />
                       </svg>
                     ) : (
                       <svg viewBox="0 0 16 16" width="15" height="15" fill="none" aria-hidden="true">
