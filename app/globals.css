@@ -5309,3 +5309,10 @@ input, select { font-family: var(--font); }
 .fin-stmt-neg {
   color: var(--c-neg) !important;
 }
+
+.fin-stmt-currency-note {
+  font-size: 11.5px;
+  color: var(--c-text-4);
+  font-style: italic;
+  margin-bottom: 8px;
+}

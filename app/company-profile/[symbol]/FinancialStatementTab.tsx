@@ -203,13 +203,12 @@ interface RowDef {
   key: keyof QuarterData | keyof AnnualData;
   label: string;
   format: 'money' | 'percent' | 'eps' | 'marketcap' | 'growth';
-  isGrowth?: boolean;
 }
 
 const ROW_DEFS: RowDef[] = [
   { key: 'revenue',     label: 'Revenue ($M)',           format: 'money' },
-  { key: 'seqGrowth',  label: 'Sequential Growth (%)',   format: 'growth', isGrowth: true },
-  { key: 'yoyGrowth',  label: 'YoY Growth (%)',          format: 'growth', isGrowth: true },
+  { key: 'seqGrowth',  label: 'Sequential Growth (%)',   format: 'growth' },
+  { key: 'yoyGrowth',  label: 'YoY Growth (%)',          format: 'growth' },
   { key: 'cogs',       label: 'COGS ($M)',               format: 'money' },
   { key: 'grossProfit',label: 'Gross Profit ($M)',        format: 'money' },
   { key: 'grossMargin',label: 'Gross Margin (%)',         format: 'percent' },
@@ -270,10 +269,11 @@ export default function FinancialStatementTab() {
 
   // Year window for quarterly view: show 2 fiscal years at a time
   const availableYears = [2023, 2024, 2025];
+  const maxYearWindowStart = availableYears[availableYears.length - 1] - 1;
   const [yearWindowStart, setYearWindowStart] = useState(2023);
 
   const prevYear = () => setYearWindowStart((y) => Math.max(availableYears[0], y - 1));
-  const nextYear = () => setYearWindowStart((y) => Math.min(availableYears[availableYears.length - 1] - 1, y + 1));
+  const nextYear = () => setYearWindowStart((y) => Math.min(maxYearWindowStart, y + 1));
 
   // Columns in quarterly view: show 2 fiscal years
   const visibleQuarters = QUARTERLY_DATA.filter(
@@ -288,7 +288,7 @@ export default function FinancialStatementTab() {
     : 'FY2021–FY2024';
 
   const canGoPrev = viewMode === 'quarterly' && yearWindowStart > availableYears[0];
-  const canGoNext = viewMode === 'quarterly' && yearWindowStart < availableYears[availableYears.length - 1] - 1;
+  const canGoNext = viewMode === 'quarterly' && yearWindowStart < maxYearWindowStart;
 
   return (
     <div className="fin-stmt-layout">
@@ -387,7 +387,13 @@ export default function FinancialStatementTab() {
 
         {/* Table */}
         {statementType === 'income' ? (
-          <div className="fin-stmt-table-wrap">
+          <>
+            {currency === 'usd' && (
+              <p className="fin-stmt-currency-note">
+                Note: Apple Inc. reports natively in USD. Original Currency = USD.
+              </p>
+            )}
+            <div className="fin-stmt-table-wrap">
             <table className="data-table fin-stmt-table">
               <thead>
                 {viewMode === 'quarterly' ? (
@@ -466,6 +472,7 @@ export default function FinancialStatementTab() {
               </tbody>
             </table>
           </div>
+          </>
         ) : (
           <div className="cp-tab-placeholder">
             <span className="cp-tab-placeholder-text">
