@@ -496,7 +496,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
               </div>
             </div>
 
-            {/* ── Company info cards + Public Tags ── */}
+            {/* ── Company info cards + Tags panel ── */}
             <div className="cp-info-tags-row">
               <div className="cp-info-cards">
                 <div className="cp-info-card">
@@ -512,43 +512,48 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                   <span className="cp-info-value">{stockExchange}</span>
                 </div>
               </div>
-              {publicTags.length > 0 && (
-                <div className="cp-public-tags-right">
-                  <span className="cp-tags-group-label">Public Tag</span>
-                  <div className="cp-tags-list">
-                    {publicTags.map((tag) => (
-                      <Link
-                        key={tag}
-                        href={`/company-profile?tag=${encodeURIComponent(tag)}`}
-                        className="cp-tag cp-tag--link"
-                      >
-                        {tag}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
 
-            {/* ── Tags row (My Tags) ── */}
-            <div className="cp-tags-row">
-              <div className="cp-tags-group">
-                <span className="cp-tags-group-label">My Tag</span>
-                <div className="cp-tags-list">
-                  {myTags.map((tag) => (
-                    <span key={tag} className="cp-tag cp-tag--my">
-                      {tag}
-                      <button className="cp-tag-remove" onClick={() => removeTag(tag)} aria-label={`Remove tag ${tag}`}>×</button>
-                    </span>
-                  ))}
-                  <input
-                    ref={tagsInputRef}
-                    className="cp-tag-input"
-                    placeholder="+ Add tag"
-                    value={tagInput}
-                    onChange={(e) => setTagInput(e.target.value)}
-                    onKeyDown={addTag}
-                  />
+              {/* Right panel: Public Tags + My Tags + Add Tag — same height as info cards */}
+              <div className="cp-tags-panel">
+                {publicTags.length > 0 && (
+                  <div className="cp-tags-group">
+                    <span className="cp-tags-group-label">Public Tag</span>
+                    <div className="cp-tags-list">
+                      {publicTags.map((tag) => (
+                        <Link
+                          key={tag}
+                          href={`/company-profile?tag=${encodeURIComponent(tag)}`}
+                          className="cp-tag cp-tag--link"
+                        >
+                          {tag}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div className="cp-tags-group">
+                  <span className="cp-tags-group-label">My Tag</span>
+                  <div className="cp-tags-list">
+                    {myTags.map((tag) => (
+                      <span key={tag} className="cp-tag cp-tag--my">
+                        <Link
+                          href={`/company-profile?tag=${encodeURIComponent(tag)}`}
+                          className="cp-tag-text-link"
+                        >
+                          {tag}
+                        </Link>
+                        <button className="cp-tag-remove" onClick={() => removeTag(tag)} aria-label={`Remove tag ${tag}`}>×</button>
+                      </span>
+                    ))}
+                    <input
+                      ref={tagsInputRef}
+                      className="cp-tag-input"
+                      placeholder="+ Add tag"
+                      value={tagInput}
+                      onChange={(e) => setTagInput(e.target.value)}
+                      onKeyDown={addTag}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -575,6 +580,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                   {/* Column 1: Current Qtr Financial */}
                   <div className="cp-data-card">
                     <div className="cp-card-title">Current Qtr Financial</div>
+                    <div className="cp-card-divider" />
                     <div className="cp-fin-metrics">
                       <div className="cp-fin-metric">
                         <div className="cp-fin-metric-label">Revenue ({finData.currentQtr.revenueUnit})</div>
@@ -604,6 +610,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                   <div className="cp-col-stack">
                     <div className="cp-data-card">
                       <div className="cp-card-title">Next Qtr Key Indices</div>
+                      <div className="cp-card-divider" />
                       <div className="cp-fin-metrics">
                         <div className="cp-fin-metric">
                           <div className="cp-fin-metric-label">Revenue Midpoint Guidance</div>
@@ -623,6 +630,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                         Revenue Breakdown
                         <span className="cp-card-subtitle">{finData.revenueBreakdown.quarter}</span>
                       </div>
+                      <div className="cp-card-divider" />
                       <div className="cp-breakdown-list">
                         {finData.revenueBreakdown.items.map((item) => (
                           <div key={item.name} className="cp-breakdown-item">
@@ -641,6 +649,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                   <div className="cp-col-stack">
                     <div className="cp-data-card cp-data-card--wide">
                       <div className="cp-card-title">Financial Indices</div>
+                      <div className="cp-card-divider" />
                       <div className="cp-fin-index-tabs">
                         {FIN_INDICES.map((idx) => (
                           <button
@@ -665,6 +674,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
 
                     <div className="cp-data-card cp-data-card--wide2">
                       <div className="cp-card-title">DOI &amp; Revenue</div>
+                      <div className="cp-card-divider" />
                       <div className="cp-chart-legend">
                         <span className="cp-legend-dot cp-legend-dot--blue" />
                         <span className="cp-legend-label cp-legend-label--blue">DOI</span>
