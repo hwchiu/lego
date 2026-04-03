@@ -104,8 +104,8 @@ interface BarChartProps {
 
 function FinancialBarChart({ data }: BarChartProps) {
   const W = 420;
-  const H = 200;
-  const PAD = { top: 20, right: 20, bottom: 36, left: 48 };
+  const H = 100;
+  const PAD = { top: 10, right: 20, bottom: 24, left: 36 };
   const chartW = W - PAD.left - PAD.right;
   const chartH = H - PAD.top - PAD.bottom;
 
@@ -196,8 +196,8 @@ interface DoiRevenueChartProps {
 
 function DoiRevenueChart({ data }: DoiRevenueChartProps) {
   const W = 420;
-  const H = 200;
-  const PAD = { top: 20, right: 56, bottom: 36, left: 48 };
+  const H = 100;
+  const PAD = { top: 10, right: 48, bottom: 24, left: 36 };
   const chartW = W - PAD.left - PAD.right;
   const chartH = H - PAD.top - PAD.bottom;
 

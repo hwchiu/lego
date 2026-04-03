@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { SP500_COMPANIES } from '@/app/data/sp500';
 
 const POPULAR_SEARCHES = ['TSM', 'AAPL', 'NVDA'];
 
@@ -28,6 +30,7 @@ const RECENT_HISTORY = [
 const NOTIFICATION_COUNT = 6;
 
 export default function TopNav() {
+  const router = useRouter();
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -35,6 +38,23 @@ export default function TopNav() {
 
   const showDropdown = focused;
   const showCategories = focused && query.trim().length > 0;
+
+  // Filter companies when "Company" category is active and query is typed
+  const filteredCompanies =
+    activeCategory === 'Company' && query.trim().length > 0
+      ? SP500_COMPANIES.filter(
+          (c) =>
+            c.symbol.toLowerCase().includes(query.trim().toLowerCase()) ||
+            c.name.toLowerCase().includes(query.trim().toLowerCase()),
+        ).slice(0, 8)
+      : [];
+
+  // Navigate to company profile page
+  function navigateToCompany(symbol: string) {
+    setFocused(false);
+    setQuery('');
+    router.push(`/company-profile/${symbol}/`);
+  }
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -97,7 +117,33 @@ export default function TopNav() {
               </div>
             )}
 
-            {/* Section 2: Popular searches */}
+            {/* Section 2: Company search results — shown when "Company" category active */}
+            {filteredCompanies.length > 0 && (
+              <div className="search-dropdown-section">
+                <div className="search-dropdown-section-label">Companies</div>
+                <ul className="search-popular-list">
+                  {filteredCompanies.map((company) => (
+                    <li key={company.symbol}>
+                      <button
+                        className="search-popular-item"
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          navigateToCompany(company.symbol);
+                        }}
+                      >
+                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                          <rect x="1.5" y="2" width="10" height="9" rx="1" stroke="currentColor" strokeWidth="1.2" />
+                          <path d="M4 5h5M4 7.5h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+                        </svg>
+                        <strong>{company.symbol}</strong>&nbsp;{company.name}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Section 3: Popular searches */}
             <div className="search-dropdown-section">
               <div className="search-dropdown-section-label">Popular Searches</div>
               <ul className="search-popular-list">
@@ -107,8 +153,7 @@ export default function TopNav() {
                       className="search-popular-item"
                       onMouseDown={(e) => {
                         e.preventDefault();
-                        setQuery(term);
-                        setFocused(false);
+                        navigateToCompany(term);
                       }}
                     >
                       <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">

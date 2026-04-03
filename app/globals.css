@@ -2993,12 +2993,12 @@ input, select { font-family: var(--font); }
 /* Tags row */
 .cp-tags-panel {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 8px;
-  align-items: flex-end;
-  justify-content: center;
+  align-items: center;
+  justify-content: flex-end;
   flex-shrink: 0;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
 .cp-tags-row {
@@ -3149,10 +3149,10 @@ input, select { font-family: var(--font); }
   gap: 20px;
 }
 
-/* Main 3-column grid: equal columns for 1 & 2, wider column 3 for charts */
+/* Main 3-column grid: narrow cols 1 & 2, col 3 takes 70% for charts */
 .cp-cards-main-grid {
   display: grid;
-  grid-template-columns: 2fr 2fr 3fr;
+  grid-template-columns: 1.5fr 1.5fr 7fr;
   gap: 16px;
   align-items: stretch;
 }
@@ -3212,15 +3212,20 @@ input, select { font-family: var(--font); }
 
 /* Financial metrics */
 .cp-fin-metrics {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  justify-content: space-evenly;
 }
 
 .cp-fin-metric {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   gap: 4px;
+  padding: 4px 0;
 }
 
 .cp-fin-metric-label {
