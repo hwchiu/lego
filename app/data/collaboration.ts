@@ -192,7 +192,7 @@ const canvas2Cards: ContentCard[] = [
     kpis: [
       { label: '全球 AI 市場規模', value: '$621B', change: '+38.1% YoY', positive: true },
       { label: 'NVIDIA 市值', value: '$2.8T', change: '+22.4% YTD', positive: true },
-      { label: 'AI 晶片需求年增率', value: '+85%', change: vs('2025: +67%'), positive: true },
+      { label: 'AI 晶片需求年增率', value: '+85%', change: 'vs 2025: +67%', positive: true },
       { label: 'Gen AI 投資總額', value: '$138B', change: '+51% YoY', positive: true },
     ],
   },
@@ -341,11 +341,6 @@ const canvas3Cards: ContentCard[] = [
     addedAt: '2026-01-22 11:15',
   },
 ];
-
-// Helper to avoid TypeScript "no-op expression" lint error
-function vs(s: string) {
-  return s;
-}
 
 // ─────────────────────────────────────────────
 // Tasks per canvas
