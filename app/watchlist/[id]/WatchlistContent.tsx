@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { SP500_COMPANIES } from '@/app/data/sp500';
+import { mainNav } from '@/app/data/navigation';
 import { useWatchlist } from '@/app/contexts/WatchlistContext';
 
 // ── Stock Index data ─────────────────────────────────────────────────────────
@@ -469,6 +471,21 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
   // Add Symbol state
   const [addSymbolQuery, setAddSymbolQuery] = useState('');
 
+  // Watchlist title dropdown state
+  const [showTitleDropdown, setShowTitleDropdown] = useState(false);
+  const titleDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close title dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (titleDropdownRef.current && !titleDropdownRef.current.contains(e.target as Node)) {
+        setShowTitleDropdown(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   // Sync editWatchlistName when watchlistName changes from context
   useEffect(() => {
     setEditWatchlistName(watchlistName);
@@ -484,6 +501,9 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
 
   const prevQ = quarterOffset(quarter, -1);
   const nextQ = quarterOffset(quarter, 1);
+
+  // Watchlist sub-items from navigation data (shared with sidebar)
+  const watchlistSubItems = mainNav.find((item) => item.icon === 'watchlist')?.subItems ?? [];
 
   const totalValue = holdingsData.reduce((sum, h) => sum + h.price * h.shares, 0);
   const totalGain = holdingsData.reduce((sum, h) => sum + h.todayGain, 0);
@@ -618,49 +638,26 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
             {/* ── Portfolio Header ──────────────────────────────────── */}
             <section className="wl-portfolio-section">
               <div className="wl-portfolio-left">
-                {/* Title row */}
-                <div className="wl-portfolio-title-row">
+                {/* Title row with dropdown */}
+                <div className="wl-portfolio-title-row" ref={titleDropdownRef}>
                   <span className="wl-portfolio-title">{watchlistName}</span>
-                  <svg viewBox="0 0 14 14" fill="none" width="14" height="14" className="wl-portfolio-chevron">
-                    <path
-                      d="M3 5L7 9L11 5"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
-
-                {/* Summary row */}
-                <div className="wl-portfolio-summary">
-                  {/* Eye icon */}
-                  <svg viewBox="0 0 14 14" fill="none" width="16" height="16" className="wl-eye-icon">
-                    <path
-                      d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z"
-                      stroke="currentColor"
-                      strokeWidth="1.3"
-                      strokeLinejoin="round"
-                    />
-                    <circle cx="7" cy="7" r="1.8" fill="currentColor" />
-                  </svg>
-
-                  <span className="wl-total-value">${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-
-                  <span className={`wl-daily-change ${totalGain >= 0 ? 'pos' : 'neg'}`}>
-                    <svg viewBox="0 0 14 14" fill="none" width="12" height="12">
-                      {totalGain >= 0 ? (
-                        <path d="M7 2.5L11 7H3L7 2.5Z" fill="currentColor" />
-                      ) : (
-                        <path d="M7 11.5L3 7H11L7 11.5Z" fill="currentColor" />
-                      )}
+                  <button
+                    className={`wl-portfolio-chevron-btn${showTitleDropdown ? ' open' : ''}`}
+                    aria-label="切換觀察清單"
+                    onClick={() => setShowTitleDropdown((v) => !v)}
+                  >
+                    <svg viewBox="0 0 14 14" fill="none" width="14" height="14" className="wl-portfolio-chevron">
+                      <path
+                        d="M3 5L7 9L11 5"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     </svg>
-                    {totalGain >= 0 ? '+' : ''}
-                    {totalGain.toFixed(2)} ({totalGainPct >= 0 ? '+' : ''}
-                    {totalGainPct.toFixed(2)}%)
-                  </span>
+                  </button>
 
-                  {/* Quarter nav */}
+                  {/* Quarter nav — moved here next to title */}
                   <div className="wl-quarter-nav">
                     <button
                       className="wl-quarter-btn"
@@ -696,6 +693,83 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                       </svg>
                     </button>
                   </div>
+
+                  {/* Watchlist switcher dropdown */}
+                  {showTitleDropdown && (
+                    <div className="wl-title-dropdown">
+                      {watchlistSubItems.map((item) => {
+                        const displayLabel = item.watchlistId
+                          ? (watchlistNames[item.watchlistId] ?? item.label)
+                          : item.label;
+                        return (
+                          <div key={item.label}>
+                            {item.dividerBefore && <div className="wl-title-dropdown-divider" />}
+                            <Link
+                              href={item.href}
+                              className={`wl-title-dropdown-item${item.watchlistId === watchlistId ? ' active' : ''}`}
+                              onClick={() => setShowTitleDropdown(false)}
+                            >
+                              <span className="wl-title-dropdown-label">{displayLabel}</span>
+                              {item.iconRight === 'add' && (
+                                <svg
+                                  viewBox="0 0 14 14"
+                                  fill="none"
+                                  width="13"
+                                  height="13"
+                                  aria-hidden="true"
+                                >
+                                  <rect
+                                    x="1"
+                                    y="1"
+                                    width="12"
+                                    height="12"
+                                    rx="2"
+                                    fill="currentColor"
+                                    fillOpacity="0.18"
+                                  />
+                                  <path
+                                    d="M7 4V10M4 7H10"
+                                    stroke="currentColor"
+                                    strokeWidth="1.6"
+                                    strokeLinecap="round"
+                                  />
+                                </svg>
+                              )}
+                            </Link>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* Summary row */}
+                <div className="wl-portfolio-summary">
+                  {/* Eye icon */}
+                  <svg viewBox="0 0 14 14" fill="none" width="16" height="16" className="wl-eye-icon">
+                    <path
+                      d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z"
+                      stroke="currentColor"
+                      strokeWidth="1.3"
+                      strokeLinejoin="round"
+                    />
+                    <circle cx="7" cy="7" r="1.8" fill="currentColor" />
+                  </svg>
+
+                  <span className="wl-total-value">${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+
+                  <span className={`wl-daily-change ${totalGain >= 0 ? 'pos' : 'neg'}`}>
+                    <svg viewBox="0 0 14 14" fill="none" width="12" height="12">
+                      {totalGain >= 0 ? (
+                        <path d="M7 2.5L11 7H3L7 2.5Z" fill="currentColor" />
+                      ) : (
+                        <path d="M7 11.5L3 7H11L7 11.5Z" fill="currentColor" />
+                      )}
+                    </svg>
+                    {totalGain >= 0 ? '+' : ''}
+                    {totalGain.toFixed(2)} ({totalGainPct >= 0 ? '+' : ''}
+                    {totalGainPct.toFixed(2)}%)
+                  </span>
                 </div>
               </div>
 
