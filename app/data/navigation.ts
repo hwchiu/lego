@@ -5,6 +5,7 @@ export interface NavItem {
   active?: boolean;
   badge?: string;
   badgeColor?: string; // optional custom badge background color
+  badgeStyle?: 'new' | 'coming-soon'; // badge visual style
   subItems?: SubNavItem[];
 }
 
@@ -67,8 +68,7 @@ export const sidebarIcons: Record<string, string> = {
 
 export const quickLinks: NavItem[] = [
   { label: 'About tMIC', href: '#', icon: 'info' },
-  { label: 'Explore MIC Picks', href: '#', icon: 'star' },
-  { label: 'Summary Report', href: '#', icon: 'report', badge: 'NEW', badgeColor: '#BF3030' },
+  { label: 'Explore MIC Picks', href: '#', icon: 'star', badge: 'NEW', badgeColor: '#BF3030' },
   { label: 'Subscribe Newsletters', href: '#', icon: 'mail' },
 ];
 
@@ -108,7 +108,18 @@ export const mainNav: NavItem[] = [
 ];
 
 export const supplyChainNav: NavItem[] = [
-  { label: 'Supply Chain Maps', href: '#', icon: 'supplyMap' },
+  {
+    label: 'Supply Chain Maps',
+    href: '/supply-chain-maps',
+    icon: 'supplyMap',
+    badge: 'Coming soon',
+    badgeStyle: 'coming-soon',
+    subItems: [
+      { label: 'Supplier', href: '/supply-chain-maps/supplier' },
+      { label: 'Customer', href: '/supply-chain-maps/customer' },
+      { label: 'Competitor', href: '/supply-chain-maps/competitor' },
+    ],
+  },
   { label: 'My Ecosystems', href: '#', icon: 'layers' },
   { label: 'Network Views', href: '#', icon: 'network' },
 ];

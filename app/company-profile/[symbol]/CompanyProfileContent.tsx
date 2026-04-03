@@ -128,7 +128,7 @@ function FinancialBarChart({ data }: BarChartProps) {
         return (
           <g key={tick}>
             <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y} stroke="#f0f0f0" strokeWidth="1" />
-            <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize="9" fill="#9ca3af">
+            <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize="10" fill="#9ca3af">
               {tick >= 1000 ? `${tick / 1000}k` : tick}
             </text>
           </g>
@@ -168,7 +168,7 @@ function FinancialBarChart({ data }: BarChartProps) {
               x={cx}
               y={H - 8}
               textAnchor="middle"
-              fontSize="9"
+              fontSize="10"
               fill="#9ca3af"
             >
               {d.quarter}
@@ -240,10 +240,10 @@ function DoiRevenueChart({ data }: DoiRevenueChartProps) {
         return (
           <g key={t}>
             <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y} stroke="#f0f0f0" strokeWidth="1" />
-            <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize="9" fill="#9ca3af">
+            <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize="10" fill="#9ca3af">
               {doiVal}
             </text>
-            <text x={W - PAD.right + 6} y={y + 4} textAnchor="start" fontSize="9" fill="#9ca3af">
+            <text x={W - PAD.right + 6} y={y + 4} textAnchor="start" fontSize="10" fill="#9ca3af">
               {revVal >= 1000 ? `${Math.round(revVal / 1000)}k` : revVal}
             </text>
           </g>
@@ -292,7 +292,7 @@ function DoiRevenueChart({ data }: DoiRevenueChartProps) {
           x={PAD.left + i * step}
           y={H - 8}
           textAnchor="middle"
-          fontSize="9"
+          fontSize="10"
           fill="#9ca3af"
         >
           {d.quarter}
@@ -471,7 +471,51 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                 </Link>
                 <div className="cp-breadcrumb">
                   <span className="cp-breadcrumb-text">Company Overview /</span>
-                  <h1 className="cp-company-name">{companyName}</h1>
+                  <div className="cp-name-tags-row">
+                    <h1 className="cp-company-name">{companyName}</h1>
+                    <div className="cp-inline-tags">
+                      {publicTags.length > 0 && (
+                        <div className="cp-tags-group">
+                          <span className="cp-tags-group-label">Public Tag</span>
+                          <div className="cp-tags-list">
+                            {publicTags.map((tag) => (
+                              <Link
+                                key={tag}
+                                href={`/company-profile?tag=${encodeURIComponent(tag)}`}
+                                className="cp-tag cp-tag--link"
+                              >
+                                {tag}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      <div className="cp-tags-group">
+                        <span className="cp-tags-group-label">My Tag</span>
+                        <div className="cp-tags-list">
+                          {myTags.map((tag) => (
+                            <span key={tag} className="cp-tag cp-tag--my">
+                              <Link
+                                href={`/company-profile?tag=${encodeURIComponent(tag)}`}
+                                className="cp-tag-text-link"
+                              >
+                                {tag}
+                              </Link>
+                              <button className="cp-tag-remove" onClick={() => removeTag(tag)} aria-label={`Remove tag ${tag}`}>×</button>
+                            </span>
+                          ))}
+                          <input
+                            ref={tagsInputRef}
+                            className="cp-tag-input"
+                            placeholder="+ Add tag"
+                            value={tagInput}
+                            onChange={(e) => setTagInput(e.target.value)}
+                            onKeyDown={addTag}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -496,7 +540,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
               </div>
             </div>
 
-            {/* ── Company info cards + Tags panel ── */}
+            {/* ── Company info cards ── */}
             <div className="cp-info-tags-row">
               <div className="cp-info-cards">
                 <div className="cp-info-card">
@@ -510,50 +554,6 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                 <div className="cp-info-card">
                   <span className="cp-info-label">Stock Exchange</span>
                   <span className="cp-info-value">{stockExchange}</span>
-                </div>
-              </div>
-
-              {/* Right panel: Public Tags + My Tags + Add Tag — same height as info cards */}
-              <div className="cp-tags-panel">
-                {publicTags.length > 0 && (
-                  <div className="cp-tags-group">
-                    <span className="cp-tags-group-label">Public Tag</span>
-                    <div className="cp-tags-list">
-                      {publicTags.map((tag) => (
-                        <Link
-                          key={tag}
-                          href={`/company-profile?tag=${encodeURIComponent(tag)}`}
-                          className="cp-tag cp-tag--link"
-                        >
-                          {tag}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                <div className="cp-tags-group">
-                  <span className="cp-tags-group-label">My Tag</span>
-                  <div className="cp-tags-list">
-                    {myTags.map((tag) => (
-                      <span key={tag} className="cp-tag cp-tag--my">
-                        <Link
-                          href={`/company-profile?tag=${encodeURIComponent(tag)}`}
-                          className="cp-tag-text-link"
-                        >
-                          {tag}
-                        </Link>
-                        <button className="cp-tag-remove" onClick={() => removeTag(tag)} aria-label={`Remove tag ${tag}`}>×</button>
-                      </span>
-                    ))}
-                    <input
-                      ref={tagsInputRef}
-                      className="cp-tag-input"
-                      placeholder="+ Add tag"
-                      value={tagInput}
-                      onChange={(e) => setTagInput(e.target.value)}
-                      onKeyDown={addTag}
-                    />
-                  </div>
                 </div>
               </div>
             </div>
@@ -586,19 +586,22 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                         <div className="cp-fin-metric-label">Revenue ({finData.currentQtr.revenueUnit})</div>
                         <div className="cp-fin-metric-value">{finData.currentQtr.revenue.toLocaleString()}</div>
                       </div>
+                      <div className="cp-fin-metric-sep" />
                       <div className="cp-fin-metric">
                         <div className="cp-fin-metric-label">Revenue QoQ</div>
                         <div className={`cp-fin-metric-value ${finData.currentQtr.revenueQoQ >= 0 ? 'pos' : 'neg'}`}>
                           {finData.currentQtr.revenueQoQ >= 0 ? '+' : ''}{finData.currentQtr.revenueQoQ}%
                         </div>
                       </div>
+                      <div className="cp-fin-metric-sep" />
                       <div className="cp-fin-metric">
                         <div className="cp-fin-metric-label">Gross Margin</div>
                         <div className="cp-fin-metric-value">
                           {finData.currentQtr.grossMargin}%
-                          <span className="cp-fin-metric-note">{finData.currentQtr.grossMarginNote}</span>
                         </div>
+                        <div className="cp-fin-metric-note">{finData.currentQtr.grossMarginNote}</div>
                       </div>
+                      <div className="cp-fin-metric-sep" />
                       <div className="cp-fin-metric">
                         <div className="cp-fin-metric-label">DOI (Days)</div>
                         <div className="cp-fin-metric-value">{finData.currentQtr.doi}</div>
@@ -616,6 +619,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                           <div className="cp-fin-metric-label">Revenue Midpoint Guidance</div>
                           <div className="cp-fin-metric-value">{finData.nextQtr.revenueMidpointGuidance.toLocaleString()}</div>
                         </div>
+                        <div className="cp-fin-metric-sep" />
                         <div className="cp-fin-metric">
                           <div className="cp-fin-metric-label">Revenue QoQ</div>
                           <div className={`cp-fin-metric-value ${finData.nextQtr.revenueQoQ >= 0 ? 'pos' : 'neg'}`}>
@@ -634,11 +638,13 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                       <div className="cp-breakdown-list">
                         {finData.revenueBreakdown.items.map((item) => (
                           <div key={item.name} className="cp-breakdown-item">
-                            <span className="cp-breakdown-name">{item.name}</span>
+                            <div className="cp-breakdown-row">
+                              <span className="cp-breakdown-name">{item.name}</span>
+                              <span className="cp-breakdown-pct">{item.pct}%</span>
+                            </div>
                             <div className="cp-breakdown-bar-wrap">
                               <div className="cp-breakdown-bar" style={{ width: `${Math.min(100, item.pct)}%` }} />
                             </div>
-                            <span className="cp-breakdown-pct">{item.pct}%</span>
                           </div>
                         ))}
                       </div>
