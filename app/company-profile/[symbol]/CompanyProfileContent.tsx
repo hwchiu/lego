@@ -9,6 +9,7 @@ import { SP500_COMPANIES } from '@/app/data/sp500';
 import { newsItems } from '@/app/data/news';
 import { extractJson } from '@/app/lib/parseContent';
 import companyProfileMd from '@/content/company-profile.md';
+import FinancialStatementTab from './FinancialStatementTab';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -904,12 +905,18 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
               </div>
             )}
 
+            {/* ── FIN. Statement tab ── */}
+            {activeTab === 'FIN. Statement' && <FinancialStatementTab />}
+
             {/* Placeholder for remaining tabs */}
-            {activeTab !== 'FIN. Summary' && activeTab !== 'News' && activeTab !== 'Stock' && (
-              <div className="cp-tab-placeholder">
-                <span className="cp-tab-placeholder-text">{activeTab} — Content coming soon</span>
-              </div>
-            )}
+            {activeTab !== 'FIN. Summary' &&
+              activeTab !== 'FIN. Statement' &&
+              activeTab !== 'News' &&
+              activeTab !== 'Stock' && (
+                <div className="cp-tab-placeholder">
+                  <span className="cp-tab-placeholder-text">{activeTab} — Content coming soon</span>
+                </div>
+              )}
 
           </div>
         </main>
