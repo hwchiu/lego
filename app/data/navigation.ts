@@ -73,7 +73,7 @@ export const quickLinks: NavItem[] = [
 ];
 
 export const mainNav: NavItem[] = [
-  { label: 'Company Profile', href: '#', icon: 'home' },
+  { label: 'Company Profile', href: '/company-profile', icon: 'home' },
   {
     label: 'Watchlist',
     href: '/watchlist/627836',
