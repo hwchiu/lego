@@ -3,10 +3,59 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { SP500_COMPANIES } from '@/app/data/sp500';
+import { newsItems } from '@/app/data/news';
 
 const POPULAR_SEARCHES = ['TSM', 'AAPL', 'NVDA'];
 
-const DATA_CATEGORIES = ['Company', 'News', 'Transcript', 'Stock', 'Data'];
+const DATA_CATEGORIES = ['All', 'Company', 'News & Event', 'People', 'Data'];
+
+// Inline SVG icons for each category tab
+function CategoryIcon({ category }: { category: string }) {
+  switch (category) {
+    case 'All':
+      return (
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+          <rect x="1" y="1" width="4" height="4" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
+          <rect x="7" y="1" width="4" height="4" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
+          <rect x="1" y="7" width="4" height="4" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
+          <rect x="7" y="7" width="4" height="4" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
+        </svg>
+      );
+    case 'Company':
+      return (
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+          <rect x="1.5" y="3" width="9" height="8" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
+          <path d="M4 3V2a2 2 0 0 1 4 0v1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+          <path d="M4 6h1M7 6h1M4 8.5h1M7 8.5h1" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+        </svg>
+      );
+    case 'News & Event':
+      return (
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+          <rect x="1" y="2" width="10" height="8" rx="1" stroke="currentColor" strokeWidth="1.2" />
+          <path d="M3.5 5h5M3.5 7h3.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+          <path d="M3.5 3.5h2" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+        </svg>
+      );
+    case 'People':
+      return (
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+          <circle cx="6" cy="4" r="2.3" stroke="currentColor" strokeWidth="1.2" />
+          <path d="M1.5 11c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+        </svg>
+      );
+    case 'Data':
+      return (
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+          <rect x="1.5" y="6.5" width="2" height="4" rx="0.4" stroke="currentColor" strokeWidth="1.1" />
+          <rect x="5" y="4" width="2" height="6.5" rx="0.4" stroke="currentColor" strokeWidth="1.1" />
+          <rect x="8.5" y="1.5" width="2" height="9" rx="0.4" stroke="currentColor" strokeWidth="1.1" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
 
 const RECENT_HISTORY = [
   {
@@ -29,24 +78,44 @@ const RECENT_HISTORY = [
 // Notification count — sourced from content/notifications.md
 const NOTIFICATION_COUNT = 6;
 
+// Pre-computed lowercase news fields for faster filtering
+const NEWS_ITEMS_LC = newsItems.map((n) => ({
+  ...n,
+  titleLc: n.title.toLowerCase(),
+  sourceLc: n.source.toLowerCase(),
+}));
+
+// Pre-computed lowercase SP500 companies for faster filtering
+const SP500_LC = SP500_COMPANIES.map((c) => ({
+  ...c,
+  symbolLc: c.symbol.toLowerCase(),
+  nameLc: c.name.toLowerCase(),
+}));
+
 export default function TopNav() {
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>('All');
   const wrapRef = useRef<HTMLDivElement>(null);
 
   const showDropdown = focused;
   const showCategories = focused && query.trim().length > 0;
+  const q = query.trim().toLowerCase();
 
-  // Filter companies when "Company" category is active and query is typed
+  // Filter companies (used for 'All' and 'Company' categories)
   const filteredCompanies =
-    activeCategory === 'Company' && query.trim().length > 0
-      ? SP500_COMPANIES.filter(
-          (c) =>
-            c.symbol.toLowerCase().includes(query.trim().toLowerCase()) ||
-            c.name.toLowerCase().includes(query.trim().toLowerCase()),
-        ).slice(0, 8)
+    (activeCategory === 'Company' || activeCategory === 'All') && q.length > 0
+      ? SP500_LC.filter((c) => c.symbolLc.includes(q) || c.nameLc.includes(q)).slice(
+          0,
+          activeCategory === 'All' ? 4 : 8,
+        )
+      : [];
+
+  // Filter news items (used for 'All' and 'News & Event' categories)
+  const filteredNews =
+    (activeCategory === 'News & Event' || activeCategory === 'All') && q.length > 0
+      ? NEWS_ITEMS_LC.filter((n) => n.titleLc.includes(q) || n.sourceLc.includes(q)).slice(0, 5)
       : [];
 
   // Navigate to company profile page
@@ -90,7 +159,10 @@ export default function TopNav() {
           placeholder="Company, Symbols, Analysts, Keywords"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => setFocused(true)}
+          onFocus={() => {
+            setFocused(true);
+            setActiveCategory('All');
+          }}
           autoComplete="off"
         />
 
@@ -107,9 +179,10 @@ export default function TopNav() {
                       className={`search-category-tab${activeCategory === cat ? ' active' : ''}`}
                       onMouseDown={(e) => {
                         e.preventDefault();
-                        setActiveCategory(activeCategory === cat ? null : cat);
+                        setActiveCategory(cat);
                       }}
                     >
+                      <CategoryIcon category={cat} />
                       {cat}
                     </button>
                   ))}
@@ -117,30 +190,103 @@ export default function TopNav() {
               </div>
             )}
 
-            {/* Section 2: Company search results — shown when "Company" category active */}
-            {filteredCompanies.length > 0 && (
-              <div className="search-dropdown-section">
-                <div className="search-dropdown-section-label">Companies</div>
-                <ul className="search-popular-list">
-                  {filteredCompanies.map((company) => (
-                    <li key={company.symbol}>
-                      <button
-                        className="search-popular-item"
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          navigateToCompany(company.symbol);
-                        }}
+            {/* Section 2: Search results — vary by active category */}
+            {showCategories && (
+              <>
+                {/* Companies — shown for 'All' and 'Company' */}
+                {filteredCompanies.length > 0 && (
+                  <div className="search-dropdown-section">
+                    <div className="search-dropdown-section-label">Companies</div>
+                    <ul className="search-popular-list">
+                      {filteredCompanies.map((company) => (
+                        <li key={company.symbol}>
+                          <button
+                            className="search-popular-item"
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              navigateToCompany(company.symbol);
+                            }}
+                          >
+                            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                              <rect x="1.5" y="2" width="10" height="9" rx="1" stroke="currentColor" strokeWidth="1.2" />
+                              <path d="M4 5h5M4 7.5h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+                            </svg>
+                            <strong>{company.symbol}</strong>&nbsp;{company.name}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* News — shown for 'All' and 'News & Event' */}
+                {filteredNews.length > 0 && (
+                  <div className="search-dropdown-section">
+                    <div className="search-dropdown-section-label">News &amp; Events</div>
+                    <ul className="search-history-list">
+                      {filteredNews.map((item) => (
+                        <li key={item.id}>
+                          <button
+                            className="search-history-item"
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              setQuery(item.title);
+                              setFocused(false);
+                            }}
+                          >
+                            <svg className="search-history-icon" width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                              <rect x="1" y="2" width="11" height="9" rx="1" stroke="currentColor" strokeWidth="1.2" />
+                              <path d="M3.5 5.5h6M3.5 7.5h4" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+                            </svg>
+                            <div className="search-history-text">
+                              <div className="search-history-title">{item.title}</div>
+                              <div className="search-history-desc">{item.source}</div>
+                            </div>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Placeholder for 'People' */}
+                {activeCategory === 'People' && (
+                  <div className="search-dropdown-section">
+                    <div
+                      className="search-dropdown-section-label"
+                      style={{ color: 'var(--c-text-3)', fontStyle: 'italic', padding: '8px 0' }}
+                    >
+                      No people data available
+                    </div>
+                  </div>
+                )}
+
+                {/* Placeholder for 'Data' */}
+                {activeCategory === 'Data' && (
+                  <div className="search-dropdown-section">
+                    <div
+                      className="search-dropdown-section-label"
+                      style={{ color: 'var(--c-text-3)', fontStyle: 'italic', padding: '8px 0' }}
+                    >
+                      No data available
+                    </div>
+                  </div>
+                )}
+
+                {/* No results message for All / Company / News & Event */}
+                {['All', 'Company', 'News & Event'].includes(activeCategory) &&
+                  filteredCompanies.length === 0 &&
+                  filteredNews.length === 0 && (
+                    <div className="search-dropdown-section">
+                      <div
+                        className="search-dropdown-section-label"
+                        style={{ color: 'var(--c-text-3)', fontStyle: 'italic', padding: '8px 0' }}
                       >
-                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
-                          <rect x="1.5" y="2" width="10" height="9" rx="1" stroke="currentColor" strokeWidth="1.2" />
-                          <path d="M4 5h5M4 7.5h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
-                        </svg>
-                        <strong>{company.symbol}</strong>&nbsp;{company.name}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                        No results found
+                      </div>
+                    </div>
+                  )}
+              </>
             )}
 
             {/* Section 3: Popular searches */}

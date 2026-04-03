@@ -2103,33 +2103,31 @@ input, select { font-family: var(--font); }
 .search-category-tabs {
   display: flex;
   gap: 0;
-  border: 1px solid var(--c-border-2);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
+  border-bottom: 1.5px solid var(--c-border);
 }
 .search-category-tab {
-  flex: 1;
-  padding: 8px 6px;
+  padding: 6px 10px;
   font-size: 12.5px;
   font-weight: 500;
-  color: var(--c-text-2);
-  background: var(--c-bg);
+  color: var(--c-text-3);
+  background: transparent;
   border: none;
-  border-right: 1px solid var(--c-border-2);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1.5px;
   cursor: pointer;
-  text-align: center;
-  transition: background 0.12s, color 0.12s;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: color 0.15s, border-color 0.15s;
 }
-.search-category-tab:last-child { border-right: none; }
 .search-category-tab:hover {
-  background: var(--c-border);
   color: var(--c-text);
 }
 .search-category-tab.active {
-  background: var(--c-dark);
-  color: var(--c-white);
+  color: var(--c-text);
   font-weight: 700;
+  border-bottom-color: #2196F3;
 }
 
 /* ===== WATCHLIST LAYOUT SPLIT ===== */
@@ -3813,7 +3811,7 @@ input, select { font-family: var(--font); }
   background: var(--c-white);
   border: 1px solid var(--c-border);
   border-radius: var(--radius-lg);
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* SVG element */
@@ -4019,4 +4017,323 @@ input, select { font-family: var(--font); }
   font-size: 11px;
   color: var(--c-text-4);
   padding-top: 4px;
+}
+
+/* ── Tier 2 node overrides ───────────────────────────────────────────────── */
+.rmap-node-rect--tier2 {
+  fill: var(--c-bg);
+  stroke: var(--c-border);
+  stroke-width: 1;
+}
+.rmap-node--tier2:hover .rmap-node-rect--tier2 {
+  stroke: var(--c-accent);
+  filter: drop-shadow(0 2px 6px rgba(79,195,247,0.16));
+}
+.rmap-node-name--tier2 {
+  font-size: 9.5px;
+  font-weight: 700;
+  fill: var(--c-text-2);
+  pointer-events: none;
+}
+.rmap-edge--tier2 {
+  stroke: var(--c-border-2);
+  stroke-dasharray: 4 3;
+  fill: none;
+  opacity: 0.72;
+}
+.rmap-edge-label {
+  font-size: 8px;
+  fill: var(--c-text-4);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── Detail panel tag chips ──────────────────────────────────────────────── */
+.rmap-detail-tag {
+  display: inline-block;
+  font-size: 9px;
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: 10px;
+  padding: 2px 7px;
+  color: var(--c-text-3);
+  line-height: 1.4;
+}
+
+/* ── Filter bar ──────────────────────────────────────────────────────────── */
+.rmap-filter-bar {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  z-index: 20;
+}
+.rmap-filter-search-wrap {
+  position: relative;
+}
+.rmap-filter-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  padding: 5px 10px;
+  min-width: 256px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+.rmap-filter-search-icon {
+  color: var(--c-text-4);
+  flex-shrink: 0;
+}
+.rmap-filter-input {
+  border: none;
+  outline: none;
+  font-size: 12px;
+  color: var(--c-text);
+  background: transparent;
+  width: 100%;
+  font-family: var(--font);
+}
+.rmap-filter-input::placeholder { color: var(--c-text-4); }
+
+.rmap-filter-tabs {
+  display: flex;
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-top: none;
+  padding: 4px 6px 0;
+  min-width: 256px;
+  gap: 0;
+}
+.rmap-filter-tab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 4px 10px 5px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--c-text-3);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+}
+.rmap-filter-tab:hover { color: var(--c-text); }
+.rmap-filter-tab--active {
+  color: #1e66f5;
+  border-bottom-color: #1e66f5;
+  font-weight: 600;
+}
+.rmap-filter-dropdown {
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  min-width: 256px;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.10);
+}
+.rmap-filter-group { padding: 6px 0; }
+.rmap-filter-group-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-text-4);
+  padding: 2px 12px 4px;
+}
+.rmap-filter-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 12px;
+  font-size: 12px;
+  color: var(--c-text);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.rmap-filter-item:hover { background: var(--c-bg); }
+.rmap-filter-item-sub {
+  font-size: 10px;
+  color: var(--c-text-4);
+  margin-left: 8px;
+}
+.rmap-filter-empty {
+  padding: 12px;
+  font-size: 12px;
+  color: var(--c-text-4);
+  text-align: center;
+}
+
+/* ── Relation & Risk dropdown buttons ────────────────────────────────────── */
+.rmap-rel-wrap,
+.rmap-risk-wrap {
+  position: relative;
+}
+.rmap-rel-btn,
+.rmap-risk-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--c-text);
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.rmap-rel-btn:hover,
+.rmap-risk-btn:hover {
+  border-color: var(--c-border-2);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+.rmap-dropdown-arrow {
+  font-size: 8px;
+  color: var(--c-text-4);
+  margin-left: 2px;
+}
+.rmap-rel-dropdown,
+.rmap-risk-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  z-index: 30;
+  min-width: 210px;
+  overflow: hidden;
+  padding: 4px 0;
+}
+.rmap-rel-option,
+.rmap-risk-option {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 7px 12px;
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  color: var(--c-text);
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: left;
+  transition: background 0.1s;
+}
+.rmap-rel-option:hover,
+.rmap-risk-option:hover { background: var(--c-bg); }
+.rmap-rel-option--active {
+  color: #1e66f5;
+  font-weight: 600;
+}
+.rmap-checkmark {
+  display: inline-block;
+  width: 14px;
+  font-size: 11px;
+  color: #1e66f5;
+  flex-shrink: 0;
+}
+.rmap-risk-option-sub {
+  font-size: 10px;
+  color: var(--c-text-4);
+  margin-left: auto;
+  padding-left: 8px;
+}
+
+/* ── Supplier page company header ────────────────────────────────────────── */
+.rmap-company-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.rmap-risk-light {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.06);
+}
+.rmap-risk-light--green { background: #16a34a; box-shadow: 0 0 6px rgba(22,163,74,0.5); }
+.rmap-risk-light--yellow { background: #ca8a04; box-shadow: 0 0 6px rgba(202,138,4,0.5); }
+.rmap-risk-light--red { background: #dc2626; box-shadow: 0 0 6px rgba(220,38,38,0.5); }
+.rmap-company-header-name {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--c-dark);
+  letter-spacing: -0.3px;
+}
+.rmap-company-header-full {
+  font-size: 13px;
+  color: var(--c-text-3);
+  font-weight: 400;
+}
+
+/* ── Summary cards row ───────────────────────────────────────────────────── */
+.rmap-summary-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.rmap-summary-card {
+  padding: 16px 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.rmap-summary-card-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--c-text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.rmap-summary-card-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--c-dark);
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+.rmap-summary-card-sub {
+  font-size: 11px;
+  color: var(--c-text-4);
+}
+.rmap-summary-card--add {
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  border: 2px dashed var(--c-border-2);
+  background: var(--c-bg);
+  transition: border-color 0.15s, background 0.15s;
+}
+.rmap-summary-card--add:hover {
+  border-color: var(--c-border-2);
+  background: var(--c-white);
+}
+.rmap-summary-card-add-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--c-text-3);
+}
+
+/* ── Supplier page nav tabs (blue underline) ─────────────────────────────── */
+.rmap-supplier-tabs {
+  margin-bottom: 16px;
+}
+.rmap-tab-blue {
+  border-bottom-color: #2196F3 !important;
+  color: var(--c-text) !important;
 }

@@ -1,10 +1,12 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import SupplierGraph from './SupplierGraph';
+import { TSM_TIER1_SUPPLIERS, TSM_TIER2_SUPPLIERS, EDGE_ENTITIES } from '@/app/data/tsmcSupplierData';
 
 function BackArrowIcon() {
   return (
@@ -20,7 +22,33 @@ function BackArrowIcon() {
   );
 }
 
+function PlusIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+      <path d="M14 6v16M6 14h16" stroke="#374151" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+const SUPPLIER_TABS = ['Network Graph', 'Table View', 'Analytics', 'Risk Heatmap'] as const;
+type SupplierTab = (typeof SUPPLIER_TABS)[number];
+
+// Compute summary stats
+const tier1Count = TSM_TIER1_SUPPLIERS.length;
+const tier2Count = TSM_TIER2_SUPPLIERS.length;
+const tier1TotalRevenue = EDGE_ENTITIES.filter((e) => e.from === 'TSM').reduce(
+  (sum, e) => sum + e.transactionAmount,
+  0,
+);
+
+function formatRevenue(millionUsd: number): string {
+  if (millionUsd >= 1000) return `$${(millionUsd / 1000).toFixed(1)}B`;
+  return `$${millionUsd}M`;
+}
+
 export default function SupplierPage() {
+  const [activeTab, setActiveTab] = useState<SupplierTab>('Network Graph');
+
   return (
     <>
       <TopNav />
@@ -29,6 +57,7 @@ export default function SupplierPage() {
         <Sidebar />
         <main className="main-content">
           <div className="page-pad scm-sub-page">
+            {/* Breadcrumb */}
             <div className="scm-sub-topbar">
               <Link href="/supply-chain-maps" className="cp-back-btn">
                 <BackArrowIcon />
@@ -40,22 +69,59 @@ export default function SupplierPage() {
               </div>
             </div>
 
-            {/* Company selector row */}
-            <div className="rmap-company-row">
-              <div className="rmap-company-badge">
-                <span className="rmap-company-label">分析對象</span>
-                <span className="rmap-company-name">Apple Inc. (AAPL)</span>
-              </div>
-              <p className="rmap-company-desc">
-                以下關係圖呈現 Apple 的主要 Tier-1 供應商網絡，包含各公司財務概況。點擊節點查看詳細資訊，並可在連線上輸入備註。
-              </p>
+            {/* Company header with green risk light */}
+            <div className="rmap-company-header">
+              <span className="rmap-risk-light rmap-risk-light--green" title="No active risk signals" />
+              <div className="rmap-company-header-name">TSM</div>
+              <div className="rmap-company-header-full">Taiwan Semiconductor Manufacturing Company</div>
             </div>
 
-            <SupplierGraph />
+            {/* Summary cards */}
+            <div className="rmap-summary-cards">
+              <div className="cp-data-card rmap-summary-card">
+                <div className="rmap-summary-card-title">Tier 1 Supplier Count</div>
+                <div className="rmap-summary-card-value">{tier1Count}</div>
+                <div className="rmap-summary-card-sub">Direct suppliers</div>
+              </div>
+              <div className="cp-data-card rmap-summary-card">
+                <div className="rmap-summary-card-title">Tier 2 Supplier Count</div>
+                <div className="rmap-summary-card-value">{tier2Count}</div>
+                <div className="rmap-summary-card-sub">Indirect suppliers</div>
+              </div>
+              <div className="cp-data-card rmap-summary-card">
+                <div className="rmap-summary-card-title">Tier 1 Total Trade Revenue</div>
+                <div className="rmap-summary-card-value">{formatRevenue(tier1TotalRevenue)}</div>
+                <div className="rmap-summary-card-sub">Annual transaction amount</div>
+              </div>
+              <div className="cp-data-card rmap-summary-card rmap-summary-card--add">
+                <PlusIcon />
+                <div className="rmap-summary-card-add-label">Add Custom Card</div>
+              </div>
+            </div>
+
+            {/* Nav tabs */}
+            <div className="cp-nav-tabs rmap-supplier-tabs">
+              {SUPPLIER_TABS.map((tab) => (
+                <button
+                  key={tab}
+                  className={`cp-nav-tab${activeTab === tab ? ' active rmap-tab-blue' : ''}`}
+                  onClick={() => setActiveTab(tab)}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+
+            {/* Tab content */}
+            {activeTab === 'Network Graph' && <SupplierGraph />}
+            {activeTab !== 'Network Graph' && (
+              <div className="cp-tab-placeholder">
+                <span className="cp-tab-placeholder-text">{activeTab} — Coming Soon</span>
+              </div>
+            )}
           </div>
         </main>
       </div>
     </>
   );
 }
-
