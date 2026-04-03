@@ -1,7 +1,7 @@
 import SupplyChainLanding from './SupplyChainLanding';
 
 export const metadata = {
-  title: 'Supply Chain Maps — tMIC',
+  title: 'RMAP — tMIC',
 };
 
 export default function SupplyChainMapsPage() {

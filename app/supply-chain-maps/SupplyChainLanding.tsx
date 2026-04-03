@@ -117,7 +117,7 @@ export default function SupplyChainLanding() {
           <div className="scm-landing">
             {/* ── Hero + Search ── */}
             <div className="scm-hero">
-              <h1 className="scm-hero-title">Supply Chain Ecosystem</h1>
+              <h1 className="scm-hero-title">RMAP — Relational Map</h1>
               <p className="scm-hero-subtitle">
                 Search any company to explore its supply chain relationships — suppliers, customers, and competitors.
               </p>
