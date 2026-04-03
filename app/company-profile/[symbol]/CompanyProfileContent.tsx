@@ -573,71 +573,73 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                 </Link>
                 <div className="cp-breadcrumb">
                   <span className="cp-breadcrumb-text">Company Overview /</span>
-                  <div className="cp-name-tags-row">
-                    <h1 className="cp-company-name">{companyName}</h1>
-                    <div className="cp-inline-tags">
-                      {publicTags.length > 0 && (
-                        <div className="cp-tags-group">
-                          <span className="cp-tags-group-label">Public Tag</span>
-                          <div className="cp-tags-list">
-                            {publicTags.map((tag) => (
-                              <Link
-                                key={tag}
-                                href={`/company-profile?tag=${encodeURIComponent(tag)}`}
-                                className="cp-tag cp-tag--link"
-                              >
-                                {tag}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      <div className="cp-tags-group">
-                        <span className="cp-tags-group-label">My Tag</span>
-                        <div className="cp-tags-list">
-                          {myTags.map((tag) => (
-                            <span key={tag} className="cp-tag cp-tag--my">
-                              <Link
-                                href={`/company-profile?tag=${encodeURIComponent(tag)}`}
-                                className="cp-tag-text-link"
-                              >
-                                {tag}
-                              </Link>
-                              <button className="cp-tag-remove" onClick={() => removeTag(tag)} aria-label={`Remove tag ${tag}`}>×</button>
-                            </span>
-                          ))}
-                          <input
-                            ref={tagsInputRef}
-                            className="cp-tag-input"
-                            placeholder="+ Add tag"
-                            value={tagInput}
-                            onChange={(e) => setTagInput(e.target.value)}
-                            onKeyDown={addTag}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <h1 className="cp-company-name">{companyName}</h1>
                 </div>
               </div>
 
               <div className="cp-detail-topbar-right">
-                {/* Favorite button */}
-                <button
-                  className={`cp-favorite-btn${isFavorite ? ' active' : ''}`}
-                  onClick={toggleFavorite}
-                  title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-                >
-                  <StarIcon filled={isFavorite} />
-                  {isFavorite ? 'Favorited' : 'Favorite'}
-                </button>
+                {/* Top row: Favorite + Action icons */}
+                <div className="cp-detail-topbar-right-actions">
+                  <button
+                    className={`cp-favorite-btn${isFavorite ? ' active' : ''}`}
+                    onClick={toggleFavorite}
+                    title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                  >
+                    <StarIcon filled={isFavorite} />
+                    {isFavorite ? 'Favorited' : 'Favorite'}
+                  </button>
 
-                {/* Action icons */}
-                <div className="cp-action-icons">
-                  <button className="cp-action-icon-btn" title="Bookmark"><BookmarkIcon /></button>
-                  <button className="cp-action-icon-btn" title="Share"><ShareIcon /></button>
-                  <button className="cp-action-icon-btn" title="Refresh"><RefreshIcon /></button>
-                  <button className="cp-action-icon-btn" title="Settings"><SettingsIcon /></button>
+                  {/* Action icons */}
+                  <div className="cp-action-icons">
+                    <button className="cp-action-icon-btn" title="Bookmark"><BookmarkIcon /></button>
+                    <button className="cp-action-icon-btn" title="Share"><ShareIcon /></button>
+                    <button className="cp-action-icon-btn" title="Refresh"><RefreshIcon /></button>
+                    <button className="cp-action-icon-btn" title="Settings"><SettingsIcon /></button>
+                  </div>
+                </div>
+
+                {/* Bottom row: Tags — right-aligned with icons above */}
+                <div className="cp-inline-tags">
+                  {publicTags.length > 0 && (
+                    <div className="cp-tags-group">
+                      <span className="cp-tags-group-label">Public Tag</span>
+                      <div className="cp-tags-list">
+                        {publicTags.map((tag) => (
+                          <Link
+                            key={tag}
+                            href={`/company-profile?tag=${encodeURIComponent(tag)}`}
+                            className="cp-tag cp-tag--link"
+                          >
+                            {tag}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <div className="cp-tags-group">
+                    <span className="cp-tags-group-label">My Tag</span>
+                    <div className="cp-tags-list">
+                      {myTags.map((tag) => (
+                        <span key={tag} className="cp-tag cp-tag--my">
+                          <Link
+                            href={`/company-profile?tag=${encodeURIComponent(tag)}`}
+                            className="cp-tag-text-link"
+                          >
+                            {tag}
+                          </Link>
+                          <button className="cp-tag-remove" onClick={() => removeTag(tag)} aria-label={`Remove tag ${tag}`}>×</button>
+                        </span>
+                      ))}
+                      <input
+                        ref={tagsInputRef}
+                        className="cp-tag-input"
+                        placeholder="+ Add tag"
+                        value={tagInput}
+                        onChange={(e) => setTagInput(e.target.value)}
+                        onKeyDown={addTag}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
