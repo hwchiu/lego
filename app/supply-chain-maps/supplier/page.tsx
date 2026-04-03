@@ -69,11 +69,13 @@ export default function SupplierPage() {
               </div>
             </div>
 
-            {/* Company header with green risk light */}
+            {/* Company header with risk light */}
             <div className="rmap-company-header">
               <span className="rmap-risk-light rmap-risk-light--green" title="No active risk signals" />
-              <div className="rmap-company-header-name">TSM</div>
-              <div className="rmap-company-header-full">Taiwan Semiconductor Manufacturing Company</div>
+              <div className="rmap-company-header-info">
+                <div className="rmap-company-header-name">TSM</div>
+                <div className="rmap-company-header-full">Taiwan Semiconductor Manufacturing Company</div>
+              </div>
             </div>
 
             {/* Summary cards */}
@@ -114,7 +116,8 @@ export default function SupplierPage() {
 
             {/* Tab content */}
             {activeTab === 'Network Graph' && <SupplierGraph />}
-            {activeTab !== 'Network Graph' && (
+            {activeTab === 'Table View' && <SupplierGraph tableOnly />}
+            {activeTab !== 'Network Graph' && activeTab !== 'Table View' && (
               <div className="cp-tab-placeholder">
                 <span className="cp-tab-placeholder-text">{activeTab} — Coming Soon</span>
               </div>

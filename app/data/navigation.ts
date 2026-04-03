@@ -68,7 +68,7 @@ export const sidebarIcons: Record<string, string> = {
 
 export const quickLinks: NavItem[] = [
   { label: 'About tMIC', href: '/about', icon: 'info' },
-  { label: 'Explore MIC Picks', href: '#', icon: 'star', badge: 'NEW', badgeColor: '#BF3030' },
+  { label: 'Explore MIC Picks', href: '#', icon: 'star', badge: 'Coming soon', badgeStyle: 'coming-soon' },
   { label: 'Subscribe Newsletters', href: '#', icon: 'mail' },
 ];
 
@@ -112,8 +112,8 @@ export const supplyChainNav: NavItem[] = [
     label: 'RMAP',
     href: '/supply-chain-maps',
     icon: 'supplyMap',
-    badge: 'Coming soon',
-    badgeStyle: 'coming-soon',
+    badge: 'NEW',
+    badgeColor: '#BF3030',
     subItems: [
       { label: 'Supplier', href: '/supply-chain-maps/supplier' },
       { label: 'Customer', href: '/supply-chain-maps/customer' },
