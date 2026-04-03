@@ -2994,7 +2994,7 @@ input, select { font-family: var(--font); }
 .cp-tags-panel {
   display: flex;
   flex-direction: row;
-  gap: 12px;
+  gap: 8px;
   align-items: center;
   justify-content: flex-end;
   flex-shrink: 0;
@@ -3214,7 +3214,7 @@ input, select { font-family: var(--font); }
 .cp-fin-metrics {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 8px;
   flex: 1;
   justify-content: space-evenly;
 }
@@ -3225,7 +3225,7 @@ input, select { font-family: var(--font); }
   align-items: center;
   text-align: center;
   gap: 4px;
-  padding: 6px 0;
+  padding: 4px 0;
 }
 
 .cp-fin-metric-label {
