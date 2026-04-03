@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -35,6 +35,15 @@ jobs:
 
       - name: Fetch live stock data
         run: npm run fetch-data
+
+      - name: Commit updated market data
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/market-indices.md content/sp500-quotes.md content/watchlist-data.md
+          git diff --cached --quiet || git commit -m "chore: update market data [skip ci]"
+          git push
 
       - run: npx next build
 

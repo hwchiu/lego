@@ -6,59 +6,18 @@ import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { SP500_COMPANIES } from '@/app/data/sp500';
-import { stockIndexes } from '@/app/data/generated/indexData';
-import { holdingsMarketData } from '@/app/data/generated/holdingsMarketData';
-import type { HoldingMarketData } from '@/app/data/generated/holdingsMarketData';
+import { stockIndexes } from '@/app/data/marketIndices';
+import { holdingsData as holdingsDataMap } from '@/app/data/watchlistData';
+import type { HoldingEntity } from '@/app/data/watchlistData';
 import { mainNav } from '@/app/data/navigation';
 import { useWatchlist } from '@/app/contexts/WatchlistContext';
 
-// Stock index data is now imported from app/data/generated/indexData.ts
+// All data (indices, holdings, portfolio config) comes from content/*.md files.
+// The fetch script writes to MD; app/data/*.ts readers parse via extractJson().
 
-// ── Holdings data ─────────────────────────────────────────────────────────────
-// Portfolio config (shares and cost are user-specific, not fetched)
-interface PortfolioEntry {
-  symbol: string;
-  shares: number;
-  cost: number;
-}
+type Holding = HoldingEntity;
 
-interface Holding extends HoldingMarketData {
-  symbol: string;
-  shares: number;
-  cost: number;
-  todayGain: number;
-  todayGainPct: number;
-}
-
-const portfolioConfig: PortfolioEntry[] = [
-  { symbol: 'TSM', shares: 120, cost: 105.3 },
-  { symbol: 'TSLA', shares: 50, cost: 196.4 },
-  { symbol: 'QCOM', shares: 80, cost: 128.9 },
-  { symbol: 'GOOGL', shares: 60, cost: 138.5 },
-  { symbol: 'SONY', shares: 200, cost: 18.7 },
-  { symbol: 'AAPL', shares: 45, cost: 167.8 },
-  { symbol: 'NVDA', shares: 30, cost: 512.6 },
-  { symbol: 'ASML', shares: 20, cost: 598.0 },
-];
-
-// Merge portfolio config with fetched market data
-const holdingsData: Holding[] = portfolioConfig.map((p) => {
-  const mkt = holdingsMarketData[p.symbol] || {
-    price: 0, change: 0, changePct: 0,
-    revenue: 'N/A', revenueQoQ: 'N/A', revenueYoY: 'N/A',
-    grossMargin: 'N/A', doi: 'N/A', nextEarning: 'N/A',
-    lastQtrRevenue: 'N/A', lastQtrGrossMargin: 'N/A', lastQtrDOI: 'N/A',
-  };
-  const todayGain = +(mkt.change * p.shares).toFixed(1);
-  return {
-    symbol: p.symbol,
-    shares: p.shares,
-    cost: p.cost,
-    ...mkt,
-    todayGain,
-    todayGainPct: mkt.changePct,
-  };
-});
+const holdingsData: Holding[] = Object.values(holdingsDataMap);
 
 // ── News feed items ───────────────────────────────────────────────────────────
 // Category tags sourced from content/watchlist-articles.md

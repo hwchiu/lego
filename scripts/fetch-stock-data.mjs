@@ -1,23 +1,28 @@
 #!/usr/bin/env node
 
 /**
- * Fetch real stock market data from Yahoo Finance and write TypeScript data files.
+ * Fetch real stock market data from Yahoo Finance and write content Markdown files.
+ *
+ * All data is stored in content/*.md as JSON code blocks, following the existing
+ * pattern used by earnings.md and banner.md. TypeScript data files in app/data/
+ * import these .md files via extractJson().
  *
  * Usage:  node scripts/fetch-stock-data.mjs
  *
  * Outputs:
- *   app/data/generated/indexData.ts      — market indices with sparklines
- *   app/data/generated/holdingsMarketData.ts — per-symbol price + financial data
+ *   content/market-indices.md   — market indices with sparklines
+ *   content/sp500-quotes.md     — price quotes for all S&P 500 companies
+ *   content/watchlist-data.md   — updated Entity Data section with real prices
  */
 
 import YahooFinance from 'yahoo-finance2';
 const yahooFinance = new YahooFinance({ suppressNotices: ['yahooSurvey', 'ripHistorical'] });
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const OUT_DIR = resolve(__dirname, '..', 'app', 'data', 'generated');
+const CONTENT_DIR = resolve(__dirname, '..', 'content');
 
 // ── Configuration ────────────────────────────────────────────────────────────
 
@@ -29,7 +34,81 @@ const INDEX_MAP = [
   { name: 'Russell 2000', symbol: '^RUT' },
 ];
 
-const HOLDING_SYMBOLS = ['TSM', 'TSLA', 'QCOM', 'GOOGL', 'SONY', 'AAPL', 'NVDA', 'ASML'];
+const BATCH_SIZE = 50;
+const BATCH_DELAY_MS = 500;
+
+// ── Read S&P 500 symbol list from sp500.ts ───────────────────────────────────
+
+function readSP500Symbols() {
+  const src = readFileSync(resolve(__dirname, '..', 'app', 'data', 'sp500.ts'), 'utf-8');
+  const symbols = [];
+  for (const match of src.matchAll(/symbol:\s*'([^']+)'/g)) {
+    symbols.push(match[1]);
+  }
+  return symbols;
+}
+
+// ── Read existing watchlist-data.md to preserve portfolio config ──────────────
+
+function readWatchlistPortfolio() {
+  try {
+    const md = readFileSync(resolve(CONTENT_DIR, 'watchlist-data.md'), 'utf-8');
+    const match = md.match(/## Entity Data[\s\S]*?```json\s*([\s\S]*?)\s*```/);
+    if (match) {
+      const entities = JSON.parse(match[1]);
+      const portfolio = {};
+      for (const [sym, data] of Object.entries(entities)) {
+        portfolio[sym] = { shares: data.shares || 0, cost: data.cost || 0 };
+      }
+      return portfolio;
+    }
+  } catch { /* file doesn't exist yet, use defaults */ }
+  return {
+    TSM: { shares: 120, cost: 105.3 },
+    TSLA: { shares: 50, cost: 196.4 },
+    QCOM: { shares: 80, cost: 128.9 },
+    GOOGL: { shares: 60, cost: 138.5 },
+    SONY: { shares: 200, cost: 18.7 },
+    AAPL: { shares: 45, cost: 167.8 },
+    NVDA: { shares: 30, cost: 512.6 },
+    ASML: { shares: 20, cost: 598.0 },
+  };
+}
+
+// ── Read existing watchlist-data.md header sections ──────────────────────────
+
+function readWatchlistHeader() {
+  try {
+    const md = readFileSync(resolve(CONTENT_DIR, 'watchlist-data.md'), 'utf-8');
+    const idx = md.indexOf('## Entity Data');
+    if (idx !== -1) return md.slice(0, idx);
+  } catch { /* file doesn't exist yet */ }
+  return `# Watchlist Persistent Data
+
+## Watchlist Names
+
+\`\`\`json
+{
+  "627836": "Watchlist1",
+  "738291": "Watchlist-TSM",
+  "394827": "Watchlist2"
+}
+\`\`\`
+
+## Symbol Orders
+
+\`\`\`json
+{
+  "627836": ["TSM", "TSLA", "QCOM", "GOOGL", "SONY", "AAPL", "NVDA", "ASML"],
+  "738291": ["TSM", "TSLA", "QCOM", "GOOGL", "SONY", "AAPL", "NVDA", "ASML"],
+  "394827": ["TSM", "TSLA", "QCOM", "GOOGL", "SONY", "AAPL", "NVDA", "ASML"]
+}
+\`\`\`
+
+> **Note:** This file records the default state. Actual user modifications are persisted in \`localStorage\` under the key \`wl-names\` (for names) and \`wl-orders\` (for symbol orders), keyed by watchlist ID.
+
+`;
+}
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -51,7 +130,6 @@ function round2(n) {
   return n == null ? 0 : Math.round(n * 100) / 100;
 }
 
-/** Normalize sparkline points to 0–100 scale */
 function normalizeSparkline(prices) {
   if (!prices || prices.length === 0) return [50, 50, 50, 50, 50, 50, 50];
   const min = Math.min(...prices);
@@ -60,11 +138,20 @@ function normalizeSparkline(prices) {
   return prices.map((p) => Math.round(((p - min) / range) * 100));
 }
 
-/** Format a date as "Mon DD, YYYY" */
 function fmtDate(d) {
   if (!d) return 'N/A';
   const date = new Date(d);
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+function chunk(arr, size) {
+  const chunks = [];
+  for (let i = 0; i < arr.length; i += size) chunks.push(arr.slice(i, i + size));
+  return chunks;
 }
 
 // ── Fetch indices ────────────────────────────────────────────────────────────
@@ -76,18 +163,13 @@ async function fetchIndices() {
   for (const idx of INDEX_MAP) {
     try {
       const quote = await yahooFinance.quote(idx.symbol);
-
-      // Fetch 14-day chart for sparkline (get ~7 trading days)
       const endDate = new Date();
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - 14);
 
       const chart = await yahooFinance.chart(idx.symbol, {
-        period1: startDate,
-        period2: endDate,
-        interval: '1d',
+        period1: startDate, period2: endDate, interval: '1d',
       });
-
       const closePrices = (chart.quotes || []).map((q) => q.close).filter(Boolean).slice(-7);
 
       results.push({
@@ -97,125 +179,193 @@ async function fetchIndices() {
         changePct: round2(quote.regularMarketChangePercent),
         trend: normalizeSparkline(closePrices),
       });
-
-      console.log(`  ✅ ${idx.name} (${idx.symbol}): ${quote.regularMarketPrice}`);
+      console.log(`  ✅ ${idx.name}: ${quote.regularMarketPrice}`);
     } catch (err) {
-      console.error(`  ❌ Failed to fetch ${idx.name} (${idx.symbol}):`, err.message);
-      results.push({
-        name: idx.name,
-        value: 0,
-        change: 0,
-        changePct: 0,
-        trend: [50, 50, 50, 50, 50, 50, 50],
-      });
+      console.error(`  ❌ ${idx.name}: ${err.message}`);
+      results.push({ name: idx.name, value: 0, change: 0, changePct: 0, trend: [50, 50, 50, 50, 50, 50, 50] });
     }
   }
-
   return results;
 }
 
-// ── Fetch holdings market data ───────────────────────────────────────────────
+// ── Batch-fetch ALL S&P 500 quotes ───────────────────────────────────────────
 
-async function fetchHoldings() {
-  console.log('\n💼 Fetching holdings market data...');
+async function fetchAllQuotes(symbols) {
+  console.log(`\n📊 Fetching quotes for ${symbols.length} S&P 500 symbols (batch size ${BATCH_SIZE})...`);
+  const results = {};
+  const batches = chunk(symbols, BATCH_SIZE);
+  let ok = 0, fail = 0;
+
+  for (let i = 0; i < batches.length; i++) {
+    const batch = batches[i];
+    try {
+      const quotes = await yahooFinance.quote(batch);
+      for (const q of quotes) {
+        if (!q || !q.symbol) continue;
+        results[q.symbol] = {
+          price: round2(q.regularMarketPrice),
+          change: round2(q.regularMarketChange),
+          changePct: round2(q.regularMarketChangePercent),
+        };
+        ok++;
+      }
+    } catch {
+      for (const sym of batch) {
+        try {
+          const q = await yahooFinance.quote(sym);
+          results[sym] = { price: round2(q.regularMarketPrice), change: round2(q.regularMarketChange), changePct: round2(q.regularMarketChangePercent) };
+          ok++;
+        } catch { results[sym] = { price: 0, change: 0, changePct: 0 }; fail++; }
+      }
+    }
+    const progress = Math.min(100, Math.round(((i + 1) / batches.length) * 100));
+    process.stdout.write(`\r  📦 Batch ${i + 1}/${batches.length} (${progress}%) — ${ok} ok, ${fail} failed`);
+    if (i < batches.length - 1) await sleep(BATCH_DELAY_MS);
+  }
+  console.log(`\n  ✅ Fetched ${ok} quotes, ${fail} failed`);
+  return results;
+}
+
+// ── Fetch detailed holdings financials ───────────────────────────────────────
+
+async function fetchHoldingsDetail(holdingSymbols) {
+  console.log('\n💼 Fetching detailed financials for watchlist holdings...');
   const results = {};
 
-  for (const symbol of HOLDING_SYMBOLS) {
+  for (const symbol of holdingSymbols) {
     try {
-      const [quote, summary] = await Promise.all([
-        yahooFinance.quote(symbol),
-        yahooFinance.quoteSummary(symbol, {
-          modules: ['financialData', 'calendarEvents', 'defaultKeyStatistics'],
-        }).catch(() => ({})),
-      ]);
-
-      const financialData = summary?.financialData || {};
-      const calendarEvents = summary?.calendarEvents || {};
-      const currency = financialData.financialCurrency || 'USD';
-
-      // Revenue from financialData (TTM, in reporting currency)
-      const totalRevenue = financialData.totalRevenue;
-      const revenueGrowth = financialData.revenueGrowth;
-      const grossMargin = financialData.grossMargins;
-
-      // Next earnings date
-      const earningsDates = calendarEvents.earnings?.earningsDate || [];
-      const nextEarning = earningsDates.length > 0 ? fmtDate(earningsDates[0]) : 'N/A';
+      const summary = await yahooFinance.quoteSummary(symbol, {
+        modules: ['financialData', 'calendarEvents', 'defaultKeyStatistics'],
+      });
+      const fd = summary?.financialData || {};
+      const ce = summary?.calendarEvents || {};
+      const currency = fd.financialCurrency || 'USD';
+      const earningsDates = ce.earnings?.earningsDate || [];
 
       results[symbol] = {
-        price: round2(quote.regularMarketPrice),
-        change: round2(quote.regularMarketChange),
-        changePct: round2(quote.regularMarketChangePercent),
-        revenue: fmt(totalRevenue, currency),
+        revenue: fmt(fd.totalRevenue, currency),
         revenueQoQ: 'N/A',
-        revenueYoY: revenueGrowth != null ? pctFmt(revenueGrowth) : 'N/A',
-        grossMargin: grossMargin != null ? `${(grossMargin * 100).toFixed(1)}%` : 'N/A',
+        revenueYoY: fd.revenueGrowth != null ? pctFmt(fd.revenueGrowth) : 'N/A',
+        grossMargin: fd.grossMargins != null ? `${(fd.grossMargins * 100).toFixed(1)}%` : 'N/A',
         doi: 'N/A',
-        nextEarning,
+        nextEarning: earningsDates.length > 0 ? fmtDate(earningsDates[0]) : 'N/A',
         lastQtrRevenue: 'N/A',
         lastQtrGrossMargin: 'N/A',
         lastQtrDOI: 'N/A',
       };
-
-      console.log(`  ✅ ${symbol}: $${quote.regularMarketPrice} (${quote.regularMarketChangePercent > 0 ? '+' : ''}${quote.regularMarketChangePercent?.toFixed(2)}%)`);
+      console.log(`  ✅ ${symbol}: revenue ${results[symbol].revenue}, margin ${results[symbol].grossMargin}`);
     } catch (err) {
-      console.error(`  ❌ Failed to fetch ${symbol}:`, err.message);
+      console.error(`  ❌ ${symbol}: ${err.message}`);
       results[symbol] = {
-        price: 0, change: 0, changePct: 0,
         revenue: 'N/A', revenueQoQ: 'N/A', revenueYoY: 'N/A',
         grossMargin: 'N/A', doi: 'N/A', nextEarning: 'N/A',
         lastQtrRevenue: 'N/A', lastQtrGrossMargin: 'N/A', lastQtrDOI: 'N/A',
       };
     }
   }
-
   return results;
 }
 
-// ── Write output files ───────────────────────────────────────────────────────
+// ── Write Markdown files ─────────────────────────────────────────────────────
 
-function writeIndexData(indices) {
-  const ts = `// Auto-generated by scripts/fetch-stock-data.mjs — do not edit manually
-// Last updated: ${new Date().toISOString()}
+function writeMarketIndicesMd(indices) {
+  const md = `# Market Indices
 
-export interface StockIndex {
-  name: string;
-  value: number;
-  change: number;
-  changePct: number;
-  trend: number[];
-}
+> Auto-generated by \`scripts/fetch-stock-data.mjs\` — do not edit manually.
+> Last updated: ${new Date().toISOString()}
 
-export const stockIndexes: StockIndex[] = ${JSON.stringify(indices, null, 2)};
+\`\`\`json
+${JSON.stringify(indices, null, 2)}
+\`\`\`
 `;
-  const path = resolve(OUT_DIR, 'indexData.ts');
-  writeFileSync(path, ts, 'utf-8');
+  const path = resolve(CONTENT_DIR, 'market-indices.md');
+  writeFileSync(path, md, 'utf-8');
   console.log(`\n📁 Wrote ${path}`);
 }
 
-function writeHoldingsData(holdings) {
-  const ts = `// Auto-generated by scripts/fetch-stock-data.mjs — do not edit manually
-// Last updated: ${new Date().toISOString()}
+function writeSP500QuotesMd(quotes) {
+  const md = `# S&P 500 Quotes
 
-export interface HoldingMarketData {
-  price: number;
-  change: number;
-  changePct: number;
-  revenue: string;
-  revenueQoQ: string;
-  revenueYoY: string;
-  grossMargin: string;
-  doi: string;
-  nextEarning: string;
-  lastQtrRevenue: string;
-  lastQtrGrossMargin: string;
-  lastQtrDOI: string;
+> Auto-generated by \`scripts/fetch-stock-data.mjs\` — do not edit manually.
+> Last updated: ${new Date().toISOString()}
+> Total symbols: ${Object.keys(quotes).length}
+
+\`\`\`json
+${JSON.stringify(quotes, null, 2)}
+\`\`\`
+`;
+  const path = resolve(CONTENT_DIR, 'sp500-quotes.md');
+  writeFileSync(path, md, 'utf-8');
+  console.log(`📁 Wrote ${path} (${Object.keys(quotes).length} symbols)`);
 }
 
-export const holdingsMarketData: Record<string, HoldingMarketData> = ${JSON.stringify(holdings, null, 2)};
+function writeWatchlistDataMd(allQuotes, holdingsDetail, portfolio) {
+  const header = readWatchlistHeader();
+  const holdingSymbols = Object.keys(portfolio);
+
+  const entities = {};
+  for (const sym of holdingSymbols) {
+    const q = allQuotes[sym] || { price: 0, change: 0, changePct: 0 };
+    const d = holdingsDetail[sym] || {
+      revenue: 'N/A', revenueQoQ: 'N/A', revenueYoY: 'N/A',
+      grossMargin: 'N/A', doi: 'N/A', nextEarning: 'N/A',
+      lastQtrRevenue: 'N/A', lastQtrGrossMargin: 'N/A', lastQtrDOI: 'N/A',
+    };
+    const p = portfolio[sym];
+    const todayGain = +(q.change * p.shares).toFixed(2);
+
+    entities[sym] = {
+      symbol: sym,
+      price: q.price,
+      change: q.change,
+      changePct: q.changePct,
+      shares: p.shares,
+      cost: p.cost,
+      todayGain,
+      todayGainPct: q.changePct,
+      ...d,
+    };
+  }
+
+  const fieldDescriptions = `### Field Descriptions
+
+| Field | Description |
+|---|---|
+| \`symbol\` | Stock ticker symbol |
+| \`price\` | Current share price (USD) |
+| \`change\` | Absolute price change today (USD) |
+| \`changePct\` | Percentage price change today (%) |
+| \`shares\` | Number of shares held |
+| \`cost\` | Average cost basis per share (USD) |
+| \`todayGain\` | Total dollar gain/loss today across all shares |
+| \`todayGainPct\` | Percentage gain/loss today (%) |
+| \`revenue\` | Trailing twelve months revenue (formatted, in reporting currency) |
+| \`revenueQoQ\` | Revenue change vs. prior quarter |
+| \`revenueYoY\` | Revenue change vs. same quarter last year |
+| \`grossMargin\` | Gross profit margin (trailing) |
+| \`doi\` | Days of Inventory Outstanding |
+| \`nextEarning\` | Next scheduled earnings release date |
+| \`lastQtrRevenue\` | Previous quarter revenue |
+| \`lastQtrGrossMargin\` | Previous quarter gross margin |
+| \`lastQtrDOI\` | Previous quarter Days of Inventory Outstanding |`;
+
+  const md = `${header}## Entity Data
+
+> Auto-updated by \`scripts/fetch-stock-data.mjs\`.
+> Last updated: ${new Date().toISOString()}
+
+Full holding-table data for every tracked symbol. User-added symbols are persisted in \`localStorage\` under the key \`wl-extra-holdings\`.
+
+> **DOI** = Days of Inventory Outstanding (a supply-chain efficiency metric; lower values indicate faster inventory turnover).
+
+\`\`\`json
+${JSON.stringify(entities, null, 2)}
+\`\`\`
+
+${fieldDescriptions}
 `;
-  const path = resolve(OUT_DIR, 'holdingsMarketData.ts');
-  writeFileSync(path, ts, 'utf-8');
+  const path = resolve(CONTENT_DIR, 'watchlist-data.md');
+  writeFileSync(path, md, 'utf-8');
   console.log(`📁 Wrote ${path}`);
 }
 
@@ -223,17 +373,23 @@ export const holdingsMarketData: Record<string, HoldingMarketData> = ${JSON.stri
 
 async function main() {
   console.log('🚀 Fetching real stock market data...\n');
-  mkdirSync(OUT_DIR, { recursive: true });
 
-  const [indices, holdings] = await Promise.all([
+  const sp500Symbols = readSP500Symbols();
+  const portfolio = readWatchlistPortfolio();
+  const holdingSymbols = Object.keys(portfolio);
+  console.log(`📋 Found ${sp500Symbols.length} S&P 500 symbols, ${holdingSymbols.length} watchlist holdings\n`);
+
+  const [indices, allQuotes] = await Promise.all([
     fetchIndices(),
-    fetchHoldings(),
+    fetchAllQuotes(sp500Symbols),
   ]);
+  const holdingsDetail = await fetchHoldingsDetail(holdingSymbols);
 
-  writeIndexData(indices);
-  writeHoldingsData(holdings);
+  writeMarketIndicesMd(indices);
+  writeSP500QuotesMd(allQuotes);
+  writeWatchlistDataMd(allQuotes, holdingsDetail, portfolio);
 
-  console.log('\n✅ Done! Generated data files are ready.');
+  console.log('\n✅ Done! Content Markdown files updated.');
 }
 
 main().catch((err) => {
