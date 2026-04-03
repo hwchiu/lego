@@ -90,12 +90,12 @@ const UPCOMING_TALKS: TalkItem[] = [
 ];
 
 const GALLERY_PHOTOS = [
-  { src: '/lego/images/yep.jpg', alt: '矽谷牛 — 技術分享' },
-  { src: '/lego/images/yep.jpg', alt: '矽谷牛 — 大會演講' },
-  { src: '/lego/images/yep.jpg', alt: '矽谷牛 — 社群活動' },
-  { src: '/lego/images/yep.jpg', alt: '矽谷牛 — Grafana Meetup' },
-  { src: '/lego/images/yep.jpg', alt: '矽谷牛 — KCD Taiwan' },
-  { src: '/lego/images/yep.jpg', alt: '矽谷牛 — 工作日常' },
+  { src: '/lego/images/hwchiu.jpg', alt: '矽谷牛 — 技術分享' },
+  { src: '/lego/images/hwchiu.jpg', alt: '矽谷牛 — 大會演講' },
+  { src: '/lego/images/hwchiu.jpg', alt: '矽谷牛 — 社群活動' },
+  { src: '/lego/images/hwchiu.jpg', alt: '矽谷牛 — Grafana Meetup' },
+  { src: '/lego/images/hwchiu.jpg', alt: '矽谷牛 — KCD Taiwan' },
+  { src: '/lego/images/hwchiu.jpg', alt: '矽谷牛 — 工作日常' },
 ];
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
@@ -141,7 +141,7 @@ export default function AboutPage() {
             <div className="about-hero">
               <div className="about-hero-photo-wrap">
                 <Image
-                  src="/lego/images/yep.jpg"
+                  src="/lego/images/hwchiu.jpg"
                   alt="矽谷牛 邱宏瑋"
                   width={300}
                   height={300}
