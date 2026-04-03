@@ -436,6 +436,42 @@ function UserAvatar() {
   );
 }
 
+// ── Placeholder holding generator (deterministic based on symbol chars) ───────
+function createPlaceholderHolding(symbol: string): Holding {
+  const seed = symbol.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const price = 20 + (seed % 780); // $20 - $799
+  const changeAbs = parseFloat(((((seed * 7) % 200) - 100) / 100).toFixed(2));
+  const changePct = parseFloat(((changeAbs / price) * 100).toFixed(2));
+  const shares = 10 + (seed % 91);
+  const cost = parseFloat((price * 0.9).toFixed(2));
+  const todayGain = parseFloat((changeAbs * shares).toFixed(2));
+  const todayGainPct = changePct;
+  const revenueB = parseFloat((1 + (seed % 99)).toFixed(2));
+  const qoqSign = seed % 2 === 0 ? '+' : '-';
+  const yoySign = (seed * 3) % 5 > 1 ? '+' : '-';
+  const grossMarginPct = 20 + (seed % 55);
+  const doiDays = 15 + (seed % 200);
+  return {
+    symbol,
+    price,
+    change: changeAbs,
+    changePct,
+    shares,
+    cost,
+    todayGain,
+    todayGainPct,
+    revenue: `$${revenueB.toFixed(2)}B`,
+    revenueQoQ: `${qoqSign}${((seed % 15) + 1).toFixed(1)}%`,
+    revenueYoY: `${yoySign}${((seed % 30) + 1).toFixed(1)}%`,
+    grossMargin: `${grossMarginPct}%`,
+    doi: `${doiDays}`,
+    nextEarning: 'TBD',
+    lastQtrRevenue: `$${(revenueB * 1.05).toFixed(2)}B`,
+    lastQtrGrossMargin: `${grossMarginPct + 1}%`,
+    lastQtrDOI: `${doiDays - 5}`,
+  };
+}
+
 // ── Main page ─────────────────────────────────────────────────────────────────
 type FeedTab = 'Latest' | 'Analysis' | 'News' | 'Warnings' | 'Transcripts' | 'Press Releases';
 
@@ -471,6 +507,10 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
   // Add Symbol state
   const [addSymbolQuery, setAddSymbolQuery] = useState('');
 
+  // Extra holdings added by the user (persisted in localStorage)
+  const [extraHoldings, setExtraHoldings] = useState<Record<string, Holding>>({});
+  const [extraHoldingsHydrated, setExtraHoldingsHydrated] = useState(false);
+
   // Watchlist title dropdown state
   const [showTitleDropdown, setShowTitleDropdown] = useState(false);
   const titleDropdownRef = useRef<HTMLDivElement>(null);
@@ -499,20 +539,42 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
     setEditSymbolOrder(currentSymbolOrder.slice());
   }, [currentSymbolOrderKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Load extraHoldings from localStorage on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('wl-extra-holdings');
+      if (stored) setExtraHoldings(JSON.parse(stored));
+    } catch {
+      // ignore parse errors
+    }
+    setExtraHoldingsHydrated(true);
+  }, []);
+
+  // Persist extraHoldings to localStorage when they change (after hydration)
+  useEffect(() => {
+    if (!extraHoldingsHydrated) return;
+    try {
+      localStorage.setItem('wl-extra-holdings', JSON.stringify(extraHoldings));
+    } catch {
+      // ignore storage errors
+    }
+  }, [extraHoldings, extraHoldingsHydrated]);
+
   const prevQ = quarterOffset(quarter, -1);
   const nextQ = quarterOffset(quarter, 1);
 
   // Watchlist sub-items from navigation data (shared with sidebar)
   const watchlistSubItems = mainNav.find((item) => item.icon === 'watchlist')?.subItems ?? [];
 
-  const totalValue = holdingsData.reduce((sum, h) => sum + h.price * h.shares, 0);
-  const totalGain = holdingsData.reduce((sum, h) => sum + h.todayGain, 0);
-  const totalGainPct = (totalGain / (totalValue - totalGain)) * 100;
-
-  // Sorted holdings based on symbolOrder
+  // Sorted holdings based on symbolOrder (includes user-added extra holdings)
+  const holdingsLookup = new Map(holdingsData.map((h) => [h.symbol, h]));
   const sortedHoldings = [...currentSymbolOrder]
-    .map((sym) => holdingsData.find((h) => h.symbol === sym))
+    .map((sym) => holdingsLookup.get(sym) ?? extraHoldings[sym])
     .filter(Boolean) as Holding[];
+
+  const totalValue = sortedHoldings.reduce((sum, h) => sum + h.price * h.shares, 0);
+  const totalGain = sortedHoldings.reduce((sum, h) => sum + h.todayGain, 0);
+  const totalGainPct = (totalGain / (totalValue - totalGain)) * 100;
 
   // Drag handlers for Edit Watchlist symbol reorder
   function handleDragStart(index: number) {
@@ -562,6 +624,30 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
   function handleAddSymbolClose() {
     setShowAddSymbol(false);
     setAddSymbolQuery('');
+  }
+
+  function handleAddSymbolSubmit() {
+    const symbols = addSymbolQuery
+      .split(',')
+      .map((s) => s.trim().toUpperCase())
+      .filter(Boolean);
+
+    if (symbols.length > 0) {
+      const newExtraHoldings = { ...extraHoldings };
+      const newOrder = [...currentSymbolOrder];
+      for (const sym of symbols) {
+        if (newOrder.includes(sym)) continue;
+        newOrder.push(sym);
+        // Create placeholder data only if not already covered by holdingsData
+        if (!holdingsLookup.has(sym) && !newExtraHoldings[sym]) {
+          newExtraHoldings[sym] = createPlaceholderHolding(sym);
+        }
+      }
+      setExtraHoldings(newExtraHoldings);
+      setSymbolOrder(watchlistId, newOrder);
+    }
+
+    handleAddSymbolClose();
   }
 
   // Feed filtering logic
@@ -1233,6 +1319,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                   placeholder="Add Symbols (e.g AAPL, TSLA, etc...)"
                   value={addSymbolQuery}
                   onChange={(e) => setAddSymbolQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleAddSymbolSubmit()}
                   autoFocus
                 />
               </div>
@@ -1259,7 +1346,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
               )}
               <button
                 className="wl-modal-submit-btn"
-                onClick={handleAddSymbolClose}
+                onClick={handleAddSymbolSubmit}
               >
                 Submit
               </button>
