@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
@@ -15,6 +15,19 @@ export default function CollaborationPlaygroundPage() {
   const [activeCanvasId, setActiveCanvasId] = useState(initialCanvases[0].id);
   const [showTaskPanel, setShowTaskPanel] = useState(false);
   const [showManageModal, setShowManageModal] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleFullscreen = useCallback(() => setIsFullscreen((v) => !v), []);
+
+  // Close fullscreen on Escape key
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsFullscreen(false);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [isFullscreen]);
 
   const activeCanvas = canvasList.find((c) => c.id === activeCanvasId) ?? canvasList[0];
 
@@ -164,15 +177,34 @@ export default function CollaborationPlaygroundPage() {
             </aside>
 
             {/* Board area */}
-            <div className="pg-board-wrap">
+            <div className={`pg-board-wrap${isFullscreen ? ' pg-board-wrap--fullscreen' : ''}`}>
               {/* Canvas header */}
               <div className="pg-canvas-header">
                 <div>
                   <div className="pg-canvas-title">{activeCanvas.title}</div>
                   <div className="pg-canvas-desc">{activeCanvas.description}</div>
                 </div>
-                <div className="pg-canvas-header-meta">
-                  建立於 {activeCanvas.createdAt}
+                <div className="pg-canvas-header-right">
+                  <div className="pg-canvas-header-meta">
+                    建立於 {activeCanvas.createdAt}
+                  </div>
+                  <button
+                    className="pg-fullscreen-btn"
+                    onClick={toggleFullscreen}
+                    title={isFullscreen ? '離開全螢幕' : '全螢幕查看'}
+                    aria-label={isFullscreen ? '離開全螢幕' : '全螢幕查看'}
+                  >
+                    {isFullscreen ? (
+                      <svg viewBox="0 0 16 16" width="15" height="15" fill="none" aria-hidden="true">
+                        <path d="M6 2H2v4M10 2h4v4M6 14H2v-4M10 14h4v-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M2 6l4-4M10 2l4 4M2 10l4 4M14 10l-4 4" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeDasharray="2 10" opacity="0" />
+                      </svg>
+                    ) : (
+                      <svg viewBox="0 0 16 16" width="15" height="15" fill="none" aria-hidden="true">
+                        <path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </button>
                 </div>
               </div>
 
