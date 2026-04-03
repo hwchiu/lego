@@ -64,6 +64,7 @@ function readWatchlistPortfolio() {
     }
   } catch { /* file doesn't exist yet, use defaults */ }
   return {
+    // ── Original holdings ──
     TSM: { shares: 120, cost: 105.3 },
     TSLA: { shares: 50, cost: 196.4 },
     QCOM: { shares: 80, cost: 128.9 },
@@ -72,6 +73,55 @@ function readWatchlistPortfolio() {
     AAPL: { shares: 45, cost: 167.8 },
     NVDA: { shares: 30, cost: 512.6 },
     ASML: { shares: 20, cost: 598.0 },
+    // ── Mega-cap tech ──
+    MSFT: { shares: 40, cost: 310.5 },
+    AMZN: { shares: 55, cost: 127.8 },
+    META: { shares: 35, cost: 290.4 },
+    AVGO: { shares: 25, cost: 620.3 },
+    CRM: { shares: 45, cost: 210.6 },
+    ORCL: { shares: 70, cost: 105.2 },
+    AMD: { shares: 65, cost: 112.7 },
+    INTC: { shares: 150, cost: 35.2 },
+    ADBE: { shares: 20, cost: 480.5 },
+    NFLX: { shares: 15, cost: 445.3 },
+    // ── Financials ──
+    JPM: { shares: 40, cost: 148.6 },
+    V: { shares: 35, cost: 235.4 },
+    MA: { shares: 25, cost: 380.2 },
+    BAC: { shares: 120, cost: 32.8 },
+    GS: { shares: 15, cost: 340.7 },
+    'BRK-B': { shares: 30, cost: 350.9 },
+    // ── Healthcare ──
+    UNH: { shares: 18, cost: 490.3 },
+    JNJ: { shares: 50, cost: 155.8 },
+    LLY: { shares: 12, cost: 520.4 },
+    PFE: { shares: 200, cost: 28.6 },
+    ABBV: { shares: 40, cost: 145.2 },
+    MRK: { shares: 55, cost: 108.7 },
+    // ── Consumer ──
+    WMT: { shares: 60, cost: 52.3 },
+    COST: { shares: 15, cost: 560.8 },
+    KO: { shares: 80, cost: 58.4 },
+    PEP: { shares: 35, cost: 172.6 },
+    MCD: { shares: 25, cost: 268.5 },
+    NKE: { shares: 50, cost: 98.3 },
+    SBUX: { shares: 45, cost: 95.7 },
+    // ── Industrial / Energy ──
+    XOM: { shares: 60, cost: 98.5 },
+    CVX: { shares: 35, cost: 152.3 },
+    CAT: { shares: 20, cost: 245.6 },
+    BA: { shares: 30, cost: 198.4 },
+    GE: { shares: 40, cost: 115.8 },
+    UNP: { shares: 25, cost: 220.3 },
+    // ── Communication / Media ──
+    DIS: { shares: 55, cost: 92.4 },
+    CMCSA: { shares: 80, cost: 42.6 },
+    TMUS: { shares: 30, cost: 148.7 },
+    // ── Semiconductor ──
+    MU: { shares: 70, cost: 72.4 },
+    MRVL: { shares: 60, cost: 48.5 },
+    LRCX: { shares: 15, cost: 620.8 },
+    KLAC: { shares: 12, cost: 510.3 },
   };
 }
 
