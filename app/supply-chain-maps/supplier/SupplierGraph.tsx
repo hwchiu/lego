@@ -33,6 +33,9 @@ const TIER2_STRIP_COLOR = '#93c5fd'; // light blue
 // Nodes with news notifications: id → count
 const NODE_NOTIFICATIONS: Record<string, number> = { ASML: 3 };
 
+// ID of the center (focal) node in the graph
+const CENTER_NODE_ID = 'TSM';
+
 // ── Static lookups (computed once) ───────────────────────────────────────────
 
 const ALL_SUPPLIERS = [...TSM_TIER1_SUPPLIERS, ...TSM_TIER2_SUPPLIERS];
@@ -158,7 +161,7 @@ const SUGGESTION_ITEMS = SUPPLY_CHAIN_FEED.slice(0, 5);
 
 const INITIAL_POSITIONS: Record<string, { x: number; y: number }> = (() => {
   const pos: Record<string, { x: number; y: number }> = {};
-  pos['TSM'] = { x: CX, y: CY };
+  pos[CENTER_NODE_ID] = { x: CX, y: CY };
   TSM_TIER1_SUPPLIERS.forEach((s, i) => {
     const a = (2 * Math.PI * i) / 9 - Math.PI / 2;
     pos[s.id] = { x: CX + R1 * Math.cos(a), y: CY + R1 * Math.sin(a) };
@@ -366,7 +369,7 @@ interface DetailPanelProps {
 
 function DetailPanel({ node, onClose }: DetailPanelProps) {
   if (!node) return null;
-  const isCenter = node.id === 'TSM';
+  const isCenter = node.id === CENTER_NODE_ID;
   const badgeColor = isCenter ? '#1a2332' : node.tier === 1 ? TIER1_STRIP_COLOR : TIER2_STRIP_COLOR;
   return (
     <div className="rmap-detail-panel">
@@ -438,7 +441,7 @@ function FilterBar({ relationType, onRelationChange, selectedIndustries, onIndus
   const [activeTab, setActiveTab] = useState<FilterTab>('Company');
   const [openDropdown, setOpenDropdown] = useState<'rel' | 'risk' | null>(null);
   const [selectedRisk, setSelectedRisk] = useState<string>(RISK_TYPES[0].key);
-  const industryScrollRef = useRef<HTMLDivElement>(null);
+  const industryTagsScrollRef = useRef<HTMLDivElement>(null);
 
   const q = query.toLowerCase().trim();
   const showQueryResults = q.length > 0;
@@ -469,8 +472,8 @@ function FilterBar({ relationType, onRelationChange, selectedIndustries, onIndus
   const relLabel = RELATION_LABEL_MAP.get(relationType) ?? '';
 
   const scrollIndustries = (dir: 'left' | 'right') => {
-    if (industryScrollRef.current) {
-      industryScrollRef.current.scrollBy({ left: dir === 'left' ? -120 : 120, behavior: 'smooth' });
+    if (industryTagsScrollRef.current) {
+      industryTagsScrollRef.current.scrollBy({ left: dir === 'left' ? -120 : 120, behavior: 'smooth' });
     }
   };
 
@@ -670,7 +673,7 @@ function FilterBar({ relationType, onRelationChange, selectedIndustries, onIndus
         >
           ‹
         </button>
-        <div className="rmap-industry-tags-scroll" ref={industryScrollRef}>
+        <div className="rmap-industry-tags-scroll" ref={industryTagsScrollRef}>
           {UNIQUE_INDUSTRIES.map((ind) => (
             <button
               key={ind}
@@ -785,7 +788,7 @@ function FeedPanel({ selectedNode }: FeedPanelProps) {
       </div>
       <div className="rmap-feed-panel-list">
         {filteredFeed.length === 0 ? (
-          <div className="rmap-feed-panel-empty">No news for {selectedNode?.name}.</div>
+          <div className="rmap-feed-panel-empty">No news for {selectedNode?.name}</div>
         ) : (
           filteredFeed.map((item, idx) => (
             <div
@@ -966,7 +969,7 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
   const visibleNodeIds = selectedIndustries.size === 0
     ? null // null means show all
     : new Set([
-        'TSM', // always show center
+        CENTER_NODE_ID, // always show center
         ...ALL_SUPPLIERS.filter((s) => selectedIndustries.has(s.industryCategory)).map((s) => s.id),
       ]);
 
@@ -1050,11 +1053,11 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
             {/* Center → Tier 1 edges */}
             {TSM_TIER1_SUPPLIERS.map((node) => {
               if (visibleNodeIds && !visibleNodeIds.has(node.id)) return null;
-              const cp = positions['TSM'],
+              const cp = positions[CENTER_NODE_ID],
                 np = positions[node.id];
               const ep = rectEdgePoint(cp.x, cp.y, CENTER_W, CENTER_H, np.x, np.y);
               const sp = rectEdgePoint(np.x, np.y, T1_W, T1_H, cp.x, cp.y);
-              const edge = EDGE_ENTITIES.find((e) => e.from === 'TSM' && e.to === node.id);
+              const edge = EDGE_ENTITIES.find((e) => e.from === CENTER_NODE_ID && e.to === node.id);
               const val = edge ? (edge[relationType] as number) : 0;
               const mx = (ep.x + sp.x) / 2,
                 my = (ep.y + sp.y) / 2;
@@ -1111,10 +1114,10 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
             {/* Center node — last for top z-order */}
             <CenterNodeSvg
               node={TSM_CENTER_NODE}
-              pos={positions['TSM']}
-              selected={selectedNode?.id === 'TSM'}
+              pos={positions[CENTER_NODE_ID]}
+              selected={selectedNode?.id === CENTER_NODE_ID}
               onClick={() => handleNodeClick(TSM_CENTER_NODE)}
-              onMouseDown={(e) => handleNodeMouseDown('TSM', e)}
+              onMouseDown={(e) => handleNodeMouseDown(CENTER_NODE_ID, e)}
             />
           </svg>
 
