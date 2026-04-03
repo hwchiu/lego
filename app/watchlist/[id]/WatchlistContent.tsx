@@ -6,213 +6,59 @@ import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { SP500_COMPANIES } from '@/app/data/sp500';
+import { stockIndexes } from '@/app/data/generated/indexData';
+import { holdingsMarketData } from '@/app/data/generated/holdingsMarketData';
+import type { HoldingMarketData } from '@/app/data/generated/holdingsMarketData';
 import { mainNav } from '@/app/data/navigation';
 import { useWatchlist } from '@/app/contexts/WatchlistContext';
 
-// ── Stock Index data ─────────────────────────────────────────────────────────
-interface StockIndex {
-  name: string;
-  value: number;
-  change: number;
-  changePct: number;
-  trend: number[]; // sparkline points (y values, 0–100 scale)
-}
-
-const stockIndexes: StockIndex[] = [
-  { name: 'Dow', value: 42284.48, change: 120.42, changePct: 0.31, trend: [45, 50, 42, 55, 60, 58, 65] },
-  {
-    name: 'S&P 500',
-    value: 5804.45,
-    change: 21.58,
-    changePct: 0.39,
-    trend: [40, 48, 44, 52, 58, 55, 62],
-  },
-  { name: 'Nasdaq', value: 18933.14, change: 74.46, changePct: 0.42, trend: [38, 46, 43, 54, 60, 57, 64] },
-  { name: 'Gold', value: 3325.39, change: -2.22, changePct: -0.1, trend: [70, 68, 72, 65, 60, 62, 58] },
-  {
-    name: 'Russell 2000',
-    value: 1987.32,
-    change: 8.14,
-    changePct: 0.41,
-    trend: [42, 46, 44, 50, 55, 52, 58],
-  },
-];
+// Stock index data is now imported from app/data/generated/indexData.ts
 
 // ── Holdings data ─────────────────────────────────────────────────────────────
-interface Holding {
+// Portfolio config (shares and cost are user-specific, not fetched)
+interface PortfolioEntry {
   symbol: string;
-  price: number;
-  change: number;
-  changePct: number;
+  shares: number;
+  cost: number;
+}
+
+interface Holding extends HoldingMarketData {
+  symbol: string;
   shares: number;
   cost: number;
   todayGain: number;
   todayGainPct: number;
-  revenue: string; // e.g. "$25.53B"
-  revenueQoQ: string; // e.g. "+3.2%"
-  revenueYoY: string; // e.g. "+38.9%"
-  grossMargin: string; // e.g. "59.2%"
-  doi: string; // Days of Inventory
-  nextEarning: string; // e.g. "Jul 17, 2025"
-  lastQtrRevenue: string;
-  lastQtrGrossMargin: string;
-  lastQtrDOI: string;
 }
 
-const holdingsData: Holding[] = [
-  {
-    symbol: 'TSM',
-    price: 168.42,
-    change: 2.14,
-    changePct: 1.29,
-    shares: 120,
-    cost: 105.3,
-    todayGain: 256.8,
-    todayGainPct: 1.29,
-    revenue: '$25.53B',
-    revenueQoQ: '+3.8%',
-    revenueYoY: '+35.3%',
-    grossMargin: '58.8%',
-    doi: '72',
-    nextEarning: 'Jul 17, 2025',
-    lastQtrRevenue: '$26.88B',
-    lastQtrGrossMargin: '59.0%',
-    lastQtrDOI: '68',
-  },
-  {
-    symbol: 'TSLA',
-    price: 248.73,
-    change: -3.82,
-    changePct: -1.51,
-    shares: 50,
-    cost: 196.4,
-    todayGain: -191.0,
-    todayGainPct: -1.51,
-    revenue: '$19.34B',
-    revenueQoQ: '-4.2%',
-    revenueYoY: '-9.3%',
-    grossMargin: '17.1%',
-    doi: '55',
-    nextEarning: 'Jul 22, 2025',
-    lastQtrRevenue: '$25.71B',
-    lastQtrGrossMargin: '19.8%',
-    lastQtrDOI: '51',
-  },
-  {
-    symbol: 'QCOM',
-    price: 152.61,
-    change: 1.28,
-    changePct: 0.85,
-    shares: 80,
-    cost: 128.9,
-    todayGain: 102.4,
-    todayGainPct: 0.85,
-    revenue: '$10.84B',
-    revenueQoQ: '+1.2%',
-    revenueYoY: '+17.3%',
-    grossMargin: '55.9%',
-    doi: '84',
-    nextEarning: 'Jul 30, 2025',
-    lastQtrRevenue: '$11.67B',
-    lastQtrGrossMargin: '56.3%',
-    lastQtrDOI: '79',
-  },
-  {
-    symbol: 'GOOGL',
-    price: 168.94,
-    change: 0.72,
-    changePct: 0.43,
-    shares: 60,
-    cost: 138.5,
-    todayGain: 43.2,
-    todayGainPct: 0.43,
-    revenue: '$90.23B',
-    revenueQoQ: '+2.7%',
-    revenueYoY: '+12.8%',
-    grossMargin: '57.3%',
-    doi: 'N/A',
-    nextEarning: 'Apr 29, 2025',
-    lastQtrRevenue: '$96.47B',
-    lastQtrGrossMargin: '58.1%',
-    lastQtrDOI: 'N/A',
-  },
-  {
-    symbol: 'SONY',
-    price: 21.34,
-    change: -0.18,
-    changePct: -0.84,
-    shares: 200,
-    cost: 18.7,
-    todayGain: -36.0,
-    todayGainPct: -0.84,
-    revenue: '$22.18B',
-    revenueQoQ: '-8.3%',
-    revenueYoY: '+4.6%',
-    grossMargin: '28.4%',
-    doi: '42',
-    nextEarning: 'May 14, 2025',
-    lastQtrRevenue: '$28.74B',
-    lastQtrGrossMargin: '27.9%',
-    lastQtrDOI: '38',
-  },
-  {
-    symbol: 'AAPL',
-    price: 212.49,
-    change: 1.54,
-    changePct: 0.73,
-    shares: 45,
-    cost: 167.8,
-    todayGain: 69.3,
-    todayGainPct: 0.73,
-    revenue: '$95.36B',
-    revenueQoQ: '-23.4%',
-    revenueYoY: '+5.1%',
-    grossMargin: '47.2%',
-    doi: '8',
-    nextEarning: 'May 1, 2025',
-    lastQtrRevenue: '$124.30B',
-    lastQtrGrossMargin: '46.9%',
-    lastQtrDOI: '7',
-  },
-  {
-    symbol: 'NVDA',
-    price: 884.27,
-    change: 12.43,
-    changePct: 1.43,
-    shares: 30,
-    cost: 512.6,
-    todayGain: 372.9,
-    todayGainPct: 1.43,
-    revenue: '$44.07B',
-    revenueQoQ: '+12.4%',
-    revenueYoY: '+69.2%',
-    grossMargin: '74.6%',
-    doi: '28',
-    nextEarning: 'May 28, 2025',
-    lastQtrRevenue: '$39.33B',
-    lastQtrGrossMargin: '73.5%',
-    lastQtrDOI: '31',
-  },
-  {
-    symbol: 'ASML',
-    price: 682.14,
-    change: -4.32,
-    changePct: -0.63,
-    shares: 20,
-    cost: 598.0,
-    todayGain: -86.4,
-    todayGainPct: -0.63,
-    revenue: '$7.74B',
-    revenueQoQ: '-12.8%',
-    revenueYoY: '+46.1%',
-    grossMargin: '52.7%',
-    doi: '185',
-    nextEarning: 'Jul 16, 2025',
-    lastQtrRevenue: '$9.26B',
-    lastQtrGrossMargin: '51.9%',
-    lastQtrDOI: '179',
-  },
+const portfolioConfig: PortfolioEntry[] = [
+  { symbol: 'TSM', shares: 120, cost: 105.3 },
+  { symbol: 'TSLA', shares: 50, cost: 196.4 },
+  { symbol: 'QCOM', shares: 80, cost: 128.9 },
+  { symbol: 'GOOGL', shares: 60, cost: 138.5 },
+  { symbol: 'SONY', shares: 200, cost: 18.7 },
+  { symbol: 'AAPL', shares: 45, cost: 167.8 },
+  { symbol: 'NVDA', shares: 30, cost: 512.6 },
+  { symbol: 'ASML', shares: 20, cost: 598.0 },
 ];
+
+// Merge portfolio config with fetched market data
+const holdingsData: Holding[] = portfolioConfig.map((p) => {
+  const mkt = holdingsMarketData[p.symbol] || {
+    price: 0, change: 0, changePct: 0,
+    revenue: 'N/A', revenueQoQ: 'N/A', revenueYoY: 'N/A',
+    grossMargin: 'N/A', doi: 'N/A', nextEarning: 'N/A',
+    lastQtrRevenue: 'N/A', lastQtrGrossMargin: 'N/A', lastQtrDOI: 'N/A',
+  };
+  const todayGain = +(mkt.change * p.shares).toFixed(1);
+  return {
+    symbol: p.symbol,
+    shares: p.shares,
+    cost: p.cost,
+    ...mkt,
+    todayGain,
+    todayGainPct: mkt.changePct,
+  };
+});
 
 // ── News feed items ───────────────────────────────────────────────────────────
 // Category tags sourced from content/watchlist-articles.md

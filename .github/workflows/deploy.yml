@@ -3,6 +3,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  schedule:
+    # Run daily after US market close (4 PM ET = 21:00 UTC, +30 min buffer)
+    - cron: '30 21 * * 1-5'
   workflow_dispatch:
 
 permissions:
@@ -29,6 +32,9 @@ jobs:
           cache: npm
 
       - run: npm ci
+
+      - name: Fetch live stock data
+        run: npm run fetch-data
 
       - run: npx next build
 
