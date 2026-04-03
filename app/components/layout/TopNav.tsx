@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { SP500_COMPANIES } from '@/app/data/sp500';
 import { newsItems } from '@/app/data/news';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 
 const POPULAR_SEARCHES = ['TSM', 'AAPL', 'NVDA'];
 
@@ -94,6 +96,7 @@ const SP500_LC = SP500_COMPANIES.map((c) => ({
 
 export default function TopNav() {
   const router = useRouter();
+  const { lang, toggleLang } = useLanguage();
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>('All');
@@ -138,9 +141,9 @@ export default function TopNav() {
 
   return (
     <header className="topnav">
-      <div className="topnav-logo">
+      <Link href="/about" className="topnav-logo" aria-label="Go to About tMIC">
         tM<span className="logo-i">I</span>C
-      </div>
+      </Link>
 
       <div className="topnav-search-wrap" ref={wrapRef}>
         <svg
@@ -361,8 +364,8 @@ export default function TopNav() {
           <span className="topnav-action-label">User Manual</span>
         </button>
 
-        {/* Language / English */}
-        <button className="topnav-action-btn" title="Language" aria-label="Switch Language">
+        {/* Language / Toggle */}
+        <button className="topnav-action-btn" title="Language" aria-label="Switch Language" onClick={toggleLang}>
           {/* Globe / multilingual icon */}
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3" />
@@ -373,7 +376,7 @@ export default function TopNav() {
               strokeLinecap="round"
             />
           </svg>
-          <span className="topnav-action-label">English</span>
+          <span className="topnav-action-label">{lang === 'zh' ? '繁體中文' : 'English'}</span>
         </button>
 
         {/* Notification bell */}

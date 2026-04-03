@@ -13,6 +13,8 @@ import {
   SubNavItem,
 } from '@/app/data/navigation';
 import { useWatchlist } from '@/app/contexts/WatchlistContext';
+import { useLanguage } from '@/app/contexts/LanguageContext';
+import { t } from '@/app/data/translations';
 
 function NavIcon({ iconKey }: { iconKey: string }) {
   const svgContent = sidebarIcons[iconKey] || '';
@@ -63,6 +65,7 @@ function SubMenu({
 }) {
   const [top, setTop] = useState(0);
   const { watchlistNames } = useWatchlist();
+  const { lang } = useLanguage();
 
   useEffect(() => {
     if (anchorRef.current) {
@@ -74,7 +77,8 @@ function SubMenu({
   return (
     <div className="sidebar-submenu" style={{ top }} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       {items.map((item) => {
-        const displayLabel = item.watchlistId ? (watchlistNames[item.watchlistId] ?? item.label) : item.label;
+        const defaultLabel = item.watchlistId ? (watchlistNames[item.watchlistId] ?? item.label) : item.label;
+        const displayLabel = lang === 'zh' ? t(defaultLabel, 'zh') : defaultLabel;
         return (
           <React.Fragment key={item.label}>
             {item.dividerBefore && <div className="sidebar-submenu-divider" />}
@@ -113,14 +117,16 @@ function SubMenu({
 }
 
 function QuickLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
+  const { lang } = useLanguage();
+  const displayLabel = lang === 'zh' ? t(item.label, 'zh') : item.label;
   return (
     <Link
       href={item.href}
       className="sidebar-quick-link"
-      title={collapsed ? item.label : undefined}
+      title={collapsed ? displayLabel : undefined}
     >
       <NavIcon iconKey={item.icon} />
-      {!collapsed && item.label}
+      {!collapsed && displayLabel}
       {!collapsed && item.badge && (
         <span
           className={item.badgeStyle === 'coming-soon' ? 'badge-coming-soon' : 'badge-new'}
@@ -146,6 +152,8 @@ function NavItemRow({
   const liRef = useRef<HTMLLIElement>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasSubMenu = item.subItems && item.subItems.length > 0;
+  const { lang } = useLanguage();
+  const displayLabel = lang === 'zh' ? t(item.label, 'zh') : item.label;
 
   // An item is active if the current path matches its href, or if any of its sub-items match
   const isActive =
@@ -184,10 +192,10 @@ function NavItemRow({
       <Link
         href={item.href}
         className={isActive ? 'active' : ''}
-        title={collapsed ? item.label : undefined}
+        title={collapsed ? displayLabel : undefined}
       >
         <NavIcon iconKey={item.icon} />
-        {!collapsed && item.label}
+        {!collapsed && displayLabel}
         {!collapsed && item.badge && (
           <span
             className={item.badgeStyle === 'coming-soon' ? 'badge-coming-soon' : 'badge-new'}
@@ -253,11 +261,15 @@ function NavSection({
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
+  const { lang } = useLanguage();
   const toggleLabel = collapsed ? 'Expand menu' : 'Collapse menu';
   // When expanded, quickLinks[0] renders inside the collapse header row,
   // so only the remaining items are listed below.
   // When collapsed, the header shows only the toggle button, so all quickLinks render here.
   const visibleQuickLinks = collapsed ? quickLinks : quickLinks.slice(1);
+
+  const mainNavLabel = lang === 'zh' ? '主要導覽' : 'Main Navigation';
+  const supplyChainLabel = lang === 'zh' ? '供應鏈分析' : 'Supply Chain Analysis';
 
   return (
     <nav className={`sidebar${collapsed ? ' collapsed' : ''}`}>
@@ -278,21 +290,24 @@ export default function Sidebar() {
         ))}
       </div>
 
-      <NavSection label="Main Navigation" items={mainNav} collapsed={collapsed} pathname={pathname} />
+      <NavSection label={mainNavLabel} items={mainNav} collapsed={collapsed} pathname={pathname} />
       <div className="sidebar-divider" />
-      <NavSection label="Supply Chain Analysis" items={supplyChainNav} collapsed={collapsed} pathname={pathname} />
+      <NavSection label={supplyChainLabel} items={supplyChainNav} collapsed={collapsed} pathname={pathname} />
 
       <div className="sidebar-bottom">
-        {bottomLinks.map((item) => (
-          <Link
-            key={item.label}
-            href={item.href}
-            title={collapsed ? item.label : undefined}
-          >
-            <NavIcon iconKey={item.icon} />
-            {!collapsed && item.label}
-          </Link>
-        ))}
+        {bottomLinks.map((item) => {
+          const label = lang === 'zh' ? t(item.label, 'zh') : item.label;
+          return (
+            <Link
+              key={item.label}
+              href={item.href}
+              title={collapsed ? label : undefined}
+            >
+              <NavIcon iconKey={item.icon} />
+              {!collapsed && label}
+            </Link>
+          );
+        })}
       </div>
     </nav>
   );
