@@ -2341,8 +2341,8 @@ input, select { font-family: var(--font); }
 }
 
 /* Holdings table header — white background */
-.wl-th--white {
-  background: var(--c-white) !important;
+.wl-thead--white .wl-th {
+  background: var(--c-white);
 }
 
 /* Feed section Updates header */

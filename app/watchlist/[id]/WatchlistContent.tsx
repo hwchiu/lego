@@ -474,10 +474,13 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
     setEditWatchlistName(watchlistName);
   }, [watchlistName]);
 
-  // Sync editSymbolOrder when symbolOrder changes from context
+  // Sync editSymbolOrder when symbolOrder changes from context (e.g., after page reload).
+  // We intentionally use a JSON-serialized snapshot as the dependency to avoid
+  // re-running on every render when the array reference changes but values are the same.
+  const currentSymbolOrderKey = currentSymbolOrder.join(',');
   useEffect(() => {
-    setEditSymbolOrder([...currentSymbolOrder]);
-  }, [currentSymbolOrder]); // eslint-disable-line react-hooks/exhaustive-deps
+    setEditSymbolOrder(currentSymbolOrder.slice());
+  }, [currentSymbolOrderKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const prevQ = quarterOffset(quarter, -1);
   const nextQ = quarterOffset(quarter, 1);
@@ -791,30 +794,30 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
               {/* ── Holdings Table ─────────────────────────────────────── */}
               <div className="wl-table-wrap">
                 <table className="wl-table">
-                  <thead>
+                  <thead className="wl-thead--white">
                     <tr>
-                      <th className="wl-th wl-th--sticky wl-th--white">
+                      <th className="wl-th wl-th--sticky">
                         Symbol
                         <svg viewBox="0 0 14 14" fill="none" width="10" height="10" style={{ marginLeft: 4 }}>
                           <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                       </th>
-                      <th className="wl-th wl-th--white">Price</th>
-                      <th className="wl-th wl-th--white">Change</th>
-                      <th className="wl-th wl-th--white">Change %</th>
-                      <th className="wl-th wl-th--white">Shares</th>
-                      <th className="wl-th wl-th--white">Cost</th>
-                      <th className="wl-th wl-th--white">Today&apos;s Gain</th>
-                      <th className="wl-th wl-th--white">Today&apos;s % Gain</th>
-                      <th className="wl-th wl-th--white">Revenue</th>
-                      <th className="wl-th wl-th--white">Revenue QoQ</th>
-                      <th className="wl-th wl-th--white">Revenue YoY</th>
-                      <th className="wl-th wl-th--white">Gross Margin</th>
-                      <th className="wl-th wl-th--white">DOI</th>
-                      <th className="wl-th wl-th--white">Next Earning Release</th>
-                      <th className="wl-th wl-th--white">Last Qtr Revenue</th>
-                      <th className="wl-th wl-th--white">Last Qtr Gross Margin</th>
-                      <th className="wl-th wl-th--white">Last Qtr DOI</th>
+                      <th className="wl-th">Price</th>
+                      <th className="wl-th">Change</th>
+                      <th className="wl-th">Change %</th>
+                      <th className="wl-th">Shares</th>
+                      <th className="wl-th">Cost</th>
+                      <th className="wl-th">Today&apos;s Gain</th>
+                      <th className="wl-th">Today&apos;s % Gain</th>
+                      <th className="wl-th">Revenue</th>
+                      <th className="wl-th">Revenue QoQ</th>
+                      <th className="wl-th">Revenue YoY</th>
+                      <th className="wl-th">Gross Margin</th>
+                      <th className="wl-th">DOI</th>
+                      <th className="wl-th">Next Earning Release</th>
+                      <th className="wl-th">Last Qtr Revenue</th>
+                      <th className="wl-th">Last Qtr Gross Margin</th>
+                      <th className="wl-th">Last Qtr DOI</th>
                     </tr>
                   </thead>
                   <tbody>
