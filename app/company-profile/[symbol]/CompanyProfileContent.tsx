@@ -496,32 +496,42 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
               </div>
             </div>
 
-            {/* ── Company info cards ── */}
-            <div className="cp-info-cards">
-              <div className="cp-info-card">
-                <span className="cp-info-label">Local Currency</span>
-                <span className="cp-info-value">{localCurrency}</span>
-              </div>
-              <div className="cp-info-card">
-                <span className="cp-info-label">BBG ID</span>
-                <span className="cp-info-value">{bbgId}</span>
-              </div>
-              <div className="cp-info-card">
-                <span className="cp-info-label">Stock Exchange</span>
-                <span className="cp-info-value">{stockExchange}</span>
-              </div>
-            </div>
-
-            {/* ── Tags row ── */}
-            <div className="cp-tags-row">
-              <div className="cp-tags-group">
-                <span className="cp-tags-group-label">Public Tag</span>
-                <div className="cp-tags-list">
-                  {publicTags.map((tag) => (
-                    <span key={tag} className="cp-tag">{tag}</span>
-                  ))}
+            {/* ── Company info cards + Public Tags ── */}
+            <div className="cp-info-tags-row">
+              <div className="cp-info-cards">
+                <div className="cp-info-card">
+                  <span className="cp-info-label">Local Currency</span>
+                  <span className="cp-info-value">{localCurrency}</span>
+                </div>
+                <div className="cp-info-card">
+                  <span className="cp-info-label">BBG ID</span>
+                  <span className="cp-info-value">{bbgId}</span>
+                </div>
+                <div className="cp-info-card">
+                  <span className="cp-info-label">Stock Exchange</span>
+                  <span className="cp-info-value">{stockExchange}</span>
                 </div>
               </div>
+              {publicTags.length > 0 && (
+                <div className="cp-public-tags-right">
+                  <span className="cp-tags-group-label">Public Tag</span>
+                  <div className="cp-tags-list">
+                    {publicTags.map((tag) => (
+                      <Link
+                        key={tag}
+                        href={`/company-profile?tag=${encodeURIComponent(tag)}`}
+                        className="cp-tag cp-tag--link"
+                      >
+                        {tag}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* ── Tags row (My Tags) ── */}
+            <div className="cp-tags-row">
               <div className="cp-tags-group">
                 <span className="cp-tags-group-label">My Tag</span>
                 <div className="cp-tags-list">
@@ -560,10 +570,9 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
             {activeTab === 'FIN. Summary' && (
               finData ? (
               <div className="cp-cards-area">
+                <div className="cp-cards-main-grid">
 
-                {/* Row 1 */}
-                <div className="cp-cards-row">
-                  {/* Card 1: Current Qtr Financial */}
+                  {/* Column 1: Current Qtr Financial */}
                   <div className="cp-data-card">
                     <div className="cp-card-title">Current Qtr Financial</div>
                     <div className="cp-fin-metrics">
@@ -591,83 +600,83 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                     </div>
                   </div>
 
-                  {/* Card 2: Next Qtr Key Indices */}
-                  <div className="cp-data-card">
-                    <div className="cp-card-title">Next Qtr Key Indices</div>
-                    <div className="cp-fin-metrics">
-                      <div className="cp-fin-metric">
-                        <div className="cp-fin-metric-label">Revenue Midpoint Guidance</div>
-                        <div className="cp-fin-metric-value">{finData.nextQtr.revenueMidpointGuidance.toLocaleString()}</div>
-                      </div>
-                      <div className="cp-fin-metric">
-                        <div className="cp-fin-metric-label">Revenue QoQ</div>
-                        <div className={`cp-fin-metric-value ${finData.nextQtr.revenueQoQ >= 0 ? 'pos' : 'neg'}`}>
-                          {finData.nextQtr.revenueQoQ >= 0 ? '+' : ''}{finData.nextQtr.revenueQoQ}%
+                  {/* Column 2: Next Qtr Key Indices + Revenue Breakdown stacked */}
+                  <div className="cp-col-stack">
+                    <div className="cp-data-card">
+                      <div className="cp-card-title">Next Qtr Key Indices</div>
+                      <div className="cp-fin-metrics">
+                        <div className="cp-fin-metric">
+                          <div className="cp-fin-metric-label">Revenue Midpoint Guidance</div>
+                          <div className="cp-fin-metric-value">{finData.nextQtr.revenueMidpointGuidance.toLocaleString()}</div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Card 3: Financial Indices chart */}
-                  <div className="cp-data-card cp-data-card--wide">
-                    <div className="cp-card-title">Financial Indices</div>
-                    <div className="cp-fin-index-tabs">
-                      {FIN_INDICES.map((idx) => (
-                        <button
-                          key={idx}
-                          className={`cp-fin-index-tab${activeFinIndex === idx ? ' active' : ''}`}
-                          onClick={() => setActiveFinIndex(idx)}
-                        >
-                          {idx}
-                        </button>
-                      ))}
-                    </div>
-                    <div className="cp-chart-legend">
-                      <span className="cp-legend-dot cp-legend-dot--blue" />
-                      <span className="cp-legend-label cp-legend-label--blue">Net income</span>
-                      <span className="cp-legend-dot cp-legend-dot--red" />
-                      <span className="cp-legend-label cp-legend-label--red">Total Revenue</span>
-                      <span className="cp-legend-dot cp-legend-dot--gray" />
-                      <span className="cp-legend-label cp-legend-label--gray">Guidance</span>
-                    </div>
-                    <FinancialBarChart data={finData.financialIndices} />
-                  </div>
-                </div>
-
-                {/* Row 2 */}
-                <div className="cp-cards-row">
-                  {/* Card 4: Revenue Breakdown */}
-                  <div className="cp-data-card">
-                    <div className="cp-card-title">
-                      Revenue Breakdown
-                      <span className="cp-card-subtitle">{finData.revenueBreakdown.quarter}</span>
-                    </div>
-                    <div className="cp-breakdown-list">
-                      {finData.revenueBreakdown.items.map((item) => (
-                        <div key={item.name} className="cp-breakdown-item">
-                          <span className="cp-breakdown-name">{item.name}</span>
-                          <div className="cp-breakdown-bar-wrap">
-                            <div className="cp-breakdown-bar" style={{ width: `${Math.min(100, item.pct)}%` }} />
+                        <div className="cp-fin-metric">
+                          <div className="cp-fin-metric-label">Revenue QoQ</div>
+                          <div className={`cp-fin-metric-value ${finData.nextQtr.revenueQoQ >= 0 ? 'pos' : 'neg'}`}>
+                            {finData.nextQtr.revenueQoQ >= 0 ? '+' : ''}{finData.nextQtr.revenueQoQ}%
                           </div>
-                          <span className="cp-breakdown-pct">{item.pct}%</span>
                         </div>
-                      ))}
+                      </div>
+                    </div>
+
+                    <div className="cp-data-card">
+                      <div className="cp-card-title">
+                        Revenue Breakdown
+                        <span className="cp-card-subtitle">{finData.revenueBreakdown.quarter}</span>
+                      </div>
+                      <div className="cp-breakdown-list">
+                        {finData.revenueBreakdown.items.map((item) => (
+                          <div key={item.name} className="cp-breakdown-item">
+                            <span className="cp-breakdown-name">{item.name}</span>
+                            <div className="cp-breakdown-bar-wrap">
+                              <div className="cp-breakdown-bar" style={{ width: `${Math.min(100, item.pct)}%` }} />
+                            </div>
+                            <span className="cp-breakdown-pct">{item.pct}%</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
 
-                  {/* Card 5: DOI & Revenue */}
-                  <div className="cp-data-card cp-data-card--wide2">
-                    <div className="cp-card-title">DOI &amp; Revenue</div>
-                    <div className="cp-chart-legend">
-                      <span className="cp-legend-dot cp-legend-dot--blue" />
-                      <span className="cp-legend-label cp-legend-label--blue">DOI</span>
-                      <span className="cp-legend-dot cp-legend-dot--red" />
-                      <span className="cp-legend-label cp-legend-label--red">Revenue</span>
-                      <span className="cp-legend-dot cp-legend-dot--gray" />
-                      <span className="cp-legend-label cp-legend-label--gray">Guidance</span>
+                  {/* Column 3: Financial Indices + DOI & Revenue stacked */}
+                  <div className="cp-col-stack">
+                    <div className="cp-data-card cp-data-card--wide">
+                      <div className="cp-card-title">Financial Indices</div>
+                      <div className="cp-fin-index-tabs">
+                        {FIN_INDICES.map((idx) => (
+                          <button
+                            key={idx}
+                            className={`cp-fin-index-tab${activeFinIndex === idx ? ' active' : ''}`}
+                            onClick={() => setActiveFinIndex(idx)}
+                          >
+                            {idx}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="cp-chart-legend">
+                        <span className="cp-legend-dot cp-legend-dot--blue" />
+                        <span className="cp-legend-label cp-legend-label--blue">Net income</span>
+                        <span className="cp-legend-dot cp-legend-dot--red" />
+                        <span className="cp-legend-label cp-legend-label--red">Total Revenue</span>
+                        <span className="cp-legend-dot cp-legend-dot--gray" />
+                        <span className="cp-legend-label cp-legend-label--gray">Guidance</span>
+                      </div>
+                      <FinancialBarChart data={finData.financialIndices} />
                     </div>
-                    <DoiRevenueChart data={finData.doiRevenue} />
+
+                    <div className="cp-data-card cp-data-card--wide2">
+                      <div className="cp-card-title">DOI &amp; Revenue</div>
+                      <div className="cp-chart-legend">
+                        <span className="cp-legend-dot cp-legend-dot--blue" />
+                        <span className="cp-legend-label cp-legend-label--blue">DOI</span>
+                        <span className="cp-legend-dot cp-legend-dot--red" />
+                        <span className="cp-legend-label cp-legend-label--red">Revenue</span>
+                        <span className="cp-legend-dot cp-legend-dot--gray" />
+                        <span className="cp-legend-label cp-legend-label--gray">Guidance</span>
+                      </div>
+                      <DoiRevenueChart data={finData.doiRevenue} />
+                    </div>
                   </div>
+
                 </div>
               </div>
               ) : (
