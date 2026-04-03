@@ -68,7 +68,7 @@ function ScenarioIconWriteAnything() {
   );
 }
 
-const SCENARIO_ICONS: Record<string, React.ReactNode> = {
+const SCENARIO_ICONS: Record<(typeof SCENARIOS)[number], React.ReactNode> = {
   'Create Report': <ScenarioIconCreateReport />,
   'Boost my day': <ScenarioIconBoostMyDay />,
   'Help me learn': <ScenarioIconHelpMeLearn />,
