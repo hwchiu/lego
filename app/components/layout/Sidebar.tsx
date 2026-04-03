@@ -112,7 +112,7 @@ function QuickLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
       {!collapsed && item.label}
       {!collapsed && item.badge && (
         <span
-          className="badge-new"
+          className={item.badgeStyle === 'coming-soon' ? 'badge-coming-soon' : 'badge-new'}
           style={item.badgeColor ? { background: item.badgeColor } : undefined}
         >
           {item.badge}

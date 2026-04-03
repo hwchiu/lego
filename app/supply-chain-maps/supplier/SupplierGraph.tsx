@@ -468,7 +468,9 @@ function FilterBar({ relationType, onRelationChange }: FilterBarProps) {
   return (
     <div className="rmap-filter-bar rmap-filter-bar--above">
       {/* Search */}
-      <div className="rmap-filter-search-wrap">
+      <div className="rmap-titled-control">
+        <div className="rmap-titled-control-label">Let&#39;s explore RMAP together…</div>
+        <div className="rmap-filter-search-wrap">
         <div className="rmap-filter-search rmap-filter-search--tall">
           <svg
             className="rmap-filter-search-icon"
@@ -578,6 +580,7 @@ function FilterBar({ relationType, onRelationChange }: FilterBarProps) {
             )}
           </div>
         )}
+      </div>
       </div>
 
       {/* Relation Type — titled control */}
