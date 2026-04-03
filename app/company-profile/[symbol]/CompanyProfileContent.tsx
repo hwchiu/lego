@@ -6,6 +6,7 @@ import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { SP500_COMPANIES } from '@/app/data/sp500';
+import { newsItems } from '@/app/data/news';
 import { extractJson } from '@/app/lib/parseContent';
 import companyProfileMd from '@/content/company-profile.md';
 
@@ -25,6 +26,11 @@ interface FinancialDataPoint {
   quarter: string;
   netIncome: number;
   totalRevenue: number;
+  grossProfit: number;
+  grossMarginPct: number;
+  operatingMarginPct: number;
+  netMarginPct: number;
+  cashEquivalents: number;
   guidance: number | null;
 }
 
@@ -96,29 +102,66 @@ const FAVORITES_KEY = 'cp-favorites';
 const BAR_CHART_Y_INTERVAL = 2000;
 const DOI_REVENUE_Y_INTERVAL = 4000;
 
+// Items per page in the News tab
+const NEWS_PAGE_SIZE = 4;
+
 // ── SVG Chart Components ─────────────────────────────────────────────────────
+
+// Metric config maps FIN_INDICES selection to chart rendering details
+interface MetricConfig {
+  getValue: (d: FinancialDataPoint) => number;
+  color: string;
+  label: string;
+  isPercent: boolean;
+}
+
+const METRIC_CONFIGS: Record<string, MetricConfig> = {
+  Revenue: { getValue: (d) => d.totalRevenue, color: '#E53935', label: 'Total Revenue', isPercent: false },
+  'Gross Profit': { getValue: (d) => d.grossProfit, color: '#E53935', label: 'Gross Profit', isPercent: false },
+  'Gross Margin': { getValue: (d) => d.grossMarginPct, color: '#00897B', label: 'Gross Margin (%)', isPercent: true },
+  'Operating Margin': { getValue: (d) => d.operatingMarginPct, color: '#F57C00', label: 'Operating Margin (%)', isPercent: true },
+  'Net Income': { getValue: (d) => d.netIncome, color: '#2196F3', label: 'Net Income', isPercent: false },
+  'Net Margin': { getValue: (d) => d.netMarginPct, color: '#7B1FA2', label: 'Net Margin (%)', isPercent: true },
+  'Cash & Cash Equivalents': { getValue: (d) => d.cashEquivalents, color: '#0288D1', label: 'Cash & Equivalents', isPercent: false },
+};
 
 interface BarChartProps {
   data: FinancialDataPoint[];
+  activeMetric: string;
 }
 
-function FinancialBarChart({ data }: BarChartProps) {
+function FinancialBarChart({ data, activeMetric }: BarChartProps) {
   const W = 420;
   const H = 100;
   const PAD = { top: 10, right: 20, bottom: 24, left: 36 };
   const chartW = W - PAD.left - PAD.right;
   const chartH = H - PAD.top - PAD.bottom;
 
-  const maxRevenue = Math.max(...data.map((d) => d.totalRevenue));
-  const maxIncome = Math.max(...data.map((d) => d.netIncome));
-  const maxVal = Math.max(maxRevenue, maxIncome, 1);
+  const isRevenue = activeMetric === 'Revenue';
+  const cfg = METRIC_CONFIGS[activeMetric] ?? METRIC_CONFIGS['Revenue'];
 
-  // Round up to nearest BAR_CHART_Y_INTERVAL
-  const yMax = Math.ceil(maxVal / BAR_CHART_Y_INTERVAL) * BAR_CHART_Y_INTERVAL;
+  // For "Revenue" tab show dual bars (Revenue + Net Income); others show single bar
+  let yMax: number;
+  if (isRevenue) {
+    const maxVal = Math.max(...data.map((d) => Math.max(d.totalRevenue, d.netIncome)), 1);
+    yMax = Math.ceil(maxVal / BAR_CHART_Y_INTERVAL) * BAR_CHART_Y_INTERVAL;
+  } else if (cfg.isPercent) {
+    // Round up to nearest 10 for percentages; ensure at least 10
+    const maxVal = Math.max(...data.map((d) => Math.abs(cfg.getValue(d))), 10);
+    yMax = Math.ceil(maxVal / 10) * 10;
+  } else {
+    const maxVal = Math.max(...data.map((d) => cfg.getValue(d)), 1);
+    yMax = Math.ceil(maxVal / BAR_CHART_Y_INTERVAL) * BAR_CHART_Y_INTERVAL;
+  }
+
   const yTicks = [0, yMax / 4, yMax / 2, (3 * yMax) / 4, yMax];
-
   const barGroupW = chartW / data.length;
   const barW = Math.max(4, barGroupW * 0.3);
+
+  const formatTick = (v: number) => {
+    if (cfg.isPercent) return `${v}%`;
+    return v >= 1000 ? `${v / 1000}k` : String(v);
+  };
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto' }}>
@@ -129,7 +172,7 @@ function FinancialBarChart({ data }: BarChartProps) {
           <g key={tick}>
             <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y} stroke="#f0f0f0" strokeWidth="1" />
             <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize="10" fill="#9ca3af">
-              {tick >= 1000 ? `${tick / 1000}k` : tick}
+              {formatTick(tick)}
             </text>
           </g>
         );
@@ -138,39 +181,53 @@ function FinancialBarChart({ data }: BarChartProps) {
       {/* Bars */}
       {data.map((d, i) => {
         const cx = PAD.left + i * barGroupW + barGroupW / 2;
-        const revenueH = (d.totalRevenue / yMax) * chartH;
-        const incomeH = (d.netIncome / yMax) * chartH;
         const isGuidance = d.guidance !== null;
+
+        if (isRevenue) {
+          const revenueH = (d.totalRevenue / yMax) * chartH;
+          const incomeH = (d.netIncome / yMax) * chartH;
+          return (
+            <g key={d.quarter}>
+              <rect
+                x={cx - barW - 2}
+                y={PAD.top + chartH - revenueH}
+                width={barW}
+                height={revenueH}
+                fill={isGuidance ? '#ef9a9a' : '#E53935'}
+                opacity={isGuidance ? 0.55 : 1}
+                rx="2"
+              />
+              <rect
+                x={cx + 2}
+                y={PAD.top + chartH - incomeH}
+                width={barW}
+                height={incomeH}
+                fill={isGuidance ? '#90caf9' : '#2196F3'}
+                opacity={isGuidance ? 0.55 : 1}
+                rx="2"
+              />
+              <text x={cx} y={H - 8} textAnchor="middle" fontSize="10" fill="#9ca3af">
+                {d.quarter}
+              </text>
+            </g>
+          );
+        }
+
+        const rawVal = cfg.getValue(d);
+        const clampedVal = Math.max(0, rawVal);
+        const barH = (clampedVal / yMax) * chartH;
         return (
           <g key={d.quarter}>
-            {/* Revenue bar */}
             <rect
-              x={cx - barW - 2}
-              y={PAD.top + chartH - revenueH}
+              x={cx - barW / 2}
+              y={PAD.top + chartH - barH}
               width={barW}
-              height={revenueH}
-              fill={isGuidance ? '#ef9a9a' : '#E53935'}
+              height={barH}
+              fill={isGuidance ? '#ef9a9a' : cfg.color}
               opacity={isGuidance ? 0.55 : 1}
               rx="2"
             />
-            {/* Net Income bar */}
-            <rect
-              x={cx + 2}
-              y={PAD.top + chartH - incomeH}
-              width={barW}
-              height={incomeH}
-              fill={isGuidance ? '#90caf9' : '#2196F3'}
-              opacity={isGuidance ? 0.55 : 1}
-              rx="2"
-            />
-            {/* X-axis label */}
-            <text
-              x={cx}
-              y={H - 8}
-              textAnchor="middle"
-              fontSize="10"
-              fill="#9ca3af"
-            >
+            <text x={cx} y={H - 8} textAnchor="middle" fontSize="10" fill="#9ca3af">
               {d.quarter}
             </text>
           </g>
@@ -280,7 +337,7 @@ function DoiRevenueChart({ data }: DoiRevenueChartProps) {
           {guidancePoints
             .filter((p) => p.y !== null)
             .map((p, i) => (
-              <circle key={`gd-${i}`} cx={p.x} cy={p.y!} r="3" fill="#B0B0B0" />
+              <circle key={`gd-${i}`} cx={p.x} cy={p.y!} r="3" fill="#ef9a9a" />
             ))}
         </>
       )}
@@ -372,11 +429,13 @@ interface CompanyProfileContentProps {
 
 export default function CompanyProfileContent({ symbol }: CompanyProfileContentProps) {
   const [activeTab, setActiveTab] = useState<Tab>('FIN. Summary');
-  const [activeFinIndex, setActiveFinIndex] = useState<string>('Gross Profit');
+  const [activeFinIndex, setActiveFinIndex] = useState<string>('Revenue');
   const [isFavorite, setIsFavorite] = useState(false);
   const [myTags, setMyTags] = useState<string[]>([]);
   const tagsInputRef = useRef<HTMLInputElement>(null);
   const [tagInput, setTagInput] = useState('');
+  const [newsPage, setNewsPage] = useState(1);
+  const stockContainerRef = useRef<HTMLDivElement>(null);
 
   // Parse markdown data
   const profileData = getProfileData();
@@ -450,6 +509,48 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
       setTagInput('');
     }
   }
+
+  // News filtered by this company's symbol tag
+  const companyNews = newsItems.filter((n) => n.tags.some((t) => t.symbol === symbol));
+  const newsTotalPages = Math.ceil(companyNews.length / NEWS_PAGE_SIZE);
+  const pagedNews = companyNews.slice((newsPage - 1) * NEWS_PAGE_SIZE, newsPage * NEWS_PAGE_SIZE);
+
+  // TradingView widget — inject when Stock tab becomes active
+  useEffect(() => {
+    if (activeTab !== 'Stock' || !stockContainerRef.current) return;
+    const container = stockContainerRef.current;
+    container.innerHTML = '';
+    const exchangeMap: Record<string, string> = {
+      NASDAQ: 'NASDAQ',
+      NYSE: 'NYSE',
+      TWSE: 'TWSE',
+    };
+    const exchange = exchangeMap[stockExchange] ?? 'NASDAQ';
+    const tvSymbol = `${exchange}:${symbol}`;
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+    script.async = true;
+    script.innerHTML = JSON.stringify({
+      autosize: true,
+      symbol: tvSymbol,
+      interval: 'D',
+      timezone: 'America/New_York',
+      theme: 'light',
+      style: '1',
+      locale: 'en',
+      withdateranges: true,
+      hide_side_toolbar: false,
+      allow_symbol_change: false,
+      details: true,
+      calendar: false,
+      support_host: 'https://www.tradingview.com',
+    });
+    container.appendChild(script);
+    return () => {
+      container.innerHTML = '';
+    };
+  }, [activeTab, symbol, stockExchange]);
 
   return (
     <>
@@ -668,14 +769,31 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                         ))}
                       </div>
                       <div className="cp-chart-legend">
-                        <span className="cp-legend-dot cp-legend-dot--blue" />
-                        <span className="cp-legend-label cp-legend-label--blue">Net income</span>
-                        <span className="cp-legend-dot cp-legend-dot--red" />
-                        <span className="cp-legend-label cp-legend-label--red">Total Revenue</span>
-                        <span className="cp-legend-dot cp-legend-dot--gray" />
-                        <span className="cp-legend-label cp-legend-label--gray">Guidance</span>
+                        {activeFinIndex === 'Revenue' ? (
+                          <>
+                            <span className="cp-legend-dot cp-legend-dot--blue" />
+                            <span className="cp-legend-label cp-legend-label--blue">Net Income</span>
+                            <span className="cp-legend-dot cp-legend-dot--red" />
+                            <span className="cp-legend-label cp-legend-label--red">Total Revenue</span>
+                          </>
+                        ) : (
+                          <>
+                            <span
+                              className="cp-legend-dot"
+                              style={{ background: METRIC_CONFIGS[activeFinIndex]?.color ?? '#E53935' }}
+                            />
+                            <span
+                              className="cp-legend-label"
+                              style={{ color: METRIC_CONFIGS[activeFinIndex]?.color ?? '#E53935' }}
+                            >
+                              {METRIC_CONFIGS[activeFinIndex]?.label ?? activeFinIndex}
+                            </span>
+                          </>
+                        )}
+                        <span className="cp-legend-dot" style={{ background: '#ef9a9a' }} />
+                        <span className="cp-legend-label" style={{ color: '#ef9a9a' }}>Guidance</span>
                       </div>
-                      <FinancialBarChart data={finData.financialIndices} />
+                      <FinancialBarChart data={finData.financialIndices} activeMetric={activeFinIndex} />
                     </div>
 
                     <div className="cp-data-card cp-data-card--wide2">
@@ -686,8 +804,8 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                         <span className="cp-legend-label cp-legend-label--blue">DOI</span>
                         <span className="cp-legend-dot cp-legend-dot--red" />
                         <span className="cp-legend-label cp-legend-label--red">Revenue</span>
-                        <span className="cp-legend-dot cp-legend-dot--gray" />
-                        <span className="cp-legend-label cp-legend-label--gray">Guidance</span>
+                        <span className="cp-legend-dot" style={{ background: '#ef9a9a' }} />
+                        <span className="cp-legend-label" style={{ color: '#ef9a9a' }}>Guidance</span>
                       </div>
                       <DoiRevenueChart data={finData.doiRevenue} />
                     </div>
@@ -704,8 +822,90 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
               )
             )}
 
-            {/* Placeholder for other tabs */}
-            {activeTab !== 'FIN. Summary' && (
+            {/* ── News tab ── */}
+            {activeTab === 'News' && (
+              <div className="cp-tab-content-box">
+                {companyNews.length === 0 ? (
+                  <div className="cp-tab-placeholder">
+                    <span className="cp-tab-placeholder-text">No news tagged with {symbol}.</span>
+                  </div>
+                ) : (
+                  <>
+                    <div className="cp-news-tab-grid">
+                      {pagedNews.map((item) => {
+                        const ago = Math.round((Date.now() - item.publishedAt.getTime()) / 3_600_000);
+                        const timeLabel = ago < 24 ? `${ago}h ago` : `${Math.floor(ago / 24)}d ago`;
+                        return (
+                          <a
+                            key={item.id}
+                            href={item.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="cp-news-tab-card"
+                          >
+                            <div className="cp-news-tab-card-header">
+                              <span className="cp-news-tab-source">{item.source}</span>
+                              <span className="cp-news-tab-time">{timeLabel}</span>
+                            </div>
+                            <p className="cp-news-tab-title">{item.title}</p>
+                            <div className="cp-news-tab-tags">
+                              {item.tags.map((t) => (
+                                <span
+                                  key={t.symbol}
+                                  className={`cp-news-tab-tag ${t.change >= 0 ? 'pos' : 'neg'}`}
+                                >
+                                  {t.symbol} {t.change >= 0 ? '+' : ''}{t.change}%
+                                </span>
+                              ))}
+                            </div>
+                          </a>
+                        );
+                      })}
+                    </div>
+                    {newsTotalPages > 1 && (
+                      <div className="cp-news-tab-pagination">
+                        <button
+                          className="cp-news-tab-page-btn"
+                          disabled={newsPage === 1}
+                          onClick={() => setNewsPage((p) => Math.max(1, p - 1))}
+                        >
+                          ‹ Prev
+                        </button>
+                        {Array.from({ length: newsTotalPages }, (_, i) => i + 1).map((p) => (
+                          <button
+                            key={p}
+                            className={`cp-news-tab-page-btn${newsPage === p ? ' active' : ''}`}
+                            onClick={() => setNewsPage(p)}
+                          >
+                            {p}
+                          </button>
+                        ))}
+                        <button
+                          className="cp-news-tab-page-btn"
+                          disabled={newsPage === newsTotalPages}
+                          onClick={() => setNewsPage((p) => Math.min(newsTotalPages, p + 1))}
+                        >
+                          Next ›
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* ── Stock tab ── */}
+            {activeTab === 'Stock' && (
+              <div className="cp-tab-content-box cp-stock-tab">
+                <div
+                  ref={stockContainerRef}
+                  className="tradingview-widget-container cp-stock-widget"
+                />
+              </div>
+            )}
+
+            {/* Placeholder for remaining tabs */}
+            {activeTab !== 'FIN. Summary' && activeTab !== 'News' && activeTab !== 'Stock' && (
               <div className="cp-tab-placeholder">
                 <span className="cp-tab-placeholder-text">{activeTab} — Content coming soon</span>
               </div>
