@@ -132,7 +132,7 @@ export const supplyChainNav: NavItem[] = [
 
 export const bottomLinks: NavItem[] = [
   { label: 'Intelligence Search', href: '#', icon: 'intelligenceSearch' },
-  { label: 'Collaboration Playground', href: '#', icon: 'collaborationPlayground' },
+  { label: 'Collaboration Playground', href: '/collaboration-playground', icon: 'collaborationPlayground' },
 ];
 
 export const marketTabs = [
