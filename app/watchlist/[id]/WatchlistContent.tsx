@@ -318,6 +318,102 @@ function createPlaceholderHolding(symbol: string): Holding {
   };
 }
 
+// ── Excel download ────────────────────────────────────────────────────────────
+
+const HEADERS = [
+  'Symbol', 'Price', 'Change', 'Change %', 'Shares', 'Cost',
+  "Today's Gain", "Today's % Gain", 'Revenue', 'Revenue QoQ', 'Revenue YoY',
+  'Gross Margin', 'DOI', 'Next Earning Release',
+  'Last Qtr Revenue', 'Last Qtr Gross Margin', 'Last Qtr DOI',
+];
+
+// Determine the text color ARGB for a cell value based on how the table renders it.
+function getCellColor(h: Holding, col: string): string | null {
+  if (col === 'Change' || col === 'Change %') return h.change >= 0 ? 'FF16A34A' : 'FFDC2626';
+  if (col === "Today's Gain" || col === "Today's % Gain") return h.todayGain >= 0 ? 'FF16A34A' : 'FFDC2626';
+  if (col === 'Revenue QoQ') return h.revenueQoQ.startsWith('+') ? 'FF16A34A' : 'FFDC2626';
+  if (col === 'Revenue YoY') return h.revenueYoY.startsWith('+') ? 'FF16A34A' : 'FFDC2626';
+  return null;
+}
+
+function getCellValue(h: Holding, col: string): string | number {
+  switch (col) {
+    case 'Symbol': return h.symbol;
+    case 'Price': return h.price.toFixed(2);
+    case 'Change': return `${h.change >= 0 ? '+' : ''}${h.change.toFixed(2)}`;
+    case 'Change %': return `${h.changePct >= 0 ? '+' : ''}${h.changePct.toFixed(2)}%`;
+    case 'Shares': return h.shares;
+    case 'Cost': return h.cost.toFixed(2);
+    case "Today's Gain": return `${h.todayGain >= 0 ? '+' : ''}${h.todayGain.toFixed(2)}`;
+    case "Today's % Gain": return `${h.todayGainPct >= 0 ? '+' : ''}${h.todayGainPct.toFixed(2)}%`;
+    case 'Revenue': return h.revenue;
+    case 'Revenue QoQ': return h.revenueQoQ;
+    case 'Revenue YoY': return h.revenueYoY;
+    case 'Gross Margin': return h.grossMargin;
+    case 'DOI': return h.doi;
+    case 'Next Earning Release': return h.nextEarning;
+    case 'Last Qtr Revenue': return h.lastQtrRevenue;
+    case 'Last Qtr Gross Margin': return h.lastQtrGrossMargin;
+    case 'Last Qtr DOI': return h.lastQtrDOI;
+    default: return '';
+  }
+}
+
+async function downloadHoldingsExcel(watchlistName: string, holdings: Holding[]) {
+  const ExcelJS = (await import('exceljs')).default;
+  const wb = new ExcelJS.Workbook();
+  const ws = wb.addWorksheet('Holdings');
+
+  // Row 1: Watchlist title (merged across all header columns)
+  const titleCell = ws.getCell('A1');
+  titleCell.value = watchlistName;
+  titleCell.font = { bold: true, size: 14, color: { argb: 'FF111827' } };
+  ws.mergeCells(1, 1, 1, HEADERS.length);
+
+  // Row 2: empty spacer
+
+  // Row 3: Column headers
+  const headerRow = ws.getRow(3);
+  HEADERS.forEach((h, i) => {
+    const cell = headerRow.getCell(i + 1);
+    cell.value = h;
+    cell.font = { bold: true, color: { argb: 'FF374151' } };
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF3F4F6' } };
+    cell.border = { bottom: { style: 'thin', color: { argb: 'FFD1D5DB' } } };
+    cell.alignment = { horizontal: 'right' };
+  });
+  // Left-align Symbol column
+  headerRow.getCell(1).alignment = { horizontal: 'left' };
+
+  // Rows 4+: Holdings data
+  holdings.forEach((h, rowIdx) => {
+    const row = ws.getRow(4 + rowIdx);
+    HEADERS.forEach((col, colIdx) => {
+      const cell = row.getCell(colIdx + 1);
+      cell.value = getCellValue(h, col);
+      const colorArgb = getCellColor(h, col);
+      cell.font = { color: { argb: colorArgb ?? 'FF111827' } };
+      cell.alignment = { horizontal: colIdx === 0 ? 'left' : 'right' };
+    });
+  });
+
+  // Auto column widths (approx)
+  ws.columns.forEach((col, i) => {
+    col.width = Math.max(HEADERS[i].length + 2, 12);
+  });
+
+  const buffer = await wb.xlsx.writeBuffer();
+  const blob = new Blob([buffer], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${watchlistName}.xlsx`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 // ── Main page ─────────────────────────────────────────────────────────────────
 type FeedTab = 'Latest' | 'Analysis' | 'News' | 'Warnings' | 'Transcripts' | 'Press Releases';
 
@@ -710,7 +806,10 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                   </svg>
                   Manage Alerts
                 </button>
-                <button className="wl-action-btn">
+                <button
+                  className="wl-action-btn"
+                  onClick={() => downloadHoldingsExcel(watchlistName, sortedHoldings)}
+                >
                   <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
                     <path
                       d="M7 1v8M4.5 6.5L7 9l2.5-2.5"
