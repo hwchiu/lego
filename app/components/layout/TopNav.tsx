@@ -78,6 +78,20 @@ const RECENT_HISTORY = [
 // Notification count — sourced from content/notifications.md
 const NOTIFICATION_COUNT = 6;
 
+// Pre-computed lowercase news fields for faster filtering
+const NEWS_ITEMS_LC = newsItems.map((n) => ({
+  ...n,
+  titleLc: n.title.toLowerCase(),
+  sourceLc: n.source.toLowerCase(),
+}));
+
+// Pre-computed lowercase SP500 companies for faster filtering
+const SP500_LC = SP500_COMPANIES.map((c) => ({
+  ...c,
+  symbolLc: c.symbol.toLowerCase(),
+  nameLc: c.name.toLowerCase(),
+}));
+
 export default function TopNav() {
   const router = useRouter();
   const [query, setQuery] = useState('');
@@ -92,18 +106,16 @@ export default function TopNav() {
   // Filter companies (used for 'All' and 'Company' categories)
   const filteredCompanies =
     (activeCategory === 'Company' || activeCategory === 'All') && q.length > 0
-      ? SP500_COMPANIES.filter(
-          (c) =>
-            c.symbol.toLowerCase().includes(q) || c.name.toLowerCase().includes(q),
-        ).slice(0, activeCategory === 'All' ? 4 : 8)
+      ? SP500_LC.filter((c) => c.symbolLc.includes(q) || c.nameLc.includes(q)).slice(
+          0,
+          activeCategory === 'All' ? 4 : 8,
+        )
       : [];
 
   // Filter news items (used for 'All' and 'News & Event' categories)
   const filteredNews =
     (activeCategory === 'News & Event' || activeCategory === 'All') && q.length > 0
-      ? newsItems
-          .filter((n) => n.title.toLowerCase().includes(q) || n.source.toLowerCase().includes(q))
-          .slice(0, 5)
+      ? NEWS_ITEMS_LC.filter((n) => n.titleLc.includes(q) || n.sourceLc.includes(q)).slice(0, 5)
       : [];
 
   // Navigate to company profile page

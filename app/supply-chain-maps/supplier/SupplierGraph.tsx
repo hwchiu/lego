@@ -32,6 +32,26 @@ const ALL_SUPPLIERS = [...TSM_TIER1_SUPPLIERS, ...TSM_TIER2_SUPPLIERS];
 const UNIQUE_INDUSTRIES = [...new Set(ALL_SUPPLIERS.map((s) => s.industryCategory))];
 const UNIQUE_PRODUCTS = [...new Set(ALL_SUPPLIERS.flatMap((s) => s.productCategories))];
 
+// Pre-computed lowercase for fast search filtering
+const ALL_SUPPLIERS_LC = ALL_SUPPLIERS.map((s) => ({
+  ...s,
+  nameLc: s.name.toLowerCase(),
+  tickerLc: s.ticker.toLowerCase(),
+}));
+const UNIQUE_INDUSTRIES_LC = UNIQUE_INDUSTRIES.map((s) => ({ val: s, lc: s.toLowerCase() }));
+const UNIQUE_PRODUCTS_LC = UNIQUE_PRODUCTS.map((s) => ({ val: s, lc: s.toLowerCase() }));
+
+// RELATION_TYPES label map for O(1) lookup
+const RELATION_LABEL_MAP = new Map(RELATION_TYPES.map((r) => [r.key, r.label]));
+
+// Pre-computed min/max per relation type key for edge width normalization
+const EDGE_RANGE_MAP = new Map<RelationTypeKey, { min: number; max: number }>(
+  RELATION_TYPES.filter((r) => r.key !== 'transactionAmount').map((r) => {
+    const vals = EDGE_ENTITIES.map((e) => e[r.key] as number);
+    return [r.key, { min: Math.min(...vals), max: Math.max(...vals) }] as [RelationTypeKey, { min: number; max: number }];
+  }),
+);
+
 const RISK_TYPES = [
   { key: 'materialShortage', labelEn: 'Material Shortage', label: '材料缺料' },
   { key: 'geopolitical', labelEn: 'Geopolitical Risk', label: '國際情勢' },
@@ -43,7 +63,7 @@ type FilterTab = (typeof FILTER_TABS)[number];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function computeInitialPositions(): Record<string, { x: number; y: number }> {
+const INITIAL_POSITIONS: Record<string, { x: number; y: number }> = (() => {
   const pos: Record<string, { x: number; y: number }> = {};
   pos['TSM'] = { x: CX, y: CY };
   TSM_TIER1_SUPPLIERS.forEach((s, i) => {
@@ -59,7 +79,7 @@ function computeInitialPositions(): Record<string, { x: number; y: number }> {
     pos[s.id] = { x: CX + R2 * Math.cos(a), y: CY + R2 * Math.sin(a) };
   });
   return pos;
-}
+})();
 
 function getSvgCoords(e: React.MouseEvent, svg: SVGSVGElement) {
   const rect = svg.getBoundingClientRect();
@@ -80,10 +100,9 @@ function rectEdgePoint(nx: number, ny: number, tw: number, th: number, tx: numbe
 
 function getEdgeWidth(key: RelationTypeKey, value: number): number {
   if (key === 'transactionAmount') return 1.0 + (Math.min(value, 5000) / 5000) * 4.0;
-  const vals = EDGE_ENTITIES.map((e) => e[key] as number);
-  const min = Math.min(...vals), max = Math.max(...vals);
-  if (max === min) return 2.5;
-  return 1.0 + ((value - min) / (max - min)) * 4.0;
+  const range = EDGE_RANGE_MAP.get(key);
+  if (!range || range.max === range.min) return 2.5;
+  return 1.0 + ((value - range.min) / (range.max - range.min)) * 4.0;
 }
 
 function trunc(s: string, n: number) {
@@ -213,8 +232,8 @@ function FilterBar({ relationType, onRelationChange }: FilterBarProps) {
   const q = query.toLowerCase().trim();
   const showDropdown = q.length > 0;
 
-  const supplierMatches = ALL_SUPPLIERS.filter(
-    (s) => s.name.toLowerCase().includes(q) || s.ticker.toLowerCase().includes(q),
+  const supplierMatches = ALL_SUPPLIERS_LC.filter(
+    (s) => s.nameLc.includes(q) || s.tickerLc.includes(q),
   ).map((s) => ({ label: s.name, sub: s.ticker }));
 
   const supplierTickers = new Set(supplierMatches.map((s) => s.sub));
@@ -227,10 +246,10 @@ function FilterBar({ relationType, onRelationChange }: FilterBarProps) {
     ...sp500Matches.filter((c) => !supplierTickers.has(c.sub)),
   ].slice(0, 3);
 
-  const industryResults = UNIQUE_INDUSTRIES.filter((ind) => ind.toLowerCase().includes(q)).slice(0, 3);
-  const productResults = UNIQUE_PRODUCTS.filter((p) => p.toLowerCase().includes(q)).slice(0, 3);
+  const industryResults = UNIQUE_INDUSTRIES_LC.filter((ind) => ind.lc.includes(q)).map((i) => i.val).slice(0, 3);
+  const productResults = UNIQUE_PRODUCTS_LC.filter((p) => p.lc.includes(q)).map((p) => p.val).slice(0, 3);
 
-  const relLabel = RELATION_TYPES.find((r) => r.key === relationType)?.label ?? '';
+  const relLabel = RELATION_LABEL_MAP.get(relationType) ?? '';
 
   return (
     <div className="rmap-filter-bar">
@@ -355,7 +374,7 @@ function FilterBar({ relationType, onRelationChange }: FilterBarProps) {
 
 export default function SupplierGraph() {
   const [positions, setPositions] = useState<Record<string, { x: number; y: number }>>(
-    () => computeInitialPositions(),
+    () => ({ ...INITIAL_POSITIONS }),
   );
   const [dragState, setDragState] = useState<{
     nodeId: string;
