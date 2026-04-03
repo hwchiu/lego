@@ -11,3 +11,19 @@ export function extractJson<T>(markdownContent: string): T {
   }
   return JSON.parse(match[1]) as T;
 }
+
+/**
+ * Extracts and parses the first JSON code block within a named `## Section` in a markdown string.
+ *
+ * Use this when a markdown file contains multiple JSON blocks under different section headings.
+ */
+export function extractJsonBySection<T>(markdownContent: string, sectionName: string): T {
+  const sectionRegex = new RegExp(
+    `##\\s+${sectionName}[\\s\\S]*?\`\`\`json\\s*([\\s\\S]*?)\\s*\`\`\``,
+  );
+  const match = markdownContent.match(sectionRegex);
+  if (!match || !match[1]) {
+    throw new Error(`No JSON block found in section "${sectionName}"`);
+  }
+  return JSON.parse(match[1]) as T;
+}

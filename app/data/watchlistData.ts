@@ -1,5 +1,5 @@
 import rawContent from '@/content/watchlist-data.md';
-import { extractJson } from '@/app/lib/parseContent';
+import { extractJsonBySection } from '@/app/lib/parseContent';
 
 export interface HoldingEntity {
   symbol: string;
@@ -21,4 +21,4 @@ export interface HoldingEntity {
   lastQtrDOI: string;
 }
 
-export const holdingsData: Record<string, HoldingEntity> = extractJson<Record<string, HoldingEntity>>(rawContent);
+export const holdingsData: Record<string, HoldingEntity> = extractJsonBySection<Record<string, HoldingEntity>>(rawContent, 'Entity Data');
