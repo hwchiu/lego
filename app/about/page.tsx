@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
@@ -115,8 +116,14 @@ export default function AboutPage() {
               {FEATURES.map((f) => (
                 <div key={f.eyebrow} className={`about-site-feature${f.reverse ? ' about-site-feature--rev' : ''}`}>
                   <div className="about-site-feature-img-wrap">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={f.img} alt={f.imgAlt} className="about-site-feature-img" />
+                    <Image
+                      src={f.img}
+                      alt={f.imgAlt}
+                      width={800}
+                      height={560}
+                      className="about-site-feature-img"
+                      unoptimized
+                    />
                   </div>
                   <div className="about-site-feature-body">
                     <span className="about-site-feature-eyebrow">{f.eyebrow}</span>
