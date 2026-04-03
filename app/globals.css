@@ -398,12 +398,12 @@ input, select { font-family: var(--font); }
 }
 
 .badge-coming-soon {
-  font-size: 6px;
+  font-size: 9px;
   font-weight: 700;
   background: #1e66f5;
   color: #fff;
   padding: 1px 3px;
-  border-radius: 8px;
+  border-radius: 3px;
   letter-spacing: 0.01em;
   margin-left: 3px;
   flex-shrink: 0;
