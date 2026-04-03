@@ -3227,7 +3227,7 @@ input, select { font-family: var(--font); }
   background: var(--c-white);
   border: 1px solid var(--c-border);
   border-radius: var(--radius-lg);
-  padding: 18px 20px;
+  padding: 13px 20px;
   display: flex;
   flex-direction: column;
 }
@@ -3245,7 +3245,7 @@ input, select { font-family: var(--font); }
   font-weight: 400;
   color: var(--c-text);
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3264,7 +3264,7 @@ input, select { font-family: var(--font); }
 .cp-card-divider {
   height: 1px;
   background: #e5e7eb;
-  margin: 0 0 14px;
+  margin: 0 0 10px;
 }
 
 /* Financial metrics */
@@ -3281,7 +3281,7 @@ input, select { font-family: var(--font); }
   align-items: flex-start;
   text-align: left;
   gap: 2px;
-  padding: 8px 0;
+  padding: 6px 0;
 }
 
 .cp-fin-metric-sep {

@@ -134,8 +134,8 @@ interface BarChartProps {
 
 function FinancialBarChart({ data, activeMetric }: BarChartProps) {
   const W = 420;
-  const H = 100;
-  const PAD = { top: 10, right: 20, bottom: 24, left: 36 };
+  const H = 75;
+  const PAD = { top: 8, right: 20, bottom: 18, left: 36 };
   const chartW = W - PAD.left - PAD.right;
   const chartH = H - PAD.top - PAD.bottom;
 
@@ -255,8 +255,8 @@ interface DoiRevenueChartProps {
 
 function DoiRevenueChart({ data }: DoiRevenueChartProps) {
   const W = 420;
-  const H = 100;
-  const PAD = { top: 10, right: 48, bottom: 24, left: 36 };
+  const H = 75;
+  const PAD = { top: 8, right: 48, bottom: 18, left: 36 };
   const chartW = W - PAD.left - PAD.right;
   const chartH = H - PAD.top - PAD.bottom;
 

@@ -402,10 +402,6 @@ function NumberValueTab({ region }: { region: Region }) {
           </tbody>
         </table>
       </div>
-
-      <div className="ma-source-note">
-        Source: Institute for Mergers, Acquisitions and Alliances (IMAA), 2024
-      </div>
     </div>
   );
 }
@@ -447,10 +443,6 @@ function LargestTab() {
             ))}
           </tbody>
         </table>
-      </div>
-
-      <div className="ma-source-note">
-        Source: Institute for Mergers, Acquisitions and Alliances (IMAA), 2024
       </div>
     </div>
   );
@@ -494,10 +486,6 @@ function HeatMapsTab({ region }: { region: Region }) {
             ))}
           </tbody>
         </table>
-      </div>
-
-      <div className="ma-source-note">
-        Source: Institute for Mergers, Acquisitions and Alliances (IMAA), 2024
       </div>
     </div>
   );

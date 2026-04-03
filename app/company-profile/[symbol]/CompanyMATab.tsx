@@ -184,6 +184,10 @@ function AAPLMAPanel() {
     });
   }
 
+  function selectAll() {
+    setSelectedIndustries(new Set());
+  }
+
   function scrollIndustries(dir: 'left' | 'right') {
     scrollRef.current?.scrollBy({ left: dir === 'left' ? -150 : 150, behavior: 'smooth' });
   }
@@ -202,6 +206,12 @@ function AAPLMAPanel() {
         <span className="aapl-ma-filter-label">INDUSTRY</span>
         <button className="aapl-ma-scroll-btn" onClick={() => scrollIndustries('left')} aria-label="Scroll left">‹</button>
         <div className="aapl-ma-tags-scroll" ref={scrollRef}>
+          <button
+            className={`aapl-ma-industry-tag${selectedIndustries.size === 0 ? ' aapl-ma-industry-tag--active' : ''}`}
+            onClick={selectAll}
+          >
+            All
+          </button>
           {allIndustries.map((ind) => (
             <button
               key={ind}
