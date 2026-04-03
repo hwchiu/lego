@@ -130,10 +130,10 @@ function MicIcon() {
   );
 }
 
-function ChevronUpIcon() {
+function ChevronDownIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-      <path d="M3 9L7 5L11 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -242,7 +242,7 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
                             <path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                           </svg>
                           <span>Tools</span>
-                          <ChevronUpIcon />
+                          <ChevronDownIcon />
                         </button>
                         {showTools && (
                           <div ref={toolsMenuRef} className="cp-tools-menu">

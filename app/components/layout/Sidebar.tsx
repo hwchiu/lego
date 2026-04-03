@@ -177,6 +177,14 @@ function NavItemRow({
       >
         <NavIcon iconKey={item.icon} />
         {!collapsed && item.label}
+        {!collapsed && item.badge && (
+          <span
+            className={item.badgeStyle === 'coming-soon' ? 'badge-coming-soon' : 'badge-new'}
+            style={item.badgeStyle !== 'coming-soon' && item.badgeColor ? { background: item.badgeColor } : undefined}
+          >
+            {item.badge}
+          </span>
+        )}
         {!collapsed && hasSubMenu && (
           <svg
             className="sidebar-submenu-arrow"
