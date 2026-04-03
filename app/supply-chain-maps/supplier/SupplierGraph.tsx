@@ -781,8 +781,10 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
 
   const applyZoom = useCallback((factor: number) => {
     setViewBox((prev) => {
-      const newW = Math.max(SVG_W * MIN_VB_SCALE, Math.min(SVG_W * MAX_VB_SCALE, prev.w / factor));
-      const newH = Math.max(SVG_H * MIN_VB_SCALE, Math.min(SVG_H * MAX_VB_SCALE, prev.h / factor));
+      const curScale = prev.w / SVG_W;
+      const newScale = Math.max(MIN_VB_SCALE, Math.min(MAX_VB_SCALE, curScale / factor));
+      const newW = SVG_W * newScale;
+      const newH = SVG_H * newScale;
       const cx = prev.x + prev.w / 2;
       const cy = prev.y + prev.h / 2;
       return { x: cx - newW / 2, y: cy - newH / 2, w: newW, h: newH };
