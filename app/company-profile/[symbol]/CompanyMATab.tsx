@@ -64,7 +64,7 @@ function AAPLBarChart({ deals }: { deals: AAPLDeal[] }) {
   const PAD = { top: 20, right: 20, bottom: 40, left: 64 };
   const chartW = W - PAD.left - PAD.right;
   const chartH = H - PAD.top - PAD.bottom;
-  const barW = Math.max(2, chartW / years.length - 1.5);
+  const barW = Math.max(2, chartW / years.length - 1.5 /* bar gap */);
 
   const yTicks = [0, 0.25, 0.5, 0.75, 1].map((t) => ({
     t,
@@ -162,6 +162,12 @@ function AAPLBarChart({ deals }: { deals: AAPLDeal[] }) {
 
 // ── AAPL M&A Panel ─────────────────────────────────────────────────────────────
 
+function getTypeBadgeClass(type: string): string {
+  if (type === 'Acquisition') return 'aapl-ma-type-badge aapl-ma-type-acq';
+  if (type === 'Asset Acquisition') return 'aapl-ma-type-badge aapl-ma-type-asset';
+  return 'aapl-ma-type-badge aapl-ma-type-merger';
+}
+
 function AAPLMAPanel() {
   const deals = getAAPLDeals();
   const allIndustries = [...new Set(deals.map((d) => d.industry))].sort();
@@ -251,7 +257,7 @@ function AAPLMAPanel() {
                 <tr key={i} className="aapl-ma-table-row">
                   <td className="aapl-ma-td-date">{deal.date}</td>
                   <td>
-                    <span className={`aapl-ma-type-badge aapl-ma-type-${deal.type === 'Acquisition' ? 'acq' : deal.type === 'Asset Acquisition' ? 'asset' : 'merger'}`}>
+                    <span className={getTypeBadgeClass(deal.type)}>
                       {deal.type}
                     </span>
                   </td>
