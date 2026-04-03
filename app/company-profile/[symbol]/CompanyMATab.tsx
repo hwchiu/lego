@@ -184,7 +184,7 @@ function AAPLMAPanel() {
     });
   }
 
-  function selectAll() {
+  function clearAllFilters() {
     setSelectedIndustries(new Set());
   }
 
@@ -208,7 +208,7 @@ function AAPLMAPanel() {
         <div className="aapl-ma-tags-scroll" ref={scrollRef}>
           <button
             className={`aapl-ma-industry-tag${selectedIndustries.size === 0 ? ' aapl-ma-industry-tag--active' : ''}`}
-            onClick={selectAll}
+            onClick={clearAllFilters}
           >
             All
           </button>
