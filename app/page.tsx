@@ -7,7 +7,7 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/company-profile');
+    router.replace('/about');
   }, [router]);
 
   return null;

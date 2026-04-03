@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { extractJson } from '@/app/lib/parseContent';
+import appleMaMd from '@/content/apple-ma.md';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -13,34 +15,278 @@ type Region =
   | 'Middle East & Africa'
   | 'South America';
 
-// ── Apple M&A History ─────────────────────────────────────────────────────────
+interface AAPLDeal {
+  year: number;
+  date: string;
+  company: string;
+  type: string;
+  industry: string;
+  valueM: number | null;
+  newsUrl: string;
+}
 
-const AAPL_DEALS = [
-  { year: 2023, target: 'Datakalab', value: 'Undisclosed', sector: 'AI / Computer Vision', type: 'Acquisition' },
-  { year: 2022, target: 'Credit Kudos', value: '~$150M', sector: 'Fintech', type: 'Acquisition' },
-  { year: 2021, target: 'AI.Music', value: 'Undisclosed', sector: 'AI / Music', type: 'Acquisition' },
-  { year: 2020, target: 'Mobeewave', value: '~$100M', sector: 'Mobile Payments', type: 'Acquisition' },
-  { year: 2020, target: 'Dark Sky', value: 'Undisclosed', sector: 'Weather / App', type: 'Acquisition' },
-  { year: 2020, target: 'Voysis', value: 'Undisclosed', sector: 'AI / NLP', type: 'Acquisition' },
-  { year: 2019, target: 'Intel Smartphone Modem', value: '$1.0B', sector: 'Semiconductors', type: 'Asset Acquisition' },
-  { year: 2019, target: 'PullString', value: 'Undisclosed', sector: 'AI / Voice', type: 'Acquisition' },
-  { year: 2018, target: 'Shazam', value: '$400M', sector: 'Music Tech', type: 'Acquisition' },
-  { year: 2018, target: 'Akonia Holographics', value: 'Undisclosed', sector: 'AR/VR Optics', type: 'Acquisition' },
-  { year: 2017, target: 'Beddit', value: 'Undisclosed', sector: 'Health Tech / Sleep', type: 'Acquisition' },
-  { year: 2016, target: 'Turi', value: '~$200M', sector: 'AI / Machine Learning', type: 'Acquisition' },
-  { year: 2015, target: 'Perceptio', value: 'Undisclosed', sector: 'AI / On-device ML', type: 'Acquisition' },
-  { year: 2015, target: 'Mapsense', value: '~$25M', sector: 'Mapping / Data', type: 'Acquisition' },
-  { year: 2014, target: 'Beats Electronics', value: '$3.0B', sector: 'Consumer Electronics / Music', type: 'Acquisition' },
-  { year: 2014, target: 'Swell', value: '~$30M', sector: 'Podcasting / Audio', type: 'Acquisition' },
-  { year: 2013, target: 'Topsy Labs', value: '~$200M', sector: 'Social Analytics', type: 'Acquisition' },
-  { year: 2013, target: 'PrimeSense', value: '$360M', sector: '3D Sensing / Motion', type: 'Acquisition' },
-  { year: 2012, target: 'AuthenTec', value: '$356M', sector: 'Fingerprint / Security', type: 'Acquisition' },
-  { year: 2012, target: 'Anobit Technologies', value: '~$390M', sector: 'Flash Memory', type: 'Acquisition' },
-  { year: 2010, target: 'Intrinsity', value: '$121M', sector: 'Chip Design', type: 'Acquisition' },
-  { year: 2010, target: 'Siri', value: '~$200M', sector: 'AI / Voice Assistant', type: 'Acquisition' },
-  { year: 2008, target: 'PA Semi', value: '$278M', sector: 'Semiconductors', type: 'Acquisition' },
-  { year: 1997, target: 'NeXT', value: '$427M', sector: 'Software / OS', type: 'Acquisition' },
-];
+// ── Parse Apple M&A data from markdown ───────────────────────────────────────
+
+let _aaplDeals: AAPLDeal[] | null = null;
+function getAAPLDeals(): AAPLDeal[] {
+  if (!_aaplDeals) {
+    const data = extractJson<{ deals: AAPLDeal[] }>(appleMaMd as string);
+    _aaplDeals = data.deals;
+  }
+  return _aaplDeals;
+}
+
+// ── AAPL Bar Chart ─────────────────────────────────────────────────────────────
+
+const CHART_START_YEAR = 1988;
+const CHART_END_YEAR = 2026;
+
+function AAPLBarChart({ deals }: { deals: AAPLDeal[] }) {
+  const [tooltip, setTooltip] = useState<{ x: number; y: number; year: number; val: number } | null>(null);
+
+  const years = Array.from(
+    { length: CHART_END_YEAR - CHART_START_YEAR + 1 },
+    (_, i) => CHART_START_YEAR + i,
+  );
+
+  const valueByYear = new Map<number, number>();
+  for (const y of years) valueByYear.set(y, 0);
+  for (const d of deals) {
+    if (d.valueM != null) {
+      valueByYear.set(d.year, (valueByYear.get(d.year) ?? 0) + d.valueM);
+    }
+  }
+
+  const maxVal = Math.max(...years.map((y) => valueByYear.get(y) ?? 0), 1);
+
+  const W = 800;
+  const H = 200;
+  const PAD = { top: 20, right: 20, bottom: 40, left: 64 };
+  const chartW = W - PAD.left - PAD.right;
+  const chartH = H - PAD.top - PAD.bottom;
+  const barW = Math.max(2, chartW / years.length - 1.5);
+
+  const yTicks = [0, 0.25, 0.5, 0.75, 1].map((t) => ({
+    t,
+    val: maxVal * t,
+    y: PAD.top + chartH * (1 - t),
+  }));
+
+  return (
+    <div className="aapl-ma-chart-wrap" style={{ position: 'relative' }}>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        style={{ width: '100%', height: 'auto', display: 'block' }}
+        onMouseLeave={() => setTooltip(null)}
+      >
+        {yTicks.map(({ t, val, y }) => (
+          <g key={t}>
+            <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y} stroke="#f0f0f0" strokeWidth="1" />
+            <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize="9" fill="#9ca3af">
+              {val >= 1000 ? `$${(val / 1000).toFixed(1)}B` : val > 0 ? `$${Math.round(val)}M` : '$0'}
+            </text>
+          </g>
+        ))}
+
+        {years.map((year, i) => {
+          const val = valueByYear.get(year) ?? 0;
+          const barH = (val / maxVal) * chartH;
+          const cx = PAD.left + i * (chartW / years.length) + (chartW / years.length) / 2;
+          const x = cx - barW / 2;
+          const y = PAD.top + chartH - barH;
+          const showLabel = year % 5 === 0 || year === CHART_END_YEAR;
+
+          return (
+            <g key={year}>
+              {barH > 0 && (
+                <rect
+                  x={x}
+                  y={y}
+                  width={barW}
+                  height={barH}
+                  fill={tooltip?.year === year ? '#1d4ed8' : '#3b82f6'}
+                  rx="1"
+                  onMouseEnter={(e) => {
+                    const svgEl = (e.target as SVGElement).closest('svg');
+                    if (!svgEl) return;
+                    const rect2 = svgEl.getBoundingClientRect();
+                    const scaleX = rect2.width / W;
+                    const scaleY = rect2.height / H;
+                    setTooltip({ x: cx * scaleX, y: (y - 4) * scaleY, year, val });
+                  }}
+                  style={{ cursor: 'pointer' }}
+                />
+              )}
+              {showLabel && (
+                <text x={cx} y={H - 6} textAnchor="middle" fontSize="8" fill="#9ca3af">
+                  {year}
+                </text>
+              )}
+            </g>
+          );
+        })}
+
+        <line
+          x1={PAD.left} y1={PAD.top + chartH}
+          x2={W - PAD.right} y2={PAD.top + chartH}
+          stroke="#e5e7eb" strokeWidth="1"
+        />
+        <rect x={PAD.left} y={3} width="8" height="8" fill="#3b82f6" rx="1" />
+        <text x={PAD.left + 11} y={11} fontSize="9" fill="#374151">Deal Value (USD, disclosed only)</text>
+      </svg>
+
+      {tooltip && (
+        <div
+          style={{
+            position: 'absolute',
+            left: tooltip.x,
+            top: tooltip.y,
+            transform: 'translate(-50%, -100%)',
+            background: '#1f2937',
+            color: '#fff',
+            padding: '5px 10px',
+            borderRadius: 6,
+            fontSize: 12,
+            pointerEvents: 'none',
+            whiteSpace: 'nowrap',
+            zIndex: 10,
+          }}
+        >
+          <strong>{tooltip.year}</strong>:{' '}
+          {tooltip.val >= 1000 ? `$${(tooltip.val / 1000).toFixed(2)}B` : `$${tooltip.val.toLocaleString()}M`}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── AAPL M&A Panel ─────────────────────────────────────────────────────────────
+
+function AAPLMAPanel() {
+  const deals = getAAPLDeals();
+  const allIndustries = [...new Set(deals.map((d) => d.industry))].sort();
+
+  const [selectedIndustries, setSelectedIndustries] = useState<Set<string>>(new Set());
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  function toggleIndustry(ind: string) {
+    setSelectedIndustries((prev) => {
+      const next = new Set(prev);
+      if (next.has(ind)) next.delete(ind);
+      else next.add(ind);
+      return next;
+    });
+  }
+
+  function scrollIndustries(dir: 'left' | 'right') {
+    scrollRef.current?.scrollBy({ left: dir === 'left' ? -150 : 150, behavior: 'smooth' });
+  }
+
+  const filteredDeals =
+    selectedIndustries.size === 0 ? deals : deals.filter((d) => selectedIndustries.has(d.industry));
+
+  const sortedDeals = [...filteredDeals].sort(
+    (a, b) => b.year - a.year || b.date.localeCompare(a.date),
+  );
+
+  return (
+    <div className="aapl-ma-panel">
+      {/* ── Industry filter bar ── */}
+      <div className="aapl-ma-filter-bar">
+        <span className="aapl-ma-filter-label">INDUSTRY</span>
+        <button className="aapl-ma-scroll-btn" onClick={() => scrollIndustries('left')} aria-label="Scroll left">‹</button>
+        <div className="aapl-ma-tags-scroll" ref={scrollRef}>
+          {allIndustries.map((ind) => (
+            <button
+              key={ind}
+              className={`aapl-ma-industry-tag${selectedIndustries.has(ind) ? ' aapl-ma-industry-tag--active' : ''}`}
+              onClick={() => toggleIndustry(ind)}
+            >
+              {ind}
+            </button>
+          ))}
+        </div>
+        <button className="aapl-ma-scroll-btn" onClick={() => scrollIndustries('right')} aria-label="Scroll right">›</button>
+        {selectedIndustries.size > 0 && (
+          <button className="aapl-ma-clear-btn" onClick={() => setSelectedIndustries(new Set())}>
+            Clear
+          </button>
+        )}
+      </div>
+
+      {/* ── Bar chart ── */}
+      <div className="aapl-ma-chart-section">
+        <div className="aapl-ma-section-title">
+          Apple Inc. — Annual M&amp;A Deal Value (1988–2026)
+          {selectedIndustries.size > 0 && (
+            <span className="aapl-ma-filter-note"> · Filtered: {[...selectedIndustries].join(', ')}</span>
+          )}
+        </div>
+        <AAPLBarChart deals={filteredDeals} />
+        <div className="aapl-ma-chart-note">
+          Bars show disclosed deal values only. Undisclosed transactions are excluded from totals.
+        </div>
+      </div>
+
+      {/* ── Table ── */}
+      <div className="aapl-ma-table-section">
+        <div className="aapl-ma-section-title">
+          M&amp;A Transactions ({filteredDeals.length} deal{filteredDeals.length !== 1 ? 's' : ''}
+          {selectedIndustries.size > 0 ? ', filtered' : ''})
+        </div>
+        <div className="aapl-ma-table-wrap">
+          <table className="aapl-ma-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Company</th>
+                <th>Industry</th>
+                <th className="text-right">Deal Value</th>
+                <th>Source</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sortedDeals.map((deal, i) => (
+                <tr key={i} className="aapl-ma-table-row">
+                  <td className="aapl-ma-td-date">{deal.date}</td>
+                  <td>
+                    <span className={`aapl-ma-type-badge aapl-ma-type-${deal.type === 'Acquisition' ? 'acq' : deal.type === 'Asset Acquisition' ? 'asset' : 'merger'}`}>
+                      {deal.type}
+                    </span>
+                  </td>
+                  <td className="aapl-ma-td-company">{deal.company}</td>
+                  <td><span className="aapl-ma-industry-pill">{deal.industry}</span></td>
+                  <td className="text-right aapl-ma-td-value">
+                    {deal.valueM != null ? (
+                      deal.valueM >= 1000
+                        ? `$${(deal.valueM / 1000).toFixed(2)}B`
+                        : `$${deal.valueM.toLocaleString()}M`
+                    ) : (
+                      <span className="aapl-ma-undisclosed">Undisclosed</span>
+                    )}
+                  </td>
+                  <td>
+                    <a href={deal.newsUrl} target="_blank" rel="noopener noreferrer" className="aapl-ma-news-link" title="View source">
+                      <svg width="12" height="12" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                        <path d="M5 2H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+                        <path d="M8 1h4v4M7 6l5-5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      Link
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="aapl-ma-source-note">
+          Sources: Apple Newsroom, TechCrunch, Reuters, Bloomberg, Wikipedia. Data current as of 2024.
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // Global M&A data (same as market-data/ma page)
 const MA_DATA: Record<Region, { year: number; deals: number; value: number }[]> = {
@@ -293,49 +539,12 @@ function HeatMapGridSmall({ data }: { data: { sector: string; deals: number; val
 
 // ── Sub panels ────────────────────────────────────────────────────────────────
 
-function NumberValuePanel({ symbol, region }: { symbol: string; region: Region }) {
+function NumberValuePanel({ region }: { region: Region }) {
   const data = MA_DATA[region];
-
-  // For AAPL show company-specific deal history, plus market context
-  const isAAPL = symbol === 'AAPL';
 
   return (
     <div className="cpma-panel">
-      {isAAPL && (
-        <>
-          <div className="cpma-section-title">Apple Inc. — Acquisition History</div>
-          <div className="ma-table-wrap">
-            <table className="ma-table">
-              <thead>
-                <tr>
-                  <th>Year</th>
-                  <th>Target Company</th>
-                  <th>Deal Value</th>
-                  <th>Sector</th>
-                  <th>Type</th>
-                </tr>
-              </thead>
-              <tbody>
-                {AAPL_DEALS.filter((d) => d.year >= 2010).slice(0, 12).map((deal, i) => (
-                  <tr key={i} className="ma-table-row">
-                    <td>{deal.year}</td>
-                    <td className="ma-target">{deal.target}</td>
-                    <td className="ma-deal-value">{deal.value}</td>
-                    <td className="ma-sector-tag">{deal.sector}</td>
-                    <td>{deal.type}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="cpma-section-divider" />
-          <div className="cpma-section-title">Market Context — {region}</div>
-        </>
-      )}
-
-      {!isAAPL && (
-        <div className="cpma-section-title">Market Data — {region}</div>
-      )}
+      <div className="cpma-section-title">Market Data — {region}</div>
 
       <div className="ma-chart-card" style={{ marginTop: 12 }}>
         <div className="ma-chart-card-title">Number of Deals &amp; Deal Value (2015–2024)</div>
@@ -376,42 +585,10 @@ function NumberValuePanel({ symbol, region }: { symbol: string; region: Region }
   );
 }
 
-function LargestPanel({ symbol }: { symbol: string }) {
-  const isAAPL = symbol === 'AAPL';
+function LargestPanel() {
   return (
     <div className="cpma-panel">
-      {isAAPL && (
-        <>
-          <div className="cpma-section-title">Apple Inc. — Full M&A History</div>
-          <div className="ma-table-wrap">
-            <table className="ma-table">
-              <thead>
-                <tr>
-                  <th>Year</th>
-                  <th>Target</th>
-                  <th>Value</th>
-                  <th>Sector</th>
-                </tr>
-              </thead>
-              <tbody>
-                {AAPL_DEALS.map((deal, i) => (
-                  <tr key={i} className="ma-table-row">
-                    <td>{deal.year}</td>
-                    <td className="ma-target">{deal.target}</td>
-                    <td className="ma-deal-value">{deal.value}</td>
-                    <td className="ma-sector-tag">{deal.sector}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="cpma-section-divider" />
-          <div className="cpma-section-title">Global Largest M&amp;A Transactions (All Time)</div>
-        </>
-      )}
-      {!isAAPL && (
-        <div className="cpma-section-title">Largest M&amp;A Transactions of All Time</div>
-      )}
+      <div className="cpma-section-title">Largest M&amp;A Transactions of All Time</div>
       <div className="ma-table-wrap" style={{ marginTop: 12 }}>
         <table className="ma-table">
           <thead>
@@ -497,6 +674,11 @@ export default function CompanyMATab({ symbol }: CompanyMATabProps) {
   const [activeSection, setActiveSection] = useState<MASection>('number-value');
   const [activeRegion, setActiveRegion] = useState<Region>('Worldwide');
 
+  // AAPL gets a dedicated panel with industry filter, bar chart, and table
+  if (symbol === 'AAPL') {
+    return <AAPLMAPanel />;
+  }
+
   return (
     <div className="fin-stmt-layout cpma-layout">
       {/* ── Left sidebar (same pattern as FIN. Statement) ── */}
@@ -534,9 +716,9 @@ export default function CompanyMATab({ symbol }: CompanyMATabProps) {
 
         {/* Panel content */}
         {activeSection === 'number-value' && (
-          <NumberValuePanel symbol={symbol} region={activeRegion} />
+          <NumberValuePanel region={activeRegion} />
         )}
-        {activeSection === 'largest' && <LargestPanel symbol={symbol} />}
+        {activeSection === 'largest' && <LargestPanel />}
         {activeSection === 'heat-maps' && <HeatMapsPanel region={activeRegion} />}
       </div>
     </div>
