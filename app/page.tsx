@@ -7,7 +7,7 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/watchlist');
+    router.replace('/watchlist/627836');
   }, [router]);
 
   return null;

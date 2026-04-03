@@ -12,6 +12,7 @@ import {
   NavItem,
   SubNavItem,
 } from '@/app/data/navigation';
+import { useWatchlist } from '@/app/contexts/WatchlistContext';
 
 function NavIcon({ iconKey }: { iconKey: string }) {
   const svgContent = sidebarIcons[iconKey] || '';
@@ -61,6 +62,7 @@ function SubMenu({
   onMouseLeave: () => void;
 }) {
   const [top, setTop] = useState(0);
+  const { watchlistNames } = useWatchlist();
 
   useEffect(() => {
     if (anchorRef.current) {
@@ -71,14 +73,30 @@ function SubMenu({
 
   return (
     <div className="sidebar-submenu" style={{ top }} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-      {items.map((item) => (
-        <React.Fragment key={item.label}>
-          {item.dividerBefore && <div className="sidebar-submenu-divider" />}
-          <Link href={item.href} className="sidebar-submenu-item">
-            {item.label}
-          </Link>
-        </React.Fragment>
-      ))}
+      {items.map((item) => {
+        const displayLabel = item.watchlistId ? (watchlistNames[item.watchlistId] ?? item.label) : item.label;
+        return (
+          <React.Fragment key={item.label}>
+            {item.dividerBefore && <div className="sidebar-submenu-divider" />}
+            <Link href={item.href} className="sidebar-submenu-item">
+              <span className="sidebar-submenu-label">{displayLabel}</span>
+              {item.iconRight === 'add' && (
+                <svg
+                  className="sidebar-submenu-icon-right"
+                  viewBox="0 0 14 14"
+                  fill="none"
+                  width="13"
+                  height="13"
+                  aria-hidden="true"
+                >
+                  <rect x="1" y="1" width="12" height="12" rx="2" fill="currentColor" fillOpacity="0.18" />
+                  <path d="M7 4V10M4 7H10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                </svg>
+              )}
+            </Link>
+          </React.Fragment>
+        );
+      })}
     </div>
   );
 }
@@ -92,7 +110,14 @@ function QuickLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
     >
       <NavIcon iconKey={item.icon} />
       {!collapsed && item.label}
-      {!collapsed && item.badge && <span className="badge-new">{item.badge}</span>}
+      {!collapsed && item.badge && (
+        <span
+          className="badge-new"
+          style={item.badgeColor ? { background: item.badgeColor } : undefined}
+        >
+          {item.badge}
+        </span>
+      )}
     </Link>
   );
 }

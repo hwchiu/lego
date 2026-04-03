@@ -4,6 +4,7 @@ export interface NavItem {
   icon: string; // SVG path data identifier — rendered by component
   active?: boolean;
   badge?: string;
+  badgeColor?: string; // optional custom badge background color
   subItems?: SubNavItem[];
 }
 
@@ -11,6 +12,8 @@ export interface SubNavItem {
   label: string;
   href: string;
   dividerBefore?: boolean; // render a thin divider line above this item
+  watchlistId?: string; // if set, label is dynamically overridden by WatchlistContext
+  iconRight?: 'add'; // optional right-aligned icon
 }
 
 export interface SidebarSection {
@@ -65,7 +68,7 @@ export const sidebarIcons: Record<string, string> = {
 export const quickLinks: NavItem[] = [
   { label: 'About tMIC', href: '#', icon: 'info' },
   { label: 'Explore MIC Picks', href: '#', icon: 'star' },
-  { label: 'Summary Report', href: '#', icon: 'report', badge: 'NEW' },
+  { label: 'Summary Report', href: '#', icon: 'report', badge: 'NEW', badgeColor: '#BF3030' },
   { label: 'Subscribe Newsletters', href: '#', icon: 'mail' },
 ];
 
@@ -73,13 +76,13 @@ export const mainNav: NavItem[] = [
   { label: 'Company Profile', href: '#', icon: 'home' },
   {
     label: 'Watchlist',
-    href: '/watchlist',
+    href: '/watchlist/627836',
     icon: 'watchlist',
     subItems: [
-      { label: 'Watchlist1', href: '/watchlist' },
-      { label: 'Watchlist-TSM', href: '#' },
-      { label: 'Watchlist2', href: '#' },
-      { label: 'Customized Watchlist', href: '#', dividerBefore: true },
+      { label: 'Watchlist1', href: '/watchlist/627836', watchlistId: '627836' },
+      { label: 'Watchlist-TSM', href: '/watchlist/738291', watchlistId: '738291' },
+      { label: 'Watchlist2', href: '/watchlist/394827', watchlistId: '394827' },
+      { label: 'Create Watchlist', href: '#', dividerBefore: true, iconRight: 'add' },
     ],
   },
   {
