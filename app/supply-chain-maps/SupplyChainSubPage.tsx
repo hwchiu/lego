@@ -32,7 +32,7 @@ export default function SupplyChainSubPage({ title }: SupplyChainSubPageProps) {
                 Back
               </Link>
               <div className="scm-sub-breadcrumb">
-                <span className="cp-breadcrumb-text">Supply Chain Maps /</span>
+                <span className="cp-breadcrumb-text">RMAP /</span>
                 <h1 className="scm-sub-title">{title}</h1>
               </div>
             </div>

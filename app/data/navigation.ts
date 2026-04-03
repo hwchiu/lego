@@ -109,7 +109,7 @@ export const mainNav: NavItem[] = [
 
 export const supplyChainNav: NavItem[] = [
   {
-    label: 'Supply Chain Maps',
+    label: 'RMAP',
     href: '/supply-chain-maps',
     icon: 'supplyMap',
     badge: 'Coming soon',
