@@ -10,6 +10,7 @@ import { newsItems } from '@/app/data/news';
 import { extractJson } from '@/app/lib/parseContent';
 import companyProfileMd from '@/content/company-profile.md';
 import FinancialStatementTab from './FinancialStatementTab';
+import CompanyMATab from './CompanyMATab';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -910,11 +911,15 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
             {/* ── FIN. Statement tab ── */}
             {activeTab === 'FIN. Statement' && <FinancialStatementTab />}
 
+            {/* ── M&A tab ── */}
+            {activeTab === 'M&A' && <CompanyMATab symbol={symbol} />}
+
             {/* Placeholder for remaining tabs */}
             {activeTab !== 'FIN. Summary' &&
               activeTab !== 'FIN. Statement' &&
               activeTab !== 'News' &&
-              activeTab !== 'Stock' && (
+              activeTab !== 'Stock' &&
+              activeTab !== 'M&A' && (
                 <div className="cp-tab-placeholder">
                   <span className="cp-tab-placeholder-text">{activeTab} — Content coming soon</span>
                 </div>
