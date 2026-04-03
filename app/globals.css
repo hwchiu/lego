@@ -1134,6 +1134,7 @@ input, select { font-family: var(--font); }
   background: transparent;
   border: 1px solid var(--c-border-2);
   border-radius: var(--radius-sm);
+  white-space: nowrap;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 .news-action-btn:hover {
@@ -2754,8 +2755,8 @@ input, select { font-family: var(--font); }
 /* Scenario buttons */
 .cp-scenarios {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  flex-wrap: nowrap;
+  gap: 8px;
   justify-content: center;
   max-width: 720px;
 }
@@ -2763,15 +2764,16 @@ input, select { font-family: var(--font); }
 .cp-scenario-btn {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 9px 18px;
+  gap: 5px;
+  padding: 6px 10px;
   border: 1.5px solid var(--c-border-2);
   border-radius: 20px;
   background: var(--c-white);
-  font-size: 13.5px;
+  font-size: 12.5px;
   font-weight: 500;
   color: var(--c-text-2);
   cursor: pointer;
+  white-space: nowrap;
   transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
 
@@ -2781,7 +2783,7 @@ input, select { font-family: var(--font); }
   box-shadow: 0 2px 6px rgba(0,0,0,0.06);
 }
 
-.cp-scenario-icon { font-size: 15px; }
+.cp-scenario-icon { display: flex; align-items: center; }
 
 /* News section */
 .cp-news-section {
@@ -2948,11 +2950,19 @@ input, select { font-family: var(--font); }
 }
 
 /* Company info cards */
+.cp-info-tags-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
 .cp-info-cards {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 16px;
 }
 
 .cp-info-card {
@@ -2986,6 +2996,15 @@ input, select { font-family: var(--font); }
   gap: 20px;
   flex-wrap: wrap;
   margin-bottom: 18px;
+}
+
+.cp-public-tags-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .cp-tags-group {
@@ -3027,6 +3046,17 @@ input, select { font-family: var(--font); }
   background: #f0fdf4;
   border-color: #86efac;
   color: #166534;
+}
+
+.cp-tag--link {
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.cp-tag--link:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
 }
 
 .cp-tag-remove {
@@ -3100,15 +3130,19 @@ input, select { font-family: var(--font); }
   gap: 20px;
 }
 
-.cp-cards-row {
+/* Main 3-column grid: 17% | 17% | 66% */
+.cp-cards-main-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1.8fr;
+  grid-template-columns: 17fr 17fr 66fr;
   gap: 16px;
   align-items: start;
 }
 
-.cp-cards-row:last-child {
-  grid-template-columns: 1fr 1.8fr;
+/* Stacked cards column */
+.cp-col-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .cp-data-card {
@@ -3147,8 +3181,8 @@ input, select { font-family: var(--font); }
 /* Financial metrics */
 .cp-fin-metrics {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: 1fr;
+  gap: 14px;
 }
 
 .cp-fin-metric {
@@ -3165,7 +3199,7 @@ input, select { font-family: var(--font); }
 
 .cp-fin-metric-value {
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--c-text);
   display: flex;
   align-items: baseline;
@@ -3238,8 +3272,8 @@ input, select { font-family: var(--font); }
 
 /* Revenue breakdown */
 .cp-breakdown-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 

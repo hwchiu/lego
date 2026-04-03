@@ -10,13 +10,7 @@ import { newsItems } from '@/app/data/news';
 import { SP500_COMPANIES } from '@/app/data/sp500';
 
 // Scenario suggestion buttons
-const SCENARIOS = [
-  { label: 'Create Report', icon: '📄' },
-  { label: 'Boost my day', icon: '⚡' },
-  { label: 'Help me learn', icon: '🎓' },
-  { label: "Let's stay current", icon: '📰' },
-  { label: 'Write anything', icon: '✏️' },
-];
+const SCENARIOS = ['Create Report', 'Boost my day', 'Help me learn', "Let's stay current", 'Write anything'] as const;
 
 // Tools dropdown items
 const TOOLS = [
@@ -27,6 +21,60 @@ const TOOLS = [
 
 // User display name (matches TopNav)
 const USER_NAME = 'HungWei';
+
+// Flat minimalist black SVG icons for scenario buttons
+function ScenarioIconCreateReport() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <rect x="2" y="1" width="9" height="12" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M4 5h5M4 7.5h5M4 10h3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function ScenarioIconBoostMyDay() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M8.5 1.5L3.5 8h5L5.5 12.5l5-6.5H6.5L8.5 1.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function ScenarioIconHelpMeLearn() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M7 2.5L1 5.5L7 8.5L13 5.5L7 2.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+      <path d="M3.5 7v3c0 0 1.5 1.5 3.5 1.5S10.5 10 10.5 10V7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function ScenarioIconStayCurrent() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <rect x="1.5" y="2.5" width="9" height="9" rx="1" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M3.5 5.5h5M3.5 7.5h5M3.5 9.5h3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M11.5 1.5v4M9.5 3.5h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function ScenarioIconWriteAnything() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M9.5 2L12 4.5L5 11.5H2.5V9L9.5 2Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+      <path d="M8 3.5L10.5 6" stroke="currentColor" strokeWidth="1.3" />
+    </svg>
+  );
+}
+
+const SCENARIO_ICONS: Record<string, React.ReactNode> = {
+  'Create Report': <ScenarioIconCreateReport />,
+  'Boost my day': <ScenarioIconBoostMyDay />,
+  'Help me learn': <ScenarioIconHelpMeLearn />,
+  "Let's stay current": <ScenarioIconStayCurrent />,
+  'Write anything': <ScenarioIconWriteAnything />,
+};
 
 // Display the 6 most-recent news items
 const LANDING_NEWS = newsItems.slice(0, 6);
@@ -256,9 +304,9 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
               {/* Scenario buttons */}
               <div className="cp-scenarios">
                 {SCENARIOS.map((s) => (
-                  <button key={s.label} className="cp-scenario-btn">
-                    <span className="cp-scenario-icon">{s.icon}</span>
-                    {s.label}
+                  <button key={s} className="cp-scenario-btn">
+                    <span className="cp-scenario-icon">{SCENARIO_ICONS[s]}</span>
+                    {s}
                   </button>
                 ))}
               </div>
