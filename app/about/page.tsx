@@ -90,12 +90,18 @@ const UPCOMING_TALKS: TalkItem[] = [
 ];
 
 const GALLERY_PHOTOS = [
-  { src: '/lego/images/hwchiu.jpg', alt: '矽谷牛 — 技術分享' },
-  { src: '/lego/images/hwchiu.jpg', alt: '矽谷牛 — 大會演講' },
-  { src: '/lego/images/hwchiu.jpg', alt: '矽谷牛 — 社群活動' },
-  { src: '/lego/images/hwchiu.jpg', alt: '矽谷牛 — Grafana Meetup' },
-  { src: '/lego/images/hwchiu.jpg', alt: '矽谷牛 — KCD Taiwan' },
-  { src: '/lego/images/hwchiu.jpg', alt: '矽谷牛 — 工作日常' },
+  { src: '/lego/images/hwchiu.jpg', alt: '矽谷牛 — 個人頭像' },
+  { src: '/lego/images/hwchiu_avatar2.jpg', alt: '矽谷牛 — 社群活動' },
+  { src: '/lego/images/hwchiu_blog_avatar.jpg', alt: '矽谷牛 — 講師形象照' },
+  { src: '/lego/images/yep.jpg', alt: '矽谷牛 — 生活日常' },
+  {
+    src: 'https://github.com/user-attachments/assets/414f949e-3fdf-4ee5-9197-eb1f4be10bfb',
+    alt: '矽谷牛 — LinkedIn 形象照',
+  },
+  {
+    src: 'https://github.com/user-attachments/assets/f46651f5-481c-440b-a4de-4948aa90e804',
+    alt: '矽谷牛 — 大會演講',
+  },
 ];
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
@@ -198,6 +204,20 @@ export default function AboutPage() {
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* ── Featured Video ── */}
+            <div className="about-section-heading" style={{ marginTop: '2.5rem' }}>
+              <span className="about-section-eyebrow">Featured Video</span>
+              <h2 className="about-section-title">精選影片</h2>
+            </div>
+            <div className="about-video-wrap">
+              <iframe
+                src="https://www.youtube.com/embed/57Tl5Lg_wpM"
+                title="邱宏瑋 Hung-Wei Chiu｜面對大規模 Kubernetes 叢集：挑戰與機遇並存"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
             </div>
 
             {/* ── Past Talks ── */}
