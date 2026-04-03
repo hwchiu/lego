@@ -81,7 +81,7 @@ export const sidebarIcons: Record<string, string> = {
 export const quickLinks: NavItem[] = [
   { label: 'About tMIC', href: '/about', icon: 'info' },
   { label: 'Explore MIC Picks', href: '#', icon: 'star', badge: 'Coming soon', badgeStyle: 'coming-soon' },
-  { label: 'Subscribe Newsletters', href: '#', icon: 'mail' },
+  { label: 'Collaboration Playground', href: '/collaboration-playground', icon: 'collaborationPlayground', badge: 'NEW', badgeStyle: 'new' },
 ];
 
 export const mainNav: NavItem[] = [
@@ -126,13 +126,11 @@ export const supplyChainNav: NavItem[] = [
       { label: 'Competitor', href: '/supply-chain-maps/competitor', icon: 'competitor' },
     ],
   },
-  { label: 'My Ecosystems', href: '#', icon: 'layers' },
-  { label: 'Network Views', href: '#', icon: 'network' },
+  { label: 'My RMAP', href: '#', icon: 'layers' },
 ];
 
 export const bottomLinks: NavItem[] = [
   { label: 'Intelligence Search', href: '#', icon: 'intelligenceSearch' },
-  { label: 'Collaboration Playground', href: '/collaboration-playground', icon: 'collaborationPlayground' },
 ];
 
 export const marketTabs = [

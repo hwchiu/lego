@@ -4,7 +4,6 @@ import Image from 'next/image';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
-import { useLanguage } from '@/app/contexts/LanguageContext';
 
 // ── Feature sections data ──────────────────────────────────────────────────────
 
@@ -100,7 +99,7 @@ const PILLARS = [
 // ── Page ───────────────────────────────────────────────────────────────────────
 
 export default function AboutPage() {
-  const { lang } = useLanguage();
+  const lang = 'en';
   return (
     <>
       <TopNav />
