@@ -409,6 +409,7 @@ input, select { font-family: var(--font); }
   flex-shrink: 0;
   white-space: nowrap;
   line-height: 1.6;
+  text-transform: uppercase;
 }
 
 /* Nav Sections */
@@ -2927,10 +2928,18 @@ input, select { font-family: var(--font); }
 /* Right side */
 .cp-detail-topbar-right {
   display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
+
+.cp-detail-topbar-right-actions {
+  display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
-  padding-top: 4px;
 }
 
 .cp-favorite-btn {
@@ -3254,6 +3263,7 @@ input, select { font-family: var(--font); }
   display: flex;
   flex-direction: column;
   flex: 1;
+  justify-content: space-between;
 }
 
 .cp-fin-metric {
@@ -4099,13 +4109,97 @@ input, select { font-family: var(--font); }
 /* ── Filter bar ──────────────────────────────────────────────────────────── */
 .rmap-filter-bar {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  gap: 12px;
+  gap: 8px;
   z-index: 20;
 }
 /* When rendered above the graph container (not inside it) */
 .rmap-filter-bar--above {
   padding: 10px 0 8px;
+}
+
+/* Top row holding search + dropdowns */
+.rmap-filter-bar-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+/* Industry filter row */
+.rmap-industry-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.rmap-industry-filter-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--c-text-3);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.rmap-industry-scroll-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: transparent;
+  border: none;
+  color: var(--c-text-3);
+  font-size: 18px;
+  cursor: pointer;
+  flex-shrink: 0;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.15s;
+}
+.rmap-industry-scroll-btn:hover { color: var(--c-text); }
+
+.rmap-industry-tags-scroll {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: hidden;
+  flex: 1;
+  scrollbar-width: none;
+}
+.rmap-industry-tags-scroll::-webkit-scrollbar { display: none; }
+
+.rmap-industry-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: var(--c-white);
+  border: 1px solid var(--c-border-2);
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--c-text-2);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.rmap-industry-tag:hover {
+  background: var(--c-bg);
+  border-color: var(--c-border);
+}
+.rmap-industry-tag--active {
+  background: #1e66f5;
+  border-color: #1e66f5;
+  color: #fff;
+}
+.rmap-industry-tag--active:hover {
+  background: #1a5ce6;
+  border-color: #1a5ce6;
 }
 .rmap-filter-search-wrap {
   position: relative;
@@ -4261,7 +4355,7 @@ input, select { font-family: var(--font); }
   border-radius: 8px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.12);
   z-index: 30;
-  min-width: 160px;
+  min-width: 220px;
   overflow: hidden;
   padding: 4px 0;
 }
@@ -4484,6 +4578,12 @@ input, select { font-family: var(--font); }
 .rmap-feed-panel-dot { color: var(--c-text-4); }
 .rmap-feed-panel-source { color: var(--c-text-3); }
 .rmap-feed-panel-time { color: var(--c-text-4); }
+.rmap-feed-panel-empty {
+  padding: 24px 16px;
+  font-size: 12px;
+  color: var(--c-text-3);
+  text-align: center;
+}
 
 /* ── Supplier flat table (Table View) ────────────────────────────────────── */
 .rmap-supplier-table-wrap {

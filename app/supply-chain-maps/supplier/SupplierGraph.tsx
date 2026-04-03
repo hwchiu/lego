@@ -428,14 +428,17 @@ function DetailPanel({ node, onClose }: DetailPanelProps) {
 interface FilterBarProps {
   relationType: RelationTypeKey;
   onRelationChange: (key: RelationTypeKey) => void;
+  selectedIndustries: Set<string>;
+  onIndustryToggle: (industry: string) => void;
 }
 
-function FilterBar({ relationType, onRelationChange }: FilterBarProps) {
+function FilterBar({ relationType, onRelationChange, selectedIndustries, onIndustryToggle }: FilterBarProps) {
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const [activeTab, setActiveTab] = useState<FilterTab>('Company');
   const [openDropdown, setOpenDropdown] = useState<'rel' | 'risk' | null>(null);
   const [selectedRisk, setSelectedRisk] = useState<string>(RISK_TYPES[0].key);
+  const industryScrollRef = useRef<HTMLDivElement>(null);
 
   const q = query.toLowerCase().trim();
   const showQueryResults = q.length > 0;
@@ -465,8 +468,16 @@ function FilterBar({ relationType, onRelationChange }: FilterBarProps) {
 
   const relLabel = RELATION_LABEL_MAP.get(relationType) ?? '';
 
+  const scrollIndustries = (dir: 'left' | 'right') => {
+    if (industryScrollRef.current) {
+      industryScrollRef.current.scrollBy({ left: dir === 'left' ? -120 : 120, behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="rmap-filter-bar rmap-filter-bar--above">
+      {/* Top row: search + relation + risk */}
+      <div className="rmap-filter-bar-row">
       {/* Search */}
       <div className="rmap-titled-control">
         <div className="rmap-titled-control-label">Let&#39;s explore RMAP together…</div>
@@ -647,6 +658,37 @@ function FilterBar({ relationType, onRelationChange }: FilterBarProps) {
           )}
         </div>
       </div>
+      </div>
+
+      {/* Industry filter row */}
+      <div className="rmap-industry-filter-row">
+        <span className="rmap-industry-filter-label">INDUSTRY</span>
+        <button
+          className="rmap-industry-scroll-btn"
+          onClick={() => scrollIndustries('left')}
+          aria-label="Scroll left"
+        >
+          ‹
+        </button>
+        <div className="rmap-industry-tags-scroll" ref={industryScrollRef}>
+          {UNIQUE_INDUSTRIES.map((ind) => (
+            <button
+              key={ind}
+              className={`rmap-industry-tag${selectedIndustries.has(ind) ? ' rmap-industry-tag--active' : ''}`}
+              onClick={() => onIndustryToggle(ind)}
+            >
+              {ind}
+            </button>
+          ))}
+        </div>
+        <button
+          className="rmap-industry-scroll-btn"
+          onClick={() => scrollIndustries('right')}
+          aria-label="Scroll right"
+        >
+          ›
+        </button>
+      </div>
     </div>
   );
 }
@@ -724,36 +766,50 @@ function SupplierTable() {
 
 // ── Feed Panel (30% width, beside graph) ─────────────────────────────────────
 
-function FeedPanel() {
+interface FeedPanelProps {
+  selectedNode: SupplierNodeTSM | null;
+}
+
+function FeedPanel({ selectedNode }: FeedPanelProps) {
+  const filteredFeed = selectedNode
+    ? SUPPLY_CHAIN_FEED.filter((item) => item.tickers.includes(selectedNode.ticker))
+    : SUPPLY_CHAIN_FEED;
+
   return (
     <div className="rmap-feed-panel">
       <div className="rmap-feed-panel-header">
         <span className="rmap-feed-panel-title">Updates</span>
-        <span className="rmap-feed-panel-sub">Supply Chain News</span>
+        <span className="rmap-feed-panel-sub">
+          {selectedNode ? `${selectedNode.name}` : 'Supply Chain News'}
+        </span>
       </div>
       <div className="rmap-feed-panel-list">
-        {SUPPLY_CHAIN_FEED.map((item, idx) => (
-          <div
-            key={item.id}
-            className={`rmap-feed-panel-item${idx < SUPPLY_CHAIN_FEED.length - 1 ? ' rmap-feed-panel-item--bordered' : ''}`}
-          >
-            <div className="rmap-feed-panel-item-title">{item.title}</div>
-            <div className="rmap-feed-panel-item-meta">
-              {item.tickers.map((t, i) => (
-                <span key={t}>
-                  {i > 0 && ' · '}
-                  <a href="#" className="rmap-feed-panel-ticker">
-                    {t}
-                  </a>
-                </span>
-              ))}
-              <span className="rmap-feed-panel-dot"> · </span>
-              <span className="rmap-feed-panel-source">{item.source}</span>
-              <span className="rmap-feed-panel-dot"> · </span>
-              <span className="rmap-feed-panel-time">{item.time}</span>
+        {filteredFeed.length === 0 ? (
+          <div className="rmap-feed-panel-empty">No news for {selectedNode?.name}.</div>
+        ) : (
+          filteredFeed.map((item, idx) => (
+            <div
+              key={item.id}
+              className={`rmap-feed-panel-item${idx < filteredFeed.length - 1 ? ' rmap-feed-panel-item--bordered' : ''}`}
+            >
+              <div className="rmap-feed-panel-item-title">{item.title}</div>
+              <div className="rmap-feed-panel-item-meta">
+                {item.tickers.map((t, i) => (
+                  <span key={t}>
+                    {i > 0 && ' · '}
+                    <a href="#" className="rmap-feed-panel-ticker">
+                      {t}
+                    </a>
+                  </span>
+                ))}
+                <span className="rmap-feed-panel-dot"> · </span>
+                <span className="rmap-feed-panel-source">{item.source}</span>
+                <span className="rmap-feed-panel-dot"> · </span>
+                <span className="rmap-feed-panel-time">{item.time}</span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
@@ -768,6 +824,13 @@ const ZOOM_STEP = 1.25;
 
 interface ViewBoxState { x: number; y: number; w: number; h: number }
 const DEFAULT_VB: ViewBoxState = { x: 0, y: 0, w: SVG_W, h: SVG_H };
+
+interface PanState {
+  startClientX: number;
+  startClientY: number;
+  startVBX: number;
+  startVBY: number;
+}
 
 interface SupplierGraphProps {
   tableOnly?: boolean;
@@ -784,13 +847,29 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
     startNodeX: number;
     startNodeY: number;
   } | null>(null);
+  const [panState, setPanState] = useState<PanState | null>(null);
   const [selectedNode, setSelectedNode] = useState<SupplierNodeTSM | null>(null);
   const [relationType, setRelationType] = useState<RelationTypeKey>('transactionAmount');
+  const [selectedIndustries, setSelectedIndustries] = useState<Set<string>>(new Set());
   const [viewBox, setViewBox] = useState<ViewBoxState>(DEFAULT_VB);
   const svgRef = useRef<SVGSVGElement>(null);
   const posRef = useRef(positions);
   posRef.current = positions;
+  const viewBoxRef = useRef(viewBox);
+  viewBoxRef.current = viewBox;
   const didDragRef = useRef(false);
+
+  const toggleIndustry = useCallback((industry: string) => {
+    setSelectedIndustries((prev) => {
+      const next = new Set(prev);
+      if (next.has(industry)) {
+        next.delete(industry);
+      } else {
+        next.add(industry);
+      }
+      return next;
+    });
+  }, []);
 
   const applyZoom = useCallback((factor: number) => {
     setViewBox((prev) => {
@@ -823,29 +902,73 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
     });
   }, []);
 
+  const handleSvgMouseDown = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
+    // Only start pan on background clicks (nodes call stopPropagation)
+    didDragRef.current = false;
+    setPanState({
+      startClientX: e.clientX,
+      startClientY: e.clientY,
+      startVBX: viewBoxRef.current.x,
+      startVBY: viewBoxRef.current.y,
+    });
+  }, []);
+
   const dragRef = useRef(dragState);
   dragRef.current = dragState;
+  const panRef = useRef(panState);
+  panRef.current = panState;
 
   const handleSvgMouseMove = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
     const drag = dragRef.current;
-    if (!drag || !svgRef.current) return;
-    didDragRef.current = true;
-    const { x, y } = getSvgCoords(e, svgRef.current);
-    setPositions((prev) => ({
-      ...prev,
-      [drag.nodeId]: {
-        x: drag.startNodeX + (x - drag.startSvgX),
-        y: drag.startNodeY + (y - drag.startSvgY),
-      },
-    }));
+    const pan = panRef.current;
+
+    if (drag) {
+      if (!svgRef.current) return;
+      didDragRef.current = true;
+      const { x, y } = getSvgCoords(e, svgRef.current);
+      setPositions((prev) => ({
+        ...prev,
+        [drag.nodeId]: {
+          x: drag.startNodeX + (x - drag.startSvgX),
+          y: drag.startNodeY + (y - drag.startSvgY),
+        },
+      }));
+      return;
+    }
+
+    if (pan && svgRef.current) {
+      didDragRef.current = true;
+      const rect = svgRef.current.getBoundingClientRect();
+      const vb = viewBoxRef.current;
+      const scaleX = vb.w / rect.width;
+      const scaleY = vb.h / rect.height;
+      const dx = (e.clientX - pan.startClientX) * scaleX;
+      const dy = (e.clientY - pan.startClientY) * scaleY;
+      setViewBox((prev) => ({
+        ...prev,
+        x: pan.startVBX - dx,
+        y: pan.startVBY - dy,
+      }));
+    }
   }, []);
 
-  const clearDrag = useCallback(() => setDragState(null), []);
+  const clearDrag = useCallback(() => {
+    setDragState(null);
+    setPanState(null);
+  }, []);
 
   const handleNodeClick = useCallback((node: SupplierNodeTSM) => {
     if (didDragRef.current) return;
     setSelectedNode((prev) => (prev?.id === node.id ? null : node));
   }, []);
+
+  // Compute which nodes to show based on industry filter
+  const visibleNodeIds = selectedIndustries.size === 0
+    ? null // null means show all
+    : new Set([
+        'TSM', // always show center
+        ...ALL_SUPPLIERS.filter((s) => selectedIndustries.has(s.industryCategory)).map((s) => s.id),
+      ]);
 
   if (tableOnly) {
     return <SupplierTable />;
@@ -854,11 +977,17 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
   const vbStr = `${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`;
   const isAtMinZoom = viewBox.w <= SVG_W * MIN_VB_SCALE + 1;
   const isAtMaxZoom = viewBox.w >= SVG_W * MAX_VB_SCALE - 1;
+  const isGrabbing = !!(dragState || panState);
 
   return (
     <div className="rmap-graph-wrap">
       {/* Filter bar is placed ABOVE the graph container (not inside it) */}
-      <FilterBar relationType={relationType} onRelationChange={setRelationType} />
+      <FilterBar
+        relationType={relationType}
+        onRelationChange={setRelationType}
+        selectedIndustries={selectedIndustries}
+        onIndustryToggle={toggleIndustry}
+      />
 
       {/* Graph and feed panel side by side */}
       <div className="rmap-graph-content">
@@ -869,10 +998,11 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
             viewBox={vbStr}
             className="rmap-svg"
             aria-label="TSMC Supplier Relationship Graph"
+            onMouseDown={handleSvgMouseDown}
             onMouseMove={handleSvgMouseMove}
             onMouseUp={clearDrag}
             onMouseLeave={clearDrag}
-            style={{ cursor: dragState ? 'grabbing' : 'default' }}
+            style={{ cursor: isGrabbing ? 'grabbing' : 'grab' }}
           >
             <defs>
               <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
@@ -885,8 +1015,10 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
 
             {/* Tier 1 → Tier 2 edges */}
             {TSM_TIER2_SUPPLIERS.map((node) => {
+              if (visibleNodeIds && !visibleNodeIds.has(node.id)) return null;
               const parent = TSM_TIER1_SUPPLIERS.find((t) => t.id === node.parentId);
               if (!parent) return null;
+              if (visibleNodeIds && !visibleNodeIds.has(parent.id)) return null;
               const pp = positions[parent.id],
                 np = positions[node.id];
               const ep = rectEdgePoint(pp.x, pp.y, T1_W, T1_H, np.x, np.y);
@@ -917,6 +1049,7 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
 
             {/* Center → Tier 1 edges */}
             {TSM_TIER1_SUPPLIERS.map((node) => {
+              if (visibleNodeIds && !visibleNodeIds.has(node.id)) return null;
               const cp = positions['TSM'],
                 np = positions[node.id];
               const ep = rectEdgePoint(cp.x, cp.y, CENTER_W, CENTER_H, np.x, np.y);
@@ -946,28 +1079,34 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
             })}
 
             {/* Tier 2 nodes */}
-            {TSM_TIER2_SUPPLIERS.map((node) => (
-              <Tier2Node
-                key={node.id}
-                node={node}
-                pos={positions[node.id]}
-                selected={selectedNode?.id === node.id}
-                onClick={() => handleNodeClick(node)}
-                onMouseDown={(e) => handleNodeMouseDown(node.id, e)}
-              />
-            ))}
+            {TSM_TIER2_SUPPLIERS.map((node) => {
+              if (visibleNodeIds && !visibleNodeIds.has(node.id)) return null;
+              return (
+                <Tier2Node
+                  key={node.id}
+                  node={node}
+                  pos={positions[node.id]}
+                  selected={selectedNode?.id === node.id}
+                  onClick={() => handleNodeClick(node)}
+                  onMouseDown={(e) => handleNodeMouseDown(node.id, e)}
+                />
+              );
+            })}
 
             {/* Tier 1 nodes */}
-            {TSM_TIER1_SUPPLIERS.map((node) => (
-              <Tier1Node
-                key={node.id}
-                node={node}
-                pos={positions[node.id]}
-                selected={selectedNode?.id === node.id}
-                onClick={() => handleNodeClick(node)}
-                onMouseDown={(e) => handleNodeMouseDown(node.id, e)}
-              />
-            ))}
+            {TSM_TIER1_SUPPLIERS.map((node) => {
+              if (visibleNodeIds && !visibleNodeIds.has(node.id)) return null;
+              return (
+                <Tier1Node
+                  key={node.id}
+                  node={node}
+                  pos={positions[node.id]}
+                  selected={selectedNode?.id === node.id}
+                  onClick={() => handleNodeClick(node)}
+                  onMouseDown={(e) => handleNodeMouseDown(node.id, e)}
+                />
+              );
+            })}
 
             {/* Center node — last for top z-order */}
             <CenterNodeSvg
@@ -1013,7 +1152,7 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
         </div>
 
         {/* Feed panel — 30% width */}
-        <FeedPanel />
+        <FeedPanel selectedNode={selectedNode} />
       </div>
     </div>
   );

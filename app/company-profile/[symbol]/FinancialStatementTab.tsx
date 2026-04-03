@@ -388,11 +388,6 @@ export default function FinancialStatementTab() {
         {/* Table */}
         {statementType === 'income' ? (
           <>
-            {currency === 'usd' && (
-              <p className="fin-stmt-currency-note">
-                Note: Apple Inc. reports natively in USD. Original Currency = USD.
-              </p>
-            )}
             <div className="fin-stmt-table-wrap">
             <table className="data-table fin-stmt-table">
               <thead>
