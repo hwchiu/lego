@@ -402,7 +402,7 @@ input, select { font-family: var(--font); }
   font-weight: 700;
   background: #1e66f5;
   color: #fff;
-  padding: 0 3px;
+  padding: 1px 3px;
   border-radius: 8px;
   letter-spacing: 0.01em;
   margin-left: 3px;
@@ -2716,14 +2716,16 @@ input, select { font-family: var(--font); }
 .cp-tool-label { flex: 1; }
 
 .cp-tool-badge {
-  font-size: 10px;
+  font-size: 8px;
   font-weight: 700;
   background: #1e66f5;
   color: #fff;
-  padding: 2px 7px;
-  border-radius: 10px;
-  letter-spacing: 0.02em;
+  padding: 1px 3px;
+  border-radius: 8px;
+  letter-spacing: 0.01em;
   flex-shrink: 0;
+  white-space: nowrap;
+  line-height: 1.6;
 }
 
 /* Search dropdown */
@@ -4259,7 +4261,7 @@ input, select { font-family: var(--font); }
   border-radius: 8px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.12);
   z-index: 30;
-  min-width: 210px;
+  min-width: 160px;
   overflow: hidden;
   padding: 4px 0;
 }
@@ -4891,3 +4893,241 @@ input, select { font-family: var(--font); }
   line-height: 1.5;
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   About Page — tMIC Site Introduction (single-page)
+   ══════════════════════════════════════════════════════════════════ */
+
+.about-site-wrap {
+  min-height: 100%;
+  background: var(--c-bg);
+}
+
+/* Hero Banner */
+.about-site-hero {
+  position: relative;
+  background: url('https://images.unsplash.com/photo-1640158615573-cd28feb1bf4e?w=1400&q=80') center/cover no-repeat;
+  min-height: 340px;
+  display: flex;
+  align-items: center;
+  padding: 3rem 3rem 3rem;
+}
+.about-site-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(17,24,39,0.85) 0%, rgba(30,102,245,0.7) 100%);
+}
+.about-site-hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+}
+.about-site-eyebrow {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 12px;
+  background: rgba(255,255,255,0.12);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.about-site-hero-title {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.2;
+  margin: 0 0 1rem;
+  letter-spacing: -0.02em;
+}
+.about-site-hero-sub {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.7;
+  margin: 0 0 1.8rem;
+  max-width: 560px;
+}
+.about-site-hero-cta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.about-site-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s;
+  border: none;
+}
+.about-site-btn--primary {
+  background: #1e66f5;
+  color: #fff;
+}
+.about-site-btn--primary:hover { background: #1a56d6; }
+.about-site-btn--ghost {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.4);
+  backdrop-filter: blur(4px);
+}
+.about-site-btn--ghost:hover { background: rgba(255,255,255,0.25); }
+
+/* Stats strip */
+.about-site-stats-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--c-dark);
+}
+.about-site-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.2rem 1rem;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  gap: 3px;
+}
+.about-site-stat-item:last-child { border-right: none; }
+.about-site-stat-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+.about-site-stat-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.55);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+/* Feature sections */
+.about-site-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.about-site-feature {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 280px;
+}
+.about-site-feature--rev { direction: rtl; }
+.about-site-feature--rev > * { direction: ltr; }
+.about-site-feature-img-wrap {
+  overflow: hidden;
+}
+.about-site-feature-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s;
+}
+.about-site-feature:hover .about-site-feature-img { transform: scale(1.04); }
+.about-site-feature-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2.5rem 3rem;
+  background: var(--c-white);
+  border-bottom: 1px solid var(--c-border);
+}
+.about-site-feature-eyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #1e66f5;
+  margin-bottom: 8px;
+}
+.about-site-feature-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--c-dark);
+  margin: 0 0 0.8rem;
+  line-height: 1.2;
+}
+.about-site-feature-desc {
+  font-size: 0.93rem;
+  line-height: 1.75;
+  color: var(--c-text-2);
+  max-width: 460px;
+}
+
+/* Value pillars */
+.about-site-pillars-section {
+  background: var(--c-bg);
+  padding: 3rem;
+  border-top: 1px solid var(--c-border);
+}
+.about-site-section-head {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.about-site-section-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--c-dark);
+  margin: 0;
+}
+.about-site-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+.about-site-pillar-card {
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem 1.2rem;
+  text-align: center;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+.about-site-pillar-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+.about-site-pillar-icon {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+.about-site-pillar-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--c-dark);
+  margin-bottom: 6px;
+}
+.about-site-pillar-desc {
+  font-size: 0.82rem;
+  color: var(--c-text-3);
+  line-height: 1.6;
+}
+
+/* CTA footer */
+.about-site-cta-section {
+  background: linear-gradient(135deg, #1a2332 0%, #1e3a6e 100%);
+  padding: 3.5rem 3rem;
+  text-align: center;
+}
+.about-site-cta-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 0.6rem;
+}
+.about-site-cta-sub {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.65);
+  margin: 0 0 1.6rem;
+}

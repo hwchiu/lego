@@ -435,6 +435,7 @@ function FilterBar({ relationType, onRelationChange }: FilterBarProps) {
   const [focused, setFocused] = useState(false);
   const [activeTab, setActiveTab] = useState<FilterTab>('Company');
   const [openDropdown, setOpenDropdown] = useState<'rel' | 'risk' | null>(null);
+  const [selectedRisk, setSelectedRisk] = useState<string>(RISK_TYPES[0].key);
 
   const q = query.toLowerCase().trim();
   const showQueryResults = q.length > 0;
@@ -611,22 +612,31 @@ function FilterBar({ relationType, onRelationChange }: FilterBarProps) {
 
       {/* Risk Analysis — titled control */}
       <div className="rmap-titled-control">
-        <div className="rmap-titled-control-label">Risk Analysis</div>
+        <div className="rmap-titled-control-label">
+          Risk Analysis
+          <span className="badge-coming-soon" style={{ marginLeft: 5 }}>
+            Coming Soon
+          </span>
+        </div>
         <div className="rmap-risk-wrap">
           <button
             className="rmap-risk-btn"
             onClick={() => setOpenDropdown(openDropdown === 'risk' ? null : 'risk')}
           >
-            Risk Filter
-            <span className="badge-coming-soon" style={{ marginLeft: 5 }}>
-              Coming Soon
-            </span>
+            {RISK_TYPES.find((r) => r.key === selectedRisk)?.labelEn}
             <span className="rmap-dropdown-arrow">&#9660;</span>
           </button>
           {openDropdown === 'risk' && (
             <div className="rmap-risk-dropdown">
               {RISK_TYPES.map((r) => (
-                <button key={r.key} className="rmap-risk-option">
+                <button
+                  key={r.key}
+                  className={`rmap-risk-option${r.key === selectedRisk ? ' rmap-rel-option--active' : ''}`}
+                  onClick={() => {
+                    setSelectedRisk(r.key);
+                    setOpenDropdown(null);
+                  }}
+                >
                   {r.labelEn}
                 </button>
               ))}
