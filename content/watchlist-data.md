@@ -25,7 +25,7 @@
 ## Entity Data
 
 > Auto-updated by `scripts/fetch-stock-data.mjs`.
-> Last updated: 2026-04-03T04:04:14.980Z
+> Last updated: 2026-04-03T04:23:11.303Z
 
 Full holding-table data for every tracked symbol. User-added symbols are persisted in `localStorage` under the key `wl-extra-holdings`.
 
@@ -66,7 +66,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "-3.1%",
     "grossMargin": "18.0%",
     "doi": "N/A",
-    "nextEarning": "Apr 23, 2026",
+    "nextEarning": "Apr 22, 2026",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -85,7 +85,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+5.0%",
     "grossMargin": "55.1%",
     "doi": "N/A",
-    "nextEarning": "Apr 30, 2026",
+    "nextEarning": "Apr 29, 2026",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -104,7 +104,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+18.0%",
     "grossMargin": "59.7%",
     "doi": "N/A",
-    "nextEarning": "Apr 24, 2026",
+    "nextEarning": "Apr 23, 2026",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -142,7 +142,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+15.7%",
     "grossMargin": "47.3%",
     "doi": "N/A",
-    "nextEarning": "May 1, 2026",
+    "nextEarning": "Apr 30, 2026",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -161,7 +161,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+73.2%",
     "grossMargin": "71.1%",
     "doi": "N/A",
-    "nextEarning": "May 21, 2026",
+    "nextEarning": "May 20, 2026",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
