@@ -657,43 +657,6 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                     </svg>
                   </button>
 
-                  {/* Quarter nav — moved here next to title */}
-                  <div className="wl-quarter-nav">
-                    <button
-                      className="wl-quarter-btn"
-                      aria-label="Previous quarter"
-                      onClick={() => setQuarter(prevQ)}
-                    >
-                      <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                        <path
-                          d="M9 2.5L4.5 7L9 11.5"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </button>
-                    <span className="wl-quarter-label">
-                      {quarter.year} {QUARTERS[quarter.q - 1]}
-                    </span>
-                    <button
-                      className="wl-quarter-btn"
-                      aria-label="Next quarter"
-                      onClick={() => setQuarter(nextQ)}
-                    >
-                      <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                        <path
-                          d="M5 2.5L9.5 7L5 11.5"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-
                   {/* Watchlist switcher dropdown */}
                   {showTitleDropdown && (
                     <div className="wl-title-dropdown">
@@ -861,12 +824,50 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                 </svg>
                 Add View
               </button>
+
+              {/* Quarter nav — right-aligned inside tab bar */}
+              <div className="wl-quarter-nav">
+                <button
+                  className="wl-quarter-btn"
+                  aria-label="Previous quarter"
+                  onClick={() => setQuarter(prevQ)}
+                >
+                  <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                    <path
+                      d="M9 2.5L4.5 7L9 11.5"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+                <span className="wl-quarter-label">
+                  {quarter.year} {QUARTERS[quarter.q - 1]}
+                </span>
+                <button
+                  className="wl-quarter-btn"
+                  aria-label="Next quarter"
+                  onClick={() => setQuarter(nextQ)}
+                >
+                  <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                    <path
+                      d="M5 2.5L9.5 7L5 11.5"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
 
             {/* ── Holdings Table + Feed (layout-aware wrapper) ──────── */}
-            <div className={`wl-content-area${splitLayout ? ' wl-content-area--split' : ''}`}>
-              {/* ── Holdings Table ─────────────────────────────────────── */}
-              <div className="wl-table-wrap">
+            {activeTab === 'Summary' ? (
+              <div className={`wl-content-area${splitLayout ? ' wl-content-area--split' : ''}`}>
+                {/* ── Holdings Table ─────────────────────────────────────── */}
+                <div className="wl-table-wrap">
                 <table className="wl-table">
                   <thead className="wl-thead--white">
                     <tr>
@@ -1016,7 +1017,79 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                   )}
                 </div>
               </section>
-            </div>
+              </div>
+            ) : (
+              /* ── Placeholder for other tabs ───────────────────────── */
+              <div className="wl-table-wrap">
+                <table className="wl-table">
+                  <thead className="wl-thead--white">
+                    <tr>
+                      <th className="wl-th wl-th--sticky">
+                        Symbol
+                        <svg viewBox="0 0 14 14" fill="none" width="10" height="10" style={{ marginLeft: 4 }}>
+                          <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </th>
+                      <th className="wl-th">Price</th>
+                      <th className="wl-th">Change</th>
+                      <th className="wl-th">Change %</th>
+                      <th className="wl-th">Shares</th>
+                      <th className="wl-th">Cost</th>
+                      <th className="wl-th">Today&apos;s Gain</th>
+                      <th className="wl-th">Today&apos;s % Gain</th>
+                      <th className="wl-th">Revenue</th>
+                      <th className="wl-th">Revenue QoQ</th>
+                      <th className="wl-th">Revenue YoY</th>
+                      <th className="wl-th">Gross Margin</th>
+                      <th className="wl-th">DOI</th>
+                      <th className="wl-th">Next Earning Release</th>
+                      <th className="wl-th">Last Qtr Revenue</th>
+                      <th className="wl-th">Last Qtr Gross Margin</th>
+                      <th className="wl-th">Last Qtr DOI</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sortedHoldings.map((h) => (
+                      <tr key={h.symbol} className="wl-tr">
+                        <td className="wl-td wl-td--sticky wl-symbol">{h.symbol}</td>
+                        <td className="wl-td">{h.price.toFixed(2)}</td>
+                        <td className={`wl-td ${h.change >= 0 ? 'pos' : 'neg'}`}>
+                          {h.change >= 0 ? '+' : ''}
+                          {h.change.toFixed(2)}
+                        </td>
+                        <td className={`wl-td ${h.changePct >= 0 ? 'pos' : 'neg'}`}>
+                          {h.changePct >= 0 ? '+' : ''}
+                          {h.changePct.toFixed(2)}%
+                        </td>
+                        <td className="wl-td">{h.shares}</td>
+                        <td className="wl-td">{h.cost.toFixed(2)}</td>
+                        <td className={`wl-td ${h.todayGain >= 0 ? 'pos' : 'neg'}`}>
+                          {h.todayGain >= 0 ? '+' : ''}
+                          {h.todayGain.toFixed(2)}
+                        </td>
+                        <td className={`wl-td ${h.todayGainPct >= 0 ? 'pos' : 'neg'}`}>
+                          {h.todayGainPct >= 0 ? '+' : ''}
+                          {h.todayGainPct.toFixed(2)}%
+                        </td>
+                        <td className="wl-td">{h.revenue}</td>
+                        <td className={`wl-td ${h.revenueQoQ.startsWith('+') ? 'pos' : 'neg'}`}>
+                          {h.revenueQoQ}
+                        </td>
+                        <td className={`wl-td ${h.revenueYoY.startsWith('+') ? 'pos' : 'neg'}`}>
+                          {h.revenueYoY}
+                        </td>
+                        <td className="wl-td">{h.grossMargin}</td>
+                        <td className="wl-td">{h.doi}</td>
+                        <td className="wl-td">{h.nextEarning}</td>
+                        <td className="wl-td">{h.lastQtrRevenue}</td>
+                        <td className="wl-td">{h.lastQtrGrossMargin}</td>
+                        <td className="wl-td">{h.lastQtrDOI}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
 
           </div>
         </main>
