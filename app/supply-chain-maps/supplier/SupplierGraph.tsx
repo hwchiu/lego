@@ -178,9 +178,10 @@ const INITIAL_POSITIONS: Record<string, { x: number; y: number }> = (() => {
 
 function getSvgCoords(e: React.MouseEvent, svg: SVGSVGElement) {
   const rect = svg.getBoundingClientRect();
+  const vb = svg.viewBox.baseVal;
   return {
-    x: (e.clientX - rect.left) * (SVG_W / rect.width),
-    y: (e.clientY - rect.top) * (SVG_H / rect.height),
+    x: (e.clientX - rect.left) * (vb.width / rect.width) + vb.x,
+    y: (e.clientY - rect.top) * (vb.height / rect.height) + vb.y,
   };
 }
 
@@ -489,7 +490,7 @@ function FilterBar({ relationType, onRelationChange }: FilterBarProps) {
           />
         </div>
         {showDropdownPanel && (
-          <>
+          <div className="rmap-filter-dropdown-abs">
             {showSuggestions ? (
               <div className="rmap-filter-dropdown rmap-filter-dropdown--suggestion">
                 <div className="rmap-filter-suggestion-header">SUGGESTION</div>
@@ -574,7 +575,7 @@ function FilterBar({ relationType, onRelationChange }: FilterBarProps) {
                 </div>
               </>
             )}
-          </>
+          </div>
         )}
       </div>
 
@@ -747,6 +748,14 @@ function FeedPanel() {
 
 // ── Main Graph Component ──────────────────────────────────────────────────────
 
+// Zoom limits (expressed as a viewBox scale factor relative to original)
+const MIN_VB_SCALE = 0.4; // zoomed in to 40% of original viewBox → 2.5× magnification
+const MAX_VB_SCALE = 2.0; // zoomed out to 200% → 0.5× magnification
+const ZOOM_STEP = 1.25;
+
+interface ViewBoxState { x: number; y: number; w: number; h: number }
+const DEFAULT_VB: ViewBoxState = { x: 0, y: 0, w: SVG_W, h: SVG_H };
+
 interface SupplierGraphProps {
   tableOnly?: boolean;
 }
@@ -764,10 +773,27 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
   } | null>(null);
   const [selectedNode, setSelectedNode] = useState<SupplierNodeTSM | null>(null);
   const [relationType, setRelationType] = useState<RelationTypeKey>('transactionAmount');
+  const [viewBox, setViewBox] = useState<ViewBoxState>(DEFAULT_VB);
   const svgRef = useRef<SVGSVGElement>(null);
   const posRef = useRef(positions);
   posRef.current = positions;
   const didDragRef = useRef(false);
+
+  const applyZoom = useCallback((factor: number) => {
+    setViewBox((prev) => {
+      const curScale = prev.w / SVG_W;
+      const newScale = Math.max(MIN_VB_SCALE, Math.min(MAX_VB_SCALE, curScale / factor));
+      const newW = SVG_W * newScale;
+      const newH = SVG_H * newScale;
+      const cx = prev.x + prev.w / 2;
+      const cy = prev.y + prev.h / 2;
+      return { x: cx - newW / 2, y: cy - newH / 2, w: newW, h: newH };
+    });
+  }, []);
+
+  const zoomIn = useCallback(() => applyZoom(ZOOM_STEP), [applyZoom]);
+  const zoomOut = useCallback(() => applyZoom(1 / ZOOM_STEP), [applyZoom]);
+  const zoomReset = useCallback(() => setViewBox(DEFAULT_VB), []);
 
   const handleNodeMouseDown = useCallback((nodeId: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -812,6 +838,10 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
     return <SupplierTable />;
   }
 
+  const vbStr = `${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`;
+  const isAtMinZoom = viewBox.w <= SVG_W * MIN_VB_SCALE + 1;
+  const isAtMaxZoom = viewBox.w >= SVG_W * MAX_VB_SCALE - 1;
+
   return (
     <div className="rmap-graph-wrap">
       {/* Filter bar is placed ABOVE the graph container (not inside it) */}
@@ -823,7 +853,7 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
         <div className="rmap-svg-container">
           <svg
             ref={svgRef}
-            viewBox={`0 0 ${SVG_W} ${SVG_H}`}
+            viewBox={vbStr}
             className="rmap-svg"
             aria-label="TSMC Supplier Relationship Graph"
             onMouseMove={handleSvgMouseMove}
@@ -935,6 +965,36 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
               onMouseDown={(e) => handleNodeMouseDown('TSM', e)}
             />
           </svg>
+
+          {/* Zoom controls — minimal flat buttons */}
+          <div className="rmap-zoom-controls">
+            <button
+              className="rmap-zoom-btn"
+              onClick={zoomIn}
+              disabled={isAtMinZoom}
+              title="Zoom In"
+              aria-label="Zoom In"
+            >
+              +
+            </button>
+            <button
+              className="rmap-zoom-btn rmap-zoom-btn--reset"
+              onClick={zoomReset}
+              title="Reset Zoom"
+              aria-label="Reset Zoom"
+            >
+              ⊡
+            </button>
+            <button
+              className="rmap-zoom-btn"
+              onClick={zoomOut}
+              disabled={isAtMaxZoom}
+              title="Zoom Out"
+              aria-label="Zoom Out"
+            >
+              −
+            </button>
+          </div>
 
           <DetailPanel node={selectedNode} onClose={() => setSelectedNode(null)} />
         </div>
