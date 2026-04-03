@@ -81,12 +81,11 @@
       "revenueBreakdown": {
         "quarter": "23Q3",
         "items": [
-          { "name": "iPad",        "pct": 3.2  },
-          { "name": "iPhone",      "pct": 71.0 },
-          { "name": "Mac",         "pct": 12.0 },
-          { "name": "Wearable",    "pct": 0.8  },
-          { "name": "Accessories", "pct": 9.6  },
-          { "name": "Services",    "pct": 3.4  }
+          { "name": "Data Center",   "pct": 76.0 },
+          { "name": "Gaming",        "pct": 16.0 },
+          { "name": "Professional",  "pct": 4.0  },
+          { "name": "Automotive",    "pct": 2.5  },
+          { "name": "OEM & Other",   "pct": 1.5  }
         ]
       },
       "doiRevenue": [

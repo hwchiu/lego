@@ -92,6 +92,10 @@ const FIN_INDICES = [
 
 const FAVORITES_KEY = 'cp-favorites';
 
+// Y-axis rounding intervals for SVG charts
+const BAR_CHART_Y_INTERVAL = 2000;
+const DOI_REVENUE_Y_INTERVAL = 4000;
+
 // ── SVG Chart Components ─────────────────────────────────────────────────────
 
 interface BarChartProps {
@@ -109,8 +113,8 @@ function FinancialBarChart({ data }: BarChartProps) {
   const maxIncome = Math.max(...data.map((d) => d.netIncome));
   const maxVal = Math.max(maxRevenue, maxIncome, 1);
 
-  // Round up to nearest 2000
-  const yMax = Math.ceil(maxVal / 2000) * 2000;
+  // Round up to nearest BAR_CHART_Y_INTERVAL
+  const yMax = Math.ceil(maxVal / BAR_CHART_Y_INTERVAL) * BAR_CHART_Y_INTERVAL;
   const yTicks = [0, yMax / 4, yMax / 2, (3 * yMax) / 4, yMax];
 
   const barGroupW = chartW / data.length;
@@ -200,7 +204,7 @@ function DoiRevenueChart({ data }: DoiRevenueChartProps) {
   const maxDoi = Math.max(...data.map((d) => d.doi), 1);
   const doiMax = Math.ceil(maxDoi / 50) * 50;
   const maxRevenue = Math.max(...data.map((d) => d.revenue), 1);
-  const revMax = Math.ceil(maxRevenue / 4000) * 4000;
+  const revMax = Math.ceil(maxRevenue / DOI_REVENUE_Y_INTERVAL) * DOI_REVENUE_Y_INTERVAL;
 
   const n = data.length;
   const step = chartW / (n > 1 ? n - 1 : 1);
@@ -387,8 +391,8 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const stockExchange = companyInfo?.stockExchange ?? '—';
   const publicTags = companyInfo?.publicTags ?? [];
 
-  // Financial data (may be undefined for symbols not in markdown)
-  const finData = profileData.financialData[symbol] ?? profileData.financialData['NVDA'];
+  // Financial data — only use if explicitly available for this symbol
+  const finData = profileData.financialData[symbol] ?? null;
 
   // Load favorites & tags from localStorage
   useEffect(() => {
@@ -554,6 +558,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
 
             {/* ── Data cards (FIN. Summary tab) ── */}
             {activeTab === 'FIN. Summary' && (
+              finData ? (
               <div className="cp-cards-area">
 
                 {/* Row 1 */}
@@ -665,6 +670,13 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                   </div>
                 </div>
               </div>
+              ) : (
+              <div className="cp-tab-placeholder">
+                <span className="cp-tab-placeholder-text">
+                  Financial data for {symbol} is not yet available.
+                </span>
+              </div>
+              )
             )}
 
             {/* Placeholder for other tabs */}
