@@ -115,10 +115,7 @@ function GuidedLearningIcon() {
 function AddFileIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-      <rect x="2" y="1.5" width="11" height="14" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
-      <path d="M5 6.5h6M5 9h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-      <circle cx="14" cy="14" r="3.5" fill="currentColor" fillOpacity="0.12" stroke="currentColor" strokeWidth="1.3" />
-      <path d="M14 12.5v3M12.5 14h3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M9 4v10M4 9h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   );
 }
