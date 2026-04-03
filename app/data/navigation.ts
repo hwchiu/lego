@@ -85,16 +85,7 @@ export const mainNav: NavItem[] = [
       { label: 'Create Watchlist', href: '#', dividerBefore: true, iconRight: 'add' },
     ],
   },
-  {
-    label: 'Market News',
-    href: '/market-news',
-    icon: 'news',
-    subItems: [
-      { label: 'Top Market News', href: '/market-news' },
-      { label: 'AI News', href: '/market-news/ai-news' },
-      { label: 'News Watchlist', href: '/market-news/watchlist' },
-    ],
-  },
+  { label: 'Market News', href: '/market-news', icon: 'news' },
   { label: 'Press Release', href: '#', icon: 'pressRelease' },
   { label: 'Earnings', href: '#', icon: 'earnings' },
   { label: 'Event Calendar', href: '/event-calendar', icon: 'calendar' },
@@ -104,7 +95,7 @@ export const mainNav: NavItem[] = [
     icon: 'marketData',
     subItems: [{ label: 'Financial Data', href: '#' }],
   },
-  { label: 'Data Explore', href: '#', icon: 'dataExplore' },
+  { label: 'Data Explore', href: '/data-explore', icon: 'dataExplore' },
 ];
 
 export const supplyChainNav: NavItem[] = [
