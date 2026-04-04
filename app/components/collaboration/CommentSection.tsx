@@ -60,8 +60,12 @@ export function CommentSection({
 
   function handleAddComment() {
     if (!newComment.trim()) return;
+    const id =
+      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? `cmt-${crypto.randomUUID()}`
+        : `cmt-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const comment: Comment = {
-      id: `cmt-${Date.now()}`,
+      id,
       author: currentUser,
       text: newComment.trim(),
       createdAt: nowTimestamp(),

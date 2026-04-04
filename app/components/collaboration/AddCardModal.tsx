@@ -38,6 +38,8 @@ export function AddCardModal({ members, currentUser, onClose, onSubmit }: AddCar
   const [text, setText] = useState('');
   const [sourceUrl, setSourceUrl] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  // Separate data URL from FileReader (safe, not user-typed)
+  const [fileDataUrl, setFileDataUrl] = useState('');
   const [imageCaption, setImageCaption] = useState('');
   const [fileName, setFileName] = useState('');
 
@@ -45,8 +47,9 @@ export function AddCardModal({ members, currentUser, onClose, onSubmit }: AddCar
     const file = e.target.files?.[0];
     if (!file) return;
     const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+    const label = type === 'image' ? 'an image' : 'a file';
     if (file.size > MAX_SIZE) {
-      alert('File is too large. Please choose an image under 5 MB.');
+      alert(`File is too large. Please choose ${label} under 5 MB.`);
       e.target.value = '';
       return;
     }
@@ -54,8 +57,9 @@ export function AddCardModal({ members, currentUser, onClose, onSubmit }: AddCar
       const reader = new FileReader();
       reader.onload = (ev) => {
         const result = ev.target?.result;
+        // Only accept genuine image data URLs produced by FileReader
         if (typeof result === 'string' && result.startsWith('data:image/')) {
-          setImageUrl(result);
+          setFileDataUrl(result);
         }
       };
       reader.readAsDataURL(file);
@@ -71,6 +75,9 @@ export function AddCardModal({ members, currentUser, onClose, onSubmit }: AddCar
       typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
         ? `user-${crypto.randomUUID()}`
         : `user-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+    // Prefer file upload data URL; fall back to validated http/https URL
+    const resolvedImageUrl = fileDataUrl || (isSafeImageUrl(imageUrl.trim()) ? imageUrl.trim() : undefined);
 
     const card: ContentCard = {
       id,
@@ -88,7 +95,7 @@ export function AddCardModal({ members, currentUser, onClose, onSubmit }: AddCar
         source: sourceUrl.trim() || undefined,
       }),
       ...(type === 'image' && {
-        imageUrl: isSafeImageUrl(imageUrl.trim()) ? imageUrl.trim() : undefined,
+        imageUrl: resolvedImageUrl,
         imageCaption: imageCaption.trim() || undefined,
       }),
       ...(type === 'file' && {
@@ -212,9 +219,9 @@ export function AddCardModal({ members, currentUser, onClose, onSubmit }: AddCar
                   style={{ padding: '4px 8px', cursor: 'pointer' }}
                   onChange={handleFileChange}
                 />
-                {imageUrl && isSafeImageUrl(imageUrl) && (
+                {fileDataUrl && (
                   <img
-                    src={imageUrl}
+                    src={fileDataUrl}
                     alt="preview"
                     style={{ marginTop: 8, maxHeight: 120, borderRadius: 6, objectFit: 'cover' }}
                   />
