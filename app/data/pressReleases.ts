@@ -53,14 +53,14 @@ function getGroupKey(date: Date, granularity: TimelineGranularity): string {
 }
 
 function getGroupLabel(key: string, granularity: TimelineGranularity): string {
-  if (granularity === 'year') return `${key} 年`;
+  if (granularity === 'year') return key;
   if (granularity === 'quarter') {
     const [year, q] = key.split('-');
-    return `${year} 年 ${q}`;
+    return `${q} ${year}`;
   }
   const [year, month] = key.split('-');
-  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
-  return `${year} 年 ${monthNames[parseInt(month, 10) - 1]}`;
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return `${monthNames[parseInt(month, 10) - 1]} ${year}`;
 }
 
 export function groupByTimeline(
