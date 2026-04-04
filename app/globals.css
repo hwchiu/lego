@@ -9666,3 +9666,381 @@ input, select { font-family: var(--font); }
 }
 .cwl-submit-btn:hover:not(:disabled) { background: var(--c-text); }
 .cwl-submit-btn:disabled { opacity: 0.45; cursor: default; }
+
+/* ============================================================
+   RESPONSIVE WEB DESIGN — Mobile & Tablet Breakpoints
+   ============================================================ */
+
+/* Hamburger button — hidden on desktop */
+.topnav-hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--c-text-2);
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background 0.13s;
+}
+.topnav-hamburger:hover {
+  background: var(--c-bg);
+}
+
+/* Mobile sidebar overlay backdrop */
+.sidebar-overlay {
+  display: none;
+}
+
+/* ===== TABLET: ≤ 768px ===== */
+@media (max-width: 768px) {
+
+  /* Show hamburger button */
+  .topnav-hamburger {
+    display: flex;
+  }
+
+  /* TopNav adjustments */
+  .topnav {
+    padding: 0 12px;
+    gap: 10px;
+  }
+  .topnav-search-wrap {
+    max-width: none;
+    margin: 0;
+  }
+  .topnav-action-label {
+    display: none;
+  }
+  .topnav-action-btn {
+    padding: 6px 8px;
+    gap: 0;
+  }
+  .topnav-name {
+    display: none;
+  }
+
+  /* Sidebar becomes a mobile drawer */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -260px;
+    width: 236px;
+    min-width: 236px;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 1000;
+    transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: none;
+  }
+  .sidebar.mobile-open {
+    left: 0;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Sidebar is always expanded on mobile (never collapsed mini) */
+  .sidebar.collapsed {
+    width: 236px;
+    min-width: 236px;
+  }
+  .sidebar.collapsed .sidebar-section-label { display: block; }
+  .sidebar.collapsed .sidebar-quick-link {
+    justify-content: flex-start;
+    padding: 6px 10px;
+  }
+  .sidebar.collapsed .sidebar-nav { padding: 2px 10px 8px; }
+  .sidebar.collapsed .sidebar-nav a {
+    justify-content: flex-start;
+    padding: 7px 10px;
+    gap: 8px;
+  }
+  .sidebar.collapsed .sidebar-nav a.active::before { display: block; }
+  .sidebar.collapsed .sidebar-divider { margin: 4px 14px; }
+  .sidebar.collapsed .sidebar-bottom { padding: 8px 10px 14px; }
+  .sidebar.collapsed .sidebar-bottom a {
+    justify-content: flex-start;
+    padding: 7px 10px;
+    gap: 8px;
+  }
+  .sidebar.collapsed .sidebar-collapse-header {
+    justify-content: flex-start;
+  }
+
+  /* Hide desktop collapse toggle on mobile */
+  .sidebar-toggle-btn {
+    display: none;
+  }
+
+  /* Overlay backdrop */
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 999;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Main layout: full width without sidebar */
+  .app-body {
+    flex-direction: column;
+  }
+
+  /* Main content takes full width */
+  .main-content {
+    width: 100%;
+  }
+
+  /* Reduce page padding */
+  .page-pad {
+    padding: 16px 14px 32px;
+  }
+
+  /* Banner adjustments */
+  .banner-slide {
+    padding: 8px 14px;
+    font-size: 12px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .banner-label {
+    font-size: 10px;
+  }
+
+  /* Calendar grids — scroll horizontally */
+  .week-grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 8px;
+  }
+  .week-cell {
+    flex: 0 0 220px;
+    scroll-snap-align: start;
+  }
+  .month-grid {
+    grid-template-columns: repeat(7, 1fr);
+    font-size: 11px;
+    gap: 2px;
+  }
+  .month-cell {
+    min-height: 36px;
+    padding: 2px;
+    font-size: 10px;
+  }
+
+  /* Tables — horizontal scroll wrapper */
+  .table-wrap,
+  .aapl-ma-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .data-table,
+  .company-rank-table,
+  .aapl-ma-table {
+    min-width: 600px;
+  }
+
+  /* Supply chain graph — stack vertically */
+  .rmap-graph-content {
+    flex-direction: column;
+  }
+  .rmap-graph-content .rmap-svg-container {
+    flex: none;
+    width: 100%;
+  }
+  .rmap-feed-panel {
+    flex: none;
+    width: 100%;
+  }
+
+  /* News grid already handled at 860px, but ensure it works */
+  .news-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Search dropdown — full width */
+  .search-dropdown {
+    position: fixed;
+    top: 58px;
+    left: 0;
+    right: 0;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    max-height: calc(100vh - 58px);
+    max-height: calc(100dvh - 58px);
+    overflow-y: auto;
+  }
+
+  /* Company profile grids */
+  .cp-news-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* M&A filter bar — wrap */
+  .aapl-ma-filter-bar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Section titles — slightly smaller */
+  .section-title,
+  .news-page-title {
+    font-size: 18px;
+  }
+
+  /* Calendar controls — wrap */
+  .calendar-controls {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Market tabs — scrollable */
+  .market-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+  }
+  .market-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Masonry grid — single column on tablet */
+  .pg-masonry {
+    grid-template-columns: 1fr;
+  }
+
+  /* Financial table — scroll */
+  .financial-table {
+    min-width: 500px;
+  }
+
+  /* News category tabs — scrollable */
+  .news-category-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+  }
+  .news-category-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Collaboration playground grids */
+  .pg-masonry {
+    grid-template-columns: 1fr;
+  }
+
+  /* Modals — nearly full width */
+  .modal {
+    width: calc(100% - 24px);
+    max-width: 100%;
+    margin: 12px;
+  }
+
+  /* Watchlist create form */
+  .cwl-layout {
+    flex-direction: column;
+  }
+
+  /* Data explore grid */
+  .data-category-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* AI Chatbot — full width on mobile */
+  .ai-chatbot-panel {
+    width: calc(100% - 16px);
+    right: 8px;
+    bottom: 8px;
+  }
+}
+
+/* ===== SMALL PHONE: ≤ 480px ===== */
+@media (max-width: 480px) {
+
+  /* Even tighter TopNav */
+  .topnav {
+    padding: 0 8px;
+    gap: 8px;
+    height: 50px;
+  }
+
+  .topnav-logo {
+    font-size: 17px;
+  }
+
+  .topnav-search {
+    height: 34px;
+    font-size: 13px;
+  }
+
+  /* Hide non-essential action buttons on small phones */
+  .topnav-actions .topnav-action-btn:not(.topnav-action-btn--icon-only) {
+    display: none;
+  }
+
+  /* Even less page padding */
+  .page-pad {
+    padding: 12px 10px 24px;
+  }
+
+  /* Smaller section titles */
+  .section-title,
+  .news-page-title {
+    font-size: 16px;
+  }
+  .section-eyebrow {
+    font-size: 10px;
+  }
+
+  /* Week cells narrower */
+  .week-cell {
+    flex: 0 0 180px;
+  }
+
+  /* Month grid cells — more compact */
+  .month-cell {
+    min-height: 30px;
+    font-size: 9px;
+  }
+
+  /* News cards — tighter */
+  .news-card {
+    padding: 12px;
+  }
+
+  /* Calendar controls */
+  .toggle-btn {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  /* Banner — smaller */
+  .banner-slide {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  /* Search dropdown */
+  .search-dropdown {
+    top: 50px;
+    max-height: calc(100vh - 50px);
+    max-height: calc(100dvh - 50px);
+  }
+
+  /* Tables — narrower min width */
+  .data-table,
+  .company-rank-table,
+  .aapl-ma-table {
+    min-width: 480px;
+  }
+}

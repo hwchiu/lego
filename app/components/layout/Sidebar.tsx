@@ -14,6 +14,7 @@ import {
 } from '@/app/data/navigation';
 import { useWatchlist } from '@/app/contexts/WatchlistContext';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { useMobileSidebar } from '@/app/contexts/MobileSidebarContext';
 import { t } from '@/app/data/translations';
 
 function NavIcon({ iconKey }: { iconKey: string }) {
@@ -340,6 +341,7 @@ export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
   const { lang } = useLanguage();
+  const { isMobileOpen, closeSidebar } = useMobileSidebar();
   const toggleLabel = collapsed ? 'Expand menu' : 'Collapse menu';
   // When expanded, quickLinks[0] renders inside the collapse header row,
   // so only the remaining items are listed below.
@@ -349,8 +351,18 @@ export default function Sidebar() {
   const mainNavLabel = lang === 'zh' ? '主要導覽' : 'Main Navigation';
   const supplyChainLabel = lang === 'zh' ? '供應鏈分析' : 'Supply Chain Analysis';
 
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    closeSidebar();
+  }, [pathname, closeSidebar]);
+
   return (
-    <nav className={`sidebar${collapsed ? ' collapsed' : ''}`}>
+    <>
+      {/* Mobile overlay backdrop */}
+      {isMobileOpen && (
+        <div className="sidebar-overlay" onClick={closeSidebar} aria-hidden="true" />
+      )}
+      <nav className={`sidebar${collapsed ? ' collapsed' : ''}${isMobileOpen ? ' mobile-open' : ''}`}>
       <div className="sidebar-quick">
         <div className="sidebar-collapse-header">
           {!collapsed && <QuickLink item={quickLinks[0]} collapsed={false} />}
@@ -388,5 +400,6 @@ export default function Sidebar() {
         })}
       </div>
     </nav>
+    </>
   );
 }
