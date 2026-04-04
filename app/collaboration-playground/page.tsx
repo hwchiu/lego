@@ -19,8 +19,8 @@ function loadCanvases(): Canvas[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return JSON.parse(raw) as Canvas[];
-  } catch {
-    // ignore
+  } catch (err) {
+    console.warn('[CollaborationPlayground] Failed to load saved canvas state:', err);
   }
   return initialCanvases;
 }
@@ -338,8 +338,14 @@ export default function CollaborationPlaygroundPage() {
               {activeCanvas.cards.length === 0 ? (
                 <div className="pg-empty-board">
                   <div className="pg-empty-icon">📋</div>
-                  <div className="pg-empty-title">No content yet</div>
-                  <div className="pg-empty-sub">Click the + button to add cards to this canvas</div>
+                  <div className="pg-empty-title">
+                    {isEn ? 'No content yet' : '畫布尚無內容'}
+                  </div>
+                  <div className="pg-empty-sub">
+                    {isEn
+                      ? 'Click the + button to add cards to this canvas'
+                      : '點選右下角的 + 按鈕新增卡片'}
+                  </div>
                 </div>
               ) : (
                 <div className="pg-masonry">

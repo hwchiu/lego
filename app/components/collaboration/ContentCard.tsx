@@ -537,16 +537,24 @@ export function ContentCardComponent({
             {card.text && <p className="pg-article-text">{card.text}</p>}
             {card.source && (
               <div className="pg-article-source">
-                {card.source.startsWith('http') ? (
-                  <>
-                    Source:{' '}
-                    <a href={card.source} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--c-text-4)' }}>
-                      {card.source}
-                    </a>
-                  </>
-                ) : (
-                  <>來源：{card.source}</>
-                )}
+                {(() => {
+                  try {
+                    const p = new URL(card.source);
+                    if (p.protocol === 'http:' || p.protocol === 'https:') {
+                      return (
+                        <>
+                          Source:{' '}
+                          <a href={card.source} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--c-text-4)' }}>
+                            {card.source}
+                          </a>
+                        </>
+                      );
+                    }
+                  } catch {
+                    // not a URL
+                  }
+                  return <>來源：{card.source}</>;
+                })()}
               </div>
             )}
           </>

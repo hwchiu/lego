@@ -20,17 +20,29 @@ function nowTimestamp() {
   return `${date} ${hh}:${mm}`;
 }
 
-// Render text with @MemberName spans highlighted
-function renderMentions(text: string) {
-  const parts = text.split(/(@[\w][\w ]*)/g);
-  return parts.map((part, i) =>
-    part.startsWith('@') ? (
-      <span key={i} className="pg-mention-tag">
-        {part}
-      </span>
-    ) : (
-      <span key={i}>{part}</span>
-    ),
+// Render text highlighting @MemberName patterns that match known members
+function renderMentions(text: string, members: Member[]) {
+  const memberNames = members.map((m) => m.name);
+  // Build alternation from longest name first to avoid partial matches
+  const escaped = memberNames
+    .slice()
+    .sort((a, b) => b.length - a.length)
+    .map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  if (escaped.length === 0) return <span>{text}</span>;
+  const pattern = new RegExp(`(@(?:${escaped.join('|')}))`, 'g');
+  const parts = text.split(pattern);
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.startsWith('@') && memberNames.includes(part.slice(1)) ? (
+          <span key={i} className="pg-mention-tag">
+            {part}
+          </span>
+        ) : (
+          <span key={i}>{part}</span>
+        ),
+      )}
+    </>
   );
 }
 
@@ -176,7 +188,7 @@ export function CommentSection({
                     </div>
                   </div>
                 ) : (
-                  <div className="pg-comment-text">{renderMentions(c.text)}</div>
+                  <div className="pg-comment-text">{renderMentions(c.text, members)}</div>
                 )}
               </div>
             </div>
