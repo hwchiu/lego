@@ -96,6 +96,14 @@ export default function CollaborationPlaygroundPage() {
     setShowAddCardModal(false);
   }
 
+  function handleDeleteCard(cardId: string) {
+    setCanvasList((prev) =>
+      prev.map((c) =>
+        c.id !== activeCanvasId ? c : { ...c, cards: c.cards.filter((card) => card.id !== cardId) },
+      ),
+    );
+  }
+
   function handleCommentsChange(cardId: string, newComments: Comment[]) {
     setCanvasList((prev) =>
       prev.map((canvas) => {
@@ -366,6 +374,7 @@ export default function CollaborationPlaygroundPage() {
                       members={members}
                       currentUser={members[0]}
                       onCommentsChange={handleCommentsChange}
+                      onDelete={handleDeleteCard}
                       isDragging={dragCardIdRef.current === card.id}
                       isDragOver={dragOverCardId === card.id}
                       onDragStart={handleDragStart}

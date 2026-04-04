@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import rawContent from '@/content/chatbot.md';
 import { extractJson } from '@/app/lib/parseContent';
 
@@ -20,6 +20,31 @@ const { greeting: BOT_GREETING, replies: BOT_REPLIES } = extractJson<ChatbotData
 // Avatar image for the Mic bot
 const BOT_AVATAR_URL = 'https://i.pravatar.cc/40?img=47';
 
+// Robot head icon — simple flat design on white background
+function RobotIcon() {
+  return (
+    <svg viewBox="0 0 36 36" width="36" height="36" fill="none" aria-hidden="true">
+      {/* White rounded square background */}
+      <rect width="36" height="36" rx="10" fill="white" />
+      {/* Antenna */}
+      <line x1="18" y1="4" x2="18" y2="9" stroke="#374151" strokeWidth="1.8" strokeLinecap="round" />
+      <circle cx="18" cy="3.5" r="1.5" fill="#374151" />
+      {/* Head */}
+      <rect x="8" y="9" width="20" height="16" rx="4" fill="#374151" />
+      {/* Eyes */}
+      <circle cx="13.5" cy="16" r="2.5" fill="white" />
+      <circle cx="22.5" cy="16" r="2.5" fill="white" />
+      <circle cx="13.5" cy="16" r="1.2" fill="#374151" />
+      <circle cx="22.5" cy="16" r="1.2" fill="#374151" />
+      {/* Mouth */}
+      <rect x="12" y="21" width="12" height="2" rx="1" fill="white" opacity="0.7" />
+      {/* Ears */}
+      <rect x="5" y="14" width="3" height="5" rx="1.5" fill="#374151" />
+      <rect x="28" y="14" width="3" height="5" rx="1.5" fill="#374151" />
+    </svg>
+  );
+}
+
 export default function AIChatbot() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -30,6 +55,16 @@ export default function AIChatbot() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const replyIdxRef = useRef(0);
+
+  // Drag state for the chatbot dialog
+  const [dialogPos, setDialogPos] = useState<{ top: number; left: number } | null>(null);
+  const dragState = useRef<{
+    mouseStartX: number;
+    mouseStartY: number;
+    dialogStartTop: number;
+    dialogStartLeft: number;
+  } | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (open) {
@@ -62,38 +97,72 @@ export default function AIChatbot() {
     if (e.key === 'Enter') sendMessage();
   };
 
+  // Header drag: record start positions on mousedown
+  const handleHeaderMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (!dialogRef.current) return;
+      const rect = dialogRef.current.getBoundingClientRect();
+      dragState.current = {
+        mouseStartX: e.clientX,
+        mouseStartY: e.clientY,
+        dialogStartTop: rect.top,
+        dialogStartLeft: rect.left,
+      };
+      e.preventDefault();
+    },
+    [],
+  );
+
+  useEffect(() => {
+    function onMouseMove(e: MouseEvent) {
+      if (!dragState.current) return;
+      const dx = e.clientX - dragState.current.mouseStartX;
+      const dy = e.clientY - dragState.current.mouseStartY;
+      setDialogPos({
+        top: Math.max(0, dragState.current.dialogStartTop + dy),
+        left: Math.max(0, dragState.current.dialogStartLeft + dx),
+      });
+    }
+    function onMouseUp() {
+      dragState.current = null;
+    }
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+  }, []);
+
   return (
     <>
       {/* Side-docked floating button */}
       <button
-        className={`chatbot-fab${open ? ' chatbot-fab--open' : ''}`}
+        className="chatbot-fab"
         onClick={() => setOpen((v) => !v)}
-        aria-label="AI Chatbot MIC"
-        title="AI Chatbot MIC"
+        aria-label="AI Chatbot"
+        title="AI Chatbot"
       >
-        {/* Icon always visible on right side */}
-        {open ? (
-          <svg viewBox="0 0 24 24" fill="none" width="20" height="20" aria-hidden="true" className="chatbot-fab-icon">
-            <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
-          </svg>
-        ) : (
-          <svg viewBox="0 0 24 24" fill="none" width="20" height="20" aria-hidden="true" className="chatbot-fab-icon">
-            <rect x="3" y="9" width="6" height="9" rx="3" stroke="currentColor" strokeWidth="1.8" />
-            <path d="M9 13h2M13 11v10M9 19H7a4 4 0 0 1-4-4v-1" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-            <path d="M15 9V7a2 2 0 0 0-4 0v2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-            <circle cx="19" cy="5" r="3" fill="currentColor" opacity="0.25" />
-            <circle cx="19" cy="5" r="3" stroke="currentColor" strokeWidth="1.5" />
-            <path d="M18 5h2M19 4v2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-          </svg>
-        )}
-        {/* Expandable label */}
-        <span className="chatbot-fab-label">AI Chatbot MIC</span>
+        <RobotIcon />
       </button>
 
       {/* Chat dialog */}
       {open && (
-        <div className="chatbot-dialog" role="dialog" aria-label="AI Chatbot Mic">
-          <div className="chatbot-dialog-header">
+        <div
+          ref={dialogRef}
+          className="chatbot-dialog"
+          role="dialog"
+          aria-label="AI Chatbot Mic"
+          style={
+            dialogPos
+              ? { top: dialogPos.top, left: dialogPos.left, right: 'auto', transform: 'none' }
+              : undefined
+          }
+        >
+          <div
+            className="chatbot-dialog-header chatbot-dialog-header--draggable"
+            onMouseDown={handleHeaderMouseDown}
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={BOT_AVATAR_URL}
@@ -107,6 +176,7 @@ export default function AIChatbot() {
             <button
               className="chatbot-dialog-close"
               onClick={() => setOpen(false)}
+              onMouseDown={(e) => e.stopPropagation()}
               aria-label="Close"
             >
               <svg viewBox="0 0 16 16" fill="none" width="14" height="14" aria-hidden="true">

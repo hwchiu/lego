@@ -471,6 +471,7 @@ interface ContentCardProps {
   members: Member[];
   currentUser: Member;
   onCommentsChange: (cardId: string, comments: Comment[]) => void;
+  onDelete?: (cardId: string) => void;
   isDragging?: boolean;
   isDragOver?: boolean;
   onDragStart: (cardId: string) => void;
@@ -484,6 +485,7 @@ export function ContentCardComponent({
   members,
   currentUser,
   onCommentsChange,
+  onDelete,
   isDragging,
   isDragOver,
   onDragStart,
@@ -502,14 +504,58 @@ export function ContentCardComponent({
   return (
     <div
       className={classNames}
-      draggable
-      onDragStart={() => onDragStart(card.id)}
       onDragOver={(e) => onDragOver(e, card.id)}
       onDrop={(e) => onDrop(e, card.id)}
-      onDragEnd={onDragEnd}
     >
-      {/* Card title */}
-      <div className="pg-card-title">{card.title}</div>
+      {/* Card title — drag handle */}
+      <div
+        className="pg-card-title"
+        draggable
+        onDragStart={() => onDragStart(card.id)}
+        onDragEnd={onDragEnd}
+      >
+        <span className="pg-card-title-text">{card.title}</span>
+        <div className="pg-card-title-actions">
+          {/* Save icon (placeholder) */}
+          <button
+            className="pg-card-action-btn"
+            title="儲存"
+            aria-label="儲存"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <svg viewBox="0 0 16 16" width="13" height="13" fill="none" aria-hidden="true">
+              <path d="M2 2h9l3 3v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+              <rect x="5" y="2" width="5" height="3.5" rx="0.5" stroke="currentColor" strokeWidth="1.3" />
+              <rect x="4" y="9" width="8" height="5" rx="0.5" stroke="currentColor" strokeWidth="1.3" />
+            </svg>
+          </button>
+          {/* Edit icon (placeholder) */}
+          <button
+            className="pg-card-action-btn"
+            title="編輯"
+            aria-label="編輯"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <svg viewBox="0 0 16 16" width="13" height="13" fill="none" aria-hidden="true">
+              <path d="M11 2l3 3-8 8H3v-3l8-8z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" strokeLinecap="round" />
+            </svg>
+          </button>
+          {/* Delete icon (functional) */}
+          <button
+            className="pg-card-action-btn pg-card-action-btn--delete"
+            title="刪除"
+            aria-label="刪除"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete?.(card.id);
+            }}
+          >
+            <svg viewBox="0 0 16 16" width="13" height="13" fill="none" aria-hidden="true">
+              <path d="M3 4h10M6 4V2.5h4V4M5 4l.5 9h5l.5-9" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
 
       {/* Card body */}
       <div className="pg-card-body">
