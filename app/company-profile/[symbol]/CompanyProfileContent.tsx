@@ -11,6 +11,7 @@ import { extractJson } from '@/app/lib/parseContent';
 import companyProfileMd from '@/content/company-profile.md';
 import FinancialStatementTab from './FinancialStatementTab';
 import CompanyMATab from './CompanyMATab';
+import IRMaterialTab from './IRMaterialTab';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -914,12 +915,16 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
             {/* ── M&A tab ── */}
             {activeTab === 'M&A' && <CompanyMATab symbol={symbol} />}
 
+            {/* ── IR Material tab ── */}
+            {activeTab === 'IR Material' && <IRMaterialTab symbol={symbol} />}
+
             {/* Placeholder for remaining tabs */}
             {activeTab !== 'FIN. Summary' &&
               activeTab !== 'FIN. Statement' &&
               activeTab !== 'News' &&
               activeTab !== 'Stock' &&
-              activeTab !== 'M&A' && (
+              activeTab !== 'M&A' &&
+              activeTab !== 'IR Material' && (
                 <div className="cp-tab-placeholder">
                   <span className="cp-tab-placeholder-text">{activeTab} — Content coming soon</span>
                 </div>
