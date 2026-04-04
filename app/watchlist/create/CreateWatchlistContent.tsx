@@ -122,7 +122,7 @@ function SymbolItem({ symbol, index, onDelete, onDragStart, onDragEnter, onDragE
 
 export default function CreateWatchlistContent() {
   const router = useRouter();
-  const { addWatchlist, dynamicWatchlists } = useWatchlist();
+  const { addWatchlist } = useWatchlist();
 
   // Search bar state
   const [query, setQuery] = useState('');
@@ -252,8 +252,6 @@ export default function CreateWatchlistContent() {
   }
 
   const canSubmit = symbols.length > 0;
-  const usedSlots = dynamicWatchlists.length;
-  const maxSlots = 10;
 
   return (
     <>
@@ -265,12 +263,8 @@ export default function CreateWatchlistContent() {
           <div className="cwl-page">
             {/* ── Header greeting ── */}
             <div className="cwl-greeting">
-              <h1 className="cwl-greeting-title">Hello! 👋 Welcome to Watchlist Creator</h1>
-              <p className="cwl-greeting-sub">
-                What current events or topics would you like to follow today?
-                <br />
-                I can help identify all related companies and build your watchlist automatically.
-              </p>
+              <p className="cwl-greeting-sub">Good day, HungWei</p>
+              <h1 className="cwl-greeting-title">What would you like to follow?</h1>
             </div>
 
             {/* ── AI Suggestion search bar ── */}
@@ -278,19 +272,24 @@ export default function CreateWatchlistContent() {
               <div className={`cwl-search-bar${showDropdown ? ' focused' : ''}`}>
                 <svg
                   className="cwl-search-icon"
-                  viewBox="0 0 16 16"
-                  width="15"
-                  height="15"
+                  viewBox="0 0 20 20"
+                  width="16"
+                  height="16"
                   fill="none"
                   aria-hidden="true"
                 >
-                  <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M10.5 10.5L14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <path
+                    d="M9 3.5C6.015 3.5 3.5 6.015 3.5 9S6.015 14.5 9 14.5 14.5 11.985 14.5 9 11.985 3.5 9 3.5Z"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  />
+                  <circle cx="9" cy="9" r="1.5" fill="currentColor" opacity="0.4" />
+                  <path d="M13.5 13.5L17 17" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
                 </svg>
-                <input
+                <textarea
                   className="cwl-search-input"
-                  type="text"
-                  placeholder="Search current events or topics…"
+                  rows={1}
+                  placeholder="Ask about a current event, topic, or theme to build a watchlist…"
                   value={query}
                   onChange={(e) => {
                     setQuery(e.target.value);
@@ -413,49 +412,72 @@ export default function CreateWatchlistContent() {
                 />
               </div>
 
-              {/* Symbol list */}
+              {/* Symbol panel */}
               <div className="cwl-field">
-                <div className="cwl-symbols-header">
+                {/* Header row: label + submit button */}
+                <div className="cwl-symbols-header-row">
                   <span className="cwl-field-label">
                     Companies
                     {symbols.length > 0 && (
                       <span className="cwl-symbol-count"> ({symbols.length})</span>
                     )}
                   </span>
-                  <div className="cwl-add-row">
-                    <input
-                      className="cwl-add-input"
-                      type="text"
-                      placeholder="Add symbol (e.g. AAPL)"
-                      value={addSymbolInput}
-                      onChange={(e) => setAddSymbolInput(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleAddSymbol()}
-                    />
-                    <button className="cwl-add-btn" onClick={handleAddSymbol}>
-                      + Add
-                    </button>
-                  </div>
-                  {addSuggestions.length > 0 && (
-                    <div className="cwl-add-suggestions">
-                      {addSuggestions.map((c) => (
-                        <button
-                          key={c.symbol}
-                          className="cwl-add-suggestion-item"
-                          onClick={() => {
-                            setSymbols((prev) =>
-                              prev.includes(c.symbol) ? prev : [...prev, c.symbol],
-                            );
-                            setAddSymbolInput('');
-                            setAddSuggestions([]);
-                          }}
-                        >
-                          <span className="cwl-add-suggestion-symbol">{c.symbol}</span>
-                          <span className="cwl-add-suggestion-name">{c.name}</span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  <button
+                    className="cwl-submit-btn"
+                    onClick={handleSubmit}
+                    disabled={!canSubmit}
+                  >
+                    <svg
+                      viewBox="0 0 16 16"
+                      width="13"
+                      height="13"
+                      fill="none"
+                      aria-hidden="true"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M8 1.5v13M1.5 8h13" />
+                    </svg>
+                    Create Watchlist
+                  </button>
                 </div>
+
+                {/* Add symbol row */}
+                <div className="cwl-add-row">
+                  <input
+                    className="cwl-add-input"
+                    type="text"
+                    placeholder="Add symbol (e.g. AAPL)"
+                    value={addSymbolInput}
+                    onChange={(e) => setAddSymbolInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleAddSymbol()}
+                  />
+                  <button className="cwl-add-btn" onClick={handleAddSymbol}>
+                    + Add
+                  </button>
+                </div>
+                {addSuggestions.length > 0 && (
+                  <div className="cwl-add-suggestions">
+                    {addSuggestions.map((c) => (
+                      <button
+                        key={c.symbol}
+                        className="cwl-add-suggestion-item"
+                        onClick={() => {
+                          setSymbols((prev) =>
+                            prev.includes(c.symbol) ? prev : [...prev, c.symbol],
+                          );
+                          setAddSymbolInput('');
+                          setAddSuggestions([]);
+                        }}
+                      >
+                        <span className="cwl-add-suggestion-symbol">{c.symbol}</span>
+                        <span className="cwl-add-suggestion-name">{c.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
 
                 {symbols.length === 0 ? (
                   <div className="cwl-symbols-empty">
@@ -494,34 +516,14 @@ export default function CreateWatchlistContent() {
                     ))}
                   </div>
                 )}
-              </div>
 
-              {/* Slot info */}
-              <div className="cwl-slot-info">
-                {usedSlots}/{maxSlots} watchlist slots used
+                {/* Symbol count info */}
+                {symbols.length > 0 && (
+                  <div className="cwl-slot-info">
+                    {symbols.length} symbol{symbols.length !== 1 ? 's' : ''}
+                  </div>
+                )}
               </div>
-
-              {/* Submit */}
-              <button
-                className="cwl-submit-btn"
-                onClick={handleSubmit}
-                disabled={!canSubmit || usedSlots >= maxSlots}
-              >
-                <svg
-                  viewBox="0 0 16 16"
-                  width="14"
-                  height="14"
-                  fill="none"
-                  aria-hidden="true"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M8 1.5v13M1.5 8h13" />
-                </svg>
-                Create Watchlist
-              </button>
             </div>
           </div>
         </main>
