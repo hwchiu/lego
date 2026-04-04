@@ -36,6 +36,9 @@ interface WatchlistContextType {
   dynamicWatchlists: DynamicWatchlist[];
   addWatchlist: (name: string, symbols: string[]) => string;
   removeWatchlist: (id: string) => void;
+  // Deleted static watchlist IDs (persisted in localStorage)
+  deletedWatchlists: Set<string>;
+  deleteWatchlist: (id: string) => void;
   // Favorites
   favorites: Set<string>;
   toggleFavorite: (id: string) => void;
@@ -49,6 +52,8 @@ const WatchlistContext = createContext<WatchlistContextType>({
   dynamicWatchlists: [],
   addWatchlist: () => '',
   removeWatchlist: () => {},
+  deletedWatchlists: new Set(),
+  deleteWatchlist: () => {},
   favorites: new Set(),
   toggleFavorite: () => {},
 });
@@ -57,6 +62,7 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
   const [watchlistNames, setWatchlistNames] = useState<Record<string, string>>(DEFAULT_NAMES);
   const [symbolOrders, setSymbolOrders] = useState<Record<string, string[]>>(DEFAULT_ORDERS);
   const [dynamicWatchlists, setDynamicWatchlists] = useState<DynamicWatchlist[]>([]);
+  const [deletedWatchlists, setDeletedWatchlists] = useState<Set<string>>(new Set());
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [hydrated, setHydrated] = useState(false);
 
@@ -74,6 +80,10 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
       const storedDynamic = localStorage.getItem('wl-dynamic');
       if (storedDynamic) {
         setDynamicWatchlists(JSON.parse(storedDynamic));
+      }
+      const storedDeleted = localStorage.getItem('wl-deleted');
+      if (storedDeleted) {
+        setDeletedWatchlists(new Set(JSON.parse(storedDeleted)));
       }
       const storedFavorites = localStorage.getItem('wl-favorites');
       if (storedFavorites) {
@@ -114,6 +124,16 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
       // ignore storage errors
     }
   }, [dynamicWatchlists, hydrated]);
+
+  // Persist deleted watchlist IDs
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      localStorage.setItem('wl-deleted', JSON.stringify([...deletedWatchlists]));
+    } catch {
+      // ignore storage errors
+    }
+  }, [deletedWatchlists, hydrated]);
 
   // Persist favorites
   useEffect(() => {
@@ -167,6 +187,26 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
     });
   }
 
+  function deleteWatchlist(id: string) {
+    const isDynamic = dynamicWatchlists.some((w) => w.id === id);
+    if (isDynamic) {
+      removeWatchlist(id);
+    } else {
+      // Mark static watchlist as deleted
+      setDeletedWatchlists((prev) => {
+        const next = new Set(prev);
+        next.add(id);
+        return next;
+      });
+    }
+    // Remove from favorites too
+    setFavorites((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  }
+
   function toggleFavorite(id: string) {
     setFavorites((prev) => {
       const next = new Set(prev);
@@ -186,6 +226,8 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
         dynamicWatchlists,
         addWatchlist,
         removeWatchlist,
+        deletedWatchlists,
+        deleteWatchlist,
         favorites,
         toggleFavorite,
       }}

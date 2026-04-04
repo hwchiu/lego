@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
@@ -10,7 +11,7 @@ import { stockIndexes } from '@/app/data/marketIndices';
 import { holdingsData as holdingsDataMap } from '@/app/data/watchlistData';
 import type { HoldingEntity } from '@/app/data/watchlistData';
 import { mainNav } from '@/app/data/navigation';
-import { useWatchlist } from '@/app/contexts/WatchlistContext';
+import { useWatchlist, WATCHLIST_IDS } from '@/app/contexts/WatchlistContext';
 
 // All data (indices, holdings, portfolio config) comes from content/*.md files.
 // The fetch script writes to MD; app/data/*.ts readers parse via extractJson().
@@ -378,7 +379,8 @@ type FeedTab = 'Latest' | 'Analysis' | 'News' | 'Warnings' | 'Transcripts' | 'Pr
 
 export default function WatchlistPage({ params }: { params: { id: string } }) {
   const watchlistId = params.id;
-  const { watchlistNames, setWatchlistName, symbolOrders, setSymbolOrder, favorites, toggleFavorite, dynamicWatchlists } = useWatchlist();
+  const { watchlistNames, setWatchlistName, symbolOrders, setSymbolOrder, favorites, toggleFavorite, dynamicWatchlists, deletedWatchlists, deleteWatchlist } = useWatchlist();
+  const router = useRouter();
 
   const watchlistName = watchlistNames[watchlistId] ?? 'Watchlist';
   const currentSymbolOrder = symbolOrders[watchlistId] ?? holdingsData.map((h) => h.symbol);
@@ -464,15 +466,17 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
   const prevQ = quarterOffset(quarter, -1);
   const nextQ = quarterOffset(quarter, 1);
 
-  // Watchlist sub-items from navigation data (shared with sidebar) — exclude "Create Watchlist" divider item
+  // Watchlist sub-items from navigation data (shared with sidebar) — exclude "Create Watchlist" divider item, filter deleted
   const watchlistSubItems = (mainNav.find((item) => item.icon === 'watchlist')?.subItems ?? []).filter(
-    (item) => !item.dividerBefore,
+    (item) => !item.dividerBefore && (!item.watchlistId || !deletedWatchlists.has(item.watchlistId)),
   );
 
-  // Build merged list: static items + dynamic watchlists
+  // Build merged list: static items + dynamic watchlists (excluding deleted)
   const allWatchlistItems = [
     ...watchlistSubItems,
-    ...dynamicWatchlists.map((wl) => ({ label: wl.name, href: `/watchlist/${wl.id}`, watchlistId: wl.id })),
+    ...dynamicWatchlists
+      .filter((wl) => !deletedWatchlists.has(wl.id))
+      .map((wl) => ({ label: wl.name, href: `/watchlist/${wl.id}`, watchlistId: wl.id })),
   ];
 
   // Sorted holdings based on symbolOrder (includes user-added extra holdings)
@@ -528,6 +532,18 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
     setWatchlistName(watchlistId, trimmed);
     setSymbolOrder(watchlistId, [...editSymbolOrder]);
     setShowEditWatchlist(false);
+  }
+
+  function handleDeleteWatchlist() {
+    deleteWatchlist(watchlistId);
+    setShowEditWatchlist(false);
+    // Navigate to another available watchlist or the watchlist root
+    const remaining = allWatchlistItems.filter((item) => item.watchlistId !== watchlistId);
+    if (remaining.length > 0) {
+      router.push(remaining[0].href);
+    } else {
+      router.push('/watchlist/' + (WATCHLIST_IDS.find((id) => id !== watchlistId && !deletedWatchlists.has(id)) ?? WATCHLIST_IDS[0]));
+    }
   }
 
   function handleAddSymbolClose() {
@@ -1199,7 +1215,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
               </div>
 
               {/* Delete Watchlist button */}
-              <button className="wl-modal-delete-wl-btn">
+              <button className="wl-modal-delete-wl-btn" onClick={handleDeleteWatchlist}>
                 Delete Watchlist
               </button>
             </div>
