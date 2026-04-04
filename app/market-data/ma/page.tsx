@@ -520,6 +520,10 @@ function HeatMapsTab({ region }: { region: Region }) {
 const CHART_START_YEAR = 1988;
 const CHART_END_YEAR = 2026;
 
+function formatDealValue(valueM: number): string {
+  return valueM >= 1000 ? `$${(valueM / 1000).toFixed(2)}B` : `$${valueM.toLocaleString()}M`;
+}
+
 function MAListBarChart({ deals }: { deals: SemiconductorDeal[] }) {
   const [tooltip, setTooltip] = useState<{ x: number; y: number; year: number; val: number } | null>(
     null,
@@ -639,9 +643,7 @@ function MAListBarChart({ deals }: { deals: SemiconductorDeal[] }) {
           }}
         >
           <strong>{tooltip.year}</strong>:{' '}
-          {tooltip.val >= 1000
-            ? `$${(tooltip.val / 1000).toFixed(2)}B`
-            : `$${tooltip.val.toLocaleString()}M`}
+          {formatDealValue(tooltip.val)}
         </div>
       )}
     </div>
@@ -800,11 +802,7 @@ function MAListPanel() {
                   </td>
                   <td className="text-right aapl-ma-td-value">
                     {deal.valueM != null ? (
-                      deal.valueM >= 1000 ? (
-                        `$${(deal.valueM / 1000).toFixed(2)}B`
-                      ) : (
-                        `$${deal.valueM.toLocaleString()}M`
-                      )
+                      formatDealValue(deal.valueM)
                     ) : (
                       <span className="aapl-ma-undisclosed">Undisclosed</span>
                     )}
