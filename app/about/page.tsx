@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
@@ -124,12 +125,12 @@ export default function AboutPage() {
                     : 'An all-in-one intelligent research tool for semiconductor and tech industry analysts — integrating company financials, supply chain maps, market news, and AI insights.'}
                 </p>
                 <div className="about-site-hero-cta-row">
-                  <a href="/company-profile" className="about-site-btn about-site-btn--primary">
+                  <Link href="/company-profile" className="about-site-btn about-site-btn--primary">
                     {lang === 'zh' ? '開始探索' : 'Start Exploring'}
-                  </a>
-                  <a href="/supply-chain-maps" className="about-site-btn about-site-btn--ghost">
+                  </Link>
+                  <Link href="/supply-chain-maps" className="about-site-btn about-site-btn--ghost">
                     {lang === 'zh' ? '查看供應鏈圖譜' : 'View Supply Chain Maps'}
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -194,9 +195,9 @@ export default function AboutPage() {
                   ? '探索超過 500 家上市公司的深度數據與供應鏈洞察'
                   : 'Explore in-depth data and supply chain insights for 500+ listed companies'}
               </p>
-              <a href="/company-profile" className="about-site-btn about-site-btn--primary">
+              <Link href="/company-profile" className="about-site-btn about-site-btn--primary">
                 {lang === 'zh' ? '前往公司分析' : 'Go to Company Analysis'}
-              </a>
+              </Link>
             </div>
 
           </div>
