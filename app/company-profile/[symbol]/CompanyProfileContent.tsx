@@ -435,8 +435,9 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const [activeFinIndex, setActiveFinIndex] = useState<string>('Revenue');
   const [isFavorite, setIsFavorite] = useState(false);
   const [myTags, setMyTags] = useState<string[]>([]);
-  const tagsInputRef = useRef<HTMLInputElement>(null);
   const [tagInput, setTagInput] = useState('');
+  const [showTagInput, setShowTagInput] = useState(false);
+  const addTagInputRef = useRef<HTMLInputElement>(null);
   const [newsPage, setNewsPage] = useState(1);
   const stockContainerRef = useRef<HTMLDivElement>(null);
 
@@ -500,17 +501,31 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     });
   }
 
-  function addTag(e: React.KeyboardEvent) {
-    if (e.key === 'Enter' && tagInput.trim()) {
-      setMyTags((prev) => {
-        const next = [...prev, tagInput.trim()];
-        try {
-          localStorage.setItem(`cp-tags-${symbol}`, JSON.stringify(next));
-        } catch {}
-        return next;
-      });
+  function addTagValue(value: string) {
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    setMyTags((prev) => {
+      const next = [...prev, trimmed];
+      try {
+        localStorage.setItem(`cp-tags-${symbol}`, JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+    setTagInput('');
+    setShowTagInput(false);
+  }
+
+  function addTag(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') addTagValue(tagInput);
+    if (e.key === 'Escape') {
       setTagInput('');
+      setShowTagInput(false);
     }
+  }
+
+  function handleShowTagInput() {
+    setShowTagInput(true);
+    setTimeout(() => addTagInputRef.current?.focus(), 0);
   }
 
   // News filtered by this company's symbol tag
@@ -610,7 +625,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                           <Link
                             key={tag}
                             href={`/company-profile?tag=${encodeURIComponent(tag)}`}
-                            className="cp-tag cp-tag--link"
+                            className="cp-tag cp-tag--public cp-tag--link"
                           >
                             {tag}
                           </Link>
@@ -632,14 +647,24 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                           <button className="cp-tag-remove" onClick={() => removeTag(tag)} aria-label={`Remove tag ${tag}`}>×</button>
                         </span>
                       ))}
-                      <input
-                        ref={tagsInputRef}
-                        className="cp-tag-input"
-                        placeholder="+ Add tag"
-                        value={tagInput}
-                        onChange={(e) => setTagInput(e.target.value)}
-                        onKeyDown={addTag}
-                      />
+                      {!showTagInput && (
+                        <button className="cp-add-tag-btn" onClick={handleShowTagInput}>
+                          + Add Tag
+                        </button>
+                      )}
+                      {showTagInput && (
+                        <div className="cp-add-tag-row">
+                          <input
+                            ref={addTagInputRef}
+                            className="cp-add-tag-input"
+                            placeholder="輸入標籤名稱"
+                            value={tagInput}
+                            onChange={(e) => setTagInput(e.target.value)}
+                            onKeyDown={addTag}
+                          />
+                          <button className="cp-add-tag-submit" onClick={() => addTagValue(tagInput)}>Add</button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
