@@ -11,7 +11,7 @@ import { stockIndexes } from '@/app/data/marketIndices';
 import { holdingsData as holdingsDataMap } from '@/app/data/watchlistData';
 import type { HoldingEntity } from '@/app/data/watchlistData';
 import { mainNav } from '@/app/data/navigation';
-import { useWatchlist, WATCHLIST_IDS } from '@/app/contexts/WatchlistContext';
+import { useWatchlist } from '@/app/contexts/WatchlistContext';
 
 // All data (indices, holdings, portfolio config) comes from content/*.md files.
 // The fetch script writes to MD; app/data/*.ts readers parse via extractJson().
@@ -537,12 +537,18 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
   function handleDeleteWatchlist() {
     deleteWatchlist(watchlistId);
     setShowEditWatchlist(false);
-    // Navigate to another available watchlist or the watchlist root
-    const remaining = allWatchlistItems.filter((item) => item.watchlistId !== watchlistId);
+    // Navigate to another available watchlist, excluding the one just deleted
+    const newDeleted = new Set([...deletedWatchlists, watchlistId]);
+    const remaining = [
+      ...(mainNav.find((item) => item.icon === 'watchlist')?.subItems ?? []).filter(
+        (item) => item.watchlistId && !newDeleted.has(item.watchlistId),
+      ),
+      ...dynamicWatchlists.filter((wl) => !newDeleted.has(wl.id)).map((wl) => ({ href: `/watchlist/${wl.id}` })),
+    ];
     if (remaining.length > 0) {
       router.push(remaining[0].href);
     } else {
-      router.push('/watchlist/' + (WATCHLIST_IDS.find((id) => id !== watchlistId && !deletedWatchlists.has(id)) ?? WATCHLIST_IDS[0]));
+      router.push('/watchlist/create');
     }
   }
 
