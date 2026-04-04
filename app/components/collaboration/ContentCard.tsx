@@ -516,19 +516,6 @@ export function ContentCardComponent({
       >
         <span className="pg-card-title-text">{card.title}</span>
         <div className="pg-card-title-actions">
-          {/* Save icon (placeholder — TODO: implement save functionality) */}
-          <button
-            className="pg-card-action-btn"
-            title="儲存"
-            aria-label="儲存"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <svg viewBox="0 0 16 16" width="13" height="13" fill="none" aria-hidden="true">
-              <path d="M2 2h9l3 3v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
-              <rect x="5" y="2" width="5" height="3.5" rx="0.5" stroke="currentColor" strokeWidth="1.3" />
-              <rect x="4" y="9" width="8" height="5" rx="0.5" stroke="currentColor" strokeWidth="1.3" />
-            </svg>
-          </button>
           {/* Edit icon (placeholder — TODO: implement edit functionality) */}
           <button
             className="pg-card-action-btn"

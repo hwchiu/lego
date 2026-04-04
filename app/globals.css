@@ -7613,12 +7613,6 @@ input, select { font-family: var(--font); }
   align-items: center;
   gap: 2px;
   flex-shrink: 0;
-  opacity: 0;
-  transition: opacity 0.15s;
-}
-
-.pg-card:hover .pg-card-title-actions {
-  opacity: 1;
 }
 
 .pg-card-action-btn {
