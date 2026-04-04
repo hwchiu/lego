@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
@@ -106,6 +105,7 @@ interface EarningsCompanyData {
 
 function buildCompanyData(symbol: string, name: string): EarningsCompanyData {
   // Use symbol hash to vary numbers slightly across companies
+  // 65 = ASCII 'A', used as fallback for single-character symbols so seed is always non-zero
   const seed = symbol.charCodeAt(0) + (symbol.charCodeAt(1) || 65);
   const v = (base: number, variance: number) => +(base + ((seed % 7) - 3) * variance).toFixed(2);
 
@@ -497,13 +497,13 @@ function YearlyEarningsForecastSection({ data }: { data: EarningsCompanyData }) 
                   <div
                     className="earn-forecast-range-fill"
                     style={{
-                      left: `${((row.low - row.low * 0.9) / (row.high * 1.1 - row.low * 0.9)) * 100}%`,
-                      width: `${((row.high - row.low) / (row.high * 1.1 - row.low * 0.9)) * 100}%`,
+                      left: `${((row.low - row.low * RANGE_LOW_PAD) / (row.high * RANGE_HIGH_PAD - row.low * RANGE_LOW_PAD)) * 100}%`,
+                      width: `${((row.high - row.low) / (row.high * RANGE_HIGH_PAD - row.low * RANGE_LOW_PAD)) * 100}%`,
                     }}
                   />
                   <div
                     className="earn-forecast-range-dot"
-                    style={{ left: `${((row.consensus - row.low * 0.9) / (row.high * 1.1 - row.low * 0.9)) * 100}%` }}
+                    style={{ left: `${((row.consensus - row.low * RANGE_LOW_PAD) / (row.high * RANGE_HIGH_PAD - row.low * RANGE_LOW_PAD)) * 100}%` }}
                   />
                 </div>
                 <span className="earn-forecast-high">${row.high.toFixed(2)}</span>
@@ -557,13 +557,13 @@ function QuarterlyEarningsForecastSection({ data }: { data: EarningsCompanyData 
                   <div
                     className="earn-forecast-range-fill"
                     style={{
-                      left: `${((row.low - row.low * 0.9) / (row.high * 1.1 - row.low * 0.9)) * 100}%`,
-                      width: `${((row.high - row.low) / (row.high * 1.1 - row.low * 0.9)) * 100}%`,
+                      left: `${((row.low - row.low * RANGE_LOW_PAD) / (row.high * RANGE_HIGH_PAD - row.low * RANGE_LOW_PAD)) * 100}%`,
+                      width: `${((row.high - row.low) / (row.high * RANGE_HIGH_PAD - row.low * RANGE_LOW_PAD)) * 100}%`,
                     }}
                   />
                   <div
                     className="earn-forecast-range-dot"
-                    style={{ left: `${((row.consensus - row.low * 0.9) / (row.high * 1.1 - row.low * 0.9)) * 100}%` }}
+                    style={{ left: `${((row.consensus - row.low * RANGE_LOW_PAD) / (row.high * RANGE_HIGH_PAD - row.low * RANGE_LOW_PAD)) * 100}%` }}
                   />
                 </div>
                 <span className="earn-forecast-high">${row.high.toFixed(2)}</span>
@@ -743,10 +743,13 @@ function NumberOfEstimatesChangedSection({ data }: { data: EarningsCompanyData }
   );
 }
 
+// Padding multipliers for forecast range visualisation
+const RANGE_LOW_PAD = 0.9;
+const RANGE_HIGH_PAD = 1.1;
+
 // ── Main Component ────────────────────────────────────────────────────────────
 
 export default function EarningsContent() {
-  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeTab, setActiveTab] = useState<SubTab>('Earnings Date');
