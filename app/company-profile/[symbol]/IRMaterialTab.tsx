@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 // ── IR Material Tab — AAPL ───────────────────────────────────────────────────
 // Content sourced from https://investor.apple.com/investor-relations/default.aspx
 // Sections: Investor Updates | Newsroom | Financial Data
@@ -7,6 +9,14 @@
 interface IRMaterialTabProps {
   symbol: string;
 }
+
+type IRSubTab = 'investor-updates' | 'newsroom' | 'financial-data';
+
+const IR_TABS: { key: IRSubTab; label: string }[] = [
+  { key: 'investor-updates', label: 'Investor Updates' },
+  { key: 'newsroom', label: 'Newsroom' },
+  { key: 'financial-data', label: 'Financial Data' },
+];
 
 // ── Investor Updates data ────────────────────────────────────────────────────
 
@@ -378,6 +388,8 @@ function CategoryBadge({ category }: { category: string }) {
 // ── IRMaterialTab ─────────────────────────────────────────────────────────────
 
 export default function IRMaterialTab({ symbol }: IRMaterialTabProps) {
+  const [activeTab, setActiveTab] = useState<IRSubTab>('investor-updates');
+
   // Only AAPL has full content; others show a placeholder
   if (symbol !== 'AAPL') {
     return (
@@ -388,174 +400,135 @@ export default function IRMaterialTab({ symbol }: IRMaterialTabProps) {
   }
 
   return (
-    <div className="cp-tab-content-box cp-ir-material">
-      {/* ── Section 1: Investor Updates ── */}
-      <div className="cp-data-card cp-ir-section-card">
-        <div className="cp-card-title cp-ir-section-title">
-          <svg
-            viewBox="0 0 16 16"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-            className="cp-ir-title-icon"
+    <div className="cp-tab-content-box cp-ir-material cp-ir-layout">
+      {/* ── Left vertical sub-tab menu ── */}
+      <div className="cp-ir-left-menu">
+        {IR_TABS.map((tab) => (
+          <button
+            key={tab.key}
+            className={`cp-ir-left-tab${activeTab === tab.key ? ' active' : ''}`}
+            onClick={() => setActiveTab(tab.key)}
           >
-            <rect x="2" y="3" width="12" height="10" rx="2" />
-            <path d="M5 8h6M5 11h4" />
-          </svg>
-          Investor Updates
-        </div>
-        <div className="cp-card-divider" />
-        <div className="cp-ir-updates-list">
-          {AAPL_INVESTOR_UPDATES.map((u) => (
-            <div key={u.period} className="cp-ir-update-item">
-              <div className="cp-ir-update-header">
-                <span className="cp-ir-update-period">{u.period}</span>
-                <span className="cp-ir-update-date">{u.date}</span>
-              </div>
-              <div className="cp-ir-update-metrics">
-                <div className="cp-ir-update-metric">
-                  <span className="cp-ir-update-metric-label">Revenue</span>
-                  <span className="cp-ir-update-metric-value">{u.revenue}</span>
-                </div>
-                <div className="cp-ir-update-metric">
-                  <span className="cp-ir-update-metric-label">EPS (Diluted)</span>
-                  <span className="cp-ir-update-metric-value">{u.eps}</span>
-                </div>
-                <div className="cp-ir-update-metric">
-                  <span className="cp-ir-update-metric-label">Dividend</span>
-                  <span className="cp-ir-update-metric-value">{u.dividend}</span>
-                </div>
-              </div>
-              <div className="cp-ir-update-highlight">{u.highlight}</div>
-            </div>
-          ))}
-        </div>
+            {tab.label}
+          </button>
+        ))}
       </div>
 
-      {/* ── Section 2: Newsroom ── */}
-      <div className="cp-data-card cp-ir-section-card">
-        <div className="cp-card-title cp-ir-section-title">
-          <svg
-            viewBox="0 0 16 16"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-            className="cp-ir-title-icon"
-          >
-            <path d="M2 3h12v9a1 1 0 01-1 1H3a1 1 0 01-1-1V3z" />
-            <path d="M5 6h6M5 9h4" />
-          </svg>
-          Newsroom
-        </div>
-        <div className="cp-card-divider" />
-        <div className="cp-ir-newsroom-list">
-          {AAPL_NEWSROOM.map((item, idx) => (
+      {/* ── Tab content ── */}
+      <div className="cp-ir-tab-content">
+        {/* ── Investor Updates ── */}
+        {activeTab === 'investor-updates' && (
+          <div className="cp-ir-card-grid">
+            {AAPL_INVESTOR_UPDATES.map((u) => (
+              <div key={u.period} className="cp-data-card cp-ir-card">
+                <div className="cp-ir-card-header">
+                  <span className="cp-ir-update-period">{u.period}</span>
+                  <span className="cp-ir-update-date">{u.date}</span>
+                </div>
+                <div className="cp-card-divider" />
+                <div className="cp-ir-update-metrics">
+                  <div className="cp-ir-update-metric">
+                    <span className="cp-ir-update-metric-label">Revenue</span>
+                    <span className="cp-ir-update-metric-value">{u.revenue}</span>
+                  </div>
+                  <div className="cp-ir-update-metric">
+                    <span className="cp-ir-update-metric-label">EPS (Diluted)</span>
+                    <span className="cp-ir-update-metric-value">{u.eps}</span>
+                  </div>
+                  <div className="cp-ir-update-metric">
+                    <span className="cp-ir-update-metric-label">Dividend</span>
+                    <span className="cp-ir-update-metric-value">{u.dividend}</span>
+                  </div>
+                </div>
+                <div className="cp-ir-update-highlight">{u.highlight}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ── Newsroom ── */}
+        {activeTab === 'newsroom' && (
+          <>
+            <div className="cp-ir-card-grid">
+              {AAPL_NEWSROOM.map((item, idx) => (
+                <a
+                  key={idx}
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cp-data-card cp-ir-card cp-ir-news-card"
+                >
+                  <div className="cp-ir-news-card-top">
+                    <CategoryBadge category={item.category} />
+                    <span className="cp-ir-news-date">{item.date}</span>
+                  </div>
+                  <div className="cp-ir-news-card-title">{item.title}</div>
+                  <div className="cp-ir-news-card-footer">
+                    <svg
+                      viewBox="0 0 12 12"
+                      width="11"
+                      height="11"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M2 6h8M6 2l4 4-4 4" />
+                    </svg>
+                    <span>Open in new tab</span>
+                  </div>
+                </a>
+              ))}
+            </div>
             <a
-              key={idx}
-              href={item.url}
+              href="https://investor.apple.com/investor-relations/default.aspx"
               target="_blank"
               rel="noopener noreferrer"
-              className="cp-ir-news-item"
+              className="cp-ir-view-all"
             >
-              <div className="cp-ir-news-item-left">
-                <CategoryBadge category={item.category} />
-                <span className="cp-ir-news-date">{item.date}</span>
-              </div>
-              <div className="cp-ir-news-title">{item.title}</div>
-              <svg
-                viewBox="0 0 12 12"
-                width="11"
-                height="11"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-                className="cp-ir-news-arrow"
-              >
-                <path d="M2 6h8M6 2l4 4-4 4" />
-              </svg>
+              View all on investor.apple.com →
             </a>
-          ))}
-        </div>
-        <a
-          href="https://investor.apple.com/investor-relations/default.aspx"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="cp-ir-view-all"
-        >
-          View all on investor.apple.com →
-        </a>
-      </div>
+          </>
+        )}
 
-      {/* ── Section 3: Financial Data ── */}
-      <div className="cp-data-card cp-ir-section-card">
-        <div className="cp-card-title cp-ir-section-title">
-          <svg
-            viewBox="0 0 16 16"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-            className="cp-ir-title-icon"
-          >
-            <path d="M4 2h6l3 3v9H3V2z" />
-            <path d="M9 2v4h4" />
-            <path d="M6 9h4M6 12h2" />
-          </svg>
-          Financial Data
-        </div>
-        <div className="cp-card-divider" />
-        <div className="cp-ir-financial-data">
-          {AAPL_FINANCIAL_DATA.map((group) => (
-            <div key={group.category} className="cp-ir-doc-group">
-              <div className="cp-ir-doc-group-title">{group.category}</div>
-              <div className="cp-ir-doc-list">
-                {group.docs.map((doc, idx) => (
-                  <a
-                    key={idx}
-                    href={doc.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    download
-                    className="cp-ir-doc-item"
-                  >
-                    <div className="cp-ir-doc-item-left">
-                      <DocTypeBadge type={doc.type} />
-                      <span className="cp-ir-doc-label">{doc.label}</span>
-                    </div>
-                    <div className="cp-ir-doc-item-right">
-                      <span className="cp-ir-doc-filed">Filed: {doc.filed}</span>
-                      <span className="cp-ir-doc-download">
+        {/* ── Financial Data ── */}
+        {activeTab === 'financial-data' && (
+          <>
+            {AAPL_FINANCIAL_DATA.map((group) => (
+              <div key={group.category} className="cp-ir-doc-group">
+                <div className="cp-ir-doc-group-title">{group.category}</div>
+                <div className="cp-ir-card-grid">
+                  {group.docs.map((doc, idx) => (
+                    <a
+                      key={idx}
+                      href={doc.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download
+                      className="cp-data-card cp-ir-card cp-ir-doc-card"
+                    >
+                      <div className="cp-ir-doc-card-top">
+                        <DocTypeBadge type={doc.type} />
+                        <span className="cp-ir-doc-filed">Filed: {doc.filed}</span>
+                      </div>
+                      <div className="cp-ir-doc-card-label">{doc.label}</div>
+                      <div className="cp-ir-doc-card-footer">
                         <DownloadIcon />
-                        Download
-                      </span>
-                    </div>
-                  </a>
-                ))}
+                        <span>Download</span>
+                      </div>
+                    </a>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-        <p className="cp-ir-disclaimer">
-          Source: Apple Inc. Investor Relations (investor.apple.com). All documents are publicly
-          available SEC filings and earnings materials.
-        </p>
+            ))}
+            <p className="cp-ir-disclaimer">
+              Source: Apple Inc. Investor Relations (investor.apple.com). All documents are publicly
+              available SEC filings and earnings materials.
+            </p>
+          </>
+        )}
       </div>
     </div>
   );

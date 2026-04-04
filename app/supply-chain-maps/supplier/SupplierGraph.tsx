@@ -1148,9 +1148,9 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
               aria-label="Reset Graph Layout"
             >
               <svg
-                viewBox="0 0 16 16"
-                width="14"
-                height="14"
+                viewBox="0 0 14 14"
+                width="12"
+                height="12"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="1.6"
@@ -1158,8 +1158,8 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
                 strokeLinejoin="round"
                 aria-hidden="true"
               >
-                <path d="M13.5 3.5A7 7 0 1 0 14 8" />
-                <polyline points="14 1 14 5 10 5" />
+                <path d="M2.5 7A4.5 4.5 0 1 0 3.5 4" />
+                <polyline points="3.5 1.5 3.5 4.5 6.5 4.5" />
               </svg>
             </button>
             <div className="rmap-zoom-sep" />

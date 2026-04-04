@@ -378,7 +378,7 @@ type FeedTab = 'Latest' | 'Analysis' | 'News' | 'Warnings' | 'Transcripts' | 'Pr
 
 export default function WatchlistPage({ params }: { params: { id: string } }) {
   const watchlistId = params.id;
-  const { watchlistNames, setWatchlistName, symbolOrders, setSymbolOrder } = useWatchlist();
+  const { watchlistNames, setWatchlistName, symbolOrders, setSymbolOrder, favorites, toggleFavorite } = useWatchlist();
 
   const watchlistName = watchlistNames[watchlistId] ?? 'Watchlist';
   const currentSymbolOrder = symbolOrders[watchlistId] ?? holdingsData.map((h) => h.symbol);
@@ -627,6 +627,32 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
               <div className="wl-portfolio-left">
                 {/* Title row with dropdown */}
                 <div className="wl-portfolio-title-row" ref={titleDropdownRef}>
+                  {/* Star / favorite button */}
+                  <button
+                    className={`wl-star-btn${favorites.has(watchlistId) ? ' starred' : ''}`}
+                    onClick={() => toggleFavorite(watchlistId)}
+                    aria-label={favorites.has(watchlistId) ? 'Remove from favorites' : 'Add to favorites'}
+                    title={favorites.has(watchlistId) ? 'Remove from favorites' : 'Add to favorites'}
+                  >
+                    <svg viewBox="0 0 14 14" width="15" height="15" fill="none" aria-hidden="true">
+                      {favorites.has(watchlistId) ? (
+                        <path
+                          d="M7 1.5l1.5 3.3L12.5 5l-2.5 2.6.6 3.7L7 9.6l-3.6 1.7.6-3.7L1.5 5l3.8-.7z"
+                          fill="#f59e0b"
+                          stroke="#f59e0b"
+                          strokeWidth="1.1"
+                          strokeLinejoin="round"
+                        />
+                      ) : (
+                        <path
+                          d="M7 1.5l1.5 3.3L12.5 5l-2.5 2.6.6 3.7L7 9.6l-3.6 1.7.6-3.7L1.5 5l3.8-.7z"
+                          stroke="currentColor"
+                          strokeWidth="1.3"
+                          strokeLinejoin="round"
+                        />
+                      )}
+                    </svg>
+                  </button>
                   <span className="wl-portfolio-title">{watchlistName}</span>
                   <button
                     className={`wl-portfolio-chevron-btn${showTitleDropdown ? ' open' : ''}`}

@@ -43,8 +43,11 @@ function PressReleaseCard({ pr, compact = false, lang }: PressReleaseCardProps) 
       {/* Corner triangle: blue for customer, dark-red for supplier */}
       <div className={`pr-card-tri ${pr.relationship === 'customer' ? 'pr-card-tri--customer' : 'pr-card-tri--supplier'}`} />
 
-      {/* Date top-left */}
-      <div className="pr-card-date">{dateStr}</div>
+      {/* Date top-left + company tag for compact cards */}
+      <div className="pr-card-date-row">
+        <div className="pr-card-date">{dateStr}</div>
+        {compact && <span className="pr-tag pr-tag--neutral pr-card-compact-company">{pr.company}</span>}
+      </div>
 
       {/* Title */}
       <div className="pr-card-title">{pr.title}</div>
