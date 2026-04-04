@@ -330,14 +330,14 @@ const AAPL_FINANCIAL_DATA: FinancialDocGroup[] = [
 
 // ── Type badge ────────────────────────────────────────────────────────────────
 
+const DOC_TYPE_CLASSES: Record<'PDF' | 'XLSX' | 'HTML', string> = {
+  PDF: 'cp-ir-doc-badge cp-ir-doc-badge--pdf',
+  XLSX: 'cp-ir-doc-badge cp-ir-doc-badge--xlsx',
+  HTML: 'cp-ir-doc-badge cp-ir-doc-badge--html',
+};
+
 function DocTypeBadge({ type }: { type: 'PDF' | 'XLSX' | 'HTML' }) {
-  const cls =
-    type === 'PDF'
-      ? 'cp-ir-doc-badge cp-ir-doc-badge--pdf'
-      : type === 'XLSX'
-        ? 'cp-ir-doc-badge cp-ir-doc-badge--xlsx'
-        : 'cp-ir-doc-badge cp-ir-doc-badge--html';
-  return <span className={cls}>{type}</span>;
+  return <span className={DOC_TYPE_CLASSES[type]}>{type}</span>;
 }
 
 // ── Download icon ─────────────────────────────────────────────────────────────
@@ -363,18 +363,15 @@ function DownloadIcon() {
 
 // ── Category icon ─────────────────────────────────────────────────────────────
 
-function CategoryBadge({ category }: { category: string }) {
-  const earningsBadge =
-    category === 'Earnings' ? 'cp-ir-category-badge cp-ir-category-badge--earnings' : '';
-  const productBadge =
-    category === 'Product' ? 'cp-ir-category-badge cp-ir-category-badge--product' : '';
-  const corporateBadge =
-    category === 'Corporate' ? 'cp-ir-category-badge cp-ir-category-badge--corporate' : '';
+const CATEGORY_CLASSES: Record<string, string> = {
+  Earnings: 'cp-ir-category-badge cp-ir-category-badge--earnings',
+  Product: 'cp-ir-category-badge cp-ir-category-badge--product',
+  Corporate: 'cp-ir-category-badge cp-ir-category-badge--corporate',
+};
 
+function CategoryBadge({ category }: { category: string }) {
   return (
-    <span className={earningsBadge || productBadge || corporateBadge || 'cp-ir-category-badge'}>
-      {category}
-    </span>
+    <span className={CATEGORY_CLASSES[category] ?? 'cp-ir-category-badge'}>{category}</span>
   );
 }
 
