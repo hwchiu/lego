@@ -9878,10 +9878,48 @@ input, select { font-family: var(--font); }
     grid-template-columns: 1fr;
   }
 
-  /* M&A filter bar — wrap */
-  .aapl-ma-filter-bar {
+  /* Supply-chain filter bar top row — wrap controls vertically */
+  .rmap-filter-bar-row {
     flex-wrap: wrap;
     gap: 8px;
+  }
+
+  /* Supply-chain industry filter row — wrap tags instead of horizontal scroll */
+  .rmap-industry-filter-row {
+    flex-wrap: wrap;
+    overflow: visible;
+    align-items: center;
+  }
+
+  .rmap-industry-scroll-btn {
+    display: none;
+  }
+
+  .rmap-industry-tags-scroll {
+    flex-wrap: wrap;
+    overflow: visible;
+    flex: none;
+    width: 100%;
+    gap: 6px;
+  }
+
+  /* M&A filter bar — wrap tags instead of horizontal scroll */
+  .aapl-ma-filter-bar {
+    flex-wrap: wrap;
+    overflow: visible;
+    gap: 8px;
+  }
+
+  .aapl-ma-scroll-btn {
+    display: none;
+  }
+
+  .aapl-ma-tags-scroll {
+    flex-wrap: wrap;
+    overflow: visible;
+    flex: none;
+    width: 100%;
+    gap: 6px;
   }
 
   /* Section titles — slightly smaller */
