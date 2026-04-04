@@ -32,7 +32,7 @@ export interface Member {
   role: string;
 }
 
-export type CardType = 'article' | 'kpi' | 'table' | 'image' | 'chart' | 'map' | 'supply-chain';
+export type CardType = 'article' | 'kpi' | 'table' | 'image' | 'chart' | 'map' | 'supply-chain' | 'file';
 
 export interface KPIMetric {
   label: string;
@@ -49,6 +49,14 @@ export interface TableData {
 export interface ChartBar {
   label: string;
   value: number;
+}
+
+export interface Comment {
+  id: string;
+  author: Member;
+  text: string;
+  createdAt: string;
+  editedAt?: string;
 }
 
 export interface ContentCard {
@@ -70,7 +78,12 @@ export interface ContentCard {
   chartData?: ChartBar[];
   chartType?: 'bar' | 'line';
   chartUnit?: string;
+  // file attachment
+  fileName?: string;
+  fileSize?: string;
   // map / supply-chain are rendered via inline SVG; title + addedBy are sufficient
+  // comments
+  comments?: Comment[];
 }
 
 export type TaskStatus = 'todo' | 'in-progress' | 'done';

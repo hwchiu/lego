@@ -1,25 +1,53 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { ContentCardComponent } from '@/app/components/collaboration/ContentCard';
 import { TaskPanel } from '@/app/components/collaboration/TaskPanel';
 import { CanvasManageModal } from '@/app/components/collaboration/CanvasManageModal';
+import { AddCardModal } from '@/app/components/collaboration/AddCardModal';
 import { canvases as initialCanvases, members, TAG_I18N } from '@/app/data/collaboration';
-import type { Canvas, ContentCard } from '@/app/data/collaboration';
+import type { Canvas, ContentCard, Comment } from '@/app/data/collaboration';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+
+const STORAGE_KEY = 'pg-canvas-state';
+
+function loadCanvases(): Canvas[] {
+  if (typeof window === 'undefined') return initialCanvases;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw) as Canvas[];
+  } catch (err) {
+    console.warn('[CollaborationPlayground] Failed to load saved canvas state:', err);
+  }
+  return initialCanvases;
+}
 
 export default function CollaborationPlaygroundPage() {
   const { lang } = useLanguage();
   const isEn = lang === 'en';
-  const [canvasList, setCanvasList] = useState<Canvas[]>(initialCanvases);
+  const [canvasList, setCanvasList] = useState<Canvas[]>(loadCanvases);
   const [activeCanvasId, setActiveCanvasId] = useState(initialCanvases[0].id);
   const [showTaskPanel, setShowTaskPanel] = useState(false);
   const [showManageModal, setShowManageModal] = useState(false);
+  const [showAddCardModal, setShowAddCardModal] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  // Drag-and-drop state
+  const dragCardIdRef = useRef<string | null>(null);
+  const [dragOverCardId, setDragOverCardId] = useState<string | null>(null);
+
+  // Persist canvas state to localStorage on every change
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(canvasList));
+    } catch {
+      // ignore quota errors
+    }
+  }, [canvasList]);
 
   const toggleFullscreen = useCallback(() => setIsFullscreen((v) => !v), []);
 
@@ -59,10 +87,65 @@ export default function CollaborationPlaygroundPage() {
     }
   }
 
-  // Filter content by type for the "new card" placeholder
-  const cardsByType: Record<string, ContentCard[]> = {};
-  for (const card of activeCanvas.cards) {
-    cardsByType[card.type] = [...(cardsByType[card.type] ?? []), card];
+  function handleAddCard(card: ContentCard) {
+    setCanvasList((prev) =>
+      prev.map((c) =>
+        c.id === activeCanvasId ? { ...c, cards: [...c.cards, card] } : c,
+      ),
+    );
+    setShowAddCardModal(false);
+  }
+
+  function handleCommentsChange(cardId: string, newComments: Comment[]) {
+    setCanvasList((prev) =>
+      prev.map((canvas) => {
+        if (canvas.id !== activeCanvasId) return canvas;
+        return {
+          ...canvas,
+          cards: canvas.cards.map((card) =>
+            card.id === cardId ? { ...card, comments: newComments } : card,
+          ),
+        };
+      }),
+    );
+  }
+
+  // ── Drag-and-drop handlers ──────────────────
+  function handleDragStart(cardId: string) {
+    dragCardIdRef.current = cardId;
+  }
+
+  function handleDragOver(e: React.DragEvent, cardId: string) {
+    e.preventDefault();
+    setDragOverCardId(cardId);
+  }
+
+  function handleDrop(e: React.DragEvent, targetCardId: string) {
+    e.preventDefault();
+    const sourceId = dragCardIdRef.current;
+    if (!sourceId || sourceId === targetCardId) {
+      setDragOverCardId(null);
+      return;
+    }
+    setCanvasList((prev) =>
+      prev.map((c) => {
+        if (c.id !== activeCanvasId) return c;
+        const cards = [...c.cards];
+        const fromIdx = cards.findIndex((card) => card.id === sourceId);
+        const toIdx = cards.findIndex((card) => card.id === targetCardId);
+        if (fromIdx === -1 || toIdx === -1) return c;
+        const [moved] = cards.splice(fromIdx, 1);
+        cards.splice(toIdx, 0, moved);
+        return { ...c, cards };
+      }),
+    );
+    dragCardIdRef.current = null;
+    setDragOverCardId(null);
+  }
+
+  function handleDragEnd() {
+    dragCardIdRef.current = null;
+    setDragOverCardId(null);
   }
 
   return (
@@ -255,16 +338,48 @@ export default function CollaborationPlaygroundPage() {
               {activeCanvas.cards.length === 0 ? (
                 <div className="pg-empty-board">
                   <div className="pg-empty-icon">📋</div>
-                  <div className="pg-empty-title">畫布尚無內容</div>
-                  <div className="pg-empty-sub">開始貼上文章、數據或圖片來協作吧</div>
+                  <div className="pg-empty-title">
+                    {isEn ? 'No content yet' : '畫布尚無內容'}
+                  </div>
+                  <div className="pg-empty-sub">
+                    {isEn
+                      ? 'Click the + button to add cards to this canvas'
+                      : '點選右下角的 + 按鈕新增卡片'}
+                  </div>
                 </div>
               ) : (
                 <div className="pg-masonry">
                   {activeCanvas.cards.map((card) => (
-                    <ContentCardComponent key={card.id} card={card} />
+                    <ContentCardComponent
+                      key={card.id}
+                      card={card}
+                      members={members}
+                      currentUser={members[0]}
+                      onCommentsChange={handleCommentsChange}
+                      isDragging={dragCardIdRef.current === card.id}
+                      isDragOver={dragOverCardId === card.id}
+                      onDragStart={handleDragStart}
+                      onDragOver={handleDragOver}
+                      onDrop={handleDrop}
+                      onDragEnd={handleDragEnd}
+                    />
                   ))}
                 </div>
               )}
+
+              {/* Add card floating zone (bottom-right of board) */}
+              <button
+                className="pg-add-card-zone"
+                onClick={() => setShowAddCardModal(true)}
+                title="Add a new card"
+                aria-label="Add a new card"
+              >
+                <svg viewBox="0 0 20 20" width="22" height="22" fill="none" aria-hidden="true">
+                  <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M10 6v8M6 10h8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                </svg>
+                <span className="pg-add-card-zone-label">Add Card</span>
+              </button>
             </div>
 
             {/* Task panel */}
@@ -283,6 +398,16 @@ export default function CollaborationPlaygroundPage() {
           onClose={() => setShowManageModal(false)}
           onCreate={handleCreateCanvas}
           onDelete={handleDeleteCanvas}
+        />
+      )}
+
+      {/* Add card modal */}
+      {showAddCardModal && (
+        <AddCardModal
+          members={members}
+          currentUser={members[0]}
+          onClose={() => setShowAddCardModal(false)}
+          onSubmit={handleAddCard}
         />
       )}
     </>

@@ -1,6 +1,7 @@
 'use client';
 
-import type { ContentCard, ChartBar } from '@/app/data/collaboration';
+import type { ContentCard, ChartBar, Member, Comment } from '@/app/data/collaboration';
+import { CommentSection } from './CommentSection';
 
 // ─── Bar chart (inline SVG) ───────────────────
 function BarChart({ data, unit }: { data: ChartBar[]; unit?: string }) {
@@ -467,11 +468,46 @@ function Avatar({ src, name, size = 28 }: { src: string; name: string; size?: nu
 // ─── Main export ──────────────────────────────
 interface ContentCardProps {
   card: ContentCard;
+  members: Member[];
+  currentUser: Member;
+  onCommentsChange: (cardId: string, comments: Comment[]) => void;
+  isDragging?: boolean;
+  isDragOver?: boolean;
+  onDragStart: (cardId: string) => void;
+  onDragOver: (e: React.DragEvent, cardId: string) => void;
+  onDrop: (e: React.DragEvent, cardId: string) => void;
+  onDragEnd: () => void;
 }
 
-export function ContentCardComponent({ card }: ContentCardProps) {
+export function ContentCardComponent({
+  card,
+  members,
+  currentUser,
+  onCommentsChange,
+  isDragging,
+  isDragOver,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  onDragEnd,
+}: ContentCardProps) {
+  const classNames = [
+    'pg-card',
+    isDragging ? 'pg-card--dragging' : '',
+    isDragOver ? 'pg-card--drag-over' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <div className="pg-card">
+    <div
+      className={classNames}
+      draggable
+      onDragStart={() => onDragStart(card.id)}
+      onDragOver={(e) => onDragOver(e, card.id)}
+      onDrop={(e) => onDrop(e, card.id)}
+      onDragEnd={onDragEnd}
+    >
       {/* Card title */}
       <div className="pg-card-title">{card.title}</div>
 
@@ -499,7 +535,28 @@ export function ContentCardComponent({ card }: ContentCardProps) {
               />
             )}
             {card.text && <p className="pg-article-text">{card.text}</p>}
-            {card.source && <div className="pg-article-source">來源：{card.source}</div>}
+            {card.source && (
+              <div className="pg-article-source">
+                {(() => {
+                  try {
+                    const p = new URL(card.source);
+                    if (p.protocol === 'http:' || p.protocol === 'https:') {
+                      return (
+                        <>
+                          Source:{' '}
+                          <a href={card.source} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--c-text-4)' }}>
+                            {card.source}
+                          </a>
+                        </>
+                      );
+                    }
+                  } catch {
+                    // not a URL
+                  }
+                  return <>來源：{card.source}</>;
+                })()}
+              </div>
+            )}
           </>
         )}
 
@@ -552,6 +609,24 @@ export function ContentCardComponent({ card }: ContentCardProps) {
 
         {card.type === 'supply-chain' && card.id.startsWith('c2') && <AiSupplyChainGraph />}
         {card.type === 'supply-chain' && card.id.startsWith('c3') && <MiddleEastSupplyChainGraph />}
+
+        {card.type === 'file' && (
+          <div className="pg-file-card">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
+              <path
+                d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"
+                stroke="var(--c-text-3)"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+              />
+              <path d="M14 2v6h6" stroke="var(--c-text-3)" strokeWidth="1.5" strokeLinejoin="round" />
+            </svg>
+            <div>
+              <div className="pg-file-name">{card.fileName ?? card.title}</div>
+              {card.fileSize && <div className="pg-file-size">{card.fileSize}</div>}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Footer: added-by info */}
@@ -560,6 +635,15 @@ export function ContentCardComponent({ card }: ContentCardProps) {
         <span className="pg-card-adder">{card.addedBy.name}</span>
         <span className="pg-card-date">{card.addedAt}</span>
       </div>
+
+      {/* Comment section */}
+      <CommentSection
+        cardId={card.id}
+        comments={card.comments ?? []}
+        members={members}
+        currentUser={currentUser}
+        onCommentsChange={onCommentsChange}
+      />
     </div>
   );
 }
