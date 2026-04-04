@@ -12,6 +12,10 @@ import { SP500_COMPANIES } from '@/app/data/sp500';
 const RECENTLY_VIEWED_KEY = 'earnings-recently-viewed';
 const MAX_RECENTLY_VIEWED = 5;
 
+// Padding multipliers for forecast range visualisation
+const RANGE_LOW_PAD = 0.9;
+const RANGE_HIGH_PAD = 1.1;
+
 const SUB_TABS = [
   'Earnings Date',
   'Earnings Quality Ranking',
@@ -105,8 +109,8 @@ interface EarningsCompanyData {
 
 function buildCompanyData(symbol: string, name: string): EarningsCompanyData {
   // Use symbol hash to vary numbers slightly across companies
-  // 65 = ASCII 'A', used as fallback for single-character symbols so seed is always non-zero
-  const seed = symbol.charCodeAt(0) + (symbol.charCodeAt(1) || 65);
+  // Use Number.isNaN to safely handle single-character symbols; charCodeAt(1) returns NaN for them
+  const seed = symbol.charCodeAt(0) + (Number.isNaN(symbol.charCodeAt(1)) ? 65 : symbol.charCodeAt(1));
   const v = (base: number, variance: number) => +(base + ((seed % 7) - 3) * variance).toFixed(2);
 
   return {
@@ -743,9 +747,7 @@ function NumberOfEstimatesChangedSection({ data }: { data: EarningsCompanyData }
   );
 }
 
-// Padding multipliers for forecast range visualisation
-const RANGE_LOW_PAD = 0.9;
-const RANGE_HIGH_PAD = 1.1;
+// Padding multipliers for forecast range visualisation are defined at the top of this file.
 
 // ── Main Component ────────────────────────────────────────────────────────────
 
