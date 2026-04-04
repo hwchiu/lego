@@ -139,10 +139,22 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
     const nextId = DYNAMIC_WATCHLIST_IDS.find((id) => !usedIds.has(id));
     if (!nextId) return ''; // All slots used
     const newWl: DynamicWatchlist = { id: nextId, name, symbols };
-    setDynamicWatchlists((prev) => [...prev, newWl]);
+    const newDynamic = [...dynamicWatchlists, newWl];
+    const newNames = { ...watchlistNames, [nextId]: name };
+    const newOrders = { ...symbolOrders, [nextId]: symbols };
+    setDynamicWatchlists(newDynamic);
     // Also register its name and symbol order
-    setWatchlistNames((prev) => ({ ...prev, [nextId]: name }));
-    setSymbolOrders((prev) => ({ ...prev, [nextId]: symbols }));
+    setWatchlistNames(newNames);
+    setSymbolOrders(newOrders);
+    // Persist immediately so the new page can read data on the very first render
+    // (the useEffect-based persistence runs after paint, which may be too late)
+    try {
+      localStorage.setItem('wl-dynamic', JSON.stringify(newDynamic));
+      localStorage.setItem('wl-names', JSON.stringify(newNames));
+      localStorage.setItem('wl-orders', JSON.stringify(newOrders));
+    } catch {
+      // ignore storage errors
+    }
     return nextId;
   }
 
