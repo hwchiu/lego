@@ -301,34 +301,146 @@ function AiWorldMap() {
 // ─── Hormuz / Middle East Map ─────────────────
 function MiddleEastMap() {
   return (
-    <div style={{ position: 'relative', width: '100%', borderRadius: '8px', overflow: 'hidden' }}>
-      <img
-        src="https://images.unsplash.com/photo-1569402030571-50a1d4a7abc1?w=700&q=75"
-        alt="Middle East map"
-        style={{ width: '100%', display: 'block', objectFit: 'cover', maxHeight: '200px' }}
+    <svg
+      viewBox="0 0 440 220"
+      width="100%"
+      style={{ display: 'block' }}
+      aria-label="霍爾木茲海峽與受影響供應鏈地域分布地圖"
+    >
+      <defs>
+        <marker id="horm-arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#9ca3af" />
+        </marker>
+        <marker id="horm-arrow-red" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#dc2626" />
+        </marker>
+        <marker id="horm-arrow-amber" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#d97706" />
+        </marker>
+        <marker id="horm-arrow-blue" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#2563eb" />
+        </marker>
+      </defs>
+
+      {/* Ocean / sea background */}
+      <rect x="0" y="0" width="440" height="220" rx="8" fill="#dbeafe" />
+
+      {/* Arabian Sea / Indian Ocean  */}
+      <ellipse cx="370" cy="150" rx="70" ry="55" fill="#bfdbfe" opacity="0.6" />
+
+      {/* Persian Gulf water */}
+      <ellipse cx="170" cy="110" rx="85" ry="28" fill="#93c5fd" opacity="0.7" />
+      <text x="170" y="114" textAnchor="middle" fontSize="7.5" fill="#1e40af" fontWeight="600">
+        波 斯 灣
+      </text>
+
+      {/* Gulf of Oman */}
+      <ellipse cx="320" cy="130" rx="50" ry="25" fill="#bfdbfe" opacity="0.5" />
+      <text x="320" y="134" textAnchor="middle" fontSize="7" fill="#1e40af" opacity="0.8">
+        阿曼灣
+      </text>
+
+      {/* ── Land masses ── */}
+      {/* Iran (top) */}
+      <rect x="100" y="20" width="175" height="60" rx="6" fill="#d1fae5" stroke="#6ee7b7" strokeWidth="0.8" />
+      <text x="187" y="46" textAnchor="middle" fontSize="11" fontWeight="700" fill="#065f46">
+        伊 朗
+      </text>
+      <text x="187" y="60" textAnchor="middle" fontSize="8" fill="#047857">
+        (衝突發起方)
+      </text>
+
+      {/* Iraq / Kuwait (top-left) */}
+      <rect x="20" y="35" width="80" height="55" rx="5" fill="#fef9c3" stroke="#fde047" strokeWidth="0.8" />
+      <text x="60" y="58" textAnchor="middle" fontSize="9" fontWeight="600" fill="#854d0e">
+        伊拉克
+      </text>
+      <text x="60" y="70" textAnchor="middle" fontSize="8" fill="#92400e">
+        科威特
+      </text>
+
+      {/* Saudi Arabia / Qatar / UAE (bottom) */}
+      <rect x="60" y="140" width="160" height="55" rx="5" fill="#fff7ed" stroke="#fed7aa" strokeWidth="0.8" />
+      <text x="140" y="162" textAnchor="middle" fontSize="10" fontWeight="700" fill="#7c2d12">
+        沙烏地阿拉伯
+      </text>
+      <text x="140" y="176" textAnchor="middle" fontSize="7.5" fill="#9a3412">
+        卡達 · UAE · 科威特
+      </text>
+      <text x="140" y="188" textAnchor="middle" fontSize="7" fill="#b45309">
+        主要石油出口國
+      </text>
+
+      {/* Oman (bottom-right of gulf) */}
+      <rect x="240" y="148" width="70" height="50" rx="5" fill="#ecfdf5" stroke="#6ee7b7" strokeWidth="0.8" />
+      <text x="275" y="170" textAnchor="middle" fontSize="9" fontWeight="600" fill="#065f46">
+        阿 曼
+      </text>
+
+      {/* ── Strait of Hormuz (key bottleneck) ── */}
+      <ellipse cx="280" cy="110" rx="18" ry="12" fill="#7c3aed" opacity="0.25" />
+      <ellipse cx="280" cy="110" rx="18" ry="12" fill="none" stroke="#7c3aed" strokeWidth="1.8" strokeDasharray="4 2" />
+      <text x="280" y="107" textAnchor="middle" fontSize="7.5" fontWeight="700" fill="#6d28d9">
+        霍爾木茲
+      </text>
+      <text x="280" y="117" textAnchor="middle" fontSize="7" fill="#7c3aed">
+        海 峽
+      </text>
+      {/* Warning badge */}
+      <text x="280" y="97" textAnchor="middle" fontSize="9">
+        ⚠
+      </text>
+
+      {/* ── Supply routes from Hormuz ── */}
+      {/* To East Asia */}
+      <line
+        x1="296" y1="105" x2="418" y2="78"
+        stroke="#dc2626" strokeWidth="2" strokeDasharray="6 3"
+        markerEnd="url(#horm-arrow-red)"
       />
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.55))',
-          display: 'flex',
-          alignItems: 'flex-end',
-          padding: '12px',
-        }}
-      >
-        <span
-          style={{
-            color: '#fff',
-            fontSize: '12px',
-            fontWeight: 600,
-            textShadow: '0 1px 4px rgba(0,0,0,0.5)',
-          }}
-        >
-          🗺 霍爾木茲海峽與波斯灣地區 — 全球 21% 海運原油通道
-        </span>
-      </div>
-    </div>
+      {/* To India / SE Asia */}
+      <line
+        x1="296" y1="115" x2="418" y2="145"
+        stroke="#d97706" strokeWidth="2" strokeDasharray="6 3"
+        markerEnd="url(#horm-arrow-amber)"
+      />
+      {/* To Europe (via Saudi overland / Suez) */}
+      <line
+        x1="92" y1="92" x2="14" y2="58"
+        stroke="#2563eb" strokeWidth="2" strokeDasharray="6 3"
+        markerEnd="url(#horm-arrow-blue)"
+      />
+
+      {/* Route labels */}
+      <text x="364" y="72" textAnchor="middle" fontSize="8" fontWeight="600" fill="#dc2626">
+        → 東亞
+      </text>
+      <text x="364" y="80" textAnchor="middle" fontSize="7" fill="#dc2626">
+        (中/日/韓/台)
+      </text>
+      <text x="364" y="140" textAnchor="middle" fontSize="8" fontWeight="600" fill="#d97706">
+        → 印度/東南亞
+      </text>
+      <text x="38" y="52" textAnchor="middle" fontSize="8" fontWeight="600" fill="#2563eb">
+        歐洲 ←
+      </text>
+
+      {/* Oil flow stat */}
+      <rect x="142" y="4" width="158" height="18" rx="4" fill="#7c3aed" opacity="0.12" />
+      <text x="221" y="16" textAnchor="middle" fontSize="8" fontWeight="700" fill="#6d28d9">
+        每日 2,100 萬桶原油 · 佔全球海運 21%
+      </text>
+
+      {/* Legend */}
+      <g transform="translate(4, 195)">
+        <line x1="0" y1="5" x2="14" y2="5" stroke="#dc2626" strokeWidth="2" strokeDasharray="4 2" />
+        <text x="17" y="8" fontSize="7.5" fill="#dc2626">東亞航線</text>
+        <line x1="58" y1="5" x2="72" y2="5" stroke="#d97706" strokeWidth="2" strokeDasharray="4 2" />
+        <text x="75" y="8" fontSize="7.5" fill="#d97706">南亞航線</text>
+        <line x1="116" y1="5" x2="130" y2="5" stroke="#2563eb" strokeWidth="2" strokeDasharray="4 2" />
+        <text x="133" y="8" fontSize="7.5" fill="#2563eb">歐洲航線</text>
+      </g>
+    </svg>
   );
 }
 
