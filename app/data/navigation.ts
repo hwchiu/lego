@@ -98,7 +98,7 @@ export const mainNav: NavItem[] = [
     ],
   },
   { label: 'Market News', href: '/market-news', icon: 'news' },
-  { label: 'Press Release', href: '#', icon: 'pressRelease' },
+  { label: 'Press Release', href: '/press-release', icon: 'pressRelease' },
   { label: 'Earnings', href: '#', icon: 'earnings' },
   { label: 'Event Calendar', href: '/event-calendar', icon: 'calendar' },
   {
