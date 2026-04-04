@@ -190,10 +190,3 @@ export default function AIChatbot() {
     </>
   );
 }
-
-
-interface ChatMessage {
-  id: number;
-  role: 'bot' | 'user';
-  text: string;
-}

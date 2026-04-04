@@ -151,14 +151,3 @@ export function MentionTextarea({
     </div>
   );
 }
-
-
-interface MentionTextareaProps {
-  value: string;
-  onChange: (value: string) => void;
-  members: Member[];
-  placeholder?: string;
-  rows?: number;
-  className?: string;
-}
-
