@@ -1,13 +1,37 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
+import { extractJson } from '@/app/lib/parseContent';
+import semiconductorMaMd from '@/content/semiconductor-ma.md';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-type MainTab = 'number-value' | 'largest' | 'heat-maps';
+type MainTab = 'ma-list' | 'number-value' | 'largest' | 'heat-maps';
+
+interface SemiconductorDeal {
+  year: number;
+  date: string;
+  company: string;
+  acquirer: string;
+  type: string;
+  industry: string;
+  valueM: number | null;
+  newsUrl: string;
+}
+
+// ── Parse semiconductor M&A data from markdown ───────────────────────────────
+
+let _semiDeals: SemiconductorDeal[] | null = null;
+function getSemiDeals(): SemiconductorDeal[] {
+  if (!_semiDeals) {
+    const data = extractJson<{ deals: SemiconductorDeal[] }>(semiconductorMaMd as string);
+    _semiDeals = data.deals;
+  }
+  return _semiDeals;
+}
 type Region =
   | 'Worldwide'
   | 'North America'
@@ -491,16 +515,338 @@ function HeatMapsTab({ region }: { region: Region }) {
   );
 }
 
+// ── M&A List — Semiconductor & AI Companies ──────────────────────────────────
+
+const CHART_START_YEAR = 1988;
+const CHART_END_YEAR = 2026;
+
+function formatDealValue(valueM: number): string {
+  return valueM >= 1000 ? `$${(valueM / 1000).toFixed(2)}B` : `$${valueM.toLocaleString()}M`;
+}
+
+function MAListBarChart({ deals }: { deals: SemiconductorDeal[] }) {
+  const [tooltip, setTooltip] = useState<{ x: number; y: number; year: number; val: number } | null>(
+    null,
+  );
+
+  const years = Array.from(
+    { length: CHART_END_YEAR - CHART_START_YEAR + 1 },
+    (_, i) => CHART_START_YEAR + i,
+  );
+
+  const valueByYear = new Map<number, number>();
+  for (const y of years) valueByYear.set(y, 0);
+  for (const d of deals) {
+    if (d.valueM != null) {
+      valueByYear.set(d.year, (valueByYear.get(d.year) ?? 0) + d.valueM);
+    }
+  }
+
+  const maxVal = Math.max(...years.map((y) => valueByYear.get(y) ?? 0), 1);
+
+  const W = 800;
+  const H = 200;
+  const PAD = { top: 20, right: 20, bottom: 40, left: 72 };
+  const chartW = W - PAD.left - PAD.right;
+  const chartH = H - PAD.top - PAD.bottom;
+  const barW = Math.max(2, chartW / years.length - 1.5);
+
+  const yTicks = [0, 0.25, 0.5, 0.75, 1].map((t) => ({
+    t,
+    val: maxVal * t,
+    y: PAD.top + chartH * (1 - t),
+  }));
+
+  return (
+    <div className="aapl-ma-chart-wrap" style={{ position: 'relative' }}>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        style={{ width: '100%', height: 'auto', display: 'block' }}
+        onMouseLeave={() => setTooltip(null)}
+      >
+        {yTicks.map(({ t, val, y }) => (
+          <g key={t}>
+            <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y} stroke="#f0f0f0" strokeWidth="1" />
+            <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize="9" fill="#9ca3af">
+              {val >= 1000 ? `$${(val / 1000).toFixed(0)}B` : val > 0 ? `$${Math.round(val)}M` : '$0'}
+            </text>
+          </g>
+        ))}
+
+        {years.map((year, i) => {
+          const val = valueByYear.get(year) ?? 0;
+          const barH = (val / maxVal) * chartH;
+          const cx = PAD.left + i * (chartW / years.length) + (chartW / years.length) / 2;
+          const x = cx - barW / 2;
+          const y = PAD.top + chartH - barH;
+          const showLabel = year % 5 === 0 || year === CHART_END_YEAR;
+
+          return (
+            <g key={year}>
+              {barH > 0 && (
+                <rect
+                  x={x}
+                  y={y}
+                  width={barW}
+                  height={barH}
+                  fill={tooltip?.year === year ? '#1d4ed8' : '#3b82f6'}
+                  rx="1"
+                  onMouseEnter={(e) => {
+                    const svgEl = (e.target as SVGElement).closest('svg');
+                    if (!svgEl) return;
+                    const rect2 = svgEl.getBoundingClientRect();
+                    const scaleX = rect2.width / W;
+                    const scaleY = rect2.height / H;
+                    setTooltip({ x: cx * scaleX, y: (y - 4) * scaleY, year, val });
+                  }}
+                  style={{ cursor: 'pointer' }}
+                />
+              )}
+              {showLabel && (
+                <text x={cx} y={H - 6} textAnchor="middle" fontSize="8" fill="#9ca3af">
+                  {year}
+                </text>
+              )}
+            </g>
+          );
+        })}
+
+        <line
+          x1={PAD.left}
+          y1={PAD.top + chartH}
+          x2={W - PAD.right}
+          y2={PAD.top + chartH}
+          stroke="#e5e7eb"
+          strokeWidth="1"
+        />
+        <rect x={PAD.left} y={3} width="8" height="8" fill="#3b82f6" rx="1" />
+        <text x={PAD.left + 11} y={11} fontSize="9" fill="#374151">
+          Total Deal Value (USD, disclosed only)
+        </text>
+      </svg>
+
+      {tooltip && (
+        <div
+          style={{
+            position: 'absolute',
+            left: tooltip.x,
+            top: tooltip.y,
+            transform: 'translate(-50%, -100%)',
+            background: '#1f2937',
+            color: '#fff',
+            padding: '5px 10px',
+            borderRadius: 6,
+            fontSize: 12,
+            pointerEvents: 'none',
+            whiteSpace: 'nowrap',
+            zIndex: 10,
+          }}
+        >
+          <strong>{tooltip.year}</strong>:{' '}
+          {formatDealValue(tooltip.val)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function getSemiBadgeClass(type: string): string {
+  if (type === 'Acquisition') return 'aapl-ma-type-badge aapl-ma-type-acq';
+  return 'aapl-ma-type-badge aapl-ma-type-merger';
+}
+
+function MAListPanel() {
+  const deals = getSemiDeals();
+  const allAcquirers = [...new Set(deals.map((d) => d.acquirer))].sort();
+
+  const [selectedAcquirers, setSelectedAcquirers] = useState<Set<string>>(new Set());
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  function toggleAcquirer(a: string) {
+    setSelectedAcquirers((prev) => {
+      const next = new Set(prev);
+      if (next.has(a)) next.delete(a);
+      else next.add(a);
+      return next;
+    });
+  }
+
+  function scrollTags(dir: 'left' | 'right') {
+    scrollRef.current?.scrollBy({ left: dir === 'left' ? -150 : 150, behavior: 'smooth' });
+  }
+
+  const filteredDeals =
+    selectedAcquirers.size === 0 ? deals : deals.filter((d) => selectedAcquirers.has(d.acquirer));
+
+  const sortedDeals = [...filteredDeals].sort(
+    (a, b) => b.year - a.year || b.date.localeCompare(a.date),
+  );
+
+  return (
+    <div className="aapl-ma-panel">
+      {/* Company filter bar */}
+      <div className="aapl-ma-filter-bar">
+        <span className="aapl-ma-filter-label">COMPANY</span>
+        <button
+          className="aapl-ma-scroll-btn"
+          onClick={() => scrollTags('left')}
+          aria-label="Scroll left"
+        >
+          ‹
+        </button>
+        <div className="aapl-ma-tags-scroll" ref={scrollRef}>
+          <button
+            className={`aapl-ma-industry-tag${selectedAcquirers.size === 0 ? ' aapl-ma-industry-tag--active' : ''}`}
+            onClick={() => setSelectedAcquirers(new Set())}
+          >
+            All
+          </button>
+          {allAcquirers.map((a) => (
+            <button
+              key={a}
+              className={`aapl-ma-industry-tag${selectedAcquirers.has(a) ? ' aapl-ma-industry-tag--active' : ''}`}
+              onClick={() => toggleAcquirer(a)}
+            >
+              {a}
+            </button>
+          ))}
+        </div>
+        <button
+          className="aapl-ma-scroll-btn"
+          onClick={() => scrollTags('right')}
+          aria-label="Scroll right"
+        >
+          ›
+        </button>
+        {selectedAcquirers.size > 0 && (
+          <button
+            className="aapl-ma-clear-btn"
+            onClick={() => setSelectedAcquirers(new Set())}
+          >
+            Clear
+          </button>
+        )}
+      </div>
+
+      {/* Bar chart */}
+      <div className="aapl-ma-chart-section">
+        <div className="aapl-ma-section-title">
+          Semiconductor &amp; AI Companies — Annual M&amp;A Deal Value (1988–2026)
+          {selectedAcquirers.size > 0 && (
+            <span className="aapl-ma-filter-note">
+              {' '}· Filtered: {[...selectedAcquirers].join(', ')}
+            </span>
+          )}
+        </div>
+        <MAListBarChart deals={filteredDeals} />
+        <div className="aapl-ma-chart-note">
+          Bars show disclosed deal values only. Undisclosed transactions are excluded from totals.
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="aapl-ma-table-section">
+        <div className="aapl-ma-section-title">
+          M&amp;A Transactions ({filteredDeals.length} deal
+          {filteredDeals.length !== 1 ? 's' : ''}
+          {selectedAcquirers.size > 0 ? ', filtered' : ''})
+        </div>
+        <div className="aapl-ma-table-wrap">
+          <table className="aapl-ma-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Company</th>
+                <th>Source</th>
+                <th>Acquirer</th>
+                <th className="text-right">Deal Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sortedDeals.map((deal, i) => (
+                <tr key={i} className="aapl-ma-table-row">
+                  <td className="aapl-ma-td-date">{deal.date}</td>
+                  <td>
+                    <span className={getSemiBadgeClass(deal.type)}>{deal.type}</span>
+                  </td>
+                  <td className="aapl-ma-td-company">{deal.company}</td>
+                  <td>
+                    <a
+                      href={deal.newsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="aapl-ma-news-link"
+                      title="View source"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                        <path
+                          d="M5 2H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8"
+                          stroke="currentColor"
+                          strokeWidth="1.2"
+                          strokeLinecap="round"
+                        />
+                        <path
+                          d="M8 1h4v4M7 6l5-5"
+                          stroke="currentColor"
+                          strokeWidth="1.2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      Link
+                    </a>
+                  </td>
+                  <td>
+                    <span className="aapl-ma-industry-pill">{deal.acquirer}</span>
+                  </td>
+                  <td className="text-right aapl-ma-td-value">
+                    {deal.valueM != null ? (
+                      formatDealValue(deal.valueM)
+                    ) : (
+                      <span className="aapl-ma-undisclosed">Undisclosed</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="aapl-ma-source-note">
+          Sources: Company press releases, Reuters, Bloomberg, TechCrunch, Wikipedia. Data covers
+          TSMC key suppliers &amp; customers and semiconductor / AI industry leaders.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MAListTab() {
+  return (
+    <div className="ma-tab-content">
+      <div className="ma-content-header">
+        <h3 className="ma-content-title">M&amp;A List — Semiconductor &amp; AI Companies</h3>
+        <p className="ma-content-sub">
+          Key M&amp;A transactions from TSMC suppliers, customers, and leading semiconductor / AI
+          companies (1988–2026)
+        </p>
+      </div>
+      <MAListPanel />
+    </div>
+  );
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 const MAIN_TABS: { key: MainTab; label: string }[] = [
+  { key: 'ma-list', label: 'M&A List' },
   { key: 'number-value', label: 'Number and Value M&A' },
   { key: 'largest', label: 'Largest M&A Transactions' },
   { key: 'heat-maps', label: 'M&A Heat Maps' },
 ];
 
 export default function MarketDataMAPage() {
-  const [activeTab, setActiveTab] = useState<MainTab>('number-value');
+  const [activeTab, setActiveTab] = useState<MainTab>('ma-list');
   const [activeRegion, setActiveRegion] = useState<Region>('Worldwide');
 
   return (
@@ -537,12 +883,15 @@ export default function MarketDataMAPage() {
             {/* ── Content layout: region nav + content ── */}
             <div className="ma-layout">
               {/* Region nav — only for tabs that use region filtering */}
-              {activeTab !== 'largest' && (
+              {activeTab !== 'largest' && activeTab !== 'ma-list' && (
                 <RegionSelector activeRegion={activeRegion} onSelect={setActiveRegion} />
               )}
 
               {/* Main content */}
-              <div className={`ma-content${activeTab === 'largest' ? ' ma-content--full' : ''}`}>
+              <div
+                className={`ma-content${activeTab === 'largest' || activeTab === 'ma-list' ? ' ma-content--full' : ''}`}
+              >
+                {activeTab === 'ma-list' && <MAListTab />}
                 {activeTab === 'number-value' && <NumberValueTab region={activeRegion} />}
                 {activeTab === 'largest' && <LargestTab />}
                 {activeTab === 'heat-maps' && <HeatMapsTab region={activeRegion} />}
