@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { Member } from '@/app/data/collaboration';
 
 interface MentionTextareaProps {
@@ -10,6 +10,12 @@ interface MentionTextareaProps {
   placeholder?: string;
   rows?: number;
   className?: string;
+}
+
+interface DropdownPos {
+  top: number;
+  left: number;
+  width: number;
 }
 
 export function MentionTextarea({
@@ -22,6 +28,7 @@ export function MentionTextarea({
 }: MentionTextareaProps) {
   const [mentionQuery, setMentionQuery] = useState('');
   const [mentionStart, setMentionStart] = useState(-1);
+  const [dropdownPos, setDropdownPos] = useState<DropdownPos | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const filteredMembers =
@@ -30,6 +37,29 @@ export function MentionTextarea({
       : members;
 
   const showDropdown = mentionStart !== -1 && filteredMembers.length > 0;
+
+  // Calculate fixed-position coordinates for the dropdown so it escapes
+  // any overflow:hidden ancestors (e.g. .pg-card, .pg-board-wrap)
+  useEffect(() => {
+    if (showDropdown && textareaRef.current) {
+      const rect = textareaRef.current.getBoundingClientRect();
+      setDropdownPos({
+        top: rect.bottom + 2,
+        left: rect.left,
+        width: rect.width,
+      });
+    } else {
+      setDropdownPos(null);
+    }
+  }, [showDropdown, value]);
+
+  // Close dropdown when the page scrolls so it doesn't drift away
+  useEffect(() => {
+    if (!showDropdown) return;
+    const close = () => setMentionStart(-1);
+    window.addEventListener('scroll', close, { capture: true, passive: true });
+    return () => window.removeEventListener('scroll', close, { capture: true });
+  }, [showDropdown]);
 
   function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     const newVal = e.target.value;
@@ -90,8 +120,17 @@ export function MentionTextarea({
         placeholder={placeholder}
         rows={rows}
       />
-      {showDropdown && (
-        <div className="pg-mention-dropdown">
+      {showDropdown && dropdownPos && (
+        <div
+          className="pg-mention-dropdown"
+          style={{
+            position: 'fixed',
+            top: dropdownPos.top,
+            left: dropdownPos.left,
+            width: dropdownPos.width,
+            zIndex: 9999,
+          }}
+        >
           {filteredMembers.map((m) => (
             <div
               key={m.id}
@@ -101,6 +140,7 @@ export function MentionTextarea({
                 selectMember(m);
               }}
             >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={m.avatar} alt={m.name} className="pg-mention-avatar" />
               <span>{m.name}</span>
               <span className="pg-mention-role">{m.role}</span>

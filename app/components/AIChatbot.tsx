@@ -64,37 +64,30 @@ export default function AIChatbot() {
 
   return (
     <>
-      {/* Floating button */}
+      {/* Side-docked floating button */}
       <button
         className={`chatbot-fab${open ? ' chatbot-fab--open' : ''}`}
         onClick={() => setOpen((v) => !v)}
-        aria-label="AI Chatbot"
-        title="AI Chatbot Mic"
+        aria-label="AI Chatbot MIC"
+        title="AI Chatbot MIC"
       >
+        {/* Icon always visible on right side */}
         {open ? (
-          <svg viewBox="0 0 24 24" fill="none" width="22" height="22" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" width="20" height="20" aria-hidden="true" className="chatbot-fab-icon">
             <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
           </svg>
         ) : (
-          <svg viewBox="0 0 24 24" fill="none" width="22" height="22" aria-hidden="true">
-            <path
-              d="M12 2C6.48 2 2 6.03 2 11C2 13.62 3.2 15.98 5.14 17.61L4 22L8.8 19.89C9.83 20.27 10.9 20.5 12 20.5C17.52 20.5 22 16.47 22 11C22 6.03 17.52 2 12 2Z"
-              fill="currentColor"
-              opacity="0.15"
-            />
-            <path
-              d="M12 2C6.48 2 2 6.03 2 11C2 13.62 3.2 15.98 5.14 17.61L4 22L8.8 19.89C9.83 20.27 10.9 20.5 12 20.5C17.52 20.5 22 16.47 22 11C22 6.03 17.52 2 12 2Z"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <circle cx="8.5" cy="11" r="1.2" fill="currentColor" />
-            <circle cx="12" cy="11" r="1.2" fill="currentColor" />
-            <circle cx="15.5" cy="11" r="1.2" fill="currentColor" />
+          <svg viewBox="0 0 24 24" fill="none" width="20" height="20" aria-hidden="true" className="chatbot-fab-icon">
+            <rect x="3" y="9" width="6" height="9" rx="3" stroke="currentColor" strokeWidth="1.8" />
+            <path d="M9 13h2M13 11v10M9 19H7a4 4 0 0 1-4-4v-1" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+            <path d="M15 9V7a2 2 0 0 0-4 0v2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+            <circle cx="19" cy="5" r="3" fill="currentColor" opacity="0.25" />
+            <circle cx="19" cy="5" r="3" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M18 5h2M19 4v2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
           </svg>
         )}
-
+        {/* Expandable label */}
+        <span className="chatbot-fab-label">AI Chatbot MIC</span>
       </button>
 
       {/* Chat dialog */}

@@ -1435,49 +1435,67 @@ input, select { font-family: var(--font); }
 /* ===== AI CHATBOT ===== */
 .chatbot-fab {
   position: fixed;
-  bottom: 28px;
-  right: 28px;
+  right: 0;
+  top: 58%;
+  transform: translateY(-50%);
   z-index: 500;
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 0 18px 0 14px;
-  height: 46px;
+  flex-direction: row-reverse; /* icon stays on right; label expands to left */
+  gap: 0;
+  width: 44px;
+  height: 44px;
   background: var(--c-dark);
   color: var(--c-white);
   border: none;
-  border-radius: 23px;
-  font-size: 13px;
-  font-weight: 700;
+  border-radius: 10px 0 0 10px;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.28);
-  transition: background 0.18s, box-shadow 0.18s, transform 0.15s;
-  white-space: nowrap;
+  overflow: hidden;
+  transition: width 0.24s cubic-bezier(0.22, 1, 0.36, 1), background 0.15s;
+  box-shadow: -2px 0 16px rgba(0, 0, 0, 0.18);
+  padding-right: 12px;
 }
 
 .chatbot-fab:hover {
+  width: 168px;
   background: #243040;
-  box-shadow: 0 6px 28px rgba(0,0,0,0.34);
-  transform: translateY(-1px);
 }
 
 .chatbot-fab--open {
   background: var(--c-text-2);
 }
+.chatbot-fab--open:hover {
+  background: #374151;
+}
+
+.chatbot-fab-icon {
+  flex-shrink: 0;
+}
 
 .chatbot-fab-label {
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
   letter-spacing: -0.1px;
+  opacity: 0;
+  transform: translateX(6px);
+  transition: opacity 0.15s 0.1s, transform 0.2s 0.06s;
+  white-space: nowrap;
+  padding-right: 8px;
+}
+
+.chatbot-fab:hover .chatbot-fab-label {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .chatbot-dialog {
   position: fixed;
-  bottom: 84px;
-  right: 28px;
+  top: 50%;
+  right: 52px;
+  transform: translateY(-50%);
   z-index: 499;
   width: 340px;
-  max-width: calc(100vw - 40px);
+  max-width: calc(100vw - 80px);
   background: var(--c-white);
   border: 1px solid var(--c-border);
   border-radius: var(--radius-lg);
@@ -1485,12 +1503,13 @@ input, select { font-family: var(--font); }
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  animation: chatbot-slide-up 0.2s ease;
+  animation: chatbot-slide-in 0.22s ease;
+  max-height: calc(100vh - 48px);
 }
 
-@keyframes chatbot-slide-up {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+@keyframes chatbot-slide-in {
+  from { opacity: 0; transform: translateY(-50%) translateX(16px); }
+  to   { opacity: 1; transform: translateY(-50%) translateX(0); }
 }
 
 .chatbot-dialog-header {
@@ -8671,69 +8690,200 @@ input, select { font-family: var(--font); }
    Collaboration Playground — new features
    ──────────────────────────────────────────────────────────── */
 
-/* Add card floating zone */
-.pg-board-wrap { position: relative; }
+/* Add Card button in canvas header */
+.pg-add-card-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  background: var(--c-dark);
+  color: var(--c-white);
+  border: none;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.13s;
+  align-self: flex-end;
+}
+.pg-add-card-btn:hover {
+  background: var(--c-text-2);
+}
 
-.pg-add-card-zone {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  width: 86px;
-  height: 86px;
-  border: 2px dashed var(--c-border-2);
+/* ── Add Card Modal (new unified design) ── */
+.pg-add-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(460px, 94vw);
+  max-height: 88vh;
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
   border-radius: var(--radius-lg);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22);
+  z-index: 910;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: wl-modal-in 0.18s ease;
+}
+.pg-add-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--c-border);
+  flex-shrink: 0;
+}
+.pg-add-modal-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--c-text);
+}
+.pg-add-modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: none;
+  color: var(--c-text-4);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.12s, color 0.12s;
+}
+.pg-add-modal-close:hover { background: var(--c-bg); color: var(--c-text-2); }
+.pg-add-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pg-add-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.pg-add-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-text-2);
+  letter-spacing: 0.01em;
+}
+.pg-add-input {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--c-border-2);
+  border-radius: 6px;
+  font-size: 13.5px;
+  color: var(--c-text);
+  background: var(--c-bg);
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+  font-family: inherit;
+}
+.pg-add-input:focus { border-color: var(--c-dark); background: var(--c-white); }
+.pg-add-input::placeholder { color: var(--c-text-4); }
+.pg-add-textarea {
+  padding: 8px 12px;
+  border: 1px solid var(--c-border-2);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--c-text);
+  background: var(--c-bg);
+  outline: none;
+  resize: vertical;
+  line-height: 1.55;
+  font-family: inherit;
+  transition: border-color 0.15s, background 0.15s;
+}
+.pg-add-textarea:focus { border-color: var(--c-dark); background: var(--c-white); }
+.pg-add-textarea::placeholder { color: var(--c-text-4); }
+/* Drag & drop zone */
+.pg-add-dropzone {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(4px);
-  z-index: 20;
-  gap: 5px;
-  color: var(--c-text-3);
-  transition: border-color 0.15s, background 0.15s, color 0.15s, transform 0.12s, box-shadow 0.15s;
-}
-.pg-add-card-zone:hover {
-  border-color: var(--c-dark);
-  background: var(--c-white);
-  color: var(--c-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-}
-.pg-add-card-zone-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-}
-
-/* Content type selector in AddCardModal */
-.pg-type-selector {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 2px;
-}
-.pg-type-btn {
-  padding: 6px 14px;
-  border: 1.5px solid var(--c-border);
-  border-radius: var(--radius);
+  gap: 6px;
+  min-height: 100px;
+  border: 1.5px dashed var(--c-border-2);
+  border-radius: 8px;
   background: var(--c-bg);
   cursor: pointer;
-  font-size: 12.5px;
+  transition: border-color 0.15s, background 0.15s;
+  padding: 16px 12px;
   color: var(--c-text-3);
+  position: relative;
+}
+.pg-add-dropzone:hover { border-color: var(--c-dark); background: #f8fafc; }
+.pg-add-dropzone--over { border-color: var(--c-dark); background: #eff6ff; color: var(--c-dark); }
+.pg-add-dropzone-text { font-size: 12.5px; font-weight: 600; }
+.pg-add-dropzone-hint { font-size: 11px; color: var(--c-text-4); }
+.pg-add-dropzone-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+}
+.pg-add-dropzone-img {
+  max-height: 110px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+.pg-add-dropzone-file-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--c-text-2);
+}
+.pg-add-dropzone-filename {
+  font-size: 12.5px;
   font-weight: 600;
-  transition: border-color 0.12s, background 0.12s, color 0.12s;
+  color: var(--c-text-2);
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.pg-type-btn:hover {
-  border-color: var(--c-dark);
-  color: var(--c-dark);
+.pg-add-dropzone-clear {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: rgba(0,0,0,0.08);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--c-text-3);
+  transition: background 0.12s;
 }
-.pg-type-btn.active {
+.pg-add-dropzone-clear:hover { background: rgba(0,0,0,0.16); }
+.pg-add-submit-btn {
+  width: 100%;
+  padding: 10px;
   background: var(--c-dark);
   color: var(--c-white);
-  border-color: var(--c-dark);
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.13s;
+  margin-top: 2px;
 }
+.pg-add-submit-btn:hover { background: var(--c-text-2); }
+.pg-add-submit-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
 /* Comment section */
 .pg-comment-section {

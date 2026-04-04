@@ -114,6 +114,7 @@ export interface Canvas {
 // Members (using randomuser.me portrait photos)
 // ─────────────────────────────────────────────
 export const members: Member[] = [
+  { id: 'm0', name: 'HungWei Chiu', avatar: 'https://avatars.githubusercontent.com/hwchiu', role: 'Founder & Lead Analyst' },
   { id: 'm1', name: 'James Lin', avatar: 'https://randomuser.me/api/portraits/men/10.jpg', role: 'Research Analyst' },
   { id: 'm2', name: 'Claire Chen', avatar: 'https://randomuser.me/api/portraits/women/18.jpg', role: 'Supply Chain Manager' },
   { id: 'm3', name: 'Kevin Huang', avatar: 'https://randomuser.me/api/portraits/men/32.jpg', role: 'Market Strategist' },
@@ -123,7 +124,7 @@ export const members: Member[] = [
   { id: 'm7', name: 'Ryan Liu', avatar: 'https://randomuser.me/api/portraits/men/67.jpg', role: 'Financial Analyst' },
 ];
 
-const [m1, m2, m3, m4, m5, m6, m7] = members;
+const [, m1, m2, m3, m4, m5, m6, m7] = members;
 
 // ─────────────────────────────────────────────
 // Canvas 1: 2026 Q1 APPL 法說會討論

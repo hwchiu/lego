@@ -316,6 +316,16 @@ export default function CollaborationPlaygroundPage() {
                     {isEn ? `Created on ${activeCanvas.createdAt}` : `建立於 ${activeCanvas.createdAt}`}
                   </div>
                   <button
+                    className="pg-add-card-btn"
+                    onClick={() => setShowAddCardModal(true)}
+                    title={isEn ? 'Add a new card' : '新增卡片'}
+                  >
+                    <svg viewBox="0 0 16 16" width="13" height="13" fill="none" aria-hidden="true">
+                      <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
+                    {isEn ? 'Add Card' : '新增卡片'}
+                  </button>
+                  <button
                     className="pg-fullscreen-btn"
                     onClick={toggleFullscreen}
                     title={isFullscreen ? (isEn ? 'Exit fullscreen' : '離開全螢幕') : (isEn ? 'Fullscreen' : '全螢幕查看')}
@@ -343,8 +353,8 @@ export default function CollaborationPlaygroundPage() {
                   </div>
                   <div className="pg-empty-sub">
                     {isEn
-                      ? 'Click the + button to add cards to this canvas'
-                      : '點選右下角的 + 按鈕新增卡片'}
+                      ? 'Click "+ Add Card" in the header to add cards to this canvas'
+                      : '點選上方「新增卡片」按鈕來新增卡片'}
                   </div>
                 </div>
               ) : (
@@ -366,20 +376,6 @@ export default function CollaborationPlaygroundPage() {
                   ))}
                 </div>
               )}
-
-              {/* Add card floating zone (bottom-right of board) */}
-              <button
-                className="pg-add-card-zone"
-                onClick={() => setShowAddCardModal(true)}
-                title="Add a new card"
-                aria-label="Add a new card"
-              >
-                <svg viewBox="0 0 20 20" width="22" height="22" fill="none" aria-hidden="true">
-                  <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M10 6v8M6 10h8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-                </svg>
-                <span className="pg-add-card-zone-label">Add Card</span>
-              </button>
             </div>
 
             {/* Task panel */}
@@ -404,7 +400,6 @@ export default function CollaborationPlaygroundPage() {
       {/* Add card modal */}
       {showAddCardModal && (
         <AddCardModal
-          members={members}
           currentUser={members[0]}
           onClose={() => setShowAddCardModal(false)}
           onSubmit={handleAddCard}
