@@ -657,7 +657,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                           <input
                             ref={addTagInputRef}
                             className="cp-add-tag-input"
-                            placeholder="輸入標籤名稱"
+                            placeholder="Enter tag name"
                             value={tagInput}
                             onChange={(e) => setTagInput(e.target.value)}
                             onKeyDown={addTag}
