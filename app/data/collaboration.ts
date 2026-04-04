@@ -1,5 +1,30 @@
 // Collaboration Playground — static seed data
 
+// ─────────────────────────────────────────────
+// Bilingual tag master map (zh → en)
+// ─────────────────────────────────────────────
+export const TAG_I18N: Record<string, string> = {
+  科技: 'Technology',
+  Apple: 'Apple',
+  AI: 'AI',
+  NVIDIA: 'NVIDIA',
+  半導體: 'Semiconductors',
+  供應鏈: 'Supply Chain',
+  地緣政治: 'Geopolitics',
+  法說會: 'Earnings Call',
+  市場趨勢: 'Market Trends',
+  財務: 'Finance',
+  風險管理: 'Risk Management',
+  能源: 'Energy',
+  產業分析: 'Industry Analysis',
+  消費電子: 'Consumer Electronics',
+  雲端: 'Cloud',
+  台積電: 'TSMC',
+  產業趨勢: 'Industry Trends',
+  原油: 'Crude Oil',
+  霍爾木茲: 'Hormuz',
+};
+
 export interface Member {
   id: string;
   name: string;
@@ -76,13 +101,13 @@ export interface Canvas {
 // Members (using randomuser.me portrait photos)
 // ─────────────────────────────────────────────
 export const members: Member[] = [
-  { id: 'm1', name: '林志偉', avatar: 'https://randomuser.me/api/portraits/men/10.jpg', role: '研究分析師' },
-  { id: 'm2', name: '陳雅琳', avatar: 'https://randomuser.me/api/portraits/women/18.jpg', role: '供應鏈經理' },
-  { id: 'm3', name: '黃建宏', avatar: 'https://randomuser.me/api/portraits/men/32.jpg', role: '市場策略師' },
-  { id: 'm4', name: '王淑芬', avatar: 'https://randomuser.me/api/portraits/women/34.jpg', role: '數據科學家' },
-  { id: 'm5', name: '張皓天', avatar: 'https://randomuser.me/api/portraits/men/45.jpg', role: '風險分析師' },
-  { id: 'm6', name: '吳美慧', avatar: 'https://randomuser.me/api/portraits/women/56.jpg', role: '產業研究員' },
-  { id: 'm7', name: '劉冠廷', avatar: 'https://randomuser.me/api/portraits/men/67.jpg', role: '財務分析師' },
+  { id: 'm1', name: 'James Lin', avatar: 'https://randomuser.me/api/portraits/men/10.jpg', role: 'Research Analyst' },
+  { id: 'm2', name: 'Claire Chen', avatar: 'https://randomuser.me/api/portraits/women/18.jpg', role: 'Supply Chain Manager' },
+  { id: 'm3', name: 'Kevin Huang', avatar: 'https://randomuser.me/api/portraits/men/32.jpg', role: 'Market Strategist' },
+  { id: 'm4', name: 'Sherry Wang', avatar: 'https://randomuser.me/api/portraits/women/34.jpg', role: 'Data Scientist' },
+  { id: 'm5', name: 'Hugo Zhang', avatar: 'https://randomuser.me/api/portraits/men/45.jpg', role: 'Risk Analyst' },
+  { id: 'm6', name: 'Amy Wu', avatar: 'https://randomuser.me/api/portraits/women/56.jpg', role: 'Industry Researcher' },
+  { id: 'm7', name: 'Ryan Liu', avatar: 'https://randomuser.me/api/portraits/men/67.jpg', role: 'Financial Analyst' },
 ];
 
 const [m1, m2, m3, m4, m5, m6, m7] = members;
@@ -268,8 +293,6 @@ const canvas3Cards: ContentCard[] = [
     title: '美伊緊張局勢升溫，霍爾木茲海峽風險重燃供應鏈警報',
     addedBy: m5,
     addedAt: '2026-01-15 07:45',
-    imageUrl:
-      'https://images.unsplash.com/photo-1569402030571-50a1d4a7abc1?w=600&q=75',
     text:
       '2026 年 1 月初，美國與伊朗之間的外交緊張再度升溫，霍爾木茲海峽的通行安全引發全球供應鏈高度警戒。該海峽每日通過約 2,100 萬桶原油，佔全球海運原油供應的近 21%。伊朗已發出警告，若衝突升級，不排除封鎖海峽。對半導體產業而言，特殊製程氣體（氖氣、氪氣）及稀土元素的替代供應鏈尚不成熟，短期內料將面臨嚴峻壓力。台積電已啟動緊急庫存盤點，並加速與日本、歐洲供應商的備援協議洽商。',
     source: 'Reuters / tMIC 地緣風險小組',

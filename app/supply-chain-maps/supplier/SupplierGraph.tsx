@@ -433,9 +433,10 @@ interface FilterBarProps {
   onRelationChange: (key: RelationTypeKey) => void;
   selectedIndustries: Set<string>;
   onIndustryToggle: (industry: string) => void;
+  onClearAllIndustries: () => void;
 }
 
-function FilterBar({ relationType, onRelationChange, selectedIndustries, onIndustryToggle }: FilterBarProps) {
+function FilterBar({ relationType, onRelationChange, selectedIndustries, onIndustryToggle, onClearAllIndustries }: FilterBarProps) {
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const [activeTab, setActiveTab] = useState<FilterTab>('Company');
@@ -674,6 +675,13 @@ function FilterBar({ relationType, onRelationChange, selectedIndustries, onIndus
           ‹
         </button>
         <div className="rmap-industry-tags-scroll" ref={industryTagsScrollRef}>
+          {/* "All" tag — clears all industry filters */}
+          <button
+            className={`rmap-industry-tag rmap-industry-tag--all${selectedIndustries.size === 0 ? ' rmap-industry-tag--active' : ''}`}
+            onClick={onClearAllIndustries}
+          >
+            All
+          </button>
           {UNIQUE_INDUSTRIES.map((ind) => (
             <button
               key={ind}
@@ -874,6 +882,10 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
     });
   }, []);
 
+  const clearAllIndustries = useCallback(() => {
+    setSelectedIndustries(new Set());
+  }, []);
+
   const applyZoom = useCallback((factor: number) => {
     setViewBox((prev) => {
       const curScale = prev.w / SVG_W;
@@ -990,6 +1002,7 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
         onRelationChange={setRelationType}
         selectedIndustries={selectedIndustries}
         onIndustryToggle={toggleIndustry}
+        onClearAllIndustries={clearAllIndustries}
       />
 
       {/* Graph and feed panel side by side */}

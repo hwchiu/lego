@@ -7,15 +7,19 @@ import Sidebar from '@/app/components/layout/Sidebar';
 import { ContentCardComponent } from '@/app/components/collaboration/ContentCard';
 import { TaskPanel } from '@/app/components/collaboration/TaskPanel';
 import { CanvasManageModal } from '@/app/components/collaboration/CanvasManageModal';
-import { canvases as initialCanvases, members } from '@/app/data/collaboration';
+import { canvases as initialCanvases, members, TAG_I18N } from '@/app/data/collaboration';
 import type { Canvas, ContentCard } from '@/app/data/collaboration';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 
 export default function CollaborationPlaygroundPage() {
+  const { lang } = useLanguage();
+  const isEn = lang === 'en';
   const [canvasList, setCanvasList] = useState<Canvas[]>(initialCanvases);
   const [activeCanvasId, setActiveCanvasId] = useState(initialCanvases[0].id);
   const [showTaskPanel, setShowTaskPanel] = useState(false);
   const [showManageModal, setShowManageModal] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const toggleFullscreen = useCallback(() => setIsFullscreen((v) => !v), []);
 
@@ -71,7 +75,6 @@ export default function CollaborationPlaygroundPage() {
           {/* ── Page header ── */}
           <div className="pg-page-header">
             <div className="pg-page-header-left">
-              <div className="section-eyebrow">Collaboration</div>
               <h1 className="pg-page-title">
                 <svg viewBox="0 0 18 18" width="20" height="20" fill="none" aria-hidden="true" style={{ marginRight: 8, flexShrink: 0 }}>
                   <circle cx="6" cy="6" r="4" stroke="currentColor" strokeWidth="1.5" />
@@ -83,11 +86,12 @@ export default function CollaborationPlaygroundPage() {
             </div>
             <div className="pg-page-header-right">
               <button className="pg-header-btn" onClick={() => setShowTaskPanel((v) => !v)}>
+                {/* Pure black task/checklist icon */}
                 <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
                   <rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.3" />
-                  <path d="M5 8l2 2 4-4" stroke="#4fc3f7" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M5 8l2 2 4-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                任務 &amp; Slack
+                {isEn ? 'Task & Slack' : '任務 & Slack'}
                 {activeCanvas.tasks.filter((t) => t.status !== 'done').length > 0 && (
                   <span className="pg-badge-count">
                     {activeCanvas.tasks.filter((t) => t.status !== 'done').length}
@@ -95,10 +99,14 @@ export default function CollaborationPlaygroundPage() {
                 )}
               </button>
               <button className="pg-header-btn primary" onClick={() => setShowManageModal(true)}>
+                {/* Manage/grid icon — white flat design */}
                 <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
-                  <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.4" />
+                  <rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.4" />
+                  <rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.4" />
+                  <rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.4" />
                 </svg>
-                管理畫布
+                {isEn ? 'Manage Canvas' : '管理畫布'}
               </button>
             </div>
           </div>
@@ -106,72 +114,92 @@ export default function CollaborationPlaygroundPage() {
           {/* ── Main body: canvas selector + board ── */}
           <div className="pg-body">
             {/* Canvas selector sidebar */}
-            <aside className="pg-canvas-sidebar">
-              <div className="pg-canvas-sidebar-label">我的畫布</div>
-              <ul className="pg-canvas-nav">
-                {canvasList.map((c) => (
-                  <li key={c.id}>
-                    <button
-                      className={`pg-canvas-nav-btn${c.id === activeCanvasId ? ' active' : ''}`}
-                      onClick={() => setActiveCanvasId(c.id)}
-                    >
-                      <span className="pg-canvas-nav-icon">
-                        {/* color dot */}
-                        <span
-                          style={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: '50%',
-                            background:
-                              c.id === 'cv1' ? '#4fc3f7' : c.id === 'cv2' ? '#a855f7' : '#f59e0b',
-                            flexShrink: 0,
-                            display: 'inline-block',
-                          }}
-                        />
-                      </span>
-                      <span className="pg-canvas-nav-title">{c.title}</span>
-                      <span className="pg-canvas-nav-count">{c.cards.length}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-
-              {/* Members of current canvas */}
-              <div className="pg-canvas-sidebar-label" style={{ marginTop: 16 }}>
-                成員 ({activeCanvas.members.length})
-              </div>
-              <div className="pg-member-stack">
-                {activeCanvas.members.map((m) => (
-                  <img
-                    key={m.id}
-                    src={m.avatar}
-                    alt={m.name}
-                    title={`${m.name} · ${m.role}`}
-                    width={30}
-                    height={30}
-                    style={{
-                      borderRadius: '50%',
-                      objectFit: 'cover',
-                      border: '2px solid #fff',
-                      marginLeft: -6,
-                    }}
-                  />
-                ))}
+            <aside className={`pg-canvas-sidebar${isSidebarCollapsed ? ' pg-canvas-sidebar--collapsed' : ''}`}>
+              <div className="pg-canvas-sidebar-header">
+                <span className="pg-canvas-sidebar-label" style={{ margin: 0, padding: 0 }}>
+                  {isEn ? 'My Canvases' : '我的畫布'}
+                </span>
+                <button
+                  className="pg-sidebar-collapse-btn"
+                  onClick={() => setIsSidebarCollapsed((v) => !v)}
+                  title={isSidebarCollapsed ? (isEn ? 'Expand sidebar' : '展開側欄') : (isEn ? 'Collapse sidebar' : '收合側欄')}
+                  aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                >
+                  {/* Hamburger / collapse icon */}
+                  <svg viewBox="0 0 16 16" width="15" height="15" fill="none" aria-hidden="true">
+                    <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  </svg>
+                </button>
               </div>
 
-              {/* Tags */}
-              {activeCanvas.tags.length > 0 && (
+              {!isSidebarCollapsed && (
                 <>
+                  <ul className="pg-canvas-nav">
+                    {canvasList.map((c) => (
+                      <li key={c.id}>
+                        <button
+                          className={`pg-canvas-nav-btn${c.id === activeCanvasId ? ' active' : ''}`}
+                          onClick={() => setActiveCanvasId(c.id)}
+                        >
+                          <span className="pg-canvas-nav-icon">
+                            {/* color dot */}
+                            <span
+                              style={{
+                                width: 8,
+                                height: 8,
+                                borderRadius: '50%',
+                                background:
+                                  c.id === 'cv1' ? '#4fc3f7' : c.id === 'cv2' ? '#a855f7' : '#f59e0b',
+                                flexShrink: 0,
+                                display: 'inline-block',
+                              }}
+                            />
+                          </span>
+                          <span className="pg-canvas-nav-title">{c.title}</span>
+                          <span className="pg-canvas-nav-count">{c.cards.length}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* Members of current canvas */}
                   <div className="pg-canvas-sidebar-label" style={{ marginTop: 16 }}>
-                    標籤
+                    {isEn ? `Members (${activeCanvas.members.length})` : `成員 (${activeCanvas.members.length})`}
                   </div>
-                  <div className="pg-tag-cloud">
-                    {activeCanvas.tags.map((t) => (
-                      <span key={t} className="pg-tag">
-                        {t}
-                      </span>
+                  <div className="pg-member-stack">
+                    {activeCanvas.members.map((m) => (
+                      <img
+                        key={m.id}
+                        src={m.avatar}
+                        alt={m.name}
+                        title={`${m.name} · ${m.role}`}
+                        width={30}
+                        height={30}
+                        style={{
+                          borderRadius: '50%',
+                          objectFit: 'cover',
+                          border: '2px solid #fff',
+                          marginLeft: -6,
+                        }}
+                      />
                     ))}
                   </div>
+
+                  {/* Tags */}
+                  {activeCanvas.tags.length > 0 && (
+                    <>
+                      <div className="pg-canvas-sidebar-label" style={{ marginTop: 16 }}>
+                        {isEn ? 'Tags' : '標籤'}
+                      </div>
+                      <div className="pg-tag-cloud">
+                        {activeCanvas.tags.map((t) => (
+                          <span key={t} className="pg-tag">
+                            {isEn ? (TAG_I18N[t] ?? t) : t}
+                          </span>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </>
               )}
             </aside>
@@ -186,13 +214,13 @@ export default function CollaborationPlaygroundPage() {
                 </div>
                 <div className="pg-canvas-header-right">
                   <div className="pg-canvas-header-meta">
-                    建立於 {activeCanvas.createdAt}
+                    {isEn ? `Created on ${activeCanvas.createdAt}` : `建立於 ${activeCanvas.createdAt}`}
                   </div>
                   <button
                     className="pg-fullscreen-btn"
                     onClick={toggleFullscreen}
-                    title={isFullscreen ? '離開全螢幕' : '全螢幕查看'}
-                    aria-label={isFullscreen ? '離開全螢幕' : '全螢幕查看'}
+                    title={isFullscreen ? (isEn ? 'Exit fullscreen' : '離開全螢幕') : (isEn ? 'Fullscreen' : '全螢幕查看')}
+                    aria-label={isFullscreen ? (isEn ? 'Exit fullscreen' : '離開全螢幕') : (isEn ? 'Fullscreen' : '全螢幕查看')}
                   >
                     {isFullscreen ? (
                       <svg viewBox="0 0 16 16" width="15" height="15" fill="none" aria-hidden="true">
