@@ -20,27 +20,18 @@ const { greeting: BOT_GREETING, replies: BOT_REPLIES } = extractJson<ChatbotData
 // Avatar image for the Mic bot
 const BOT_AVATAR_URL = 'https://i.pravatar.cc/40?img=47';
 
-// Robot head icon — simple flat design on white background
-function RobotIcon() {
+// Chat bubble icon — minimal flat speech bubble design
+function ChatBubbleIcon() {
   return (
-    <svg viewBox="0 0 36 36" width="36" height="36" fill="none" aria-hidden="true">
-      {/* White rounded square background */}
-      <rect width="36" height="36" rx="10" fill="white" />
-      {/* Antenna */}
-      <line x1="18" y1="4" x2="18" y2="9" stroke="#374151" strokeWidth="1.8" strokeLinecap="round" />
-      <circle cx="18" cy="3.5" r="1.5" fill="#374151" />
-      {/* Head */}
-      <rect x="8" y="9" width="20" height="16" rx="4" fill="#374151" />
-      {/* Eyes */}
-      <circle cx="13.5" cy="16" r="2.5" fill="white" />
-      <circle cx="22.5" cy="16" r="2.5" fill="white" />
-      <circle cx="13.5" cy="16" r="1.2" fill="#374151" />
-      <circle cx="22.5" cy="16" r="1.2" fill="#374151" />
-      {/* Mouth */}
-      <rect x="12" y="21" width="12" height="2" rx="1" fill="white" opacity="0.7" />
-      {/* Ears */}
-      <rect x="5" y="14" width="3" height="5" rx="1.5" fill="#374151" />
-      <rect x="28" y="14" width="3" height="5" rx="1.5" fill="#374151" />
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true">
+      <path
+        d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+        stroke="white"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="rgba(255,255,255,0.12)"
+      />
     </svg>
   );
 }
@@ -138,14 +129,14 @@ export default function AIChatbot() {
 
   return (
     <>
-      {/* Side-docked floating button */}
+      {/* Side-docked floating button — peeks at right edge, slides in on hover */}
       <button
-        className="chatbot-fab"
+        className={`chatbot-fab${open ? ' chatbot-fab--open' : ''}`}
         onClick={() => setOpen((v) => !v)}
         aria-label="AI Chatbot"
         title="AI Chatbot"
       >
-        <RobotIcon />
+        <ChatBubbleIcon />
       </button>
 
       {/* Chat dialog */}

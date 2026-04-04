@@ -1470,27 +1470,31 @@ input, select { font-family: var(--font); }
 /* ===== AI CHATBOT ===== */
 .chatbot-fab {
   position: fixed;
-  right: 8px;
+  right: 0;
   top: 58%;
-  transform: translateY(-50%);
+  /* Peek: only ~10px of the button visible at the right edge */
+  transform: translateY(-50%) translateX(calc(100% - 10px));
   z-index: 500;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  background: transparent;
+  width: 46px;
+  height: 46px;
+  background: var(--c-dark);
+  color: var(--c-white);
   border: none;
-  border-radius: 12px;
+  border-radius: 12px 0 0 12px;
   cursor: pointer;
-  padding: 4px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
-  transition: box-shadow 0.15s, transform 0.15s;
+  padding: 0;
+  box-shadow: -2px 2px 16px rgba(0, 0, 0, 0.25);
+  transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.15s;
 }
 
-.chatbot-fab:hover {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.28);
-  transform: translateY(-50%) scale(1.08);
+/* Fully visible on hover or when chat dialog is open */
+.chatbot-fab:hover,
+.chatbot-fab--open {
+  transform: translateY(-50%) translateX(0);
+  box-shadow: -4px 4px 20px rgba(0, 0, 0, 0.32);
 }
 
 .chatbot-fab-icon {
@@ -9331,44 +9335,52 @@ input, select { font-family: var(--font); }
   gap: 28px;
 }
 
-/* Greeting */
-.cwl-greeting { text-align: center; }
-.cwl-greeting-title {
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--c-text);
-  margin-bottom: 8px;
-}
+/* Greeting — matches Company Profile landing style */
+.cwl-greeting { text-align: center; margin-bottom: 4px; }
 .cwl-greeting-sub {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--c-text-3);
-  line-height: 1.6;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+.cwl-greeting-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--c-text);
+  letter-spacing: -0.3px;
 }
 
-/* Search bar */
+/* Search bar — Gemini / ChatGPT style dialog input */
 .cwl-search-wrap { position: relative; }
 .cwl-search-bar {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 10px;
   background: var(--c-white);
   border: 1.5px solid var(--c-border-2);
-  border-radius: 8px;
-  padding: 10px 14px;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  border-radius: 22px;
+  padding: 14px 18px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 .cwl-search-bar.focused {
-  border-color: var(--c-dark);
-  box-shadow: 0 0 0 3px rgba(26,35,50,0.07);
+  border-color: #aab2bd;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
-.cwl-search-icon { color: var(--c-text-4); flex-shrink: 0; }
+.cwl-search-icon { color: var(--c-text-4); flex-shrink: 0; margin-top: 4px; }
 .cwl-search-input {
   flex: 1;
   border: none;
   outline: none;
-  font-size: 14px;
-  background: none;
+  resize: none;
+  font-family: var(--font);
+  font-size: 15px;
   color: var(--c-text);
+  background: transparent;
+  line-height: 1.5;
+  min-height: 26px;
+  max-height: 120px;
+  overflow-y: auto;
   min-width: 0;
 }
 .cwl-search-input::placeholder { color: var(--c-text-4); }
@@ -9385,6 +9397,7 @@ input, select { font-family: var(--font); }
   border-radius: 50%;
   padding: 0;
   flex-shrink: 0;
+  margin-top: 3px;
   transition: background 0.12s, color 0.12s;
 }
 .cwl-search-clear:hover { background: var(--c-bg); color: var(--c-text); }
@@ -9442,13 +9455,24 @@ input, select { font-family: var(--font); }
   white-space: nowrap;
 }
 
-/* Builder section */
+/* Builder section — card frame */
 .cwl-builder {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  background: var(--c-white);
+  border: 1.5px solid var(--c-border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
-.cwl-field { display: flex; flex-direction: column; gap: 8px; }
+.cwl-field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--c-border);
+}
+.cwl-field:last-child { border-bottom: none; }
 .cwl-field-label {
   font-size: 12px;
   font-weight: 700;
@@ -9457,6 +9481,14 @@ input, select { font-family: var(--font); }
   color: var(--c-text-3);
 }
 .cwl-symbol-count { font-weight: 400; color: var(--c-text-4); }
+
+/* Symbol panel header row: label left, submit button right */
+.cwl-symbols-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
 .cwl-name-input {
   width: 100%;
   padding: 9px 12px;
@@ -9608,28 +9640,28 @@ input, select { font-family: var(--font); }
 }
 .cwl-symbol-delete:hover { color: #dc2626; background: #fef2f2; }
 
-/* Slot info */
+/* Slot info — symbol count only */
 .cwl-slot-info {
   font-size: 11px;
   color: var(--c-text-4);
   text-align: right;
 }
 
-/* Submit button */
+/* Submit button — compact, placed in symbol panel header */
 .cwl-submit-btn {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 7px;
-  padding: 11px 28px;
+  gap: 5px;
+  padding: 7px 14px;
   background: var(--c-dark);
   color: var(--c-white);
   border: none;
-  border-radius: 7px;
-  font-size: 14px;
-  font-weight: 700;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
-  align-self: flex-start;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: background 0.12s, opacity 0.12s;
 }
 .cwl-submit-btn:hover:not(:disabled) { background: var(--c-text); }
