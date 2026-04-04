@@ -36,6 +36,7 @@ export default function CompanyRankingTable() {
       <div className="insight-block-title">
         Company Heat Ranking
       </div>
+      <div className="company-rank-table-wrap">
       <table className="company-rank-table">
         <thead>
           <tr>
@@ -75,6 +76,7 @@ export default function CompanyRankingTable() {
           })}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }
