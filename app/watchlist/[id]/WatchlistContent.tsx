@@ -378,7 +378,7 @@ type FeedTab = 'Latest' | 'Analysis' | 'News' | 'Warnings' | 'Transcripts' | 'Pr
 
 export default function WatchlistPage({ params }: { params: { id: string } }) {
   const watchlistId = params.id;
-  const { watchlistNames, setWatchlistName, symbolOrders, setSymbolOrder, favorites, toggleFavorite } = useWatchlist();
+  const { watchlistNames, setWatchlistName, symbolOrders, setSymbolOrder, favorites, toggleFavorite, dynamicWatchlists } = useWatchlist();
 
   const watchlistName = watchlistNames[watchlistId] ?? 'Watchlist';
   const currentSymbolOrder = symbolOrders[watchlistId] ?? holdingsData.map((h) => h.symbol);
@@ -464,8 +464,16 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
   const prevQ = quarterOffset(quarter, -1);
   const nextQ = quarterOffset(quarter, 1);
 
-  // Watchlist sub-items from navigation data (shared with sidebar)
-  const watchlistSubItems = mainNav.find((item) => item.icon === 'watchlist')?.subItems ?? [];
+  // Watchlist sub-items from navigation data (shared with sidebar) — exclude "Create Watchlist" divider item
+  const watchlistSubItems = (mainNav.find((item) => item.icon === 'watchlist')?.subItems ?? []).filter(
+    (item) => !item.dividerBefore,
+  );
+
+  // Build merged list: static items + dynamic watchlists
+  const allWatchlistItems = [
+    ...watchlistSubItems,
+    ...dynamicWatchlists.map((wl) => ({ label: wl.name, href: `/watchlist/${wl.id}`, watchlistId: wl.id })),
+  ];
 
   // Sorted holdings based on symbolOrder (includes user-added extra holdings)
   const holdingsLookup = new Map(holdingsData.map((h) => [h.symbol, h]));
@@ -673,44 +681,18 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                   {/* Watchlist switcher dropdown */}
                   {showTitleDropdown && (
                     <div className="wl-title-dropdown">
-                      {watchlistSubItems.map((item) => {
+                      {allWatchlistItems.map((item) => {
                         const displayLabel = item.watchlistId
                           ? (watchlistNames[item.watchlistId] ?? item.label)
                           : item.label;
                         return (
-                          <div key={item.label}>
-                            {item.dividerBefore && <div className="wl-title-dropdown-divider" />}
+                          <div key={item.watchlistId ?? item.label}>
                             <Link
                               href={item.href}
                               className={`wl-title-dropdown-item${item.watchlistId === watchlistId ? ' active' : ''}`}
                               onClick={() => setShowTitleDropdown(false)}
                             >
                               <span className="wl-title-dropdown-label">{displayLabel}</span>
-                              {item.iconRight === 'add' && (
-                                <svg
-                                  viewBox="0 0 14 14"
-                                  fill="none"
-                                  width="13"
-                                  height="13"
-                                  aria-hidden="true"
-                                >
-                                  <rect
-                                    x="1"
-                                    y="1"
-                                    width="12"
-                                    height="12"
-                                    rx="2"
-                                    fill="currentColor"
-                                    fillOpacity="0.18"
-                                  />
-                                  <path
-                                    d="M7 4V10M4 7H10"
-                                    stroke="currentColor"
-                                    strokeWidth="1.6"
-                                    strokeLinecap="round"
-                                  />
-                                </svg>
-                              )}
                             </Link>
                           </div>
                         );

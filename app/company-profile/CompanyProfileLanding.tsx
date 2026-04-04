@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
@@ -308,6 +309,36 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
                 ))}
               </div>
             </div>
+
+            {/* ── Favorites section ── */}
+            {favorites.length > 0 && (
+              <div className="cp-favorites-section">
+                <div className="cp-favorites-header">
+                  <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
+                    <path
+                      d="M7 1.5l1.5 3.3L12.5 5l-2.5 2.6.6 3.7L7 9.6l-3.6 1.7.6-3.7L1.5 5l3.8-.7z"
+                      fill="#f59e0b"
+                      stroke="#f59e0b"
+                      strokeWidth="1.1"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span className="cp-favorites-title">Favorites</span>
+                  <span className="cp-favorites-count">{favorites.length}</span>
+                </div>
+                <div className="cp-favorites-tags">
+                  {favorites.map((sym) => {
+                    const co = SP500_COMPANIES.find((c) => c.symbol === sym);
+                    return (
+                      <Link key={sym} href={`/company-profile/${sym}`} className="cp-favorites-tag">
+                        <span className="cp-favorites-tag-symbol">{sym}</span>
+                        {co && <span className="cp-favorites-tag-name">{co.name}</span>}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* ── Latest News section ── */}
             <div className="cp-news-section">
