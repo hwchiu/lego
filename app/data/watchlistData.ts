@@ -22,3 +22,10 @@ export interface HoldingEntity {
 }
 
 export const holdingsData: Record<string, HoldingEntity> = extractJsonBySection<Record<string, HoldingEntity>>(rawContent, 'Entity Data');
+
+// Pre-generated IDs for dynamically created watchlists (static-export compatible)
+// These IDs are reserved for user-created watchlists stored in localStorage
+export const DYNAMIC_WATCHLIST_IDS = [
+  '912847', '583926', '374819', '647203', '829516',
+  '193472', '756381', '482039', '261748', '935061',
+] as const;

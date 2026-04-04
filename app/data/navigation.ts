@@ -94,7 +94,7 @@ export const mainNav: NavItem[] = [
       { label: 'Watchlist1', href: '/watchlist/627836', watchlistId: '627836' },
       { label: 'Watchlist-TSM', href: '/watchlist/738291', watchlistId: '738291' },
       { label: 'Watchlist2', href: '/watchlist/394827', watchlistId: '394827' },
-      { label: 'Create Watchlist', href: '#', dividerBefore: true, iconRight: 'add' },
+      { label: 'Create Watchlist', href: '/watchlist/create', dividerBefore: true, iconRight: 'add' },
     ],
   },
   { label: 'Market News', href: '/market-news', icon: 'news' },

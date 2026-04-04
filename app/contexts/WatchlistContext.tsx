@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { DYNAMIC_WATCHLIST_IDS } from '@/app/data/watchlistData';
 
 // Default watchlist IDs and names (matches navigation.ts sub-items)
 export const WATCHLIST_IDS = ['627836', '738291', '394827'] as const;
@@ -20,11 +21,24 @@ const DEFAULT_ORDERS: Record<string, string[]> = {
   '394827': [...DEFAULT_SYMBOL_ORDER],
 };
 
+export interface DynamicWatchlist {
+  id: string;
+  name: string;
+  symbols: string[];
+}
+
 interface WatchlistContextType {
   watchlistNames: Record<string, string>;
   setWatchlistName: (id: string, name: string) => void;
   symbolOrders: Record<string, string[]>;
   setSymbolOrder: (id: string, order: string[]) => void;
+  // Dynamic watchlists (user-created)
+  dynamicWatchlists: DynamicWatchlist[];
+  addWatchlist: (name: string, symbols: string[]) => string;
+  removeWatchlist: (id: string) => void;
+  // Favorites
+  favorites: Set<string>;
+  toggleFavorite: (id: string) => void;
 }
 
 const WatchlistContext = createContext<WatchlistContextType>({
@@ -32,11 +46,18 @@ const WatchlistContext = createContext<WatchlistContextType>({
   setWatchlistName: () => {},
   symbolOrders: DEFAULT_ORDERS,
   setSymbolOrder: () => {},
+  dynamicWatchlists: [],
+  addWatchlist: () => '',
+  removeWatchlist: () => {},
+  favorites: new Set(),
+  toggleFavorite: () => {},
 });
 
 export function WatchlistProvider({ children }: { children: React.ReactNode }) {
   const [watchlistNames, setWatchlistNames] = useState<Record<string, string>>(DEFAULT_NAMES);
   const [symbolOrders, setSymbolOrders] = useState<Record<string, string[]>>(DEFAULT_ORDERS);
+  const [dynamicWatchlists, setDynamicWatchlists] = useState<DynamicWatchlist[]>([]);
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [hydrated, setHydrated] = useState(false);
 
   // Load from localStorage on mount
@@ -49,6 +70,14 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
       const storedOrders = localStorage.getItem('wl-orders');
       if (storedOrders) {
         setSymbolOrders((prev) => ({ ...prev, ...JSON.parse(storedOrders) }));
+      }
+      const storedDynamic = localStorage.getItem('wl-dynamic');
+      if (storedDynamic) {
+        setDynamicWatchlists(JSON.parse(storedDynamic));
+      }
+      const storedFavorites = localStorage.getItem('wl-favorites');
+      if (storedFavorites) {
+        setFavorites(new Set(JSON.parse(storedFavorites)));
       }
     } catch {
       // ignore parse errors
@@ -76,6 +105,26 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
     }
   }, [symbolOrders, hydrated]);
 
+  // Persist dynamic watchlists
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      localStorage.setItem('wl-dynamic', JSON.stringify(dynamicWatchlists));
+    } catch {
+      // ignore storage errors
+    }
+  }, [dynamicWatchlists, hydrated]);
+
+  // Persist favorites
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      localStorage.setItem('wl-favorites', JSON.stringify([...favorites]));
+    } catch {
+      // ignore storage errors
+    }
+  }, [favorites, hydrated]);
+
   function setWatchlistName(id: string, name: string) {
     setWatchlistNames((prev) => ({ ...prev, [id]: name }));
   }
@@ -84,8 +133,51 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
     setSymbolOrders((prev) => ({ ...prev, [id]: order }));
   }
 
+  function addWatchlist(name: string, symbols: string[]): string {
+    // Find the next unused dynamic ID
+    const usedIds = new Set(dynamicWatchlists.map((w) => w.id));
+    const nextId = DYNAMIC_WATCHLIST_IDS.find((id) => !usedIds.has(id));
+    if (!nextId) return ''; // All slots used
+    const newWl: DynamicWatchlist = { id: nextId, name, symbols };
+    setDynamicWatchlists((prev) => [...prev, newWl]);
+    // Also register its name and symbol order
+    setWatchlistNames((prev) => ({ ...prev, [nextId]: name }));
+    setSymbolOrders((prev) => ({ ...prev, [nextId]: symbols }));
+    return nextId;
+  }
+
+  function removeWatchlist(id: string) {
+    setDynamicWatchlists((prev) => prev.filter((w) => w.id !== id));
+    setFavorites((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  }
+
+  function toggleFavorite(id: string) {
+    setFavorites((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
   return (
-    <WatchlistContext.Provider value={{ watchlistNames, setWatchlistName, symbolOrders, setSymbolOrder }}>
+    <WatchlistContext.Provider
+      value={{
+        watchlistNames,
+        setWatchlistName,
+        symbolOrders,
+        setSymbolOrder,
+        dynamicWatchlists,
+        addWatchlist,
+        removeWatchlist,
+        favorites,
+        toggleFavorite,
+      }}
+    >
       {children}
     </WatchlistContext.Provider>
   );
