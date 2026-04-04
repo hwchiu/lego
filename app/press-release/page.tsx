@@ -327,6 +327,9 @@ function TimelineView({ items, lang }: TimelineViewProps) {
           <span className="pr-granularity-sep" />
 
           {/* Customer / Supplier filter */}
+          <span className="pr-granularity-label">
+            {lang === 'en' ? 'Relation' : '關聯'}
+          </span>
           {(['all', 'customer', 'supplier'] as RelFilter[]).map((r) => {
             const relClass =
               r === 'customer'
