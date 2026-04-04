@@ -516,7 +516,7 @@ export function ContentCardComponent({
       >
         <span className="pg-card-title-text">{card.title}</span>
         <div className="pg-card-title-actions">
-          {/* Save icon (placeholder) */}
+          {/* Save icon (placeholder — TODO: implement save functionality) */}
           <button
             className="pg-card-action-btn"
             title="儲存"
@@ -529,7 +529,7 @@ export function ContentCardComponent({
               <rect x="4" y="9" width="8" height="5" rx="0.5" stroke="currentColor" strokeWidth="1.3" />
             </svg>
           </button>
-          {/* Edit icon (placeholder) */}
+          {/* Edit icon (placeholder — TODO: implement edit functionality) */}
           <button
             className="pg-card-action-btn"
             title="編輯"

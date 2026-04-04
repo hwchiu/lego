@@ -115,12 +115,14 @@ export default function AIChatbot() {
 
   useEffect(() => {
     function onMouseMove(e: MouseEvent) {
-      if (!dragState.current) return;
+      if (!dragState.current || !dialogRef.current) return;
       const dx = e.clientX - dragState.current.mouseStartX;
       const dy = e.clientY - dragState.current.mouseStartY;
+      const dialogW = dialogRef.current.offsetWidth;
+      const dialogH = dialogRef.current.offsetHeight;
       setDialogPos({
-        top: Math.max(0, dragState.current.dialogStartTop + dy),
-        left: Math.max(0, dragState.current.dialogStartLeft + dx),
+        top: Math.max(0, Math.min(window.innerHeight - dialogH, dragState.current.dialogStartTop + dy)),
+        left: Math.max(0, Math.min(window.innerWidth - dialogW, dragState.current.dialogStartLeft + dx)),
       });
     }
     function onMouseUp() {
