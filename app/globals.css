@@ -1470,37 +1470,27 @@ input, select { font-family: var(--font); }
 /* ===== AI CHATBOT ===== */
 .chatbot-fab {
   position: fixed;
-  right: 0;
+  right: 8px;
   top: 58%;
   transform: translateY(-50%);
   z-index: 500;
   display: flex;
   align-items: center;
-  flex-direction: row-reverse; /* icon stays on right; label expands to left */
-  gap: 0;
+  justify-content: center;
   width: 44px;
   height: 44px;
-  background: var(--c-dark);
-  color: var(--c-white);
+  background: transparent;
   border: none;
-  border-radius: 10px 0 0 10px;
+  border-radius: 12px;
   cursor: pointer;
-  overflow: hidden;
-  transition: width 0.24s cubic-bezier(0.22, 1, 0.36, 1), background 0.15s;
-  box-shadow: -2px 0 16px rgba(0, 0, 0, 0.18);
-  padding-right: 12px;
+  padding: 4px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+  transition: box-shadow 0.15s, transform 0.15s;
 }
 
 .chatbot-fab:hover {
-  width: 168px;
-  background: #243040;
-}
-
-.chatbot-fab--open {
-  background: var(--c-text-2);
-}
-.chatbot-fab--open:hover {
-  background: #374151;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.28);
+  transform: translateY(-50%) scale(1.08);
 }
 
 .chatbot-fab-icon {
@@ -1508,19 +1498,7 @@ input, select { font-family: var(--font); }
 }
 
 .chatbot-fab-label {
-  font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: -0.1px;
-  opacity: 0;
-  transform: translateX(6px);
-  transition: opacity 0.15s 0.1s, transform 0.2s 0.06s;
-  white-space: nowrap;
-  padding-right: 8px;
-}
-
-.chatbot-fab:hover .chatbot-fab-label {
-  opacity: 1;
-  transform: translateX(0);
+  display: none;
 }
 
 .chatbot-dialog {
@@ -1555,6 +1533,11 @@ input, select { font-family: var(--font); }
   background: var(--c-dark);
   color: var(--c-white);
   flex-shrink: 0;
+}
+
+.chatbot-dialog-header--draggable {
+  cursor: move;
+  user-select: none;
 }
 
 .chatbot-dialog-avatar {
@@ -7602,16 +7585,61 @@ input, select { font-family: var(--font); }
 }
 .pg-card:hover {
   box-shadow: 0 4px 16px rgba(0,0,0,0.10);
-  transform: translateY(-1px);
 }
 
 .pg-card-title {
   font-size: 12.5px;
   font-weight: 700;
   color: var(--c-text);
-  padding: 12px 14px 8px;
+  padding: 10px 10px 8px 14px;
   line-height: 1.4;
   border-bottom: 1px solid var(--c-border);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pg-card-title-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.pg-card-title-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.pg-card:hover .pg-card-title-actions {
+  opacity: 1;
+}
+
+.pg-card-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  color: var(--c-text-4);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  padding: 0;
+  transition: color 0.12s, background 0.12s;
+}
+
+.pg-card-action-btn:hover {
+  color: var(--c-text-2);
+  background: var(--c-bg);
+}
+
+.pg-card-action-btn--delete:hover {
+  color: #ef4444;
+  background: #fef2f2;
 }
 
 .pg-card-body { padding: 10px 14px 10px; }
@@ -9258,8 +9286,8 @@ input, select { font-family: var(--font); }
 }
 
 /* Drag-and-drop card states */
-.pg-card[draggable='true'] { cursor: grab; }
-.pg-card[draggable='true']:active { cursor: grabbing; }
+.pg-card-title[draggable='true'] { cursor: grab; }
+.pg-card-title[draggable='true']:active { cursor: grabbing; }
 .pg-card--dragging {
   opacity: 0.45;
   transform: scale(0.96) rotate(1deg);
