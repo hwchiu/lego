@@ -760,7 +760,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                       strokeLinecap="round"
                     />
                   </svg>
-                  Add Symbol
+                  <span className="wl-action-btn-label">Add Symbol</span>
                 </button>
                 <button className="wl-action-btn" onClick={handleEditWatchlistClick}>
                   <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
@@ -771,7 +771,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                       strokeLinejoin="round"
                     />
                   </svg>
-                  Edit Watchlist
+                  <span className="wl-action-btn-label">Edit Watchlist</span>
                 </button>
                 <button className="wl-action-btn" onClick={() => setShowManageAlerts(true)}>
                   {/* Alarm / bell icon */}
@@ -789,7 +789,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                       strokeLinecap="round"
                     />
                   </svg>
-                  Manage Alerts
+                  <span className="wl-action-btn-label">Manage Alerts</span>
                 </button>
                 <button
                   className="wl-action-btn"
@@ -810,7 +810,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                       strokeLinecap="round"
                     />
                   </svg>
-                  Download
+                  <span className="wl-action-btn-label">Download</span>
                 </button>
                 <button className="wl-action-btn" onClick={() => setSplitLayout((v) => !v)}>
                   {/* Layout icon — two-column grid */}
@@ -818,7 +818,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                     <rect x="1.5" y="1.5" width="4.5" height="11" rx="1" stroke="currentColor" strokeWidth="1.3" />
                     <rect x="8" y="1.5" width="4.5" height="11" rx="1" stroke="currentColor" strokeWidth="1.3" />
                   </svg>
-                  Layout
+                  <span className="wl-action-btn-label">Layout</span>
                 </button>
               </div>
             </section>

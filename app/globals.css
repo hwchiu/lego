@@ -9994,6 +9994,62 @@ input, select { font-family: var(--font); }
     right: 8px;
     bottom: 8px;
   }
+
+  /* Watchlist action buttons — stack section, icon-only buttons */
+  .wl-portfolio-section {
+    flex-wrap: wrap;
+  }
+  .wl-action-btns {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .wl-action-btn {
+    padding: 6px 8px;
+  }
+  .wl-action-btn-label {
+    display: none;
+  }
+
+  /* Company Heat Ranking table — horizontal scroll */
+  .company-rank-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Press Release — stack layout vertically, unpin topics panel */
+  .pr-timeline-layout {
+    flex-direction: column;
+  }
+  .pr-timeline-main {
+    flex: none;
+    width: 100%;
+  }
+  .pr-topics-panel {
+    flex: none;
+    width: 100%;
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+    top: auto;
+  }
+  .pr-granularity-bar {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  /* Company Profile landing — search toolbar buttons wrap */
+  .cp-search-toolbar {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .cp-search-toolbar-left {
+    flex-wrap: wrap;
+  }
+  /* Scenario (quick action) buttons below search — allow wrapping */
+  .cp-scenarios {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
 }
 
 /* ===== SMALL PHONE: ≤ 480px ===== */
