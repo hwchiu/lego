@@ -46,8 +46,8 @@ const AI_SUGGESTIONS: SuggestionItem[] = [
   {
     id: 'topic-semiconductors',
     label: 'Semiconductors',
-    symbols: ['NVDA', 'TSM', 'INTC', 'AMD', 'QCOM', 'ASML', 'AMAT', 'LRCX', 'KLAC', 'MU', 'AVGO', 'TXN'],
     type: 'topic',
+    symbols: ['NVDA', 'TSM', 'INTC', 'AMD', 'QCOM', 'ASML', 'AMAT', 'LRCX', 'KLAC', 'MU', 'AVGO', 'TXN'],
   },
   {
     id: 'topic-3d-fabric',

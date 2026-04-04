@@ -967,7 +967,6 @@ input, select { font-family: var(--font); }
   color: rgba(255,255,255,0.75);
   transition: background 0.15s, color 0.15s;
   white-space: nowrap;
-  gap: 0;
 }
 .sidebar-submenu-item:hover {
   background: rgba(255,255,255,0.09);
