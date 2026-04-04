@@ -37,8 +37,7 @@ export function CanvasManageModal({
   const [copied, setCopied] = useState<string | null>(null);
 
   function displayTag(tag: string): string {
-    if (isEn) return TAG_I18N[tag] ?? tag;
-    return tag;
+    return isEn ? (TAG_I18N[tag] ?? tag) : tag;
   }
 
   function toggleTag(tag: string) {
