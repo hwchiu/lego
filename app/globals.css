@@ -8344,3 +8344,272 @@ input, select { font-family: var(--font); }
   border-color: var(--c-dark);
   font-weight: 700;
 }
+
+
+/* ─────────────────────────────────────────────────────────────
+   Collaboration Playground — new features
+   ──────────────────────────────────────────────────────────── */
+
+/* Add card floating zone */
+.pg-board-wrap { position: relative; }
+
+.pg-add-card-zone {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 86px;
+  height: 86px;
+  border: 2px dashed var(--c-border-2);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(4px);
+  z-index: 20;
+  gap: 5px;
+  color: var(--c-text-3);
+  transition: border-color 0.15s, background 0.15s, color 0.15s, transform 0.12s, box-shadow 0.15s;
+}
+.pg-add-card-zone:hover {
+  border-color: var(--c-dark);
+  background: var(--c-white);
+  color: var(--c-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+.pg-add-card-zone-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+/* Content type selector in AddCardModal */
+.pg-type-selector {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+.pg-type-btn {
+  padding: 6px 14px;
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-bg);
+  cursor: pointer;
+  font-size: 12.5px;
+  color: var(--c-text-3);
+  font-weight: 600;
+  transition: border-color 0.12s, background 0.12s, color 0.12s;
+}
+.pg-type-btn:hover {
+  border-color: var(--c-dark);
+  color: var(--c-dark);
+}
+.pg-type-btn.active {
+  background: var(--c-dark);
+  color: var(--c-white);
+  border-color: var(--c-dark);
+}
+
+/* Comment section */
+.pg-comment-section {
+  border-top: 1px solid var(--c-border);
+}
+.pg-comment-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  padding: 7px 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--c-text-3);
+  font-weight: 600;
+  text-align: left;
+  transition: background 0.12s, color 0.12s;
+}
+.pg-comment-toggle:hover {
+  background: var(--c-bg);
+  color: var(--c-dark);
+}
+.pg-comment-body {
+  padding: 6px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pg-comment-empty {
+  font-size: 11.5px;
+  color: var(--c-text-4);
+  text-align: center;
+  padding: 6px 0;
+}
+.pg-comment-item {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.pg-comment-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.pg-comment-content { flex: 1; min-width: 0; }
+.pg-comment-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 3px;
+}
+.pg-comment-author {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--c-dark);
+}
+.pg-comment-time {
+  font-size: 10px;
+  color: var(--c-text-4);
+}
+.pg-comment-actions {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+.pg-comment-btn {
+  font-size: 10px;
+  padding: 1px 7px;
+  border-radius: 3px;
+  border: 1px solid var(--c-border);
+  background: none;
+  cursor: pointer;
+  color: var(--c-text-3);
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+}
+.pg-comment-btn:hover {
+  background: var(--c-bg);
+  color: var(--c-dark);
+}
+.pg-comment-btn.delete:hover {
+  background: #fee2e2;
+  color: var(--c-neg);
+  border-color: #fca5a5;
+}
+.pg-comment-text {
+  font-size: 12px;
+  color: var(--c-text-2);
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.pg-comment-textarea {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  line-height: 1.5;
+  resize: vertical;
+  background: var(--c-bg);
+  color: var(--c-text);
+  box-sizing: border-box;
+  font-family: inherit;
+}
+.pg-comment-textarea:focus {
+  outline: none;
+  border-color: var(--c-dark);
+  background: var(--c-white);
+}
+.pg-comment-form {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding-top: 8px;
+  border-top: 1px dashed var(--c-border);
+}
+
+/* @mention dropdown */
+.pg-mention-dropdown {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+  max-height: 200px;
+  overflow-y: auto;
+}
+.pg-mention-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  cursor: pointer;
+  font-size: 12.5px;
+  color: var(--c-text);
+  transition: background 0.1s;
+}
+.pg-mention-item:hover { background: var(--c-bg); }
+.pg-mention-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.pg-mention-role {
+  font-size: 10.5px;
+  color: var(--c-text-4);
+  margin-left: auto;
+}
+.pg-mention-tag {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-radius: 3px;
+  padding: 0 3px;
+  font-weight: 600;
+  font-size: inherit;
+}
+
+/* Drag-and-drop card states */
+.pg-card[draggable='true'] { cursor: grab; }
+.pg-card[draggable='true']:active { cursor: grabbing; }
+.pg-card--dragging {
+  opacity: 0.45;
+  transform: scale(0.96) rotate(1deg);
+}
+.pg-card--drag-over {
+  border-color: #4fc3f7 !important;
+  box-shadow: 0 0 0 2px #4fc3f7;
+}
+
+/* File attachment card */
+.pg-file-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  color: var(--c-text-2);
+}
+.pg-file-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-dark);
+  word-break: break-all;
+}
+.pg-file-size {
+  font-size: 11px;
+  color: var(--c-text-4);
+  margin-top: 2px;
+}
