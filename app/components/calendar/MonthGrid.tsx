@@ -36,15 +36,17 @@ function MonthCell({ day }: { day: WeekDay }) {
 
 export default function MonthGrid({ days }: { days: WeekDay[] }) {
   return (
-    <div className="month-grid">
-      {DAY_LABELS.map((h) => (
-        <div key={h} className="month-day-header">
-          {h}
-        </div>
-      ))}
-      {days.map((day, i) => (
-        <MonthCell key={day.isEmpty ? `empty-${i}` : day.dateLabel} day={day} />
-      ))}
+    <div className="month-grid-scroll-wrap">
+      <div className="month-grid">
+        {DAY_LABELS.map((h) => (
+          <div key={h} className="month-day-header">
+            {h}
+          </div>
+        ))}
+        {days.map((day, i) => (
+          <MonthCell key={day.isEmpty ? `empty-${i}` : day.dateLabel} day={day} />
+        ))}
+      </div>
     </div>
   );
 }
