@@ -163,7 +163,7 @@ interface CardStackProps {
 function CardStack({ group, articles, onOpenGallery, lang }: CardStackProps) {
   if (articles.length === 0) return null;
 
-  const stackDepth = Math.min(articles.length, 4);
+  const layerCount = Math.min(articles.length - 1, 3); // up to 3 decorative layers behind top card
 
   return (
     <div
@@ -177,7 +177,7 @@ function CardStack({ group, articles, onOpenGallery, lang }: CardStackProps) {
       aria-label={`View ${articles.length} articles for ${group.label}`}
     >
       {/* Decorative background layers */}
-      {Array.from({ length: stackDepth - 1 }, (_, i) => (
+      {Array.from({ length: layerCount }, (_, i) => (
         <div key={i} className={`pr-card-stack-layer pr-card-stack-layer--${i + 1}`} />
       ))}
       {/* Top card */}
@@ -214,8 +214,8 @@ function TimelineView({ items, lang }: TimelineViewProps) {
   }, [items, relFilter, selectedTopics]);
 
   const groups = useMemo(
-    () => groupByTimeline(filteredItems, granularity),
-    [filteredItems, granularity],
+    () => groupByTimeline(filteredItems, granularity, 2, lang),
+    [filteredItems, granularity, lang],
   );
   const topicCounts = useMemo(() => getTopicCounts(items), [items]);
 
@@ -275,25 +275,33 @@ function TimelineView({ items, lang }: TimelineViewProps) {
           <span className="pr-granularity-sep" />
 
           {/* Customer / Supplier filter */}
-          {(['all', 'customer', 'supplier'] as RelFilter[]).map((r) => (
-            <button
-              key={r}
-              className={`pr-granularity-btn${relFilter === r ? ' active' : ''}${r === 'customer' ? ' pr-granularity-btn--customer' : r === 'supplier' ? ' pr-granularity-btn--supplier' : ''}`}
-              onClick={() => setRelFilter(r)}
-            >
-              {r === 'all'
-                ? lang === 'en'
-                  ? 'All'
-                  : '全部'
-                : r === 'customer'
+          {(['all', 'customer', 'supplier'] as RelFilter[]).map((r) => {
+            const relClass =
+              r === 'customer'
+                ? ' pr-granularity-btn--customer'
+                : r === 'supplier'
+                  ? ' pr-granularity-btn--supplier'
+                  : '';
+            return (
+              <button
+                key={r}
+                className={`pr-granularity-btn${relFilter === r ? ' active' : ''}${relClass}`}
+                onClick={() => setRelFilter(r)}
+              >
+                {r === 'all'
                   ? lang === 'en'
-                    ? 'Customer'
-                    : '客戶'
-                  : lang === 'en'
-                    ? 'Supplier'
-                    : '供應商'}
-            </button>
-          ))}
+                    ? 'All'
+                    : '全部'
+                  : r === 'customer'
+                    ? lang === 'en'
+                      ? 'Customer'
+                      : '客戶'
+                    : lang === 'en'
+                      ? 'Supplier'
+                      : '供應商'}
+              </button>
+            );
+          })}
 
           {hasFilters && (
             <button
