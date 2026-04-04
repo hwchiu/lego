@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { SP500_COMPANIES } from '@/app/data/sp500';
 import { newsItems } from '@/app/data/news';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { useMobileSidebar } from '@/app/contexts/MobileSidebarContext';
 
 const POPULAR_SEARCHES = ['TSM', 'AAPL', 'NVDA'];
 
@@ -97,6 +98,7 @@ const SP500_LC = SP500_COMPANIES.map((c) => ({
 export default function TopNav() {
   const router = useRouter();
   const { lang, toggleLang } = useLanguage();
+  const { toggleSidebar } = useMobileSidebar();
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>('All');
@@ -141,6 +143,17 @@ export default function TopNav() {
 
   return (
     <header className="topnav">
+      {/* Hamburger menu button — only visible on mobile via CSS */}
+      <button
+        className="topnav-hamburger"
+        onClick={toggleSidebar}
+        aria-label="Toggle navigation menu"
+      >
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+          <path d="M2 4.5h14M2 9h14M2 13.5h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        </svg>
+      </button>
+
       <Link href="/about" className="topnav-logo" aria-label="Go to About tMIC">
         tM<span className="logo-i">I</span>C
       </Link>

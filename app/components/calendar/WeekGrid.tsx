@@ -29,10 +29,12 @@ function WeekCell({ day }: { day: WeekDay }) {
 
 export default function WeekGrid({ days }: { days: WeekDay[] }) {
   return (
-    <div className="week-grid">
-      {days.map((day) => (
-        <WeekCell key={day.dateLabel} day={day} />
-      ))}
+    <div className="week-grid-scroll-wrap">
+      <div className="week-grid">
+        {days.map((day) => (
+          <WeekCell key={day.dateLabel} day={day} />
+        ))}
+      </div>
     </div>
   );
 }
