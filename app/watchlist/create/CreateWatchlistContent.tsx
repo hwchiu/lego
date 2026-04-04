@@ -138,6 +138,19 @@ export default function CreateWatchlistContent() {
   // Drag state
   const dragIdx = useRef<number | null>(null);
 
+  // Pending navigation: set after a successful addWatchlist so the redirect
+  // fires inside a useEffect (after React has committed the new context state)
+  const [pendingNavId, setPendingNavId] = useState<string | null>(null);
+
+  // Redirect to the newly created watchlist once React state is committed
+  useEffect(() => {
+    if (pendingNavId) {
+      const id = pendingNavId;
+      setPendingNavId(null); // reset so a future creation always re-triggers this effect
+      router.push(`/watchlist/${id}`);
+    }
+  }, [pendingNavId, router]);
+
   // Close dropdown on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -230,7 +243,9 @@ export default function CreateWatchlistContent() {
     if (symbols.length === 0) return;
     const newId = addWatchlist(name, symbols);
     if (newId) {
-      router.push(`/watchlist/${newId}`);
+      // Schedule redirect via useEffect so it fires after React commits the new
+      // WatchlistContext state (avoids navigating to the page before data is ready)
+      setPendingNavId(newId);
     } else {
       alert('Maximum number of watchlists reached (10). Please delete an existing one first.');
     }
