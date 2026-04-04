@@ -113,29 +113,28 @@ export default function CollaborationPlaygroundPage() {
 
           {/* ── Main body: canvas selector + board ── */}
           <div className="pg-body">
-            {/* Canvas selector sidebar */}
-            <aside className={`pg-canvas-sidebar${isSidebarCollapsed ? ' pg-canvas-sidebar--collapsed' : ''}`}>
-              <div className="pg-canvas-sidebar-header">
-                <span className="pg-canvas-sidebar-label" style={{ margin: 0, padding: 0 }}>
-                  {isEn ? 'My Canvases' : '我的畫布'}
-                </span>
-                <button
-                  className="pg-sidebar-collapse-btn"
-                  onClick={() => setIsSidebarCollapsed((v) => !v)}
-                  title={isSidebarCollapsed ? (isEn ? 'Expand sidebar' : '展開側欄') : (isEn ? 'Collapse sidebar' : '收合側欄')}
-                  aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-                >
-                  {/* Hamburger / collapse icon */}
-                  <svg viewBox="0 0 16 16" width="15" height="15" fill="none" aria-hidden="true">
-                    <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  </svg>
-                </button>
-              </div>
+            {/* Canvas selector sidebar — hidden when collapsed */}
+            {!isSidebarCollapsed && (
+              <aside className="pg-canvas-sidebar">
+                <div className="pg-canvas-sidebar-header">
+                  <span className="pg-canvas-sidebar-label" style={{ margin: 0, padding: 0 }}>
+                    {isEn ? 'My Canvases' : '我的畫布'}
+                  </span>
+                  <button
+                    className="pg-sidebar-collapse-btn"
+                    onClick={() => setIsSidebarCollapsed(true)}
+                    title={isEn ? 'Collapse sidebar' : '收合側欄'}
+                    aria-label="Collapse sidebar"
+                  >
+                    {/* Hamburger / collapse icon */}
+                    <svg viewBox="0 0 16 16" width="15" height="15" fill="none" aria-hidden="true">
+                      <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                </div>
 
-              {!isSidebarCollapsed && (
                 <>
-                  <ul className="pg-canvas-nav">
-                    {canvasList.map((c) => (
+                  <ul className="pg-canvas-nav">                    {canvasList.map((c) => (
                       <li key={c.id}>
                         <button
                           className={`pg-canvas-nav-btn${c.id === activeCanvasId ? ' active' : ''}`}
@@ -201,8 +200,25 @@ export default function CollaborationPlaygroundPage() {
                     </>
                   )}
                 </>
-              )}
-            </aside>
+              </aside>
+            )}
+
+            {/* Expand button shown when sidebar is fully collapsed */}
+            {isSidebarCollapsed && (
+              <div className="pg-sidebar-expand-zone">
+                <button
+                  className="pg-sidebar-expand-btn"
+                  onClick={() => setIsSidebarCollapsed(false)}
+                  title={isEn ? 'Expand sidebar' : '展開側欄'}
+                  aria-label="Expand sidebar"
+                >
+                  {/* Right-pointing chevron arrow */}
+                  <svg viewBox="0 0 16 16" width="13" height="13" fill="none" aria-hidden="true">
+                    <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+              </div>
+            )}
 
             {/* Board area */}
             <div className={`pg-board-wrap${isFullscreen ? ' pg-board-wrap--fullscreen' : ''}`}>
