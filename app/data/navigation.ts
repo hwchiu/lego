@@ -126,7 +126,7 @@ export const supplyChainNav: NavItem[] = [
       { label: 'Competitor', href: '/supply-chain-maps/competitor', icon: 'competitor' },
     ],
   },
-  { label: 'My RMAP', href: '#', icon: 'layers' },
+  { label: 'My RMAP', href: '#', icon: 'layers', badge: 'COMING SOON', badgeStyle: 'coming-soon' },
 ];
 
 export const bottomLinks: NavItem[] = [

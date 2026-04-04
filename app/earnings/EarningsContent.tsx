@@ -203,6 +203,96 @@ const DEFAULT_COMPANY = SP500_COMPANIES.find((c) => c.symbol === DEFAULT_SYMBOL)
   name: 'Apple Inc.',
 };
 
+// ── TSM-specific data (Taiwan Semiconductor Manufacturing) ───────────────────
+
+const TSM_DATA: EarningsCompanyData = {
+  symbol: 'TSM',
+  name: 'Taiwan Semiconductor Manufacturing Company',
+  exchange: 'NYSE',
+  price: 167.52,
+  change: 2.34,
+  changePct: 1.42,
+  marketCap: '868.4B',
+  volume: '11.2M',
+  eps: 7.68,
+  peRatio: 21.8,
+  sector: 'Technology',
+  nextEarningsDate: 'Jul 17, 2025',
+  earningsDates: [
+    { quarter: 'Q2 FY2025', reportDate: 'Jul 17, 2025', epsEstimate: 2.11, epsActual: null, surprise: null, surprisePct: null },
+    { quarter: 'Q1 FY2025', reportDate: 'Apr 17, 2025', epsEstimate: 1.93, epsActual: 2.12, surprise: 0.19, surprisePct: 9.84 },
+    { quarter: 'Q4 FY2024', reportDate: 'Jan 16, 2025', epsEstimate: 2.22, epsActual: 2.24, surprise: 0.02, surprisePct: 0.90 },
+    { quarter: 'Q3 FY2024', reportDate: 'Oct 17, 2024', epsEstimate: 1.78, epsActual: 1.94, surprise: 0.16, surprisePct: 8.99 },
+    { quarter: 'Q2 FY2024', reportDate: 'Jul 18, 2024', epsEstimate: 1.45, epsActual: 1.48, surprise: 0.03, surprisePct: 2.07 },
+    { quarter: 'Q1 FY2024', reportDate: 'Apr 18, 2024', epsEstimate: 1.38, epsActual: 1.38, surprise: 0.00, surprisePct: 0.00 },
+    { quarter: 'Q4 FY2023', reportDate: 'Jan 18, 2024', epsEstimate: 1.31, epsActual: 1.44, surprise: 0.13, surprisePct: 9.92 },
+    { quarter: 'Q3 FY2023', reportDate: 'Oct 19, 2023', epsEstimate: 1.10, epsActual: 1.29, surprise: 0.19, surprisePct: 17.27 },
+  ],
+  qualityRanking: {
+    score: 91,
+    percentile: 93,
+    grade: 'A+',
+    consistencyScore: 92,
+    growthScore: 94,
+    qualityScore: 90,
+  },
+  pressReleases: [
+    { date: 'Apr 17, 2025', title: 'TSMC Reports First Quarter 2025 Results', quarter: 'Q1 FY2025', url: '#' },
+    { date: 'Jan 16, 2025', title: 'TSMC Reports Fourth Quarter and Full Year 2024 Results', quarter: 'Q4 FY2024', url: '#' },
+    { date: 'Oct 17, 2024', title: 'TSMC Reports Third Quarter 2024 Results', quarter: 'Q3 FY2024', url: '#' },
+    { date: 'Jul 18, 2024', title: 'TSMC Reports Second Quarter 2024 Results', quarter: 'Q2 FY2024', url: '#' },
+  ],
+  epsHistory: [
+    { quarter: 'Q2 FY2025', estimate: 2.11, actual: null },
+    { quarter: 'Q1 FY2025', estimate: 1.93, actual: 2.12 },
+    { quarter: 'Q4 FY2024', estimate: 2.22, actual: 2.24 },
+    { quarter: 'Q3 FY2024', estimate: 1.78, actual: 1.94 },
+    { quarter: 'Q2 FY2024', estimate: 1.45, actual: 1.48 },
+    { quarter: 'Q1 FY2024', estimate: 1.38, actual: 1.38 },
+    { quarter: 'Q4 FY2023', estimate: 1.31, actual: 1.44 },
+    { quarter: 'Q3 FY2023', estimate: 1.10, actual: 1.29 },
+  ],
+  earningsSurprise: [
+    { quarter: 'Q1 FY2025', surprise: 0.19, surprisePct: 9.84 },
+    { quarter: 'Q4 FY2024', surprise: 0.02, surprisePct: 0.90 },
+    { quarter: 'Q3 FY2024', surprise: 0.16, surprisePct: 8.99 },
+    { quarter: 'Q2 FY2024', surprise: 0.03, surprisePct: 2.07 },
+    { quarter: 'Q1 FY2024', surprise: 0.00, surprisePct: 0.00 },
+    { quarter: 'Q4 FY2023', surprise: 0.13, surprisePct: 9.92 },
+    { quarter: 'Q3 FY2023', surprise: 0.19, surprisePct: 17.27 },
+    { quarter: 'Q2 FY2023', surprise: -0.02, surprisePct: -1.89 },
+  ],
+  yearlyForecast: [
+    { year: 'FY2025', low: 7.80, consensus: 8.52, high: 9.10, numAnalysts: 32 },
+    { year: 'FY2026', low: 9.20, consensus: 10.15, high: 11.30, numAnalysts: 29 },
+    { year: 'FY2027', low: 10.50, consensus: 11.80, high: 13.00, numAnalysts: 22 },
+  ],
+  quarterlyForecast: [
+    { quarter: 'Q2 FY2025', low: 1.98, consensus: 2.11, high: 2.28, numAnalysts: 28 },
+    { quarter: 'Q3 FY2025', low: 2.14, consensus: 2.28, high: 2.45, numAnalysts: 26 },
+    { quarter: 'Q4 FY2025', low: 2.30, consensus: 2.48, high: 2.65, numAnalysts: 24 },
+    { quarter: 'Q1 FY2026', low: 2.10, consensus: 2.25, high: 2.42, numAnalysts: 20 },
+  ],
+  consensusChange: [
+    { period: 'Q2 FY2025', oneWeekAgo: 2.09, oneMonthAgo: 2.05, threeMonthsAgo: 1.98, current: 2.11 },
+    { period: 'Q3 FY2025', oneWeekAgo: 2.26, oneMonthAgo: 2.20, threeMonthsAgo: 2.10, current: 2.28 },
+    { period: 'FY2025', oneWeekAgo: 8.48, oneMonthAgo: 8.35, threeMonthsAgo: 8.10, current: 8.52 },
+    { period: 'FY2026', oneWeekAgo: 10.10, oneMonthAgo: 9.92, threeMonthsAgo: 9.60, current: 10.15 },
+  ],
+  estimatesChanged: [
+    { period: 'Q2 FY2025', up: 14, down: 2, unchanged: 12, total: 28 },
+    { period: 'Q3 FY2025', up: 12, down: 3, unchanged: 11, total: 26 },
+    { period: 'FY2025', up: 18, down: 4, unchanged: 10, total: 32 },
+    { period: 'FY2026', up: 15, down: 5, unchanged: 9, total: 29 },
+  ],
+};
+
+function getCompanyData(symbol: string, name: string): EarningsCompanyData {
+  if (symbol === 'TSM') return TSM_DATA;
+  return buildCompanyData(symbol, name);
+}
+
+
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 function BarChart({
@@ -758,6 +848,13 @@ export default function EarningsContent() {
   const [recentlyViewed, setRecentlyViewed] = useState<string[]>([]);
   const [selectedSymbol, setSelectedSymbol] = useState(DEFAULT_SYMBOL);
   const searchRef = useRef<HTMLDivElement>(null);
+  const tabsScrollRef = useRef<HTMLDivElement>(null);
+
+  function scrollTabs(dir: 'left' | 'right') {
+    if (tabsScrollRef.current) {
+      tabsScrollRef.current.scrollBy({ left: dir === 'left' ? -160 : 160, behavior: 'smooth' });
+    }
+  }
 
   // Load recently viewed from localStorage
   useEffect(() => {
@@ -811,7 +908,7 @@ export default function EarningsContent() {
       : [];
 
   const selectedCompany = SP500_COMPANIES.find((c) => c.symbol === selectedSymbol) ?? DEFAULT_COMPANY;
-  const companyData = buildCompanyData(selectedCompany.symbol, selectedCompany.name);
+  const companyData = getCompanyData(selectedCompany.symbol, selectedCompany.name);
 
   function renderTabContent() {
     switch (activeTab) {
@@ -948,7 +1045,12 @@ export default function EarningsContent() {
 
             {/* ── Sub-tabs ── */}
             <div className="earn-subtabs-wrap">
-              <div className="earn-subtabs">
+              <button className="earn-subtabs-arrow earn-subtabs-arrow--left" onClick={() => scrollTabs('left')} aria-label="Scroll tabs left">
+                <svg viewBox="0 0 14 14" fill="none" width="14" height="14" aria-hidden="true">
+                  <path d="M9 2.5L4.5 7L9 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+              <div className="earn-subtabs" ref={tabsScrollRef}>
                 {SUB_TABS.map((tab) => (
                   <button
                     key={tab}
@@ -959,6 +1061,11 @@ export default function EarningsContent() {
                   </button>
                 ))}
               </div>
+              <button className="earn-subtabs-arrow earn-subtabs-arrow--right" onClick={() => scrollTabs('right')} aria-label="Scroll tabs right">
+                <svg viewBox="0 0 14 14" fill="none" width="14" height="14" aria-hidden="true">
+                  <path d="M5 2.5L9.5 7L5 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
             </div>
 
             {/* ── Tab content ── */}

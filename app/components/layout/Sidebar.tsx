@@ -96,7 +96,7 @@ function SubMenu({
   onMouseLeave: () => void;
 }) {
   const [top, setTop] = useState(0);
-  const { watchlistNames, dynamicWatchlists, favorites, toggleFavorite } = useWatchlist();
+  const { watchlistNames, dynamicWatchlists, deletedWatchlists, favorites, toggleFavorite } = useWatchlist();
   const { lang } = useLanguage();
 
   useEffect(() => {
@@ -109,18 +109,24 @@ function SubMenu({
   // Detect if this is the watchlist submenu (contains a watchlistId item)
   const isWatchlistMenu = items.some((item) => item.watchlistId);
 
+  // Filter out deleted watchlists from both static items and dynamic lists
+  const visibleItems = isWatchlistMenu
+    ? items.filter((item) => !item.watchlistId || !deletedWatchlists.has(item.watchlistId))
+    : items;
+  const visibleDynamic = dynamicWatchlists.filter((wl) => !deletedWatchlists.has(wl.id));
+
   return (
     <div className="sidebar-submenu" style={{ top }} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-      {items.map((item) => {
+      {visibleItems.map((item) => {
         const defaultLabel = item.watchlistId ? (watchlistNames[item.watchlistId] ?? item.label) : item.label;
         const displayLabel = lang === 'zh' ? t(defaultLabel, 'zh') : defaultLabel;
         const isFav = item.watchlistId ? favorites.has(item.watchlistId) : false;
         return (
           <React.Fragment key={item.label}>
-            {item.dividerBefore && isWatchlistMenu && dynamicWatchlists.length > 0 && (
+            {item.dividerBefore && isWatchlistMenu && visibleDynamic.length > 0 && (
               // Dynamic watchlists are injected before the divider/create item
               <>
-                {dynamicWatchlists.map((wl) => (
+                {visibleDynamic.map((wl) => (
                   <div key={wl.id} className="sidebar-submenu-item sidebar-submenu-item--with-star">
                     <StarIcon
                       filled={favorites.has(wl.id)}
@@ -141,7 +147,7 @@ function SubMenu({
               </>
             )}
             {item.dividerBefore && !isWatchlistMenu && <div className="sidebar-submenu-divider" />}
-            {item.dividerBefore && isWatchlistMenu && dynamicWatchlists.length === 0 && (
+            {item.dividerBefore && isWatchlistMenu && visibleDynamic.length === 0 && (
               <div className="sidebar-submenu-divider" />
             )}
             <div
