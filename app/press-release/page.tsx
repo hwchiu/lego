@@ -161,6 +161,9 @@ interface CardStackProps {
 }
 
 function CardStack({ group, articles, onOpenGallery, lang }: CardStackProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
   if (articles.length === 0) return null;
 
   const layerCount = Math.min(articles.length - 1, 3); // up to 3 decorative layers behind top card
@@ -169,6 +172,11 @@ function CardStack({ group, articles, onOpenGallery, lang }: CardStackProps) {
     <div
       className="pr-card-stack"
       onClick={() => onOpenGallery(group)}
+      onMouseEnter={() => setIsExpanded(true)}
+      onMouseLeave={() => {
+        setIsExpanded(false);
+        setHoveredIdx(null);
+      }}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -187,6 +195,47 @@ function CardStack({ group, articles, onOpenGallery, lang }: CardStackProps) {
       {/* Count badge */}
       {articles.length > 1 && (
         <div className="pr-card-stack-badge">{articles.length}</div>
+      )}
+
+      {/* Hover expand: fan-out card list below the stack */}
+      {isExpanded && articles.length > 1 && (
+        <div
+          className="pr-card-stack-expand"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {articles.map((pr, i) => {
+            const date = new Date(pr.publishedAt);
+            const dateStr = date.toLocaleDateString(lang === 'en' ? 'en-US' : 'zh-TW', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            });
+            const isActive = hoveredIdx === i;
+            return (
+              <div
+                key={pr.id}
+                className={`pr-card-stack-expand-item${isActive ? ' active' : ''}`}
+                onMouseEnter={() => setHoveredIdx(i)}
+                onMouseLeave={() => setHoveredIdx(null)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpenGallery(group);
+                }}
+              >
+                <span
+                  className={`pr-card-stack-expand-dot${pr.relationship === 'customer' ? ' customer' : ' supplier'}`}
+                />
+                <div className="pr-card-stack-expand-body">
+                  <div className="pr-card-stack-expand-date">{dateStr}</div>
+                  <div className="pr-card-stack-expand-title">{pr.title}</div>
+                  {isActive && pr.summary && (
+                    <div className="pr-card-stack-expand-summary">{pr.summary}</div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       )}
     </div>
   );

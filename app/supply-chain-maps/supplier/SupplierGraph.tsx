@@ -902,6 +902,11 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
   const zoomOut = useCallback(() => applyZoom(1 / ZOOM_STEP), [applyZoom]);
   const zoomReset = useCallback(() => setViewBox(DEFAULT_VB), []);
 
+  const resetGraph = useCallback(() => {
+    setPositions({ ...INITIAL_POSITIONS });
+    setViewBox(DEFAULT_VB);
+  }, []);
+
   const handleNodeMouseDown = useCallback((nodeId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (!svgRef.current) return;
@@ -1136,6 +1141,28 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
 
           {/* Zoom controls — minimal flat buttons */}
           <div className="rmap-zoom-controls">
+            <button
+              className="rmap-zoom-btn rmap-zoom-btn--graph-reset"
+              onClick={resetGraph}
+              title="Reset Graph Layout"
+              aria-label="Reset Graph Layout"
+            >
+              <svg
+                viewBox="0 0 16 16"
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M13.5 3.5A7 7 0 1 0 14 8" />
+                <polyline points="14 1 14 5 10 5" />
+              </svg>
+            </button>
+            <div className="rmap-zoom-sep" />
             <button
               className="rmap-zoom-btn"
               onClick={zoomIn}
