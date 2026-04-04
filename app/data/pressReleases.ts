@@ -52,21 +52,30 @@ function getGroupKey(date: Date, granularity: TimelineGranularity): string {
   return `${y}-${mm}`;
 }
 
-function getGroupLabel(key: string, granularity: TimelineGranularity): string {
-  if (granularity === 'year') return `${key} 年`;
+function getGroupLabel(
+  key: string,
+  granularity: TimelineGranularity,
+  lang: 'zh' | 'en' = 'en',
+): string {
+  if (granularity === 'year') return lang === 'zh' ? `${key} 年` : key;
   if (granularity === 'quarter') {
     const [year, q] = key.split('-');
-    return `${year} 年 ${q}`;
+    return lang === 'zh' ? `${year} 年 ${q}` : `${q} ${year}`;
   }
   const [year, month] = key.split('-');
-  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
-  return `${year} 年 ${monthNames[parseInt(month, 10) - 1]}`;
+  if (lang === 'zh') {
+    const zhMonths = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+    return `${year} 年 ${zhMonths[parseInt(month, 10) - 1]}`;
+  }
+  const enMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return `${enMonths[parseInt(month, 10) - 1]} ${year}`;
 }
 
 export function groupByTimeline(
   items: PressRelease[],
   granularity: TimelineGranularity,
   maxCards = 2,
+  lang: 'zh' | 'en' = 'en',
 ): TimelineGroup[] {
   const map = new Map<string, PressRelease[]>();
 
@@ -84,7 +93,7 @@ export function groupByTimeline(
     const groupItems = map.get(key)!.sort((a, b) => b.viewCount - a.viewCount);
     return {
       key,
-      label: getGroupLabel(key, granularity),
+      label: getGroupLabel(key, granularity, lang),
       total: groupItems.length,
       topArticles: groupItems.slice(0, maxCards),
       items: groupItems,
