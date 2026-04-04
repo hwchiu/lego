@@ -152,7 +152,7 @@ function TimelineView({ items }: TimelineViewProps) {
 
       {/* ── Right: Topics panel (30%) ── */}
       <aside className="pr-topics-panel">
-        <div className="pr-topics-panel-title">Press Releases by Topic</div>
+        <div className="pr-topics-panel-title">依主題篩選 · Press Releases by Topic</div>
         <div className="pr-topics-list">
           {allTopics.map((topic) => {
             const count = topicCounts[topic] ?? 0;
