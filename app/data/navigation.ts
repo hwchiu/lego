@@ -76,6 +76,9 @@ export const sidebarIcons: Record<string, string> = {
     '<circle cx="7" cy="4.5" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M2 12.5C2 10 4.2 8.5 7 8.5C9.8 8.5 12 10 12 12.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>',
   competitor:
     '<circle cx="4.5" cy="7" r="3" stroke="currentColor" stroke-width="1.2"/><circle cx="9.5" cy="7" r="3" stroke="currentColor" stroke-width="1.2" stroke-dasharray="1.5 1.5"/>',
+  // User Manual — open book icon
+  userManual:
+    '<rect x="2" y="1.5" width="4.5" height="11" rx="0.8" stroke="currentColor" stroke-width="1.3"/><rect x="7.5" y="1.5" width="4.5" height="11" rx="0.8" stroke="currentColor" stroke-width="1.3"/><path d="M2 3.5C3 3 4 3 4.5 3.5M9.5 3.5C10.5 3 11.5 3 12 3.5M2 6C3 5.5 4 5.5 4.5 6M9.5 6C10.5 5.5 11.5 5.5 12 6M2 8.5C3 8 4 8 4.5 8.5M9.5 8.5C10.5 8 11.5 8 12 8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>',
 };
 
 export const quickLinks: NavItem[] = [
@@ -131,6 +134,7 @@ export const supplyChainNav: NavItem[] = [
 
 export const bottomLinks: NavItem[] = [
   { label: 'Intelligence Search', href: '#', icon: 'intelligenceSearch' },
+  { label: 'User Manual', href: '/user-manual', icon: 'userManual' },
 ];
 
 export const marketTabs = [

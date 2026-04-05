@@ -35,6 +35,7 @@ export const NAV_LABELS: Record<string, { zh: string; en: string }> = {
   // Bottom links
   'Intelligence Search': { zh: '智能搜尋', en: 'Intelligence Search' },
   'Collaboration Playground': { zh: '協作空間', en: 'Collaboration Playground' },
+  'User Manual': { zh: '使用手冊', en: 'User Manual' },
 };
 
 export function t(key: string, lang: 'zh' | 'en'): string {

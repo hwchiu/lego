@@ -366,7 +366,12 @@ export default function TopNav() {
       {/* ── Header action buttons ────────────────────────────────── */}
       <div className="topnav-actions">
         {/* User Manual */}
-        <button className="topnav-action-btn" title="User Manual" aria-label="User Manual">
+        <button
+          className="topnav-action-btn"
+          title="User Manual"
+          aria-label="User Manual"
+          onClick={() => router.push('/user-manual/')}
+        >
           {/* Book / manual icon */}
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <rect x="2" y="1" width="9" height="12" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
