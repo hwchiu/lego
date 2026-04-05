@@ -4682,6 +4682,12 @@ input, select { font-family: var(--font); }
   width: 100%;
   overflow: hidden;
 }
+/* Expanded modifier — allows tags to wrap to multiple lines */
+.rmap-industry-filter-row--expanded {
+  flex-wrap: wrap;
+  align-items: flex-start;
+  overflow: visible;
+}
 
 .rmap-industry-filter-label {
   font-size: 11px;
@@ -4692,33 +4698,22 @@ input, select { font-family: var(--font); }
   flex-shrink: 0;
 }
 
-.rmap-industry-scroll-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  background: transparent;
-  border: none;
-  color: var(--c-text-3);
-  font-size: 18px;
-  cursor: pointer;
-  flex-shrink: 0;
-  line-height: 1;
-  padding: 0;
-  transition: color 0.15s;
-}
-.rmap-industry-scroll-btn:hover { color: var(--c-text); }
-
 .rmap-industry-tags-scroll {
   display: flex;
   align-items: center;
   gap: 6px;
-  overflow-x: hidden;
+  overflow: hidden;
   flex: 1;
-  scrollbar-width: none;
+  flex-wrap: nowrap;
+  min-width: 0;
 }
-.rmap-industry-tags-scroll::-webkit-scrollbar { display: none; }
+
+/* Expanded modifier — tags wrap to fill all available space */
+.rmap-industry-tags-scroll--expanded {
+  flex-wrap: wrap;
+  overflow: visible;
+  align-items: flex-start;
+}
 
 .rmap-industry-tag {
   display: inline-flex;
@@ -4751,6 +4746,17 @@ input, select { font-family: var(--font); }
 /* "All" tag — shown as active when no filters are selected */
 .rmap-industry-tag--all {
   font-weight: 600;
+}
+/* "更多" / "收起" toggle button */
+.rmap-industry-tag--more {
+  color: #1e66f5;
+  border-color: #1e66f5;
+  font-weight: 600;
+}
+.rmap-industry-tag--more:hover {
+  background: #e8f0fe;
+  border-color: #1a5ce6;
+  color: #1a5ce6;
 }
 .rmap-filter-search-wrap {
   position: relative;
@@ -11542,23 +11548,25 @@ input, select { font-family: var(--font); }
     gap: 8px;
   }
 
-  /* Supply-chain industry filter row — wrap tags instead of horizontal scroll */
-  .rmap-industry-filter-row {
+  /* Supply-chain industry filter row — always show all tags wrapped on mobile */
+  .rmap-industry-filter-row,
+  .rmap-industry-filter-row--expanded {
     flex-wrap: wrap;
     overflow: visible;
-    align-items: center;
+    align-items: flex-start;
   }
 
-  .rmap-industry-scroll-btn {
-    display: none;
-  }
-
-  .rmap-industry-tags-scroll {
+  .rmap-industry-tags-scroll,
+  .rmap-industry-tags-scroll--expanded {
     flex-wrap: wrap;
     overflow: visible;
-    flex: none;
-    width: 100%;
+    flex: 1 1 100%;
     gap: 6px;
+  }
+
+  /* Hide the more/collapse button on mobile since all tags are already visible */
+  .rmap-industry-tag--more {
+    display: none;
   }
 
   /* M&A filter bar — wrap tags instead of horizontal scroll */

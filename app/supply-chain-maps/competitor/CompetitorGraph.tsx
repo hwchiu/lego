@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import {
   TSM_COMPETITOR_CENTER,
   TSM_COMPETITORS,
@@ -262,7 +262,9 @@ function FilterBar({ selectedIndustries, onIndustryToggle, onClearAllIndustries 
   const [activeTab, setActiveTab] = useState<FilterTab>('Company');
   const [openDropdown, setOpenDropdown] = useState<'risk' | null>(null);
   const [selectedRisk, setSelectedRisk] = useState<string>(RISK_TYPES[0].key);
-  const industryTagsScrollRef = useRef<HTMLDivElement>(null);
+  const industryTagsRef = useRef<HTMLDivElement>(null);
+  const [showAllTags, setShowAllTags] = useState(false);
+  const [hasTagOverflow, setHasTagOverflow] = useState(false);
 
   const q = query.toLowerCase().trim();
   const showQueryResults = q.length > 0;
@@ -290,11 +292,16 @@ function FilterBar({ selectedIndustries, onIndustryToggle, onClearAllIndustries 
     .map((p) => p.val)
     .slice(0, 3);
 
-  const scrollIndustries = (dir: 'left' | 'right') => {
-    if (industryTagsScrollRef.current) {
-      industryTagsScrollRef.current.scrollBy({ left: dir === 'left' ? -120 : 120, behavior: 'smooth' });
-    }
-  };
+  useEffect(() => {
+    if (showAllTags) return;
+    const el = industryTagsRef.current;
+    if (!el) return;
+    const check = () => setHasTagOverflow(el.scrollWidth > el.clientWidth);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [showAllTags]);
 
   return (
     <div className="rmap-filter-bar rmap-filter-bar--above">
@@ -452,16 +459,12 @@ function FilterBar({ selectedIndustries, onIndustryToggle, onClearAllIndustries 
       </div>
 
       {/* Industry filter row */}
-      <div className="rmap-industry-filter-row">
+      <div className={`rmap-industry-filter-row${showAllTags ? ' rmap-industry-filter-row--expanded' : ''}`}>
         <span className="rmap-industry-filter-label">CATEGORY</span>
-        <button
-          className="rmap-industry-scroll-btn"
-          onClick={() => scrollIndustries('left')}
-          aria-label="Scroll left"
+        <div
+          className={`rmap-industry-tags-scroll${showAllTags ? ' rmap-industry-tags-scroll--expanded' : ''}`}
+          ref={industryTagsRef}
         >
-          ‹
-        </button>
-        <div className="rmap-industry-tags-scroll" ref={industryTagsScrollRef}>
           <button
             className={`rmap-industry-tag rmap-industry-tag--all${selectedIndustries.size === 0 ? ' rmap-industry-tag--active' : ''}`}
             onClick={onClearAllIndustries}
@@ -477,14 +480,23 @@ function FilterBar({ selectedIndustries, onIndustryToggle, onClearAllIndustries 
               {ind}
             </button>
           ))}
+          {showAllTags && hasTagOverflow && (
+            <button
+              className="rmap-industry-tag rmap-industry-tag--more"
+              onClick={() => setShowAllTags(false)}
+            >
+              收起
+            </button>
+          )}
         </div>
-        <button
-          className="rmap-industry-scroll-btn"
-          onClick={() => scrollIndustries('right')}
-          aria-label="Scroll right"
-        >
-          ›
-        </button>
+        {!showAllTags && hasTagOverflow && (
+          <button
+            className="rmap-industry-tag rmap-industry-tag--more"
+            onClick={() => setShowAllTags(true)}
+          >
+            更多
+          </button>
+        )}
       </div>
     </div>
   );
