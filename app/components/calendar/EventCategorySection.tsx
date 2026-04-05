@@ -4,14 +4,9 @@ import { useState, useMemo, useCallback } from 'react';
 
 import MonthGrid from '@/app/components/calendar/MonthGrid';
 import WeekGrid from '@/app/components/calendar/WeekGrid';
-import { weekDays as rawWeekDays, aprilMonthData } from '@/app/data/earnings';
 import type { WeekDay } from '@/app/data/earnings';
 import type { AnyEvent } from '@/app/data/eventCategories';
 import { DAY_LABELS, MONTH_SHORT, MONTH_FULL, getDateLabel, getWeekStart } from '@/app/lib/calendarUtils';
-
-// Shared base calendar: all known days from earnings data
-const ALL_BASE_DAYS: WeekDay[] = [...rawWeekDays, ...aprilMonthData];
-const BASE_MAP = new Map<string, WeekDay>(ALL_BASE_DAYS.map((d) => [d.dateLabel, d]));
 
 function buildMonthDays(
   year: number,
@@ -83,14 +78,13 @@ function buildWeekDays(
     const d = new Date(weekStart);
     d.setDate(weekStart.getDate() + i);
     const dateLabel = getDateLabel(d);
-    const existing = BASE_MAP.get(dateLabel);
     const evts = eventsByDate[dateLabel] ?? [];
     days.push({
       dayLabel: DAY_LABELS[i],
       dateLabel,
       isToday: dateLabel === todayLabel,
-      companies: evts.length > 0 ? evts.map((e) => e.cellLabel) : existing?.companies,
-      companyCount: evts.length > 0 ? evts.length : 0,
+      companies: evts.map((e) => e.cellLabel),
+      companyCount: evts.length,
     });
   }
   return days;
