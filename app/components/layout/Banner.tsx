@@ -2,16 +2,34 @@
 
 import { useState, useEffect } from 'react';
 import { bannerSlides } from '@/app/data/banner';
+import { useBanner } from '@/app/contexts/BannerContext';
+
+function CloseIcon() {
+  return (
+    <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
+      <path
+        d="M4 4l8 8M12 4l-8 8"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
 
 export default function Banner() {
   const [current, setCurrent] = useState(0);
+  const { dismissed, dismissBanner } = useBanner();
 
   useEffect(() => {
+    if (dismissed) return;
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % bannerSlides.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [dismissed]);
+
+  if (dismissed) return null;
 
   return (
     <div className="banner-wrap">
@@ -27,17 +45,12 @@ export default function Banner() {
               {slide.linkText}
             </a>
           </span>
-          <div className="banner-dots">
-            {bannerSlides.map((_, dotIdx) => (
-              <button
-                key={dotIdx}
-                className={`banner-dot ${dotIdx === current ? 'active' : ''}`}
-                onClick={() => setCurrent(dotIdx)}
-              />
-            ))}
-          </div>
+          <button className="banner-close" onClick={dismissBanner} aria-label="關閉公告">
+            <CloseIcon />
+          </button>
         </div>
       ))}
     </div>
   );
 }
+

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
@@ -8,6 +9,20 @@ import { getCompanies, getStatement, STATEMENT_TABS } from '@/app/data/financial
 import type { CompanyInfo, StatementKey } from '@/app/data/financialData';
 
 // ─── Icons ───────────────────────────────────────────────────────────────────
+
+function BackArrowIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" width="14" height="14" aria-hidden="true">
+      <path
+        d="M10 3L5 8L10 13"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 function SearchIcon() {
   return (
@@ -140,6 +155,14 @@ export default function FinancialDataContent() {
         <Sidebar />
         <main className="main-content">
           <div className="fd-layout">
+            {/* ── Back navigation ── */}
+            <div className="fd-topbar">
+              <Link href="/market-data/" className="cp-back-btn">
+                <BackArrowIcon />
+                Back
+              </Link>
+            </div>
+
             {/* ── Search bar ── */}
             <div className="fd-search-bar">
               <div className="fd-search-wrap" ref={searchRef}>

@@ -244,6 +244,7 @@ input, select { font-family: var(--font); }
   overflow: hidden;
   height: 40px;
 }
+
 .banner-slide {
   display: none;
   align-items: center;
@@ -253,6 +254,7 @@ input, select { font-family: var(--font); }
   color: var(--c-white);
   font-size: 13.5px;
 }
+
 .banner-slide.active { display: flex; }
 .banner-label {
   font-size: 10px;
@@ -265,34 +267,45 @@ input, select { font-family: var(--font); }
   flex-shrink: 0;
   color: var(--c-white);
 }
+
 .banner-text {
   flex: 1;
   font-size: 13.5px;
   color: rgba(255,255,255,0.96);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
+
 .banner-link {
   color: var(--c-white);
   border-bottom: 1px solid rgba(255,255,255,0.55);
   transition: border-color 0.15s;
 }
+
 .banner-link:hover { border-bottom-color: var(--c-white); }
-.banner-dots {
+
+.banner-close {
   display: flex;
-  gap: 5px;
-  margin-left: 12px;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-}
-.banner-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.35);
-  cursor: pointer;
-  transition: background 0.2s;
+  width: 24px;
+  height: 24px;
   border: none;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  color: var(--c-white);
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-left: 8px;
   padding: 0;
 }
-.banner-dot.active { background: var(--c-white); }
+
+.banner-close:hover {
+  background: rgba(255,255,255,0.35);
+}
 
 /* ===== APP BODY ===== */
 .app-body {
@@ -10447,15 +10460,27 @@ input, select { font-family: var(--font); }
     padding: 16px 14px 32px;
   }
 
-  /* Banner adjustments */
+  /* Banner adjustments — allow content to wrap on mobile */
+  .banner-wrap {
+    height: auto;
+    min-height: 40px;
+    overflow: visible;
+  }
   .banner-slide {
     padding: 8px 14px;
     font-size: 12px;
     flex-wrap: wrap;
     gap: 4px;
+    height: auto;
+    min-height: 40px;
   }
   .banner-label {
     font-size: 10px;
+  }
+  .banner-text {
+    white-space: normal;
+    text-overflow: clip;
+    word-break: break-word;
   }
 
   /* Calendar header — wrap controls below title/nav on mobile */
@@ -10846,6 +10871,9 @@ input, select { font-family: var(--font); }
   .banner-slide {
     padding: 6px 10px;
     font-size: 11px;
+  }
+  .banner-label {
+    display: none;
   }
 
   /* Search dropdown */
@@ -12046,6 +12074,12 @@ input, select { font-family: var(--font); }
   flex-direction: column;
   gap: 0;
   min-height: 100%;
+}
+.fd-topbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 14px 24px 0;
 }
 .fd-search-bar {
   flex-shrink: 0;
