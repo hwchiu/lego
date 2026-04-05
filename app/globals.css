@@ -13934,6 +13934,10 @@ a.fd-hint-btn {
   white-space: normal;
   line-height: 1.5;
 }
+.td-unit {
+  font-size: 11px;
+  color: var(--c-text-3);
+}
 .ec-change {
   font-weight: 600;
   font-size: 12px;

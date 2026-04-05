@@ -150,7 +150,7 @@ function CommoditiesTable({ events }: { events: CommodityEvent[] }) {
           {events.map((e, i) => (
             <tr key={i}>
               <td className="td-symbol">{e.commodity}</td>
-              <td className="td-company" style={{ fontSize: 11 }}>{e.unit}</td>
+              <td className="td-company td-unit">{e.unit}</td>
               <td className="td-num">{e.price}</td>
               <td className="td-num">
                 <ChangePill value={e.change} />
