@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import type { CSSProperties, ReactNode, KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { useState, useCallback, useEffect } from 'react';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
@@ -246,12 +246,42 @@ function CustomerRevenueChart() {
 
 function DataInsightFlow() {
   const steps = [
-    { label: '原始\n數據', icon: '📥', color: '#e0f2fe', border: '#4fc3f7' },
-    { label: '清洗\n分類', icon: '🔍', color: '#f3e8ff', border: '#a78bfa' },
-    { label: '交叉\n分析', icon: '📊', color: '#fef9c3', border: '#fbbf24' },
-    { label: '趨勢\n識別', icon: '📈', color: '#dcfce7', border: '#4ade80' },
-    { label: '風險\n預警', icon: '⚠️', color: '#fee2e2', border: '#f87171' },
-    { label: '洞察\n報告', icon: '📋', color: '#e0f2fe', border: '#4fc3f7' },
+    {
+      label: '原始\n數據',
+      color: '#e0f2fe',
+      border: '#4fc3f7',
+      iconPath: 'M17 4v8M17 12l-4-4M17 12l4-4M8 3h-4v11h13',
+    },
+    {
+      label: '清洗\n分類',
+      color: '#f3e8ff',
+      border: '#a78bfa',
+      iconPath: 'M15 15a6 6 0 1 1-8.5-8.5A6 6 0 0 1 15 15ZM18 18l-3.5-3.5',
+    },
+    {
+      label: '交叉\n分析',
+      color: '#fef9c3',
+      border: '#fbbf24',
+      iconPath: 'M3 16h4v-6H3zM9 16h4V8H9zM15 16h4V4h-4zM2 17h18',
+    },
+    {
+      label: '趨勢\n識別',
+      color: '#dcfce7',
+      border: '#4ade80',
+      iconPath: 'M2 14l5-5 4 3 7-8M14 4h5v5',
+    },
+    {
+      label: '風險\n預警',
+      color: '#fee2e2',
+      border: '#f87171',
+      iconPath: 'M10 2L2 17h16L10 2ZM10 8v5M10 14.5v.5',
+    },
+    {
+      label: '洞察\n報告',
+      color: '#e0f2fe',
+      border: '#4fc3f7',
+      iconPath: 'M4 2h9l4 4v13H4V2ZM13 2v4h4M7 10h7M7 13h5',
+    },
   ];
   const W = 260,
     boxW = 34,
@@ -275,6 +305,9 @@ function DataInsightFlow() {
       {steps.map((s, i) => {
         const x = i * step + 1;
         const lines = s.label.split('\n');
+        const iconCx = x + boxW / 2;
+        const iconCy = 26;
+        const iconScale = 0.55; // scale 20-unit icon path to ~11px
         return (
           <g key={i}>
             <rect
@@ -287,9 +320,9 @@ function DataInsightFlow() {
               strokeWidth="1.5"
               rx="4"
             />
-            <text x={x + boxW / 2} y="30" textAnchor="middle" fontSize="13">
-              {s.icon}
-            </text>
+            <g transform={`translate(${iconCx - 10 * iconScale}, ${iconCy - 10 * iconScale}) scale(${iconScale})`}>
+              <path d={s.iconPath} stroke={s.border} strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            </g>
             {lines.map((line, li) => (
               <text
                 key={li}
@@ -369,7 +402,7 @@ function ProcessRoadmap() {
         );
       })}
       <text x="205" y="72" fontSize="7.5" fill="#fbbf24" fontWeight="700">
-        ⚡ 研發中
+        ◈ 研發中
       </text>
     </svg>
   );
@@ -645,11 +678,11 @@ function CoverIllustrationThumb() {
 // Flat SVG icon components (minimal line design)
 // ─────────────────────────────────────────────────────────────────
 
-const IC: React.CSSProperties = { display: 'inline', verticalAlign: 'middle' };
+const iconInlineStyle: CSSProperties = { display: 'inline', verticalAlign: 'middle' };
 
 function InsightIcon() {
   return (
-    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={IC}>
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={iconInlineStyle}>
       <path d="M7 1a4 4 0 0 1 2 7.46V10H5V8.46A4 4 0 0 1 7 1Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
       <path d="M5 11h4M5.5 12.5h3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
     </svg>
@@ -658,7 +691,7 @@ function InsightIcon() {
 
 function LinkIcon() {
   return (
-    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={IC}>
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={iconInlineStyle}>
       <path d="M5.5 8.5l3-3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
       <path d="M4 9.5 3 10.5a2 2 0 0 0 2.8 2.8l1.5-1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
       <path d="M10 4.5l1-1a2 2 0 0 0-2.8-2.8L6.7 2.2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
@@ -668,7 +701,7 @@ function LinkIcon() {
 
 function WarningIcon() {
   return (
-    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={IC}>
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={iconInlineStyle}>
       <path d="M7 2.5 1.5 12h11L7 2.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
       <path d="M7 6v3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
       <circle cx="7" cy="10.5" r="0.7" fill="currentColor" />
@@ -678,7 +711,7 @@ function WarningIcon() {
 
 function WrenchIcon() {
   return (
-    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={IC}>
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={iconInlineStyle}>
       <path d="M9.5 1.5a3 3 0 0 0-2 4.8L3 10.8a1.4 1.4 0 0 0 2 2l4.5-4.5A3 3 0 0 0 13.5 4l-1.7 1.5L10 4l1.5-2.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
     </svg>
   );
@@ -686,7 +719,7 @@ function WrenchIcon() {
 
 function TrendingUpIcon() {
   return (
-    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={IC}>
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={iconInlineStyle}>
       <path d="M1 10l3.5-3.5 2.5 2 5-5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M9 3h4v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
@@ -695,7 +728,7 @@ function TrendingUpIcon() {
 
 function TargetIcon() {
   return (
-    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={IC}>
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={iconInlineStyle}>
       <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.3" />
       <circle cx="7" cy="7" r="3" stroke="currentColor" strokeWidth="1.3" />
       <circle cx="7" cy="7" r="1.2" fill="currentColor" />
@@ -705,7 +738,7 @@ function TargetIcon() {
 
 function EyeIcon() {
   return (
-    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={IC}>
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={iconInlineStyle}>
       <path d="M1 7s2.5-4 6-4 6 4 6 4-2.5 4-6 4-6-4-6-4Z" stroke="currentColor" strokeWidth="1.3" />
       <circle cx="7" cy="7" r="2" stroke="currentColor" strokeWidth="1.3" />
     </svg>
@@ -714,7 +747,7 @@ function EyeIcon() {
 
 function ChartBarIcon() {
   return (
-    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={IC}>
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={iconInlineStyle}>
       <path d="M1 12h12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
       <rect x="2" y="6" width="2.5" height="6" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
       <rect x="5.75" y="3" width="2.5" height="9" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
@@ -1030,7 +1063,7 @@ function Page3SupplyChain() {
 }
 
 function Page4Markets() {
-  const segments: { iconNode: React.ReactNode; name: string; color: string; bg: string; points: string[] }[] = [
+  const segments: { iconNode: ReactNode; name: string; color: string; bg: string; points: string[] }[] = [
     {
       iconNode: <ChipIcon />,
       name: 'AI / HPC',
@@ -1281,24 +1314,25 @@ function Page6CustomerSupplier() {
           <DataInsightFlow />
           <div className="emp-subsection-title emp-subsection-title--mt">MIC 資訊整理能力總結</div>
           <div className="emp-capability-grid">
-            {(
-              [
+            {(() => {
+              const capabilities: { iconNode: ReactNode; title: string; desc: string }[] = [
                 { iconNode: <SyncIcon />, title: '跨領域整合', desc: '將經濟、政策、技術、市場四維數據交叉分析，形成完整情境判斷。' },
                 { iconNode: <SignalIcon />, title: '動態即時追蹤', desc: '持續監控 200+ 資訊源，重大事件 24 小時內完成預警更新。' },
                 { iconNode: <FolderIcon />, title: '系統性分類', desc: '六大資訊類型、三十個子類別，支援快速檢索與交叉分析。' },
                 { iconNode: <BoltIcon />, title: '預警機制', desc: '設定閾值觸發器，自動識別供應鏈斷鏈風險與市場異動訊號。' },
                 { iconNode: <DiamondIcon />, title: '決策賦能', desc: '每份報告附帶「決策建議」區塊，直接對應台積電戰略場景。' },
                 { iconNode: <ChartBarIcon />, title: '可視化呈現', desc: '複雜數據轉化為圖表與儀表板，降低閱讀門檻，提升洞察效率。' },
-              ] as { iconNode: React.ReactNode; title: string; desc: string }[]
-            ).map((c) => (
-              <div key={c.title} className="emp-capability-item">
-                <span className="emp-capability-icon">{c.iconNode}</span>
-                <div>
-                  <div className="emp-capability-title">{c.title}</div>
-                  <div className="emp-capability-desc">{c.desc}</div>
+              ];
+              return capabilities.map((c) => (
+                <div key={c.title} className="emp-capability-item">
+                  <span className="emp-capability-icon">{c.iconNode}</span>
+                  <div>
+                    <div className="emp-capability-title">{c.title}</div>
+                    <div className="emp-capability-desc">{c.desc}</div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ));
+            })()}
           </div>
         </div>
       </div>
@@ -1547,7 +1581,7 @@ function MicShelfCard({ issue, onOpen }: MicShelfCardProps) {
   }, [issue, onOpen]);
 
   const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
+    (e: ReactKeyboardEvent) => {
       if (issue.available && (e.key === 'Enter' || e.key === ' ')) {
         e.preventDefault();
         onOpen(issue.id);
