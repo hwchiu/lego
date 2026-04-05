@@ -1004,7 +1004,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
     const id =
       typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
         ? `view-${crypto.randomUUID()}`
-        : `view-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        : `view-${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
     const newView: CustomView = { id, name, columns, hidden: false };
     setCustomViews((prev) => [...prev, newView]);
     setViewOrder((prev) => [...prev, id]);
@@ -1614,7 +1614,8 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
             ) : customViews.some((v) => v.id === activeTab) ? (
               /* ── Custom View Table ─────────────────────────────────── */
               (() => {
-                const cv = customViews.find((v) => v.id === activeTab)!;
+                const cv = customViews.find((v) => v.id === activeTab);
+                if (!cv) return null;
                 const cols = cv.columns.filter((c) => ALL_COLUMNS[c]);
                 return (
                   <div className="wl-table-wrap">
