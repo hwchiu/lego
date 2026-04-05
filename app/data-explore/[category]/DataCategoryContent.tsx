@@ -5,6 +5,7 @@ import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
+import CategoryIcon from '@/app/components/CategoryIcon';
 import { CATEGORIES_MAP, DataItem } from '@/app/data/dataExplore';
 
 // ── helpers ────────────────────────────────────────────────────────────────────
@@ -15,19 +16,6 @@ function formatDate(iso: string): string {
 }
 
 // ── sub-components ─────────────────────────────────────────────────────────────
-
-function CategoryIcon({ paths }: { paths: string }) {
-  return (
-    <svg
-      width="28"
-      height="28"
-      viewBox="0 0 28 28"
-      fill="none"
-      aria-hidden="true"
-      dangerouslySetInnerHTML={{ __html: paths }}
-    />
-  );
-}
 
 function BackArrowIcon() {
   return (
@@ -190,7 +178,7 @@ export default function DataCategoryContent({ params }: { params: { category: st
                 </Link>
                 <div className="de-cat-hero-meta">
                   <div className="de-cat-hero-icon" style={{ background: 'rgba(255,255,255,0.1)', color: cat.color }}>
-                    <CategoryIcon paths={cat.icon} />
+                    <CategoryIcon paths={cat.icon} size={28} />
                   </div>
                   <div>
                     <div className="section-eyebrow">Data Explore</div>

@@ -7,6 +7,8 @@ import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { CATEGORIES, DataItem } from '@/app/data/dataExplore';
 
+import CategoryIcon from '@/app/components/CategoryIcon';
+
 // ── helpers ────────────────────────────────────────────────────────────────────
 
 function formatDate(iso: string): string {
@@ -32,19 +34,6 @@ function SearchIcon() {
       <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.6" />
       <path d="M14 14L18 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
-  );
-}
-
-function CategoryIcon({ paths }: { paths: string }) {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 28 28"
-      fill="none"
-      aria-hidden="true"
-      dangerouslySetInnerHTML={{ __html: paths }}
-    />
   );
 }
 
@@ -75,8 +64,7 @@ function CategoryCard({ slug, label, icon, color, description, count }: Category
   return (
     <Link href={`/data-explore/${slug}`} className="de-category-card">
       <div className="de-category-card-icon" style={{ background: `${color}1a`, color }}>
-        <CategoryIcon paths={icon} />
-      </div>
+        <CategoryIcon paths={icon} />      </div>
       <div className="de-category-card-body">
         <div className="de-category-card-label">{label}</div>
         <div className="de-category-card-desc">{description}</div>
