@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
@@ -13,6 +13,7 @@ import {
   aprilMonthData,
   dateEpsData,
   dateRevenueData,
+  usdToTwdRate,
 } from '@/app/data/earnings';
 import { getDateLabel } from '@/app/lib/calendarUtils';
 
@@ -25,10 +26,37 @@ const COMPANY_COUNT_MAP = new Map([
 
 export default function EventCalendarPage() {
   const [selectedDate, setSelectedDate] = useState<string>(() => getDateLabel(new Date()));
+  const [selectedSymbol, setSelectedSymbol] = useState<string>('');
+  const [currency, setCurrency] = useState<'USD' | 'NTD'>('USD');
 
-  const epsData = useMemo(() => dateEpsData[selectedDate] ?? [], [selectedDate]);
-  const revenueData = useMemo(() => dateRevenueData[selectedDate] ?? [], [selectedDate]);
-  const companyCount = useMemo(() => COMPANY_COUNT_MAP.get(selectedDate) ?? 0, [selectedDate]);
+  const handleSymbolSelect = useCallback((symbol: string) => {
+    setSelectedSymbol(symbol);
+  }, []);
+
+  const allEpsForDate = useMemo(() => dateEpsData[selectedDate] ?? [], [selectedDate]);
+  const allRevenueForDate = useMemo(() => dateRevenueData[selectedDate] ?? [], [selectedDate]);
+
+  // Filter by selected symbol when one is active
+  const epsData = useMemo(
+    () =>
+      selectedSymbol
+        ? allEpsForDate.filter((r) => r.symbol === selectedSymbol)
+        : allEpsForDate,
+    [allEpsForDate, selectedSymbol],
+  );
+
+  const revenueData = useMemo(
+    () =>
+      selectedSymbol
+        ? allRevenueForDate.filter((r) => r.symbol === selectedSymbol)
+        : allRevenueForDate,
+    [allRevenueForDate, selectedSymbol],
+  );
+
+  const companyCount = useMemo(() => {
+    if (selectedSymbol) return epsData.length;
+    return COMPANY_COUNT_MAP.get(selectedDate) ?? 0;
+  }, [selectedDate, selectedSymbol, epsData.length]);
 
   return (
     <>
@@ -40,12 +68,20 @@ export default function EventCalendarPage() {
           <div className="page-pad">
             <div className="section-eyebrow">Event Category</div>
             <MarketTabs />
-            <EarningsCalendarSection onDateSelect={setSelectedDate} />
+            <EarningsCalendarSection
+              onDateSelect={setSelectedDate}
+              selectedSymbol={selectedSymbol}
+              onSymbolSelect={handleSymbolSelect}
+              currency={currency}
+              onCurrencyChange={setCurrency}
+            />
             <DetailTable
               epsData={epsData}
               revenueData={revenueData}
               selectedDateLabel={selectedDate}
               companyCount={companyCount}
+              currency={currency}
+              usdToTwdRate={usdToTwdRate}
             />
           </div>
         </main>
