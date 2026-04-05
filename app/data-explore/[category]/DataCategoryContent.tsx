@@ -291,8 +291,11 @@ function TaiwanTaxNewsTab() {
   return (
     <div className="de-tax-news-wrap">
       <div className="de-tax-news-header">
-        <div className="de-tax-news-title">每週台灣稅務新聞整理</div>
-        <div className="de-tax-news-sub">整理台灣財政部、國稅局及各大會計師事務所最新稅務法令動態，共 {items.length} 則。</div>
+        <div className="de-tax-news-title">Weekly Taiwan Tax News Summary</div>
+        <div className="de-tax-news-sub">
+          Curated tax law updates from Taiwan&apos;s Ministry of Finance, National Tax Administration,
+          and major accounting firms — {items.length} items in total.
+        </div>
       </div>
       <div className="de-tax-news-grid">
         {items.map((item) => (
