@@ -6169,6 +6169,11 @@ input, select { font-family: var(--font); }
   border-radius: var(--radius-sm);
 }
 
+.de-category-card-icon svg {
+  width: 36px;
+  height: 36px;
+}
+
 .de-category-card-body {
   flex: 1;
   min-width: 0;

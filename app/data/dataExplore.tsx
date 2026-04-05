@@ -9,10 +9,11 @@ import { extractJson } from '@/app/lib/parseContent';
 
 // ── Category icon components ────────────────────────────────────────────────
 // Style matches RMAP / User Manual: 48×48 viewBox, stroke-based, rounded caps.
+// Width/height intentionally omitted — controlled by CSS at each usage site.
 
 function EsgIcon() {
   return (
-    <svg viewBox="0 0 48 48" fill="none" width="40" height="40" aria-hidden="true">
+    <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
       {/* Stem */}
       <path d="M24 40V26" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
       {/* Left leaf */}
@@ -39,7 +40,7 @@ function EsgIcon() {
 
 function GovernmentIcon() {
   return (
-    <svg viewBox="0 0 48 48" fill="none" width="40" height="40" aria-hidden="true">
+    <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
       {/* Pediment */}
       <path
         d="M8 22L24 8L40 22"
@@ -62,7 +63,7 @@ function GovernmentIcon() {
 
 function StandardsIcon() {
   return (
-    <svg viewBox="0 0 48 48" fill="none" width="40" height="40" aria-hidden="true">
+    <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
       {/* Shield */}
       <path
         d="M24 6L38 12V26C38 34 30 40 24 42C18 40 10 34 10 26V12L24 6Z"
@@ -85,7 +86,7 @@ function StandardsIcon() {
 
 function IndustryIcon() {
   return (
-    <svg viewBox="0 0 48 48" fill="none" width="40" height="40" aria-hidden="true">
+    <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
       {/* Chip body */}
       <rect x="14" y="14" width="20" height="20" rx="2" stroke="currentColor" strokeWidth="2" />
       {/* Left pins */}
@@ -104,7 +105,7 @@ function IndustryIcon() {
 
 function CompanyOpsIcon() {
   return (
-    <svg viewBox="0 0 48 48" fill="none" width="40" height="40" aria-hidden="true">
+    <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
       {/* Axes */}
       <path d="M10 8V40H42" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
       {/* Ascending bars */}
@@ -117,7 +118,7 @@ function CompanyOpsIcon() {
 
 function CapitalMarketsIcon() {
   return (
-    <svg viewBox="0 0 48 48" fill="none" width="40" height="40" aria-hidden="true">
+    <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
       {/* Axes */}
       <path d="M8 40H40" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
       <path d="M8 40V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
