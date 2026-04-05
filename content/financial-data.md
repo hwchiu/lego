@@ -1,6 +1,8 @@
 # Financial Data — TSMC Key Customers
 
-Financial statements for TSMC's 10 major customers. Data is for illustrative purposes; figures are approximate and based on publicly available annual and quarterly reports.
+**Disclaimer:** All financial figures below are sample/mock data for demonstration purposes only. They do not represent actual financial results and should not be used for investment decisions.
+
+Financial statements for TSMC's 10 major customers. Figures are approximate, illustrative, and based on publicly available annual and quarterly reports.
 
 ## Company List
 

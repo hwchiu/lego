@@ -56,8 +56,8 @@ function isSectionRow(row: string[]): boolean {
 /** Format a cell: colour negative numbers red, positive green for ratio/growth rows. */
 function CellValue({ value, colIdx }: { value: string; colIdx: number }) {
   if (colIdx === 0) return <>{value}</>;
-  const isNeg =
-    (value.startsWith('-') && value !== '-') || value === 'N/A';
+  if (value === 'N/A' || value === '—' || value === '') return <>{value}</>;
+  const isNeg = value.startsWith('-') && value !== '-';
   const isPos = value.startsWith('+') || (value.endsWith('%') && !value.startsWith('-') && parseFloat(value) > 0);
   if (isNeg) return <span className="fd-neg">{value}</span>;
   if (isPos) return <span className="fd-pos">{value}</span>;
@@ -196,7 +196,7 @@ export default function FinancialDataContent() {
                       <span className="fd-company-sector">{selected.sector}</span>
                       <span className="fd-company-cap">Market Cap: ~{selected.marketCap}</span>
                     </div>
-                    <p style={{ margin: '6px 0 0', fontSize: 12.5, color: 'var(--c-text-3)', lineHeight: 1.55 }}>
+                    <p className="fd-company-desc">
                       {selected.description}
                     </p>
                   </div>
