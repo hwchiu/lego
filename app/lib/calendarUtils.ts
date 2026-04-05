@@ -23,6 +23,12 @@ export function getWeekStart(date: Date): Date {
   return d;
 }
 
+/** Map a 3-letter short month name to its full name (e.g., "Apr" → "April"). */
+export function monthShortToFull(short: string): string {
+  const idx = MONTH_SHORT.indexOf(short);
+  return idx >= 0 ? MONTH_FULL[idx] : short;
+}
+
 export function truncateCompanies(companies: string[], maxLen = 20): string {
   const joined = companies.join(', ');
   if (joined.length <= maxLen) return joined;

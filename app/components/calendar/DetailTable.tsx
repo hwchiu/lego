@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { EpsRow, RevenueRow, BeatMiss } from '@/app/data/earnings';
+import { monthShortToFull } from '@/app/lib/calendarUtils';
 
 function BeatMissTag({ value }: { value: BeatMiss }) {
   if (!value) return <span className="td-na">—</span>;
@@ -146,17 +147,12 @@ export default function DetailTable({
 }) {
   const [activeTab, setActiveTab] = useState<'eps' | 'revenue'>('eps');
 
-  // Format the date label for display, e.g. "Apr 5" → "05 April, 2026"
+  // Format the date label for display, e.g. "Apr 5" → "05 April"
   const displayDate = selectedDateLabel
     ? (() => {
         const parts = selectedDateLabel.split(' ');
         const day = parts[1]?.padStart(2, '0') ?? '';
-        const monthNames: Record<string, string> = {
-          Jan: 'January', Feb: 'February', Mar: 'March', Apr: 'April',
-          May: 'May', Jun: 'June', Jul: 'July', Aug: 'August',
-          Sep: 'September', Oct: 'October', Nov: 'November', Dec: 'December',
-        };
-        const month = monthNames[parts[0]] ?? parts[0];
+        const month = monthShortToFull(parts[0]);
         return `${day} ${month}`;
       })()
     : '—';

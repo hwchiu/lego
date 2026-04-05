@@ -14,19 +14,14 @@ import {
   dateEpsData,
   dateRevenueData,
 } from '@/app/data/earnings';
-import { MONTH_SHORT } from '@/app/lib/calendarUtils';
+import { getDateLabel } from '@/app/lib/calendarUtils';
 
 // Build a unified lookup map for companyCount by dateLabel
 const ALL_DAYS = [...weekDays, ...aprilMonthData];
 const COMPANY_COUNT_MAP = new Map(ALL_DAYS.map((d) => [d.dateLabel, d.companyCount ?? 0]));
 
-function getTodayLabel(): string {
-  const today = new Date();
-  return `${MONTH_SHORT[today.getMonth()]} ${today.getDate()}`;
-}
-
 export default function EventCalendarPage() {
-  const [selectedDate, setSelectedDate] = useState<string>(getTodayLabel);
+  const [selectedDate, setSelectedDate] = useState<string>(() => getDateLabel(new Date()));
 
   const epsData = useMemo(() => dateEpsData[selectedDate] ?? [], [selectedDate]);
   const revenueData = useMemo(() => dateRevenueData[selectedDate] ?? [], [selectedDate]);
