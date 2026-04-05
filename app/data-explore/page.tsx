@@ -64,7 +64,8 @@ function CategoryCard({ slug, label, icon, color, description, count }: Category
   return (
     <Link href={`/data-explore/${slug}`} className="de-category-card">
       <div className="de-category-card-icon" style={{ background: `${color}1a`, color }}>
-        <CategoryIcon paths={icon} />      </div>
+        <CategoryIcon paths={icon} />
+      </div>
       <div className="de-category-card-body">
         <div className="de-category-card-label">{label}</div>
         <div className="de-category-card-desc">{description}</div>
