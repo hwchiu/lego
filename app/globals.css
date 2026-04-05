@@ -2261,6 +2261,58 @@ input, select { font-family: var(--font); }
   flex-shrink: 0;
 }
 
+/* ===== WATCHLIST HOLDINGS TAB ===== */
+.wl-holdings-kpis {
+  display: flex;
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.wl-holdings-kpi {
+  flex: 1;
+  padding: 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border-right: 1px solid var(--c-border);
+}
+.wl-holdings-kpi:last-child { border-right: none; }
+.wl-holdings-kpi-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--c-text-3);
+  white-space: nowrap;
+}
+.wl-holdings-kpi-value {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--c-text);
+  letter-spacing: -0.3px;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+.wl-holdings-kpi-pct {
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.wl-holdings-table { min-width: 1160px; }
+.wl-th--name { text-align: left; min-width: 160px; }
+.wl-company-name {
+  font-size: 12px;
+  color: var(--c-text-3);
+  text-align: left;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* ===== WATCHLIST MODAL OVERLAY ===== */
 .wl-modal-overlay {
   position: fixed;
@@ -11675,6 +11727,19 @@ input, select { font-family: var(--font); }
   .wl-action-btn-label {
     display: none;
   }
+
+  /* Watchlist Holdings KPI bar — wrap to 2-column grid on mobile */
+  .wl-holdings-kpis {
+    flex-wrap: wrap;
+  }
+  .wl-holdings-kpi {
+    flex: 1 1 calc(50% - 1px);
+    min-width: 140px;
+  }
+  .wl-holdings-kpi:nth-child(even) { border-right: none; }
+  .wl-holdings-kpi:nth-child(1),
+  .wl-holdings-kpi:nth-child(2) { border-bottom: 1px solid var(--c-border); }
+  .wl-holdings-kpi-value { font-size: 15px; }
 
   /* Watchlist indexes — horizontal touch-scroll, hide arrow buttons, hide sparkline */
   .wl-indexes-track {
