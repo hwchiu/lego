@@ -5,26 +5,28 @@ import { EpsRow, RevenueRow, BeatMiss } from '@/app/data/earnings';
 import { monthShortToFull } from '@/app/lib/calendarUtils';
 
 /**
- * Convert a formatted USD money string to NTD.
- * Handles formats: "$2.45", "−$0.06", "$82.4B", "$1.2T", "$428.7B", null/dash.
- * Returns the NTD string or the original if parsing fails.
+ * Matches optional sign characters in money strings:
+ *   \u2212 = Unicode minus sign (−), \u002D = ASCII hyphen-minus (-)
  */
-function convertToNtd(value: string | null, rate: number): string | null {
-  if (!value || value === '—') return value;
-  // Match: optional sign (− or -), $, numeric part, optional B/T suffix
-  const match = value.match(/^([\u2212-]?)\$([0-9,]+(?:\.[0-9]*)?)([BT]?)$/);
+const MONEY_SIGN_RE = /^([\u2212\u002D]?)\$([0-9,]+(?:\.[0-9]*)?)([BT]?)$/;
+
+/**
+ * Convert a formatted USD money string to NTD.
+ * Handles formats: "$2.45", "−$0.06", "$82.4B", "$1.2T", null/dash.
+ * Returns the NTD string, '—' for null/empty, or the original if parsing fails.
+ */
+function convertToNtd(value: string | null, rate: number): string {
+  if (!value || value === '—') return '—';
+  const match = value.match(MONEY_SIGN_RE);
   if (!match) return value;
   const sign = match[1] === '\u2212' ? '−' : match[1];
   const num = parseFloat(match[2].replace(/,/g, ''));
   const suffix = match[3];
   const converted = num * rate;
   // Format: no suffix → 2 decimals; with suffix → 1 decimal with thousands separator
-  let formatted: string;
-  if (suffix) {
-    formatted = converted.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-  } else {
-    formatted = converted.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  }
+  const formatted = suffix
+    ? converted.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+    : converted.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   return `${sign}NT$${formatted}${suffix}`;
 }
 
@@ -41,7 +43,7 @@ interface EpsTableProps {
 
 function EpsTable({ data, currency, rate }: EpsTableProps) {
   const cv = useCallback(
-    (v: string | null) => (currency === 'NTD' ? convertToNtd(v, rate) : v),
+    (v: string | null): string => (currency === 'NTD' ? convertToNtd(v, rate) : (v ?? '—')),
     [currency, rate],
   );
 
@@ -91,7 +93,7 @@ function EpsTable({ data, currency, rate }: EpsTableProps) {
               </td>
               <td className="td-num">{cv(row.epsGaap)}</td>
               <td className={`td-num ${row.epsActual ? '' : 'td-na'}`}>
-                {cv(row.epsActual) ?? '—'}
+                {cv(row.epsActual)}
               </td>
               <td className="td-num">
                 <BeatMissTag value={row.epsBeatMiss} />
@@ -118,7 +120,7 @@ interface RevenueTableProps {
 
 function RevenueTable({ data, currency, rate }: RevenueTableProps) {
   const cv = useCallback(
-    (v: string | null) => (currency === 'NTD' ? convertToNtd(v, rate) : v),
+    (v: string | null): string => (currency === 'NTD' ? convertToNtd(v, rate) : (v ?? '—')),
     [currency, rate],
   );
 
@@ -163,7 +165,7 @@ function RevenueTable({ data, currency, rate }: RevenueTableProps) {
               </td>
               <td className="td-num">{cv(row.revHighEst)}</td>
               <td className={`td-num ${row.revActual ? '' : 'td-na'}`}>
-                {cv(row.revActual) ?? '—'}
+                {cv(row.revActual)}
               </td>
               <td className="td-num">
                 <BeatMissTag value={row.revBeatMiss} />
