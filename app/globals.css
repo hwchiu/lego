@@ -14040,6 +14040,9 @@ a.fd-hint-btn {
   font-weight: 700;
   flex-shrink: 0;
   font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 
 /* Rate table (Page 2) */
@@ -14085,7 +14088,24 @@ a.fd-hint-btn {
   border-radius: var(--radius-sm);
   border: 1px solid var(--c-border);
 }
-.emp-policy-flag { font-size: 16px; flex-shrink: 0; line-height: 1.3; }
+.emp-policy-flag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 1.3;
+}
+.emp-policy-flag--text {
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #fff;
+  background: var(--c-text-3);
+  border-radius: 3px;
+  padding: 2px 5px;
+  min-width: 22px;
+  text-align: center;
+}
 .emp-policy-name { font-size: 11.5px; font-weight: 700; color: var(--c-text); margin-bottom: 2px; }
 .emp-policy-desc { font-size: 11px; color: var(--c-text-3); line-height: 1.5; }
 
@@ -14139,7 +14159,14 @@ a.fd-hint-btn {
   border: 1px solid #fed7aa;
   border-radius: var(--radius-sm);
 }
-.emp-supply-risk-icon { font-size: 16px; flex-shrink: 0; line-height: 1.3; }
+.emp-supply-risk-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+}
 .emp-supply-risk-title { font-size: 11.5px; font-weight: 700; color: var(--c-text); margin-bottom: 2px; }
 .emp-supply-risk-desc { font-size: 11px; color: var(--c-text-3); line-height: 1.5; }
 
@@ -14172,7 +14199,13 @@ a.fd-hint-btn {
   align-items: center;
   gap: 6px;
 }
-.emp-segment-icon { font-size: 15px; }
+.emp-segment-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: currentColor;
+}
 .emp-segment-name { font-size: 12px; font-weight: 700; }
 .emp-segment-points {
   list-style: none;
@@ -14297,19 +14330,41 @@ a.fd-hint-btn {
   border-radius: var(--radius-sm);
   align-items: flex-start;
 }
-.emp-capability-icon { font-size: 16px; flex-shrink: 0; line-height: 1.3; }
+.emp-capability-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 1px;
+  color: var(--c-text-3);
+}
 .emp-capability-title { font-size: 11.5px; font-weight: 700; color: var(--c-text); margin-bottom: 2px; }
 .emp-capability-desc { font-size: 10.5px; color: var(--c-text-3); line-height: 1.5; }
 
 /* Cover page (Page 1) */
 .emp-page-wrap--cover { background: var(--c-white); }
-.emp-cover-deco { flex-shrink: 0; }
-.emp-cover-body {
+.emp-cover-brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px 0;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.emp-cover-illus-wrap {
   flex: 1;
-  padding: 16px 24px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 28px 10px;
+  min-height: 180px;
+}
+.emp-cover-body {
+  padding: 0 20px 8px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 .emp-cover-eyebrow {
   font-size: 10px;
@@ -14840,6 +14895,20 @@ a.fd-hint-btn {
   font-weight: 600;
   color: rgba(255, 255, 255, 0.72);
   margin-top: 2px;
+}
+.emp-shelf-card-cover-illus {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 4px 2px;
+}
+.emp-shelf-card-cover-illus svg {
+  width: 100%;
+  height: auto;
+  max-height: 95px;
+  border-radius: 4px;
 }
 .emp-shelf-card-coming-soon {
   position: absolute;

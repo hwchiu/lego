@@ -1,5 +1,6 @@
 'use client';
 
+import type { CSSProperties, ReactNode, KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { useState, useCallback, useEffect } from 'react';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
@@ -245,12 +246,42 @@ function CustomerRevenueChart() {
 
 function DataInsightFlow() {
   const steps = [
-    { label: '原始\n數據', icon: '📥', color: '#e0f2fe', border: '#4fc3f7' },
-    { label: '清洗\n分類', icon: '🔍', color: '#f3e8ff', border: '#a78bfa' },
-    { label: '交叉\n分析', icon: '📊', color: '#fef9c3', border: '#fbbf24' },
-    { label: '趨勢\n識別', icon: '📈', color: '#dcfce7', border: '#4ade80' },
-    { label: '風險\n預警', icon: '⚠️', color: '#fee2e2', border: '#f87171' },
-    { label: '洞察\n報告', icon: '📋', color: '#e0f2fe', border: '#4fc3f7' },
+    {
+      label: '原始\n數據',
+      color: '#e0f2fe',
+      border: '#4fc3f7',
+      iconPath: 'M17 4v8M17 12l-4-4M17 12l4-4M8 3h-4v11h13',
+    },
+    {
+      label: '清洗\n分類',
+      color: '#f3e8ff',
+      border: '#a78bfa',
+      iconPath: 'M15 15a6 6 0 1 1-8.5-8.5A6 6 0 0 1 15 15ZM18 18l-3.5-3.5',
+    },
+    {
+      label: '交叉\n分析',
+      color: '#fef9c3',
+      border: '#fbbf24',
+      iconPath: 'M3 16h4v-6H3zM9 16h4V8H9zM15 16h4V4h-4zM2 17h18',
+    },
+    {
+      label: '趨勢\n識別',
+      color: '#dcfce7',
+      border: '#4ade80',
+      iconPath: 'M2 14l5-5 4 3 7-8M14 4h5v5',
+    },
+    {
+      label: '風險\n預警',
+      color: '#fee2e2',
+      border: '#f87171',
+      iconPath: 'M10 2L2 17h16L10 2ZM10 8v5M10 14.5v.5',
+    },
+    {
+      label: '洞察\n報告',
+      color: '#e0f2fe',
+      border: '#4fc3f7',
+      iconPath: 'M4 2h9l4 4v13H4V2ZM13 2v4h4M7 10h7M7 13h5',
+    },
   ];
   const W = 260,
     boxW = 34,
@@ -274,6 +305,9 @@ function DataInsightFlow() {
       {steps.map((s, i) => {
         const x = i * step + 1;
         const lines = s.label.split('\n');
+        const iconCx = x + boxW / 2;
+        const iconCy = 26;
+        const iconScale = 0.55; // scale 20-unit icon path to ~11px
         return (
           <g key={i}>
             <rect
@@ -286,9 +320,9 @@ function DataInsightFlow() {
               strokeWidth="1.5"
               rx="4"
             />
-            <text x={x + boxW / 2} y="30" textAnchor="middle" fontSize="13">
-              {s.icon}
-            </text>
+            <g transform={`translate(${iconCx - 10 * iconScale}, ${iconCy - 10 * iconScale}) scale(${iconScale})`}>
+              <path d={s.iconPath} stroke={s.border} strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            </g>
             {lines.map((line, li) => (
               <text
                 key={li}
@@ -368,7 +402,7 @@ function ProcessRoadmap() {
         );
       })}
       <text x="205" y="72" fontSize="7.5" fill="#fbbf24" fontWeight="700">
-        ⚡ 研發中
+        ◈ 研發中
       </text>
     </svg>
   );
@@ -474,197 +508,337 @@ function IndustryChainDiagram() {
   );
 }
 
-function CoverDecoration() {
-  const nodes: [number, number][] = [
-    [182, 38], [218, 28], [256, 44], [286, 30], [200, 68], [240, 58], [270, 78], [290, 58],
-    [188, 98], [228, 90], [262, 108], [285, 92],
+// ─────────────────────────────────────────────────────────────────
+// Cover illustration — clean editorial tech art (no charts/numbers)
+// ─────────────────────────────────────────────────────────────────
+
+function CoverIllustration() {
+  const cx = 140,
+    cy = 100;
+  const orbitR = 62;
+  const nodeAnglesDeg = [0, 60, 120, 180, 240, 300];
+  const nodes = nodeAnglesDeg.map((deg) => {
+    const a = (deg - 90) * (Math.PI / 180);
+    return { x: cx + Math.cos(a) * orbitR, y: cy + Math.sin(a) * orbitR };
+  });
+  const cardinals = [0, 90, 180, 270].map((deg) => {
+    const a = deg * (Math.PI / 180);
+    return { x: cx + Math.cos(a) * 30, y: cy + Math.sin(a) * 30 };
+  });
+  const ticks = Array.from({ length: 24 }).map((_, i) => {
+    const a = (i / 24) * 2 * Math.PI - Math.PI / 2;
+    const isMajor = i % 6 === 0;
+    const r1 = 81;
+    const r2 = r1 + (isMajor ? 6 : 3);
+    return { x1: cx + Math.cos(a) * r1, y1: cy + Math.sin(a) * r1, x2: cx + Math.cos(a) * r2, y2: cy + Math.sin(a) * r2, isMajor };
+  });
+  const hexCenters: [number, number][] = [
+    [cx - 12, cy - 7], [cx, cy - 14], [cx + 12, cy - 7],
+    [cx - 12, cy + 7], [cx, cy + 14], [cx + 12, cy + 7],
+    [cx, cy],
   ];
-  const edges: [number, number][] = [
-    [0, 1], [1, 2], [2, 3], [0, 4], [1, 4], [1, 5], [2, 5], [2, 6], [3, 6], [3, 7],
-    [4, 8], [5, 8], [5, 9], [6, 9], [6, 10], [7, 10], [7, 11], [9, 10], [10, 11],
-  ];
-  const bars = [
-    { label: 'AI / ML', pct: 88, val: '+34%', color: '#4fc3f7', grad: 'url(#cov-g1)' },
-    { label: 'HPC', pct: 66, val: '+22%', color: '#818cf8', grad: 'url(#cov-g2)' },
-    { label: 'Auto', pct: 74, val: '+18%', color: '#34d399', grad: 'url(#cov-g3)' },
-    { label: 'IoT', pct: 52, val: '+11%', color: '#fbbf24', grad: 'url(#cov-g4)' },
-  ];
-  const trendPts = [[14, 162], [35, 155], [58, 157], [82, 147], [105, 140], [128, 133], [150, 125]];
-  const trendPath = trendPts.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x} ${y}`).join(' ');
 
   return (
-    <svg viewBox="0 0 300 210" width="100%" height="210" aria-hidden="true">
+    <svg viewBox="0 0 280 200" width="100%" height="200" aria-hidden="true">
       <defs>
-        <linearGradient id="cov-bg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#07111f" />
-          <stop offset="100%" stopColor="#0d1b2e" />
-        </linearGradient>
-        <linearGradient id="cov-g1" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#4fc3f7" />
-          <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0.5" />
-        </linearGradient>
-        <linearGradient id="cov-g2" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#818cf8" />
-          <stop offset="100%" stopColor="#4f46e5" stopOpacity="0.5" />
-        </linearGradient>
-        <linearGradient id="cov-g3" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#34d399" />
-          <stop offset="100%" stopColor="#059669" stopOpacity="0.5" />
-        </linearGradient>
-        <linearGradient id="cov-g4" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#fbbf24" />
-          <stop offset="100%" stopColor="#d97706" stopOpacity="0.5" />
-        </linearGradient>
-        <linearGradient id="cov-divider" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#4fc3f7" stopOpacity="0.5" />
+        <radialGradient id="il-bg" cx="50%" cy="50%" r="70%">
+          <stop offset="0%" stopColor="#0f2a4a" />
+          <stop offset="100%" stopColor="#07111f" />
+        </radialGradient>
+        <radialGradient id="il-glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#4fc3f7" stopOpacity="0.45" />
           <stop offset="100%" stopColor="#4fc3f7" stopOpacity="0" />
-        </linearGradient>
+        </radialGradient>
       </defs>
 
       {/* Background */}
-      <rect width="300" height="210" fill="url(#cov-bg)" />
+      <rect width="280" height="200" fill="url(#il-bg)" rx="8" />
 
-      {/* Right panel — 3D Fabric topology */}
-      {/* Perspective depth grid */}
-      {[0, 1, 2, 3, 4, 5, 6].map((i) => {
-        const y = 10 + i * 28;
-        return (
-          <line
-            key={`fg${i}`}
-            x1="160"
-            y1={y}
-            x2="300"
-            y2={y}
-            stroke="#1e3a5f"
-            strokeWidth="0.4"
-            opacity={0.2 + i * 0.04}
-          />
-        );
-      })}
-      {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
-        const x2 = 165 + i * 20;
-        return (
-          <line key={`fv${i}`} x1="228" y1="0" x2={x2} y2="210" stroke="#1e3a5f" strokeWidth="0.3" opacity="0.18" />
-        );
-      })}
-      {/* Mesh edges */}
-      {edges.map(([a, b], i) => (
+      {/* Subtle dot grid */}
+      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) =>
+        [0, 1, 2, 3, 4, 5, 6].map((j) => (
+          <circle key={`d${i}-${j}`} cx={14 + i * 28} cy={14 + j * 28} r="0.7" fill="#2563eb" opacity="0.22" />
+        )),
+      )}
+
+      {/* Outer precision ring */}
+      <circle cx={cx} cy={cy} r="87" fill="none" stroke="#4fc3f7" strokeWidth="0.4" opacity="0.18" />
+
+      {/* Tick marks */}
+      {ticks.map((t, i) => (
         <line
-          key={`e${i}`}
-          x1={nodes[a][0]}
-          y1={nodes[a][1]}
-          x2={nodes[b][0]}
-          y2={nodes[b][1]}
+          key={`tick${i}`}
+          x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2}
           stroke="#4fc3f7"
-          strokeWidth="0.7"
-          opacity="0.35"
+          strokeWidth={t.isMajor ? '0.8' : '0.5'}
+          opacity={t.isMajor ? '0.5' : '0.22'}
         />
       ))}
-      {/* Mesh nodes */}
-      {nodes.map(([cx, cy], i) => (
-        <g key={`n${i}`}>
-          <circle cx={cx} cy={cy} r="4.5" fill="none" stroke="#4fc3f7" strokeWidth="0.5" opacity="0.25" />
-          <circle cx={cx} cy={cy} r="2.5" fill="#4fc3f7" opacity="0.75" />
+
+      {/* Connection lines center → nodes */}
+      {nodes.map((n, i) => (
+        <line key={`cl${i}`} x1={cx} y1={cy} x2={n.x} y2={n.y} stroke="#4fc3f7" strokeWidth="0.45" opacity="0.22" />
+      ))}
+
+      {/* Orbit ring */}
+      <circle cx={cx} cy={cy} r={orbitR} fill="none" stroke="#4fc3f7" strokeWidth="0.6" strokeDasharray="3 5" opacity="0.32" />
+
+      {/* Orbital nodes */}
+      {nodes.map((n, i) => (
+        <g key={`node${i}`}>
+          <circle cx={n.x} cy={n.y} r="5.5" fill="#0f2a4a" stroke="#4fc3f7" strokeWidth="0.9" opacity="0.9" />
+          <circle cx={n.x} cy={n.y} r="2" fill="#7dd3fc" opacity="0.9" />
         </g>
       ))}
-      {/* 3D FABRIC label */}
-      <text
-        x="232"
-        y="148"
-        textAnchor="middle"
-        fontSize="7"
-        fill="#4fc3f7"
-        fontFamily="monospace"
-        fontWeight="700"
-        opacity="0.55"
-        letterSpacing="2"
-      >
-        3D FABRIC
-      </text>
-      <text
-        x="232"
-        y="159"
-        textAnchor="middle"
-        fontSize="5.5"
-        fill="#4fc3f7"
-        fontFamily="monospace"
-        opacity="0.4"
-        letterSpacing="2.5"
-      >
-        TOPOLOGY
-      </text>
 
-      {/* Divider */}
-      <line x1="158" y1="8" x2="158" y2="202" stroke="url(#cov-divider)" strokeWidth="0.8" />
+      {/* Middle ring */}
+      <circle cx={cx} cy={cy} r="30" fill="none" stroke="#4fc3f7" strokeWidth="1.2" opacity="0.38" />
 
-      {/* Left panel — Market Intelligence */}
-      {/* Panel header */}
-      <text
-        x="10"
-        y="18"
-        fontSize="6.5"
-        fill="#4fc3f7"
-        fontFamily="monospace"
-        fontWeight="700"
-        letterSpacing="1.8"
-        opacity="0.9"
-      >
-        MARKET INTELLIGENCE
-      </text>
-      <line x1="10" y1="22" x2="148" y2="22" stroke="#4fc3f7" strokeWidth="0.5" opacity="0.4" />
-
-      {/* Bar chart grid lines */}
-      {[0, 1, 2, 3].map((i) => (
-        <line key={`bg${i}`} x1="44" y1={36 + i * 29} x2="148" y2={36 + i * 29} stroke="#1e3a5f" strokeWidth="0.5" />
+      {/* Cardinal diamond accents */}
+      {cardinals.map((c, i) => (
+        <g key={`card${i}`} transform={`translate(${c.x},${c.y}) rotate(45)`}>
+          <rect x="-2.5" y="-2.5" width="5" height="5" fill="#4fc3f7" opacity="0.55" />
+        </g>
       ))}
-      {/* Bars */}
-      {bars.map((b, i) => {
-        const y = 39 + i * 29;
-        const barW = (b.pct / 100) * 94;
-        const valX = 44 + barW + 3;
-        return (
-          <g key={`bar${i}`}>
-            <rect x="44" y={y} width={barW} height="14" fill={b.grad} rx="2" />
-            <text x="40" y={y + 10} textAnchor="end" fontSize="6.5" fill="#94a3b8" fontFamily="monospace">
-              {b.label}
-            </text>
-            <text x={valX} y={y + 10} fontSize="6.5" fill={b.color} fontFamily="monospace" fontWeight="700">
-              {b.val}
-            </text>
-          </g>
-        );
+
+      {/* Core glow */}
+      <circle cx={cx} cy={cy} r="24" fill="url(#il-glow)" />
+
+      {/* Chip-like hex grid in core */}
+      {hexCenters.map(([hx, hy], i) => {
+        const s = 6;
+        const pts = Array.from({ length: 6 })
+          .map((_, j) => {
+            const a = (j * 60 - 30) * (Math.PI / 180);
+            return `${hx + s * Math.cos(a)},${hy + s * Math.sin(a)}`;
+          })
+          .join(' ');
+        return <polygon key={`hex${i}`} points={pts} fill="none" stroke="#4fc3f7" strokeWidth="0.6" opacity="0.38" />;
       })}
 
-      {/* Trend line */}
-      <path d={trendPath} stroke="#4fc3f7" strokeWidth="1.5" fill="none" opacity="0.8" />
-      {trendPts.map(([x, y], i) => (
-        <circle key={`tp${i}`} cx={x} cy={y} r="2" fill="#4fc3f7" opacity="0.9" />
-      ))}
+      {/* Center glow dot */}
+      <circle cx={cx} cy={cy} r="9" fill="#4fc3f7" opacity="0.18" />
+      <circle cx={cx} cy={cy} r="4.5" fill="#4fc3f7" opacity="0.7" />
+      <circle cx={cx} cy={cy} r="1.8" fill="#e0f7fa" />
 
-      {/* KPI cards */}
-      {[
-        { x: 10, label: 'TAM 2025', val: '$620B', color: '#4fc3f7' },
-        { x: 66, label: 'CAGR', val: '8.4%', color: '#34d399' },
-        { x: 118, label: 'Coverage', val: '48 Co.', color: '#fbbf24' },
-      ].map((kpi, i) => (
-        <g key={`kpi${i}`}>
-          <rect x={kpi.x} y="175" width="48" height="26" fill="#1e3a5f" opacity="0.45" rx="3" />
-          <text x={kpi.x + 24} y="185" textAnchor="middle" fontSize="6" fill="#94a3b8" fontFamily="monospace">
-            {kpi.label}
-          </text>
-          <text
-            x={kpi.x + 24}
-            y="196"
-            textAnchor="middle"
-            fontSize="8.5"
-            fill={kpi.color}
-            fontFamily="monospace"
-            fontWeight="700"
-          >
-            {kpi.val}
-          </text>
+      {/* Watermark text */}
+      <text x={cx} y="193" textAnchor="middle" fontSize="6" fill="#4fc3f7" opacity="0.3" fontFamily="monospace" letterSpacing="2">
+        INTELLIGENCE · ANALYTICS
+      </text>
+    </svg>
+  );
+}
+
+// Compact thumbnail for bookshelf card
+function CoverIllustrationThumb() {
+  const cx = 60,
+    cy = 55;
+  const orbitR = 28;
+  const nodeAnglesDeg = [0, 60, 120, 180, 240, 300];
+  const nodes = nodeAnglesDeg.map((deg) => {
+    const a = (deg - 90) * (Math.PI / 180);
+    return { x: cx + Math.cos(a) * orbitR, y: cy + Math.sin(a) * orbitR };
+  });
+  const cardinals = [0, 90, 180, 270].map((deg) => {
+    const a = deg * (Math.PI / 180);
+    return { x: cx + Math.cos(a) * 13, y: cy + Math.sin(a) * 13 };
+  });
+  return (
+    <svg viewBox="0 0 120 110" width="100%" aria-hidden="true">
+      <defs>
+        <radialGradient id="th-glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#4fc3f7" stopOpacity="0.45" />
+          <stop offset="100%" stopColor="#4fc3f7" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <circle cx={cx} cy={cy} r={orbitR} fill="none" stroke="#4fc3f7" strokeWidth="0.5" strokeDasharray="2 4" opacity="0.45" />
+      {nodes.map((n, i) => (
+        <g key={`tn${i}`}>
+          <circle cx={n.x} cy={n.y} r="3" fill="none" stroke="#4fc3f7" strokeWidth="0.7" opacity="0.8" />
+          <circle cx={n.x} cy={n.y} r="1.2" fill="#7dd3fc" opacity="0.9" />
         </g>
       ))}
+      {nodes.map((n, i) => (
+        <line key={`tl${i}`} x1={cx} y1={cy} x2={n.x} y2={n.y} stroke="#4fc3f7" strokeWidth="0.4" opacity="0.25" />
+      ))}
+      <circle cx={cx} cy={cy} r="13" fill="none" stroke="#4fc3f7" strokeWidth="0.8" opacity="0.4" />
+      {cardinals.map((c, i) => (
+        <g key={`tc${i}`} transform={`translate(${c.x},${c.y}) rotate(45)`}>
+          <rect x="-1.5" y="-1.5" width="3" height="3" fill="#4fc3f7" opacity="0.5" />
+        </g>
+      ))}
+      <circle cx={cx} cy={cy} r="10" fill="url(#th-glow)" />
+      <circle cx={cx} cy={cy} r="4" fill="#4fc3f7" opacity="0.7" />
+      <circle cx={cx} cy={cy} r="1.5" fill="#e0f7fa" />
+    </svg>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Flat SVG icon components (minimal line design)
+// ─────────────────────────────────────────────────────────────────
+
+const iconInlineStyle: CSSProperties = { display: 'inline', verticalAlign: 'middle' };
+
+function InsightIcon() {
+  return (
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={iconInlineStyle}>
+      <path d="M7 1a4 4 0 0 1 2 7.46V10H5V8.46A4 4 0 0 1 7 1Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+      <path d="M5 11h4M5.5 12.5h3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function LinkIcon() {
+  return (
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={iconInlineStyle}>
+      <path d="M5.5 8.5l3-3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <path d="M4 9.5 3 10.5a2 2 0 0 0 2.8 2.8l1.5-1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <path d="M10 4.5l1-1a2 2 0 0 0-2.8-2.8L6.7 2.2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function WarningIcon() {
+  return (
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={iconInlineStyle}>
+      <path d="M7 2.5 1.5 12h11L7 2.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+      <path d="M7 6v3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <circle cx="7" cy="10.5" r="0.7" fill="currentColor" />
+    </svg>
+  );
+}
+
+function WrenchIcon() {
+  return (
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={iconInlineStyle}>
+      <path d="M9.5 1.5a3 3 0 0 0-2 4.8L3 10.8a1.4 1.4 0 0 0 2 2l4.5-4.5A3 3 0 0 0 13.5 4l-1.7 1.5L10 4l1.5-2.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function TrendingUpIcon() {
+  return (
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={iconInlineStyle}>
+      <path d="M1 10l3.5-3.5 2.5 2 5-5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9 3h4v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function TargetIcon() {
+  return (
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={iconInlineStyle}>
+      <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.3" />
+      <circle cx="7" cy="7" r="3" stroke="currentColor" strokeWidth="1.3" />
+      <circle cx="7" cy="7" r="1.2" fill="currentColor" />
+    </svg>
+  );
+}
+
+function EyeIcon() {
+  return (
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={iconInlineStyle}>
+      <path d="M1 7s2.5-4 6-4 6 4 6 4-2.5 4-6 4-6-4-6-4Z" stroke="currentColor" strokeWidth="1.3" />
+      <circle cx="7" cy="7" r="2" stroke="currentColor" strokeWidth="1.3" />
+    </svg>
+  );
+}
+
+function ChartBarIcon() {
+  return (
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" style={iconInlineStyle}>
+      <path d="M1 12h12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <rect x="2" y="6" width="2.5" height="6" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
+      <rect x="5.75" y="3" width="2.5" height="9" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
+      <rect x="9.5" y="8" width="2.5" height="4" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
+    </svg>
+  );
+}
+
+// Larger icons for segment/capability cards
+function ChipIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" width="18" height="18" aria-hidden="true">
+      <rect x="3.5" y="3.5" width="9" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M6 7.5h1.5M8.5 7.5H10M6 9h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M6 1v2.5M10 1v2.5M6 12.5V15M10 12.5V15M1 6h2.5M12.5 6H15M1 10h2.5M12.5 10H15" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function PhoneIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" width="18" height="18" aria-hidden="true">
+      <rect x="4" y="1" width="8" height="14" rx="2.5" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M6.5 12h3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function CarIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" width="18" height="18" aria-hidden="true">
+      <path d="M2 9 3.8 5h8.4L14 9v3H2V9Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+      <circle cx="5" cy="12.5" r="1.2" stroke="currentColor" strokeWidth="1.2" />
+      <circle cx="11" cy="12.5" r="1.2" stroke="currentColor" strokeWidth="1.2" />
+      <path d="M6 5l-1 4M10 5l1 4" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+    </svg>
+  );
+}
+
+function GlobeIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" width="18" height="18" aria-hidden="true">
+      <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M8 1.5C6.5 3.5 5.5 5.5 5.5 8s1 4.5 2.5 6.5M8 1.5c1.5 2 2.5 4 2.5 6.5s-1 4.5-2.5 6.5" stroke="currentColor" strokeWidth="1.1" />
+      <path d="M1.5 8h13M2.5 5h11M2.5 11h11" stroke="currentColor" strokeWidth="1" opacity="0.65" />
+    </svg>
+  );
+}
+
+function SyncIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" width="18" height="18" aria-hidden="true">
+      <path d="M13 8A5 5 0 0 1 5 12.2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <path d="M3 8a5 5 0 0 1 8-3.8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <path d="M14.5 6 13 8l-2-1.5M1.5 10 3 8l2 1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function SignalIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" width="18" height="18" aria-hidden="true">
+      <circle cx="8" cy="9.5" r="1.8" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M5 12A4 4 0 0 1 5 7M11 12A4 4 0 0 0 11 7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <path d="M2.5 14A7 7 0 0 1 2.5 5M13.5 14A7 7 0 0 0 13.5 5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function FolderIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" width="18" height="18" aria-hidden="true">
+      <path d="M1.5 5v8h13V5H8L6 3H1.5V5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+      <path d="M5 8.5h6M5 11h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.7" />
+    </svg>
+  );
+}
+
+function BoltIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" width="18" height="18" aria-hidden="true">
+      <path d="M10.5 1.5 5 8.5h5.5L5.5 14.5l9-8H9l1.5-5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function DiamondIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" width="18" height="18" aria-hidden="true">
+      <path d="M3 4h10l2 4-7 6-7-6 2-4Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+      <path d="M1 8h14" stroke="currentColor" strokeWidth="1.1" />
     </svg>
   );
 }
@@ -684,17 +858,19 @@ function Page1Cover() {
   ];
   return (
     <div className="emp-page-wrap emp-page-wrap--cover">
-      <div className="emp-cover-deco">
-        <CoverDecoration />
-      </div>
-      <div className="emp-cover-body">
+      <div className="emp-cover-brand">
         <div className="emp-cover-eyebrow">MIC PICKS · 情報電子報</div>
-        <h1 className="emp-cover-title">半導體產業<br />深度洞察</h1>
         <div className="emp-cover-meta">
           <span className="emp-cover-vol">Vol. 1</span>
           <span className="emp-cover-dot">·</span>
           <span className="emp-cover-issue">2025 年第一季</span>
         </div>
+      </div>
+      <div className="emp-cover-illus-wrap">
+        <CoverIllustration />
+      </div>
+      <div className="emp-cover-body">
+        <h1 className="emp-cover-title">半導體產業<br />深度洞察</h1>
         <div className="emp-cover-divider" />
         <p className="emp-cover-tagline">
           整合全球宏觀數據、產業鏈動態與競爭情報，<br />
@@ -742,7 +918,7 @@ function Page2Macro() {
           <div className="emp-subsection-title">GDP 增長預測</div>
           <GdpBarChart />
           <div className="emp-insight-box emp-insight-box--blue">
-            <span className="emp-insight-label">💡 洞察</span>
+            <span className="emp-insight-label"><InsightIcon /> 洞察</span>
             <span>
               印度6.5%高速增長預示半導體需求新動能；中國4.6%放緩需關注訂單結構調整。
             </span>
@@ -772,21 +948,21 @@ function Page2Macro() {
           <div className="emp-subsection-title emp-subsection-title--mt">政策解讀摘要</div>
           <div className="emp-policy-list">
             <div className="emp-policy-item">
-              <span className="emp-policy-flag">🇺🇸</span>
+              <span className="emp-policy-flag emp-policy-flag--text">US</span>
               <div>
                 <div className="emp-policy-name">《晶片與科學法》補貼計畫</div>
                 <div className="emp-policy-desc">提供 527 億美元補貼，台積電亞利桑那廠已獲批 66 億美元直接資金。</div>
               </div>
             </div>
             <div className="emp-policy-item">
-              <span className="emp-policy-flag">🇪🇺</span>
+              <span className="emp-policy-flag emp-policy-flag--text">EU</span>
               <div>
                 <div className="emp-policy-name">歐洲晶片法案</div>
                 <div className="emp-policy-desc">目標2030年達全球20%市占率，德國、法國積極招商建廠。</div>
               </div>
             </div>
             <div className="emp-policy-item">
-              <span className="emp-policy-flag">🇯🇵</span>
+              <span className="emp-policy-flag emp-policy-flag--text">JP</span>
               <div>
                 <div className="emp-policy-name">日本半導體振興計畫</div>
                 <div className="emp-policy-desc">補助台積電熊本廠建設，目標恢復日本先進晶圓製造能力。</div>
@@ -833,7 +1009,7 @@ function Page3SupplyChain() {
           <div className="emp-subsection-title">產業鏈全覽</div>
           <IndustryChainDiagram />
           <div className="emp-insight-box emp-insight-box--amber">
-            <span className="emp-insight-label">🔗 關鍵節點</span>
+            <span className="emp-insight-label"><LinkIcon /> 關鍵節點</span>
             <span>ASML High-NA EUV 設備交付進度是 2nm 以下製程的核心制約因素。</span>
           </div>
           <div className="emp-subsection-title emp-subsection-title--mt">晶圓廠產能利用率</div>
@@ -862,14 +1038,14 @@ function Page3SupplyChain() {
           <div className="emp-subsection-title emp-subsection-title--mt">供應鏈風險分析</div>
           <div className="emp-supply-risk">
             <div className="emp-supply-risk-item">
-              <span className="emp-supply-risk-icon">⚠️</span>
+              <span className="emp-supply-risk-icon"><WarningIcon /></span>
               <div>
                 <div className="emp-supply-risk-title">HBM 封裝產能緊張</div>
                 <div className="emp-supply-risk-desc">AI 伺服器需求爆發，SK Hynix / Micron HBM3E 供不應求，影響 CoWoS 先進封裝排程。</div>
               </div>
             </div>
             <div className="emp-supply-risk-item">
-              <span className="emp-supply-risk-icon">🔧</span>
+              <span className="emp-supply-risk-icon"><WrenchIcon /></span>
               <div>
                 <div className="emp-supply-risk-title">特殊氣體供應預警</div>
                 <div className="emp-supply-risk-desc">氙氣、氖氣等稀有氣體依賴烏克蘭產源，需建立六個月以上的戰略庫存。</div>
@@ -887,30 +1063,30 @@ function Page3SupplyChain() {
 }
 
 function Page4Markets() {
-  const segments = [
+  const segments: { iconNode: ReactNode; name: string; color: string; bg: string; points: string[] }[] = [
     {
-      icon: '🤖',
+      iconNode: <ChipIcon />,
       name: 'AI / HPC',
       color: '#4fc3f7',
       bg: '#e0f2fe',
       points: ['輝達 H200/B200 需求超過供給 3–4 倍', 'CoWoS 封裝成為台積電主要增長引擎', 'AMD MI300 系列搶攻資料中心市占'],
     },
     {
-      icon: '📱',
+      iconNode: <PhoneIcon />,
       name: '智能手機',
       color: '#4ade80',
       bg: '#dcfce7',
       points: ['2024 年全球出貨量 12.4 億支，年增 6%', 'Apple A18 Pro 採 3nm N3E 製程', '高通 Snapdragon 8 Gen4 切入 3nm'],
     },
     {
-      icon: '🚗',
+      iconNode: <CarIcon />,
       name: '汽車電子',
       color: '#fbbf24',
       bg: '#fef9c3',
       points: ['車用晶片市場 2028 年達 1,060 億美元', '自動駕駛 SoC 轉向 7nm 及以下製程', 'AEC-Q100 車規認證週期縮短為重要競爭力'],
     },
     {
-      icon: '🌐',
+      iconNode: <GlobeIcon />,
       name: 'IoT / 消費電子',
       color: '#a78bfa',
       bg: '#f3e8ff',
@@ -929,7 +1105,7 @@ function Page4Markets() {
             <MarketSizeChart />
           </div>
           <div className="emp-insight-box emp-insight-box--green emp-insight-box--compact">
-            <span className="emp-insight-label">📊 需求驅動力</span>
+            <span className="emp-insight-label"><ChartBarIcon /> 需求驅動力</span>
             <span>AI/HPC 年增 42% 成為台積電最強成長引擎，汽車電子 31% 增速緊隨其後，兩者合計佔先進製程新增需求的 65%。</span>
           </div>
         </div>
@@ -937,7 +1113,7 @@ function Page4Markets() {
           {segments.map((s) => (
             <div key={s.name} className="emp-segment-card" style={{ borderTopColor: s.color }}>
               <div className="emp-segment-card-header">
-                <span className="emp-segment-icon">{s.icon}</span>
+                <span className="emp-segment-icon">{s.iconNode}</span>
                 <span className="emp-segment-name" style={{ color: s.color }}>
                   {s.name}
                 </span>
@@ -1054,7 +1230,7 @@ function Page5Competitive() {
             ))}
           </div>
           <div className="emp-insight-box emp-insight-box--red emp-insight-box--compact">
-            <span className="emp-insight-label">🎯 戰略洞察</span>
+            <span className="emp-insight-label"><TargetIcon /> 戰略洞察</span>
             <span>台積電市占 61% 持續擴大，三星良率問題導致客戶回流，英特爾代工業務虧損壓力仍大。</span>
           </div>
           <div className="emp-subsection-title emp-subsection-title--mt">製程技術路線圖</div>
@@ -1082,7 +1258,7 @@ function Page5Competitive() {
             ))}
           </div>
           <div className="emp-insight-box emp-insight-box--purple emp-insight-box--compact">
-            <span className="emp-insight-label">🔭 前瞻視野</span>
+            <span className="emp-insight-label"><EyeIcon /> 前瞻視野</span>
             <span>GAAFET 與 Chiplet 已是產業主流；背面供電技術將成為 2nm 以下製程的關鍵差異化因素。</span>
           </div>
         </div>
@@ -1112,7 +1288,7 @@ function Page6CustomerSupplier() {
           <div className="emp-subsection-title">主要客戶季度營收動態</div>
           <CustomerRevenueChart />
           <div className="emp-insight-box emp-insight-box--orange emp-insight-box--compact">
-            <span className="emp-insight-label">📈 訂單展望</span>
+            <span className="emp-insight-label"><TrendingUpIcon /> 訂單展望</span>
             <span>Apple Q4 業績超預期，iPhone 16 周期強勁；NVIDIA H200 產能全數由台積電 CoWoS 供應。</span>
           </div>
           <div className="emp-subsection-title emp-subsection-title--mt">關鍵供應商動態</div>
@@ -1138,22 +1314,25 @@ function Page6CustomerSupplier() {
           <DataInsightFlow />
           <div className="emp-subsection-title emp-subsection-title--mt">MIC 資訊整理能力總結</div>
           <div className="emp-capability-grid">
-            {[
-              { icon: '🔄', title: '跨領域整合', desc: '將經濟、政策、技術、市場四維數據交叉分析，形成完整情境判斷。' },
-              { icon: '📡', title: '動態即時追蹤', desc: '持續監控 200+ 資訊源，重大事件 24 小時內完成預警更新。' },
-              { icon: '🗂️', title: '系統性分類', desc: '六大資訊類型、三十個子類別，支援快速檢索與交叉分析。' },
-              { icon: '⚡', title: '預警機制', desc: '設定閾值觸發器，自動識別供應鏈斷鏈風險與市場異動訊號。' },
-              { icon: '💎', title: '決策賦能', desc: '每份報告附帶「決策建議」區塊，直接對應台積電戰略場景。' },
-              { icon: '📊', title: '可視化呈現', desc: '複雜數據轉化為圖表與儀表板，降低閱讀門檻，提升洞察效率。' },
-            ].map((c) => (
-              <div key={c.title} className="emp-capability-item">
-                <span className="emp-capability-icon">{c.icon}</span>
-                <div>
-                  <div className="emp-capability-title">{c.title}</div>
-                  <div className="emp-capability-desc">{c.desc}</div>
+            {(() => {
+              const capabilities: { iconNode: ReactNode; title: string; desc: string }[] = [
+                { iconNode: <SyncIcon />, title: '跨領域整合', desc: '將經濟、政策、技術、市場四維數據交叉分析，形成完整情境判斷。' },
+                { iconNode: <SignalIcon />, title: '動態即時追蹤', desc: '持續監控 200+ 資訊源，重大事件 24 小時內完成預警更新。' },
+                { iconNode: <FolderIcon />, title: '系統性分類', desc: '六大資訊類型、三十個子類別，支援快速檢索與交叉分析。' },
+                { iconNode: <BoltIcon />, title: '預警機制', desc: '設定閾值觸發器，自動識別供應鏈斷鏈風險與市場異動訊號。' },
+                { iconNode: <DiamondIcon />, title: '決策賦能', desc: '每份報告附帶「決策建議」區塊，直接對應台積電戰略場景。' },
+                { iconNode: <ChartBarIcon />, title: '可視化呈現', desc: '複雜數據轉化為圖表與儀表板，降低閱讀門檻，提升洞察效率。' },
+              ];
+              return capabilities.map((c) => (
+                <div key={c.title} className="emp-capability-item">
+                  <span className="emp-capability-icon">{c.iconNode}</span>
+                  <div>
+                    <div className="emp-capability-title">{c.title}</div>
+                    <div className="emp-capability-desc">{c.desc}</div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ));
+            })()}
           </div>
         </div>
       </div>
@@ -1215,11 +1394,11 @@ const MIC_ISSUES: MicIssue[] = [
     title: '半導體產業深度洞察',
     year: 2025,
     quarter: 'Q1',
-    category: '半導體',
+    category: 'Semiconductor',
     coverGradient: 'linear-gradient(145deg, #0369a1 0%, #0ea5e9 60%, #38bdf8 100%)',
     accentColor: '#0369a1',
     pages: 6,
-    publishedLabel: '2025 年 3 月',
+    publishedLabel: 'March 2025',
     available: true,
   },
   {
@@ -1228,11 +1407,11 @@ const MIC_ISSUES: MicIssue[] = [
     title: 'AI 晶片競合格局',
     year: 2025,
     quarter: 'Q2',
-    category: '半導體',
+    category: 'Semiconductor',
     coverGradient: 'linear-gradient(145deg, #6d28d9 0%, #a78bfa 60%, #c4b5fd 100%)',
     accentColor: '#6d28d9',
     pages: 6,
-    publishedLabel: '2025 年 6 月',
+    publishedLabel: 'June 2025',
     available: false,
   },
   {
@@ -1241,11 +1420,11 @@ const MIC_ISSUES: MicIssue[] = [
     title: '次世代科技趨勢',
     year: 2025,
     quarter: 'Q3',
-    category: '科技趨勢',
+    category: 'Tech Trends',
     coverGradient: 'linear-gradient(145deg, #15803d 0%, #22c55e 60%, #86efac 100%)',
     accentColor: '#15803d',
     pages: 6,
-    publishedLabel: '2025 年 9 月',
+    publishedLabel: 'September 2025',
     available: false,
   },
   {
@@ -1254,11 +1433,11 @@ const MIC_ISSUES: MicIssue[] = [
     title: '總體經濟與科技投資',
     year: 2024,
     quarter: 'Q4',
-    category: '總體經濟',
+    category: 'Macroeconomics',
     coverGradient: 'linear-gradient(145deg, #b45309 0%, #f59e0b 60%, #fcd34d 100%)',
     accentColor: '#b45309',
     pages: 6,
-    publishedLabel: '2024 年 12 月',
+    publishedLabel: 'December 2024',
     available: false,
   },
   {
@@ -1267,11 +1446,11 @@ const MIC_ISSUES: MicIssue[] = [
     title: '先進封裝技術革命',
     year: 2024,
     quarter: 'Q3',
-    category: '半導體',
+    category: 'Semiconductor',
     coverGradient: 'linear-gradient(145deg, #b91c1c 0%, #f87171 60%, #fca5a5 100%)',
     accentColor: '#b91c1c',
     pages: 6,
-    publishedLabel: '2024 年 9 月',
+    publishedLabel: 'September 2024',
     available: false,
   },
   {
@@ -1280,11 +1459,11 @@ const MIC_ISSUES: MicIssue[] = [
     title: '開源生態系與企業軟體',
     year: 2024,
     quarter: 'Q2',
-    category: '科技趨勢',
+    category: 'Tech Trends',
     coverGradient: 'linear-gradient(145deg, #c2410c 0%, #fb923c 60%, #fdba74 100%)',
     accentColor: '#c2410c',
     pages: 6,
-    publishedLabel: '2024 年 6 月',
+    publishedLabel: 'June 2024',
     available: false,
   },
 ];
@@ -1318,19 +1497,19 @@ function MicShelfSidebar({
 
   return (
     <div className="emp-shelf-sidebar">
-      <div className="emp-shelf-sidebar-header">電子報書庫</div>
-      <nav className="emp-shelf-tree" aria-label="電子報分類">
+      <div className="emp-shelf-sidebar-header">Newsletter Library</div>
+      <nav className="emp-shelf-tree" aria-label="Newsletter categories">
         {/* All */}
         <button className={`emp-shelf-tree-node${isAllActive ? ' active' : ''}`} onClick={onSelectAll}>
           <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
             <path d="M2 3h10M2 7h10M2 11h6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
           </svg>
-          所有電子報
+          All Newsletters
           <span className="emp-shelf-tree-count">{MIC_ISSUES.length}</span>
         </button>
 
         {/* By category */}
-        <div className="emp-shelf-tree-section-label">依類型</div>
+        <div className="emp-shelf-tree-section-label">By Category</div>
         {categories.map((cat) => {
           const count = MIC_ISSUES.filter((i) => i.category === cat).length;
           return (
@@ -1346,7 +1525,7 @@ function MicShelfSidebar({
         })}
 
         {/* By year/quarter */}
-        <div className="emp-shelf-tree-section-label">依年份</div>
+        <div className="emp-shelf-tree-section-label">By Year</div>
         {years.map((year) => {
           const quarters = [
             ...new Set(MIC_ISSUES.filter((i) => i.year === year).map((i) => i.quarter)),
@@ -1361,7 +1540,7 @@ function MicShelfSidebar({
                   <rect x="2" y="2" width="10" height="10" rx="2" stroke="currentColor" strokeWidth="1.3" />
                   <path d="M5 1v3M9 1v3M2 6h10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
                 </svg>
-                {year} 年
+                {year}
                 <span className="emp-shelf-tree-count">
                   {MIC_ISSUES.filter((i) => i.year === year).length}
                 </span>
@@ -1402,7 +1581,7 @@ function MicShelfCard({ issue, onOpen }: MicShelfCardProps) {
   }, [issue, onOpen]);
 
   const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
+    (e: ReactKeyboardEvent) => {
       if (issue.available && (e.key === 'Enter' || e.key === ' ')) {
         e.preventDefault();
         onOpen(issue.id);
@@ -1418,18 +1597,24 @@ function MicShelfCard({ issue, onOpen }: MicShelfCardProps) {
       onKeyDown={handleKeyDown}
       role={issue.available ? 'button' : undefined}
       tabIndex={issue.available ? 0 : undefined}
-      aria-label={issue.available ? `開啟 ${issue.title}` : `${issue.title} 即將推出`}
+      aria-label={issue.available ? `Open ${issue.title}` : `${issue.title} — Coming Soon`}
     >
       <div className="emp-shelf-card-book">
         <div className="emp-shelf-card-spine" style={{ background: issue.accentColor }} />
         <div className="emp-shelf-card-cover" style={{ background: issue.coverGradient }}>
           <div className="emp-shelf-card-cover-eyebrow">MIC PICKS</div>
-          <div className="emp-shelf-card-cover-category">{issue.category}</div>
+          {issue.available ? (
+            <div className="emp-shelf-card-cover-illus">
+              <CoverIllustrationThumb />
+            </div>
+          ) : (
+            <div className="emp-shelf-card-cover-category">{issue.category}</div>
+          )}
           <div className="emp-shelf-card-cover-title">{issue.title}</div>
           <div className="emp-shelf-card-cover-vol">
             Vol. {issue.vol} · {issue.year} {issue.quarter}
           </div>
-          {!issue.available && <div className="emp-shelf-card-coming-soon">即將推出</div>}
+          {!issue.available && <div className="emp-shelf-card-coming-soon">Coming Soon</div>}
         </div>
       </div>
       <div className="emp-shelf-card-info">
@@ -1512,14 +1697,11 @@ function MicShelf({ onOpen }: MicShelfProps) {
         <div className="emp-shelf-header">
           <h2 className="emp-shelf-title">
             <svg viewBox="0 0 16 16" fill="none" width="18" height="18" aria-hidden="true">
-              <path
-                d="M8 1.5l1.8 3.6 4 .6-2.9 2.8.7 4L8 10.4l-3.6 2 .7-4L2.2 5.7l4-.6z"
-                stroke="currentColor"
-                strokeWidth="1.3"
-                strokeLinejoin="round"
-              />
+              <path d="M3 2h7l3 3v9H3V2Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+              <path d="M10 2v3h3" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+              <path d="M6 7h5M6 10h3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
             </svg>
-            MIC PICKS 書架
+            MIC PICKS Library
           </h2>
           <div className="emp-shelf-search-wrap">
             <svg
@@ -1536,16 +1718,16 @@ function MicShelf({ onOpen }: MicShelfProps) {
             <input
               className="emp-shelf-search-input"
               type="search"
-              placeholder="搜尋電子報..."
+              placeholder="Search newsletters..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              aria-label="搜尋電子報"
+              aria-label="Search newsletters"
             />
           </div>
         </div>
         <div className="emp-shelf-grid">
           {filtered.length === 0 ? (
-            <div className="emp-shelf-empty">找不到符合的電子報</div>
+            <div className="emp-shelf-empty">No newsletters found</div>
           ) : (
             filtered.map((issue) => <MicShelfCard key={issue.id} issue={issue} onOpen={onOpen} />)
           )}
@@ -1610,7 +1792,7 @@ function MicReader({ issue, onBack }: MicReaderProps) {
     <div className="emp-reader-outer">
       {/* Toolbar */}
       <div className="emp-reader-toolbar">
-        <button className="emp-reader-back-btn" onClick={onBack} aria-label="返回書架">
+        <button className="emp-reader-back-btn" onClick={onBack} aria-label="Back to library">
           <svg viewBox="0 0 14 14" fill="none" width="12" height="12" aria-hidden="true">
             <path
               d="M9 2L4 7l5 5"
@@ -1620,7 +1802,7 @@ function MicReader({ issue, onBack }: MicReaderProps) {
               strokeLinejoin="round"
             />
           </svg>
-          返回書架
+          Back to Library
         </button>
         <span className="emp-reader-brand">
           <svg viewBox="0 0 14 14" fill="none" width="14" height="14" aria-hidden="true">
@@ -1701,19 +1883,21 @@ export default function ExploreMicPicksContent() {
     : null;
 
   return (
-    <div className="app-body">
-      <Sidebar />
-      <main className="main-content">
-        <TopNav />
-        <Banner />
-        <div className="page-pad">
-          {selectedIssue ? (
-            <MicReader issue={selectedIssue} onBack={() => setSelectedIssueId(null)} />
-          ) : (
-            <MicShelf onOpen={setSelectedIssueId} />
-          )}
-        </div>
-      </main>
-    </div>
+    <>
+      <TopNav />
+      <Banner />
+      <div className="app-body">
+        <Sidebar />
+        <main className="main-content">
+          <div className="page-pad">
+            {selectedIssue ? (
+              <MicReader issue={selectedIssue} onBack={() => setSelectedIssueId(null)} />
+            ) : (
+              <MicShelf onOpen={setSelectedIssueId} />
+            )}
+          </div>
+        </main>
+      </div>
+    </>
   );
 }
