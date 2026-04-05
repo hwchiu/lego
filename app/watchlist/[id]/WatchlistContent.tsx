@@ -90,7 +90,7 @@ const VIEW_CATEGORIES: Record<string, string[]> = {
   Debt:         ['debtEquity', 'currentRatio', 'netDebt', 'doi', 'lastQtrDOI'],
 };
 
-const BUILTIN_VIEWS = ['Summary', 'Health Score', 'Ratings', 'Holdings'] as const;
+const BUILTIN_VIEWS = ['Summary', 'Holdings', 'Health Score', 'Ratings'] as const;
 
 // All data (indices, holdings, portfolio config) comes from content/*.md files.
 // The fetch script writes to MD; app/data/*.ts readers parse via extractJson().
@@ -696,7 +696,6 @@ function ManageViewModal({
                       <path d="M3 4h8M3 7h8M3 10h8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
                     </svg>
                     <span className={`wl-mv-edit-label${isHidden ? ' wl-mv-edit-label--hidden' : ''}`}>{label}</span>
-                    {isBuiltin && <span className="wl-mv-built-in-badge">Built-in</span>}
                     <div className="wl-mv-edit-actions">
                       <button
                         className={`wl-mv-hide-btn${isHidden ? ' active' : ''}`}
@@ -717,19 +716,17 @@ function ManageViewModal({
                         )}
                         <span>{isHidden ? 'Show' : 'Hide'}</span>
                       </button>
-                      {!isBuiltin && (
-                        <button
-                          className="wl-mv-delete-btn"
-                          title="Delete View"
-                          onClick={() => onDelete(id)}
-                        >
-                          <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                            <path d="M2.5 4h9M5.5 4V2.5h3V4M5.5 6.5v4M8.5 6.5v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-                            <rect x="3" y="4" width="8" height="8" rx="1" stroke="currentColor" strokeWidth="1.3" />
-                          </svg>
-                          <span>Delete</span>
-                        </button>
-                      )}
+                      <button
+                        className="wl-mv-delete-btn"
+                        title="Delete View"
+                        onClick={() => onDelete(id)}
+                      >
+                        <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                          <path d="M2.5 4h9M5.5 4V2.5h3V4M5.5 6.5v4M8.5 6.5v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                          <rect x="3" y="4" width="8" height="8" rx="1" stroke="currentColor" strokeWidth="1.3" />
+                        </svg>
+                        <span>Delete</span>
+                      </button>
                     </div>
                   </div>
                 );
@@ -1498,19 +1495,19 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                 {/* KPI summary bar */}
                 <div className="wl-holdings-kpis">
                   <div className="wl-holdings-kpi">
-                    <span className="wl-holdings-kpi-label">市值 Market Value</span>
+                    <span className="wl-holdings-kpi-label">Market Value</span>
                     <span className="wl-holdings-kpi-value">
                       ${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </span>
                   </div>
                   <div className="wl-holdings-kpi">
-                    <span className="wl-holdings-kpi-label">成本 Cost Basis</span>
+                    <span className="wl-holdings-kpi-label">Cost Basis</span>
                     <span className="wl-holdings-kpi-value">
                       ${totalCostBasis.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </span>
                   </div>
                   <div className="wl-holdings-kpi">
-                    <span className="wl-holdings-kpi-label">未實現損益 Unrealized P&amp;L</span>
+                    <span className="wl-holdings-kpi-label">Unrealized P&amp;L</span>
                     <span className={`wl-holdings-kpi-value ${totalUnrealizedGain >= 0 ? 'pos' : 'neg'}`}>
                       {totalUnrealizedGain >= 0 ? '+' : ''}
                       {totalUnrealizedGain.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -1521,7 +1518,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                     </span>
                   </div>
                   <div className="wl-holdings-kpi">
-                    <span className="wl-holdings-kpi-label">當日損益 Today&apos;s P&amp;L</span>
+                    <span className="wl-holdings-kpi-label">Today&apos;s P&amp;L</span>
                     <span className={`wl-holdings-kpi-value ${totalGain >= 0 ? 'pos' : 'neg'}`}>
                       {totalGain >= 0 ? '+' : ''}
                       {totalGain.toFixed(2)}
@@ -1532,7 +1529,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                     </span>
                   </div>
                   <div className="wl-holdings-kpi">
-                    <span className="wl-holdings-kpi-label">持倉數 Positions</span>
+                    <span className="wl-holdings-kpi-label">Positions</span>
                     <span className="wl-holdings-kpi-value">{sortedHoldings.length}</span>
                   </div>
                 </div>
