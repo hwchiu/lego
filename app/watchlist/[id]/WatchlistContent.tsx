@@ -489,6 +489,14 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
   const totalGain = sortedHoldings.reduce((sum, h) => sum + h.todayGain, 0);
   const totalGainPct = (totalGain / (totalValue - totalGain)) * 100;
 
+  // Holdings tab derived totals
+  const totalCostBasis = sortedHoldings.reduce((sum, h) => sum + h.cost * h.shares, 0);
+  const totalUnrealizedGain = totalValue - totalCostBasis;
+  const totalUnrealizedPct = totalCostBasis > 0 ? (totalUnrealizedGain / totalCostBasis) * 100 : 0;
+
+  // Company name lookup map (symbol → full name)
+  const companyNameMap = new Map(SP500_COMPANIES.map((c) => [c.symbol, c.name]));
+
   // Drag handlers for Edit Watchlist symbol reorder
   function handleDragStart(index: number) {
     dragItem.current = index;
@@ -1038,8 +1046,127 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                 </div>
               </section>
               </div>
+            ) : activeTab === 'Holdings' ? (
+              /* ── Holdings tab: portfolio performance view ─────────── */
+              <>
+                {/* KPI summary bar */}
+                <div className="wl-holdings-kpis">
+                  <div className="wl-holdings-kpi">
+                    <span className="wl-holdings-kpi-label">市值 Market Value</span>
+                    <span className="wl-holdings-kpi-value">
+                      ${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                  <div className="wl-holdings-kpi">
+                    <span className="wl-holdings-kpi-label">成本 Cost Basis</span>
+                    <span className="wl-holdings-kpi-value">
+                      ${totalCostBasis.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                  <div className="wl-holdings-kpi">
+                    <span className="wl-holdings-kpi-label">未實現損益 Unrealized P&amp;L</span>
+                    <span className={`wl-holdings-kpi-value ${totalUnrealizedGain >= 0 ? 'pos' : 'neg'}`}>
+                      {totalUnrealizedGain >= 0 ? '+' : ''}
+                      {totalUnrealizedGain.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      <span className="wl-holdings-kpi-pct">
+                        &nbsp;({totalUnrealizedPct >= 0 ? '+' : ''}
+                        {totalUnrealizedPct.toFixed(2)}%)
+                      </span>
+                    </span>
+                  </div>
+                  <div className="wl-holdings-kpi">
+                    <span className="wl-holdings-kpi-label">當日損益 Today&apos;s P&amp;L</span>
+                    <span className={`wl-holdings-kpi-value ${totalGain >= 0 ? 'pos' : 'neg'}`}>
+                      {totalGain >= 0 ? '+' : ''}
+                      {totalGain.toFixed(2)}
+                      <span className="wl-holdings-kpi-pct">
+                        &nbsp;({totalGainPct >= 0 ? '+' : ''}
+                        {totalGainPct.toFixed(2)}%)
+                      </span>
+                    </span>
+                  </div>
+                  <div className="wl-holdings-kpi">
+                    <span className="wl-holdings-kpi-label">持倉數 Positions</span>
+                    <span className="wl-holdings-kpi-value">{sortedHoldings.length}</span>
+                  </div>
+                </div>
+
+                {/* Holdings performance table */}
+                <div className="wl-table-wrap">
+                  <table className="wl-table wl-holdings-table">
+                    <thead className="wl-thead--white">
+                      <tr>
+                        <th className="wl-th wl-th--sticky">Symbol</th>
+                        <th className="wl-th wl-th--name">Company</th>
+                        <th className="wl-th">Shares</th>
+                        <th className="wl-th">Avg Cost</th>
+                        <th className="wl-th">Price</th>
+                        <th className="wl-th">Change</th>
+                        <th className="wl-th">Change %</th>
+                        <th className="wl-th">Market Value</th>
+                        <th className="wl-th">Cost Basis</th>
+                        <th className="wl-th">Unrealized P&amp;L</th>
+                        <th className="wl-th">Unrealized %</th>
+                        <th className="wl-th">Today&apos;s P&amp;L</th>
+                        <th className="wl-th">Today&apos;s %</th>
+                        <th className="wl-th">Weight</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sortedHoldings.map((h) => {
+                        const marketValue = h.price * h.shares;
+                        const costBasis = h.cost * h.shares;
+                        const unrealizedGain = marketValue - costBasis;
+                        const unrealizedPct = costBasis > 0 ? (unrealizedGain / costBasis) * 100 : 0;
+                        const weight = totalValue > 0 ? (marketValue / totalValue) * 100 : 0;
+                        const companyName = companyNameMap.get(h.symbol) ?? h.symbol;
+                        return (
+                          <tr key={h.symbol} className="wl-tr">
+                            <td className="wl-td wl-td--sticky wl-symbol">{h.symbol}</td>
+                            <td className="wl-td wl-company-name">{companyName}</td>
+                            <td className="wl-td">{h.shares.toLocaleString()}</td>
+                            <td className="wl-td">{h.cost.toFixed(2)}</td>
+                            <td className="wl-td">{h.price.toFixed(2)}</td>
+                            <td className={`wl-td ${h.change >= 0 ? 'pos' : 'neg'}`}>
+                              {h.change >= 0 ? '+' : ''}
+                              {h.change.toFixed(2)}
+                            </td>
+                            <td className={`wl-td ${h.changePct >= 0 ? 'pos' : 'neg'}`}>
+                              {h.changePct >= 0 ? '+' : ''}
+                              {h.changePct.toFixed(2)}%
+                            </td>
+                            <td className="wl-td">
+                              {marketValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </td>
+                            <td className="wl-td">
+                              {costBasis.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </td>
+                            <td className={`wl-td ${unrealizedGain >= 0 ? 'pos' : 'neg'}`}>
+                              {unrealizedGain >= 0 ? '+' : ''}
+                              {unrealizedGain.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </td>
+                            <td className={`wl-td ${unrealizedPct >= 0 ? 'pos' : 'neg'}`}>
+                              {unrealizedPct >= 0 ? '+' : ''}
+                              {unrealizedPct.toFixed(2)}%
+                            </td>
+                            <td className={`wl-td ${h.todayGain >= 0 ? 'pos' : 'neg'}`}>
+                              {h.todayGain >= 0 ? '+' : ''}
+                              {h.todayGain.toFixed(2)}
+                            </td>
+                            <td className={`wl-td ${h.todayGainPct >= 0 ? 'pos' : 'neg'}`}>
+                              {h.todayGainPct >= 0 ? '+' : ''}
+                              {h.todayGainPct.toFixed(2)}%
+                            </td>
+                            <td className="wl-td">{weight.toFixed(2)}%</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </>
             ) : (
-              /* ── Placeholder for other tabs ───────────────────────── */
+              /* ── Placeholder for Health Score / Ratings tabs ──────── */
               <div className="wl-table-wrap">
                 <table className="wl-table">
                   <thead className="wl-thead--white">
