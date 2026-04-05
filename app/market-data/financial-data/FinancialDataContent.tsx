@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
@@ -57,12 +57,9 @@ export default function FinancialDataContent() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleSelect = useCallback(
-    (symbol: string) => {
-      router.push(`/market-data/financial-data/${symbol}/`);
-    },
-    [router],
-  );
+  const handleSelect = (symbol: string) => {
+    router.push(`/market-data/financial-data/${symbol}/`);
+  };
 
   const handleQueryChange = (val: string) => {
     setQuery(val);

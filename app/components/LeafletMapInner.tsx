@@ -6,8 +6,12 @@ import MarkerClusterGroup from 'react-leaflet-cluster';
 import L from 'leaflet';
 import type { FabLocation } from '@/app/data/tsmcFabs';
 
-// Fix Leaflet's default marker icon URLs broken by webpack asset hashing
-// (happens with Next.js / Webpack; must be done before any map renders)
+// Fix Leaflet's default marker icon URLs broken by webpack asset hashing.
+// Next.js/Webpack rewrites asset filenames, breaking Leaflet's internal URL
+// resolution. We must delete the private `_getIconUrl` method and set explicit
+// CDN paths so markers render correctly in both dev and production builds.
+// The `as unknown as Record<string, unknown>` cast is required because
+// `_getIconUrl` is not exposed in Leaflet's public TypeScript types.
 delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -39,7 +43,9 @@ function createFabIcon(count: number, isActive: boolean) {
   });
 }
 
-// Minimal interface for Leaflet.MarkerCluster (not exported by @types/leaflet)
+// Minimal interface for Leaflet.MarkerCluster — the full type is part of
+// leaflet.markercluster which is not separately published as @types.
+// We only need `getChildCount()` for the icon creation callback.
 interface MarkerCluster {
   getChildCount: () => number;
 }
