@@ -5280,6 +5280,60 @@ input, select { font-family: var(--font); }
   height: 6px;
 }
 
+/* ── Customer / Competitor node variants ─────────────────────────── */
+
+.rmap-node-rect--customer {
+  fill: var(--c-white);
+  stroke: #15803d;
+  stroke-width: 1.5;
+}
+
+.rmap-node:hover .rmap-node-rect--customer {
+  fill: #f0fdf4;
+  stroke: #166534;
+  stroke-width: 2;
+}
+
+.rmap-node-rect--competitor {
+  fill: var(--c-white);
+  stroke: #c2410c;
+  stroke-width: 1.5;
+}
+
+.rmap-node:hover .rmap-node-rect--competitor {
+  fill: #fff7ed;
+  stroke: #9a3412;
+  stroke-width: 2;
+}
+
+.rmap-edge--customer {
+  stroke: #16a34a;
+  stroke-opacity: 0.7;
+  fill: none;
+}
+
+.rmap-edge--competitor {
+  stroke: #ea580c;
+  stroke-opacity: 0.65;
+  fill: none;
+  stroke-dasharray: 6 3;
+}
+
+/* ── News category tag in feed panel ────────────────────────────── */
+
+.rmap-news-category-tag {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 /* ══════════════════════════════════════════════════════════════════
    About Page — Hall of Fame Gallery (矽谷牛 / 邱宏瑋)
    ══════════════════════════════════════════════════════════════════ */
