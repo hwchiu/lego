@@ -475,49 +475,195 @@ function IndustryChainDiagram() {
 }
 
 function CoverDecoration() {
+  const nodes: [number, number][] = [
+    [182, 38], [218, 28], [256, 44], [286, 30], [200, 68], [240, 58], [270, 78], [290, 58],
+    [188, 98], [228, 90], [262, 108], [285, 92],
+  ];
+  const edges: [number, number][] = [
+    [0, 1], [1, 2], [2, 3], [0, 4], [1, 4], [1, 5], [2, 5], [2, 6], [3, 6], [3, 7],
+    [4, 8], [5, 8], [5, 9], [6, 9], [6, 10], [7, 10], [7, 11], [9, 10], [10, 11],
+  ];
+  const bars = [
+    { label: 'AI / ML', pct: 88, val: '+34%', color: '#4fc3f7', grad: 'url(#cov-g1)' },
+    { label: 'HPC', pct: 66, val: '+22%', color: '#818cf8', grad: 'url(#cov-g2)' },
+    { label: 'Auto', pct: 74, val: '+18%', color: '#34d399', grad: 'url(#cov-g3)' },
+    { label: 'IoT', pct: 52, val: '+11%', color: '#fbbf24', grad: 'url(#cov-g4)' },
+  ];
+  const trendPts = [[14, 162], [35, 155], [58, 157], [82, 147], [105, 140], [128, 133], [150, 125]];
+  const trendPath = trendPts.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x} ${y}`).join(' ');
+
   return (
-    <svg viewBox="0 0 300 130" width="100%" height="130" aria-hidden="true">
-      <rect x="0" y="0" width="300" height="130" fill="#0f172a" />
-      {[0, 1, 2, 3, 4, 5].map((i) => (
-        <line key={`h${i}`} x1="0" y1={i * 26} x2="300" y2={i * 26} stroke="#1e3a5f" strokeWidth="0.5" />
+    <svg viewBox="0 0 300 210" width="100%" height="210" aria-hidden="true">
+      <defs>
+        <linearGradient id="cov-bg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#07111f" />
+          <stop offset="100%" stopColor="#0d1b2e" />
+        </linearGradient>
+        <linearGradient id="cov-g1" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#4fc3f7" />
+          <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0.5" />
+        </linearGradient>
+        <linearGradient id="cov-g2" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#818cf8" />
+          <stop offset="100%" stopColor="#4f46e5" stopOpacity="0.5" />
+        </linearGradient>
+        <linearGradient id="cov-g3" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#34d399" />
+          <stop offset="100%" stopColor="#059669" stopOpacity="0.5" />
+        </linearGradient>
+        <linearGradient id="cov-g4" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#fbbf24" />
+          <stop offset="100%" stopColor="#d97706" stopOpacity="0.5" />
+        </linearGradient>
+        <linearGradient id="cov-divider" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4fc3f7" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#4fc3f7" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+
+      {/* Background */}
+      <rect width="300" height="210" fill="url(#cov-bg)" />
+
+      {/* Right panel — 3D Fabric topology */}
+      {/* Perspective depth grid */}
+      {[0, 1, 2, 3, 4, 5, 6].map((i) => {
+        const y = 10 + i * 28;
+        return (
+          <line
+            key={`fg${i}`}
+            x1="160"
+            y1={y}
+            x2="300"
+            y2={y}
+            stroke="#1e3a5f"
+            strokeWidth="0.4"
+            opacity={0.2 + i * 0.04}
+          />
+        );
+      })}
+      {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
+        const x2 = 165 + i * 20;
+        return (
+          <line key={`fv${i}`} x1="228" y1="0" x2={x2} y2="210" stroke="#1e3a5f" strokeWidth="0.3" opacity="0.18" />
+        );
+      })}
+      {/* Mesh edges */}
+      {edges.map(([a, b], i) => (
+        <line
+          key={`e${i}`}
+          x1={nodes[a][0]}
+          y1={nodes[a][1]}
+          x2={nodes[b][0]}
+          y2={nodes[b][1]}
+          stroke="#4fc3f7"
+          strokeWidth="0.7"
+          opacity="0.35"
+        />
       ))}
-      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) => (
-        <line key={`v${i}`} x1={i * 27} y1="0" x2={i * 27} y2="130" stroke="#1e3a5f" strokeWidth="0.5" />
+      {/* Mesh nodes */}
+      {nodes.map(([cx, cy], i) => (
+        <g key={`n${i}`}>
+          <circle cx={cx} cy={cy} r="4.5" fill="none" stroke="#4fc3f7" strokeWidth="0.5" opacity="0.25" />
+          <circle cx={cx} cy={cy} r="2.5" fill="#4fc3f7" opacity="0.75" />
+        </g>
       ))}
-      <path d="M30 65 H90 V30 H190 V65 H260" stroke="#4fc3f7" strokeWidth="2" fill="none" opacity="0.7" />
-      <path d="M0 95 H70 V55 H150 V95 H300" stroke="#ea580c" strokeWidth="1.5" fill="none" opacity="0.5" />
-      <path d="M60 130 V80 H160 V40 H270" stroke="#16a34a" strokeWidth="1.5" fill="none" opacity="0.4" />
+      {/* 3D FABRIC label */}
+      <text
+        x="232"
+        y="148"
+        textAnchor="middle"
+        fontSize="7"
+        fill="#4fc3f7"
+        fontFamily="monospace"
+        fontWeight="700"
+        opacity="0.55"
+        letterSpacing="2"
+      >
+        3D FABRIC
+      </text>
+      <text
+        x="232"
+        y="159"
+        textAnchor="middle"
+        fontSize="5.5"
+        fill="#4fc3f7"
+        fontFamily="monospace"
+        opacity="0.4"
+        letterSpacing="2.5"
+      >
+        TOPOLOGY
+      </text>
+
+      {/* Divider */}
+      <line x1="158" y1="8" x2="158" y2="202" stroke="url(#cov-divider)" strokeWidth="0.8" />
+
+      {/* Left panel — Market Intelligence */}
+      {/* Panel header */}
+      <text
+        x="10"
+        y="18"
+        fontSize="6.5"
+        fill="#4fc3f7"
+        fontFamily="monospace"
+        fontWeight="700"
+        letterSpacing="1.8"
+        opacity="0.9"
+      >
+        MARKET INTELLIGENCE
+      </text>
+      <line x1="10" y1="22" x2="148" y2="22" stroke="#4fc3f7" strokeWidth="0.5" opacity="0.4" />
+
+      {/* Bar chart grid lines */}
+      {[0, 1, 2, 3].map((i) => (
+        <line key={`bg${i}`} x1="44" y1={36 + i * 29} x2="148" y2={36 + i * 29} stroke="#1e3a5f" strokeWidth="0.5" />
+      ))}
+      {/* Bars */}
+      {bars.map((b, i) => {
+        const y = 39 + i * 29;
+        const barW = (b.pct / 100) * 94;
+        const valX = 44 + barW + 3;
+        return (
+          <g key={`bar${i}`}>
+            <rect x="44" y={y} width={barW} height="14" fill={b.grad} rx="2" />
+            <text x="40" y={y + 10} textAnchor="end" fontSize="6.5" fill="#94a3b8" fontFamily="monospace">
+              {b.label}
+            </text>
+            <text x={valX} y={y + 10} fontSize="6.5" fill={b.color} fontFamily="monospace" fontWeight="700">
+              {b.val}
+            </text>
+          </g>
+        );
+      })}
+
+      {/* Trend line */}
+      <path d={trendPath} stroke="#4fc3f7" strokeWidth="1.5" fill="none" opacity="0.8" />
+      {trendPts.map(([x, y], i) => (
+        <circle key={`tp${i}`} cx={x} cy={y} r="2" fill="#4fc3f7" opacity="0.9" />
+      ))}
+
+      {/* KPI cards */}
       {[
-        [90, 65],
-        [190, 65],
-        [90, 30],
-        [190, 30],
-        [150, 95],
-        [70, 55],
-      ].map(([cx, cy], i) => (
-        <circle key={i} cx={cx} cy={cy} r="5" fill="#4fc3f7" opacity="0.8" />
-      ))}
-      <rect x="118" y="45" width="44" height="30" fill="#0f172a" stroke="#4fc3f7" strokeWidth="1.5" rx="3" />
-      <text x="140" y="58" textAnchor="middle" fontSize="7" fill="#4fc3f7" fontFamily="monospace" fontWeight="700">
-        TSMC
-      </text>
-      <text x="140" y="68" textAnchor="middle" fontSize="6.5" fill="#93c5fd" fontFamily="monospace">
-        N2 · 2nm
-      </text>
-      <rect x="205" y="72" width="38" height="24" fill="#0f172a" stroke="#fbbf24" strokeWidth="1.5" rx="3" />
-      <text x="224" y="85" textAnchor="middle" fontSize="7" fill="#fbbf24" fontFamily="monospace">
-        1.4nm
-      </text>
-      <text x="224" y="92" textAnchor="middle" fontSize="6" fill="#fde68a" fontFamily="monospace">
-        2027→
-      </text>
-      {[
-        [45, 25],
-        [220, 20],
-        [270, 90],
-        [15, 100],
-      ].map(([cx, cy], i) => (
-        <circle key={i} cx={cx} cy={cy} r="2" fill="#fbbf24" opacity="0.6" />
+        { x: 10, label: 'TAM 2025', val: '$620B', color: '#4fc3f7' },
+        { x: 66, label: 'CAGR', val: '8.4%', color: '#34d399' },
+        { x: 118, label: 'Coverage', val: '48 Co.', color: '#fbbf24' },
+      ].map((kpi, i) => (
+        <g key={`kpi${i}`}>
+          <rect x={kpi.x} y="175" width="48" height="26" fill="#1e3a5f" opacity="0.45" rx="3" />
+          <text x={kpi.x + 24} y="185" textAnchor="middle" fontSize="6" fill="#94a3b8" fontFamily="monospace">
+            {kpi.label}
+          </text>
+          <text
+            x={kpi.x + 24}
+            y="196"
+            textAnchor="middle"
+            fontSize="8.5"
+            fill={kpi.color}
+            fontFamily="monospace"
+            fontWeight="700"
+          >
+            {kpi.val}
+          </text>
+        </g>
       ))}
     </svg>
   );
@@ -529,12 +675,12 @@ function CoverDecoration() {
 
 function Page1Cover() {
   const sections = [
-    { num: '一', title: '宏觀經濟與地緣政治', color: '#4fc3f7' },
-    { num: '二', title: '半導體產業鏈', color: '#fbbf24' },
-    { num: '三', title: '細分市場應用', color: '#4ade80' },
-    { num: '四', title: '競爭情報', color: '#f87171' },
-    { num: '五', title: '新技術與研發趨勢', color: '#a78bfa' },
-    { num: '六', title: '客戶與供應商動態', color: '#fb923c' },
+    { num: '一', title: '宏觀經濟與地緣政治' },
+    { num: '二', title: '半導體產業鏈' },
+    { num: '三', title: '細分市場應用' },
+    { num: '四', title: '競爭情報' },
+    { num: '五', title: '新技術與研發趨勢' },
+    { num: '六', title: '客戶與供應商動態' },
   ];
   return (
     <div className="emp-page-wrap emp-page-wrap--cover">
@@ -559,9 +705,7 @@ function Page1Cover() {
           <div className="emp-cover-toc-grid">
             {sections.map((s) => (
               <div key={s.num} className="emp-cover-toc-item">
-                <span className="emp-cover-toc-num" style={{ color: s.color }}>
-                  {s.num}
-                </span>
+                <span className="emp-cover-toc-num">{s.num}</span>
                 <span className="emp-cover-toc-text">{s.title}</span>
               </div>
             ))}
@@ -1157,7 +1301,7 @@ export default function ExploreMicPicksContent() {
                   />
                 ))}
               </div>
-              <span className="emp-keyboard-hint">← → 鍵盤導覽</span>
+              <span className="emp-keyboard-hint">← → Use arrow keys to navigate</span>
             </div>
           </div>
         </div>

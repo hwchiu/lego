@@ -14367,8 +14367,9 @@ a.fd-hint-btn {
 .emp-cover-toc-num {
   font-size: 12px;
   font-weight: 900;
+  color: var(--c-dark);
 }
-.emp-cover-toc-text { font-size: 11px; color: var(--c-text-2); font-weight: 600; }
+.emp-cover-toc-text { font-size: 11px; color: var(--c-dark); font-weight: 600; }
 
 /* ===== EXPLORE MIC PICKS RWD ===== */
 @media (max-width: 768px) {
