@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import 'leaflet/dist/leaflet.css';
-import 'react-leaflet-cluster/dist/assets/MarkerCluster.css';
-import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
+import 'react-leaflet-cluster/lib/assets/MarkerCluster.css';
+import 'react-leaflet-cluster/lib/assets/MarkerCluster.Default.css';
 import AIChatbot from '@/app/components/AIChatbot';
 import Providers from '@/app/components/Providers';
 
