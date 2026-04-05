@@ -101,7 +101,10 @@ function NotifItemRow({ notif, isRead, lang, onClick }: NotifItemRowProps) {
 
   const displayTitle = lang === 'en' && notif.titleEn ? notif.titleEn : notif.title;
   const displayTime = lang === 'en' && notif.timeEn ? notif.timeEn : notif.time;
-  const readLabel = lang === 'zh' ? (isRead ? '已讀' : '未讀') : (isRead ? 'Read' : 'Unread');
+  const ariaLabel =
+    lang === 'zh'
+      ? `${isRead ? '已讀' : '未讀'}通知：${displayTitle}`
+      : `${isRead ? 'Read' : 'Unread'} notification: ${displayTitle}`;
 
   return (
     <div
@@ -109,7 +112,7 @@ function NotifItemRow({ notif, isRead, lang, onClick }: NotifItemRowProps) {
       onClick={onClick}
       role="button"
       tabIndex={0}
-      aria-label={`${readLabel} notification: ${displayTitle}`}
+      aria-label={ariaLabel}
       onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick()}
     >
       <NotifTypeIcon type={notif.type} />
