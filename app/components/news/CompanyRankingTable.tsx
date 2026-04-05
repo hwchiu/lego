@@ -43,7 +43,7 @@ export default function CompanyRankingTable() {
             <th className="crt-th crt-th-no">#No</th>
             <th className="crt-th crt-th-company">Company</th>
             <th className="crt-th crt-th-num">Mentions</th>
-            <th className="crt-th crt-th-num">Change</th>
+            <th className="crt-th crt-th-num crt-th-change">Change</th>
           </tr>
         </thead>
         <tbody>
@@ -66,7 +66,7 @@ export default function CompanyRankingTable() {
                     <span className="crt-count-value">{co.count}</span>
                   </div>
                 </td>
-                <td className="crt-td crt-td-num">
+                <td className="crt-td crt-td-num crt-td-change">
                   <span className={isPos ? 'crt-change pos' : 'crt-change neg'}>
                     {isPos ? '▲' : '▼'} {Math.abs(change).toFixed(1)}%
                   </span>

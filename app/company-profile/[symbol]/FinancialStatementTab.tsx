@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { extractJson } from '@/app/lib/parseContent';
+import tsmFinStmtMd from '@/content/tsm-financial-statement.md';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type StatementType = 'income' | 'balance' | 'cashflow' | 'segment';
@@ -262,33 +264,78 @@ function getCellClass(val: number | null, format: RowDef['format']): string {
 }
 
 // ── Component ──────────────────────────────────────────────────────────────────
-export default function FinancialStatementTab() {
+interface FinancialStatementTabProps {
+  symbol: string;
+}
+
+// Lazily parsed TSM data from markdown
+let _tsmParsed: { quarterlyData: QuarterData[]; annualData: AnnualData[] } | null = null;
+function getTsmData() {
+  if (!_tsmParsed) {
+    _tsmParsed = extractJson<{ quarterlyData: QuarterData[]; annualData: AnnualData[] }>(
+      tsmFinStmtMd as string,
+    );
+  }
+  return _tsmParsed;
+}
+
+export default function FinancialStatementTab({ symbol }: FinancialStatementTabProps) {
   const [statementType, setStatementType] = useState<StatementType>('income');
   const [viewMode, setViewMode] = useState<ViewMode>('quarterly');
   const [currency, setCurrency] = useState<Currency>('original');
 
-  // Year window for quarterly view: show 2 fiscal years at a time
-  const availableYears = [2023, 2024, 2025];
-  const maxYearWindowStart = availableYears[availableYears.length - 1] - 1;
-  const [yearWindowStart, setYearWindowStart] = useState(2023);
+  // Select data source based on symbol
+  const isTsm = symbol === 'TSM';
+  const tsmData = useMemo(() => (isTsm ? getTsmData() : null), [isTsm]);
 
-  const prevYear = () => setYearWindowStart((y) => Math.max(availableYears[0], y - 1));
+  const allQuarterlyData: QuarterData[] = isTsm ? (tsmData?.quarterlyData ?? []) : QUARTERLY_DATA;
+  const allAnnualData: AnnualData[] = isTsm ? (tsmData?.annualData ?? []) : ANNUAL_DATA;
+
+  // Year window for quarterly view: show 2 fiscal years at a time
+  const availableYears = [...new Set(allQuarterlyData.map((q) => q.year))].sort((a, b) => a - b);
+  // If no quarterly data available (shouldn't happen for AAPL/TSM), fall back gracefully
+  const safeAvailableYears =
+    availableYears.length > 0
+      ? availableYears
+      : [new Date().getFullYear() - 1, new Date().getFullYear()];
+  const maxYearWindowStart = safeAvailableYears[safeAvailableYears.length - 1] - 1;
+  const defaultStart = Math.max(
+    safeAvailableYears[0],
+    safeAvailableYears[safeAvailableYears.length - 1] - 1,
+  );
+  const [yearWindowStart, setYearWindowStart] = useState(defaultStart);
+
+  const prevYear = () => setYearWindowStart((y) => Math.max(safeAvailableYears[0], y - 1));
   const nextYear = () => setYearWindowStart((y) => Math.min(maxYearWindowStart, y + 1));
 
   // Columns in quarterly view: show 2 fiscal years
-  const visibleQuarters = QUARTERLY_DATA.filter(
+  const visibleQuarters = allQuarterlyData.filter(
     (q) => q.year === yearWindowStart || q.year === yearWindowStart + 1,
   );
 
   // Columns in annual view
-  const visibleAnnual = ANNUAL_DATA;
+  const visibleAnnual = allAnnualData;
+
+  const minYear = safeAvailableYears[0];
+  const maxYear = safeAvailableYears[safeAvailableYears.length - 1];
 
   const yearLabel = viewMode === 'quarterly'
     ? `FY${yearWindowStart}–FY${yearWindowStart + 1}`
-    : 'FY2021–FY2024';
+    : `FY${minYear}–FY${maxYear}`;
 
-  const canGoPrev = viewMode === 'quarterly' && yearWindowStart > availableYears[0];
+  const canGoPrev = viewMode === 'quarterly' && yearWindowStart > safeAvailableYears[0];
   const canGoNext = viewMode === 'quarterly' && yearWindowStart < maxYearWindowStart;
+
+  // Show placeholder for symbols with no data
+  if (!isTsm && symbol !== 'AAPL') {
+    return (
+      <div className="cp-tab-placeholder">
+        <span className="cp-tab-placeholder-text">
+          Financial Statement for {symbol} — Content coming soon
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div className="fin-stmt-layout">
