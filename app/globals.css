@@ -6865,48 +6865,29 @@ input, select { font-family: var(--font); }
   font-size: 12.5px;
   color: var(--c-text-3);
 }
-.de-world-map-container {
+/* Leaflet map container */
+.de-leaflet-container {
   position: relative;
   background: var(--c-white);
   border: 1px solid var(--c-border);
   border-radius: var(--radius);
   overflow: hidden;
 }
-.de-world-svg {
-  display: block;
-  width: 100%;
-  height: auto;
+.de-leaflet-map {
+  border-radius: var(--radius);
 }
-.de-map-land {
-  transition: fill 0.12s;
-}
-.de-map-pin {
-  cursor: pointer;
-  outline: none;
-}
-.de-map-pin:focus > circle:nth-child(2) {
-  stroke: #fff;
-  stroke-width: 3;
-}
-.de-world-map-legend {
+.de-leaflet-loading {
+  height: 420px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 14px 10px;
-  border-top: 1px solid var(--c-border);
+  justify-content: center;
   background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
 }
-.de-world-map-legend-dot {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #2563eb;
-  flex-shrink: 0;
-}
-.de-world-map-legend-text {
-  font-size: 11.5px;
-  color: var(--c-text-3);
+.de-leaflet-loading-text {
+  font-size: 13px;
+  color: var(--c-text-4);
 }
 
 /* Country chip row below map */
@@ -12921,6 +12902,56 @@ input, select { font-family: var(--font); }
   color: var(--c-text-4);
   margin-top: 2px;
 }
+/* Page header (list page) */
+.fd-page-header {
+  padding: 24px 24px 0;
+  flex-shrink: 0;
+}
+.fd-page-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--c-text);
+  letter-spacing: -0.5px;
+  margin-top: 4px;
+  margin-bottom: 6px;
+}
+.fd-page-sub {
+  font-size: 13.5px;
+  color: var(--c-text-3);
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+/* Search bar variant: list page (no download btn, wider search) */
+.fd-search-bar--list .fd-search-wrap {
+  max-width: 520px;
+}
+/* Company detail topbar */
+.fd-detail-topbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: 14px 24px 0;
+}
+.fd-detail-topbar-left {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+/* fd-hint-btn as link */
+a.fd-hint-btn {
+  text-decoration: none;
+}
+/* fd-company-header with download button */
+.fd-company-header {
+  align-items: flex-start;
+}
+/* Inline back link (not-found state) */
+.fd-back-link {
+  color: var(--c-accent);
+  text-decoration: underline;
+  font-weight: 600;
+}
 /* RWD */
 @media (max-width: 768px) {
   .fd-search-bar {
@@ -12928,6 +12959,7 @@ input, select { font-family: var(--font); }
   }
   .fd-company-header {
     padding: 12px 16px;
+    flex-wrap: wrap;
   }
   .fd-tabs {
     padding: 0 16px;
@@ -12938,5 +12970,11 @@ input, select { font-family: var(--font); }
   .fd-search-wrap {
     max-width: 100%;
     flex: 1 1 100%;
+  }
+  .fd-page-header {
+    padding: 16px 16px 0;
+  }
+  .fd-detail-topbar {
+    padding: 12px 16px 0;
   }
 }

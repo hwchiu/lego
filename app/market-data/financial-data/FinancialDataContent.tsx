@@ -1,54 +1,20 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
-import { getCompanies, getStatement, STATEMENT_TABS } from '@/app/data/financialData';
-import type { CompanyInfo, StatementKey } from '@/app/data/financialData';
+import { getCompanies } from '@/app/data/financialData';
 
 // ─── Icons ───────────────────────────────────────────────────────────────────
-
-function BackArrowIcon() {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" width="14" height="14" aria-hidden="true">
-      <path
-        d="M10 3L5 8L10 13"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 function SearchIcon() {
   return (
     <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
       <circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" strokeWidth="1.4" />
       <path d="M10.5 10.5L14 14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function DownloadIcon() {
-  return (
-    <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
-      <path
-        d="M8 2v8M5 7l3 3 3-3"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M2 12h12"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-      />
     </svg>
   );
 }
@@ -61,55 +27,14 @@ function ChartIcon() {
   );
 }
 
-// ─── Section-row detection ───────────────────────────────────────────────────
-
-/** Rows where all non-first cells are empty are used as section headers. */
-function isSectionRow(row: string[]): boolean {
-  return row.slice(1).every((cell) => cell === '' || cell === '—');
-}
-
-/** Format a cell: colour negative numbers red, positive green for ratio/growth rows. */
-function CellValue({ value, colIdx }: { value: string; colIdx: number }) {
-  if (colIdx === 0) return <>{value}</>;
-  if (value === 'N/A' || value === '—' || value === '') return <>{value}</>;
-  const isNeg = value.startsWith('-') && value !== '-';
-  const isPos = value.startsWith('+') || (value.endsWith('%') && !value.startsWith('-') && parseFloat(value) > 0);
-  if (isNeg) return <span className="fd-neg">{value}</span>;
-  if (isPos) return <span className="fd-pos">{value}</span>;
-  return <>{value}</>;
-}
-
-// ─── CSV download helper ─────────────────────────────────────────────────────
-
-function downloadCsv(company: CompanyInfo, tabKey: StatementKey) {
-  const stmt = getStatement(tabKey);
-  const data = stmt[company.symbol];
-  if (!data) return;
-
-  const lines = [
-    [`${company.name} (${company.symbol}) — ${STATEMENT_TABS.find((t) => t.key === tabKey)?.label ?? tabKey}`],
-    data.columns,
-    ...data.rows,
-  ];
-  const csv = lines.map((row) => row.map((c) => `"${c.replace(/"/g, '""')}"`).join(',')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${company.symbol}_${tabKey}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
 // ─── Main component ───────────────────────────────────────────────────────────
 
 const COMPANIES = getCompanies();
 
 export default function FinancialDataContent() {
+  const router = useRouter();
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState<CompanyInfo | null>(null);
-  const [activeTab, setActiveTab] = useState<StatementKey>('income');
   const searchRef = useRef<HTMLDivElement>(null);
 
   // Filter companies by query
@@ -132,20 +57,17 @@ export default function FinancialDataContent() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleSelect = useCallback((company: CompanyInfo) => {
-    setSelected(company);
-    setQuery(company.symbol);
-    setIsOpen(false);
-    setActiveTab('income');
-  }, []);
+  const handleSelect = useCallback(
+    (symbol: string) => {
+      router.push(`/market-data/financial-data/${symbol}/`);
+    },
+    [router],
+  );
 
   const handleQueryChange = (val: string) => {
     setQuery(val);
     setIsOpen(true);
   };
-
-  // Statement data for selected company + active tab
-  const stmtData = selected ? getStatement(activeTab)[selected.symbol] : null;
 
   return (
     <>
@@ -155,16 +77,18 @@ export default function FinancialDataContent() {
         <Sidebar />
         <main className="main-content">
           <div className="fd-layout">
-            {/* ── Back navigation ── */}
-            <div className="fd-topbar">
-              <Link href="/market-data/" className="cp-back-btn">
-                <BackArrowIcon />
-                Back
-              </Link>
+            {/* ── Page header ── */}
+            <div className="fd-page-header">
+              <div className="section-eyebrow">Market Data</div>
+              <h1 className="fd-page-title">Financial Data</h1>
+              <p className="fd-page-sub">
+                Browse financial statements, balance sheets, and cash flow reports for TSMC&apos;s
+                key customers and partners.
+              </p>
             </div>
 
             {/* ── Search bar ── */}
-            <div className="fd-search-bar">
+            <div className="fd-search-bar fd-search-bar--list">
               <div className="fd-search-wrap" ref={searchRef}>
                 <span className="fd-search-icon">
                   <SearchIcon />
@@ -184,10 +108,10 @@ export default function FinancialDataContent() {
                     {filtered.slice(0, 10).map((c) => (
                       <button
                         key={c.symbol}
-                        className={`fd-search-item${selected?.symbol === c.symbol ? ' active' : ''}`}
+                        className="fd-search-item"
                         role="option"
-                        aria-selected={selected?.symbol === c.symbol}
-                        onClick={() => handleSelect(c)}
+                        aria-selected={false}
+                        onClick={() => handleSelect(c.symbol)}
                       >
                         <span className="fd-search-item-symbol">{c.symbol}</span>
                         <span className="fd-search-item-name">{c.name}</span>
@@ -196,122 +120,33 @@ export default function FinancialDataContent() {
                   </div>
                 )}
               </div>
-              <button
-                className="fd-download-btn"
-                onClick={() => selected && downloadCsv(selected, activeTab)}
-                disabled={!selected || !stmtData}
-                aria-label="Download CSV"
-              >
-                <DownloadIcon />
-                Download CSV
-              </button>
             </div>
 
-            {selected ? (
-              <>
-                {/* ── Company header ── */}
-                <div className="fd-company-header">
-                  <div className="fd-company-badge">{selected.symbol.slice(0, 4)}</div>
-                  <div className="fd-company-info">
-                    <h1 className="fd-company-name">{selected.name}</h1>
-                    <div className="fd-company-meta">
-                      <span className="fd-company-symbol">{selected.symbol}</span>
-                      <span className="fd-company-sector">{selected.sector}</span>
-                      <span className="fd-company-cap">Market Cap: ~{selected.marketCap}</span>
-                    </div>
-                    <p className="fd-company-desc">
-                      {selected.description}
-                    </p>
-                  </div>
+            {/* ── Company grid ── */}
+            <div className="fd-content">
+              <div className="fd-empty-state">
+                <div className="fd-empty-icon">
+                  <ChartIcon />
                 </div>
-
-                {/* ── Statement tabs ── */}
-                <div className="fd-tabs" role="tablist">
-                  {STATEMENT_TABS.map((tab) => (
-                    <button
-                      key={tab.key}
-                      className={`fd-tab${activeTab === tab.key ? ' active' : ''}`}
-                      role="tab"
-                      aria-selected={activeTab === tab.key}
-                      onClick={() => setActiveTab(tab.key)}
+                <p className="fd-empty-title">Select a Company</p>
+                <p className="fd-empty-sub">
+                  Search for a company symbol above, or choose from TSMC&apos;s key customers
+                  below.
+                </p>
+                <div className="fd-hint-grid">
+                  {COMPANIES.map((c) => (
+                    <Link
+                      key={c.symbol}
+                      href={`/market-data/financial-data/${c.symbol}/`}
+                      className="fd-hint-btn"
                     >
-                      {tab.label}
-                    </button>
+                      <span className="fd-hint-symbol">{c.symbol}</span>
+                      <span className="fd-hint-name">{c.name.split(' ').slice(0, 2).join(' ')}</span>
+                    </Link>
                   ))}
                 </div>
-
-                {/* ── Statement table ── */}
-                <div className="fd-content">
-                  {stmtData ? (
-                    <div className="fd-table-wrap">
-                      <table className="fd-table">
-                        <thead>
-                          <tr>
-                            {stmtData.columns.map((col, i) => (
-                              <th key={i}>{col}</th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {stmtData.rows.map((row, ri) =>
-                            isSectionRow(row) ? (
-                              <tr key={ri} className="fd-row-section">
-                                <td colSpan={stmtData.columns.length}>{row[0]}</td>
-                              </tr>
-                            ) : (
-                              <tr key={ri}>
-                                {row.map((cell, ci) => (
-                                  <td key={ci}>
-                                    <CellValue value={cell} colIdx={ci} />
-                                  </td>
-                                ))}
-                              </tr>
-                            ),
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  ) : (
-                    <div className="fd-empty-state">
-                      <div className="fd-empty-icon">
-                        <ChartIcon />
-                      </div>
-                      <p className="fd-empty-title">No data available</p>
-                      <p className="fd-empty-sub">
-                        Financial data for {selected.symbol} is not available in this view.
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </>
-            ) : (
-              /* ── Empty / landing state ── */
-              <div className="fd-content">
-                <div className="fd-empty-state">
-                  <div className="fd-empty-icon">
-                    <ChartIcon />
-                  </div>
-                  <p className="fd-empty-title">Select a Company</p>
-                  <p className="fd-empty-sub">
-                    Search for a company symbol above to view its financial statements.
-                    <br />
-                    Showing data for TSMC&apos;s key customers.
-                  </p>
-                  <div className="fd-hint-grid">
-                    {COMPANIES.map((c) => (
-                      <button
-                        key={c.symbol}
-                        className="fd-hint-btn"
-                        onClick={() => handleSelect(c)}
-                      >
-                        <span className="fd-hint-symbol">{c.symbol}</span>
-                        <span className="fd-hint-name">{c.name.split(' ').slice(0, 2).join(' ')}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
               </div>
-            )}
+            </div>
           </div>
         </main>
       </div>
