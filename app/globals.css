@@ -9861,6 +9861,21 @@ input, select { font-family: var(--font); }
     font-size: 10px;
   }
 
+  /* Calendar header — wrap controls below title/nav on mobile */
+  .cal-header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .cal-controls {
+    width: 100%;
+    flex-wrap: wrap;
+    margin-left: 0;
+  }
+  .cal-search {
+    width: 100%;
+    flex: 1 1 auto;
+  }
+
   /* Calendar grids — scroll horizontally */
   .week-grid {
     display: flex;
