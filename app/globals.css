@@ -14392,6 +14392,7 @@ a.fd-hint-btn {
   .emp-segment-grid { grid-template-columns: 1fr; }
   .emp-cover-title { font-size: 18px; }
   .emp-reader-vol { display: none; }
+}
 /* ===== EVENT CATEGORY DETAIL ===== */
 .ec-cal-header {
   flex-wrap: wrap;
