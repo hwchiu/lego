@@ -83,7 +83,7 @@ export const sidebarIcons: Record<string, string> = {
 
 export const quickLinks: NavItem[] = [
   { label: 'About tMIC', href: '/about', icon: 'info' },
-  { label: 'Explore MIC Picks', href: '#', icon: 'star', badge: 'Coming soon', badgeStyle: 'coming-soon' },
+  { label: 'Explore MIC Picks', href: '/explore-mic-picks', icon: 'star', badge: 'NEW', badgeStyle: 'new' },
   { label: 'Collaboration Playground', href: '/collaboration-playground', icon: 'collaborationPlayground', badge: 'NEW', badgeStyle: 'new' },
 ];
 
