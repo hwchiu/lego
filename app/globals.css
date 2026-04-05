@@ -7094,10 +7094,303 @@ input, select { font-family: var(--font); }
   margin: 0;
 }
 
+/* ── Tax news panel (International Tax News map side-panel) ── */
+.de-map-panel--tax .de-map-panel-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.de-map-tax-empty {
+  padding: 24px 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--c-text-4);
+}
+.de-map-tax-card {
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 14px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: box-shadow 0.13s, border-color 0.13s;
+}
+.de-map-tax-card:hover {
+  box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+  border-color: var(--c-border-2);
+}
+.de-map-tax-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.de-map-tax-card-category {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 10px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+.de-map-tax-card-date {
+  font-size: 11px;
+  color: var(--c-text-4);
+  margin-left: auto;
+  white-space: nowrap;
+}
+.de-map-tax-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-text);
+  line-height: 1.4;
+}
+.de-map-tax-card-link {
+  color: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.de-map-tax-card-link:hover {
+  text-decoration: underline;
+}
+.de-map-tax-card-ext {
+  display: inline-flex;
+  align-items: center;
+  color: var(--c-text-4);
+}
+.de-map-tax-card-summary {
+  font-size: 12px;
+  color: var(--c-text-3);
+  line-height: 1.6;
+  margin: 0;
+}
+.de-map-tax-card-source {
+  font-size: 11px;
+  color: var(--c-text-4);
+}
+.de-map-tax-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+.de-map-tax-card-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 7px;
+  border-radius: 9px;
+  font-size: 10px;
+  font-weight: 600;
+  background: var(--c-bg);
+  color: var(--c-text-3);
+}
+
+/* ── ESG Reports two-panel layout ── */
+.de-esg-layout {
+  display: flex;
+  gap: 0;
+  align-items: flex-start;
+  min-height: 400px;
+}
+.de-esg-sidebar {
+  width: 200px;
+  min-width: 200px;
+  border-right: 1px solid var(--c-border);
+  padding-right: 0;
+  margin-right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 0;
+}
+.de-esg-sidebar-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-text-4);
+  padding: 4px 16px 8px;
+}
+.de-esg-sidebar-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: background 0.13s, border-left-color 0.13s, color 0.13s;
+  font-family: var(--font);
+}
+.de-esg-sidebar-item:hover {
+  background: var(--c-bg);
+}
+.de-esg-sidebar-item.active {
+  background: var(--c-bg);
+  font-weight: 700;
+}
+.de-esg-sidebar-item-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: inherit;
+}
+.de-esg-sidebar-item-sub {
+  font-size: 10.5px;
+  color: var(--c-text-4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+.de-esg-content {
+  flex: 1;
+  min-width: 0;
+  padding-left: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+/* Two-column grid for ESG reports */
+.de-esg-reports-grid--two-col {
+  grid-template-columns: repeat(2, 1fr) !important;
+}
+
+/* ── Taiwan Tax News tab ── */
+.de-tax-news-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 32px;
+}
+.de-tax-news-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.de-tax-news-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--c-text);
+}
+.de-tax-news-sub {
+  font-size: 12.5px;
+  color: var(--c-text-3);
+}
+.de-tax-news-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.de-tax-card {
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 18px 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+.de-tax-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  border-color: var(--c-border-2);
+}
+.de-tax-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.de-tax-card-category {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 10px;
+  border-radius: 11px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+.de-tax-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+.de-tax-card-week {
+  font-size: 10.5px;
+  color: var(--c-text-4);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.de-tax-card-date {
+  font-size: 10.5px;
+  color: var(--c-text-4);
+}
+.de-tax-card-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--c-text);
+  line-height: 1.4;
+}
+.de-tax-card-link {
+  color: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+}
+.de-tax-card-link:hover {
+  text-decoration: underline;
+}
+.de-tax-card-ext {
+  display: inline-flex;
+  align-items: center;
+  color: var(--c-text-4);
+}
+.de-tax-card-summary {
+  font-size: 12px;
+  color: var(--c-text-3);
+  line-height: 1.65;
+  margin: 0;
+  flex: 1;
+}
+.de-tax-card-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: auto;
+}
+.de-tax-card-source {
+  font-size: 11px;
+  color: var(--c-text-4);
+}
+.de-tax-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
 /* ── RWD for new DE features ── */
 @media (max-width: 900px) {
   .de-esg-reports-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .de-esg-reports-grid--two-col {
+    grid-template-columns: 1fr !important;
+  }
+  .de-tax-news-grid {
+    grid-template-columns: 1fr;
   }
 }
 @media (max-width: 768px) {
@@ -7114,6 +7407,42 @@ input, select { font-family: var(--font); }
   .de-esg-reports-section-header {
     flex-wrap: wrap;
     gap: 8px;
+  }
+  .de-esg-layout {
+    flex-direction: column;
+  }
+  .de-esg-sidebar {
+    width: 100%;
+    min-width: 0;
+    border-right: none;
+    border-bottom: 1px solid var(--c-border);
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 8px 0;
+  }
+  .de-esg-sidebar-title {
+    width: 100%;
+    padding-bottom: 4px;
+  }
+  .de-esg-sidebar-item {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+    border-radius: var(--radius-sm);
+  }
+  .de-esg-sidebar-item.active {
+    border-left: none;
+    border-bottom-color: currentColor;
+  }
+  .de-esg-sidebar-item-sub {
+    display: none;
+  }
+  .de-esg-content {
+    padding-left: 0;
+    padding-top: 16px;
   }
   .de-map-panel {
     width: 100%;
@@ -7148,6 +7477,9 @@ input, select { font-family: var(--font); }
   }
   .de-map-country-chips {
     gap: 6px;
+  }
+  .de-tax-card {
+    padding: 14px 14px 12px;
   }
 }
 

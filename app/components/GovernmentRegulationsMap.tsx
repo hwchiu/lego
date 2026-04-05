@@ -2,7 +2,8 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { TSMC_FAB_LOCATIONS, FabLocation } from '@/app/data/tsmcFabs';
+import { TSMC_FAB_LOCATIONS } from '@/app/data/tsmcFabs';
+import { getTaxNewsByCountry, type TaxNewsItem } from '@/app/data/taxNews';
 
 // ─── Icons ───────────────────────────────────────────────────────────────────
 
@@ -27,16 +28,33 @@ function CloseIcon() {
   );
 }
 
-// ─── Detail panel (fab info drawer) ──────────────────────────────────────────
+function ExternalLinkIcon() {
+  return (
+    <svg viewBox="0 0 14 14" fill="none" width="11" height="11" aria-hidden="true">
+      <path
+        d="M6 2H2.5A1.5 1.5 0 001 3.5v8A1.5 1.5 0 002.5 13h8A1.5 1.5 0 0012 11.5V8M8 1h5v5M13 1L6.5 7.5"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
-interface MapPanelProps {
-  location: FabLocation;
+// ─── Tax news panel — shown when a country pin is clicked ────────────────────
+
+const TAX_ACCENT = '#2563eb';
+
+interface TaxNewsPanelProps {
+  countryId: string;
+  countryName: string;
   onClose: () => void;
 }
 
-function MapPanel({ location, onClose }: MapPanelProps) {
+function TaxNewsPanel({ countryId, countryName, onClose }: TaxNewsPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
-  const allFabCount = location.subLocations.reduce((sum, sl) => sum + sl.fabs.length, 0);
+  const newsItems: TaxNewsItem[] = getTaxNewsByCountry(countryId);
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
@@ -57,11 +75,11 @@ function MapPanel({ location, onClose }: MapPanelProps) {
   return (
     <div className="de-map-panel-overlay">
       <div
-        className="de-map-panel"
+        className="de-map-panel de-map-panel--tax"
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-label={`${location.country} fab details`}
+        aria-label={`${countryName} tax news`}
       >
         <div className="de-map-panel-header">
           <div className="de-map-panel-title-row">
@@ -69,11 +87,8 @@ function MapPanel({ location, onClose }: MapPanelProps) {
               <MapPinIcon />
             </span>
             <div>
-              <div className="de-map-panel-country">{location.country}</div>
-              <div className="de-map-panel-subtitle">
-                {allFabCount} fab{allFabCount !== 1 ? 's' : ''} &middot;{' '}
-                {location.subLocations.length} location{location.subLocations.length !== 1 ? 's' : ''}
-              </div>
+              <div className="de-map-panel-country">{countryName}</div>
+              <div className="de-map-panel-subtitle">國際稅務新聞整理 · {newsItems.length} 則</div>
             </div>
           </div>
           <button className="de-map-panel-close" onClick={onClose} aria-label="Close">
@@ -81,29 +96,37 @@ function MapPanel({ location, onClose }: MapPanelProps) {
           </button>
         </div>
         <div className="de-map-panel-body">
-          {location.subLocations.map((sub) => (
-            <div key={sub.city} className="de-map-city-group">
-              <div className="de-map-city-label">{sub.city}</div>
-              <div className="de-map-fab-stack">
-                {sub.fabs.map((fab) => (
-                  <div key={fab.id} className="de-map-fab-card">
-                    <div className="de-map-fab-card-name">{fab.name}</div>
-                    <div className="de-map-fab-card-meta">
-                      <div className="de-map-fab-card-row">
-                        <span className="de-map-fab-card-label">Node</span>
-                        <span className="de-map-fab-card-value">{fab.node}</span>
-                      </div>
-                      <div className="de-map-fab-card-row">
-                        <span className="de-map-fab-card-label">Established</span>
-                        <span className="de-map-fab-card-value">{fab.established}</span>
-                      </div>
-                    </div>
-                    <p className="de-map-fab-card-desc">{fab.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
+          {newsItems.length === 0 ? (
+            <div className="de-map-tax-empty">目前尚無此國家的稅務新聞資料</div>
+          ) : (
+            newsItems.map((item) => (
+              <article key={item.id} className="de-map-tax-card">
+                <div className="de-map-tax-card-header">
+                  <span className="de-map-tax-card-category" style={{ background: `${TAX_ACCENT}14`, color: TAX_ACCENT }}>
+                    {item.category}
+                  </span>
+                  <span className="de-map-tax-card-date">{item.date}</span>
+                </div>
+                <div className="de-map-tax-card-title">
+                  {item.url && item.url !== '#' ? (
+                    <a href={item.url} target="_blank" rel="noopener noreferrer" className="de-map-tax-card-link">
+                      {item.title}
+                      <span className="de-map-tax-card-ext"><ExternalLinkIcon /></span>
+                    </a>
+                  ) : (
+                    item.title
+                  )}
+                </div>
+                <p className="de-map-tax-card-summary">{item.summary}</p>
+                <div className="de-map-tax-card-source">來源：{item.source}</div>
+                <div className="de-map-tax-card-tags">
+                  {item.tags.map((tag) => (
+                    <span key={tag} className="de-map-tax-card-tag">{tag}</span>
+                  ))}
+                </div>
+              </article>
+            ))
+          )}
         </div>
       </div>
     </div>
@@ -135,11 +158,11 @@ export default function WorldMapTab() {
   return (
     <div className="de-world-map-wrap">
       <div className="de-world-map-header">
-        <div className="de-world-map-title">TSMC Global Manufacturing Presence</div>
+        <div className="de-world-map-title">國際稅務新聞整理（以台積電廠區國家為維度）</div>
         <div className="de-world-map-sub">
-          Click a pin to explore fab details by country and city.&nbsp;
-          <strong>{totalFabs}</strong> fabs across{' '}
-          <strong>{TSMC_FAB_LOCATIONS.length}</strong> countries&nbsp;/ regions.
+          點選地圖上的 Pin 或下方國家按鈕，查看各國最新稅務新聞整理。涵蓋台積電廠區所在的{' '}
+          <strong>{TSMC_FAB_LOCATIONS.length}</strong> 個國家／地區，共計{' '}
+          <strong>{totalFabs}</strong> 座廠房所在地。
         </div>
       </div>
 
@@ -168,7 +191,11 @@ export default function WorldMapTab() {
       </div>
 
       {activeLocation && (
-        <MapPanel location={activeLocation} onClose={() => setActiveLocationId(null)} />
+        <TaxNewsPanel
+          countryId={activeLocation.id}
+          countryName={activeLocation.country}
+          onClose={() => setActiveLocationId(null)}
+        />
       )}
     </div>
   );
