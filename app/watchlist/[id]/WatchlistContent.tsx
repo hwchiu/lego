@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import TopNav from '@/app/components/layout/TopNav';
@@ -12,6 +12,85 @@ import { holdingsData as holdingsDataMap } from '@/app/data/watchlistData';
 import type { HoldingEntity } from '@/app/data/watchlistData';
 import { mainNav } from '@/app/data/navigation';
 import { useWatchlist } from '@/app/contexts/WatchlistContext';
+
+// ── Custom View types ─────────────────────────────────────────────────────────
+interface CustomView {
+  id: string;
+  name: string;
+  columns: string[]; // ordered column IDs
+  hidden: boolean;
+}
+
+// Column definition: label + value getter + optional CSS class getter
+interface ColDef {
+  label: string;
+  getValue: (h: HoldingEntity) => string | number;
+  getClass?: (h: HoldingEntity) => string;
+}
+
+const ALL_COLUMNS: Record<string, ColDef> = {
+  price:             { label: 'Price',              getValue: h => h.price.toFixed(2) },
+  change:            { label: 'Change',             getValue: h => `${h.change >= 0 ? '+' : ''}${h.change.toFixed(2)}`, getClass: h => h.change >= 0 ? 'pos' : 'neg' },
+  changePct:         { label: 'Change %',           getValue: h => `${h.changePct >= 0 ? '+' : ''}${h.changePct.toFixed(2)}%`, getClass: h => h.changePct >= 0 ? 'pos' : 'neg' },
+  volume:            { label: 'Volume',             getValue: () => '-' },
+  avgVolume:         { label: 'Avg Volume (30D)',   getValue: () => '-' },
+  '52wHigh':         { label: '52W High',           getValue: () => '-' },
+  '52wLow':          { label: '52W Low',            getValue: () => '-' },
+  beta:              { label: 'Beta',               getValue: () => '-' },
+  marketCap:         { label: 'Market Cap',         getValue: () => '-' },
+  nextEarning:       { label: 'Next Earning Release', getValue: h => h.nextEarning },
+  revenueQoQ:        { label: 'Revenue QoQ',        getValue: h => h.revenueQoQ, getClass: h => (h.revenueQoQ !== 'N/A' && h.revenueQoQ.startsWith('+')) ? 'pos' : (h.revenueQoQ !== 'N/A' ? 'neg' : '') },
+  revenueYoY:        { label: 'Revenue YoY',        getValue: h => h.revenueYoY, getClass: h => (h.revenueYoY !== 'N/A' && h.revenueYoY.startsWith('+')) ? 'pos' : (h.revenueYoY !== 'N/A' ? 'neg' : '') },
+  lastQtrRevenue:    { label: 'Last Qtr Revenue',   getValue: h => h.lastQtrRevenue },
+  epsGrowthYoY:      { label: 'EPS Growth YoY',     getValue: () => '-' },
+  peRatio:           { label: 'P/E Ratio',          getValue: () => '-' },
+  forwardPE:         { label: 'Forward P/E',        getValue: () => '-' },
+  psRatio:           { label: 'P/S Ratio',          getValue: () => '-' },
+  pbRatio:           { label: 'P/B Ratio',          getValue: () => '-' },
+  evEbitda:          { label: 'EV/EBITDA',          getValue: () => '-' },
+  dividendYield:     { label: 'Dividend Yield',     getValue: () => '-' },
+  revCagr3y:         { label: 'Revenue CAGR (3Y)',  getValue: () => '-' },
+  todayGain:         { label: "Today's Gain",       getValue: h => `${h.todayGain >= 0 ? '+' : ''}${h.todayGain.toFixed(2)}`, getClass: h => h.todayGain >= 0 ? 'pos' : 'neg' },
+  todayGainPct:      { label: "Today's % Gain",     getValue: h => `${h.todayGainPct >= 0 ? '+' : ''}${h.todayGainPct.toFixed(2)}%`, getClass: h => h.todayGainPct >= 0 ? 'pos' : 'neg' },
+  return1m:          { label: '1M Return',          getValue: () => '-' },
+  return3m:          { label: '3M Return',          getValue: () => '-' },
+  return1y:          { label: '1Y Return',          getValue: () => '-' },
+  returnYtd:         { label: 'YTD Return',         getValue: () => '-' },
+  vsSP500:           { label: 'vs S&P 500 (1Y)',    getValue: () => '-' },
+  vsNasdaq:          { label: 'vs Nasdaq (1Y)',     getValue: () => '-' },
+  vsSector:          { label: 'vs Sector (1Y)',     getValue: () => '-' },
+  grossMargin:       { label: 'Gross Margin',       getValue: h => h.grossMargin },
+  operatingMargin:   { label: 'Operating Margin',   getValue: () => '-' },
+  netMargin:         { label: 'Net Margin',         getValue: () => '-' },
+  roe:               { label: 'ROE',                getValue: () => '-' },
+  roic:              { label: 'ROIC',               getValue: () => '-' },
+  lastQtrGrossMargin:{ label: 'Last Qtr Gross Margin', getValue: h => h.lastQtrGrossMargin },
+  shares:            { label: 'Shares',             getValue: h => h.shares },
+  cost:              { label: 'Cost',               getValue: h => h.cost.toFixed(2) },
+  revenue:           { label: 'Revenue',            getValue: h => h.revenue },
+  marketValue:       { label: 'Market Value',       getValue: h => (h.price * h.shares).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
+  unrealizedPL:      { label: 'Unrealized P&L',     getValue: h => { const v = (h.price - h.cost) * h.shares; return `${v >= 0 ? '+' : ''}${v.toFixed(2)}`; }, getClass: h => (h.price - h.cost) >= 0 ? 'pos' : 'neg' },
+  unrealizedPct:     { label: 'Unrealized %',       getValue: h => { const pct = ((h.price - h.cost) / h.cost) * 100; return `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%`; }, getClass: h => h.price >= h.cost ? 'pos' : 'neg' },
+  debtEquity:        { label: 'Debt/Equity',        getValue: () => '-' },
+  currentRatio:      { label: 'Current Ratio',      getValue: () => '-' },
+  netDebt:           { label: 'Net Debt',           getValue: () => '-' },
+  doi:               { label: 'DOI',                getValue: h => h.doi },
+  lastQtrDOI:        { label: 'Last Qtr DOI',       getValue: h => h.lastQtrDOI },
+};
+
+const VIEW_CATEGORIES: Record<string, string[]> = {
+  Trading:      ['price', 'change', 'changePct', 'volume', 'avgVolume', '52wHigh', '52wLow', 'beta', 'marketCap'],
+  Earnings:     ['nextEarning', 'revenueQoQ', 'revenueYoY', 'lastQtrRevenue', 'epsGrowthYoY'],
+  Valuation:    ['peRatio', 'forwardPE', 'psRatio', 'pbRatio', 'evEbitda', 'dividendYield', 'marketCap'],
+  Growth:       ['revenueYoY', 'revenueQoQ', 'epsGrowthYoY', 'revCagr3y'],
+  Performance:  ['todayGain', 'todayGainPct', 'return1m', 'return3m', 'return1y', 'returnYtd'],
+  Benchmarks:   ['vsSP500', 'vsNasdaq', 'vsSector', 'beta'],
+  Profitability:['grossMargin', 'operatingMargin', 'netMargin', 'roe', 'roic', 'lastQtrGrossMargin'],
+  Ownership:    ['shares', 'cost', 'revenue', 'marketValue', 'unrealizedPL', 'unrealizedPct'],
+  Debt:         ['debtEquity', 'currentRatio', 'netDebt', 'doi', 'lastQtrDOI'],
+};
+
+const BUILTIN_VIEWS = ['Summary', 'Health Score', 'Ratings', 'Holdings'] as const;
 
 // All data (indices, holdings, portfolio config) comes from content/*.md files.
 // The fetch script writes to MD; app/data/*.ts readers parse via extractJson().
@@ -374,6 +453,295 @@ async function downloadHoldingsExcel(watchlistName: string, holdings: Holding[])
   URL.revokeObjectURL(url);
 }
 
+// ── Manage View Modal ─────────────────────────────────────────────────────────
+interface ManageViewModalProps {
+  customViews: CustomView[];
+  viewOrder: string[];
+  hiddenViews: Set<string>;
+  onSave: (name: string, columns: string[]) => void;
+  onDelete: (id: string) => void;
+  onToggleHide: (id: string) => void;
+  onReorderViews: (order: string[]) => void;
+  onClose: () => void;
+}
+
+function ManageViewModal({
+  customViews,
+  viewOrder,
+  hiddenViews,
+  onSave,
+  onDelete,
+  onToggleHide,
+  onReorderViews,
+  onClose,
+}: ManageViewModalProps) {
+  const [modalTab, setModalTab] = useState<'create' | 'edit'>('create');
+
+  // Create New View state
+  const [viewName, setViewName] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>(Object.keys(VIEW_CATEGORIES)[0]);
+  const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
+
+  // Edit Views drag state
+  const editDragItem = useRef<number | null>(null);
+  const editDragOver = useRef<number | null>(null);
+
+  const availableColumns = VIEW_CATEGORIES[selectedCategory] ?? [];
+
+  const handleToggleColumn = useCallback((colId: string) => {
+    setSelectedColumns((prev) =>
+      prev.includes(colId) ? prev.filter((c) => c !== colId) : [...prev, colId],
+    );
+  }, []);
+
+  const handleRemoveSelectedColumn = useCallback((colId: string) => {
+    setSelectedColumns((prev) => prev.filter((c) => c !== colId));
+  }, []);
+
+  // Drag handlers for selected columns reorder
+  const selDragItem = useRef<number | null>(null);
+  const selDragOver = useRef<number | null>(null);
+
+  function handleSelDragStart(i: number) { selDragItem.current = i; }
+  function handleSelDragEnter(i: number) { selDragOver.current = i; }
+  function handleSelDragEnd() {
+    if (selDragItem.current === null || selDragOver.current === null) return;
+    const copy = [...selectedColumns];
+    const item = copy.splice(selDragItem.current, 1)[0];
+    copy.splice(selDragOver.current, 0, item);
+    setSelectedColumns(copy);
+    selDragItem.current = null;
+    selDragOver.current = null;
+  }
+
+  // Drag handlers for Edit Views tab order
+  function handleEditDragStart(i: number) { editDragItem.current = i; }
+  function handleEditDragEnter(i: number) { editDragOver.current = i; }
+  function handleEditDragEnd() {
+    if (editDragItem.current === null || editDragOver.current === null) return;
+    const copy = [...viewOrder];
+    const item = copy.splice(editDragItem.current, 1)[0];
+    copy.splice(editDragOver.current, 0, item);
+    onReorderViews(copy);
+    editDragItem.current = null;
+    editDragOver.current = null;
+  }
+
+  function handleCreateSave() {
+    const name = viewName.trim();
+    if (!name || selectedColumns.length === 0) return;
+    onSave(name, selectedColumns);
+  }
+
+  return (
+    <div className="wl-modal-overlay" onClick={onClose}>
+      <div className="wl-modal wl-modal--wide" onClick={(e) => e.stopPropagation()}>
+        {/* Header */}
+        <div className="wl-modal-header">
+          <span className="wl-modal-title">Manage View</span>
+          <div className="wl-modal-header-actions">
+            <button className="wl-modal-cancel-btn" onClick={onClose}>Close</button>
+          </div>
+        </div>
+
+        {/* Inner tabs */}
+        <div className="wl-mv-tabs">
+          <button
+            className={`wl-mv-tab${modalTab === 'create' ? ' active' : ''}`}
+            onClick={() => setModalTab('create')}
+          >
+            Create New View
+          </button>
+          <button
+            className={`wl-mv-tab${modalTab === 'edit' ? ' active' : ''}`}
+            onClick={() => setModalTab('edit')}
+          >
+            Edit Views
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="wl-modal-body wl-modal-body--scroll">
+          {modalTab === 'create' ? (
+            <>
+              {/* View Name */}
+              <div className="wl-modal-field">
+                <label className="wl-modal-field-label">View Name</label>
+                <input
+                  className="wl-modal-input"
+                  type="text"
+                  placeholder="e.g. My Earnings View"
+                  value={viewName}
+                  onChange={(e) => setViewName(e.target.value)}
+                  autoFocus
+                />
+              </div>
+
+              {/* 3-column picker */}
+              <div className="wl-mv-picker">
+                {/* Category */}
+                <div className="wl-mv-panel">
+                  <div className="wl-mv-panel-title">Category</div>
+                  <div className="wl-mv-panel-body">
+                    {Object.keys(VIEW_CATEGORIES).map((cat) => (
+                      <button
+                        key={cat}
+                        className={`wl-mv-cat-item${selectedCategory === cat ? ' active' : ''}`}
+                        onClick={() => setSelectedCategory(cat)}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Available Columns */}
+                <div className="wl-mv-panel">
+                  <div className="wl-mv-panel-title">Available Columns</div>
+                  <div className="wl-mv-panel-body">
+                    {availableColumns.map((colId) => {
+                      const def = ALL_COLUMNS[colId];
+                      if (!def) return null;
+                      const checked = selectedColumns.includes(colId);
+                      return (
+                        <label key={colId} className="wl-mv-col-item">
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => handleToggleColumn(colId)}
+                          />
+                          <span>{def.label}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Selected Columns */}
+                <div className="wl-mv-panel">
+                  <div className="wl-mv-panel-title">
+                    Selected Columns
+                    {selectedColumns.length > 0 && (
+                      <span className="wl-mv-badge">{selectedColumns.length}</span>
+                    )}
+                  </div>
+                  <div className="wl-mv-panel-body">
+                    {selectedColumns.length === 0 ? (
+                      <div className="wl-mv-empty">No columns selected yet.<br />Check columns on the left.</div>
+                    ) : (
+                      selectedColumns.map((colId, i) => {
+                        const def = ALL_COLUMNS[colId];
+                        if (!def) return null;
+                        return (
+                          <div
+                            key={colId}
+                            className="wl-mv-sel-item"
+                            draggable
+                            onDragStart={() => handleSelDragStart(i)}
+                            onDragEnter={() => handleSelDragEnter(i)}
+                            onDragEnd={handleSelDragEnd}
+                            onDragOver={(e) => e.preventDefault()}
+                          >
+                            <svg className="wl-drag-handle" viewBox="0 0 14 14" fill="none" width="12" height="12">
+                              <path d="M3 4h8M3 7h8M3 10h8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                            </svg>
+                            <span className="wl-mv-sel-label">{def.label}</span>
+                            <button
+                              className="wl-drag-delete"
+                              aria-label={`Remove ${def.label}`}
+                              onClick={() => handleRemoveSelectedColumn(colId)}
+                            >
+                              <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+                                <path d="M3 3L11 11M11 3L3 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                              </svg>
+                            </button>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Save button */}
+              <button
+                className="wl-modal-done-btn"
+                style={{ alignSelf: 'flex-end', marginTop: 4 }}
+                onClick={handleCreateSave}
+                disabled={!viewName.trim() || selectedColumns.length === 0}
+              >
+                Save View
+              </button>
+            </>
+          ) : (
+            /* Edit Views tab */
+            <div className="wl-mv-edit-list">
+              {viewOrder.map((id, i) => {
+                const isBuiltin = BUILTIN_VIEWS.includes(id as typeof BUILTIN_VIEWS[number]);
+                const label = isBuiltin
+                  ? id
+                  : (customViews.find((v) => v.id === id)?.name ?? id);
+                const isHidden = hiddenViews.has(id);
+                return (
+                  <div
+                    key={id}
+                    className="wl-mv-edit-item"
+                    draggable
+                    onDragStart={() => handleEditDragStart(i)}
+                    onDragEnter={() => handleEditDragEnter(i)}
+                    onDragEnd={handleEditDragEnd}
+                    onDragOver={(e) => e.preventDefault()}
+                  >
+                    <svg className="wl-drag-handle" viewBox="0 0 14 14" fill="none" width="14" height="14">
+                      <path d="M3 4h8M3 7h8M3 10h8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                    </svg>
+                    <span className={`wl-mv-edit-label${isHidden ? ' wl-mv-edit-label--hidden' : ''}`}>{label}</span>
+                    {isBuiltin && <span className="wl-mv-built-in-badge">Built-in</span>}
+                    <div className="wl-mv-edit-actions">
+                      <button
+                        className={`wl-mv-hide-btn${isHidden ? ' active' : ''}`}
+                        title={isHidden ? 'Show View' : 'Hide View'}
+                        onClick={() => onToggleHide(id)}
+                      >
+                        {isHidden ? (
+                          <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                            <path d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z" stroke="currentColor" strokeWidth="1.3" />
+                            <circle cx="7" cy="7" r="1.8" fill="currentColor" />
+                            <path d="M2 2L12 12" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                          </svg>
+                        ) : (
+                          <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                            <path d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z" stroke="currentColor" strokeWidth="1.3" />
+                            <circle cx="7" cy="7" r="1.8" fill="currentColor" />
+                          </svg>
+                        )}
+                        <span>{isHidden ? 'Show' : 'Hide'}</span>
+                      </button>
+                      {!isBuiltin && (
+                        <button
+                          className="wl-mv-delete-btn"
+                          title="Delete View"
+                          onClick={() => onDelete(id)}
+                        >
+                          <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                            <path d="M2.5 4h9M5.5 4V2.5h3V4M5.5 6.5v4M8.5 6.5v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                            <rect x="3" y="4" width="8" height="8" rx="1" stroke="currentColor" strokeWidth="1.3" />
+                          </svg>
+                          <span>Delete</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Main page ─────────────────────────────────────────────────────────────────
 type FeedTab = 'Latest' | 'Analysis' | 'News' | 'Warnings' | 'Transcripts' | 'Press Releases';
 
@@ -385,17 +753,22 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
   const watchlistName = watchlistNames[watchlistId] ?? 'Watchlist';
   const currentSymbolOrder = symbolOrders[watchlistId] ?? holdingsData.map((h) => h.symbol);
 
-  const [activeTab, setActiveTab] = useState<'Summary' | 'Health Score' | 'Ratings' | 'Holdings'>(
-    'Summary',
-  );
+  const [activeTab, setActiveTab] = useState<string>('Summary');
   const [feedTab, setFeedTab] = useState<FeedTab>('Latest');
   const [quarter, setQuarter] = useState({ year: 2026, q: 1 });
   const [splitLayout, setSplitLayout] = useState(false);
+
+  // Custom views state
+  const [customViews, setCustomViews] = useState<CustomView[]>([]);
+  const [viewOrder, setViewOrder] = useState<string[]>([...BUILTIN_VIEWS]);
+  const [hiddenViews, setHiddenViews] = useState<Set<string>>(new Set());
+  const [customViewsHydrated, setCustomViewsHydrated] = useState(false);
 
   // Modal states
   const [showManageAlerts, setShowManageAlerts] = useState(false);
   const [showEditWatchlist, setShowEditWatchlist] = useState(false);
   const [showAddSymbol, setShowAddSymbol] = useState(false);
+  const [showManageView, setShowManageView] = useState(false);
 
   // Manage Alerts toggles
   const [newsAlert, setNewsAlert] = useState(true);
@@ -462,6 +835,43 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
       // ignore storage errors
     }
   }, [extraHoldings, extraHoldingsHydrated]);
+
+  // Load custom views from localStorage on mount
+  useEffect(() => {
+    try {
+      const storedViews = localStorage.getItem('wl-custom-views');
+      if (storedViews) setCustomViews(JSON.parse(storedViews));
+      const storedOrder = localStorage.getItem('wl-view-order');
+      if (storedOrder) setViewOrder(JSON.parse(storedOrder));
+      const storedHidden = localStorage.getItem('wl-hidden-views');
+      if (storedHidden) setHiddenViews(new Set(JSON.parse(storedHidden)));
+    } catch {
+      // ignore parse errors
+    }
+    setCustomViewsHydrated(true);
+  }, []);
+
+  // Persist custom views
+  useEffect(() => {
+    if (!customViewsHydrated) return;
+    try {
+      localStorage.setItem('wl-custom-views', JSON.stringify(customViews));
+    } catch { /* ignore */ }
+  }, [customViews, customViewsHydrated]);
+
+  useEffect(() => {
+    if (!customViewsHydrated) return;
+    try {
+      localStorage.setItem('wl-view-order', JSON.stringify(viewOrder));
+    } catch { /* ignore */ }
+  }, [viewOrder, customViewsHydrated]);
+
+  useEffect(() => {
+    if (!customViewsHydrated) return;
+    try {
+      localStorage.setItem('wl-hidden-views', JSON.stringify([...hiddenViews]));
+    } catch { /* ignore */ }
+  }, [hiddenViews, customViewsHydrated]);
 
   const prevQ = quarterOffset(quarter, -1);
   const nextQ = quarterOffset(quarter, 1);
@@ -587,6 +997,35 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
     }
 
     handleAddSymbolClose();
+  }
+
+  // ── Custom View handlers ───────────────────────────────────────────────────
+  function handleSaveCustomView(name: string, columns: string[]) {
+    const id =
+      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? `view-${crypto.randomUUID()}`
+        : `view-${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
+    const newView: CustomView = { id, name, columns, hidden: false };
+    setCustomViews((prev) => [...prev, newView]);
+    setViewOrder((prev) => [...prev, id]);
+    setShowManageView(false);
+    setActiveTab(id);
+  }
+
+  function handleDeleteCustomView(id: string) {
+    setCustomViews((prev) => prev.filter((v) => v.id !== id));
+    setViewOrder((prev) => prev.filter((v) => v !== id));
+    if (activeTab === id) setActiveTab('Summary');
+  }
+
+  function handleToggleHideView(id: string) {
+    setHiddenViews((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+    if (activeTab === id) setActiveTab('Summary');
   }
 
   // Feed filtering logic
@@ -837,20 +1276,27 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
 
             {/* ── Sub-tabs ───────────────────────────────────────────── */}
             <div className="wl-subtabs">
-              {(['Summary', 'Health Score', 'Ratings', 'Holdings'] as const).map((t) => (
-                <button
-                  key={t}
-                  className={`wl-subtab${activeTab === t ? ' active' : ''}`}
-                  onClick={() => setActiveTab(t)}
-                >
-                  {t}
-                </button>
-              ))}
-              <button className="wl-subtab wl-subtab--add">
+              {viewOrder
+                .filter((id) => !hiddenViews.has(id))
+                .map((id) => {
+                  const label = BUILTIN_VIEWS.includes(id as typeof BUILTIN_VIEWS[number])
+                    ? id
+                    : (customViews.find((v) => v.id === id)?.name ?? id);
+                  return (
+                    <button
+                      key={id}
+                      className={`wl-subtab${activeTab === id ? ' active' : ''}`}
+                      onClick={() => setActiveTab(id)}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              <button className="wl-subtab wl-subtab--add" onClick={() => setShowManageView(true)}>
                 <svg viewBox="0 0 14 14" fill="none" width="12" height="12">
                   <path d="M7 2V12M2 7H12" stroke="#2563eb" strokeWidth="1.8" strokeLinecap="round" />
                 </svg>
-                Add View
+                Add/Edit View
               </button>
 
               {/* Quarter nav — right-aligned inside tab bar */}
@@ -1165,6 +1611,48 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                   </table>
                 </div>
               </>
+            ) : customViews.some((v) => v.id === activeTab) ? (
+              /* ── Custom View Table ─────────────────────────────────── */
+              (() => {
+                const cv = customViews.find((v) => v.id === activeTab);
+                if (!cv) return null;
+                const cols = cv.columns.filter((c) => ALL_COLUMNS[c]);
+                return (
+                  <div className="wl-table-wrap">
+                    <table className="wl-table">
+                      <thead className="wl-thead--white">
+                        <tr>
+                          <th className="wl-th wl-th--sticky">
+                            Symbol
+                            <svg viewBox="0 0 14 14" fill="none" width="10" height="10" style={{ marginLeft: 4 }}>
+                              <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </th>
+                          {cols.map((c) => (
+                            <th key={c} className="wl-th">{ALL_COLUMNS[c].label}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sortedHoldings.map((h) => (
+                          <tr key={h.symbol} className="wl-tr">
+                            <td className="wl-td wl-td--sticky wl-symbol">{h.symbol}</td>
+                            {cols.map((c) => {
+                              const def = ALL_COLUMNS[c];
+                              const cls = def.getClass ? def.getClass(h) : '';
+                              return (
+                                <td key={c} className={`wl-td${cls ? ` ${cls}` : ''}`}>
+                                  {def.getValue(h)}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                );
+              })()
             ) : (
               /* ── Placeholder for Health Score / Ratings tabs ──────── */
               <div className="wl-table-wrap">
@@ -1414,6 +1902,20 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
             </div>
           </div>
         </div>
+      )}
+
+      {/* ── Manage View Modal ────────────────────────────────────────────── */}
+      {showManageView && (
+        <ManageViewModal
+          customViews={customViews}
+          viewOrder={viewOrder}
+          hiddenViews={hiddenViews}
+          onSave={handleSaveCustomView}
+          onDelete={handleDeleteCustomView}
+          onToggleHide={handleToggleHideView}
+          onReorderViews={setViewOrder}
+          onClose={() => setShowManageView(false)}
+        />
       )}
     </>
   );
