@@ -245,11 +245,7 @@ export default function IntelligenceSearchPage() {
                   <span className="is-hero-ai-badge">Powered by GPT</span>
                 </div>
                 <h1 className="is-hero-title">
-                  {lang === 'zh' ? (
-                    <>Intelligence<br />Search</>
-                  ) : (
-                    <>Intelligence<br />Search</>
-                  )}
+                  Intelligence<br />Search
                 </h1>
                 <p className="is-hero-sub">
                   {lang === 'zh'
