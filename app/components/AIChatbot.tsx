@@ -81,6 +81,13 @@ export default function AIChatbot() {
   const [open, setOpen] = useState(false);
   const [flowStep, setFlowStep] = useState<FlowStep>('role');
   const [selectedRole, setSelectedRole] = useState<RoleData | null>(null);
+  const msgIdRef = useRef(1);
+
+  function nextId() {
+    msgIdRef.current += 1;
+    return msgIdRef.current;
+  }
+
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 0,
@@ -120,9 +127,10 @@ export default function AIChatbot() {
   function resetFlow() {
     setFlowStep('role');
     setSelectedRole(null);
+    msgIdRef.current = 1;
     setMessages([
       {
-        id: Date.now(),
+        id: 0,
         role: 'bot',
         text: BOT_GREETING,
         options: ROLES.map((r) => ({ id: r.id, label: r.label, icon: r.icon })),
@@ -131,11 +139,11 @@ export default function AIChatbot() {
   }
 
   function addBotMessage(msg: Omit<ChatMessage, 'id' | 'role'>) {
-    setMessages((prev) => [...prev, { ...msg, id: Date.now() + Math.random(), role: 'bot' }]);
+    setMessages((prev) => [...prev, { ...msg, id: nextId(), role: 'bot' }]);
   }
 
   function addUserMessage(text: string) {
-    setMessages((prev) => [...prev, { id: Date.now(), role: 'user', text }]);
+    setMessages((prev) => [...prev, { id: nextId(), role: 'user', text }]);
   }
 
   function handleRoleSelect(roleId: string) {

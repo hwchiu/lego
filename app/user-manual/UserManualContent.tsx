@@ -144,7 +144,7 @@ const ROLES: Role[] = [
         ],
         pages: [
           { label: 'Data Explore', href: '/data-explore' },
-          { label: 'Intelligence Search', href: '#' },
+          { label: 'Intelligence Search', href: '#' }, // placeholder — feature not yet launched
           { label: 'Market News', href: '/market-news' },
           { label: 'Event Calendar', href: '/event-calendar' },
         ],
@@ -256,7 +256,7 @@ function ScenarioCard({ scenario, roleColor }: ScenarioCardProps) {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className={`um-scenario-card${expanded ? ' um-scenario-card--open' : ''}`}>
+    <div id={`scenario-${scenario.id}`} className={`um-scenario-card${expanded ? ' um-scenario-card--open' : ''}`}>
       <button
         className="um-scenario-header"
         onClick={() => setExpanded((v) => !v)}
