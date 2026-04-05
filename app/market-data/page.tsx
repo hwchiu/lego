@@ -191,8 +191,11 @@ export default function MarketDataPage() {
                         <span className="md-product-stat-label">Updates</span>
                       </div>
                     </div>
-                    <div className="md-product-card-cta md-product-card-cta--disabled">
-                      <span>Coming Soon</span>
+                    <div className="md-product-card-cta">
+                      <Link href="/market-data/financial-data/">
+                        <span>Explore Financial Data</span>
+                        <ArrowRightIcon />
+                      </Link>
                     </div>
                   </div>
                 </div>

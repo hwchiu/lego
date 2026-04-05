@@ -110,7 +110,7 @@ export const mainNav: NavItem[] = [
     icon: 'marketData',
     subItems: [
       { label: 'M&A', href: '/market-data/ma', icon: 'mAndA' },
-      { label: 'Financial Data', href: '#', icon: 'financialData' },
+      { label: 'Financial Data', href: '/market-data/financial-data', icon: 'financialData' },
     ],
   },
   { label: 'Data Explore', href: '/data-explore', icon: 'dataExplore' },

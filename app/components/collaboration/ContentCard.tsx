@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import type { ContentCard, ChartBar, Member, Comment } from '@/app/data/collaboration';
 import { CommentSection } from './CommentSection';
 
@@ -493,6 +494,17 @@ export function ContentCardComponent({
   onDrop,
   onDragEnd,
 }: ContentCardProps) {
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(card.likes ?? 0);
+
+  function handleLike() {
+    setIsLiked((prev) => {
+      const next = !prev;
+      setLikeCount((c) => c + (next ? 1 : -1));
+      return next;
+    });
+  }
+
   const classNames = [
     'pg-card',
     isDragging ? 'pg-card--dragging' : '',
@@ -667,6 +679,35 @@ export function ContentCardComponent({
         <Avatar src={card.addedBy.avatar} name={card.addedBy.name} size={26} />
         <span className="pg-card-adder">{card.addedBy.name}</span>
         <span className="pg-card-date">{card.addedAt}</span>
+      </div>
+
+      {/* Interaction bar: like + comment */}
+      <div className="pg-card-interactions">
+        <button
+          className={`pg-card-like-btn${isLiked ? ' pg-card-like-btn--liked' : ''}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleLike();
+          }}
+          aria-label={isLiked ? 'Unlike' : 'Like'}
+          title={isLiked ? 'Unlike' : 'Like'}
+        >
+          <svg
+            viewBox="0 0 16 16"
+            width="14"
+            height="14"
+            fill={isLiked ? 'currentColor' : 'none'}
+            aria-hidden="true"
+          >
+            <path
+              d="M8 13.5S2 9.8 2 5.5C2 3.6 3.6 2 5.5 2c1 0 1.9.5 2.5 1.2C8.6 2.5 9.5 2 10.5 2 12.4 2 14 3.6 14 5.5 14 9.8 8 13.5 8 13.5z"
+              stroke="currentColor"
+              strokeWidth="1.3"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <span className="pg-card-like-count">{likeCount > 0 ? likeCount : ''}</span>
+        </button>
       </div>
 
       {/* Comment section */}
