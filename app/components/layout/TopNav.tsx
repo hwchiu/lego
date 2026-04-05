@@ -99,7 +99,14 @@ function NotifItemRow({ notif, isRead, onClick }: NotifItemRowProps) {
   ].join(' ');
 
   return (
-    <div className={classes} onClick={onClick} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && onClick()}>
+    <div
+      className={classes}
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      aria-label={`${isRead ? '已讀' : '未讀'}通知：${notif.title}`}
+      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick()}
+    >
       <NotifTypeIcon type={notif.type} />
       <div className="topnav-notif-item-body">
         <div className="topnav-notif-item-title">{notif.title}</div>
@@ -580,8 +587,11 @@ export default function TopNav() {
               </div>
 
               {/* Category tabs */}
-              <div className="topnav-notif-tabs">
+              <div className="topnav-notif-tabs" role="tablist">
                 <button
+                  role="tab"
+                  aria-selected={notifTab === 'news'}
+                  aria-controls="notif-panel-news"
                   className={`topnav-notif-tab${notifTab === 'news' ? ' active' : ''}`}
                   onClick={() => setNotifTab('news')}
                 >
@@ -589,6 +599,9 @@ export default function TopNav() {
                   <span className="topnav-notif-tab-count">{newsNotifications.length}</span>
                 </button>
                 <button
+                  role="tab"
+                  aria-selected={notifTab === 'collaboration'}
+                  aria-controls="notif-panel-collaboration"
                   className={`topnav-notif-tab${notifTab === 'collaboration' ? ' active' : ''}`}
                   onClick={() => setNotifTab('collaboration')}
                 >
@@ -598,7 +611,11 @@ export default function TopNav() {
               </div>
 
               {/* Notification list */}
-              <div className="topnav-notif-list">
+              <div
+                id={notifTab === 'news' ? 'notif-panel-news' : 'notif-panel-collaboration'}
+                role="tabpanel"
+                className="topnav-notif-list"
+              >
                 {(notifTab === 'news' ? newsNotifications : collaborationNotifications).length === 0 ? (
                   <div className="topnav-notif-empty">暫無通知</div>
                 ) : (

@@ -56,8 +56,11 @@ export const newsNotifications: NotificationItem[] = payload.notifications.map((
 function tagMatchesNews(tag: string): boolean {
   const en = TAG_I18N[tag] ?? tag;
   const enLower = en.toLowerCase();
-  // Also handle English plural/singular (e.g. "Semiconductors" → "semiconductor")
-  const enSingular = enLower.endsWith('s') ? enLower.slice(0, -1) : enLower;
+  // Strip trailing 's' only for regular English plurals (not words ending in 'is', 'us', 'ss')
+  const enSingular =
+    enLower.endsWith('s') && !enLower.endsWith('is') && !enLower.endsWith('us') && !enLower.endsWith('ss')
+      ? enLower.slice(0, -1)
+      : enLower;
 
   return newsItems.some(
     (n) =>
