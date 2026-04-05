@@ -1,14 +1,133 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { SP500_COMPANIES } from '@/app/data/sp500';
 import { newsItems } from '@/app/data/news';
+import {
+  newsNotifications,
+  collaborationNotifications,
+  allNotifications,
+  type NotificationItem,
+  type NotificationType,
+} from '@/app/data/notifications';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { useMobileSidebar } from '@/app/contexts/MobileSidebarContext';
 
 const POPULAR_SEARCHES = ['TSM', 'AAPL', 'NVDA'];
+
+// ─────────────────────────────────────────────
+// Notification type icon
+// ─────────────────────────────────────────────
+function NotifTypeIcon({ type }: { type: NotificationType }) {
+  const cls = `topnav-notif-item-icon topnav-notif-item-icon--${type}`;
+  switch (type) {
+    case 'alert':
+    case 'warning':
+      return (
+        <span className={cls}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path
+              d="M7 1.5L13 12.5H1L7 1.5Z"
+              stroke="currentColor"
+              strokeWidth="1.3"
+              strokeLinejoin="round"
+            />
+            <path d="M7 5.5v3M7 10h.01" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+          </svg>
+        </span>
+      );
+    case 'analysis':
+      return (
+        <span className={cls}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <rect x="1.5" y="1.5" width="11" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
+            <path d="M4 9.5l2-3 2 2 2-4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+      );
+    case 'transcript':
+      return (
+        <span className={cls}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <rect x="2" y="1.5" width="8" height="10" rx="1" stroke="currentColor" strokeWidth="1.3" />
+            <path d="M4 4.5h4M4 6.5h4M4 8.5h2.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+            <path d="M10 8l2.5 1.5L10 11V8Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+          </svg>
+        </span>
+      );
+    case 'tag-match':
+      return (
+        <span className={cls}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path
+              d="M7.5 1.5H12.5V6.5L7.5 11.5L2.5 6.5L7.5 1.5Z"
+              stroke="currentColor"
+              strokeWidth="1.3"
+              strokeLinejoin="round"
+            />
+            <circle cx="10" cy="4" r="1" fill="currentColor" />
+          </svg>
+        </span>
+      );
+    default: // 'news'
+      return (
+        <span className={cls}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <rect x="1" y="2" width="12" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
+            <path d="M3.5 5.5h7M3.5 7.5h7M3.5 9.5h4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+          </svg>
+        </span>
+      );
+  }
+}
+
+// ─────────────────────────────────────────────
+// Single notification row
+// ─────────────────────────────────────────────
+interface NotifItemRowProps {
+  notif: NotificationItem;
+  isRead: boolean;
+  onClick: () => void;
+}
+
+function NotifItemRow({ notif, isRead, onClick }: NotifItemRowProps) {
+  const classes = [
+    'topnav-notif-item',
+    !isRead ? 'topnav-notif-item--unread' : 'topnav-notif-item--read',
+  ].join(' ');
+
+  return (
+    <div
+      className={classes}
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      aria-label={`${isRead ? '已讀' : '未讀'}通知：${notif.title}`}
+      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick()}
+    >
+      <NotifTypeIcon type={notif.type} />
+      <div className="topnav-notif-item-body">
+        <div className="topnav-notif-item-title">{notif.title}</div>
+        <div className="topnav-notif-item-meta">
+          <span>{notif.source}</span>
+          <span>·</span>
+          <span>{notif.time}</span>
+        </div>
+        {notif.tags && notif.tags.length > 0 && (
+          <div className="topnav-notif-item-tags">
+            {notif.tags.map((tag) => (
+              <span key={tag} className="topnav-notif-tag">
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 const DATA_CATEGORIES = ['All', 'Company', 'News & Event', 'People', 'Data'];
 
@@ -78,9 +197,6 @@ const RECENT_HISTORY = [
   },
 ];
 
-// Notification count — sourced from content/notifications.md
-const NOTIFICATION_COUNT = 6;
-
 // Pre-computed lowercase news fields for faster filtering
 const NEWS_ITEMS_LC = newsItems.map((n) => ({
   ...n,
@@ -103,6 +219,26 @@ export default function TopNav() {
   const [focused, setFocused] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const wrapRef = useRef<HTMLDivElement>(null);
+
+  // Notification panel state
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifTab, setNotifTab] = useState<'news' | 'collaboration'>('news');
+  const [readIds, setReadIds] = useState<Set<string>>(new Set());
+  const notifRef = useRef<HTMLDivElement>(null);
+
+  const badgeCount = allNotifications.filter((n) => !readIds.has(n.id)).length;
+
+  const handleNotifToggle = useCallback(() => {
+    setNotifOpen((prev) => !prev);
+  }, []);
+
+  const handleMarkAllRead = useCallback(() => {
+    setReadIds(new Set(allNotifications.map((n) => n.id)));
+  }, []);
+
+  const handleMarkRead = useCallback((id: string) => {
+    setReadIds((prev) => new Set([...prev, id]));
+  }, []);
 
   const showDropdown = focused;
   const showCategories = focused && query.trim().length > 0;
@@ -130,7 +266,7 @@ export default function TopNav() {
     router.push(`/company-profile/${symbol}/`);
   }
 
-  // Close dropdown when clicking outside
+  // Close search dropdown when clicking outside
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
@@ -140,6 +276,19 @@ export default function TopNav() {
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
+
+  // Close notification panel when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
+        setNotifOpen(false);
+      }
+    }
+    if (notifOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [notifOpen]);
 
   return (
     <header className="topnav">
@@ -398,28 +547,91 @@ export default function TopNav() {
         </button>
 
         {/* Notification bell */}
-        <button className="topnav-action-btn topnav-action-btn--icon-only" title="Notifications" aria-label="Notifications">
-          <span className="topnav-notif-wrap">
-            {/* Bell icon */}
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path
-                d="M8 2a4.5 4.5 0 0 1 4.5 4.5v2.8l1.1 1.7H2.4L3.5 9.3V6.5A4.5 4.5 0 0 1 8 2Z"
-                stroke="currentColor"
-                strokeWidth="1.3"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M6.2 13a1.8 1.8 0 0 0 3.6 0"
-                stroke="currentColor"
-                strokeWidth="1.3"
-                strokeLinecap="round"
-              />
-            </svg>
-            {NOTIFICATION_COUNT > 0 && (
-              <span className="topnav-notif-badge">{NOTIFICATION_COUNT}</span>
-            )}
-          </span>
-        </button>
+        <div className="topnav-notif-panel-wrap" ref={notifRef}>
+          <button
+            className={`topnav-action-btn topnav-action-btn--icon-only${notifOpen ? ' active' : ''}`}
+            title="Notifications"
+            aria-label="Notifications"
+            onClick={handleNotifToggle}
+          >
+            <span className="topnav-notif-wrap">
+              {/* Bell icon */}
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path
+                  d="M8 2a4.5 4.5 0 0 1 4.5 4.5v2.8l1.1 1.7H2.4L3.5 9.3V6.5A4.5 4.5 0 0 1 8 2Z"
+                  stroke="currentColor"
+                  strokeWidth="1.3"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M6.2 13a1.8 1.8 0 0 0 3.6 0"
+                  stroke="currentColor"
+                  strokeWidth="1.3"
+                  strokeLinecap="round"
+                />
+              </svg>
+              {badgeCount > 0 && (
+                <span className="topnav-notif-badge">{badgeCount}</span>
+              )}
+            </span>
+          </button>
+
+          {notifOpen && (
+            <div className="topnav-notif-panel">
+              {/* Panel header */}
+              <div className="topnav-notif-panel-header">
+                <span className="topnav-notif-panel-title">通知</span>
+                <button className="topnav-notif-mark-read" onClick={handleMarkAllRead}>
+                  全部標為已讀
+                </button>
+              </div>
+
+              {/* Category tabs */}
+              <div className="topnav-notif-tabs" role="tablist">
+                <button
+                  role="tab"
+                  aria-selected={notifTab === 'news'}
+                  aria-controls="notif-panel-news"
+                  className={`topnav-notif-tab${notifTab === 'news' ? ' active' : ''}`}
+                  onClick={() => setNotifTab('news')}
+                >
+                  新聞
+                  <span className="topnav-notif-tab-count">{newsNotifications.length}</span>
+                </button>
+                <button
+                  role="tab"
+                  aria-selected={notifTab === 'collaboration'}
+                  aria-controls="notif-panel-collaboration"
+                  className={`topnav-notif-tab${notifTab === 'collaboration' ? ' active' : ''}`}
+                  onClick={() => setNotifTab('collaboration')}
+                >
+                  協作動態
+                  <span className="topnav-notif-tab-count">{collaborationNotifications.length}</span>
+                </button>
+              </div>
+
+              {/* Notification list */}
+              <div
+                id={notifTab === 'news' ? 'notif-panel-news' : 'notif-panel-collaboration'}
+                role="tabpanel"
+                className="topnav-notif-list"
+              >
+                {(notifTab === 'news' ? newsNotifications : collaborationNotifications).length === 0 ? (
+                  <div className="topnav-notif-empty">暫無通知</div>
+                ) : (
+                  (notifTab === 'news' ? newsNotifications : collaborationNotifications).map((notif) => (
+                    <NotifItemRow
+                      key={notif.id}
+                      notif={notif}
+                      isRead={readIds.has(notif.id)}
+                      onClick={() => handleMarkRead(notif.id)}
+                    />
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="topnav-user">
