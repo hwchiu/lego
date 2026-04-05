@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { EpsRow, RevenueRow, BeatMiss } from '@/app/data/earnings';
+import { monthShortToFull } from '@/app/lib/calendarUtils';
 
 function BeatMissTag({ value }: { value: BeatMiss }) {
   if (!value) return <span className="td-na">—</span>;
@@ -136,17 +137,33 @@ function RevenueTable({ data }: { data: RevenueRow[] }) {
 export default function DetailTable({
   epsData,
   revenueData,
+  selectedDateLabel,
+  companyCount,
 }: {
   epsData: EpsRow[];
   revenueData: RevenueRow[];
+  selectedDateLabel?: string;
+  companyCount?: number;
 }) {
   const [activeTab, setActiveTab] = useState<'eps' | 'revenue'>('eps');
+
+  // Format the date label for display, e.g. "Apr 5" → "05 April"
+  const displayDate = selectedDateLabel
+    ? (() => {
+        const parts = selectedDateLabel.split(' ');
+        const day = parts[1]?.padStart(2, '0') ?? '';
+        const month = monthShortToFull(parts[0]);
+        return `${day} ${month}`;
+      })()
+    : '—';
+
+  const count = companyCount ?? epsData.length;
 
   return (
     <div className="detail-card">
       <div className="detail-header">
         <div className="detail-eyebrow">
-          01 April, 2026 &nbsp;·&nbsp; 19 Companies
+          {displayDate} &nbsp;·&nbsp; {count} {count === 1 ? 'Company' : 'Companies'}
         </div>
         <div className="detail-tabs">
           <button

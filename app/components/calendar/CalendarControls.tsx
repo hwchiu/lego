@@ -2,14 +2,8 @@
 
 import { useState } from 'react';
 
-const MONTHS = [
-  'January','February','March','April','May','June',
-  'July','August','September','October','November','December',
-];
-
 interface CalendarControlsProps {
-  year: number;
-  month: number;
+  displayLabel: string;
   onPrev: () => void;
   onNext: () => void;
   isMonthlyView: boolean;
@@ -34,8 +28,7 @@ function CalendarIcon() {
 }
 
 export default function CalendarControls({
-  year,
-  month,
+  displayLabel,
   onPrev,
   onNext,
   isMonthlyView,
@@ -47,13 +40,11 @@ export default function CalendarControls({
     <div className="cal-header">
       <div className="cal-eyebrow">Earnings Calendar</div>
       <div className="cal-month-nav">
-        <button className="cal-arrow" onClick={onPrev} aria-label="Previous month">
+        <button className="cal-arrow" onClick={onPrev} aria-label="Previous">
           ‹
         </button>
-        <span className="cal-month-label">
-          {MONTHS[month]} {year}
-        </span>
-        <button className="cal-arrow" onClick={onNext} aria-label="Next month">
+        <span className="cal-month-label">{displayLabel}</span>
+        <button className="cal-arrow" onClick={onNext} aria-label="Next">
           ›
         </button>
       </div>
