@@ -10,6 +10,9 @@ export interface FabInfo {
 
 export interface FabSubLocation {
   city: string;
+  /** Geographic center of the city/campus for map marker placement */
+  lat: number;
+  lon: number;
   fabs: FabInfo[];
 }
 
@@ -37,6 +40,8 @@ export const TSMC_FAB_LOCATIONS: FabLocation[] = [
     subLocations: [
       {
         city: 'Hsinchu City',
+        lat: 24.8138,
+        lon: 120.9675,
         fabs: [
           {
             id: 'fab5',
@@ -63,6 +68,8 @@ export const TSMC_FAB_LOCATIONS: FabLocation[] = [
       },
       {
         city: 'Hsinchu County',
+        lat: 24.7007,
+        lon: 120.9176,
         fabs: [
           {
             id: 'fab15',
@@ -82,6 +89,8 @@ export const TSMC_FAB_LOCATIONS: FabLocation[] = [
       },
       {
         city: 'Taoyuan',
+        lat: 24.9936,
+        lon: 121.3010,
         fabs: [
           {
             id: 'fab3a',
@@ -101,6 +110,8 @@ export const TSMC_FAB_LOCATIONS: FabLocation[] = [
       },
       {
         city: 'Tainan (STSP)',
+        lat: 22.9208,
+        lon: 120.2830,
         fabs: [
           {
             id: 'fab14',
@@ -120,6 +131,8 @@ export const TSMC_FAB_LOCATIONS: FabLocation[] = [
       },
       {
         city: 'Kaohsiung',
+        lat: 22.6273,
+        lon: 120.3014,
         fabs: [
           {
             id: 'fab22',
@@ -132,6 +145,8 @@ export const TSMC_FAB_LOCATIONS: FabLocation[] = [
       },
       {
         city: 'Taichung',
+        lat: 24.3031,
+        lon: 120.8539,
         fabs: [
           {
             id: 'fab15b',
@@ -144,6 +159,8 @@ export const TSMC_FAB_LOCATIONS: FabLocation[] = [
       },
       {
         city: 'Miaoli',
+        lat: 24.5602,
+        lon: 120.8214,
         fabs: [
           {
             id: 'fab2',
@@ -167,6 +184,8 @@ export const TSMC_FAB_LOCATIONS: FabLocation[] = [
     subLocations: [
       {
         city: 'Phoenix, Arizona',
+        lat: 33.6057,
+        lon: -112.2340,
         fabs: [
           {
             id: 'fab21-p1',
@@ -197,6 +216,8 @@ export const TSMC_FAB_LOCATIONS: FabLocation[] = [
     subLocations: [
       {
         city: 'Kumamoto',
+        lat: 32.7899,
+        lon: 130.7417,
         fabs: [
           {
             id: 'jasm1',
@@ -227,6 +248,8 @@ export const TSMC_FAB_LOCATIONS: FabLocation[] = [
     subLocations: [
       {
         city: 'Dresden, Saxony',
+        lat: 51.0504,
+        lon: 13.7373,
         fabs: [
           {
             id: 'esmc1',
@@ -250,6 +273,8 @@ export const TSMC_FAB_LOCATIONS: FabLocation[] = [
     subLocations: [
       {
         city: 'Nanjing, Jiangsu',
+        lat: 32.0603,
+        lon: 118.7969,
         fabs: [
           {
             id: 'fab16',
