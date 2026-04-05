@@ -7529,7 +7529,8 @@ input, select { font-family: var(--font); }
   .de-esg-sidebar-item-sub {
     display: none;
   }
-  .de-esg-content {
+  .de-esg-content,
+  .de-intl-tax-content {
     padding-left: 0;
     padding-top: 16px;
   }
@@ -7558,10 +7559,6 @@ input, select { font-family: var(--font); }
   .de-intl-tax-sidebar-item.active {
     border-left: none;
     border-bottom-color: currentColor;
-  }
-  .de-intl-tax-content {
-    padding-left: 0;
-    padding-top: 16px;
   }
   .de-map-panel {
     width: 100%;
