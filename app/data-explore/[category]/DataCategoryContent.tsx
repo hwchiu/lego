@@ -7,6 +7,7 @@ import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { CATEGORIES_MAP, DataItem } from '@/app/data/dataExplore';
 import { ESG_REPORTS } from '@/app/data/esgReports';
+import { TAIWAN_TAX_NEWS, type TaxNewsItem } from '@/app/data/taxNews';
 import WorldMapTab from '@/app/components/GovernmentRegulationsMap';
 
 const TAGS_VISIBLE_COUNT = 6;
@@ -181,42 +182,66 @@ function ArticlesTab({ items, accentColor, allTags, searchQuery, activeTag, onSe
   );
 }
 
-const TSMC_COLOR = '#16a34a';
-const APPLE_COLOR = '#1d4ed8';
+const ESG_ACCENT = '#16a34a';
+
+// ── ESG companies list ────────────────────────────────────────────────────────
+
+const ESG_COMPANIES: { id: 'TSMC' | 'Apple'; label: string; subLabel: string }[] = [
+  { id: 'TSMC', label: 'TSMC', subLabel: 'Taiwan Semiconductor Manufacturing' },
+  { id: 'Apple', label: 'Apple', subLabel: 'Apple Inc.' },
+];
 
 function EsgReportsTab() {
-  const tsmcReports = useMemo(
-    () => ESG_REPORTS.filter((r) => r.company === 'TSMC').sort((a, b) => b.year - a.year),
-    [],
-  );
-  const appleReports = useMemo(
-    () => ESG_REPORTS.filter((r) => r.company === 'Apple').sort((a, b) => b.year - a.year),
-    [],
+  const [selectedCompany, setSelectedCompany] = useState<'TSMC' | 'Apple'>('TSMC');
+
+  const reports = useMemo(
+    () =>
+      ESG_REPORTS.filter((r) => r.company === selectedCompany).sort((a, b) => b.year - a.year),
+    [selectedCompany],
   );
 
-  function ReportSection({ reports, company, color, sectionTitle, subTitle }: {
-    reports: typeof tsmcReports;
-    company: string;
-    color: string;
-    sectionTitle: string;
-    subTitle: string;
-  }) {
-    return (
-      <div className="de-esg-reports-section">
+  const sectionTitle = selectedCompany === 'TSMC' ? 'Sustainability Reports' : 'Environmental Progress Reports';
+  const sectionSub = ESG_COMPANIES.find((c) => c.id === selectedCompany)?.subLabel ?? '';
+
+  return (
+    <div className="de-esg-layout">
+      {/* Left: company submenu sidebar */}
+      <nav className="de-esg-sidebar" aria-label="Company list">
+        <div className="de-esg-sidebar-title">公司列表</div>
+        {ESG_COMPANIES.map((co) => (
+          <button
+            key={co.id}
+            className={`de-esg-sidebar-item${selectedCompany === co.id ? ' active' : ''}`}
+            style={selectedCompany === co.id ? { borderLeftColor: ESG_ACCENT, color: ESG_ACCENT } : {}}
+            onClick={() => setSelectedCompany(co.id)}
+          >
+            <span className="de-esg-sidebar-item-name">{co.label}</span>
+            <span className="de-esg-sidebar-item-sub">{co.subLabel}</span>
+          </button>
+        ))}
+      </nav>
+
+      {/* Right: report cards for selected company */}
+      <div className="de-esg-content">
         <div className="de-esg-reports-section-header">
-          <span className="de-esg-reports-company-badge" style={{ background: `${color}18`, color }}>
-            {company}
+          <span
+            className="de-esg-reports-company-badge"
+            style={{ background: `${ESG_ACCENT}18`, color: ESG_ACCENT }}
+          >
+            {selectedCompany}
           </span>
           <div className="de-esg-reports-section-titles">
             <span className="de-esg-reports-section-title">{sectionTitle}</span>
-            <span className="de-esg-reports-section-sub">{subTitle}</span>
+            <span className="de-esg-reports-section-sub">{sectionSub}</span>
           </div>
         </div>
-        <div className="de-esg-reports-grid">
+        <div className="de-esg-reports-grid de-esg-reports-grid--two-col">
           {reports.map((report) => (
-            <article key={`${company}-${report.year}`} className="de-esg-report-card">
+            <article key={`${selectedCompany}-${report.year}`} className="de-esg-report-card">
               <div className="de-esg-report-card-top">
-                <div className="de-esg-report-card-year" style={{ color }}>{report.year}</div>
+                <div className="de-esg-report-card-year" style={{ color: ESG_ACCENT }}>
+                  {report.year}
+                </div>
                 <div className="de-esg-report-card-fiscal">{report.fiscalYear}</div>
               </div>
               <div className="de-esg-report-card-title">{report.title}</div>
@@ -227,7 +252,7 @@ function EsgReportsTab() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="de-esg-report-download-btn"
-                  style={{ background: color }}
+                  style={{ background: ESG_ACCENT }}
                   aria-label={`Download ${report.title}`}
                 >
                   <DownloadIcon />
@@ -238,7 +263,7 @@ function EsgReportsTab() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="de-esg-report-view-btn"
-                  style={{ color, borderColor: `${color}45` }}
+                  style={{ color: ESG_ACCENT, borderColor: `${ESG_ACCENT}45` }}
                   aria-label={`View ${report.title}`}
                 >
                   <ExternalLinkIcon />
@@ -249,26 +274,74 @@ function EsgReportsTab() {
           ))}
         </div>
       </div>
-    );
-  }
+    </div>
+  );
+}
+
+// ── Taiwan Tax News tab ────────────────────────────────────────────────────────
+
+const TAX_ACCENT = '#2563eb';
+
+function TaiwanTaxNewsTab() {
+  const items = useMemo(
+    () => [...TAIWAN_TAX_NEWS].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+    [],
+  );
 
   return (
-    <div className="de-esg-reports">
-      <ReportSection
-        reports={tsmcReports}
-        company="TSMC"
-        color={TSMC_COLOR}
-        sectionTitle="Sustainability Reports"
-        subTitle="Taiwan Semiconductor Manufacturing Company"
-      />
-      <ReportSection
-        reports={appleReports}
-        company="Apple"
-        color={APPLE_COLOR}
-        sectionTitle="Environmental Progress Reports"
-        subTitle="Apple Inc."
-      />
+    <div className="de-tax-news-wrap">
+      <div className="de-tax-news-header">
+        <div className="de-tax-news-title">每週台灣稅務新聞整理</div>
+        <div className="de-tax-news-sub">整理台灣財政部、國稅局及各大會計師事務所最新稅務法令動態，共 {items.length} 則。</div>
+      </div>
+      <div className="de-tax-news-grid">
+        {items.map((item) => (
+          <TaxNewsCard key={item.id} item={item} />
+        ))}
+      </div>
     </div>
+  );
+}
+
+interface TaxNewsCardProps {
+  item: TaxNewsItem;
+}
+
+function TaxNewsCard({ item }: TaxNewsCardProps) {
+  const hasLink = item.url && item.url !== '#';
+  return (
+    <article className="de-tax-card">
+      <div className="de-tax-card-header">
+        <span className="de-tax-card-category" style={{ background: `${TAX_ACCENT}14`, color: TAX_ACCENT }}>
+          {item.category}
+        </span>
+        <span className="de-tax-card-meta">
+          <span className="de-tax-card-week">{item.week}</span>
+          <span className="de-tax-card-date">{item.date}</span>
+        </span>
+      </div>
+      <div className="de-tax-card-title">
+        {hasLink ? (
+          <a href={item.url} target="_blank" rel="noopener noreferrer" className="de-tax-card-link">
+            {item.title}
+            <span className="de-tax-card-ext"><ExternalLinkIcon /></span>
+          </a>
+        ) : (
+          item.title
+        )}
+      </div>
+      <p className="de-tax-card-summary">{item.summary}</p>
+      <div className="de-tax-card-footer">
+        <span className="de-tax-card-source">來源：{item.source}</span>
+        <div className="de-tax-card-tags">
+          {item.tags.map((tag) => (
+            <span key={tag} className="de-tag" style={{ background: `${TAX_ACCENT}12`, color: TAX_ACCENT }}>
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    </article>
   );
 }
 
@@ -303,7 +376,8 @@ const ESG_TABS = [
 
 const GOV_TABS = [
   { id: 'articles', label: 'Articles' },
-  { id: 'map', label: 'TSMC Global Presence' },
+  { id: 'taiwan-tax', label: 'Weekly Taiwan Tax News Summary' },
+  { id: 'intl-tax', label: 'Weekly International Tax News Summary' },
 ];
 
 export default function DataCategoryContent({ params }: { params: { category: string } }) {
@@ -418,7 +492,8 @@ export default function DataCategoryContent({ params }: { params: { category: st
               )}
 
               {activeSubTab === 'reports' && isEsg && <EsgReportsTab />}
-              {activeSubTab === 'map' && isGov && <WorldMapTab />}
+              {activeSubTab === 'taiwan-tax' && isGov && <TaiwanTaxNewsTab />}
+              {activeSubTab === 'intl-tax' && isGov && <WorldMapTab />}
             </div>
           </div>
         </main>
