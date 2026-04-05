@@ -1,15 +1,50 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { EpsRow, RevenueRow, BeatMiss } from '@/app/data/earnings';
 import { monthShortToFull } from '@/app/lib/calendarUtils';
+
+/**
+ * Convert a formatted USD money string to NTD.
+ * Handles formats: "$2.45", "−$0.06", "$82.4B", "$1.2T", "$428.7B", null/dash.
+ * Returns the NTD string or the original if parsing fails.
+ */
+function convertToNtd(value: string | null, rate: number): string | null {
+  if (!value || value === '—') return value;
+  // Match: optional sign (− or -), $, numeric part, optional B/T suffix
+  const match = value.match(/^([\u2212-]?)\$([0-9,]+(?:\.[0-9]*)?)([BT]?)$/);
+  if (!match) return value;
+  const sign = match[1] === '\u2212' ? '−' : match[1];
+  const num = parseFloat(match[2].replace(/,/g, ''));
+  const suffix = match[3];
+  const converted = num * rate;
+  // Format: no suffix → 2 decimals; with suffix → 1 decimal with thousands separator
+  let formatted: string;
+  if (suffix) {
+    formatted = converted.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  } else {
+    formatted = converted.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  return `${sign}NT$${formatted}${suffix}`;
+}
 
 function BeatMissTag({ value }: { value: BeatMiss }) {
   if (!value) return <span className="td-na">—</span>;
   return <span className={value === 'Beat' ? 'beat' : 'miss'}>{value}</span>;
 }
 
-function EpsTable({ data }: { data: EpsRow[] }) {
+interface EpsTableProps {
+  data: EpsRow[];
+  currency: 'USD' | 'NTD';
+  rate: number;
+}
+
+function EpsTable({ data, currency, rate }: EpsTableProps) {
+  const cv = useCallback(
+    (v: string | null) => (currency === 'NTD' ? convertToNtd(v, rate) : v),
+    [currency, rate],
+  );
+
   return (
     <div className="table-wrap">
       <table className="data-table">
@@ -49,19 +84,19 @@ function EpsTable({ data }: { data: EpsRow[] }) {
               <td>
                 <span className="td-report">{row.report}</span>
               </td>
-              <td className="td-mktcap">{row.mktCap}</td>
-              <td className="td-num">{row.epsNormalized}</td>
+              <td className="td-mktcap">{cv(row.mktCap)}</td>
+              <td className="td-num">{cv(row.epsNormalized)}</td>
               <td className={`td-num ${row.epsYoYPositive ? 'pos' : 'neg'}`}>
                 {row.epsYoY}
               </td>
-              <td className="td-num">{row.epsGaap}</td>
+              <td className="td-num">{cv(row.epsGaap)}</td>
               <td className={`td-num ${row.epsActual ? '' : 'td-na'}`}>
-                {row.epsActual ?? '—'}
+                {cv(row.epsActual) ?? '—'}
               </td>
               <td className="td-num">
                 <BeatMissTag value={row.epsBeatMiss} />
               </td>
-              <td className="td-num">{row.lastQGaap}</td>
+              <td className="td-num">{cv(row.lastQGaap)}</td>
               <td className="td-num">
                 <BeatMissTag value={row.lastQBeatMiss} />
               </td>
@@ -75,7 +110,18 @@ function EpsTable({ data }: { data: EpsRow[] }) {
   );
 }
 
-function RevenueTable({ data }: { data: RevenueRow[] }) {
+interface RevenueTableProps {
+  data: RevenueRow[];
+  currency: 'USD' | 'NTD';
+  rate: number;
+}
+
+function RevenueTable({ data, currency, rate }: RevenueTableProps) {
+  const cv = useCallback(
+    (v: string | null) => (currency === 'NTD' ? convertToNtd(v, rate) : v),
+    [currency, rate],
+  );
+
   return (
     <div className="table-wrap">
       <table className="data-table">
@@ -110,19 +156,19 @@ function RevenueTable({ data }: { data: RevenueRow[] }) {
               <td>
                 <span className="td-report">{row.report}</span>
               </td>
-              <td className="td-mktcap">{row.mktCap}</td>
-              <td className="td-num">{row.revConsensus}</td>
+              <td className="td-mktcap">{cv(row.mktCap)}</td>
+              <td className="td-num">{cv(row.revConsensus)}</td>
               <td className={`td-num ${row.revYoYPositive ? 'pos' : 'neg'}`}>
                 {row.revYoY}
               </td>
-              <td className="td-num">{row.revHighEst}</td>
+              <td className="td-num">{cv(row.revHighEst)}</td>
               <td className={`td-num ${row.revActual ? '' : 'td-na'}`}>
-                {row.revActual ?? '—'}
+                {cv(row.revActual) ?? '—'}
               </td>
               <td className="td-num">
                 <BeatMissTag value={row.revBeatMiss} />
               </td>
-              <td className="td-num">{row.lastQActual}</td>
+              <td className="td-num">{cv(row.lastQActual)}</td>
               <td className="td-num">
                 <BeatMissTag value={row.lastQBeatMiss} />
               </td>
@@ -139,11 +185,15 @@ export default function DetailTable({
   revenueData,
   selectedDateLabel,
   companyCount,
+  currency = 'USD',
+  usdToTwdRate = 32.7,
 }: {
   epsData: EpsRow[];
   revenueData: RevenueRow[];
   selectedDateLabel?: string;
   companyCount?: number;
+  currency?: 'USD' | 'NTD';
+  usdToTwdRate?: number;
 }) {
   const [activeTab, setActiveTab] = useState<'eps' | 'revenue'>('eps');
 
@@ -188,9 +238,9 @@ export default function DetailTable({
         </div>
       </div>
       {activeTab === 'eps' ? (
-        <EpsTable data={epsData} />
+        <EpsTable data={epsData} currency={currency} rate={usdToTwdRate} />
       ) : (
-        <RevenueTable data={revenueData} />
+        <RevenueTable data={revenueData} currency={currency} rate={usdToTwdRate} />
       )}
     </div>
   );

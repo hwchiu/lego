@@ -1,12 +1,13 @@
 # Earnings Calendar Data
 
-此為假資料，僅供展示用途。包含六個資料集：
+此為假資料，僅供展示用途。包含七個資料集：
 - `weekDays`：上週（Mar 29 – Apr 4）每日財報公司列表（`isToday` 由前端依實際日期動態計算）
 - `aprilMonthData`：四月整月財報日曆（週一至週五）
 - `epsData`：Apr 1 每股盈餘（EPS）報告列表（供向後相容）
 - `revenueData`：Apr 1 營收報告列表（供向後相容）
 - `dateEpsData`：各日期 EPS 報告（以 dateLabel 為鍵）
 - `dateRevenueData`：各日期營收報告（以 dateLabel 為鍵）
+- `usdToTwdRate`：USD → TWD 換算匯率（2025-04 實際匯率 32.7，用於前端幣別切換）
 
 ```json
 {
@@ -5538,6 +5539,7 @@
         "lastQBeatMiss": "Beat"
       }
     ]
-  }
+  },
+  "usdToTwdRate": 32.7
 }
 ```

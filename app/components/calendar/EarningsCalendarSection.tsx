@@ -96,9 +96,19 @@ function buildWeekDays(weekStart: Date, todayLabel: string): WeekDay[] {
 
 interface EarningsCalendarSectionProps {
   onDateSelect?: (dateLabel: string) => void;
+  selectedSymbol?: string;
+  onSymbolSelect?: (symbol: string) => void;
+  currency?: 'USD' | 'NTD';
+  onCurrencyChange?: (currency: 'USD' | 'NTD') => void;
 }
 
-export default function EarningsCalendarSection({ onDateSelect }: EarningsCalendarSectionProps) {
+export default function EarningsCalendarSection({
+  onDateSelect,
+  selectedSymbol = '',
+  onSymbolSelect,
+  currency = 'USD',
+  onCurrencyChange,
+}: EarningsCalendarSectionProps) {
   // Compute "today" once on mount
   const today = useMemo(() => new Date(), []);
   const todayLabel = useMemo(() => getDateLabel(today), [today]);
@@ -151,14 +161,36 @@ export default function EarningsCalendarSection({ onDateSelect }: EarningsCalend
     }
   }, [isMonthlyView, month]);
 
-  const monthDays = useMemo(
+  // When a symbol is active, apply it as a filter to calendar cell companies
+  const filterDays = useCallback(
+    (days: WeekDay[]): WeekDay[] => {
+      if (!selectedSymbol) return days;
+      return days.map((day) => {
+        const filteredCompanies = day.companies?.filter((s) => s === selectedSymbol);
+        return {
+          ...day,
+          companies: filteredCompanies,
+          companyCount: filteredCompanies?.length ?? 0,
+        };
+      });
+    },
+    [selectedSymbol],
+  );
+
+  const rawMonthDays = useMemo(
     () => buildMonthDays(year, month, todayLabel),
     [year, month, todayLabel],
   );
 
-  const currentWeekDays = useMemo(
+  const rawWeekDaysCurrent = useMemo(
     () => buildWeekDays(weekStart, todayLabel),
     [weekStart, todayLabel],
+  );
+
+  const monthDays = useMemo(() => filterDays(rawMonthDays), [filterDays, rawMonthDays]);
+  const currentWeekDays = useMemo(
+    () => filterDays(rawWeekDaysCurrent),
+    [filterDays, rawWeekDaysCurrent],
   );
 
   // Compute the display label for CalendarControls
@@ -179,6 +211,10 @@ export default function EarningsCalendarSection({ onDateSelect }: EarningsCalend
         onNext={next}
         isMonthlyView={isMonthlyView}
         onToggleView={() => setIsMonthlyView((v) => !v)}
+        selectedSymbol={selectedSymbol}
+        onSymbolSelect={onSymbolSelect}
+        currency={currency}
+        onCurrencyChange={onCurrencyChange}
       />
       {isMonthlyView ? (
         <MonthGrid

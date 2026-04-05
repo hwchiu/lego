@@ -53,6 +53,7 @@ interface EarningsData {
   revenueData: RevenueRow[];
   dateEpsData: Record<string, EpsRow[]>;
   dateRevenueData: Record<string, RevenueRow[]>;
+  usdToTwdRate?: number;
 }
 
 const data = extractJson<EarningsData>(rawContent);
@@ -63,3 +64,5 @@ export const epsData: EpsRow[] = data.epsData;
 export const revenueData: RevenueRow[] = data.revenueData;
 export const dateEpsData: Record<string, EpsRow[]> = data.dateEpsData ?? {};
 export const dateRevenueData: Record<string, RevenueRow[]> = data.dateRevenueData ?? {};
+/** USD → TWD exchange rate pre-fetched from earnings.md (2025-04 rate: 32.7) */
+export const usdToTwdRate: number = data.usdToTwdRate ?? 32.7;
