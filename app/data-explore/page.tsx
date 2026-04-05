@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, type ReactNode } from 'react';
 import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
@@ -52,7 +52,7 @@ function ArrowIcon() {
 interface CategoryCardProps {
   slug: string;
   label: string;
-  icon: string;
+  icon: ReactNode;
   color: string;
   description: string;
   count: number;
@@ -62,7 +62,7 @@ function CategoryCard({ slug, label, icon, color, description, count }: Category
   return (
     <Link href={`/data-explore/${slug}`} className="de-category-card">
       <div className="de-category-card-icon" style={{ color }}>
-        <span role="img" aria-label={label}>{icon}</span>
+        {icon}
       </div>
       <div className="de-category-card-body">
         <div className="de-category-card-label">{label}</div>
