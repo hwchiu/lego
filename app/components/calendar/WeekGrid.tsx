@@ -8,6 +8,8 @@ interface WeekGridProps {
   todayLabel: string;
   selectedDate: string;
   onSelectDate: (dateLabel: string) => void;
+  countLabel?: string;
+  emptyLabel?: string;
 }
 
 interface WeekCellProps {
@@ -15,9 +17,11 @@ interface WeekCellProps {
   isToday: boolean;
   isSelected: boolean;
   onSelect: () => void;
+  countLabel: string;
+  emptyLabel: string;
 }
 
-function WeekCell({ day, isToday, isSelected, onSelect }: WeekCellProps) {
+function WeekCell({ day, isToday, isSelected, onSelect, countLabel, emptyLabel }: WeekCellProps) {
   const hasReports = day.companies && day.companies.length > 0;
 
   return (
@@ -36,19 +40,26 @@ function WeekCell({ day, isToday, isSelected, onSelect }: WeekCellProps) {
           <>
             <div className="cell-count-row">
               <span className="cell-count">{day.companyCount}</span>
-              <span className="cell-count-label">Companies</span>
+              <span className="cell-count-label">{countLabel}</span>
             </div>
             <div className="cell-co-text">{truncateCompanies(day.companies!)}</div>
           </>
         ) : (
-          <div className="cell-empty">No Reports</div>
+          <div className="cell-empty">{emptyLabel}</div>
         )}
       </div>
     </div>
   );
 }
 
-export default function WeekGrid({ days, todayLabel, selectedDate, onSelectDate }: WeekGridProps) {
+export default function WeekGrid({
+  days,
+  todayLabel,
+  selectedDate,
+  onSelectDate,
+  countLabel = 'Companies',
+  emptyLabel = 'No Reports',
+}: WeekGridProps) {
   return (
     <div className="week-grid">
       {days.map((day) => (
@@ -58,6 +69,8 @@ export default function WeekGrid({ days, todayLabel, selectedDate, onSelectDate 
           isToday={day.dateLabel === todayLabel}
           isSelected={day.dateLabel === selectedDate}
           onSelect={() => onSelectDate(day.dateLabel)}
+          countLabel={countLabel}
+          emptyLabel={emptyLabel}
         />
       ))}
     </div>

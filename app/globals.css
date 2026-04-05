@@ -13644,7 +13644,7 @@ input, select { font-family: var(--font); }
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 60px 24px;
+  padding: 24px 24px;
   color: var(--c-text-4);
 }
 .fd-empty-icon {
@@ -13775,5 +13775,219 @@ a.fd-hint-btn {
   }
   .fd-detail-topbar {
     padding: 12px 16px 0;
+  }
+}
+
+/* ===== EVENT CATEGORY DETAIL ===== */
+.ec-cal-header {
+  flex-wrap: wrap;
+}
+/* Cards grid — used for Bonds and Countries */
+.ec-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 16px;
+  padding: 16px 22px 20px;
+}
+.ec-event-card {
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ec-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.ec-card-company {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.ec-card-symbol {
+  font-size: 13px;
+  font-weight: 800;
+  color: #1d4ed8;
+}
+.ec-card-name {
+  font-size: 12.5px;
+  color: var(--c-text-3);
+}
+.ec-flag {
+  font-size: 18px;
+  line-height: 1;
+}
+.ec-card-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.ec-type-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  background: rgba(79, 195, 247, 0.12);
+  color: #0369a1;
+  border: 1px solid rgba(79, 195, 247, 0.3);
+  border-radius: 3px;
+  padding: 2px 7px;
+  white-space: nowrap;
+}
+.ec-impact {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  border-radius: 3px;
+  padding: 2px 7px;
+  white-space: nowrap;
+}
+.ec-impact--high {
+  background: rgba(220, 38, 38, 0.1);
+  color: var(--c-neg);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+}
+.ec-impact--medium {
+  background: rgba(234, 88, 12, 0.1);
+  color: #c2410c;
+  border: 1px solid rgba(234, 88, 12, 0.25);
+}
+.ec-impact--low {
+  background: rgba(22, 163, 74, 0.1);
+  color: var(--c-pos);
+  border: 1px solid rgba(22, 163, 74, 0.25);
+}
+.ec-card-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--c-text);
+  margin: 0;
+  line-height: 1.4;
+}
+.ec-card-desc {
+  font-size: 12.5px;
+  color: var(--c-text-2);
+  line-height: 1.6;
+  margin: 0;
+}
+.ec-card-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  padding-top: 6px;
+  border-top: 1px solid var(--c-border);
+}
+.ec-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ec-metric-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-text-4);
+}
+.ec-metric-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-text);
+}
+.ec-rating {
+  color: #7c3aed;
+}
+.ec-card-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--c-border);
+}
+.ec-affected {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.ec-affected-tag {
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--c-bg);
+  border: 1px solid var(--c-border-2);
+  border-radius: 3px;
+  padding: 2px 7px;
+  color: var(--c-text-2);
+}
+/* Table cell helpers */
+.ec-relevance {
+  font-size: 11.5px;
+  color: var(--c-text-3);
+  max-width: 300px;
+  white-space: normal;
+  line-height: 1.5;
+}
+.ec-change {
+  font-weight: 600;
+  font-size: 12px;
+}
+.td-num-h {
+  text-align: right !important;
+}
+/* Empty state */
+.ec-empty {
+  padding: 32px 22px;
+  text-align: center;
+}
+.ec-empty-text {
+  font-size: 13px;
+  color: var(--c-text-4);
+  margin: 0;
+}
+/* Coming soon placeholder */
+.ec-coming-soon {
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 48px 24px;
+  text-align: center;
+}
+.ec-coming-soon-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--c-text-3);
+  margin: 0 0 8px;
+}
+.ec-coming-soon-sub {
+  font-size: 13px;
+  color: var(--c-text-4);
+  margin: 0;
+}
+/* RWD */
+@media (max-width: 768px) {
+  .ec-cards-grid {
+    grid-template-columns: 1fr;
+    padding: 12px 14px 16px;
+  }
+  .ec-card-top {
+    flex-wrap: wrap;
+  }
+  .ec-relevance {
+    max-width: 180px;
+  }
+  .ec-cal-header {
+    gap: 10px;
+  }
+}
+@media (max-width: 480px) {
+  .ec-cards-grid {
+    gap: 10px;
   }
 }
