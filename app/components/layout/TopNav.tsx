@@ -403,8 +403,9 @@ export default function TopNav() {
                             className="search-history-item"
                             onMouseDown={(e) => {
                               e.preventDefault();
-                              setQuery(item.title);
                               setFocused(false);
+                              setQuery('');
+                              router.push('/market-news/');
                             }}
                           >
                             <svg className="search-history-icon" width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
