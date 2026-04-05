@@ -84,6 +84,8 @@ export interface ContentCard {
   // map / supply-chain are rendered via inline SVG; title + addedBy are sufficient
   // comments
   comments?: Comment[];
+  // likes
+  likes?: number;
 }
 
 export type TaskStatus = 'todo' | 'in-progress' | 'done';
