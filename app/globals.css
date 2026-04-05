@@ -6652,6 +6652,524 @@ input, select { font-family: var(--font); }
   color: var(--c-text);
 }
 
+/* ── Tag row single-line collapse ── */
+.de-tags-bar--row {
+  flex-wrap: wrap;
+}
+.de-tag-more-btn {
+  flex-shrink: 0;
+  background: var(--c-bg) !important;
+  color: var(--c-text-2) !important;
+  border-color: var(--c-border-2) !important;
+  font-style: italic;
+  white-space: nowrap;
+}
+.de-tag-more-btn:hover {
+  background: #e0e7ef !important;
+  color: var(--c-text) !important;
+}
+
+/* ── Sub-tab bar ── */
+.de-subtab-bar {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--c-border);
+  margin-bottom: 20px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.de-subtab-btn {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 20px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-text-3);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.14s, border-bottom-color 0.14s;
+  margin-bottom: -2px;
+}
+.de-subtab-btn:hover {
+  color: var(--c-text);
+}
+.de-subtab-btn.active {
+  font-weight: 700;
+}
+
+/* ── ESG Reports tab ── */
+.de-esg-reports {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  padding-bottom: 32px;
+}
+.de-esg-reports-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.de-esg-reports-section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 0 4px;
+  border-bottom: 1px solid var(--c-border);
+}
+.de-esg-reports-company-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.de-esg-reports-section-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.de-esg-reports-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-text);
+}
+.de-esg-reports-section-sub {
+  font-size: 11.5px;
+  color: var(--c-text-4);
+}
+.de-esg-reports-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.de-esg-report-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 18px 18px 16px;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+.de-esg-report-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  border-color: var(--c-border-2);
+}
+.de-esg-report-card-top {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.de-esg-report-card-year {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+.de-esg-report-card-fiscal {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--c-text-4);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.de-esg-report-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-text);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+.de-esg-report-card-desc {
+  font-size: 12px;
+  color: var(--c-text-3);
+  line-height: 1.6;
+  flex: 1;
+  margin: 0 0 16px;
+}
+.de-esg-report-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+}
+.de-esg-report-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  transition: opacity 0.13s, box-shadow 0.13s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.de-esg-report-download-btn:hover {
+  opacity: 0.88;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+.de-esg-report-view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  background: transparent;
+  transition: background 0.13s, opacity 0.13s;
+  white-space: nowrap;
+}
+.de-esg-report-view-btn:hover {
+  opacity: 0.75;
+}
+
+/* ── World Map tab ── */
+.de-world-map-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 32px;
+}
+.de-world-map-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.de-world-map-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--c-text);
+}
+.de-world-map-sub {
+  font-size: 12.5px;
+  color: var(--c-text-3);
+}
+.de-world-map-container {
+  position: relative;
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.de-world-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.de-map-land {
+  transition: fill 0.12s;
+}
+.de-map-pin {
+  cursor: pointer;
+  outline: none;
+}
+.de-map-pin:focus > circle:nth-child(2) {
+  stroke: #fff;
+  stroke-width: 3;
+}
+.de-world-map-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px 10px;
+  border-top: 1px solid var(--c-border);
+  background: var(--c-bg);
+}
+.de-world-map-legend-dot {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #2563eb;
+  flex-shrink: 0;
+}
+.de-world-map-legend-text {
+  font-size: 11.5px;
+  color: var(--c-text-3);
+}
+
+/* Country chip row below map */
+.de-map-country-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.de-map-country-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--c-border-2);
+  border-radius: 20px;
+  background: var(--c-white);
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-text-2);
+  cursor: pointer;
+  transition: background 0.13s, border-color 0.13s, color 0.13s;
+  white-space: nowrap;
+}
+.de-map-country-chip:hover {
+  background: var(--c-bg);
+  color: var(--c-text);
+}
+.de-map-country-chip.active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+.de-map-country-chip-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: rgba(0,0,0,0.12);
+  font-size: 10px;
+  font-weight: 700;
+}
+.de-map-country-chip.active .de-map-country-chip-count {
+  background: rgba(255,255,255,0.25);
+}
+
+/* Map detail panel overlay */
+.de-map-panel-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 0;
+}
+.de-map-panel {
+  position: relative;
+  width: 440px;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100vh;
+  background: var(--c-white);
+  border-left: 1px solid var(--c-border);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 32px rgba(0,0,0,0.14);
+  animation: de-panel-slide-in 0.22s ease;
+}
+@keyframes de-panel-slide-in {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);   opacity: 1; }
+}
+.de-map-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--c-border);
+  flex-shrink: 0;
+}
+.de-map-panel-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.de-map-panel-pin-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #dbeafe;
+  color: #2563eb;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.de-map-panel-country {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--c-text);
+  line-height: 1.2;
+}
+.de-map-panel-subtitle {
+  font-size: 12px;
+  color: var(--c-text-4);
+  margin-top: 2px;
+}
+.de-map-panel-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  background: var(--c-white);
+  color: var(--c-text-3);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  flex-shrink: 0;
+}
+.de-map-panel-close:hover {
+  background: var(--c-bg);
+  color: var(--c-text);
+}
+.de-map-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.de-map-city-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.de-map-city-label {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-text-4);
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--c-border);
+}
+.de-map-fab-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.de-map-fab-card {
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 14px 16px 12px;
+  border-left: 3px solid #2563eb;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  transition: box-shadow 0.13s;
+}
+.de-map-fab-card:hover {
+  box-shadow: 0 3px 12px rgba(37,99,235,0.1);
+}
+.de-map-fab-card-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--c-text);
+  margin-bottom: 8px;
+}
+.de-map-fab-card-meta {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.de-map-fab-card-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.de-map-fab-card-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-text-4);
+}
+.de-map-fab-card-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-text-2);
+}
+.de-map-fab-card-desc {
+  font-size: 11.5px;
+  color: var(--c-text-3);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── RWD for new DE features ── */
+@media (max-width: 900px) {
+  .de-esg-reports-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 768px) {
+  .de-subtab-bar {
+    margin-bottom: 16px;
+  }
+  .de-subtab-btn {
+    padding: 0 14px;
+    font-size: 12.5px;
+  }
+  .de-esg-reports-grid {
+    grid-template-columns: 1fr;
+  }
+  .de-esg-reports-section-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .de-map-panel {
+    width: 100%;
+    height: 80vh;
+    border-left: none;
+    border-top: 1px solid var(--c-border);
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .de-map-panel-overlay {
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .de-world-map-title {
+    font-size: 14px;
+  }
+  .de-tags-bar--row {
+    max-height: none;
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 480px) {
+  .de-esg-report-card {
+    padding: 14px;
+  }
+  .de-esg-report-download-btn {
+    padding: 0 10px;
+    font-size: 11.5px;
+  }
+  .de-esg-report-view-btn {
+    padding: 0 8px;
+    font-size: 11.5px;
+  }
+  .de-map-country-chips {
+    gap: 6px;
+  }
+}
+
 /* ============================================================
    MARKET DATA — Landing Page
    ============================================================ */
