@@ -89,14 +89,19 @@ function NotifTypeIcon({ type }: { type: NotificationType }) {
 interface NotifItemRowProps {
   notif: NotificationItem;
   isRead: boolean;
+  lang: 'zh' | 'en';
   onClick: () => void;
 }
 
-function NotifItemRow({ notif, isRead, onClick }: NotifItemRowProps) {
+function NotifItemRow({ notif, isRead, lang, onClick }: NotifItemRowProps) {
   const classes = [
     'topnav-notif-item',
     !isRead ? 'topnav-notif-item--unread' : 'topnav-notif-item--read',
   ].join(' ');
+
+  const displayTitle = lang === 'en' && notif.titleEn ? notif.titleEn : notif.title;
+  const displayTime = lang === 'en' && notif.timeEn ? notif.timeEn : notif.time;
+  const readLabel = lang === 'zh' ? (isRead ? '已讀' : '未讀') : (isRead ? 'Read' : 'Unread');
 
   return (
     <div
@@ -104,16 +109,16 @@ function NotifItemRow({ notif, isRead, onClick }: NotifItemRowProps) {
       onClick={onClick}
       role="button"
       tabIndex={0}
-      aria-label={`${isRead ? '已讀' : '未讀'}通知：${notif.title}`}
+      aria-label={`${readLabel} notification: ${displayTitle}`}
       onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick()}
     >
       <NotifTypeIcon type={notif.type} />
       <div className="topnav-notif-item-body">
-        <div className="topnav-notif-item-title">{notif.title}</div>
+        <div className="topnav-notif-item-title">{displayTitle}</div>
         <div className="topnav-notif-item-meta">
           <span>{notif.source}</span>
           <span>·</span>
-          <span>{notif.time}</span>
+          <span>{displayTime}</span>
         </div>
         {notif.tags && notif.tags.length > 0 && (
           <div className="topnav-notif-item-tags">
@@ -580,9 +585,9 @@ export default function TopNav() {
             <div className="topnav-notif-panel">
               {/* Panel header */}
               <div className="topnav-notif-panel-header">
-                <span className="topnav-notif-panel-title">通知</span>
+                <span className="topnav-notif-panel-title">{lang === 'zh' ? '通知' : 'Notifications'}</span>
                 <button className="topnav-notif-mark-read" onClick={handleMarkAllRead}>
-                  全部標為已讀
+                  {lang === 'zh' ? '全部標為已讀' : 'Mark All as Read'}
                 </button>
               </div>
 
@@ -595,7 +600,7 @@ export default function TopNav() {
                   className={`topnav-notif-tab${notifTab === 'news' ? ' active' : ''}`}
                   onClick={() => setNotifTab('news')}
                 >
-                  新聞
+                  {lang === 'zh' ? '新聞' : 'News'}
                   <span className="topnav-notif-tab-count">{newsNotifications.length}</span>
                 </button>
                 <button
@@ -605,7 +610,7 @@ export default function TopNav() {
                   className={`topnav-notif-tab${notifTab === 'collaboration' ? ' active' : ''}`}
                   onClick={() => setNotifTab('collaboration')}
                 >
-                  協作動態
+                  {lang === 'zh' ? '協作動態' : 'Collaboration'}
                   <span className="topnav-notif-tab-count">{collaborationNotifications.length}</span>
                 </button>
               </div>
@@ -617,13 +622,14 @@ export default function TopNav() {
                 className="topnav-notif-list"
               >
                 {(notifTab === 'news' ? newsNotifications : collaborationNotifications).length === 0 ? (
-                  <div className="topnav-notif-empty">暫無通知</div>
+                  <div className="topnav-notif-empty">{lang === 'zh' ? '暫無通知' : 'No notifications'}</div>
                 ) : (
                   (notifTab === 'news' ? newsNotifications : collaborationNotifications).map((notif) => (
                     <NotifItemRow
                       key={notif.id}
                       notif={notif}
                       isRead={readIds.has(notif.id)}
+                      lang={lang}
                       onClick={() => handleMarkRead(notif.id)}
                     />
                   ))

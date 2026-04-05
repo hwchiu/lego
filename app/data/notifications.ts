@@ -17,8 +17,10 @@ export interface NotificationItem {
   category: NotificationCategory;
   type: NotificationType;
   title: string;
+  titleEn?: string;
   source: string;
   time: string;
+  timeEn?: string;
   read: boolean;
   tags?: string[];
   canvasId?: string;
@@ -79,8 +81,10 @@ export const collaborationNotifications: NotificationItem[] = canvases.flatMap((
       category: 'collaboration' as const,
       type: 'tag-match' as const,
       title: `Canvas「${canvas.title}」的關注標籤有新相關資訊`,
+      titleEn: `New updates on watched tags in Canvas "${canvas.title}"`,
       source: canvas.title,
       time: '最近',
+      timeEn: 'Recently',
       read: false,
       tags: matchedTags,
       canvasId: canvas.id,
