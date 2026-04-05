@@ -9955,9 +9955,30 @@ input, select { font-family: var(--font); }
   transform: translateY(-2px);
 }
 .um-role-icon {
-  font-size: 28px;
-  margin-bottom: 10px;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 12px;
+  color: currentColor;
+  opacity: 0.75;
+}
+.um-role-card--active .um-role-icon,
+.um-role-card:hover .um-role-icon {
+  opacity: 1;
+}
+.um-eyebrow-sm--icon-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.um-eyebrow-icon {
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.85;
+}
+.um-eyebrow-icon svg {
+  width: 18px;
+  height: 18px;
 }
 .um-role-subtitle {
   font-size: 9.5px;

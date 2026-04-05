@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
@@ -24,7 +24,7 @@ interface Scenario {
 
 interface Role {
   id: string;
-  icon: string;
+  icon: ReactNode;
   title: string;
   subtitle: string;
   desc: string;
@@ -37,7 +37,7 @@ interface Role {
 const ROLES: Role[] = [
   {
     id: 'region-sales',
-    icon: '📊',
+    icon: <SalesManagerIcon />,
     title: 'Region Sales Manager',
     subtitle: 'Sales & Business Development',
     desc: 'Monitor key accounts, track financial performance of portfolio companies, and stay ahead of market news to support client conversations and revenue targets.',
@@ -94,7 +94,7 @@ const ROLES: Role[] = [
   },
   {
     id: 'supply-chain',
-    icon: '🌐',
+    icon: <SupplyChainIcon />,
     title: 'Supply Chain Analyst',
     subtitle: 'Procurement & Risk Management',
     desc: 'Map multi-tier supplier relationships, identify geopolitical risks, track competitor ecosystems, and monitor real-time events that may disrupt supply continuity.',
@@ -153,7 +153,7 @@ const ROLES: Role[] = [
   },
   {
     id: 'investment-researcher',
-    icon: '🔬',
+    icon: <ResearcherIcon />,
     title: 'Investment Researcher',
     subtitle: 'Equity Research & Portfolio Strategy',
     desc: 'Conduct rigorous company analysis, evaluate M&A activity, explore thematic datasets, and build curated watchlists to support investment decisions.',
@@ -220,6 +220,48 @@ const STATS = [
   { value: '12+', label: 'Platform Modules' },
   { value: '100%', label: 'Page Coverage' },
 ];
+
+// ── Icons ──────────────────────────────────────────────────────────────────────
+
+function SalesManagerIcon() {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" width="40" height="40" aria-hidden="true">
+      <rect x="6" y="10" width="16" height="12" rx="2" stroke="currentColor" strokeWidth="2" />
+      <rect x="26" y="10" width="16" height="12" rx="2" stroke="currentColor" strokeWidth="2" />
+      <rect x="16" y="30" width="16" height="12" rx="2" stroke="currentColor" strokeWidth="2" />
+      <path d="M14 22v4h20v-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M24 26v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="14" cy="16" r="2.5" fill="currentColor" />
+      <circle cx="34" cy="16" r="2.5" fill="currentColor" />
+    </svg>
+  );
+}
+
+function SupplyChainIcon() {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" width="40" height="40" aria-hidden="true">
+      <rect x="4" y="14" width="16" height="12" rx="2" stroke="currentColor" strokeWidth="2" />
+      <rect x="28" y="14" width="16" height="12" rx="2" stroke="currentColor" strokeWidth="2" />
+      <rect x="16" y="30" width="16" height="12" rx="2" stroke="currentColor" strokeWidth="2" />
+      <path d="M20 20h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M24 26v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="12" cy="20" r="2.5" fill="currentColor" />
+      <circle cx="36" cy="20" r="2.5" fill="currentColor" />
+      <circle cx="24" cy="36" r="2.5" fill="currentColor" />
+    </svg>
+  );
+}
+
+function ResearcherIcon() {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" width="40" height="40" aria-hidden="true">
+      <rect x="8" y="8" width="20" height="26" rx="2" stroke="currentColor" strokeWidth="2" />
+      <path d="M14 16h8M14 21h8M14 26h5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <circle cx="34" cy="34" r="7" stroke="currentColor" strokeWidth="2" />
+      <path d="M39.5 39.5L44 44" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
@@ -407,8 +449,9 @@ export default function UserManualContent() {
             {selectedRole && (
               <div className="um-section um-section--scenarios">
                 <div className="um-section-head">
-                  <span className="um-eyebrow-sm" style={{ color: selectedRole.color }}>
-                    {selectedRole.icon} {selectedRole.title}
+                  <span className="um-eyebrow-sm um-eyebrow-sm--icon-row" style={{ color: selectedRole.color }}>
+                    <span className="um-eyebrow-icon">{selectedRole.icon}</span>
+                    {selectedRole.title}
                   </span>
                   <h2 className="um-section-title">Step 2 — Choose a Scenario</h2>
                   <p className="um-section-sub">
@@ -426,51 +469,6 @@ export default function UserManualContent() {
                 </div>
               </div>
             )}
-
-            {/* ── All scenarios overview ── */}
-            <div className="um-section">
-              <div className="um-section-head">
-                <span className="um-eyebrow-sm">All Scenarios</span>
-                <h2 className="um-section-title">Complete Coverage Map</h2>
-                <p className="um-section-sub">
-                  Every tMIC module is covered by at least one guided scenario.
-                </p>
-              </div>
-              <div className="um-coverage-grid">
-                {ROLES.map((role) =>
-                  role.scenarios.map((scenario) => (
-                    <div
-                      key={`${role.id}-${scenario.id}`}
-                      className="um-coverage-card"
-                      onClick={() => {
-                        setSelectedRoleId(role.id);
-                        setTimeout(() => {
-                          document.getElementById(`scenario-${scenario.id}`)?.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center',
-                          });
-                        }, 100);
-                      }}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') setSelectedRoleId(role.id);
-                      }}
-                    >
-                      <span className="um-coverage-role" style={{ color: role.color }}>
-                        {role.icon} {role.title}
-                      </span>
-                      <span className="um-coverage-title">{scenario.title}</span>
-                      <div className="um-coverage-pages">
-                        {scenario.pages.map((p) => (
-                          <span key={p.href + p.label} className="um-coverage-tag">{p.label}</span>
-                        ))}
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
 
             {/* ── CTA ── */}
             <div className="um-cta-section">
