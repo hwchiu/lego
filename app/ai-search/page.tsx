@@ -219,7 +219,7 @@ const HOW_IT_WORKS = [
 
 // ── Page ───────────────────────────────────────────────────────────────────────
 
-export default function IntelligenceSearchPage() {
+export default function AiSearchPage() {
   const { lang } = useLanguage();
   return (
     <>
@@ -377,7 +377,7 @@ export default function IntelligenceSearchPage() {
                   </svg>
                 </div>
                 <h2 className="is-cta-title">
-                  {lang === 'zh' ? '智慧搜尋，即將到來' : 'Intelligence Search, Coming Soon'}
+                  {lang === 'zh' ? '智慧搜尋，即將到來' : 'AI Search, Coming Soon'}
                 </h2>
                 <p className="is-cta-sub">
                   {lang === 'zh'
