@@ -555,7 +555,7 @@ function FilterBar({
               className="rmap-industry-tag rmap-industry-tag--more"
               onClick={() => setShowAllTags(false)}
             >
-              收起
+              less
             </button>
           )}
         </div>
@@ -564,7 +564,7 @@ function FilterBar({
             className="rmap-industry-tag rmap-industry-tag--more"
             onClick={() => setShowAllTags(true)}
           >
-            更多
+            more
           </button>
         )}
       </div>
