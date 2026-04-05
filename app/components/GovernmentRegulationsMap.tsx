@@ -123,11 +123,6 @@ const LeafletMap = dynamic(() => import('./LeafletMapInner'), {
 
 // ─── Main WorldMapTab component ───────────────────────────────────────────────
 
-interface WorldMapTabProps {
-  onSelectLocation: (id: string | null) => void;
-  activeLocationId: string | null;
-}
-
 export default function WorldMapTab() {
   const [activeLocationId, setActiveLocationId] = useState<string | null>(null);
   const activeLocation = TSMC_FAB_LOCATIONS.find((l) => l.id === activeLocationId) ?? null;

@@ -39,6 +39,11 @@ function createFabIcon(count: number, isActive: boolean) {
   });
 }
 
+// Minimal interface for Leaflet.MarkerCluster (not exported by @types/leaflet)
+interface MarkerCluster {
+  getChildCount: () => number;
+}
+
 // ─── Map click handler — deselects on map background click ──────────────────
 
 function MapClickHandler({ onDeselect }: { onDeselect: () => void }) {
@@ -96,9 +101,8 @@ export default function LeafletMapInner({
       <MarkerClusterGroup
         chunkedLoading
         maxClusterRadius={60}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        iconCreateFunction={(cluster: any) => {
-          const count = cluster.getChildCount() as number;
+        iconCreateFunction={(cluster: MarkerCluster) => {
+          const count = cluster.getChildCount();
           return L.divIcon({
             className: '',
             html: `<div style="
