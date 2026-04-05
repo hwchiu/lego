@@ -1813,7 +1813,7 @@ function MicReader({ issue, onBack }: MicReaderProps) {
               strokeLinejoin="round"
             />
           </svg>
-          MIC PICKS 情報電子報
+          MIC PICKS Intelligence Newsletter
         </span>
         <span className="emp-reader-vol">
           Vol. {issue.vol} · {issue.year} {issue.quarter}
@@ -1866,7 +1866,6 @@ function MicReader({ issue, onBack }: MicReaderProps) {
             />
           ))}
         </div>
-        <span className="emp-keyboard-hint">← → Use arrow keys to navigate</span>
       </div>
     </div>
   );

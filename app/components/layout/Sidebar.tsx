@@ -401,6 +401,14 @@ export default function Sidebar() {
             >
               <NavIcon iconKey={item.icon} />
               {!collapsed && label}
+              {!collapsed && item.badge && (
+                <span
+                  className={item.badgeStyle === 'coming-soon' ? 'badge-coming-soon' : 'badge-new'}
+                  style={item.badgeStyle !== 'coming-soon' && item.badgeColor ? { background: item.badgeColor } : undefined}
+                >
+                  {item.badge}
+                </span>
+              )}
             </Link>
           );
         })}
