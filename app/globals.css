@@ -7381,8 +7381,97 @@ input, select { font-family: var(--font); }
   gap: 4px;
 }
 
+/* ── International Tax News two-panel layout ── */
+.de-intl-tax-layout {
+  display: flex;
+  gap: 0;
+  align-items: flex-start;
+  min-height: 400px;
+}
+.de-intl-tax-sidebar {
+  width: 180px;
+  min-width: 180px;
+  border-right: 1px solid var(--c-border);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 0;
+}
+.de-intl-tax-sidebar-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-text-4);
+  padding: 4px 16px 8px;
+}
+.de-intl-tax-sidebar-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: background 0.13s, border-left-color 0.13s, color 0.13s;
+  font-family: var(--font);
+  color: var(--c-text-2);
+}
+.de-intl-tax-sidebar-item:hover {
+  background: var(--c-bg);
+}
+.de-intl-tax-sidebar-item.active {
+  background: var(--c-bg);
+  font-weight: 700;
+}
+.de-intl-tax-sidebar-item-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: inherit;
+}
+.de-intl-tax-sidebar-item-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: var(--c-bg);
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--c-text-4);
+  flex-shrink: 0;
+}
+.de-intl-tax-sidebar-item.active .de-intl-tax-sidebar-item-count {
+  background: #dbeafe;
+  color: #2563eb;
+}
+.de-intl-tax-content {
+  flex: 1;
+  min-width: 0;
+  padding-left: 24px;
+}
+.de-intl-tax-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.de-intl-tax-empty {
+  padding: 40px 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--c-text-4);
+}
+
 /* ── RWD for new DE features ── */
 @media (max-width: 900px) {
+  .de-intl-tax-grid {
+    grid-template-columns: 1fr;
+  }
+}
   .de-esg-reports-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -7441,6 +7530,36 @@ input, select { font-family: var(--font); }
     display: none;
   }
   .de-esg-content {
+    padding-left: 0;
+    padding-top: 16px;
+  }
+  .de-intl-tax-layout {
+    flex-direction: column;
+  }
+  .de-intl-tax-sidebar {
+    width: 100%;
+    min-width: 0;
+    border-right: none;
+    border-bottom: 1px solid var(--c-border);
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 8px 0;
+  }
+  .de-intl-tax-sidebar-title {
+    width: 100%;
+    padding-bottom: 4px;
+  }
+  .de-intl-tax-sidebar-item {
+    border-left: none;
+    border-bottom: 3px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+  }
+  .de-intl-tax-sidebar-item.active {
+    border-left: none;
+    border-bottom-color: currentColor;
+  }
+  .de-intl-tax-content {
     padding-left: 0;
     padding-top: 16px;
   }
