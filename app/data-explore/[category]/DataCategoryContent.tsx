@@ -16,6 +16,19 @@ function formatDate(iso: string): string {
 
 // ── sub-components ─────────────────────────────────────────────────────────────
 
+function CategoryIcon({ paths }: { paths: string }) {
+  return (
+    <svg
+      width="28"
+      height="28"
+      viewBox="0 0 28 28"
+      fill="none"
+      aria-hidden="true"
+      dangerouslySetInnerHTML={{ __html: paths }}
+    />
+  );
+}
+
 function BackArrowIcon() {
   return (
     <svg viewBox="0 0 16 16" fill="none" width="14" height="14" aria-hidden="true">
@@ -176,9 +189,9 @@ export default function DataCategoryContent({ params }: { params: { category: st
                   Data Explore
                 </Link>
                 <div className="de-cat-hero-meta">
-                  <span className="de-cat-hero-icon" style={{ color: cat.color }}>
-                    {cat.icon}
-                  </span>
+                  <div className="de-cat-hero-icon" style={{ background: 'rgba(255,255,255,0.1)', color: cat.color }}>
+                    <CategoryIcon paths={cat.icon} />
+                  </div>
                   <div>
                     <div className="section-eyebrow">Data Explore</div>
                     <h1 className="de-cat-hero-title">{cat.label}</h1>

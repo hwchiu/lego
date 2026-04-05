@@ -35,6 +35,19 @@ function SearchIcon() {
   );
 }
 
+function CategoryIcon({ paths }: { paths: string }) {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 28 28"
+      fill="none"
+      aria-hidden="true"
+      dangerouslySetInnerHTML={{ __html: paths }}
+    />
+  );
+}
+
 function ArrowIcon() {
   return (
     <svg viewBox="0 0 16 16" fill="none" width="14" height="14" aria-hidden="true">
@@ -61,8 +74,8 @@ interface CategoryCardProps {
 function CategoryCard({ slug, label, icon, color, description, count }: CategoryCardProps) {
   return (
     <Link href={`/data-explore/${slug}`} className="de-category-card">
-      <div className="de-category-card-icon" style={{ color }}>
-        <span role="img" aria-label={label}>{icon}</span>
+      <div className="de-category-card-icon" style={{ background: `${color}1a`, color }}>
+        <CategoryIcon paths={icon} />
       </div>
       <div className="de-category-card-body">
         <div className="de-category-card-label">{label}</div>

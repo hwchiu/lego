@@ -6157,15 +6157,13 @@ input, select { font-family: var(--font); }
 }
 
 .de-category-card-icon {
-  font-size: 26px;
   width: 44px;
   height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  background: var(--c-bg);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
 }
 
 .de-category-card-body {
@@ -6373,8 +6371,13 @@ input, select { font-family: var(--font); }
 }
 
 .de-cat-hero-icon {
-  font-size: 32px;
-  line-height: 1;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: var(--radius);
 }
 
 .de-cat-hero .section-eyebrow {
