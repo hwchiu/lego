@@ -1191,26 +1191,397 @@ function renderPage(idx: number) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// Main component
+// Bookshelf data & types
 // ─────────────────────────────────────────────────────────────────
 
-export default function ExploreMicPicksContent() {
+interface MicIssue {
+  id: string;
+  vol: number;
+  title: string;
+  year: number;
+  quarter: string;
+  category: string;
+  coverGradient: string;
+  accentColor: string;
+  pages: number;
+  publishedLabel: string;
+  available: boolean;
+}
+
+const MIC_ISSUES: MicIssue[] = [
+  {
+    id: 'vol-1-2025-q1',
+    vol: 1,
+    title: '半導體產業深度洞察',
+    year: 2025,
+    quarter: 'Q1',
+    category: '半導體',
+    coverGradient: 'linear-gradient(145deg, #0369a1 0%, #0ea5e9 60%, #38bdf8 100%)',
+    accentColor: '#0369a1',
+    pages: 6,
+    publishedLabel: '2025 年 3 月',
+    available: true,
+  },
+  {
+    id: 'vol-2-2025-q2',
+    vol: 2,
+    title: 'AI 晶片競合格局',
+    year: 2025,
+    quarter: 'Q2',
+    category: '半導體',
+    coverGradient: 'linear-gradient(145deg, #6d28d9 0%, #a78bfa 60%, #c4b5fd 100%)',
+    accentColor: '#6d28d9',
+    pages: 6,
+    publishedLabel: '2025 年 6 月',
+    available: false,
+  },
+  {
+    id: 'vol-3-2025-q3',
+    vol: 3,
+    title: '次世代科技趨勢',
+    year: 2025,
+    quarter: 'Q3',
+    category: '科技趨勢',
+    coverGradient: 'linear-gradient(145deg, #15803d 0%, #22c55e 60%, #86efac 100%)',
+    accentColor: '#15803d',
+    pages: 6,
+    publishedLabel: '2025 年 9 月',
+    available: false,
+  },
+  {
+    id: 'vol-4-2024-q4',
+    vol: 4,
+    title: '總體經濟與科技投資',
+    year: 2024,
+    quarter: 'Q4',
+    category: '總體經濟',
+    coverGradient: 'linear-gradient(145deg, #b45309 0%, #f59e0b 60%, #fcd34d 100%)',
+    accentColor: '#b45309',
+    pages: 6,
+    publishedLabel: '2024 年 12 月',
+    available: false,
+  },
+  {
+    id: 'vol-5-2024-q3',
+    vol: 5,
+    title: '先進封裝技術革命',
+    year: 2024,
+    quarter: 'Q3',
+    category: '半導體',
+    coverGradient: 'linear-gradient(145deg, #b91c1c 0%, #f87171 60%, #fca5a5 100%)',
+    accentColor: '#b91c1c',
+    pages: 6,
+    publishedLabel: '2024 年 9 月',
+    available: false,
+  },
+  {
+    id: 'vol-6-2024-q2',
+    vol: 6,
+    title: '開源生態系與企業軟體',
+    year: 2024,
+    quarter: 'Q2',
+    category: '科技趨勢',
+    coverGradient: 'linear-gradient(145deg, #c2410c 0%, #fb923c 60%, #fdba74 100%)',
+    accentColor: '#c2410c',
+    pages: 6,
+    publishedLabel: '2024 年 6 月',
+    available: false,
+  },
+];
+
+// ─────────────────────────────────────────────────────────────────
+// Shelf sidebar — left menu tree (by category & year/quarter)
+// ─────────────────────────────────────────────────────────────────
+
+interface MicShelfSidebarProps {
+  activeCategory: string | null;
+  activeYear: number | null;
+  activeQuarter: string | null;
+  onSelectAll: () => void;
+  onSelectCategory: (cat: string) => void;
+  onSelectYear: (year: number) => void;
+  onSelectQuarter: (year: number, quarter: string) => void;
+}
+
+function MicShelfSidebar({
+  activeCategory,
+  activeYear,
+  activeQuarter,
+  onSelectAll,
+  onSelectCategory,
+  onSelectYear,
+  onSelectQuarter,
+}: MicShelfSidebarProps) {
+  const categories = [...new Set(MIC_ISSUES.map((i) => i.category))];
+  const years = [...new Set(MIC_ISSUES.map((i) => i.year))].sort((a, b) => b - a);
+  const isAllActive = !activeCategory && !activeYear && !activeQuarter;
+
+  return (
+    <div className="emp-shelf-sidebar">
+      <div className="emp-shelf-sidebar-header">電子報書庫</div>
+      <nav className="emp-shelf-tree" aria-label="電子報分類">
+        {/* All */}
+        <button className={`emp-shelf-tree-node${isAllActive ? ' active' : ''}`} onClick={onSelectAll}>
+          <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+            <path d="M2 3h10M2 7h10M2 11h6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+          </svg>
+          所有電子報
+          <span className="emp-shelf-tree-count">{MIC_ISSUES.length}</span>
+        </button>
+
+        {/* By category */}
+        <div className="emp-shelf-tree-section-label">依類型</div>
+        {categories.map((cat) => {
+          const count = MIC_ISSUES.filter((i) => i.category === cat).length;
+          return (
+            <button
+              key={cat}
+              className={`emp-shelf-tree-node emp-shelf-tree-node--indent${activeCategory === cat ? ' active' : ''}`}
+              onClick={() => onSelectCategory(cat)}
+            >
+              {cat}
+              <span className="emp-shelf-tree-count">{count}</span>
+            </button>
+          );
+        })}
+
+        {/* By year/quarter */}
+        <div className="emp-shelf-tree-section-label">依年份</div>
+        {years.map((year) => {
+          const quarters = [
+            ...new Set(MIC_ISSUES.filter((i) => i.year === year).map((i) => i.quarter)),
+          ].sort();
+          return (
+            <div key={year}>
+              <button
+                className={`emp-shelf-tree-node${activeYear === year && !activeQuarter ? ' active' : ''}`}
+                onClick={() => onSelectYear(year)}
+              >
+                <svg viewBox="0 0 14 14" fill="none" width="12" height="12" aria-hidden="true">
+                  <rect x="2" y="2" width="10" height="10" rx="2" stroke="currentColor" strokeWidth="1.3" />
+                  <path d="M5 1v3M9 1v3M2 6h10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                </svg>
+                {year} 年
+                <span className="emp-shelf-tree-count">
+                  {MIC_ISSUES.filter((i) => i.year === year).length}
+                </span>
+              </button>
+              {quarters.map((q) => {
+                const count = MIC_ISSUES.filter((i) => i.year === year && i.quarter === q).length;
+                return (
+                  <button
+                    key={q}
+                    className={`emp-shelf-tree-node emp-shelf-tree-node--quarter${activeYear === year && activeQuarter === q ? ' active' : ''}`}
+                    onClick={() => onSelectQuarter(year, q)}
+                  >
+                    {q}
+                    <span className="emp-shelf-tree-count">{count}</span>
+                  </button>
+                );
+              })}
+            </div>
+          );
+        })}
+      </nav>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Shelf card — Apple Books-style 3D book cover
+// ─────────────────────────────────────────────────────────────────
+
+interface MicShelfCardProps {
+  issue: MicIssue;
+  onOpen: (id: string) => void;
+}
+
+function MicShelfCard({ issue, onOpen }: MicShelfCardProps) {
+  const handleClick = useCallback(() => {
+    if (issue.available) onOpen(issue.id);
+  }, [issue, onOpen]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (issue.available && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        onOpen(issue.id);
+      }
+    },
+    [issue, onOpen],
+  );
+
+  return (
+    <div
+      className={`emp-shelf-card${issue.available ? '' : ' emp-shelf-card--unavailable'}`}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role={issue.available ? 'button' : undefined}
+      tabIndex={issue.available ? 0 : undefined}
+      aria-label={issue.available ? `開啟 ${issue.title}` : `${issue.title} 即將推出`}
+    >
+      <div className="emp-shelf-card-book">
+        <div className="emp-shelf-card-spine" style={{ background: issue.accentColor }} />
+        <div className="emp-shelf-card-cover" style={{ background: issue.coverGradient }}>
+          <div className="emp-shelf-card-cover-eyebrow">MIC PICKS</div>
+          <div className="emp-shelf-card-cover-category">{issue.category}</div>
+          <div className="emp-shelf-card-cover-title">{issue.title}</div>
+          <div className="emp-shelf-card-cover-vol">
+            Vol. {issue.vol} · {issue.year} {issue.quarter}
+          </div>
+          {!issue.available && <div className="emp-shelf-card-coming-soon">即將推出</div>}
+        </div>
+      </div>
+      <div className="emp-shelf-card-info">
+        <div className="emp-shelf-card-info-title">{issue.title}</div>
+        <div className="emp-shelf-card-info-meta">
+          {issue.publishedLabel} · {issue.category}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Bookshelf overview — grid + search + sidebar
+// ─────────────────────────────────────────────────────────────────
+
+interface MicShelfProps {
+  onOpen: (id: string) => void;
+}
+
+function MicShelf({ onOpen }: MicShelfProps) {
+  const [query, setQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeYear, setActiveYear] = useState<number | null>(null);
+  const [activeQuarter, setActiveQuarter] = useState<string | null>(null);
+
+  const handleSelectAll = useCallback(() => {
+    setActiveCategory(null);
+    setActiveYear(null);
+    setActiveQuarter(null);
+  }, []);
+
+  const handleSelectCategory = useCallback((cat: string) => {
+    setActiveCategory(cat);
+    setActiveYear(null);
+    setActiveQuarter(null);
+  }, []);
+
+  const handleSelectYear = useCallback((year: number) => {
+    setActiveYear(year);
+    setActiveCategory(null);
+    setActiveQuarter(null);
+  }, []);
+
+  const handleSelectQuarter = useCallback((year: number, quarter: string) => {
+    setActiveYear(year);
+    setActiveQuarter(quarter);
+    setActiveCategory(null);
+  }, []);
+
+  const filtered = MIC_ISSUES.filter((issue) => {
+    if (activeCategory && issue.category !== activeCategory) return false;
+    if (activeYear && issue.year !== activeYear) return false;
+    if (activeQuarter && issue.quarter !== activeQuarter) return false;
+    if (query) {
+      const q = query.toLowerCase();
+      return (
+        issue.title.toLowerCase().includes(q) ||
+        issue.category.toLowerCase().includes(q) ||
+        issue.publishedLabel.includes(q) ||
+        `vol. ${issue.vol}`.includes(q) ||
+        String(issue.year).includes(q)
+      );
+    }
+    return true;
+  });
+
+  return (
+    <div className="emp-shelf-layout">
+      <MicShelfSidebar
+        activeCategory={activeCategory}
+        activeYear={activeYear}
+        activeQuarter={activeQuarter}
+        onSelectAll={handleSelectAll}
+        onSelectCategory={handleSelectCategory}
+        onSelectYear={handleSelectYear}
+        onSelectQuarter={handleSelectQuarter}
+      />
+      <div className="emp-shelf-main">
+        <div className="emp-shelf-header">
+          <h2 className="emp-shelf-title">
+            <svg viewBox="0 0 16 16" fill="none" width="18" height="18" aria-hidden="true">
+              <path
+                d="M8 1.5l1.8 3.6 4 .6-2.9 2.8.7 4L8 10.4l-3.6 2 .7-4L2.2 5.7l4-.6z"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinejoin="round"
+              />
+            </svg>
+            MIC PICKS 書架
+          </h2>
+          <div className="emp-shelf-search-wrap">
+            <svg
+              viewBox="0 0 14 14"
+              fill="none"
+              width="13"
+              height="13"
+              className="emp-shelf-search-icon"
+              aria-hidden="true"
+            >
+              <circle cx="6" cy="6" r="4" stroke="currentColor" strokeWidth="1.3" />
+              <path d="M9.5 9.5L12 12" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+            </svg>
+            <input
+              className="emp-shelf-search-input"
+              type="search"
+              placeholder="搜尋電子報..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              aria-label="搜尋電子報"
+            />
+          </div>
+        </div>
+        <div className="emp-shelf-grid">
+          {filtered.length === 0 ? (
+            <div className="emp-shelf-empty">找不到符合的電子報</div>
+          ) : (
+            filtered.map((issue) => <MicShelfCard key={issue.id} issue={issue} onOpen={onOpen} />)
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Magazine reader — wraps the 6-page reader with a back-to-shelf button
+// ─────────────────────────────────────────────────────────────────
+
+interface MicReaderProps {
+  issue: MicIssue;
+  onBack: () => void;
+}
+
+function MicReader({ issue, onBack }: MicReaderProps) {
   const [currentPage, setCurrentPage] = useState(0);
   const [animState, setAnimState] = useState<'idle' | 'exit' | 'enter'>('idle');
   const [direction, setDirection] = useState<'next' | 'prev'>('next');
+  const totalPages = issue.pages;
 
   const goTo = useCallback(
     (target: number) => {
-      if (target < 0 || target >= TOTAL_PAGES || animState !== 'idle') return;
+      if (target < 0 || target >= totalPages || animState !== 'idle') return;
       setDirection(target > currentPage ? 'next' : 'prev');
       setAnimState('exit');
       setTimeout(() => {
         setCurrentPage(target);
         setAnimState('enter');
-        setTimeout(() => setAnimState('idle'), 30); // brief tick to let React flush the enter-class render before clearing it
+        setTimeout(() => setAnimState('idle'), 30); // brief tick to let React flush the enter-class before clearing
       }, 350);
     },
-    [currentPage, animState],
+    [currentPage, animState, totalPages],
   );
 
   const handleNext = useCallback(() => goTo(currentPage + 1), [currentPage, goTo]);
@@ -1236,74 +1607,111 @@ export default function ExploreMicPicksContent() {
     .join(' ');
 
   return (
+    <div className="emp-reader-outer">
+      {/* Toolbar */}
+      <div className="emp-reader-toolbar">
+        <button className="emp-reader-back-btn" onClick={onBack} aria-label="返回書架">
+          <svg viewBox="0 0 14 14" fill="none" width="12" height="12" aria-hidden="true">
+            <path
+              d="M9 2L4 7l5 5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          返回書架
+        </button>
+        <span className="emp-reader-brand">
+          <svg viewBox="0 0 14 14" fill="none" width="14" height="14" aria-hidden="true">
+            <path
+              d="M7 1.5l1.5 3.3L12.5 5l-2.5 2.6.6 3.7L7 9.6l-3.6 1.7.6-3.7L1.5 5l3.8-.7z"
+              stroke="currentColor"
+              strokeWidth="1.3"
+              strokeLinejoin="round"
+            />
+          </svg>
+          MIC PICKS 情報電子報
+        </span>
+        <span className="emp-reader-vol">
+          Vol. {issue.vol} · {issue.year} {issue.quarter}
+        </span>
+        <span className="emp-reader-pagenum">
+          {currentPage + 1} / {totalPages}
+        </span>
+      </div>
+
+      {/* Stage */}
+      <div className="emp-reader-stage">
+        <button
+          className="emp-nav-btn emp-nav-btn--prev"
+          onClick={handlePrev}
+          disabled={currentPage === 0 || animState !== 'idle'}
+          aria-label="上一頁"
+        >
+          ‹
+        </button>
+
+        <div
+          className="emp-magazine"
+          aria-live="polite"
+          aria-label={`第 ${currentPage + 1} 頁，共 ${totalPages} 頁`}
+        >
+          <div className={pageClass}>{renderPage(currentPage)}</div>
+        </div>
+
+        <button
+          className="emp-nav-btn emp-nav-btn--next"
+          onClick={handleNext}
+          disabled={currentPage === totalPages - 1 || animState !== 'idle'}
+          aria-label="下一頁"
+        >
+          ›
+        </button>
+      </div>
+
+      {/* Footer: dots + hint */}
+      <div className="emp-reader-footer">
+        <div className="emp-dots" role="tablist" aria-label="頁面導覽">
+          {Array.from({ length: totalPages }).map((_, i) => (
+            <button
+              key={i}
+              role="tab"
+              aria-selected={i === currentPage}
+              aria-label={`跳至第 ${i + 1} 頁`}
+              className={`emp-dot${i === currentPage ? ' emp-dot--active' : ''}`}
+              onClick={() => goTo(i)}
+            />
+          ))}
+        </div>
+        <span className="emp-keyboard-hint">← → Use arrow keys to navigate</span>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Main component
+// ─────────────────────────────────────────────────────────────────
+
+export default function ExploreMicPicksContent() {
+  const [selectedIssueId, setSelectedIssueId] = useState<string | null>(null);
+  const selectedIssue = selectedIssueId
+    ? (MIC_ISSUES.find((i) => i.id === selectedIssueId) ?? null)
+    : null;
+
+  return (
     <div className="app-body">
       <Sidebar />
       <main className="main-content">
         <TopNav />
         <Banner />
         <div className="page-pad">
-          <div className="emp-reader-outer">
-            {/* Toolbar */}
-            <div className="emp-reader-toolbar">
-              <span className="emp-reader-brand">
-                <svg viewBox="0 0 14 14" fill="none" width="14" height="14" aria-hidden="true">
-                  <path
-                    d="M7 1.5l1.5 3.3L12.5 5l-2.5 2.6.6 3.7L7 9.6l-3.6 1.7.6-3.7L1.5 5l3.8-.7z"
-                    stroke="currentColor"
-                    strokeWidth="1.3"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                MIC PICKS 情報電子報
-              </span>
-              <span className="emp-reader-vol">Vol. 1 · 2025 Q1</span>
-              <span className="emp-reader-pagenum">
-                {currentPage + 1} / {TOTAL_PAGES}
-              </span>
-            </div>
-
-            {/* Stage */}
-            <div className="emp-reader-stage">
-              <button
-                className="emp-nav-btn emp-nav-btn--prev"
-                onClick={handlePrev}
-                disabled={currentPage === 0 || animState !== 'idle'}
-                aria-label="上一頁"
-              >
-                ‹
-              </button>
-
-              <div className="emp-magazine" aria-live="polite" aria-label={`第 ${currentPage + 1} 頁，共 ${TOTAL_PAGES} 頁`}>
-                <div className={pageClass}>{renderPage(currentPage)}</div>
-              </div>
-
-              <button
-                className="emp-nav-btn emp-nav-btn--next"
-                onClick={handleNext}
-                disabled={currentPage === TOTAL_PAGES - 1 || animState !== 'idle'}
-                aria-label="下一頁"
-              >
-                ›
-              </button>
-            </div>
-
-            {/* Footer: dots + hint */}
-            <div className="emp-reader-footer">
-              <div className="emp-dots" role="tablist" aria-label="頁面導覽">
-                {Array.from({ length: TOTAL_PAGES }).map((_, i) => (
-                  <button
-                    key={i}
-                    role="tab"
-                    aria-selected={i === currentPage}
-                    aria-label={`跳至第 ${i + 1} 頁`}
-                    className={`emp-dot${i === currentPage ? ' emp-dot--active' : ''}`}
-                    onClick={() => goTo(i)}
-                  />
-                ))}
-              </div>
-              <span className="emp-keyboard-hint">← → Use arrow keys to navigate</span>
-            </div>
-          </div>
+          {selectedIssue ? (
+            <MicReader issue={selectedIssue} onBack={() => setSelectedIssueId(null)} />
+          ) : (
+            <MicShelf onOpen={setSelectedIssueId} />
+          )}
         </div>
       </main>
     </div>
