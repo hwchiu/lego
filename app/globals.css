@@ -1361,6 +1361,7 @@ input, select { font-family: var(--font); }
 
 .crt-th-no { width: 36px; text-align: center; }
 .crt-th-num { text-align: right; }
+.crt-th-company { width: 1%; white-space: nowrap; }
 
 .crt-row {
   border-bottom: 1px solid var(--c-border);
@@ -1388,6 +1389,7 @@ input, select { font-family: var(--font); }
   font-weight: 600;
   font-size: 13px;
   color: var(--c-text);
+  white-space: nowrap;
 }
 
 .crt-company-symbol {
@@ -10662,7 +10664,7 @@ input, select { font-family: var(--font); }
     display: none;
   }
 
-  /* Watchlist indexes — horizontal touch-scroll, hide arrow buttons */
+  /* Watchlist indexes — horizontal touch-scroll, hide arrow buttons, hide sparkline */
   .wl-indexes-track {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -10670,6 +10672,10 @@ input, select { font-family: var(--font); }
   .wl-index-card {
     flex: 0 0 130px;
     min-width: 130px;
+    grid-template-columns: 1fr;
+  }
+  .wl-index-spark {
+    display: none;
   }
   .wl-indexes-arrows {
     display: none;

@@ -41,7 +41,7 @@ export default function CompanyRankingTable() {
         <thead>
           <tr>
             <th className="crt-th crt-th-no">#No</th>
-            <th className="crt-th">Company</th>
+            <th className="crt-th crt-th-company">Company</th>
             <th className="crt-th crt-th-num">Mentions</th>
             <th className="crt-th crt-th-num">Change</th>
           </tr>
