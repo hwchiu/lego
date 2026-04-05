@@ -659,13 +659,24 @@ function Page2Macro() {
   );
 }
 
+// Maps milestone status text to the corresponding CSS modifier class.
+const MILESTONE_STATUS_CLASS: Record<string, string> = {
+  量產: 'emp-milestone-status--ok',
+  供貨: 'emp-milestone-status--ok',
+  研發: 'emp-milestone-status--pending',
+  試產: 'emp-milestone-status--pending',
+};
+
+// Maps supplier risk level (Chinese) to the corresponding CSS modifier suffix.
+const SUPPLIER_RISK_CLASS: Record<string, string> = { 高: 'high', 中: 'mid', 低: 'low' };
+
 function Page3SupplyChain() {
   const milestones = [
-    { company: '台積電', node: '2nm (N2)', status: '量產', date: 'H2 2025', ok: true },
-    { company: '台積電', node: '1.4nm (A14)', status: '研發', date: '2027', ok: false },
-    { company: '三星', node: '2nm SF2', status: '研發', date: '2025', ok: false },
-    { company: '英特爾', node: '18A', status: '試產', date: '2025', ok: false },
-    { company: 'ASML', node: 'High-NA EUV', status: '供貨', date: '2024', ok: true },
+    { company: '台積電', node: '2nm (N2)', status: '量產', date: 'H2 2025' },
+    { company: '台積電', node: '1.4nm (A14)', status: '研發', date: '2027' },
+    { company: '三星', node: '2nm SF2', status: '研發', date: '2025' },
+    { company: '英特爾', node: '18A', status: '試產', date: '2025' },
+    { company: 'ASML', node: 'High-NA EUV', status: '供貨', date: '2024' },
   ];
   return (
     <div className="emp-page-wrap">
@@ -697,7 +708,7 @@ function Page3SupplyChain() {
               <div key={i} className="emp-milestone-row">
                 <span className="emp-milestone-company">{m.company}</span>
                 <span className="emp-milestone-node">{m.node}</span>
-                <span className={`emp-milestone-status ${m.ok ? 'emp-milestone-status--ok' : 'emp-milestone-status--pending'}`}>
+                <span className={`emp-milestone-status ${MILESTONE_STATUS_CLASS[m.status] ?? 'emp-milestone-status--pending'}`}>
                   {m.status}
                 </span>
                 <span className="emp-milestone-date">{m.date}</span>
@@ -969,7 +980,7 @@ function Page6CustomerSupplier() {
                     {s.name}
                   </span>
                   <span className="emp-supplier-type">{s.type}</span>
-                  <span className={`emp-supplier-risk emp-supplier-risk--${s.risk === '高' ? 'high' : s.risk === '中' ? 'mid' : 'low'}`}>
+                  <span className={`emp-supplier-risk emp-supplier-risk--${SUPPLIER_RISK_CLASS[s.risk] ?? 'low'}`}>
                     風險 {s.risk}
                   </span>
                 </div>
@@ -1052,7 +1063,7 @@ export default function ExploreMicPicksContent() {
       setTimeout(() => {
         setCurrentPage(target);
         setAnimState('enter');
-        setTimeout(() => setAnimState('idle'), 30);
+        setTimeout(() => setAnimState('idle'), 30); // brief tick to let React flush the enter-class render before clearing it
       }, 350);
     },
     [currentPage, animState],
