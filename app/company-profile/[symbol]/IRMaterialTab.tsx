@@ -1,9 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { extractJson } from '@/app/lib/parseContent';
+import tsmIrMd from '@/content/tsm-ir-material.md';
 
-// ── IR Material Tab — AAPL ───────────────────────────────────────────────────
-// Content sourced from https://investor.apple.com/investor-relations/default.aspx
+// ── IR Material Tab — AAPL / TSM ─────────────────────────────────────────────
+// AAPL content sourced from https://investor.apple.com/investor-relations/default.aspx
+// TSM content sourced from https://investor.tsmc.com
 // Sections: Investor Updates | Newsroom | Financial Data
 
 interface IRMaterialTabProps {
@@ -18,7 +21,7 @@ const IR_TABS: { key: IRSubTab; label: string }[] = [
   { key: 'financial-data', label: 'Financial Data' },
 ];
 
-// ── Investor Updates data ────────────────────────────────────────────────────
+// ── Shared interfaces ─────────────────────────────────────────────────────────
 
 interface InvestorUpdate {
   period: string;
@@ -377,6 +380,7 @@ const CATEGORY_CLASSES: Record<string, string> = {
   Earnings: 'cp-ir-category-badge cp-ir-category-badge--earnings',
   Product: 'cp-ir-category-badge cp-ir-category-badge--product',
   Corporate: 'cp-ir-category-badge cp-ir-category-badge--corporate',
+  Technology: 'cp-ir-category-badge cp-ir-category-badge--product',
 };
 
 function CategoryBadge({ category }: { category: string }) {
@@ -385,16 +389,195 @@ function CategoryBadge({ category }: { category: string }) {
   );
 }
 
+// ── TSM data loader ───────────────────────────────────────────────────────────
+
+interface TsmIrData {
+  investorUpdates: InvestorUpdate[];
+  newsroom: NewsroomItem[];
+  financialData: FinancialDocGroup[];
+}
+
+let _tsmIrData: TsmIrData | null = null;
+function getTsmIrData(): TsmIrData {
+  if (!_tsmIrData) {
+    _tsmIrData = extractJson<TsmIrData>(tsmIrMd as string);
+  }
+  return _tsmIrData;
+}
+
+// ── Generic IR content renderer ───────────────────────────────────────────────
+
+interface IRContentProps {
+  investorUpdates: InvestorUpdate[];
+  newsroom: NewsroomItem[];
+  financialData: FinancialDocGroup[];
+  activeTab: IRSubTab;
+  viewAllUrl: string;
+  viewAllLabel: string;
+  disclaimerText: string;
+}
+
+function IRContent({
+  investorUpdates,
+  newsroom,
+  financialData,
+  activeTab,
+  viewAllUrl,
+  viewAllLabel,
+  disclaimerText,
+}: IRContentProps) {
+  return (
+    <div className="cp-ir-tab-content">
+      {/* ── Investor Updates ── */}
+      {activeTab === 'investor-updates' && (
+        <div className="cp-ir-card-grid">
+          {investorUpdates.map((u) => (
+            <div key={u.period} className="cp-data-card cp-ir-card">
+              <div className="cp-ir-card-header">
+                <span className="cp-ir-update-period">{u.period}</span>
+                <span className="cp-ir-update-date">{u.date}</span>
+              </div>
+              <div className="cp-card-divider" />
+              <div className="cp-ir-update-metrics">
+                <div className="cp-ir-update-metric">
+                  <span className="cp-ir-update-metric-label">Revenue</span>
+                  <span className="cp-ir-update-metric-value">{u.revenue}</span>
+                </div>
+                <div className="cp-ir-update-metric">
+                  <span className="cp-ir-update-metric-label">EPS</span>
+                  <span className="cp-ir-update-metric-value">{u.eps}</span>
+                </div>
+                <div className="cp-ir-update-metric">
+                  <span className="cp-ir-update-metric-label">Dividend</span>
+                  <span className="cp-ir-update-metric-value">{u.dividend}</span>
+                </div>
+              </div>
+              <div className="cp-ir-update-highlight">{u.highlight}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ── Newsroom ── */}
+      {activeTab === 'newsroom' && (
+        <>
+          <div className="cp-ir-card-grid">
+            {newsroom.map((item, idx) => (
+              <a
+                key={idx}
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cp-data-card cp-ir-card cp-ir-news-card"
+              >
+                <div className="cp-ir-news-card-top">
+                  <CategoryBadge category={item.category} />
+                  <span className="cp-ir-news-date">{item.date}</span>
+                </div>
+                <div className="cp-ir-news-card-title">{item.title}</div>
+                <div className="cp-ir-news-card-footer">
+                  <svg
+                    viewBox="0 0 12 12"
+                    width="11"
+                    height="11"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M2 6h8M6 2l4 4-4 4" />
+                  </svg>
+                  <span>Open in new tab</span>
+                </div>
+              </a>
+            ))}
+          </div>
+          <a
+            href={viewAllUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cp-ir-view-all"
+          >
+            {viewAllLabel}
+          </a>
+        </>
+      )}
+
+      {/* ── Financial Data ── */}
+      {activeTab === 'financial-data' && (
+        <>
+          {financialData.map((group) => (
+            <div key={group.category} className="cp-ir-doc-group">
+              <div className="cp-ir-doc-group-title">{group.category}</div>
+              <div className="cp-ir-card-grid">
+                {group.docs.map((doc, idx) => (
+                  <a
+                    key={idx}
+                    href={doc.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download={doc.type !== 'HTML'}
+                    className="cp-data-card cp-ir-card cp-ir-doc-card"
+                  >
+                    <div className="cp-ir-doc-card-top">
+                      <DocTypeBadge type={doc.type} />
+                      <span className="cp-ir-doc-filed">Filed: {doc.filed}</span>
+                    </div>
+                    <div className="cp-ir-doc-card-label">{doc.label}</div>
+                    <div className="cp-ir-doc-card-footer">
+                      <DownloadIcon />
+                      <span>{doc.type === 'HTML' ? 'Open' : 'Download'}</span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
+          <p className="cp-ir-disclaimer">{disclaimerText}</p>
+        </>
+      )}
+    </div>
+  );
+}
+
 // ── IRMaterialTab ─────────────────────────────────────────────────────────────
 
 export default function IRMaterialTab({ symbol }: IRMaterialTabProps) {
   const [activeTab, setActiveTab] = useState<IRSubTab>('investor-updates');
 
-  // Only AAPL has full content; others show a placeholder
-  if (symbol !== 'AAPL') {
+  // Resolve data and config based on symbol
+  let investorUpdates: InvestorUpdate[];
+  let newsroom: NewsroomItem[];
+  let financialData: FinancialDocGroup[];
+  let viewAllUrl: string;
+  let viewAllLabel: string;
+  let disclaimerText: string;
+
+  if (symbol === 'AAPL') {
+    investorUpdates = AAPL_INVESTOR_UPDATES;
+    newsroom = AAPL_NEWSROOM;
+    financialData = AAPL_FINANCIAL_DATA;
+    viewAllUrl = 'https://investor.apple.com/investor-relations/default.aspx';
+    viewAllLabel = 'View all on investor.apple.com →';
+    disclaimerText =
+      'Source: Apple Inc. Investor Relations (investor.apple.com). All documents are publicly available SEC filings and earnings materials.';
+  } else if (symbol === 'TSM') {
+    const tsmData = getTsmIrData();
+    investorUpdates = tsmData.investorUpdates;
+    newsroom = tsmData.newsroom;
+    financialData = tsmData.financialData;
+    viewAllUrl = 'https://investor.tsmc.com/en';
+    viewAllLabel = 'View all on investor.tsmc.com →';
+    disclaimerText =
+      'Source: TSMC Investor Relations (investor.tsmc.com). SEC filings available via EDGAR. All documents are publicly available.';
+  } else {
     return (
       <div className="cp-tab-placeholder">
-        <span className="cp-tab-placeholder-text">IR Material for {symbol} — Content coming soon</span>
+        <span className="cp-tab-placeholder-text">
+          IR Material for {symbol} — Content coming soon
+        </span>
       </div>
     );
   }
@@ -414,122 +597,15 @@ export default function IRMaterialTab({ symbol }: IRMaterialTabProps) {
         ))}
       </div>
 
-      {/* ── Tab content ── */}
-      <div className="cp-ir-tab-content">
-        {/* ── Investor Updates ── */}
-        {activeTab === 'investor-updates' && (
-          <div className="cp-ir-card-grid">
-            {AAPL_INVESTOR_UPDATES.map((u) => (
-              <div key={u.period} className="cp-data-card cp-ir-card">
-                <div className="cp-ir-card-header">
-                  <span className="cp-ir-update-period">{u.period}</span>
-                  <span className="cp-ir-update-date">{u.date}</span>
-                </div>
-                <div className="cp-card-divider" />
-                <div className="cp-ir-update-metrics">
-                  <div className="cp-ir-update-metric">
-                    <span className="cp-ir-update-metric-label">Revenue</span>
-                    <span className="cp-ir-update-metric-value">{u.revenue}</span>
-                  </div>
-                  <div className="cp-ir-update-metric">
-                    <span className="cp-ir-update-metric-label">EPS (Diluted)</span>
-                    <span className="cp-ir-update-metric-value">{u.eps}</span>
-                  </div>
-                  <div className="cp-ir-update-metric">
-                    <span className="cp-ir-update-metric-label">Dividend</span>
-                    <span className="cp-ir-update-metric-value">{u.dividend}</span>
-                  </div>
-                </div>
-                <div className="cp-ir-update-highlight">{u.highlight}</div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* ── Newsroom ── */}
-        {activeTab === 'newsroom' && (
-          <>
-            <div className="cp-ir-card-grid">
-              {AAPL_NEWSROOM.map((item, idx) => (
-                <a
-                  key={idx}
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="cp-data-card cp-ir-card cp-ir-news-card"
-                >
-                  <div className="cp-ir-news-card-top">
-                    <CategoryBadge category={item.category} />
-                    <span className="cp-ir-news-date">{item.date}</span>
-                  </div>
-                  <div className="cp-ir-news-card-title">{item.title}</div>
-                  <div className="cp-ir-news-card-footer">
-                    <svg
-                      viewBox="0 0 12 12"
-                      width="11"
-                      height="11"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
-                      <path d="M2 6h8M6 2l4 4-4 4" />
-                    </svg>
-                    <span>Open in new tab</span>
-                  </div>
-                </a>
-              ))}
-            </div>
-            <a
-              href="https://investor.apple.com/investor-relations/default.aspx"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cp-ir-view-all"
-            >
-              View all on investor.apple.com →
-            </a>
-          </>
-        )}
-
-        {/* ── Financial Data ── */}
-        {activeTab === 'financial-data' && (
-          <>
-            {AAPL_FINANCIAL_DATA.map((group) => (
-              <div key={group.category} className="cp-ir-doc-group">
-                <div className="cp-ir-doc-group-title">{group.category}</div>
-                <div className="cp-ir-card-grid">
-                  {group.docs.map((doc, idx) => (
-                    <a
-                      key={idx}
-                      href={doc.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      download
-                      className="cp-data-card cp-ir-card cp-ir-doc-card"
-                    >
-                      <div className="cp-ir-doc-card-top">
-                        <DocTypeBadge type={doc.type} />
-                        <span className="cp-ir-doc-filed">Filed: {doc.filed}</span>
-                      </div>
-                      <div className="cp-ir-doc-card-label">{doc.label}</div>
-                      <div className="cp-ir-doc-card-footer">
-                        <DownloadIcon />
-                        <span>Download</span>
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            ))}
-            <p className="cp-ir-disclaimer">
-              Source: Apple Inc. Investor Relations (investor.apple.com). All documents are publicly
-              available SEC filings and earnings materials.
-            </p>
-          </>
-        )}
-      </div>
+      <IRContent
+        investorUpdates={investorUpdates}
+        newsroom={newsroom}
+        financialData={financialData}
+        activeTab={activeTab}
+        viewAllUrl={viewAllUrl}
+        viewAllLabel={viewAllLabel}
+        disclaimerText={disclaimerText}
+      />
     </div>
   );
 }
