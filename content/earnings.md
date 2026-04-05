@@ -1,10 +1,12 @@
 # Earnings Calendar Data
 
-此為假資料，僅供展示用途。包含四個資料集：
-- `weekDays`：本週（Mar 29 – Apr 4）每日財報公司列表
+此為假資料，僅供展示用途。包含六個資料集：
+- `weekDays`：上週（Mar 29 – Apr 4）每日財報公司列表（`isToday` 由前端依實際日期動態計算）
 - `aprilMonthData`：四月整月財報日曆（週一至週五）
-- `epsData`：每股盈餘（EPS）報告列表
-- `revenueData`：營收報告列表
+- `epsData`：Apr 1 每股盈餘（EPS）報告列表（供向後相容）
+- `revenueData`：Apr 1 營收報告列表（供向後相容）
+- `dateEpsData`：各日期 EPS 報告（以 dateLabel 為鍵）
+- `dateRevenueData`：各日期營收報告（以 dateLabel 為鍵）
 
 ```json
 {
@@ -21,7 +23,7 @@
       "companies": ["PAYX","MKC","ACN","NKE","STZ","WGO","DLTR","FIVE","COST","CASY"]
     },
     {
-      "dayLabel": "WED", "dateLabel": "Apr 1", "isToday": true,
+      "dayLabel": "WED", "dateLabel": "Apr 1",
       "companyCount": 19,
       "companies": ["TLK","CAG","LW","MSM","UNF","CALM","PENG","TLRY","PSMT","BNED"]
     },
@@ -223,6 +225,322 @@
       "revHighEst": "$218.0M", "revActual": null, "revBeatMiss": null,
       "lastQActual": "$220.6M", "lastQBeatMiss": "Miss"
     }
-  ]
+  ],
+
+  "dateEpsData": {
+    "Mar 30": [
+      {
+        "symbol": "WBA", "company": "Walgreens Boots Alliance, Inc.", "report": "Pre",
+        "mktCap": "$5.2B", "epsNormalized": "−$0.06", "epsYoY": "−88.6%", "epsYoYPositive": false,
+        "epsGaap": "−$0.18", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$0.41", "lastQBeatMiss": "Beat", "beatsL2Y": 2, "missedL2Y": 6
+      },
+      {
+        "symbol": "CTAS", "company": "Cintas Corporation", "report": "Pre",
+        "mktCap": "$82.4B", "epsNormalized": "$4.21", "epsYoY": "+8.3%", "epsYoYPositive": true,
+        "epsGaap": "$4.10", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$3.88", "lastQBeatMiss": "Beat", "beatsL2Y": 7, "missedL2Y": 1
+      },
+      {
+        "symbol": "LEN", "company": "Lennar Corporation", "report": "Post",
+        "mktCap": "$16.8B", "epsNormalized": "$3.04", "epsYoY": "−8.4%", "epsYoYPositive": false,
+        "epsGaap": "$2.91", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$3.55", "lastQBeatMiss": "Miss", "beatsL2Y": 3, "missedL2Y": 5
+      }
+    ],
+    "Mar 31": [
+      {
+        "symbol": "NKE", "company": "NIKE, Inc.", "report": "Post",
+        "mktCap": "$95.2B", "epsNormalized": "$0.29", "epsYoY": "−45.3%", "epsYoYPositive": false,
+        "epsGaap": "$0.24", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$0.98", "lastQBeatMiss": "Beat", "beatsL2Y": 3, "missedL2Y": 5
+      },
+      {
+        "symbol": "COST", "company": "Costco Wholesale Corporation", "report": "Post",
+        "mktCap": "$428.7B", "epsNormalized": "$4.22", "epsYoY": "+9.5%", "epsYoYPositive": true,
+        "epsGaap": "$4.10", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$3.85", "lastQBeatMiss": "Beat", "beatsL2Y": 7, "missedL2Y": 1
+      },
+      {
+        "symbol": "ACN", "company": "Accenture plc", "report": "Pre",
+        "mktCap": "$189.3B", "epsNormalized": "$3.14", "epsYoY": "+6.2%", "epsYoYPositive": true,
+        "epsGaap": "$3.04", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$2.96", "lastQBeatMiss": "Beat", "beatsL2Y": 6, "missedL2Y": 2
+      }
+    ],
+    "Apr 1": [
+      {
+        "symbol": "TLK", "company": "PT Telekomunikasi Indonesia Tbk", "report": "Pre",
+        "mktCap": "$17.2B", "epsNormalized": "$0.42", "epsYoY": "+3.2%", "epsYoYPositive": true,
+        "epsGaap": "$0.38", "epsActual": "$0.43", "epsBeatMiss": "Beat",
+        "lastQGaap": "$0.41", "lastQBeatMiss": "Beat", "beatsL2Y": 4, "missedL2Y": 2
+      },
+      {
+        "symbol": "CAG", "company": "Conagra Brands, Inc.", "report": "Pre",
+        "mktCap": "$10.8B", "epsNormalized": "$0.61", "epsYoY": "−8.4%", "epsYoYPositive": false,
+        "epsGaap": "$0.58", "epsActual": "$0.56", "epsBeatMiss": "Miss",
+        "lastQGaap": "$0.68", "lastQBeatMiss": "Miss", "beatsL2Y": 3, "missedL2Y": 5
+      },
+      {
+        "symbol": "LW", "company": "Lamb Weston Holdings, Inc.", "report": "Pre",
+        "mktCap": "$4.2B", "epsNormalized": "$0.48", "epsYoY": "−22.3%", "epsYoYPositive": false,
+        "epsGaap": "$0.44", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$0.76", "lastQBeatMiss": "Miss", "beatsL2Y": 2, "missedL2Y": 6
+      },
+      {
+        "symbol": "MSM", "company": "MSC Industrial Direct Co., Inc.", "report": "Post",
+        "mktCap": "$3.1B", "epsNormalized": "$1.08", "epsYoY": "−5.2%", "epsYoYPositive": false,
+        "epsGaap": "$1.02", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$1.12", "lastQBeatMiss": "Beat", "beatsL2Y": 5, "missedL2Y": 3
+      },
+      {
+        "symbol": "UNF", "company": "UniFirst Corporation", "report": "Pre",
+        "mktCap": "$1.5B", "epsNormalized": "$1.95", "epsYoY": "+2.8%", "epsYoYPositive": true,
+        "epsGaap": "$1.88", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$1.86", "lastQBeatMiss": "Beat", "beatsL2Y": 6, "missedL2Y": 2
+      },
+      {
+        "symbol": "CALM", "company": "Cal-Maine Foods, Inc.", "report": "Pre",
+        "mktCap": "$3.8B", "epsNormalized": "$5.42", "epsYoY": "+187.3%", "epsYoYPositive": true,
+        "epsGaap": "$5.10", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$6.15", "lastQBeatMiss": "Beat", "beatsL2Y": 7, "missedL2Y": 1
+      },
+      {
+        "symbol": "PENG", "company": "Penguin Solutions, Inc.", "report": "Post",
+        "mktCap": "$0.4B", "epsNormalized": "$0.28", "epsYoY": "−12.5%", "epsYoYPositive": false,
+        "epsGaap": "$0.25", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$0.31", "lastQBeatMiss": "Beat", "beatsL2Y": 3, "missedL2Y": 5
+      },
+      {
+        "symbol": "TLRY", "company": "Tilray Brands, Inc.", "report": "Post",
+        "mktCap": "$1.2B", "epsNormalized": "−$0.05", "epsYoY": "+16.7%", "epsYoYPositive": true,
+        "epsGaap": "−$0.08", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "−$0.06", "lastQBeatMiss": "Miss", "beatsL2Y": 2, "missedL2Y": 6
+      }
+    ],
+    "Apr 2": [
+      {
+        "symbol": "CIEN", "company": "Ciena Corporation", "report": "Post",
+        "mktCap": "$5.8B", "epsNormalized": "$0.72", "epsYoY": "+28.6%", "epsYoYPositive": true,
+        "epsGaap": "$0.67", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$0.58", "lastQBeatMiss": "Beat", "beatsL2Y": 5, "missedL2Y": 3
+      },
+      {
+        "symbol": "AZZ", "company": "AZZ Inc.", "report": "Pre",
+        "mktCap": "$1.4B", "epsNormalized": "$1.24", "epsYoY": "+5.1%", "epsYoYPositive": true,
+        "epsGaap": "$1.18", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$1.22", "lastQBeatMiss": "Beat", "beatsL2Y": 6, "missedL2Y": 2
+      },
+      {
+        "symbol": "GMS", "company": "GMS Inc.", "report": "Post",
+        "mktCap": "$2.3B", "epsNormalized": "$1.85", "epsYoY": "+3.6%", "epsYoYPositive": true,
+        "epsGaap": "$1.79", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$1.74", "lastQBeatMiss": "Miss", "beatsL2Y": 4, "missedL2Y": 4
+      }
+    ],
+    "Apr 3": [
+      {
+        "symbol": "GIS", "company": "General Mills, Inc.", "report": "Pre",
+        "mktCap": "$31.2B", "epsNormalized": "$1.01", "epsYoY": "−2.9%", "epsYoYPositive": false,
+        "epsGaap": "$0.97", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$1.09", "lastQBeatMiss": "Miss", "beatsL2Y": 5, "missedL2Y": 3
+      },
+      {
+        "symbol": "TSN", "company": "Tyson Foods, Inc.", "report": "Pre",
+        "mktCap": "$12.8B", "epsNormalized": "$0.87", "epsYoY": "+67.3%", "epsYoYPositive": true,
+        "epsGaap": "$0.81", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$0.52", "lastQBeatMiss": "Beat", "beatsL2Y": 4, "missedL2Y": 4
+      },
+      {
+        "symbol": "STZ", "company": "Constellation Brands, Inc.", "report": "Pre",
+        "mktCap": "$28.4B", "epsNormalized": "$2.54", "epsYoY": "−18.3%", "epsYoYPositive": false,
+        "epsGaap": "$2.42", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$3.22", "lastQBeatMiss": "Miss", "beatsL2Y": 3, "missedL2Y": 5
+      }
+    ],
+    "Apr 6": [
+      {
+        "symbol": "JPM", "company": "JPMorgan Chase & Co.", "report": "Pre",
+        "mktCap": "$801.2B", "epsNormalized": "$4.64", "epsYoY": "+3.1%", "epsYoYPositive": true,
+        "epsGaap": "$4.44", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$4.81", "lastQBeatMiss": "Beat", "beatsL2Y": 7, "missedL2Y": 1
+      },
+      {
+        "symbol": "GS", "company": "The Goldman Sachs Group, Inc.", "report": "Pre",
+        "mktCap": "$181.4B", "epsNormalized": "$11.23", "epsYoY": "+22.8%", "epsYoYPositive": true,
+        "epsGaap": "$10.87", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$9.14", "lastQBeatMiss": "Beat", "beatsL2Y": 6, "missedL2Y": 2
+      },
+      {
+        "symbol": "WFC", "company": "Wells Fargo & Company", "report": "Pre",
+        "mktCap": "$254.8B", "epsNormalized": "$1.23", "epsYoY": "+4.2%", "epsYoYPositive": true,
+        "epsGaap": "$1.19", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$1.20", "lastQBeatMiss": "Beat", "beatsL2Y": 5, "missedL2Y": 3
+      }
+    ],
+    "Apr 7": [
+      {
+        "symbol": "JNJ", "company": "Johnson & Johnson", "report": "Pre",
+        "mktCap": "$373.8B", "epsNormalized": "$2.32", "epsYoY": "+2.8%", "epsYoYPositive": true,
+        "epsGaap": "$2.18", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$2.27", "lastQBeatMiss": "Beat", "beatsL2Y": 7, "missedL2Y": 1
+      },
+      {
+        "symbol": "TSLA", "company": "Tesla, Inc.", "report": "Post",
+        "mktCap": "$1.2T", "epsNormalized": "$0.51", "epsYoY": "−34.6%", "epsYoYPositive": false,
+        "epsGaap": "$0.41", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$0.73", "lastQBeatMiss": "Miss", "beatsL2Y": 3, "missedL2Y": 5
+      },
+      {
+        "symbol": "UNH", "company": "UnitedHealth Group Incorporated", "report": "Pre",
+        "mktCap": "$534.2B", "epsNormalized": "$7.21", "epsYoY": "+7.8%", "epsYoYPositive": true,
+        "epsGaap": "$7.05", "epsActual": null, "epsBeatMiss": null,
+        "lastQGaap": "$6.71", "lastQBeatMiss": "Beat", "beatsL2Y": 6, "missedL2Y": 2
+      }
+    ]
+  },
+
+  "dateRevenueData": {
+    "Mar 30": [
+      {
+        "symbol": "WBA", "company": "Walgreens Boots Alliance, Inc.", "report": "Pre",
+        "mktCap": "$5.2B", "revConsensus": "$36.4B", "revYoY": "−4.2%", "revYoYPositive": false,
+        "revHighEst": "$37.1B", "revActual": null, "revBeatMiss": null,
+        "lastQActual": "$37.5B", "lastQBeatMiss": "Miss"
+      },
+      {
+        "symbol": "CTAS", "company": "Cintas Corporation", "report": "Pre",
+        "mktCap": "$82.4B", "revConsensus": "$2.65B", "revYoY": "+6.8%", "revYoYPositive": true,
+        "revHighEst": "$2.71B", "revActual": null, "revBeatMiss": null,
+        "lastQActual": "$2.48B", "lastQBeatMiss": "Beat"
+      }
+    ],
+    "Mar 31": [
+      {
+        "symbol": "NKE", "company": "NIKE, Inc.", "report": "Post",
+        "mktCap": "$95.2B", "revConsensus": "$11.2B", "revYoY": "−9.7%", "revYoYPositive": false,
+        "revHighEst": "$11.7B", "revActual": null, "revBeatMiss": null,
+        "lastQActual": "$11.9B", "lastQBeatMiss": "Beat"
+      },
+      {
+        "symbol": "COST", "company": "Costco Wholesale Corporation", "report": "Post",
+        "mktCap": "$428.7B", "revConsensus": "$63.5B", "revYoY": "+9.3%", "revYoYPositive": true,
+        "revHighEst": "$64.2B", "revActual": null, "revBeatMiss": null,
+        "lastQActual": "$58.4B", "lastQBeatMiss": "Beat"
+      },
+      {
+        "symbol": "ACN", "company": "Accenture plc", "report": "Pre",
+        "mktCap": "$189.3B", "revConsensus": "$16.4B", "revYoY": "+7.8%", "revYoYPositive": true,
+        "revHighEst": "$16.8B", "revActual": null, "revBeatMiss": null,
+        "lastQActual": "$15.8B", "lastQBeatMiss": "Beat"
+      }
+    ],
+    "Apr 1": [
+      {
+        "symbol": "TLK", "company": "PT Telekomunikasi Indonesia Tbk", "report": "Pre",
+        "mktCap": "$17.2B", "revConsensus": "$3.28B", "revYoY": "+4.1%", "revYoYPositive": true,
+        "revHighEst": "$3.41B", "revActual": "$3.31B", "revBeatMiss": "Beat",
+        "lastQActual": "$3.15B", "lastQBeatMiss": "Beat"
+      },
+      {
+        "symbol": "CAG", "company": "Conagra Brands, Inc.", "report": "Pre",
+        "mktCap": "$10.8B", "revConsensus": "$2.96B", "revYoY": "−3.8%", "revYoYPositive": false,
+        "revHighEst": "$3.04B", "revActual": "$2.91B", "revBeatMiss": "Miss",
+        "lastQActual": "$3.08B", "lastQBeatMiss": "Miss"
+      },
+      {
+        "symbol": "LW", "company": "Lamb Weston Holdings, Inc.", "report": "Pre",
+        "mktCap": "$4.2B", "revConsensus": "$1.51B", "revYoY": "−9.2%", "revYoYPositive": false,
+        "revHighEst": "$1.58B", "revActual": null, "revBeatMiss": null,
+        "lastQActual": "$1.66B", "lastQBeatMiss": "Miss"
+      },
+      {
+        "symbol": "CALM", "company": "Cal-Maine Foods, Inc.", "report": "Pre",
+        "mktCap": "$3.8B", "revConsensus": "$1.08B", "revYoY": "+94.6%", "revYoYPositive": true,
+        "revHighEst": "$1.14B", "revActual": null, "revBeatMiss": null,
+        "lastQActual": "$1.11B", "lastQBeatMiss": "Beat"
+      },
+      {
+        "symbol": "TLRY", "company": "Tilray Brands, Inc.", "report": "Post",
+        "mktCap": "$1.2B", "revConsensus": "$209.4M", "revYoY": "−5.1%", "revYoYPositive": false,
+        "revHighEst": "$218.0M", "revActual": null, "revBeatMiss": null,
+        "lastQActual": "$220.6M", "lastQBeatMiss": "Miss"
+      }
+    ],
+    "Apr 2": [
+      {
+        "symbol": "CIEN", "company": "Ciena Corporation", "report": "Post",
+        "mktCap": "$5.8B", "revConsensus": "$1.08B", "revYoY": "+29.0%", "revYoYPositive": true,
+        "revHighEst": "$1.12B", "revActual": null, "revBeatMiss": null,
+        "lastQActual": "$0.98B", "lastQBeatMiss": "Beat"
+      },
+      {
+        "symbol": "AZZ", "company": "AZZ Inc.", "report": "Pre",
+        "mktCap": "$1.4B", "revConsensus": "$402.8M", "revYoY": "+5.6%", "revYoYPositive": true,
+        "revHighEst": "$412.0M", "revActual": null, "revBeatMiss": null,
+        "lastQActual": "$381.5M", "lastQBeatMiss": "Beat"
+      }
+    ],
+    "Apr 3": [
+      {
+        "symbol": "GIS", "company": "General Mills, Inc.", "report": "Pre",
+        "mktCap": "$31.2B", "revConsensus": "$4.58B", "revYoY": "−2.3%", "revYoYPositive": false,
+        "revHighEst": "$4.64B", "revActual": null, "revBeatMiss": null,
+        "lastQActual": "$4.69B", "lastQBeatMiss": "Miss"
+      },
+      {
+        "symbol": "TSN", "company": "Tyson Foods, Inc.", "report": "Pre",
+        "mktCap": "$12.8B", "revConsensus": "$13.24B", "revYoY": "+4.1%", "revYoYPositive": true,
+        "revHighEst": "$13.40B", "revActual": null, "revBeatMiss": null,
+        "lastQActual": "$12.72B", "lastQBeatMiss": "Beat"
+      },
+      {
+        "symbol": "STZ", "company": "Constellation Brands, Inc.", "report": "Pre",
+        "mktCap": "$28.4B", "revConsensus": "$2.34B", "revYoY": "−4.9%", "revYoYPositive": false,
+        "revHighEst": "$2.38B", "revActual": null, "revBeatMiss": null,
+        "lastQActual": "$2.42B", "lastQBeatMiss": "Miss"
+      }
+    ],
+    "Apr 6": [
+      {
+        "symbol": "JPM", "company": "JPMorgan Chase & Co.", "report": "Pre",
+        "mktCap": "$801.2B", "revConsensus": "$44.6B", "revYoY": "+6.5%", "revYoYPositive": true,
+        "revHighEst": "$46.1B", "revActual": null, "revBeatMiss": null,
+        "lastQActual": "$41.9B", "lastQBeatMiss": "Beat"
+      },
+      {
+        "symbol": "GS", "company": "The Goldman Sachs Group, Inc.", "report": "Pre",
+        "mktCap": "$181.4B", "revConsensus": "$14.8B", "revYoY": "+7.2%", "revYoYPositive": true,
+        "revHighEst": "$15.1B", "revActual": null, "revBeatMiss": null,
+        "lastQActual": "$13.8B", "lastQBeatMiss": "Beat"
+      },
+      {
+        "symbol": "WFC", "company": "Wells Fargo & Company", "report": "Pre",
+        "mktCap": "$254.8B", "revConsensus": "$21.3B", "revYoY": "+1.8%", "revYoYPositive": true,
+        "revHighEst": "$21.6B", "revActual": null, "revBeatMiss": null,
+        "lastQActual": "$20.9B", "lastQBeatMiss": "Beat"
+      }
+    ],
+    "Apr 7": [
+      {
+        "symbol": "JNJ", "company": "Johnson & Johnson", "report": "Pre",
+        "mktCap": "$373.8B", "revConsensus": "$22.8B", "revYoY": "+3.2%", "revYoYPositive": true,
+        "revHighEst": "$23.1B", "revActual": null, "revBeatMiss": null,
+        "lastQActual": "$22.1B", "lastQBeatMiss": "Beat"
+      },
+      {
+        "symbol": "TSLA", "company": "Tesla, Inc.", "report": "Post",
+        "mktCap": "$1.2T", "revConsensus": "$21.3B", "revYoY": "−9.5%", "revYoYPositive": false,
+        "revHighEst": "$21.8B", "revActual": null, "revBeatMiss": null,
+        "lastQActual": "$23.5B", "lastQBeatMiss": "Miss"
+      },
+      {
+        "symbol": "UNH", "company": "UnitedHealth Group Incorporated", "report": "Pre",
+        "mktCap": "$534.2B", "revConsensus": "$110.4B", "revYoY": "+8.2%", "revYoYPositive": true,
+        "revHighEst": "$111.8B", "revActual": null, "revBeatMiss": null,
+        "lastQActual": "$102.0B", "lastQBeatMiss": "Beat"
+      }
+    ]
+  }
 }
 ```

@@ -628,11 +628,16 @@ input, select { font-family: var(--font); }
   color: var(--c-text);
 }
 .cal-month-label {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--c-text);
-  min-width: 108px;
+  min-width: 128px;
   text-align: center;
+  border: 1px solid var(--c-border-2);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  background: var(--c-white);
+  white-space: nowrap;
 }
 .cal-controls {
   display: flex;
@@ -693,6 +698,23 @@ input, select { font-family: var(--font); }
 }
 .week-cell.today {
   border-color: var(--c-btn-active);
+}
+.week-cell.selected {
+  border-color: var(--c-accent);
+  box-shadow: 0 0 0 2px rgba(79, 195, 247, 0.18);
+  cursor: pointer;
+}
+.week-cell.today.selected {
+  border-color: var(--c-btn-active);
+  box-shadow: 0 0 0 2px rgba(30, 136, 229, 0.22);
+}
+.week-cell:not(.today):not(.selected) {
+  cursor: pointer;
+  transition: border-color 0.12s, box-shadow 0.12s;
+}
+.week-cell:not(.today):not(.selected):hover {
+  border-color: var(--c-border-2);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07);
 }
 .week-cell-head {
   padding: 8px 12px 7px;

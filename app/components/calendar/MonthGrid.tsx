@@ -3,7 +3,21 @@
 import type { WeekDay } from '@/app/data/earnings';
 import { DAY_LABELS, truncateCompanies } from '@/app/lib/calendarUtils';
 
-function MonthCell({ day }: { day: WeekDay }) {
+interface MonthGridProps {
+  days: WeekDay[];
+  todayLabel: string;
+  selectedDate: string;
+  onSelectDate: (dateLabel: string) => void;
+}
+
+interface MonthCellProps {
+  day: WeekDay;
+  isToday: boolean;
+  isSelected: boolean;
+  onSelect: () => void;
+}
+
+function MonthCell({ day, isToday, isSelected, onSelect }: MonthCellProps) {
   if (day.isEmpty) {
     return <div className="month-cell-empty" />;
   }
@@ -14,7 +28,12 @@ function MonthCell({ day }: { day: WeekDay }) {
 
   return (
     <div
-      className={`week-cell month-cell${day.isToday ? ' today' : ''}${day.isOutOfMonth ? ' month-cell-out' : ''}`}
+      className={`week-cell month-cell${isToday ? ' today' : ''}${day.isOutOfMonth ? ' month-cell-out' : ''}${isSelected ? ' selected' : ''}`}
+      onClick={onSelect}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === 'Enter' && onSelect()}
+      aria-pressed={isSelected}
     >
       <div className="week-cell-head">{dayNum}</div>
       <div className="week-cell-body">
@@ -34,7 +53,7 @@ function MonthCell({ day }: { day: WeekDay }) {
   );
 }
 
-export default function MonthGrid({ days }: { days: WeekDay[] }) {
+export default function MonthGrid({ days, todayLabel, selectedDate, onSelectDate }: MonthGridProps) {
   return (
     <div className="month-grid">
       {DAY_LABELS.map((h) => (
@@ -43,7 +62,13 @@ export default function MonthGrid({ days }: { days: WeekDay[] }) {
         </div>
       ))}
       {days.map((day, i) => (
-        <MonthCell key={day.isEmpty ? `empty-${i}` : day.dateLabel} day={day} />
+        <MonthCell
+          key={day.isEmpty ? `empty-${i}` : day.dateLabel}
+          day={day}
+          isToday={day.dateLabel === todayLabel}
+          isSelected={day.dateLabel === selectedDate}
+          onSelect={() => !day.isEmpty && onSelectDate(day.dateLabel)}
+        />
       ))}
     </div>
   );

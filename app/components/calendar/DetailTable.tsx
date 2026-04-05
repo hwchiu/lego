@@ -136,17 +136,38 @@ function RevenueTable({ data }: { data: RevenueRow[] }) {
 export default function DetailTable({
   epsData,
   revenueData,
+  selectedDateLabel,
+  companyCount,
 }: {
   epsData: EpsRow[];
   revenueData: RevenueRow[];
+  selectedDateLabel?: string;
+  companyCount?: number;
 }) {
   const [activeTab, setActiveTab] = useState<'eps' | 'revenue'>('eps');
+
+  // Format the date label for display, e.g. "Apr 5" → "05 April, 2026"
+  const displayDate = selectedDateLabel
+    ? (() => {
+        const parts = selectedDateLabel.split(' ');
+        const day = parts[1]?.padStart(2, '0') ?? '';
+        const monthNames: Record<string, string> = {
+          Jan: 'January', Feb: 'February', Mar: 'March', Apr: 'April',
+          May: 'May', Jun: 'June', Jul: 'July', Aug: 'August',
+          Sep: 'September', Oct: 'October', Nov: 'November', Dec: 'December',
+        };
+        const month = monthNames[parts[0]] ?? parts[0];
+        return `${day} ${month}`;
+      })()
+    : '—';
+
+  const count = companyCount ?? epsData.length;
 
   return (
     <div className="detail-card">
       <div className="detail-header">
         <div className="detail-eyebrow">
-          01 April, 2026 &nbsp;·&nbsp; 19 Companies
+          {displayDate} &nbsp;·&nbsp; {count} {count === 1 ? 'Company' : 'Companies'}
         </div>
         <div className="detail-tabs">
           <button

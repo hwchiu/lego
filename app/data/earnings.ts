@@ -51,6 +51,8 @@ interface EarningsData {
   aprilMonthData: WeekDay[];
   epsData: EpsRow[];
   revenueData: RevenueRow[];
+  dateEpsData: Record<string, EpsRow[]>;
+  dateRevenueData: Record<string, RevenueRow[]>;
 }
 
 const data = extractJson<EarningsData>(rawContent);
@@ -59,3 +61,5 @@ export const weekDays: WeekDay[] = data.weekDays;
 export const aprilMonthData: WeekDay[] = data.aprilMonthData;
 export const epsData: EpsRow[] = data.epsData;
 export const revenueData: RevenueRow[] = data.revenueData;
+export const dateEpsData: Record<string, EpsRow[]> = data.dateEpsData ?? {};
+export const dateRevenueData: Record<string, RevenueRow[]> = data.dateRevenueData ?? {};
