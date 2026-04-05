@@ -315,11 +315,8 @@ export default function CollaborationPlaygroundPage() {
             <div className={`pg-board-wrap${isFullscreen ? ' pg-board-wrap--fullscreen' : ''}`}>
               {/* Canvas header */}
               <div className="pg-canvas-header">
-                <div>
-                  <div className="pg-canvas-title">{activeCanvas.title}</div>
-                  <div className="pg-canvas-desc">{activeCanvas.description}</div>
-                </div>
-                <div className="pg-canvas-header-right">
+                {/* Top action row — right-aligned */}
+                <div className="pg-canvas-header-actions">
                   <div className="pg-canvas-header-meta">
                     {isEn ? `Created on ${activeCanvas.createdAt}` : `建立於 ${activeCanvas.createdAt}`}
                   </div>
@@ -349,6 +346,11 @@ export default function CollaborationPlaygroundPage() {
                       </svg>
                     )}
                   </button>
+                </div>
+                {/* Canvas title and description row */}
+                <div className="pg-canvas-header-info">
+                  <div className="pg-canvas-title">{activeCanvas.title}</div>
+                  <div className="pg-canvas-desc">{activeCanvas.description}</div>
                 </div>
               </div>
 

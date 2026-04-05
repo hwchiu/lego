@@ -16,9 +16,12 @@ import {
 } from '@/app/data/earnings';
 import { getDateLabel } from '@/app/lib/calendarUtils';
 
-// Build a unified lookup map for companyCount by dateLabel
+// Build a record count map from actual dateEpsData (not hardcoded companyCount)
 const ALL_DAYS = [...weekDays, ...aprilMonthData];
-const COMPANY_COUNT_MAP = new Map(ALL_DAYS.map((d) => [d.dateLabel, d.companyCount ?? 0]));
+const COMPANY_COUNT_MAP = new Map([
+  ...ALL_DAYS.map((d) => [d.dateLabel, 0] as [string, number]),
+  ...Object.entries(dateEpsData).map(([k, v]) => [k, v.length] as [string, number]),
+]);
 
 export default function EventCalendarPage() {
   const [selectedDate, setSelectedDate] = useState<string>(() => getDateLabel(new Date()));

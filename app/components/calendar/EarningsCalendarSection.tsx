@@ -5,13 +5,18 @@ import { useState, useMemo, useCallback } from 'react';
 import CalendarControls from '@/app/components/calendar/CalendarControls';
 import MonthGrid from '@/app/components/calendar/MonthGrid';
 import WeekGrid from '@/app/components/calendar/WeekGrid';
-import { weekDays as rawWeekDays, aprilMonthData } from '@/app/data/earnings';
+import { weekDays as rawWeekDays, aprilMonthData, dateEpsData } from '@/app/data/earnings';
 import type { WeekDay } from '@/app/data/earnings';
 import { DAY_LABELS, MONTH_SHORT, MONTH_FULL, getDateLabel, getWeekStart } from '@/app/lib/calendarUtils';
 
 // Master map: dateLabel → WeekDay (used by both month and week builders)
 const ALL_DAYS: WeekDay[] = [...rawWeekDays, ...aprilMonthData];
 const MASTER_MAP = new Map<string, WeekDay>(ALL_DAYS.map((wd) => [wd.dateLabel, wd]));
+
+// Record count map: dateLabel → number of EPS event records for that date
+const RECORD_COUNT_MAP = new Map<string, number>(
+  Object.entries(dateEpsData).map(([dateLabel, rows]) => [dateLabel, rows.length]),
+);
 
 function buildMonthDays(year: number, month: number, todayLabel: string): WeekDay[] {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -32,7 +37,7 @@ function buildMonthDays(year: number, month: number, todayLabel: string): WeekDa
       isOutOfMonth: true,
       isToday: dateLabel === todayLabel,
       companies: existing?.companies,
-      companyCount: existing?.companyCount,
+      companyCount: RECORD_COUNT_MAP.get(dateLabel) ?? existing?.companyCount ?? 0,
     });
   }
 
@@ -46,7 +51,7 @@ function buildMonthDays(year: number, month: number, todayLabel: string): WeekDa
       dateLabel,
       isToday: dateLabel === todayLabel,
       companies: existing?.companies,
-      companyCount: existing?.companyCount,
+      companyCount: RECORD_COUNT_MAP.get(dateLabel) ?? existing?.companyCount ?? 0,
     });
   }
 
@@ -64,7 +69,7 @@ function buildMonthDays(year: number, month: number, todayLabel: string): WeekDa
       isOutOfMonth: true,
       isToday: dateLabel === todayLabel,
       companies: existing?.companies,
-      companyCount: existing?.companyCount,
+      companyCount: RECORD_COUNT_MAP.get(dateLabel) ?? existing?.companyCount ?? 0,
     });
   }
 
@@ -83,7 +88,7 @@ function buildWeekDays(weekStart: Date, todayLabel: string): WeekDay[] {
       dateLabel,
       isToday: dateLabel === todayLabel,
       companies: existing?.companies,
-      companyCount: existing?.companyCount,
+      companyCount: RECORD_COUNT_MAP.get(dateLabel) ?? existing?.companyCount ?? 0,
     });
   }
   return days;

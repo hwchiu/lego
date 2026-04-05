@@ -7618,12 +7618,21 @@ input, select { font-family: var(--font); }
 .pg-canvas-header {
   flex-shrink: 0;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 14px 20px 12px;
+  flex-direction: column;
+  padding: 10px 20px 14px;
   background: var(--c-white);
   border-bottom: 1px solid var(--c-border);
-  gap: 12px;
+  gap: 8px;
+}
+.pg-canvas-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.pg-canvas-header-info {
+  display: flex;
+  flex-direction: column;
 }
 .pg-canvas-title {
   font-size: 16px;
@@ -7636,12 +7645,6 @@ input, select { font-family: var(--font); }
   color: var(--c-text-3);
   margin-top: 3px;
   max-width: 600px;
-}
-.pg-canvas-header-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
 }
 .pg-canvas-header-meta {
   font-size: 11.5px;
