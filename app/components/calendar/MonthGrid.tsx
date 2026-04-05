@@ -8,6 +8,8 @@ interface MonthGridProps {
   todayLabel: string;
   selectedDate: string;
   onSelectDate: (dateLabel: string) => void;
+  countLabel?: string;
+  emptyLabel?: string;
 }
 
 interface MonthCellProps {
@@ -15,9 +17,11 @@ interface MonthCellProps {
   isToday: boolean;
   isSelected: boolean;
   onSelect: () => void;
+  countLabel: string;
+  emptyLabel: string;
 }
 
-function MonthCell({ day, isToday, isSelected, onSelect }: MonthCellProps) {
+function MonthCell({ day, isToday, isSelected, onSelect, countLabel, emptyLabel }: MonthCellProps) {
   if (day.isEmpty) {
     return <div className="month-cell-empty" />;
   }
@@ -41,19 +45,26 @@ function MonthCell({ day, isToday, isSelected, onSelect }: MonthCellProps) {
           <>
             <div className="cell-count-row">
               <span className="cell-count">{day.companyCount}</span>
-              <span className="cell-count-label">Companies</span>
+              <span className="cell-count-label">{countLabel}</span>
             </div>
             <div className="cell-co-text">{truncateCompanies(day.companies!)}</div>
           </>
         ) : (
-          <div className="cell-empty">No Reports</div>
+          <div className="cell-empty">{emptyLabel}</div>
         )}
       </div>
     </div>
   );
 }
 
-export default function MonthGrid({ days, todayLabel, selectedDate, onSelectDate }: MonthGridProps) {
+export default function MonthGrid({
+  days,
+  todayLabel,
+  selectedDate,
+  onSelectDate,
+  countLabel = 'Companies',
+  emptyLabel = 'No Reports',
+}: MonthGridProps) {
   return (
     <div className="month-grid">
       {DAY_LABELS.map((h) => (
@@ -68,6 +79,8 @@ export default function MonthGrid({ days, todayLabel, selectedDate, onSelectDate
           isToday={day.dateLabel === todayLabel}
           isSelected={day.dateLabel === selectedDate}
           onSelect={() => !day.isEmpty && onSelectDate(day.dateLabel)}
+          countLabel={countLabel}
+          emptyLabel={emptyLabel}
         />
       ))}
     </div>

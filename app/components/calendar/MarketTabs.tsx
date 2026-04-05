@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
 import { marketTabs } from '@/app/data/navigation';
 
-export default function MarketTabs() {
-  const [activeTab, setActiveTab] = useState('Earnings Calendar');
+interface MarketTabsProps {
+  activeTab: string;
+  onTabChange: (tab: string) => void;
+}
 
+export default function MarketTabs({ activeTab, onTabChange }: MarketTabsProps) {
   return (
     <div className="market-tabs-card">
       <div className="market-tabs">
@@ -13,7 +15,7 @@ export default function MarketTabs() {
           <button
             key={tab}
             className={`market-tab ${activeTab === tab ? 'active' : ''}`}
-            onClick={() => setActiveTab(tab)}
+            onClick={() => onTabChange(tab)}
           >
             {tab}
           </button>
