@@ -9876,18 +9876,39 @@ input, select { font-family: var(--font); }
     flex: 1 1 auto;
   }
 
-  /* Calendar grids — scroll horizontally */
+  /* Calendar grids — compress to fit all 7 days */
   .week-grid {
-    display: flex;
-    overflow-x: auto;
-    gap: 8px;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
-    padding-bottom: 8px;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
   }
   .week-cell {
-    flex: 0 0 220px;
-    scroll-snap-align: start;
+    min-height: 70px;
+  }
+  .week-cell-head {
+    padding: 4px 2px;
+    font-size: 8px;
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  .week-cell-body {
+    padding: 3px 4px;
+  }
+  .cell-date {
+    font-size: 9px;
+  }
+  .cell-count {
+    font-size: 12px;
+  }
+  .cell-count-label {
+    display: none;
+  }
+  .cell-co-text {
+    display: none;
+  }
+  .cell-empty {
+    font-size: 9px;
+    margin-top: 3px;
   }
   .month-grid {
     grid-template-columns: repeat(7, 1fr);
@@ -10159,9 +10180,19 @@ input, select { font-family: var(--font); }
     font-size: 10px;
   }
 
-  /* Week cells narrower */
+  /* Week cells — tighter on small phones */
   .week-cell {
-    flex: 0 0 180px;
+    min-height: 60px;
+  }
+  .week-cell-head {
+    padding: 3px 1px;
+    font-size: 7px;
+  }
+  .week-cell-body {
+    padding: 2px 3px;
+  }
+  .cell-count {
+    font-size: 11px;
   }
 
   /* Month grid cells — more compact */
