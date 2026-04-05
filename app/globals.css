@@ -10179,6 +10179,19 @@ input, select { font-family: var(--font); }
     display: none;
   }
 
+  /* Watchlist indexes — horizontal touch-scroll, hide arrow buttons */
+  .wl-indexes-track {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .wl-index-card {
+    flex: 0 0 130px;
+    min-width: 130px;
+  }
+  .wl-indexes-arrows {
+    display: none;
+  }
+
   /* Company Heat Ranking table — horizontal scroll */
   .company-rank-table-wrap {
     overflow-x: auto;
