@@ -8,7 +8,7 @@ import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { SP500_COMPANIES } from '@/app/data/sp500';
 import { stockIndexes } from '@/app/data/marketIndices';
-import { holdingsData as holdingsDataMap } from '@/app/data/watchlistData';
+import { holdingsData as holdingsDataMap, holdingsDataQ4_2025 } from '@/app/data/watchlistData';
 import type { HoldingEntity } from '@/app/data/watchlistData';
 import { mainNav } from '@/app/data/navigation';
 import { useWatchlist } from '@/app/contexts/WatchlistContext';
@@ -97,7 +97,8 @@ const BUILTIN_VIEWS = ['Summary', 'Holdings', 'Health Score', 'Ratings'] as cons
 
 type Holding = HoldingEntity;
 
-const holdingsData: Holding[] = Object.values(holdingsDataMap);
+const holdingsDataQ1: Holding[] = Object.values(holdingsDataMap);
+const holdingsDataQ4: Holding[] = Object.values(holdingsDataQ4_2025);
 
 // ── News feed items ───────────────────────────────────────────────────────────
 // Category tags sourced from content/watchlist-articles.md
@@ -743,12 +744,12 @@ function ManageViewModal({
 function HealthScoreComingSoon() {
   return (
     <div className="wl-cs-wrap">
-      <span className="wl-cs-badge">即將推出</span>
+      <span className="wl-cs-badge">Coming Soon</span>
       <div className="wl-cs-layout">
         {/* Gauge visualization */}
         <div className="wl-cs-visual">
-          <svg className="wl-cs-gauge-svg" viewBox="0 0 260 165" fill="none" role="img" aria-label="健康評分儀表板，分數 72（滿分 100）">
-            <title>健康評分儀表板</title>
+          <svg className="wl-cs-gauge-svg" viewBox="0 0 260 165" fill="none" role="img" aria-label="Health Score gauge, score 72 out of 100">
+            <title>Health Score Gauge</title>
             {/* Background track */}
             <path d="M 30 140 A 100 100 0 0 1 230 140" stroke="#e5e7eb" strokeWidth="16" strokeLinecap="round" fill="none" />
             {/* Red zone 0–33%: (30,140) → (80,53) */}
@@ -766,38 +767,84 @@ function HealthScoreComingSoon() {
             <text x="130" y="118" textAnchor="middle" fontSize="30" fontWeight="700" fill="#1a2332" fontFamily="system-ui,sans-serif">72</text>
             <text x="130" y="158" textAnchor="middle" fontSize="10" fill="#6b7280" fontFamily="system-ui,sans-serif">Health Score</text>
             {/* Zone labels */}
-            <text x="14" y="158" fontSize="9" fill="#ef4444" fontFamily="system-ui,sans-serif">低</text>
-            <text x="125" y="26" fontSize="9" fill="#f59e0b" fontFamily="system-ui,sans-serif">中</text>
-            <text x="238" y="158" fontSize="9" fill="#22c55e" fontFamily="system-ui,sans-serif">高</text>
+            <text x="14" y="158" fontSize="9" fill="#ef4444" fontFamily="system-ui,sans-serif">Low</text>
+            <text x="120" y="26" fontSize="9" fill="#f59e0b" fontFamily="system-ui,sans-serif">Mid</text>
+            <text x="232" y="158" fontSize="9" fill="#22c55e" fontFamily="system-ui,sans-serif">High</text>
           </svg>
           <div className="wl-cs-score-bands">
-            <span className="wl-cs-band wl-cs-band--low">0–40 低</span>
-            <span className="wl-cs-band wl-cs-band--mid">41–70 中</span>
-            <span className="wl-cs-band wl-cs-band--high">71–100 健康</span>
+            <span className="wl-cs-band wl-cs-band--low">0–40 Low</span>
+            <span className="wl-cs-band wl-cs-band--mid">41–70 Mid</span>
+            <span className="wl-cs-band wl-cs-band--high">71–100 Healthy</span>
           </div>
         </div>
         {/* Description and factor grid */}
         <div className="wl-cs-info">
           <h2 className="wl-cs-title">
-            健康評分
-            <span className="wl-cs-en">Health Score</span>
+            Health Score
           </h2>
           <p className="wl-cs-desc">
-            透過蒐集多項關鍵因子，對目標公司進行全方位基本面健康度分析。系統整合財務數據、成長動能、市場定位等維度，最終以儀表板形式直觀呈現綜合評分，協助投資人迅速掌握公司整體體質。
+            A comprehensive fundamental health analysis of target companies, synthesizing key financial metrics. The system integrates financial data, growth momentum, and market positioning into an intuitive dashboard score, helping investors quickly assess a company&apos;s overall condition.
           </p>
           <div className="wl-cs-factors">
             {[
-              { icon: '📈', label: '營收成長', sub: 'Revenue Growth' },
-              { icon: '💰', label: '獲利能力', sub: 'Profitability' },
-              { icon: '🏦', label: '資產負債', sub: 'Balance Sheet' },
-              { icon: '💧', label: '現金流量', sub: 'Cash Flow' },
-              { icon: '🏆', label: '市場地位', sub: 'Market Position' },
-              { icon: '⚙️', label: '管理效能', sub: 'Management' },
+              {
+                icon: (
+                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
+                    <polyline points="2,16 7,9 12,12 18,4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                    <polyline points="14,4 18,4 18,8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                ),
+                label: 'Revenue Growth',
+              },
+              {
+                icon: (
+                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
+                    <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M10 6v4l3 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                  </svg>
+                ),
+                label: 'Profitability',
+              },
+              {
+                icon: (
+                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
+                    <rect x="2" y="11" width="4" height="7" rx="1" stroke="currentColor" strokeWidth="1.5" />
+                    <rect x="8" y="7" width="4" height="11" rx="1" stroke="currentColor" strokeWidth="1.5" />
+                    <rect x="14" y="3" width="4" height="15" rx="1" stroke="currentColor" strokeWidth="1.5" />
+                  </svg>
+                ),
+                label: 'Balance Sheet',
+              },
+              {
+                icon: (
+                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
+                    <path d="M4 15c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    <path d="M10 9V5M7 6l3-3 3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                ),
+                label: 'Cash Flow',
+              },
+              {
+                icon: (
+                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
+                    <path d="M10 2L12.4 7.5H18L13.5 11l1.9 5.5L10 13.5 4.6 16.5l1.9-5.5L2 7.5h5.6z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                  </svg>
+                ),
+                label: 'Market Position',
+              },
+              {
+                icon: (
+                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
+                    <circle cx="10" cy="7" r="3.5" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M3 18c0-3.9 3.1-7 7-7s7 3.1 7 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  </svg>
+                ),
+                label: 'Management',
+              },
             ].map((f) => (
               <div key={f.label} className="wl-cs-factor">
                 <span className="wl-cs-factor-icon">{f.icon}</span>
                 <span className="wl-cs-factor-label">{f.label}</span>
-                <span className="wl-cs-factor-sub">{f.sub}</span>
               </div>
             ))}
           </div>
@@ -810,16 +857,18 @@ function HealthScoreComingSoon() {
 function RatingsComingSoon() {
   return (
     <div className="wl-cs-wrap">
-      <span className="wl-cs-badge">即將推出</span>
+      <span className="wl-cs-badge">Coming Soon</span>
       <div className="wl-cs-layout">
         {/* Star rating + analyst distribution */}
         <div className="wl-cs-visual">
-          <div className="wl-cs-stars" role="img" aria-label="分析師綜合評分 4.2 分（滿分 5 分）；圖示以 4 顆實心星加 1 顆空心星代表此評分">
+          <div className="wl-cs-stars" role="img" aria-label="Analyst consensus rating 4.2 out of 5; shown as 4 filled stars and 1 empty star">
             {[1, 2, 3, 4, 5].map((i) => (
               <svg key={i} viewBox="0 0 20 20" width="28" height="28" aria-hidden="true">
                 <path
                   d="M10 1.5l2.4 4.86 5.36.78-3.88 3.78.92 5.33L10 13.5l-4.8 2.75.92-5.33L2.24 7.14l5.36-.78L10 1.5z"
-                  fill={i <= 4 ? '#f59e0b' : '#e5e7eb'}
+                  fill={i <= 4 ? '#f59e0b' : 'none'}
+                  stroke={i <= 4 ? '#f59e0b' : '#d1d5db'}
+                  strokeWidth="1.2"
                 />
               </svg>
             ))}
@@ -827,9 +876,9 @@ function RatingsComingSoon() {
           </div>
           <div className="wl-cs-rating-dist">
             {[
-              { label: '買入 Buy', pct: 62, cls: 'buy' },
-              { label: '持有 Hold', pct: 25, cls: 'hold' },
-              { label: '賣出 Sell', pct: 13, cls: 'sell' },
+              { label: 'Buy', pct: 62, cls: 'buy' },
+              { label: 'Hold', pct: 25, cls: 'hold' },
+              { label: 'Sell', pct: 13, cls: 'sell' },
             ].map((r) => (
               <div key={r.cls} className="wl-cs-rating-row">
                 <span className={`wl-cs-rating-label wl-cs-rating-label--${r.cls}`}>{r.label}</span>
@@ -840,30 +889,76 @@ function RatingsComingSoon() {
               </div>
             ))}
           </div>
-          <p className="wl-cs-analyst-count">基於 32 位分析師評級</p>
+          <p className="wl-cs-analyst-count">Based on 32 analyst ratings</p>
         </div>
         {/* Description and feature grid */}
         <div className="wl-cs-info">
           <h2 className="wl-cs-title">
-            評級分析
-            <span className="wl-cs-en">Ratings</span>
+            Ratings
           </h2>
           <p className="wl-cs-desc">
-            整合來自多家主要機構的分析師評級與目標價資訊，提供買入、持有、賣出比例分佈及共識評分，並追蹤評級變化趨勢，為投資決策提供全面的市場觀點參考。
+            Aggregates analyst ratings and price target data from major institutions, providing buy/hold/sell distribution, consensus scores, and rating change trends — delivering a comprehensive market perspective to inform investment decisions.
           </p>
           <div className="wl-cs-factors">
             {[
-              { icon: '⭐', label: '分析師評級', sub: 'Analyst Ratings' },
-              { icon: '🎯', label: '目標價區間', sub: 'Price Targets' },
-              { icon: '📊', label: '評級分佈', sub: 'Rating Distribution' },
-              { icon: '🔄', label: '評級變化', sub: 'Rating Changes' },
-              { icon: '🏛️', label: '機構覆蓋', sub: 'Institutional Coverage' },
-              { icon: '📉', label: '情緒指標', sub: 'Sentiment Indicator' },
+              {
+                icon: (
+                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
+                    <path d="M10 1.5l2.4 4.86 5.36.78-3.88 3.78.92 5.33L10 13.5l-4.8 2.75.92-5.33L2.24 7.14l5.36-.78L10 1.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                  </svg>
+                ),
+                label: 'Analyst Ratings',
+              },
+              {
+                icon: (
+                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
+                    <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M10 7v3l2.5 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  </svg>
+                ),
+                label: 'Price Targets',
+              },
+              {
+                icon: (
+                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
+                    <rect x="3" y="13" width="3" height="5" rx="0.5" stroke="currentColor" strokeWidth="1.5" />
+                    <rect x="8.5" y="8" width="3" height="10" rx="0.5" stroke="currentColor" strokeWidth="1.5" />
+                    <rect x="14" y="3" width="3" height="15" rx="0.5" stroke="currentColor" strokeWidth="1.5" />
+                  </svg>
+                ),
+                label: 'Rating Distribution',
+              },
+              {
+                icon: (
+                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
+                    <path d="M3 10h14M13 6l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                ),
+                label: 'Rating Changes',
+              },
+              {
+                icon: (
+                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
+                    <rect x="2" y="3" width="16" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M6 7h8M6 10h8M6 13h5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                  </svg>
+                ),
+                label: 'Institutional Coverage',
+              },
+              {
+                icon: (
+                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
+                    <path d="M3 15l4-5 4 3 3-4 3 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                    <circle cx="3" cy="15" r="1.2" fill="currentColor" />
+                    <circle cx="18" cy="12" r="1.2" fill="currentColor" />
+                  </svg>
+                ),
+                label: 'Sentiment Indicator',
+              },
             ].map((f) => (
               <div key={f.label} className="wl-cs-factor">
                 <span className="wl-cs-factor-icon">{f.icon}</span>
                 <span className="wl-cs-factor-label">{f.label}</span>
-                <span className="wl-cs-factor-sub">{f.sub}</span>
               </div>
             ))}
           </div>
@@ -882,7 +977,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
   const router = useRouter();
 
   const watchlistName = watchlistNames[watchlistId] ?? 'Watchlist';
-  const currentSymbolOrder = symbolOrders[watchlistId] ?? holdingsData.map((h) => h.symbol);
+  const currentSymbolOrder = symbolOrders[watchlistId] ?? holdingsDataQ1.map((h) => h.symbol);
 
   const [activeTab, setActiveTab] = useState<string>('Summary');
   const [feedTab, setFeedTab] = useState<FeedTab>('Latest');
@@ -1021,7 +1116,10 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
   ];
 
   // Sorted holdings based on symbolOrder (includes user-added extra holdings)
-  const holdingsLookup = new Map(holdingsData.map((h) => [h.symbol, h]));
+  // Select dataset based on active quarter (Q4 2025 or Q1 2026)
+  const isQ4_2025 = quarter.year === 2025 && quarter.q === 4;
+  const activeHoldingsData = isQ4_2025 ? holdingsDataQ4 : holdingsDataQ1;
+  const holdingsLookup = new Map(activeHoldingsData.map((h) => [h.symbol, h]));
   const sortedHoldings = [...currentSymbolOrder]
     .map((sym) => holdingsLookup.get(sym) ?? extraHoldings[sym])
     .filter(Boolean) as Holding[];
@@ -1435,6 +1533,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                 <button
                   className="wl-quarter-btn"
                   aria-label="Previous quarter"
+                  disabled={quarter.year === 2025 && quarter.q === 4}
                   onClick={() => setQuarter(prevQ)}
                 >
                   <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
@@ -1453,6 +1552,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                 <button
                   className="wl-quarter-btn"
                   aria-label="Next quarter"
+                  disabled={quarter.year === 2026 && quarter.q === 1}
                   onClick={() => setQuarter(nextQ)}
                 >
                   <svg viewBox="0 0 14 14" fill="none" width="13" height="13">

@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { SP500_COMPANIES } from '@/app/data/sp500';
 import {
   pressReleases,
   allTopics,
@@ -58,6 +59,14 @@ function PressReleaseCard({ pr, compact = false, lang }: PressReleaseCardProps) 
       {/* Tags split into sections (full card only) */}
       {!compact && (
         <div className="pr-card-tags-wrap">
+          {pr.ticker && (
+            <div className="pr-card-tag-section">
+              <span className="pr-card-tag-label">Symbol</span>
+              <div className="pr-card-tags">
+                <span className="pr-tag pr-tag--symbol">{pr.ticker}</span>
+              </div>
+            </div>
+          )}
           <div className="pr-card-tag-section">
             <span className="pr-card-tag-label">Company</span>
             <div className="pr-card-tags">
@@ -249,21 +258,25 @@ function CardStack({ group, articles, onOpenGallery, lang }: CardStackProps) {
 interface TimelineViewProps {
   items: PressRelease[];
   lang: 'zh' | 'en';
+  companyFilter: string;
 }
 
-function TimelineView({ items, lang }: TimelineViewProps) {
+function TimelineView({ items, lang, companyFilter }: TimelineViewProps) {
   const [granularity, setGranularity] = useState<TimelineGranularity>('year');
-  const [selectedTopics, setSelectedTopics] = useState<Set<string>>(new Set());
-  const [relFilter, setRelFilter] = useState<RelFilter>('all');
+  // null = show All topics (no filter), Set = filter to these topics
+  const [selectedTopics, setSelectedTopics] = useState<Set<string> | null>(null);
   const [openGroup, setOpenGroup] = useState<TimelineGroup | null>(null);
 
   const filteredItems = useMemo(() => {
     let list = items;
-    if (relFilter !== 'all') list = list.filter((pr) => pr.relationship === relFilter);
-    if (selectedTopics.size > 0)
+    if (companyFilter) {
+      const q = companyFilter.toUpperCase();
+      list = list.filter((pr) => pr.ticker.toUpperCase() === q || pr.company.toLowerCase().includes(companyFilter.toLowerCase()));
+    }
+    if (selectedTopics !== null && selectedTopics.size > 0)
       list = list.filter((pr) => pr.topics.some((t) => selectedTopics.has(t)));
     return list;
-  }, [items, relFilter, selectedTopics]);
+  }, [items, companyFilter, selectedTopics]);
 
   const groups = useMemo(
     () => groupByTimeline(filteredItems, granularity, 2, lang),
@@ -273,11 +286,19 @@ function TimelineView({ items, lang }: TimelineViewProps) {
 
   function toggleTopic(topic: string) {
     setSelectedTopics((prev) => {
+      if (prev === null) {
+        // "All" mode: selecting a specific topic switches from show-all to that single topic
+        return new Set([topic]);
+      }
       const next = new Set(prev);
       if (next.has(topic)) next.delete(topic);
       else next.add(topic);
       return next;
     });
+  }
+
+  function selectAllTopics() {
+    setSelectedTopics(null);
   }
 
   const handleOpenGallery = useCallback((group: TimelineGroup) => {
@@ -288,7 +309,7 @@ function TimelineView({ items, lang }: TimelineViewProps) {
     setOpenGroup(null);
   }, []);
 
-  const hasFilters = selectedTopics.size > 0 || relFilter !== 'all';
+  const hasFilters = selectedTopics !== null && selectedTopics.size > 0;
 
   return (
     <div className="pr-timeline-layout">
@@ -297,9 +318,47 @@ function TimelineView({ items, lang }: TimelineViewProps) {
         <GalleryModal group={openGroup} onClose={handleCloseGallery} lang={lang} />
       )}
 
-      {/* Left: Timeline */}
+      {/* Left: Topics filter panel (30%) */}
+      <aside className="pr-topics-panel">
+        <div className="pr-topics-panel-title">
+          {lang === 'en' ? 'Filter by Topic' : '依主題篩選'}
+        </div>
+        <div className="pr-topics-list">
+          {/* All option */}
+          <button
+            className={`pr-topic-item${selectedTopics === null ? ' active' : ''}`}
+            onClick={selectAllTopics}
+          >
+            <span className="pr-topic-name">{lang === 'en' ? 'All' : '全部'}</span>
+            <span className="pr-topic-count">{filteredItems.length}</span>
+          </button>
+          {allTopics.map((topic) => {
+            const count = topicCounts[topic] ?? 0;
+            const isActive = selectedTopics !== null && selectedTopics.has(topic);
+            return (
+              <button
+                key={topic}
+                className={`pr-topic-item${isActive ? ' active' : ''}`}
+                onClick={() => toggleTopic(topic)}
+              >
+                <span className="pr-topic-name">{topic}</span>
+                <span className="pr-topic-count">{count}</span>
+              </button>
+            );
+          })}
+        </div>
+        {hasFilters && (
+          <div className="pr-topics-active-info">
+            {lang === 'en'
+              ? `${selectedTopics!.size} topic(s) selected · ${filteredItems.length} articles`
+              : `已選 ${selectedTopics!.size} 個 Topic，顯示 ${filteredItems.length} 篇`}
+          </div>
+        )}
+      </aside>
+
+      {/* Right: Timeline main content (70%) */}
       <div className="pr-timeline-main">
-        {/* Granularity + Relationship filter bar */}
+        {/* Granularity filter bar (Relation filter removed, use Company search above) */}
         <div className="pr-granularity-bar">
           <span className="pr-granularity-label">
             {lang === 'en' ? 'Time Dimension' : '檢視維度'}
@@ -324,47 +383,10 @@ function TimelineView({ items, lang }: TimelineViewProps) {
             </button>
           ))}
 
-          <span className="pr-granularity-sep" />
-
-          {/* Customer / Supplier filter */}
-          <span className="pr-granularity-label">
-            {lang === 'en' ? 'Relation' : '關聯'}
-          </span>
-          {(['all', 'customer', 'supplier'] as RelFilter[]).map((r) => {
-            const relClass =
-              r === 'customer'
-                ? ' pr-granularity-btn--customer'
-                : r === 'supplier'
-                  ? ' pr-granularity-btn--supplier'
-                  : '';
-            return (
-              <button
-                key={r}
-                className={`pr-granularity-btn${relFilter === r ? ' active' : ''}${relClass}`}
-                onClick={() => setRelFilter(r)}
-              >
-                {r === 'all'
-                  ? lang === 'en'
-                    ? 'All'
-                    : '全部'
-                  : r === 'customer'
-                    ? lang === 'en'
-                      ? 'Customer'
-                      : '客戶'
-                    : lang === 'en'
-                      ? 'Supplier'
-                      : '供應商'}
-              </button>
-            );
-          })}
-
           {hasFilters && (
             <button
               className="pr-granularity-clear"
-              onClick={() => {
-                setSelectedTopics(new Set());
-                setRelFilter('all');
-              }}
+              onClick={selectAllTopics}
             >
               {lang === 'en' ? 'Clear Filters' : '清除篩選'}
             </button>
@@ -382,9 +404,9 @@ function TimelineView({ items, lang }: TimelineViewProps) {
         ) : (
           <div className="pr-timeline">
             {groups.map((group) => {
-              // Interleave items: even indices → left, odd indices → right
-              const leftItems = group.items.filter((_, i) => i % 2 === 0);
-              const rightItems = group.items.filter((_, i) => i % 2 !== 0);
+              // Left = Customer, Right = Supplier
+              const leftItems = group.items.filter((pr) => pr.relationship === 'customer');
+              const rightItems = group.items.filter((pr) => pr.relationship === 'supplier');
               return (
                 <div className="pr-timeline-group" key={group.key}>
                   {/* BI-style timeline node */}
@@ -433,36 +455,6 @@ function TimelineView({ items, lang }: TimelineViewProps) {
           </div>
         )}
       </div>
-
-      {/* Right: Topics filter panel */}
-      <aside className="pr-topics-panel">
-        <div className="pr-topics-panel-title">
-          {lang === 'en' ? 'Filter by Topic' : '依主題篩選'}
-        </div>
-        <div className="pr-topics-list">
-          {allTopics.map((topic) => {
-            const count = topicCounts[topic] ?? 0;
-            const isActive = selectedTopics.has(topic);
-            return (
-              <button
-                key={topic}
-                className={`pr-topic-item${isActive ? ' active' : ''}`}
-                onClick={() => toggleTopic(topic)}
-              >
-                <span className="pr-topic-name">{topic}</span>
-                <span className="pr-topic-count">{count}</span>
-              </button>
-            );
-          })}
-        </div>
-        {selectedTopics.size > 0 && (
-          <div className="pr-topics-active-info">
-            {lang === 'en'
-              ? `${selectedTopics.size} topic(s) selected · ${filteredItems.length} articles`
-              : `已選 ${selectedTopics.size} 個 Topic，顯示 ${filteredItems.length} 篇`}
-          </div>
-        )}
-      </aside>
     </div>
   );
 }
@@ -472,9 +464,10 @@ function TimelineView({ items, lang }: TimelineViewProps) {
 interface ListViewProps {
   items: PressRelease[];
   lang: 'zh' | 'en';
+  companyFilter: string;
 }
 
-function ListView({ items, lang }: ListViewProps) {
+function ListView({ items, lang, companyFilter }: ListViewProps) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
   const [filterRelationship, setFilterRelationship] = useState<RelFilter>('all');
@@ -485,6 +478,10 @@ function ListView({ items, lang }: ListViewProps) {
     let list = [...items].sort(
       (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
     );
+    if (companyFilter.trim()) {
+      const cq = companyFilter.toUpperCase();
+      list = list.filter((pr) => pr.ticker.toUpperCase() === cq || pr.company.toLowerCase().includes(companyFilter.toLowerCase()));
+    }
     if (filterRelationship !== 'all')
       list = list.filter((pr) => pr.relationship === filterRelationship);
     if (dateFrom) list = list.filter((pr) => pr.publishedAt >= dateFrom);
@@ -495,11 +492,12 @@ function ListView({ items, lang }: ListViewProps) {
         (pr) =>
           pr.title.toLowerCase().includes(q) ||
           pr.company.toLowerCase().includes(q) ||
+          pr.ticker.toLowerCase().includes(q) ||
           pr.topics.some((t) => t.toLowerCase().includes(q)),
       );
     }
     return list;
-  }, [items, search, filterRelationship, dateFrom, dateTo]);
+  }, [items, search, filterRelationship, dateFrom, dateTo, companyFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paged = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
@@ -721,7 +719,51 @@ function ListView({ items, lang }: ListViewProps) {
 
 export default function PressReleasePage() {
   const [activeTab, setActiveTab] = useState<PRTab>('timeline');
+  const [companyFilter, setCompanyFilter] = useState('');
+  const [companySuggestions, setCompanySuggestions] = useState<typeof SP500_COMPANIES>([]);
+  const companyInputRef = useRef<HTMLInputElement>(null);
+  const companyWrapRef = useRef<HTMLDivElement>(null);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const { lang } = useLanguage();
+
+  function handleCompanyInput(val: string) {
+    setCompanyFilter(val);
+    if (val.trim().length > 0) {
+      const q = val.toUpperCase();
+      const suggestions = SP500_COMPANIES.filter(
+        (c) =>
+          c.symbol.startsWith(q) ||
+          c.name.toLowerCase().includes(val.toLowerCase()),
+      ).slice(0, 8);
+      setCompanySuggestions(suggestions);
+      setShowSuggestions(true);
+    } else {
+      setCompanySuggestions([]);
+      setShowSuggestions(false);
+    }
+  }
+
+  function clearCompanyFilter() {
+    setCompanyFilter('');
+    setCompanySuggestions([]);
+    setShowSuggestions(false);
+  }
+
+  function selectCompany(symbol: string) {
+    setCompanyFilter(symbol);
+    setShowSuggestions(false);
+    setCompanySuggestions([]);
+  }
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (companyWrapRef.current && !companyWrapRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <>
@@ -736,30 +778,93 @@ export default function PressReleasePage() {
               <span className="section-eyebrow">Press Release</span>
             </div>
 
-            {/* Tab navigation */}
-            <div className="cp-nav-tabs" style={{ marginBottom: 0 }}>
-              <button
-                className={`cp-nav-tab${activeTab === 'timeline' ? ' active' : ''}`}
-                onClick={() => setActiveTab('timeline')}
-              >
-                Timeline View
-                <span className="badge-new" style={{ marginLeft: 6 }}>
-                  NEW
+            {/* Tab navigation + Company search + Color legend */}
+            <div className="pr-tab-header-row">
+              <div className="cp-nav-tabs" style={{ marginBottom: 0 }}>
+                <button
+                  className={`cp-nav-tab${activeTab === 'timeline' ? ' active' : ''}`}
+                  onClick={() => setActiveTab('timeline')}
+                >
+                  Timeline View
+                  <span className="badge-new" style={{ marginLeft: 6 }}>
+                    NEW
+                  </span>
+                </button>
+                <button
+                  className={`cp-nav-tab${activeTab === 'list' ? ' active' : ''}`}
+                  onClick={() => setActiveTab('list')}
+                >
+                  List View
+                </button>
+              </div>
+
+              {/* Company search bar */}
+              <div className="pr-company-search-wrap" ref={companyWrapRef}>
+                <svg
+                  viewBox="0 0 14 14"
+                  width="13"
+                  height="13"
+                  fill="none"
+                  aria-hidden="true"
+                  className="pr-company-search-icon"
+                >
+                  <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" strokeWidth="1.3" />
+                  <path d="M8.5 8.5L12.5 12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+                <input
+                  ref={companyInputRef}
+                  className="pr-company-search-input"
+                  type="text"
+                  placeholder={lang === 'en' ? 'Search by symbol (e.g. AAPL)…' : '輸入 symbol 篩選公司...'}
+                  value={companyFilter}
+                  onChange={(e) => handleCompanyInput(e.target.value)}
+                  onFocus={() => companyFilter && setShowSuggestions(true)}
+                />
+                {companyFilter && (
+                  <button
+                    className="pr-company-search-clear"
+                    onClick={clearCompanyFilter}
+                    aria-label="Clear company filter"
+                  >
+                    <svg viewBox="0 0 14 14" width="11" height="11" fill="none" aria-hidden="true">
+                      <path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                )}
+                {showSuggestions && companySuggestions.length > 0 && (
+                  <div className="pr-company-suggestions">
+                    {companySuggestions.map((c) => (
+                      <button
+                        key={c.symbol}
+                        className="pr-company-suggestion-item"
+                        onMouseDown={(e) => { e.preventDefault(); selectCompany(c.symbol); }}
+                      >
+                        <span className="pr-company-suggestion-symbol">{c.symbol}</span>
+                        <span className="pr-company-suggestion-name">{c.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Color legend */}
+              <div className="pr-legend">
+                <span className="pr-legend-item">
+                  <span className="pr-legend-tri pr-legend-tri--customer" aria-hidden="true">▲</span>
+                  <span className="pr-legend-label">Customer</span>
                 </span>
-              </button>
-              <button
-                className={`cp-nav-tab${activeTab === 'list' ? ' active' : ''}`}
-                onClick={() => setActiveTab('list')}
-              >
-                List View
-              </button>
+                <span className="pr-legend-item">
+                  <span className="pr-legend-tri pr-legend-tri--supplier" aria-hidden="true">▲</span>
+                  <span className="pr-legend-label">Supplier</span>
+                </span>
+              </div>
             </div>
             <div className="pr-tab-divider" />
 
             {activeTab === 'timeline' ? (
-              <TimelineView items={pressReleases} lang={lang} />
+              <TimelineView items={pressReleases} lang={lang} companyFilter={companyFilter} />
             ) : (
-              <ListView items={pressReleases} lang={lang} />
+              <ListView items={pressReleases} lang={lang} companyFilter={companyFilter} />
             )}
           </div>
         </main>
