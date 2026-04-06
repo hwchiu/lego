@@ -13742,7 +13742,7 @@ input, select { font-family: var(--font); }
   min-width: 600px;
 }
 .fd-table thead tr {
-  background: var(--c-bg);
+  background: var(--c-white);
 }
 .fd-table thead th {
   padding: 10px 14px;
@@ -13823,10 +13823,11 @@ input, select { font-family: var(--font); }
 }
 .fd-hint-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 8px;
   margin-top: 8px;
-  max-width: 520px;
+  width: 100%;
+  max-width: 640px;
 }
 .fd-hint-btn {
   display: flex;
@@ -13894,6 +13895,17 @@ input, select { font-family: var(--font); }
 a.fd-hint-btn {
   text-decoration: none;
 }
+/* fd-company-badge with logo image */
+.fd-company-badge--logo {
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+}
+.fd-company-badge--logo img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: block;
+}
 /* fd-company-header with download button */
 .fd-company-header {
   align-items: flex-start;
@@ -13928,6 +13940,15 @@ a.fd-hint-btn {
   }
   .fd-detail-topbar {
     padding: 12px 16px 0;
+  }
+  .fd-hint-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 100%;
+  }
+}
+@media (max-width: 480px) {
+  .fd-hint-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
