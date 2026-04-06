@@ -372,10 +372,9 @@ function NavSection({
 }
 
 export default function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
   const { lang } = useLanguage();
-  const { isMobileOpen, closeSidebar } = useMobileSidebar();
+  const { isMobileOpen, closeSidebar, isDesktopCollapsed: collapsed, toggleDesktopCollapsed } = useMobileSidebar();
   const toggleLabel = collapsed ? 'Expand menu' : 'Collapse menu';
   // When expanded, quickLinks[0] renders inside the collapse header row,
   // so only the remaining items are listed below.
@@ -402,7 +401,7 @@ export default function Sidebar() {
           {!collapsed && <QuickLink item={quickLinks[0]} collapsed={false} />}
           <button
             className="sidebar-toggle-btn"
-            onClick={() => setCollapsed(!collapsed)}
+            onClick={toggleDesktopCollapsed}
             title={toggleLabel}
             aria-label={toggleLabel}
           >
