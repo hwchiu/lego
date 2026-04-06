@@ -120,11 +120,14 @@ function readWatchlistHistoricalSections() {
     if (entityDataIdx === -1) return '';
     // Look for the next ## heading that is NOT "## Entity Data" itself
     const afterEntityData = md.slice(entityDataIdx + '## Entity Data'.length);
-    const nextSectionMatch = afterEntityData.match(/\n##\s+/);
+    const nextSectionMatch = afterEntityData.match(/\n## /);
     if (!nextSectionMatch) return '';
-    const historicalStart = entityDataIdx + '## Entity Data'.length + nextSectionMatch.index;
-    return '\n' + md.slice(historicalStart);
-  } catch { /* file doesn't exist yet */ }
+    // +1 to skip the newline character so the returned string starts with ##
+    const historicalStart = entityDataIdx + '## Entity Data'.length + nextSectionMatch.index + 1;
+    return md.slice(historicalStart);
+  } catch (err) {
+    if (err.code !== 'ENOENT') console.warn('⚠️  Could not read historical sections:', err.message);
+  }
   return '';
 }
 
@@ -382,7 +385,7 @@ ${JSON.stringify(entities, null, 2)}
 \`\`\`
 
 ${fieldDescriptions}
-${historicalSections}`;
+${historicalSections ? `\n${historicalSections}` : ''}`;
   const path = resolve(CONTENT_DIR, 'watchlist-data.md');
   writeFileSync(path, md, 'utf-8');
   console.log(`📁 Wrote ${path}`);
