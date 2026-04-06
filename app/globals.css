@@ -11127,7 +11127,7 @@ input, select { font-family: var(--font); }
 
 /* Hamburger button — hidden on desktop */
 .topnav-hamburger {
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
   width: 36px;
@@ -11655,11 +11655,6 @@ input, select { font-family: var(--font); }
 
 /* ===== TABLET: ≤ 768px ===== */
 @media (max-width: 768px) {
-
-  /* Show hamburger button */
-  .topnav-hamburger {
-    display: flex;
-  }
 
   /* TopNav adjustments */
   .topnav {

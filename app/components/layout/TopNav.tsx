@@ -13,7 +13,7 @@ import {
   type NotificationType,
 } from '@/app/data/notifications';
 import { useLanguage } from '@/app/contexts/LanguageContext';
-import { useMobileSidebar } from '@/app/contexts/MobileSidebarContext';
+import { useMobileSidebar, MOBILE_BREAKPOINT } from '@/app/contexts/MobileSidebarContext';
 
 const POPULAR_SEARCHES = ['TSM', 'AAPL', 'NVDA'];
 
@@ -222,7 +222,16 @@ const SP500_LC = SP500_COMPANIES.map((c) => ({
 export default function TopNav() {
   const router = useRouter();
   const { lang, toggleLang } = useLanguage();
-  const { toggleSidebar } = useMobileSidebar();
+  const { toggleSidebar, toggleDesktopCollapsed } = useMobileSidebar();
+
+  const handleMenuToggle = () => {
+    // window.innerWidth reflects the current viewport at click time
+    if (window.innerWidth <= MOBILE_BREAKPOINT) {
+      toggleSidebar();
+    } else {
+      toggleDesktopCollapsed();
+    }
+  };
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>('All');
@@ -300,10 +309,10 @@ export default function TopNav() {
 
   return (
     <header className="topnav">
-      {/* Mobile hamburger menu */}
+      {/* Menu toggle button — collapses sidebar on desktop, opens drawer on mobile */}
       <button
         className="topnav-hamburger"
-        onClick={toggleSidebar}
+        onClick={handleMenuToggle}
         aria-label="Toggle navigation menu"
       >
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
