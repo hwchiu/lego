@@ -13946,11 +13946,6 @@ a.fd-hint-btn {
     max-width: 100%;
   }
 }
-@media (max-width: 480px) {
-  .fd-hint-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
 
 /* ===== EXPLORE MIC PICKS — NEWSLETTER READER ===== */
 .emp-reader-outer {
