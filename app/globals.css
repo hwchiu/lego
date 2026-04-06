@@ -15596,3 +15596,189 @@ a.fd-hint-btn {
     max-width: 100%;
   }
 }
+
+/* ===== WATCHLIST – COMING SOON PANELS ===== */
+.wl-cs-wrap {
+  padding: 32px 28px;
+}
+.wl-cs-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #ea580c, #f59e0b);
+  color: #fff;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 24px;
+}
+.wl-cs-layout {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+.wl-cs-visual {
+  flex: 0 0 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-lg);
+  padding: 24px 20px 20px;
+}
+.wl-cs-gauge-svg {
+  width: 100%;
+  max-width: 240px;
+}
+.wl-cs-score-bands {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.wl-cs-band {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: 12px;
+}
+.wl-cs-band--low  { background: #fee2e2; color: #991b1b; }
+.wl-cs-band--mid  { background: #fef3c7; color: #92400e; }
+.wl-cs-band--high { background: #dcfce7; color: #166534; }
+.wl-cs-info {
+  flex: 1;
+  min-width: 0;
+}
+.wl-cs-title {
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--c-dark);
+  margin: 0 0 12px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.wl-cs-en {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-text-3);
+}
+.wl-cs-desc {
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: var(--c-text-2);
+  margin: 0 0 24px;
+  max-width: 520px;
+}
+.wl-cs-factors {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.wl-cs-factor {
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.wl-cs-factor-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+.wl-cs-factor-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-text);
+}
+.wl-cs-factor-sub {
+  font-size: 10.5px;
+  color: var(--c-text-3);
+}
+/* Ratings visual */
+.wl-cs-stars {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 20px;
+}
+.wl-cs-star-score {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-text);
+  margin-left: 6px;
+}
+.wl-cs-rating-dist {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.wl-cs-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.wl-cs-rating-label {
+  font-size: 11px;
+  font-weight: 600;
+  width: 74px;
+  flex-shrink: 0;
+}
+.wl-cs-rating-label--buy  { color: var(--c-pos); }
+.wl-cs-rating-label--hold { color: #d97706; }
+.wl-cs-rating-label--sell { color: var(--c-neg); }
+.wl-cs-rating-bar-wrap {
+  flex: 1;
+  height: 10px;
+  background: var(--c-border);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.wl-cs-rating-bar {
+  height: 100%;
+  border-radius: 5px;
+}
+.wl-cs-rating-bar--buy  { background: var(--c-pos); }
+.wl-cs-rating-bar--hold { background: #f59e0b; }
+.wl-cs-rating-bar--sell { background: var(--c-neg); }
+.wl-cs-rating-pct {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--c-text-2);
+  width: 32px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.wl-cs-analyst-count {
+  margin-top: 14px;
+  font-size: 11px;
+  color: var(--c-text-3);
+  text-align: center;
+}
+
+/* ===== WATCHLIST COMING SOON RWD ===== */
+@media (max-width: 860px) {
+  .wl-cs-layout {
+    flex-direction: column;
+  }
+  .wl-cs-visual {
+    flex: none;
+    width: 100%;
+    max-width: 100%;
+  }
+  .wl-cs-factors {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  .wl-cs-wrap {
+    padding: 20px 16px;
+  }
+}
