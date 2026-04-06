@@ -108,6 +108,29 @@ function readWatchlistHeader() {
 `;
 }
 
+// ── Read historical snapshot sections that follow the live Entity Data block ──
+// These sections (e.g. "## Entity Data Q4 2025") are hand-authored historical
+// snapshots and must be preserved verbatim across every script re-run.
+
+function readWatchlistHistoricalSections() {
+  try {
+    const md = readFileSync(resolve(CONTENT_DIR, 'watchlist-data.md'), 'utf-8');
+    // Find the first historical-snapshot heading that comes after ## Entity Data
+    const entityDataIdx = md.indexOf('## Entity Data');
+    if (entityDataIdx === -1) return '';
+    // Look for the next ## heading that is NOT "## Entity Data" itself
+    const afterEntityData = md.slice(entityDataIdx + '## Entity Data'.length);
+    const nextSectionMatch = afterEntityData.match(/\n## /);
+    if (!nextSectionMatch) return '';
+    // +1 to skip the newline character so the returned string starts with ##
+    const historicalStart = entityDataIdx + '## Entity Data'.length + nextSectionMatch.index + 1;
+    return md.slice(historicalStart);
+  } catch (err) {
+    if (err.code !== 'ENOENT') console.warn('⚠️  Could not read historical sections:', err.message);
+  }
+  return '';
+}
+
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function fmt(n, currency) {
@@ -299,6 +322,7 @@ ${JSON.stringify(quotes, null, 2)}
 
 function writeWatchlistDataMd(allQuotes, holdingsDetail, portfolio) {
   const header = readWatchlistHeader();
+  const historicalSections = readWatchlistHistoricalSections();
   const holdingSymbols = Object.keys(portfolio);
 
   const entities = {};
@@ -361,7 +385,7 @@ ${JSON.stringify(entities, null, 2)}
 \`\`\`
 
 ${fieldDescriptions}
-`;
+${historicalSections ? `\n${historicalSections}` : ''}`;
   const path = resolve(CONTENT_DIR, 'watchlist-data.md');
   writeFileSync(path, md, 'utf-8');
   console.log(`📁 Wrote ${path}`);
