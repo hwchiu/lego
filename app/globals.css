@@ -41,6 +41,7 @@ input, select { font-family: var(--font); }
 
 /* ===== TOP NAV ===== */
 .topnav {
+  position: relative;
   flex-shrink: 0;
   height: 58px;
   background: var(--c-white);
@@ -373,12 +374,13 @@ input, select { font-family: var(--font); }
   background: transparent;
   border: none;
   border-radius: var(--radius-sm);
-  color: rgba(255,255,255,0.32);
+  color: rgba(255,255,255,0.45);
+  cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
 .sidebar-toggle-btn:hover {
-  background: rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.72);
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.85);
 }
 .sidebar.collapsed .sidebar-toggle-btn {
   width: 32px;
@@ -1110,6 +1112,26 @@ input, select { font-family: var(--font); }
   margin-left: auto;
   flex-shrink: 0;
   opacity: 0.5;
+  transition: transform 0.18s ease;
+}
+.sidebar-submenu-arrow.open {
+  transform: rotate(90deg);
+}
+.sidebar-submenu-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 4px;
+  margin-left: auto;
+  cursor: pointer;
+  color: inherit;
+  border-radius: var(--radius-sm);
+  transition: background 0.13s;
+}
+.sidebar-submenu-toggle:hover {
+  background: rgba(255,255,255,0.1);
 }
 .sidebar-submenu-divider {
   height: 1px;
@@ -11671,10 +11693,12 @@ input, select { font-family: var(--font); }
     z-index: 1000;
     transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: none;
+    pointer-events: none;
   }
   .sidebar.mobile-open {
     left: 0;
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
+    pointer-events: auto;
   }
 
   /* Sidebar is always expanded on mobile (never collapsed mini) */

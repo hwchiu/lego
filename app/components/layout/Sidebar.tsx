@@ -236,6 +236,7 @@ function NavItemRow({
   const [open, setOpen] = useState(false);
   const liRef = useRef<HTMLLIElement>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hoverActiveRef = useRef(false);
   const hasSubMenu = item.subItems && item.subItems.length > 0;
   const { lang } = useLanguage();
   const displayLabel = lang === 'zh' ? t(item.label, 'zh') : item.label;
@@ -248,6 +249,7 @@ function NavItemRow({
       (hasSubMenu && item.subItems!.some((s) => pathname === s.href || pathname.startsWith(s.href + '/'))));
 
   const openSubmenu = () => {
+    hoverActiveRef.current = true;
     if (closeTimerRef.current) {
       clearTimeout(closeTimerRef.current);
       closeTimerRef.current = null;
@@ -256,8 +258,27 @@ function NavItemRow({
   };
 
   const scheduleClose = () => {
+    hoverActiveRef.current = false;
     if (hasSubMenu) {
       closeTimerRef.current = setTimeout(() => setOpen(false), 200);
+    }
+  };
+
+  const toggleSubmenu = (e: React.MouseEvent) => {
+    if (!hasSubMenu) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+    if (hoverActiveRef.current) {
+      // Desktop: mouse is hovering over the item — the submenu is already open via hover.
+      // Keep it open; closing is handled by mouseleave.
+      setOpen(true);
+    } else {
+      // Mobile/touch: no hover, so genuinely toggle open/close.
+      setOpen((prev) => !prev);
     }
   };
 
@@ -290,22 +311,29 @@ function NavItemRow({
           </span>
         )}
         {!collapsed && hasSubMenu && (
-          <svg
-            className="sidebar-submenu-arrow"
-            viewBox="0 0 14 14"
-            fill="none"
-            width="10"
-            height="10"
-            aria-hidden="true"
+          <button
+            className="sidebar-submenu-toggle"
+            onClick={toggleSubmenu}
+            aria-label={open ? 'Collapse submenu' : 'Expand submenu'}
+            aria-expanded={open}
           >
-            <path
-              d="M5 2.5L9.5 7L5 11.5"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+            <svg
+              className={`sidebar-submenu-arrow${open ? ' open' : ''}`}
+              viewBox="0 0 14 14"
+              fill="none"
+              width="10"
+              height="10"
+              aria-hidden="true"
+            >
+              <path
+                d="M5 2.5L9.5 7L5 11.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
         )}
       </Link>
       {open && hasSubMenu && (
