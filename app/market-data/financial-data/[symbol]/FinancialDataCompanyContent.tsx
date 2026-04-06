@@ -99,6 +99,43 @@ function downloadCsv(symbol: string, companyName: string, tabKey: StatementKey) 
   URL.revokeObjectURL(url);
 }
 
+// ─── Company logo map ────────────────────────────────────────────────────────
+
+const COMPANY_LOGOS: Record<string, string> = {
+  AAPL: 'https://logo.clearbit.com/apple.com',
+  NVDA: 'https://logo.clearbit.com/nvidia.com',
+  AMD: 'https://logo.clearbit.com/amd.com',
+  QCOM: 'https://logo.clearbit.com/qualcomm.com',
+  AVGO: 'https://logo.clearbit.com/broadcom.com',
+  MRVL: 'https://logo.clearbit.com/marvell.com',
+  NXPI: 'https://logo.clearbit.com/nxp.com',
+  STM: 'https://logo.clearbit.com/st.com',
+  SONY: 'https://logo.clearbit.com/sony.com',
+  TXN: 'https://logo.clearbit.com/ti.com',
+};
+
+function CompanyBadge({ symbol, name }: { symbol: string; name: string }) {
+  const [imgFailed, setImgFailed] = useState(false);
+  const logoUrl = COMPANY_LOGOS[symbol];
+
+  if (logoUrl && !imgFailed) {
+    return (
+      <div className="fd-company-badge fd-company-badge--logo">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={logoUrl}
+          alt={`${name} logo`}
+          width={28}
+          height={28}
+          onError={() => setImgFailed(true)}
+        />
+      </div>
+    );
+  }
+
+  return <div className="fd-company-badge">{symbol.slice(0, 4)}</div>;
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 interface FinancialDataCompanyContentProps {
@@ -141,7 +178,7 @@ export default function FinancialDataCompanyContent({ symbol }: FinancialDataCom
               <>
                 {/* ── Company header ── */}
                 <div className="fd-company-header">
-                  <div className="fd-company-badge">{company.symbol.slice(0, 4)}</div>
+                  <CompanyBadge symbol={company.symbol} name={company.name} />
                   <div className="fd-company-info">
                     <div className="fd-company-name">{company.name}</div>
                     <div className="fd-company-meta">

@@ -161,7 +161,7 @@ export default function MarketDataPage() {
                 </Link>
 
                 {/* Financial Data Card */}
-                <div className="md-product-card md-product-card--fin">
+                <Link href="/market-data/financial-data/" className="md-product-card md-product-card--fin">
                   <div className="md-product-card-accent" />
                   <div className="md-product-card-body">
                     <div className="md-product-card-icon-wrap md-product-card-icon-wrap--fin">
@@ -192,13 +192,11 @@ export default function MarketDataPage() {
                       </div>
                     </div>
                     <div className="md-product-card-cta">
-                      <Link href="/market-data/financial-data/">
-                        <span>Explore Financial Data</span>
-                        <ArrowRightIcon />
-                      </Link>
+                      <span>Explore Financial Data</span>
+                      <ArrowRightIcon />
                     </div>
                   </div>
-                </div>
+                </Link>
 
               </div>
             </div>
