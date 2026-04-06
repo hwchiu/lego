@@ -35,6 +35,7 @@ jobs:
 
       - name: Fetch live stock data
         run: npm run fetch-data
+        continue-on-error: true
 
       - name: Commit updated market data
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'

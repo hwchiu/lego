@@ -15933,3 +15933,47 @@ a.fd-hint-btn {
     padding: 20px 16px;
   }
 }
+
+/* ===== 404 NOT FOUND PAGE ===== */
+.not-found-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+  padding: 2rem;
+}
+
+.not-found-content {
+  text-align: center;
+  max-width: 400px;
+}
+
+.not-found-title {
+  font-size: 6rem;
+  font-weight: 700;
+  color: var(--c-accent);
+  line-height: 1;
+  margin: 0 0 1rem;
+}
+
+.not-found-desc {
+  font-size: 1.125rem;
+  color: var(--c-text-secondary);
+  margin: 0 0 2rem;
+}
+
+.not-found-link {
+  display: inline-block;
+  padding: 0.625rem 1.5rem;
+  background: var(--c-accent);
+  color: #fff;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.not-found-link:hover {
+  opacity: 0.88;
+}
