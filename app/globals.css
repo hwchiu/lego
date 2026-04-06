@@ -14942,7 +14942,7 @@ a.fd-hint-btn {
 }
 .emp-shelf-card-coming-soon {
   position: absolute;
-  top: 12px;
+  top: 20px;
   right: -26px;
   background: rgba(0, 0, 0, 0.52);
   color: #fff;
@@ -14952,6 +14952,7 @@ a.fd-hint-btn {
   transform: rotate(45deg);
   letter-spacing: 0.06em;
   white-space: nowrap;
+  z-index: 1;
 }
 .emp-shelf-card--unavailable .emp-shelf-card-cover {
   filter: grayscale(0.3) brightness(0.95);
