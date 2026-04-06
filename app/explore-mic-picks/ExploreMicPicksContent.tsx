@@ -1491,38 +1491,120 @@ function MicShelfSidebar({
   onSelectYear,
   onSelectQuarter,
 }: MicShelfSidebarProps) {
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const categories = [...new Set(MIC_ISSUES.map((i) => i.category))];
   const years = [...new Set(MIC_ISSUES.map((i) => i.year))].sort((a, b) => b - a);
   const isAllActive = !activeCategory && !activeYear && !activeQuarter;
 
+  // Label shown in the mobile toggle button
+  const activeSummary =
+    activeCategory ??
+    (activeYear
+      ? `${activeYear}${activeQuarter ? ` ${activeQuarter}` : ''}`
+      : 'All Newsletters');
+
+  const handleSelectAll = useCallback(() => {
+    onSelectAll();
+    setIsMobileOpen(false);
+  }, [onSelectAll]);
+
+  const handleSelectCategory = useCallback(
+    (cat: string) => {
+      onSelectCategory(cat);
+      setIsMobileOpen(false);
+    },
+    [onSelectCategory],
+  );
+
+  const handleSelectYear = useCallback(
+    (year: number) => {
+      onSelectYear(year);
+      setIsMobileOpen(false);
+    },
+    [onSelectYear],
+  );
+
+  const handleSelectQuarter = useCallback(
+    (year: number, quarter: string) => {
+      onSelectQuarter(year, quarter);
+      setIsMobileOpen(false);
+    },
+    [onSelectQuarter],
+  );
+
   return (
     <div className="emp-shelf-sidebar">
-      <div className="emp-shelf-sidebar-header">Newsletter Library</div>
-      <nav className="emp-shelf-tree" aria-label="Newsletter categories">
-        {/* All */}
-        <button className={`emp-shelf-tree-node${isAllActive ? ' active' : ''}`} onClick={onSelectAll}>
+      {/* Mobile-only toggle row — hidden on desktop via CSS */}
+      <button
+        className="emp-shelf-mobile-toggle"
+        onClick={() => setIsMobileOpen((o) => !o)}
+        aria-expanded={isMobileOpen}
+        aria-controls="emp-shelf-tree"
+      >
+        <span className="emp-shelf-mobile-toggle-label">
           <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
             <path d="M2 3h10M2 7h10M2 11h6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
           </svg>
-          All Newsletters
-          <span className="emp-shelf-tree-count">{MIC_ISSUES.length}</span>
-        </button>
+          <span className="emp-shelf-mobile-toggle-text">{activeSummary}</span>
+          {!isAllActive && <span className="emp-shelf-mobile-active-dot" aria-hidden="true" />}
+        </span>
+        <svg
+          className={`emp-shelf-mobile-chevron${isMobileOpen ? ' open' : ''}`}
+          viewBox="0 0 14 14"
+          fill="none"
+          width="14"
+          height="14"
+          aria-hidden="true"
+        >
+          <path
+            d="M3 5l4 4 4-4"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
+
+      {/* Desktop header — hidden on mobile via CSS */}
+      <div className="emp-shelf-sidebar-header">Newsletter Library</div>
+
+      <nav
+        id="emp-shelf-tree"
+        className={`emp-shelf-tree${isMobileOpen ? ' mobile-open' : ''}`}
+        aria-label="Newsletter categories"
+      >
+        {/* All */}
+        <div className="emp-shelf-tree-group">
+          <button
+            className={`emp-shelf-tree-node${isAllActive ? ' active' : ''}`}
+            onClick={handleSelectAll}
+          >
+            <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+              <path d="M2 3h10M2 7h10M2 11h6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+            </svg>
+            All Newsletters
+            <span className="emp-shelf-tree-count">{MIC_ISSUES.length}</span>
+          </button>
+        </div>
 
         {/* By category */}
         <div className="emp-shelf-tree-section-label">By Category</div>
-        {categories.map((cat) => {
-          const count = MIC_ISSUES.filter((i) => i.category === cat).length;
-          return (
-            <button
-              key={cat}
-              className={`emp-shelf-tree-node emp-shelf-tree-node--indent${activeCategory === cat ? ' active' : ''}`}
-              onClick={() => onSelectCategory(cat)}
-            >
-              {cat}
-              <span className="emp-shelf-tree-count">{count}</span>
-            </button>
-          );
-        })}
+        <div className="emp-shelf-tree-group">
+          {categories.map((cat) => {
+            const count = MIC_ISSUES.filter((i) => i.category === cat).length;
+            return (
+              <button
+                key={cat}
+                className={`emp-shelf-tree-node emp-shelf-tree-node--indent${activeCategory === cat ? ' active' : ''}`}
+                onClick={() => handleSelectCategory(cat)}
+              >
+                {cat}
+                <span className="emp-shelf-tree-count">{count}</span>
+              </button>
+            );
+          })}
+        </div>
 
         {/* By year/quarter */}
         <div className="emp-shelf-tree-section-label">By Year</div>
@@ -1531,10 +1613,10 @@ function MicShelfSidebar({
             ...new Set(MIC_ISSUES.filter((i) => i.year === year).map((i) => i.quarter)),
           ].sort();
           return (
-            <div key={year}>
+            <div key={year} className="emp-shelf-tree-year-group">
               <button
                 className={`emp-shelf-tree-node${activeYear === year && !activeQuarter ? ' active' : ''}`}
-                onClick={() => onSelectYear(year)}
+                onClick={() => handleSelectYear(year)}
               >
                 <svg viewBox="0 0 14 14" fill="none" width="12" height="12" aria-hidden="true">
                   <rect x="2" y="2" width="10" height="10" rx="2" stroke="currentColor" strokeWidth="1.3" />
@@ -1545,19 +1627,21 @@ function MicShelfSidebar({
                   {MIC_ISSUES.filter((i) => i.year === year).length}
                 </span>
               </button>
-              {quarters.map((q) => {
-                const count = MIC_ISSUES.filter((i) => i.year === year && i.quarter === q).length;
-                return (
-                  <button
-                    key={q}
-                    className={`emp-shelf-tree-node emp-shelf-tree-node--quarter${activeYear === year && activeQuarter === q ? ' active' : ''}`}
-                    onClick={() => onSelectQuarter(year, q)}
-                  >
-                    {q}
-                    <span className="emp-shelf-tree-count">{count}</span>
-                  </button>
-                );
-              })}
+              <div className="emp-shelf-tree-quarter-group">
+                {quarters.map((q) => {
+                  const count = MIC_ISSUES.filter((i) => i.year === year && i.quarter === q).length;
+                  return (
+                    <button
+                      key={q}
+                      className={`emp-shelf-tree-node emp-shelf-tree-node--quarter${activeYear === year && activeQuarter === q ? ' active' : ''}`}
+                      onClick={() => handleSelectQuarter(year, q)}
+                    >
+                      {q}
+                      <span className="emp-shelf-tree-count">{count}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           );
         })}
