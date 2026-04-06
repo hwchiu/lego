@@ -287,7 +287,7 @@ function TimelineView({ items, lang, companyFilter }: TimelineViewProps) {
   function toggleTopic(topic: string) {
     setSelectedTopics((prev) => {
       if (prev === null) {
-        // Was showing all — now select only this topic
+        // "All" mode: selecting a specific topic switches from show-all to that single topic
         return new Set([topic]);
       }
       const next = new Set(prev);
@@ -722,6 +722,7 @@ export default function PressReleasePage() {
   const [companyFilter, setCompanyFilter] = useState('');
   const [companySuggestions, setCompanySuggestions] = useState<typeof SP500_COMPANIES>([]);
   const companyInputRef = useRef<HTMLInputElement>(null);
+  const companyWrapRef = useRef<HTMLDivElement>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const { lang } = useLanguage();
 
@@ -742,6 +743,12 @@ export default function PressReleasePage() {
     }
   }
 
+  function clearCompanyFilter() {
+    setCompanyFilter('');
+    setCompanySuggestions([]);
+    setShowSuggestions(false);
+  }
+
   function selectCompany(symbol: string) {
     setCompanyFilter(symbol);
     setShowSuggestions(false);
@@ -750,7 +757,7 @@ export default function PressReleasePage() {
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (companyInputRef.current && !companyInputRef.current.closest('.pr-company-search-wrap')?.contains(e.target as Node)) {
+      if (companyWrapRef.current && !companyWrapRef.current.contains(e.target as Node)) {
         setShowSuggestions(false);
       }
     }
@@ -792,7 +799,7 @@ export default function PressReleasePage() {
               </div>
 
               {/* Company search bar */}
-              <div className="pr-company-search-wrap" ref={companyInputRef}>
+              <div className="pr-company-search-wrap" ref={companyWrapRef}>
                 <svg
                   viewBox="0 0 14 14"
                   width="13"
@@ -805,6 +812,7 @@ export default function PressReleasePage() {
                   <path d="M8.5 8.5L12.5 12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                 </svg>
                 <input
+                  ref={companyInputRef}
                   className="pr-company-search-input"
                   type="text"
                   placeholder={lang === 'en' ? 'Search by symbol (e.g. AAPL)…' : '輸入 symbol 篩選公司...'}
@@ -815,7 +823,7 @@ export default function PressReleasePage() {
                 {companyFilter && (
                   <button
                     className="pr-company-search-clear"
-                    onClick={() => { setCompanyFilter(''); setCompanySuggestions([]); setShowSuggestions(false); }}
+                    onClick={clearCompanyFilter}
                     aria-label="Clear company filter"
                   >
                     <svg viewBox="0 0 14 14" width="11" height="11" fill="none" aria-hidden="true">
