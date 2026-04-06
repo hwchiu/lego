@@ -42,7 +42,7 @@ export default function MarketNewsPage() {
             <h1 className="news-page-title">Top Market News</h1>
             <NewsCategoryTabs active={activeCategory} onChange={setActiveCategory} />
             <div className="company-ranking-below-tabs">
-              <CompanyRankingTable />
+              <CompanyRankingTable activeCategory={activeCategory} />
             </div>
             <div className="news-pager-layout">
               <button

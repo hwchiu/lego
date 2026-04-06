@@ -1,13 +1,14 @@
 'use client';
 
-import { newsItems } from '@/app/data/news';
+import { newsItems, type NewsCategory } from '@/app/data/news';
 import rawContent from '@/content/company-changes.md';
 import { extractJson } from '@/app/lib/parseContent';
 
-// Compute top-5 companies by mention count across all news items
-function computeTopCompanies() {
+// Compute top-5 companies by mention count, optionally filtered by category
+function computeTopCompanies(category: NewsCategory = 'all') {
+  const filtered = category === 'all' ? newsItems : newsItems.filter((n) => n.category === category);
   const countMap: Record<string, { name: string; count: number }> = {};
-  for (const item of newsItems) {
+  for (const item of filtered) {
     for (const tag of item.tags) {
       if (!countMap[tag.symbol]) {
         countMap[tag.symbol] = { name: tag.name, count: 0 };
@@ -28,8 +29,12 @@ function getMockChange(index: number): number {
   return MOCK_CHANGES[index % MOCK_CHANGES.length];
 }
 
-export default function CompanyRankingTable() {
-  const companies = computeTopCompanies();
+interface CompanyRankingTableProps {
+  activeCategory?: NewsCategory;
+}
+
+export default function CompanyRankingTable({ activeCategory = 'all' }: CompanyRankingTableProps) {
+  const companies = computeTopCompanies(activeCategory);
 
   return (
     <div className="insight-block">

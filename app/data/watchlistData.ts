@@ -21,7 +21,11 @@ export interface HoldingEntity {
   lastQtrDOI: string;
 }
 
+// Q1 2026 (current / latest) entity data
 export const holdingsData: Record<string, HoldingEntity> = extractJsonBySection<Record<string, HoldingEntity>>(rawContent, 'Entity Data');
+
+// Q4 2025 historical snapshot
+export const holdingsDataQ4_2025: Record<string, HoldingEntity> = extractJsonBySection<Record<string, HoldingEntity>>(rawContent, 'Entity Data Q4 2025');
 
 // Pre-generated IDs for dynamically created watchlists (static-export compatible)
 // These IDs are reserved for user-created watchlists stored in localStorage
