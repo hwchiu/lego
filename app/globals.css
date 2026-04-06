@@ -14765,6 +14765,16 @@ a.fd-hint-btn {
   background: #bfdbfe;
   color: #1d4ed8;
 }
+/* Mobile toggle — visible only on small screens */
+.emp-shelf-mobile-toggle {
+  display: none;
+}
+/* Wrapper divs for grouped rows — no visual effect on desktop */
+.emp-shelf-tree-group,
+.emp-shelf-tree-year-group,
+.emp-shelf-tree-quarter-group {
+  display: contents;
+}
 
 /* ── Main shelf area ── */
 .emp-shelf-main {
@@ -15002,25 +15012,114 @@ a.fd-hint-btn {
     min-width: unset;
     border-right: none;
     border-bottom: 1px solid var(--c-border);
-    padding: 10px 0 6px;
+    padding: 0;
   }
-  .emp-shelf-tree {
+  /* Mobile toggle button */
+  .emp-shelf-mobile-toggle {
     display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    gap: 0;
-    padding: 0 12px;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--c-text);
+    gap: 8px;
+    min-height: 44px;
   }
-  .emp-shelf-tree-section-label {
+  .emp-shelf-mobile-toggle:active {
+    background: var(--c-bg);
+  }
+  .emp-shelf-mobile-toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex: 1;
+    min-width: 0;
+    color: var(--c-text-2);
+  }
+  .emp-shelf-mobile-toggle-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .emp-shelf-mobile-active-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #1d4ed8;
+    flex-shrink: 0;
+  }
+  .emp-shelf-mobile-chevron {
+    flex-shrink: 0;
+    color: var(--c-text-3);
+    transition: transform 0.2s ease;
+  }
+  .emp-shelf-mobile-chevron.open {
+    transform: rotate(180deg);
+  }
+  /* Desktop sidebar header hidden on mobile */
+  .emp-shelf-sidebar-header {
     display: none;
   }
-  .emp-shelf-tree-node {
-    white-space: nowrap;
+  /* Tree panel: hidden by default, revealed when .mobile-open */
+  .emp-shelf-tree {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    padding: 6px 14px 14px;
+    border-top: 1px solid var(--c-border);
+  }
+  .emp-shelf-tree.mobile-open {
+    display: flex;
+  }
+  /* Section labels visible on mobile */
+  .emp-shelf-tree-section-label {
+    display: block;
+    padding: 10px 2px 5px;
+  }
+  /* Grouped pill rows */
+  .emp-shelf-tree-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px 6px;
+    padding: 2px 0 4px;
+  }
+  /* Override display:contents from desktop */
+  .emp-shelf-tree-year-group,
+  .emp-shelf-tree-quarter-group {
+    display: block;
+  }
+  .emp-shelf-tree-year-group {
+    margin-bottom: 6px;
+  }
+  .emp-shelf-tree-quarter-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px 6px;
+    padding: 4px 0 0 10px;
+  }
+  /* Pill style for all nodes inside the group wrappers */
+  .emp-shelf-tree-group .emp-shelf-tree-node,
+  .emp-shelf-tree-year-group > .emp-shelf-tree-node,
+  .emp-shelf-tree-quarter-group .emp-shelf-tree-node {
+    width: auto;
     padding: 5px 10px;
     border-radius: 20px;
     font-size: 12px;
     flex-shrink: 0;
+    border: 1px solid var(--c-border);
+    background: var(--c-white);
   }
+  .emp-shelf-tree-group .emp-shelf-tree-node.active,
+  .emp-shelf-tree-year-group > .emp-shelf-tree-node.active,
+  .emp-shelf-tree-quarter-group .emp-shelf-tree-node.active {
+    border-color: #93c5fd;
+  }
+  /* Remove desktop indentation — pills are self-contained */
   .emp-shelf-tree-node--indent,
   .emp-shelf-tree-node--quarter {
     padding-left: 10px;
