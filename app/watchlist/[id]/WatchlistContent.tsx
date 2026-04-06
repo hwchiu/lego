@@ -739,6 +739,140 @@ function ManageViewModal({
   );
 }
 
+// ── Coming Soon panels (Health Score & Ratings) ───────────────────────────────
+function HealthScoreComingSoon() {
+  return (
+    <div className="wl-cs-wrap">
+      <span className="wl-cs-badge">即將推出</span>
+      <div className="wl-cs-layout">
+        {/* Gauge visualization */}
+        <div className="wl-cs-visual">
+          <svg className="wl-cs-gauge-svg" viewBox="0 0 260 165" fill="none" role="img" aria-label="健康評分儀表板示意，示範分數 72（滿分 100）">
+            <title>健康評分儀表板</title>
+            {/* Background track */}
+            <path d="M 30 140 A 100 100 0 0 1 230 140" stroke="#e5e7eb" strokeWidth="16" strokeLinecap="round" fill="none" />
+            {/* Red zone 0–33%: (30,140) → (80,53) */}
+            <path d="M 30 140 A 100 100 0 0 1 80 53" stroke="#ef4444" strokeWidth="16" strokeLinecap="round" fill="none" />
+            {/* Yellow zone 33–67%: (80,53) → (180,53) */}
+            <path d="M 80 53 A 100 100 0 0 1 180 53" stroke="#f59e0b" strokeWidth="16" strokeLinecap="round" fill="none" />
+            {/* Green zone 67–100%: (180,53) → (230,140) */}
+            <path d="M 180 53 A 100 100 0 0 1 230 140" stroke="#22c55e" strokeWidth="16" strokeLinecap="round" fill="none" />
+            {/* Needle pointing to score 72 */}
+            <line x1="130" y1="140" x2="182" y2="77" stroke="#1a2332" strokeWidth="3.5" strokeLinecap="round" />
+            {/* Pivot */}
+            <circle cx="130" cy="140" r="9" fill="#1a2332" />
+            <circle cx="130" cy="140" r="4" fill="white" />
+            {/* Score value */}
+            <text x="130" y="118" textAnchor="middle" fontSize="30" fontWeight="700" fill="#1a2332" fontFamily="system-ui,sans-serif">72</text>
+            <text x="130" y="158" textAnchor="middle" fontSize="10" fill="#6b7280" fontFamily="system-ui,sans-serif">Health Score</text>
+            {/* Zone labels */}
+            <text x="14" y="158" fontSize="9" fill="#ef4444" fontFamily="system-ui,sans-serif">低</text>
+            <text x="125" y="26" fontSize="9" fill="#f59e0b" fontFamily="system-ui,sans-serif">中</text>
+            <text x="238" y="158" fontSize="9" fill="#22c55e" fontFamily="system-ui,sans-serif">高</text>
+          </svg>
+          <div className="wl-cs-score-bands">
+            <span className="wl-cs-band wl-cs-band--low">0–40 低</span>
+            <span className="wl-cs-band wl-cs-band--mid">41–70 中</span>
+            <span className="wl-cs-band wl-cs-band--high">71–100 健康</span>
+          </div>
+        </div>
+        {/* Description and factor grid */}
+        <div className="wl-cs-info">
+          <h2 className="wl-cs-title">
+            健康評分
+            <span className="wl-cs-en">Health Score</span>
+          </h2>
+          <p className="wl-cs-desc">
+            透過蒐集多項關鍵因子，對目標公司進行全方位基本面健康度分析。系統整合財務數據、成長動能、市場定位等維度，最終以儀表板形式直觀呈現綜合評分，協助投資人迅速掌握公司整體體質。
+          </p>
+          <div className="wl-cs-factors">
+            {[
+              { icon: '📈', label: '營收成長', sub: 'Revenue Growth' },
+              { icon: '💰', label: '獲利能力', sub: 'Profitability' },
+              { icon: '🏦', label: '資產負債', sub: 'Balance Sheet' },
+              { icon: '💧', label: '現金流量', sub: 'Cash Flow' },
+              { icon: '🏆', label: '市場地位', sub: 'Market Position' },
+              { icon: '⚙️', label: '管理效能', sub: 'Management' },
+            ].map((f) => (
+              <div key={f.label} className="wl-cs-factor">
+                <span className="wl-cs-factor-icon">{f.icon}</span>
+                <span className="wl-cs-factor-label">{f.label}</span>
+                <span className="wl-cs-factor-sub">{f.sub}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RatingsComingSoon() {
+  return (
+    <div className="wl-cs-wrap">
+      <span className="wl-cs-badge">即將推出</span>
+      <div className="wl-cs-layout">
+        {/* Star rating + analyst distribution */}
+        <div className="wl-cs-visual">
+          <div className="wl-cs-stars" role="img" aria-label="綜合評分 4.2 分（滿分 5 分）">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <svg key={i} viewBox="0 0 20 20" width="28" height="28" aria-hidden="true">
+                <path
+                  d="M10 1.5l2.4 4.86 5.36.78-3.88 3.78.92 5.33L10 13.5l-4.8 2.75.92-5.33L2.24 7.14l5.36-.78L10 1.5z"
+                  fill={i <= 4 ? '#f59e0b' : '#e5e7eb'}
+                />
+              </svg>
+            ))}
+            <span className="wl-cs-star-score">4.2 / 5</span>
+          </div>
+          <div className="wl-cs-rating-dist">
+            {[
+              { label: '買入 Buy', pct: 62, cls: 'buy' },
+              { label: '持有 Hold', pct: 25, cls: 'hold' },
+              { label: '賣出 Sell', pct: 13, cls: 'sell' },
+            ].map((r) => (
+              <div key={r.cls} className="wl-cs-rating-row">
+                <span className={`wl-cs-rating-label wl-cs-rating-label--${r.cls}`}>{r.label}</span>
+                <div className="wl-cs-rating-bar-wrap">
+                  <div className={`wl-cs-rating-bar wl-cs-rating-bar--${r.cls}`} style={{ width: `${r.pct}%` }} />
+                </div>
+                <span className="wl-cs-rating-pct">{r.pct}%</span>
+              </div>
+            ))}
+          </div>
+          <p className="wl-cs-analyst-count">基於 32 位分析師評級</p>
+        </div>
+        {/* Description and feature grid */}
+        <div className="wl-cs-info">
+          <h2 className="wl-cs-title">
+            評級分析
+            <span className="wl-cs-en">Ratings</span>
+          </h2>
+          <p className="wl-cs-desc">
+            整合來自多家主要機構的分析師評級與目標價資訊，提供買入、持有、賣出比例分佈及共識評分，並追蹤評級變化趨勢，為投資決策提供全面的市場觀點參考。
+          </p>
+          <div className="wl-cs-factors">
+            {[
+              { icon: '⭐', label: '分析師評級', sub: 'Analyst Ratings' },
+              { icon: '🎯', label: '目標價區間', sub: 'Price Targets' },
+              { icon: '📊', label: '評級分佈', sub: 'Rating Distribution' },
+              { icon: '🔄', label: '評級變化', sub: 'Rating Changes' },
+              { icon: '🏛️', label: '機構覆蓋', sub: 'Institutional Coverage' },
+              { icon: '📉', label: '情緒指標', sub: 'Sentiment Indicator' },
+            ].map((f) => (
+              <div key={f.label} className="wl-cs-factor">
+                <span className="wl-cs-factor-icon">{f.icon}</span>
+                <span className="wl-cs-factor-label">{f.label}</span>
+                <span className="wl-cs-factor-sub">{f.sub}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Main page ─────────────────────────────────────────────────────────────────
 type FeedTab = 'Latest' | 'Analysis' | 'News' | 'Warnings' | 'Transcripts' | 'Press Releases';
 
@@ -1651,132 +1785,9 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                 );
               })()
             ) : activeTab === 'Health Score' ? (
-              /* ── Health Score: Coming Soon ───────────────────────────────── */
-              <div className="wl-cs-wrap">
-                <span className="wl-cs-badge">即將推出</span>
-                <div className="wl-cs-layout">
-                  {/* Gauge visualization */}
-                  <div className="wl-cs-visual">
-                    <svg className="wl-cs-gauge-svg" viewBox="0 0 260 165" fill="none" role="img" aria-label="健康評分儀表板示意，示範分數 72（滿分 100）">
-                      <title>健康評分儀表板</title>
-                      {/* Background track */}
-                      <path d="M 30 140 A 100 100 0 0 1 230 140" stroke="#e5e7eb" strokeWidth="16" strokeLinecap="round" fill="none" />
-                      {/* Red zone 0–33%: (30,140) → (80,53) */}
-                      <path d="M 30 140 A 100 100 0 0 1 80 53" stroke="#ef4444" strokeWidth="16" strokeLinecap="round" fill="none" />
-                      {/* Yellow zone 33–67%: (80,53) → (180,53) */}
-                      <path d="M 80 53 A 100 100 0 0 1 180 53" stroke="#f59e0b" strokeWidth="16" strokeLinecap="round" fill="none" />
-                      {/* Green zone 67–100%: (180,53) → (230,140) */}
-                      <path d="M 180 53 A 100 100 0 0 1 230 140" stroke="#22c55e" strokeWidth="16" strokeLinecap="round" fill="none" />
-                      {/* Needle pointing to score 72 */}
-                      <line x1="130" y1="140" x2="182" y2="77" stroke="#1a2332" strokeWidth="3.5" strokeLinecap="round" />
-                      {/* Pivot */}
-                      <circle cx="130" cy="140" r="9" fill="#1a2332" />
-                      <circle cx="130" cy="140" r="4" fill="white" />
-                      {/* Score value */}
-                      <text x="130" y="118" textAnchor="middle" fontSize="30" fontWeight="700" fill="#1a2332" fontFamily="system-ui,sans-serif">72</text>
-                      <text x="130" y="158" textAnchor="middle" fontSize="10" fill="#6b7280" fontFamily="system-ui,sans-serif">Health Score</text>
-                      {/* Zone labels */}
-                      <text x="14" y="158" fontSize="9" fill="#ef4444" fontFamily="system-ui,sans-serif">低</text>
-                      <text x="125" y="26" fontSize="9" fill="#f59e0b" fontFamily="system-ui,sans-serif">中</text>
-                      <text x="238" y="158" fontSize="9" fill="#22c55e" fontFamily="system-ui,sans-serif">高</text>
-                    </svg>
-                    <div className="wl-cs-score-bands">
-                      <span className="wl-cs-band wl-cs-band--low">0–40 低</span>
-                      <span className="wl-cs-band wl-cs-band--mid">41–70 中</span>
-                      <span className="wl-cs-band wl-cs-band--high">71–100 健康</span>
-                    </div>
-                  </div>
-                  {/* Description and factor grid */}
-                  <div className="wl-cs-info">
-                    <h2 className="wl-cs-title">
-                      健康評分
-                      <span className="wl-cs-en">Health Score</span>
-                    </h2>
-                    <p className="wl-cs-desc">
-                      透過蒐集多項關鍵因子，對目標公司進行全方位基本面健康度分析。系統整合財務數據、成長動能、市場定位等維度，最終以儀表板形式直觀呈現綜合評分，協助投資人迅速掌握公司整體體質。
-                    </p>
-                    <div className="wl-cs-factors">
-                      {[
-                        { icon: '📈', label: '營收成長', sub: 'Revenue Growth' },
-                        { icon: '💰', label: '獲利能力', sub: 'Profitability' },
-                        { icon: '🏦', label: '資產負債', sub: 'Balance Sheet' },
-                        { icon: '💧', label: '現金流量', sub: 'Cash Flow' },
-                        { icon: '🏆', label: '市場地位', sub: 'Market Position' },
-                        { icon: '⚙️', label: '管理效能', sub: 'Management' },
-                      ].map((f) => (
-                        <div key={f.label} className="wl-cs-factor">
-                          <span className="wl-cs-factor-icon">{f.icon}</span>
-                          <span className="wl-cs-factor-label">{f.label}</span>
-                          <span className="wl-cs-factor-sub">{f.sub}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <HealthScoreComingSoon />
             ) : activeTab === 'Ratings' ? (
-              /* ── Ratings: Coming Soon ────────────────────────────────────── */
-              <div className="wl-cs-wrap">
-                <span className="wl-cs-badge">即將推出</span>
-                <div className="wl-cs-layout">
-                  {/* Star rating + analyst distribution */}
-                  <div className="wl-cs-visual">
-                    <div className="wl-cs-stars" role="img" aria-label="綜合評分 4.2 分（滿分 5 分）">
-                      {[1, 2, 3, 4, 5].map((i) => (
-                        <svg key={i} viewBox="0 0 20 20" width="28" height="28" aria-hidden="true">
-                          <path
-                            d="M10 1.5l2.4 4.86 5.36.78-3.88 3.78.92 5.33L10 13.5l-4.8 2.75.92-5.33L2.24 7.14l5.36-.78L10 1.5z"
-                            fill={i <= 4 ? '#f59e0b' : '#e5e7eb'}
-                          />
-                        </svg>
-                      ))}
-                      <span className="wl-cs-star-score">4.2 / 5</span>
-                    </div>
-                    <div className="wl-cs-rating-dist">
-                      {[
-                        { label: '買入 Buy', pct: 62, cls: 'buy' },
-                        { label: '持有 Hold', pct: 25, cls: 'hold' },
-                        { label: '賣出 Sell', pct: 13, cls: 'sell' },
-                      ].map((r) => (
-                        <div key={r.cls} className="wl-cs-rating-row">
-                          <span className={`wl-cs-rating-label wl-cs-rating-label--${r.cls}`}>{r.label}</span>
-                          <div className="wl-cs-rating-bar-wrap">
-                            <div className={`wl-cs-rating-bar wl-cs-rating-bar--${r.cls}`} style={{ width: `${r.pct}%` }} />
-                          </div>
-                          <span className="wl-cs-rating-pct">{r.pct}%</span>
-                        </div>
-                      ))}
-                    </div>
-                    <p className="wl-cs-analyst-count">基於 32 位分析師評級</p>
-                  </div>
-                  {/* Description and feature grid */}
-                  <div className="wl-cs-info">
-                    <h2 className="wl-cs-title">
-                      評級分析
-                      <span className="wl-cs-en">Ratings</span>
-                    </h2>
-                    <p className="wl-cs-desc">
-                      整合來自多家主要機構的分析師評級與目標價資訊，提供買入、持有、賣出比例分佈及共識評分，並追蹤評級變化趨勢，為投資決策提供全面的市場觀點參考。
-                    </p>
-                    <div className="wl-cs-factors">
-                      {[
-                        { icon: '⭐', label: '分析師評級', sub: 'Analyst Ratings' },
-                        { icon: '🎯', label: '目標價區間', sub: 'Price Targets' },
-                        { icon: '📊', label: '評級分佈', sub: 'Rating Distribution' },
-                        { icon: '🔄', label: '評級變化', sub: 'Rating Changes' },
-                        { icon: '🏛️', label: '機構覆蓋', sub: 'Institutional Coverage' },
-                        { icon: '📉', label: '情緒指標', sub: 'Sentiment Indicator' },
-                      ].map((f) => (
-                        <div key={f.label} className="wl-cs-factor">
-                          <span className="wl-cs-factor-icon">{f.icon}</span>
-                          <span className="wl-cs-factor-label">{f.label}</span>
-                          <span className="wl-cs-factor-sub">{f.sub}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <RatingsComingSoon />
             ) : null}
 
           </div>

@@ -15781,7 +15781,4 @@ a.fd-hint-btn {
   .wl-cs-wrap {
     padding: 20px 16px;
   }
-  .wl-cs-factors {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
