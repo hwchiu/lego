@@ -15782,6 +15782,6 @@ a.fd-hint-btn {
     padding: 20px 16px;
   }
   .wl-cs-factors {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 }

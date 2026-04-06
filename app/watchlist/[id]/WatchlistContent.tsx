@@ -1657,7 +1657,8 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                 <div className="wl-cs-layout">
                   {/* Gauge visualization */}
                   <div className="wl-cs-visual">
-                    <svg className="wl-cs-gauge-svg" viewBox="0 0 260 165" fill="none" aria-hidden="true">
+                    <svg className="wl-cs-gauge-svg" viewBox="0 0 260 165" fill="none" role="img" aria-label="健康評分儀表板示意，示範分數 72（滿分 100）">
+                      <title>健康評分儀表板</title>
                       {/* Background track */}
                       <path d="M 30 140 A 100 100 0 0 1 230 140" stroke="#e5e7eb" strokeWidth="16" strokeLinecap="round" fill="none" />
                       {/* Red zone 0–33%: (30,140) → (80,53) */}
@@ -1720,7 +1721,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                 <div className="wl-cs-layout">
                   {/* Star rating + analyst distribution */}
                   <div className="wl-cs-visual">
-                    <div className="wl-cs-stars">
+                    <div className="wl-cs-stars" role="img" aria-label="綜合評分 4.2 分（滿分 5 分）">
                       {[1, 2, 3, 4, 5].map((i) => (
                         <svg key={i} viewBox="0 0 20 20" width="28" height="28" aria-hidden="true">
                           <path
