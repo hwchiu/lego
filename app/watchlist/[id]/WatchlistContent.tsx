@@ -814,7 +814,7 @@ function RatingsComingSoon() {
       <div className="wl-cs-layout">
         {/* Star rating + analyst distribution */}
         <div className="wl-cs-visual">
-          <div className="wl-cs-stars" role="img" aria-label="分析師綜合評分 4.2 分（滿分 5 分），視覺顯示 4 顆實心星">
+          <div className="wl-cs-stars" role="img" aria-label="分析師綜合評分 4.2 分（滿分 5 分）；圖示以 4 顆實心星加 1 顆空心星代表此評分">
             {[1, 2, 3, 4, 5].map((i) => (
               <svg key={i} viewBox="0 0 20 20" width="28" height="28" aria-hidden="true">
                 <path
