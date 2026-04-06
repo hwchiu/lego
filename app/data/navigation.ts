@@ -133,7 +133,7 @@ export const supplyChainNav: NavItem[] = [
 ];
 
 export const bottomLinks: NavItem[] = [
-  { label: 'Intelligence Search', href: '/intelligence-search', icon: 'intelligenceSearch', badge: 'COMING SOON', badgeStyle: 'coming-soon' },
+  { label: 'AI Search', href: '/ai-search', icon: 'intelligenceSearch', badge: 'COMING SOON', badgeStyle: 'coming-soon' },
   { label: 'User Manual', href: '/user-manual', icon: 'userManual' },
 ];
 
