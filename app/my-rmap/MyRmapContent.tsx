@@ -236,6 +236,7 @@ export default function MyRmapContent() {
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     rows={4}
+                    maxLength={500}
                   />
                   <div className="mrmap-build-actions">
                     <span className="mrmap-build-hint">
