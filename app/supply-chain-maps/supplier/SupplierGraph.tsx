@@ -375,6 +375,13 @@ function DetailPanel({ node, onClose }: DetailPanelProps) {
     startPosX: number;
     startPosY: number;
   } | null>(null);
+  const cleanupRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (cleanupRef.current) cleanupRef.current();
+    };
+  }, []);
 
   function handleDragMouseDown(e: React.MouseEvent) {
     e.preventDefault();
@@ -388,9 +395,11 @@ function DetailPanel({ node, onClose }: DetailPanelProps) {
     }
     function onUp() {
       cardDragRef.current = null;
+      cleanupRef.current = null;
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseup', onUp);
     }
+    cleanupRef.current = onUp;
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
   }
@@ -735,7 +744,6 @@ function FilterBar({
           })
         }
         onClearAll={() => setSelectedRisk(new Set())}
-        singleSelect
       />
 
       {/* Industry tags */}
