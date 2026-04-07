@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { TSM_TIER1_SUPPLIERS, TSM_TIER2_SUPPLIERS, TSM_CENTER_NODE } from '@/app/data/tsmcSupplierData';
@@ -367,6 +367,22 @@ const SVG_H = 1000;
 const CCX = SVG_W / 2;
 const CCY = SVG_H / 2;
 
+// ── Zoom / pan constants ──────────────────────────────────────────────────────
+
+const MIN_VB_SCALE = 0.4; // smaller viewBox → zoomed in (2.5× magnification)
+const MAX_VB_SCALE = 2.0; // larger viewBox → zoomed out (0.5× magnification)
+const ZOOM_STEP = 1.25;
+
+interface ViewBoxState { x: number; y: number; w: number; h: number }
+const DEFAULT_VB: ViewBoxState = { x: 0, y: 0, w: SVG_W, h: SVG_H };
+
+interface PanState {
+  startClientX: number;
+  startClientY: number;
+  startVBX: number;
+  startVBY: number;
+}
+
 function computeLayout(visible: DisplayNode[]): LayoutNode[] {
   const result: LayoutNode[] = [];
 
@@ -519,8 +535,15 @@ export default function KnowledgeGraph() {
     segment: false,
     country: false,
   });
-  const [zoom, setZoom] = useState(1);
+  const [viewBox, setViewBox] = useState<ViewBoxState>(DEFAULT_VB);
+  const [panState, setPanState] = useState<PanState | null>(null);
   const [selected, setSelected] = useState<Selection>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const viewBoxRef = useRef(viewBox);
+  viewBoxRef.current = viewBox;
+  const panRef = useRef(panState);
+  panRef.current = panState;
+  const didDragRef = useRef(false);
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -570,12 +593,14 @@ export default function KnowledgeGraph() {
   const selectedNodeId = selected?.type === 'node' ? selected.data.id : null;
 
   function handleNodeClick(n: LayoutNode) {
+    if (didDragRef.current) return;
     setSelected((prev) =>
       prev?.type === 'node' && prev.data.id === n.id ? null : { type: 'node', data: n },
     );
   }
 
   function handleEdgeClick(e: GraphEdge) {
+    if (didDragRef.current) return;
     setSelected((prev) =>
       prev?.type === 'edge' && prev.data.from === e.from && prev.data.to === e.to
         ? null
@@ -590,6 +615,59 @@ export default function KnowledgeGraph() {
     setExpandedFilters({ industry: false, segment: false, country: false });
     setSelected(null);
   }
+
+  const applyZoom = useCallback((factor: number) => {
+    setViewBox((prev) => {
+      const curScale = prev.w / SVG_W;
+      const newScale = Math.max(MIN_VB_SCALE, Math.min(MAX_VB_SCALE, curScale / factor));
+      const newW = SVG_W * newScale;
+      const newH = SVG_H * newScale;
+      const cx = prev.x + prev.w / 2;
+      const cy = prev.y + prev.h / 2;
+      return { x: cx - newW / 2, y: cy - newH / 2, w: newW, h: newH };
+    });
+  }, []);
+
+  const zoomIn = useCallback(() => applyZoom(ZOOM_STEP), [applyZoom]);
+  const zoomOut = useCallback(() => applyZoom(1 / ZOOM_STEP), [applyZoom]);
+  const zoomReset = useCallback(() => setViewBox(DEFAULT_VB), []);
+
+  const resetGraph = useCallback(() => {
+    setViewBox(DEFAULT_VB);
+    setSelected(null);
+  }, []);
+
+  const handleSvgMouseDown = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
+    didDragRef.current = false;
+    setPanState({
+      startClientX: e.clientX,
+      startClientY: e.clientY,
+      startVBX: viewBoxRef.current.x,
+      startVBY: viewBoxRef.current.y,
+    });
+  }, []);
+
+  const handleSvgMouseMove = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
+    const pan = panRef.current;
+    if (pan && svgRef.current) {
+      didDragRef.current = true;
+      const vb = viewBoxRef.current;
+      const rect = svgRef.current.getBoundingClientRect();
+      const scaleX = vb.w / rect.width;
+      const scaleY = vb.h / rect.height;
+      const dx = (e.clientX - pan.startClientX) * scaleX;
+      const dy = (e.clientY - pan.startClientY) * scaleY;
+      setViewBox((prev) => ({
+        ...prev,
+        x: pan.startVBX - dx,
+        y: pan.startVBY - dy,
+      }));
+    }
+  }, []);
+
+  const clearPan = useCallback(() => {
+    setPanState(null);
+  }, []);
 
   return (
     <div className="kg-wrapper">
@@ -652,16 +730,7 @@ export default function KnowledgeGraph() {
         </div>
       </div>
 
-      {/* Zoom controls */}
-      <div className="kg-zoom-controls">
-        <button className="kg-zoom-btn" onClick={() => setZoom((z) => Math.min(z + 0.15, 3))} aria-label="Zoom in">+</button>
-        <button className="kg-zoom-btn" onClick={() => setZoom((z) => Math.max(z - 0.15, 0.3))} aria-label="Zoom out">−</button>
-        <button className="kg-zoom-btn" onClick={() => setZoom(1)} aria-label="Reset zoom" style={{ fontSize: 10, width: 42 }}>Reset</button>
-        <span className="kg-zoom-label">{Math.round(zoom * 100)}%</span>
-      </div>
-
-      {/* Legend */}
-      <div className="kg-legend">
+      {/* Legend */}      <div className="kg-legend">
         {(['supplier1', 'supplier2', 'customer', 'competitor', 'partner'] as NodeRole[]).map((role) => (
           <div key={role} className="kg-legend-item">
             <span className="kg-legend-dot" style={{ background: ROLE_COLORS[role].fill, border: `2px solid ${ROLE_COLORS[role].stroke}` }} />
@@ -674,26 +743,30 @@ export default function KnowledgeGraph() {
       {/* Graph + Feed panel side by side */}
       <div className="rmap-graph-content">
         {/* Graph area (70%) with draggable info card overlay */}
-        <div className="rmap-svg-container" style={{ position: 'relative' }}>
-          <div className="kg-graph-container">
-            <div className="kg-graph-scroll" style={{ overflow: 'auto' }}>
-              <svg
-                viewBox={`0 0 ${SVG_W} ${SVG_H}`}
-                className="kg-svg"
-                style={{ width: SVG_W * zoom, height: SVG_H * zoom, display: 'block' }}
-              >
-                <defs>
-                  <filter id="node-glow" x="-30%" y="-30%" width="160%" height="160%">
-                    <feGaussianBlur stdDeviation="3" result="blur" />
-                    <feMerge>
-                      <feMergeNode in="blur" />
-                      <feMergeNode in="SourceGraphic" />
-                    </feMerge>
-                  </filter>
-                </defs>
+        <div className="rmap-svg-container">
+          <svg
+            ref={svgRef}
+            viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`}
+            className="rmap-svg"
+            aria-label="RMAP Relational Graph"
+            onMouseDown={handleSvgMouseDown}
+            onMouseMove={handleSvgMouseMove}
+            onMouseUp={clearPan}
+            onMouseLeave={clearPan}
+            style={{ cursor: panState ? 'grabbing' : 'grab' }}
+          >
+            <defs>
+              <filter id="node-glow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
 
-                {/* Edges */}
-                {visibleEdges.map((edge, i) => {
+            {/* Edges */}
+            {visibleEdges.map((edge, i) => {
                   const src = nodeById[edge.from];
                   const tgt = nodeById[edge.to];
                   if (!src || !tgt) return null;
@@ -728,8 +801,8 @@ export default function KnowledgeGraph() {
                   );
                 })}
 
-                {/* Nodes */}
-                {layoutNodes.map((n) => {
+            {/* Nodes */}
+            {layoutNodes.map((n) => {
                   const isCenter = n.role === 'center';
                   const c = ROLE_COLORS[n.role];
                   const isSelected = selectedNodeId === n.id;
@@ -741,6 +814,7 @@ export default function KnowledgeGraph() {
                     <g
                       key={n.id}
                       onClick={() => handleNodeClick(n)}
+                      onMouseDown={(e) => e.stopPropagation()}
                       style={{ cursor: 'pointer', opacity: dimmed ? 0.25 : 1 }}
                     >
                       <title>{n.name} ({n.ticker}) — {n.country} | {n.industry} | {n.segment}</title>
@@ -795,29 +869,79 @@ export default function KnowledgeGraph() {
                   );
                 })}
 
-                {/* Section labels */}
-                <text x={1180} y={80} textAnchor="middle" fill="#64748b" fontSize={9.5}
-                  fontWeight="700" letterSpacing="0.08em"
-                  style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}>
-                  SUPPLIERS
-                </text>
-                <text x={1430} y={80} textAnchor="middle" fill="#94a3b8" fontSize={8.5}
-                  fontWeight="700" letterSpacing="0.08em"
-                  style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}>
-                  TIER-2
-                </text>
-                <text x={350} y={60} textAnchor="middle" fill="#64748b" fontSize={9.5}
-                  fontWeight="700" letterSpacing="0.08em"
-                  style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}>
-                  CUSTOMERS
-                </text>
-                <text x={CCX} y={60} textAnchor="middle" fill="#64748b" fontSize={9.5}
-                  fontWeight="700" letterSpacing="0.08em"
-                  style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}>
-                  COMPETITORS (bottom)
-                </text>
+            {/* Section labels */}
+            <text x={1180} y={80} textAnchor="middle" fill="#64748b" fontSize={9.5}
+              fontWeight="700" letterSpacing="0.08em"
+              style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}>
+              SUPPLIERS
+            </text>
+            <text x={1430} y={80} textAnchor="middle" fill="#94a3b8" fontSize={8.5}
+              fontWeight="700" letterSpacing="0.08em"
+              style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}>
+              TIER-2
+            </text>
+            <text x={350} y={60} textAnchor="middle" fill="#64748b" fontSize={9.5}
+              fontWeight="700" letterSpacing="0.08em"
+              style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}>
+              CUSTOMERS
+            </text>
+            <text x={CCX} y={60} textAnchor="middle" fill="#64748b" fontSize={9.5}
+              fontWeight="700" letterSpacing="0.08em"
+              style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}>
+              COMPETITORS (bottom)
+            </text>
+          </svg>
+
+          {/* Zoom controls — minimal flat buttons, consistent with Supplier Network */}
+          <div className="rmap-zoom-controls">
+            <button
+              className="rmap-zoom-btn rmap-zoom-btn--graph-reset"
+              onClick={resetGraph}
+              title="Reset Graph Layout"
+              aria-label="Reset Graph Layout"
+            >
+              <svg
+                viewBox="0 0 14 14"
+                width="12"
+                height="12"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M2.5 7A4.5 4.5 0 1 0 3.5 4" />
+                <polyline points="3.5 1.5 3.5 4.5 6.5 4.5" />
               </svg>
-            </div>
+            </button>
+            <div className="rmap-zoom-sep" />
+            <button
+              className="rmap-zoom-btn"
+              onClick={zoomIn}
+              disabled={viewBox.w <= SVG_W * MIN_VB_SCALE + 1}
+              title="Zoom In"
+              aria-label="Zoom In"
+            >
+              +
+            </button>
+            <button
+              className="rmap-zoom-btn rmap-zoom-btn--reset"
+              onClick={zoomReset}
+              title="Reset Zoom"
+              aria-label="Reset Zoom"
+            >
+              ⊡
+            </button>
+            <button
+              className="rmap-zoom-btn"
+              onClick={zoomOut}
+              disabled={viewBox.w >= SVG_W * MAX_VB_SCALE - 1}
+              title="Zoom Out"
+              aria-label="Zoom Out"
+            >
+              −
+            </button>
           </div>
 
           {/* Draggable node info card overlay */}
