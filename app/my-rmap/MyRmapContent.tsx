@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
@@ -201,6 +202,25 @@ const SCENARIO_CARDS = [
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function MyRmapContent() {
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  function handleShare(e: React.MouseEvent, card: (typeof SCENARIO_CARDS)[number]) {
+    e.preventDefault();
+    e.stopPropagation();
+    const url = `${window.location.origin}/lego${card.href}/`;
+    if (navigator.share) {
+      navigator.share({ title: card.title, url }).catch(() => {});
+    } else {
+      navigator.clipboard
+        .writeText(url)
+        .then(() => {
+          setCopiedKey(card.key);
+          setTimeout(() => setCopiedKey(null), 1800);
+        })
+        .catch(() => {});
+    }
+  }
+
   return (
     <>
       <TopNav />
@@ -261,20 +281,17 @@ export default function MyRmapContent() {
                     </Link>
                     <button
                       className="mrmap-scenario-share-btn"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        const url = `${window.location.origin}/lego${card.href}/`;
-                        if (navigator.share) {
-                          navigator.share({ title: card.title, url }).catch(() => {});
-                        } else {
-                          navigator.clipboard.writeText(url).catch(() => {});
-                        }
-                      }}
-                      title="Share this network"
+                      onClick={(e) => handleShare(e, card)}
+                      title={copiedKey === card.key ? 'Link copied!' : 'Share this network'}
                       aria-label="Share this network"
                     >
-                      <ShareIcon />
+                      {copiedKey === card.key ? (
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                          <path d="M3 8l3.5 3.5L13 4.5" stroke="#16a34a" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      ) : (
+                        <ShareIcon />
+                      )}
                     </button>
                   </div>
                 ))}
