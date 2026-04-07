@@ -334,7 +334,7 @@ function SymbolItem({ symbol, index, relevance, onDelete, onDragStart, onDragEnt
         <path d="M3 4h8M3 7h8M3 10h8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
       </svg>
       <span className="cwl-symbol-badge">{symbol}</span>
-      {name && <span className="cwl-symbol-name">{name}</span>}
+      <span className="cwl-symbol-name">{name}</span>
       {relevance !== undefined && <span className="cwl-symbol-relevance">{relevance}%</span>}
       <span className="cwl-symbol-rank">#{index + 1}</span>
       <button

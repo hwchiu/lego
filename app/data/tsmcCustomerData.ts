@@ -21,6 +21,7 @@ export interface CustomerNode {
   color: string;
   productCategories: string[];
   industryCategory: string;
+  segment: string;
 }
 
 export interface CustomerEdge {
@@ -80,6 +81,7 @@ export const TSM_CUSTOMER_CENTER: CustomerNode = {
   color: '#1a2332',
   productCategories: ['Logic Chips', 'Advanced Packaging'],
   industryCategory: 'Semiconductor Foundry',
+  segment: 'Foundry',
 };
 
 // ---------------------------------------------------------------------------
@@ -103,6 +105,7 @@ export const TSM_CUSTOMERS: CustomerNode[] = [
     color: '#1565c0',
     productCategories: ['Smartphones', 'Personal Computers', 'Tablets', 'Wearables'],
     industryCategory: 'Consumer Electronics',
+    segment: 'Consumer Electronics',
   },
   {
     id: 'NVDA',
@@ -120,6 +123,7 @@ export const TSM_CUSTOMERS: CustomerNode[] = [
     color: '#76b900',
     productCategories: ['AI Accelerators', 'Data Center GPUs', 'Automotive SoC'],
     industryCategory: 'AI & Data Center',
+    segment: 'AI/Cloud',
   },
   {
     id: 'AMD',
@@ -137,6 +141,7 @@ export const TSM_CUSTOMERS: CustomerNode[] = [
     color: '#ed1c24',
     productCategories: ['PC Processors', 'AI GPUs', 'Data Center CPUs'],
     industryCategory: 'PC & Data Center',
+    segment: 'CPU/GPU',
   },
   {
     id: 'QCOM',
@@ -154,6 +159,7 @@ export const TSM_CUSTOMERS: CustomerNode[] = [
     color: '#3253dc',
     productCategories: ['Mobile SoC', '5G Modems', 'Automotive Chips'],
     industryCategory: 'Mobile & Connectivity',
+    segment: 'Mobile SoC',
   },
   {
     id: 'AVGO',
@@ -171,6 +177,7 @@ export const TSM_CUSTOMERS: CustomerNode[] = [
     color: '#cc0000',
     productCategories: ['Networking ASICs', 'Custom AI Chips', 'Storage Controllers'],
     industryCategory: 'Networking & Cloud',
+    segment: 'Networking',
   },
   {
     id: 'MTKMF',
@@ -188,6 +195,7 @@ export const TSM_CUSTOMERS: CustomerNode[] = [
     color: '#0891b2',
     productCategories: ['Mobile SoC', 'Smart TV Chips', 'IoT Processors'],
     industryCategory: 'Mobile & Connectivity',
+    segment: 'Mobile SoC',
   },
   {
     id: 'MRVL',
@@ -205,6 +213,7 @@ export const TSM_CUSTOMERS: CustomerNode[] = [
     color: '#6d28d9',
     productCategories: ['Data Infrastructure', 'Custom AI ASICs', 'Optical DSP'],
     industryCategory: 'Networking & Cloud',
+    segment: 'Networking',
   },
   {
     id: 'INTC',
@@ -222,6 +231,7 @@ export const TSM_CUSTOMERS: CustomerNode[] = [
     color: '#0068b5',
     productCategories: ['PC Processors', 'Data Center CPUs', 'AI Accelerators'],
     industryCategory: 'PC & Data Center',
+    segment: 'CPU/GPU',
   },
   {
     id: 'SONY',
@@ -239,6 +249,7 @@ export const TSM_CUSTOMERS: CustomerNode[] = [
     color: '#1a1a1a',
     productCategories: ['Image Sensors', 'Gaming Consoles', 'Consumer Electronics'],
     industryCategory: 'Consumer Electronics',
+    segment: 'Image Sensors',
   },
   {
     id: 'TXN',
@@ -256,6 +267,91 @@ export const TSM_CUSTOMERS: CustomerNode[] = [
     color: '#c0392b',
     productCategories: ['Analog Chips', 'Embedded Processors', 'Industrial ICs'],
     industryCategory: 'Industrial & Analog',
+    segment: 'Analog/Mixed Signal',
+  },
+  {
+    id: 'META', name: 'Meta Platforms', ticker: 'META', exchange: 'NASDAQ', country: 'USA',
+    relationship: 'AI Chip Customer — Custom AI ASICs',
+    purchaseItems: 'MTIA custom AI accelerator chips (N5/N3 node)',
+    financials: { revenue: '$134.9B', grossMargin: '81.0%', marketCap: '~$1.3T' },
+    color: '#1877f2', productCategories: ['AI Accelerators'], industryCategory: 'Technology', segment: 'AI/Cloud',
+  },
+  {
+    id: 'AMZN', name: 'Amazon (AWS)', ticker: 'AMZN', exchange: 'NASDAQ', country: 'USA',
+    relationship: 'Cloud Silicon Customer — Graviton & Trainium',
+    purchaseItems: 'Graviton4 CPUs, Trainium2 ML chips',
+    financials: { revenue: '$554B', grossMargin: '47.0%', marketCap: '~$2T' },
+    color: '#ff9900', productCategories: ['Cloud CPUs', 'AI Training Chips'], industryCategory: 'Technology', segment: 'AI/Cloud',
+  },
+  {
+    id: 'GOOGL', name: 'Google (Alphabet)', ticker: 'GOOGL', exchange: 'NASDAQ', country: 'USA',
+    relationship: 'AI Chip Customer — TPU',
+    purchaseItems: 'Custom TPU v5/v6 AI accelerators',
+    financials: { revenue: '$307B', grossMargin: '57.4%', marketCap: '~$2.1T' },
+    color: '#4285f4', productCategories: ['TPU Chips', 'AI Accelerators'], industryCategory: 'Technology', segment: 'AI/Cloud',
+  },
+  {
+    id: 'MSFT', name: 'Microsoft', ticker: 'MSFT', exchange: 'NASDAQ', country: 'USA',
+    relationship: 'AI Chip Customer — Maia AI',
+    purchaseItems: 'Azure Maia AI accelerator chips',
+    financials: { revenue: '$211B', grossMargin: '68.9%', marketCap: '~$3T' },
+    color: '#0078d4', productCategories: ['AI Accelerators'], industryCategory: 'Technology', segment: 'AI/Cloud',
+  },
+  {
+    id: 'ARM', name: 'Arm Holdings', ticker: 'ARM', exchange: 'NASDAQ', country: 'UK',
+    relationship: 'IP Core Customer — Chip Design',
+    purchaseItems: 'Advanced process node test chips & partner tape-outs',
+    financials: { revenue: '$3.2B', grossMargin: '97.4%', marketCap: '~$170B' },
+    color: '#0091bd', productCategories: ['CPU IP Cores'], industryCategory: 'Semiconductor IP', segment: 'IP Cores',
+  },
+  {
+    id: 'STM', name: 'STMicroelectronics', ticker: 'STM', exchange: 'NYSE', country: 'Switzerland',
+    relationship: 'Customer — Automotive & Industrial',
+    purchaseItems: 'Advanced automotive microcontrollers, power ICs',
+    financials: { revenue: '$17.3B', grossMargin: '41.7%', marketCap: '~$22B' },
+    color: '#003087', productCategories: ['Automotive ICs', 'Power Management'], industryCategory: 'Semiconductor IDM', segment: 'Automotive',
+  },
+  {
+    id: 'NXP', name: 'NXP Semiconductors', ticker: 'NXPI', exchange: 'NASDAQ', country: 'Netherlands',
+    relationship: 'Customer — Automotive Chips',
+    purchaseItems: 'S32 automotive processors, radar ICs',
+    financials: { revenue: '$12.6B', grossMargin: '57.5%', marketCap: '~$50B' },
+    color: '#ff6600', productCategories: ['Automotive Processors', 'Radar ICs'], industryCategory: 'Semiconductor IDM', segment: 'Automotive',
+  },
+  {
+    id: 'ADI', name: 'Analog Devices', ticker: 'ADI', exchange: 'NASDAQ', country: 'USA',
+    relationship: 'Customer — Analog & Mixed Signal',
+    purchaseItems: 'High-performance analog ICs, data converters',
+    financials: { revenue: '$9.4B', grossMargin: '67.6%', marketCap: '~$90B' },
+    color: '#0033a0', productCategories: ['Analog ICs', 'Data Converters'], industryCategory: 'Semiconductor IDM', segment: 'Analog/Mixed Signal',
+  },
+  {
+    id: 'MCHP', name: 'Microchip Technology', ticker: 'MCHP', exchange: 'NASDAQ', country: 'USA',
+    relationship: 'Customer — MCU & Analog',
+    purchaseItems: 'PIC32 microcontrollers, dsPIC DSPs',
+    financials: { revenue: '$5.8B', grossMargin: '65.9%', marketCap: '~$20B' },
+    color: '#e31837', productCategories: ['Microcontrollers', 'DSPs'], industryCategory: 'Semiconductor IDM', segment: 'Microcontrollers',
+  },
+  {
+    id: 'MTEKF', name: 'MediaTek', ticker: '2454.TW', exchange: 'TWSE', country: 'Taiwan',
+    relationship: 'Major Customer — Mobile SoCs',
+    purchaseItems: 'Dimensity 9400 & Dimensity 6000 mobile SoCs (N3/N4)',
+    financials: { revenue: '$17.1B', grossMargin: '48.9%', marketCap: '~$50B' },
+    color: '#e0222a', productCategories: ['Mobile SoCs', 'Wi-Fi Chips'], industryCategory: 'Semiconductor Fabless', segment: 'Mobile SoC',
+  },
+  {
+    id: 'HIMAX', name: 'Himax Technologies', ticker: 'HIMX', exchange: 'NASDAQ', country: 'Taiwan',
+    relationship: 'Customer — Display Drivers',
+    purchaseItems: 'OLED display driver ICs, LCOS panels',
+    financials: { revenue: '$0.9B', grossMargin: '35.8%', marketCap: '~$0.8B' },
+    color: '#0a6abf', productCategories: ['Display Driver ICs', 'LCOS'], industryCategory: 'Semiconductor Fabless', segment: 'Display',
+  },
+  {
+    id: 'CRUS', name: 'Cirrus Logic', ticker: 'CRUS', exchange: 'NASDAQ', country: 'USA',
+    relationship: 'Customer — Audio Chips',
+    purchaseItems: 'Smart codec & audio amplifier ICs for Apple devices',
+    financials: { revenue: '$1.9B', grossMargin: '53.0%', marketCap: '~$5B' },
+    color: '#204b5c', productCategories: ['Smart Codecs', 'Audio Amplifiers'], industryCategory: 'Semiconductor Fabless', segment: 'Audio',
   },
 ];
 

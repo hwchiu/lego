@@ -1,88 +1,242 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { TSM_TIER1_SUPPLIERS, TSM_TIER2_SUPPLIERS } from '@/app/data/tsmcSupplierData';
+import { TSM_TIER1_SUPPLIERS, TSM_TIER2_SUPPLIERS, TSM_CENTER_NODE } from '@/app/data/tsmcSupplierData';
 import { TSM_CUSTOMERS } from '@/app/data/tsmcCustomerData';
 import { TSM_COMPETITORS } from '@/app/data/tsmcCompetitorData';
-import type { SupplierNodeTSM } from '@/app/data/tsmcSupplierData';
-import type { CustomerNode } from '@/app/data/tsmcCustomerData';
-import type { CompetitorNode } from '@/app/data/tsmcCompetitorData';
+import {
+  STRATEGIC_PARTNERS,
+  ECOSYSTEM_SUPPLIERS,
+  GRAPH_EDGES,
+  CUSTOMER_ARTICLES,
+  type GraphEdge,
+} from '@/app/data/tsmcGraphData';
 
-// ── Selected-node union ───────────────────────────────────────────────────────
+// ── Types ─────────────────────────────────────────────────────────────────────
 
-type SelectedNode =
-  | { kind: 'supplier1'; data: SupplierNodeTSM }
-  | { kind: 'supplier2'; data: SupplierNodeTSM }
-  | { kind: 'customer'; data: CustomerNode }
-  | { kind: 'competitor'; data: CompetitorNode };
+type NodeRole = 'center' | 'supplier1' | 'supplier2' | 'customer' | 'competitor' | 'partner';
 
-function getNodeId(node: SelectedNode): string {
-  return node.data.id;
+interface DisplayNode {
+  id: string;
+  name: string;
+  ticker: string;
+  country: string;
+  industry: string;
+  segment: string;
+  role: NodeRole;
+  description: string;
+  color: string;
+  financials: { revenue: string; marketCap: string };
+  articles: { title: string; source: string; date: string; url: string }[];
 }
 
-function truncate(name: string, max: number): string {
-  return name.length > max ? name.slice(0, max - 1) + '…' : name;
+type Selection =
+  | { type: 'node'; data: DisplayNode }
+  | { type: 'edge'; data: GraphEdge }
+  | null;
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function truncate(s: string, max: number): string {
+  return s.length > max ? s.slice(0, max - 1) + '…' : s;
 }
 
-// ── Colour palette ────────────────────────────────────────────────────────────
+const ROLE_COLORS: Record<NodeRole, { fill: string; stroke: string; text: string; edge: string }> = {
+  center:     { fill: '#1a2332', stroke: '#334155', text: '#ffffff', edge: '#93c5fd' },
+  supplier1:  { fill: '#dbeafe', stroke: '#2563eb', text: '#1e3a8a', edge: '#93c5fd' },
+  supplier2:  { fill: '#eff6ff', stroke: '#60a5fa', text: '#1e40af', edge: '#bfdbfe' },
+  customer:   { fill: '#dcfce7', stroke: '#16a34a', text: '#14532d', edge: '#86efac' },
+  competitor: { fill: '#ffedd5', stroke: '#ea580c', text: '#9a3412', edge: '#fdba74' },
+  partner:    { fill: '#f3e8ff', stroke: '#9333ea', text: '#581c87', edge: '#d8b4fe' },
+};
 
-const BLUE_NODE = '#2563eb';
-const BLUE_BG = '#dbeafe';
-const BLUE_TEXT = '#1e3a8a';
-const BLUE_EDGE = '#93c5fd';
-const BLUE2_NODE = '#60a5fa';
-const BLUE2_BG = '#eff6ff';
-const BLUE2_TEXT = '#1e40af';
-const BLUE2_EDGE = '#bfdbfe';
-const GREEN_NODE = '#16a34a';
-const GREEN_BG = '#dcfce7';
-const GREEN_TEXT = '#14532d';
-const GREEN_EDGE = '#86efac';
-const ORANGE_NODE = '#ea580c';
-const ORANGE_BG = '#ffedd5';
-const ORANGE_TEXT = '#9a3412';
-const ORANGE_EDGE = '#fdba74';
+function roleBadgeColor(role: NodeRole): string {
+  return ROLE_COLORS[role]?.stroke ?? '#64748b';
+}
 
-// ── Node dimensions ───────────────────────────────────────────────────────────
+// ── Build unified node list ───────────────────────────────────────────────────
 
-const CW = 160, CH = 64;       // TSMC center
-const OW = 110, OH = 36;       // tier-1 / customer / competitor
-const T2W = 100, T2H = 32;     // tier-2
+function buildAllNodes(): DisplayNode[] {
+  const nodes: DisplayNode[] = [];
 
-// ── Graph coordinates (1400 × 900 viewBox) ───────────────────────────────────
+  // Center
+  nodes.push({
+    id: TSM_CENTER_NODE.id,
+    name: TSM_CENTER_NODE.name,
+    ticker: TSM_CENTER_NODE.ticker,
+    country: TSM_CENTER_NODE.country,
+    industry: TSM_CENTER_NODE.industryCategory,
+    segment: TSM_CENTER_NODE.segment,
+    role: 'center',
+    description: "Taiwan Semiconductor Manufacturing Company — world's largest pure-play foundry with ~62% market share.",
+    color: '#1a2332',
+    financials: { revenue: TSM_CENTER_NODE.financials.revenue, marketCap: TSM_CENTER_NODE.financials.marketCap },
+    articles: [],
+  });
 
-const CCX = 700, CCY = 450;
-const T1X = 960;
-const T2X = 1235;
-const CUSTX = 435;
-const COMPY = 812;
+  // Tier-1 suppliers
+  for (const s of TSM_TIER1_SUPPLIERS) {
+    nodes.push({
+      id: s.id, name: s.name, ticker: s.ticker, country: s.country,
+      industry: s.industryCategory, segment: s.segment,
+      role: 'supplier1', description: s.relationship + ': ' + s.supplyItems,
+      color: s.color,
+      financials: { revenue: s.financials.revenue, marketCap: s.financials.marketCap },
+      articles: [],
+    });
+  }
 
-// 9 tier-1 nodes spread y 175 → 727 (step ≈ 69)
-const T1_CY = Array.from({ length: 9 }, (_, i) => 175 + i * 69);
+  // Tier-2 suppliers
+  for (const s of TSM_TIER2_SUPPLIERS) {
+    nodes.push({
+      id: s.id, name: s.name, ticker: s.ticker, country: s.country,
+      industry: s.industryCategory, segment: s.segment,
+      role: 'supplier2', description: s.relationship + ': ' + s.supplyItems,
+      color: s.color,
+      financials: { revenue: s.financials.revenue, marketCap: s.financials.marketCap },
+      articles: [],
+    });
+  }
 
-// 6 tier-2 nodes — same y as parent tier-1
-const T2_CY = T1_CY.slice(0, 6);
+  // Customers
+  for (const c of TSM_CUSTOMERS) {
+    nodes.push({
+      id: c.id, name: c.name, ticker: c.ticker, country: c.country,
+      industry: c.industryCategory, segment: c.segment,
+      role: 'customer', description: c.relationship + ': ' + c.purchaseItems,
+      color: c.color,
+      financials: { revenue: c.financials.revenue, marketCap: c.financials.marketCap },
+      articles: CUSTOMER_ARTICLES[c.id] ?? [],
+    });
+  }
 
-// 6 customer nodes
-const CUST_CY = [175, 285, 395, 505, 615, 725];
+  // Competitors
+  for (const comp of TSM_COMPETITORS) {
+    nodes.push({
+      id: comp.id, name: comp.name, ticker: comp.ticker, country: comp.country,
+      industry: comp.industryCategory, segment: comp.segment,
+      role: 'competitor', description: comp.relationship,
+      color: comp.color,
+      financials: { revenue: comp.financials.revenue, marketCap: comp.financials.marketCap },
+      articles: [],
+    });
+  }
 
-// 4 competitor nodes
-const COMP_CX = [480, 620, 760, 900];
+  // Partners
+  for (const p of STRATEGIC_PARTNERS) {
+    nodes.push({
+      id: p.id, name: p.name, ticker: p.ticker, country: p.country,
+      industry: p.industry, segment: p.segment,
+      role: 'partner', description: p.description, color: '#9333ea',
+      financials: p.financials,
+      articles: p.articles,
+    });
+  }
 
-// ── Data slices ───────────────────────────────────────────────────────────────
+  // Ecosystem suppliers
+  for (const e of ECOSYSTEM_SUPPLIERS) {
+    // Avoid duplicates
+    if (!nodes.find((n) => n.id === e.id)) {
+      nodes.push({
+        id: e.id, name: e.name, ticker: e.ticker, country: e.country,
+        industry: e.industry, segment: e.segment,
+        role: e.role as NodeRole, description: e.description, color: '#64748b',
+        financials: e.financials,
+        articles: e.articles,
+      });
+    }
+  }
 
-const T1_NODES = TSM_TIER1_SUPPLIERS.slice(0, 9);
-const TOP6_CUST = TSM_CUSTOMERS.slice(0, 6);
-const TOP4_COMP = TSM_COMPETITORS.slice(0, 4);
+  return nodes;
+}
 
-// One tier-2 child per first-6 tier-1 parents
-const VIS_T2: SupplierNodeTSM[] = T1_NODES.slice(0, 6)
-  .map((t1) => TSM_TIER2_SUPPLIERS.find((t2) => t2.parentId === t1.id))
-  .filter((n): n is SupplierNodeTSM => Boolean(n));
+const ALL_NODES = buildAllNodes();
 
-// ── Icons ─────────────────────────────────────────────────────────────────────
+// ── Layout helpers ────────────────────────────────────────────────────────────
+
+interface LayoutNode extends DisplayNode {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+const NODE_W = 112;
+const NODE_H = 44;
+const CENTER_W = 160;
+const CENTER_H = 64;
+const SVG_W = 1600;
+const SVG_H = 1000;
+const CCX = SVG_W / 2;
+const CCY = SVG_H / 2;
+
+function computeLayout(visible: DisplayNode[]): LayoutNode[] {
+  const result: LayoutNode[] = [];
+
+  // Center always shown
+  const center = visible.find((n) => n.role === 'center');
+  if (center) {
+    result.push({ ...center, x: CCX, y: CCY, w: CENTER_W, h: CENTER_H });
+  }
+
+  const s1 = visible.filter((n) => n.role === 'supplier1');
+  const s2 = visible.filter((n) => n.role === 'supplier2');
+  const custs = visible.filter((n) => n.role === 'customer');
+  const comps = visible.filter((n) => n.role === 'competitor');
+  const partners = visible.filter((n) => n.role === 'partner');
+  const eco = visible.filter((n) => n.role !== 'center' && n.role !== 'supplier1' && n.role !== 'supplier2' && n.role !== 'customer' && n.role !== 'competitor' && n.role !== 'partner');
+
+  // Tier-1 right column (x=1180)
+  const maxS1 = Math.min(s1.length, 12);
+  const s1StartY = 110;
+  const s1Step = Math.min(72, (SVG_H - s1StartY - 80) / Math.max(maxS1 - 1, 1));
+  for (let i = 0; i < maxS1; i++) {
+    result.push({ ...s1[i], x: 1180, y: s1StartY + i * s1Step, w: NODE_W, h: NODE_H });
+  }
+
+  // Tier-2 far-right (x=1430)
+  const maxS2 = Math.min(s2.length, 10);
+  const s2StartY = 130;
+  const s2Step = Math.min(68, (SVG_H - s2StartY - 80) / Math.max(maxS2 - 1, 1));
+  for (let i = 0; i < maxS2; i++) {
+    result.push({ ...s2[i], x: 1430, y: s2StartY + i * s2Step, w: 100, h: 34 });
+  }
+
+  // Partners top-right (x=1180, after s1 section)
+  const partnerStartY = s1StartY + maxS1 * s1Step + 20;
+  const maxPartners = Math.min(partners.length, 5);
+  const partnerStep = 64;
+  for (let i = 0; i < maxPartners; i++) {
+    result.push({ ...partners[i], x: 1180, y: partnerStartY + i * partnerStep, w: NODE_W, h: NODE_H });
+  }
+
+  // Customers left (x=350)
+  const maxCust = Math.min(custs.length, 15);
+  const custStartY = 90;
+  const custStep = Math.min(58, (SVG_H - custStartY - 60) / Math.max(maxCust - 1, 1));
+  for (let i = 0; i < maxCust; i++) {
+    result.push({ ...custs[i], x: 350, y: custStartY + i * custStep, w: NODE_W, h: NODE_H });
+  }
+
+  // Competitors bottom row (y=940)
+  const maxComp = Math.min(comps.length, 10);
+  const compStartX = 260;
+  const compStep = Math.min(140, (SVG_W - compStartX - 200) / Math.max(maxComp - 1, 1));
+  for (let i = 0; i < maxComp; i++) {
+    result.push({ ...comps[i], x: compStartX + i * compStep, y: 940, w: NODE_W, h: NODE_H });
+  }
+
+  // Eco suppliers (extra, placed below tier-2)
+  for (let i = 0; i < Math.min(eco.length, 6); i++) {
+    result.push({ ...eco[i], x: 1430, y: 130 + (maxS2 + i) * 60, w: 100, h: 34 });
+  }
+
+  return result;
+}
+
+// ── SearchIcon ────────────────────────────────────────────────────────────────
 
 function SearchIcon() {
   return (
@@ -93,232 +247,16 @@ function SearchIcon() {
   );
 }
 
-function SupplierIcon() {
-  return (
-    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-      <rect x="4" y="14" width="18" height="13" rx="2" stroke="currentColor" strokeWidth="2" />
-      <rect x="26" y="28" width="18" height="13" rx="2" stroke="currentColor" strokeWidth="2" />
-      <path d="M22 20.5H28C31 20.5 33 22.5 33 25.5V28" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="13" cy="20.5" r="2.5" fill="currentColor" />
-      <circle cx="35" cy="34.5" r="2.5" fill="currentColor" />
-    </svg>
-  );
-}
-
-function CustomerIcon() {
-  return (
-    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-      <rect x="26" y="14" width="18" height="13" rx="2" stroke="currentColor" strokeWidth="2" />
-      <rect x="4" y="28" width="18" height="13" rx="2" stroke="currentColor" strokeWidth="2" />
-      <path d="M26 20.5H20C17 20.5 15 22.5 15 25.5V28" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="35" cy="20.5" r="2.5" fill="currentColor" />
-      <circle cx="13" cy="34.5" r="2.5" fill="currentColor" />
-    </svg>
-  );
-}
-
-function CompetitorIcon() {
-  return (
-    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-      <rect x="15" y="4" width="18" height="13" rx="2" stroke="currentColor" strokeWidth="2" />
-      <rect x="4" y="31" width="16" height="13" rx="2" stroke="currentColor" strokeWidth="2" />
-      <rect x="28" y="31" width="16" height="13" rx="2" stroke="currentColor" strokeWidth="2" />
-      <path d="M24 17V24M24 24L12 31M24 24L36 31" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <circle cx="24" cy="17" r="2" fill="currentColor" />
-    </svg>
-  );
-}
-
-// ── SVG node helper ───────────────────────────────────────────────────────────
-
-interface NodeRectProps {
-  cx: number;
-  cy: number;
-  w: number;
-  h: number;
-  fill: string;
-  stroke: string;
-  label: string;
-  sublabel?: string;
-  textFill: string;
-  labelSize?: number;
-  subSize?: number;
-  selected?: boolean;
-  onClick: () => void;
-}
-
-function NodeRect({
-  cx, cy, w, h, fill, stroke, label, sublabel, textFill,
-  labelSize = 10, subSize = 8, selected, onClick,
-}: NodeRectProps) {
-  const rx = cx - w / 2;
-  const ry = cy - h / 2;
-  return (
-    <g onClick={onClick} style={{ cursor: 'pointer' }}>
-      <rect
-        x={rx} y={ry} width={w} height={h} rx={4}
-        fill={fill}
-        stroke={selected ? '#f59e0b' : stroke}
-        strokeWidth={selected ? 2.5 : 1.5}
-        filter={selected ? 'url(#node-glow)' : undefined}
-      />
-      <text
-        x={cx}
-        y={sublabel ? cy - 5 : cy}
-        textAnchor="middle"
-        dominantBaseline="middle"
-        fill={textFill}
-        fontSize={labelSize}
-        fontWeight="700"
-        style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}
-      >
-        {label}
-      </text>
-      {sublabel && (
-        <text
-          x={cx}
-          y={cy + 8}
-          textAnchor="middle"
-          dominantBaseline="middle"
-          fill={textFill}
-          fontSize={subSize}
-          opacity={0.65}
-          style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}
-        >
-          {sublabel}
-        </text>
-      )}
-    </g>
-  );
-}
-
-// ── Detail panel ──────────────────────────────────────────────────────────────
-
-function DetailPanel({ node, onClose }: { node: SelectedNode; onClose: () => void }) {
-  let name = '',
-    ticker = '',
-    typeLabel = '',
-    country = '',
-    industry = '',
-    revenue = '',
-    mktCap = '',
-    viewHref = '';
-
-  if (node.kind === 'supplier1' || node.kind === 'supplier2') {
-    name = node.data.name;
-    ticker = node.data.ticker;
-    typeLabel = node.kind === 'supplier1' ? 'Supplier Tier-1' : 'Supplier Tier-2';
-    country = node.data.country;
-    industry = node.data.industryCategory;
-    revenue = node.data.financials.revenue;
-    mktCap = node.data.financials.marketCap;
-    viewHref = '/my-rmap/supplier';
-  } else if (node.kind === 'customer') {
-    name = node.data.name;
-    ticker = node.data.ticker;
-    typeLabel = 'Customer';
-    country = node.data.country;
-    industry = node.data.industryCategory;
-    revenue = node.data.financials.revenue;
-    mktCap = node.data.financials.marketCap;
-    viewHref = '/my-rmap/customer';
-  } else {
-    name = node.data.name;
-    ticker = node.data.ticker;
-    typeLabel = 'Competitor';
-    country = node.data.country;
-    industry = node.data.industryCategory;
-    revenue = node.data.financials.revenue;
-    mktCap = node.data.financials.marketCap;
-    viewHref = '/my-rmap/competitor';
-  }
-
-  const badgeBg =
-    node.kind === 'customer' ? GREEN_NODE : node.kind === 'competitor' ? ORANGE_NODE : BLUE_NODE;
-
-  return (
-    <div className="kg-detail-panel">
-      <button className="kg-detail-close" onClick={onClose} aria-label="Close detail panel">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-          <path d="M2 2L12 12M12 2L2 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-        </svg>
-      </button>
-      <span className="kg-detail-badge" style={{ background: badgeBg }}>
-        {typeLabel}
-      </span>
-      <div className="kg-detail-name">{name}</div>
-      <div className="kg-detail-ticker">{ticker}</div>
-      <div className="kg-detail-rows">
-        {country && (
-          <div className="kg-detail-row">
-            <span>Country</span>
-            <span>{country}</span>
-          </div>
-        )}
-        {industry && (
-          <div className="kg-detail-row">
-            <span>Industry</span>
-            <span>{industry}</span>
-          </div>
-        )}
-        {revenue && (
-          <div className="kg-detail-row">
-            <span>Revenue</span>
-            <span>{revenue}</span>
-          </div>
-        )}
-        {mktCap && (
-          <div className="kg-detail-row">
-            <span>Mkt Cap</span>
-            <span>{mktCap}</span>
-          </div>
-        )}
-      </div>
-      <Link href={viewHref} className="kg-detail-link">
-        View Full Page →
-      </Link>
-    </div>
-  );
-}
-
-// ── Scenario cards (Detailed Views) ──────────────────────────────────────────
-
-const DETAIL_VIEW_CARDS = [
-  {
-    key: 'supplier',
-    title: 'Supplier Network',
-    description:
-      'Explore upstream supply relationships and tier-1/tier-2 supplier ecosystems for any company.',
-    href: '/my-rmap/supplier',
-    icon: <SupplierIcon />,
-    color: '#2196F3',
-  },
-  {
-    key: 'customer',
-    title: 'Customer Network',
-    description:
-      'Discover downstream customer relationships and distribution channels for a target company.',
-    href: '/my-rmap/customer',
-    icon: <CustomerIcon />,
-    color: '#43a047',
-  },
-  {
-    key: 'competitor',
-    title: 'Competitor Network',
-    description:
-      'Map out competitive relationships and peer companies within the same market ecosystem.',
-    href: '/my-rmap/competitor',
-    icon: <CompetitorIcon />,
-    color: '#ef6c00',
-  },
-];
-
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function KnowledgeGraph() {
   const router = useRouter();
   const [query, setQuery] = useState('');
-  const [selected, setSelected] = useState<SelectedNode | null>(null);
+  const [filterIndustry, setFilterIndustry] = useState('all');
+  const [filterSegment, setFilterSegment] = useState('all');
+  const [filterCountry, setFilterCountry] = useState('all');
+  const [zoom, setZoom] = useState(1);
+  const [selected, setSelected] = useState<Selection>(null);
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -327,48 +265,78 @@ export default function KnowledgeGraph() {
     }
   }
 
-  function selectNode(node: SelectedNode) {
+  // Filter options derived from all nodes
+  const allIndustries = useMemo(
+    () => ['all', ...Array.from(new Set(ALL_NODES.map((n) => n.industry).filter(Boolean))).sort()],
+    [],
+  );
+  const allSegments = useMemo(
+    () => ['all', ...Array.from(new Set(ALL_NODES.map((n) => n.segment).filter(Boolean))).sort()],
+    [],
+  );
+  const allCountries = useMemo(
+    () => ['all', ...Array.from(new Set(ALL_NODES.map((n) => n.country).filter(Boolean))).sort()],
+    [],
+  );
+
+  // Filtered nodes
+  const visibleNodes = useMemo(() => {
+    return ALL_NODES.filter((n) => {
+      if (n.role === 'center') return true; // always show center
+      if (filterIndustry !== 'all' && n.industry !== filterIndustry) return false;
+      if (filterSegment !== 'all' && n.segment !== filterSegment) return false;
+      if (filterCountry !== 'all' && n.country !== filterCountry) return false;
+      return true;
+    });
+  }, [filterIndustry, filterSegment, filterCountry]);
+
+  const layoutNodes = useMemo(() => computeLayout(visibleNodes), [visibleNodes]);
+  const nodeById = useMemo(() => {
+    const m: Record<string, LayoutNode> = {};
+    for (const n of layoutNodes) m[n.id] = n;
+    return m;
+  }, [layoutNodes]);
+
+  // Visible edges (both endpoints must be visible)
+  const visibleEdges = useMemo(() => {
+    const ids = new Set(visibleNodes.map((n) => n.id));
+    return GRAPH_EDGES.filter((e) => ids.has(e.from) && ids.has(e.to));
+  }, [visibleNodes]);
+
+  const selectedNodeId = selected?.type === 'node' ? selected.data.id : null;
+
+  function handleNodeClick(n: LayoutNode) {
     setSelected((prev) =>
-      prev && prev.kind === node.kind && getNodeId(prev) === getNodeId(node) ? null : node,
+      prev?.type === 'node' && prev.data.id === n.id ? null : { type: 'node', data: n },
     );
   }
 
-  const selId = selected ? getNodeId(selected) : null;
+  function handleEdgeClick(e: GraphEdge) {
+    setSelected((prev) =>
+      prev?.type === 'edge' && prev.data.from === e.from && prev.data.to === e.to
+        ? null
+        : { type: 'edge', data: e },
+    );
+  }
 
-  // ── Edge endpoint helpers ──────────────────────────────────────────────────
-
-  // TSMC center edges
-  const cRight = { x: CCX + CW / 2, y: CCY };      // to tier-1
-  const cLeft = { x: CCX - CW / 2, y: CCY };       // to customers
-  const cBot = { x: CCX, y: CCY + CH / 2 };        // to competitors
-
-  // Tier-1 left/right edges
-  const t1LE = (cy: number) => ({ x: T1X - OW / 2, y: cy });
-  const t1RE = (cy: number) => ({ x: T1X + OW / 2, y: cy });
-
-  // Tier-2 left edge
-  const t2LE = (cy: number) => ({ x: T2X - T2W / 2, y: cy });
-
-  // Customer right edge
-  const custRE = (cy: number) => ({ x: CUSTX + OW / 2, y: cy });
-
-  // Competitor top edge
-  const compTE = (cx: number) => ({ x: cx, y: COMPY - OH / 2 });
+  function resetFilters() {
+    setFilterIndustry('all');
+    setFilterSegment('all');
+    setFilterCountry('all');
+    setSelected(null);
+  }
 
   return (
     <div className="kg-wrapper">
-      {/* ── Hero + search ── */}
+      {/* Hero + search */}
       <div className="kg-hero">
         <h1 className="kg-hero-title">RMAP — Relational Map</h1>
         <p className="kg-hero-subtitle">
-          Search any company to explore its supply chain relationships — suppliers, customers, and
-          competitors.
+          Search any company to explore its supply chain relationships — suppliers, customers, and competitors.
         </p>
         <form className="kg-search-wrap" onSubmit={handleSearch}>
           <div className="kg-search-box">
-            <span className="kg-search-icon">
-              <SearchIcon />
-            </span>
+            <span className="kg-search-icon"><SearchIcon /></span>
             <input
               className="kg-search-input"
               type="text"
@@ -376,41 +344,78 @@ export default function KnowledgeGraph() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
-            <button className="kg-search-btn" type="submit">
-              Search
-            </button>
+            <button className="kg-search-btn" type="submit">Search</button>
           </div>
         </form>
       </div>
 
-      {/* ── Legend ── */}
+      {/* Filter bar */}
+      <div className="kg-filter-bar">
+        <span className="kg-filter-label">Filter:</span>
+
+        <select
+          className="kg-filter-select"
+          value={filterIndustry}
+          onChange={(e) => setFilterIndustry(e.target.value)}
+          aria-label="Filter by Industry"
+        >
+          {allIndustries.map((v) => (
+            <option key={v} value={v}>{v === 'all' ? 'All Industries' : v}</option>
+          ))}
+        </select>
+
+        <select
+          className="kg-filter-select"
+          value={filterSegment}
+          onChange={(e) => setFilterSegment(e.target.value)}
+          aria-label="Filter by Segment"
+        >
+          {allSegments.map((v) => (
+            <option key={v} value={v}>{v === 'all' ? 'All Segments' : v}</option>
+          ))}
+        </select>
+
+        <select
+          className="kg-filter-select"
+          value={filterCountry}
+          onChange={(e) => setFilterCountry(e.target.value)}
+          aria-label="Filter by Country"
+        >
+          {allCountries.map((v) => (
+            <option key={v} value={v}>{v === 'all' ? 'All Countries' : v}</option>
+          ))}
+        </select>
+
+        <button className="kg-filter-reset" onClick={resetFilters}>Reset</button>
+        <span className="kg-filter-count">{visibleNodes.length} nodes</span>
+      </div>
+
+      {/* Zoom controls */}
+      <div className="kg-zoom-controls">
+        <button className="kg-zoom-btn" onClick={() => setZoom((z) => Math.min(z + 0.15, 3))} aria-label="Zoom in">+</button>
+        <button className="kg-zoom-btn" onClick={() => setZoom((z) => Math.max(z - 0.15, 0.3))} aria-label="Zoom out">−</button>
+        <button className="kg-zoom-btn" onClick={() => setZoom(1)} aria-label="Reset zoom" style={{ fontSize: 10, width: 42 }}>Reset</button>
+        <span className="kg-zoom-label">{Math.round(zoom * 100)}%</span>
+      </div>
+
+      {/* Legend */}
       <div className="kg-legend">
-        <div className="kg-legend-item">
-          <span className="kg-legend-dot" style={{ background: BLUE_BG, border: `2px solid ${BLUE_NODE}` }} />
-          Tier-1 Supplier
-        </div>
-        <div className="kg-legend-item">
-          <span className="kg-legend-dot" style={{ background: BLUE2_BG, border: `2px solid ${BLUE2_NODE}` }} />
-          Tier-2 Supplier
-        </div>
-        <div className="kg-legend-item">
-          <span className="kg-legend-dot" style={{ background: GREEN_BG, border: `2px solid ${GREEN_NODE}` }} />
-          Customer
-        </div>
-        <div className="kg-legend-item">
-          <span className="kg-legend-dot" style={{ background: ORANGE_BG, border: `2px solid ${ORANGE_NODE}` }} />
-          Competitor
-        </div>
+        {(['supplier1', 'supplier2', 'customer', 'competitor', 'partner'] as NodeRole[]).map((role) => (
+          <div key={role} className="kg-legend-item">
+            <span className="kg-legend-dot" style={{ background: ROLE_COLORS[role].fill, border: `2px solid ${ROLE_COLORS[role].stroke}` }} />
+            {role === 'supplier1' ? 'Tier-1 Supplier' : role === 'supplier2' ? 'Tier-2 Supplier' : role.charAt(0).toUpperCase() + role.slice(1)}
+          </div>
+        ))}
         <span className="kg-legend-hint">Click a node for details</span>
       </div>
 
-      {/* ── Graph container ── */}
+      {/* Graph container */}
       <div className="kg-graph-container">
-        <div className="kg-graph-scroll">
+        <div className="kg-graph-scroll" style={{ overflow: 'auto' }}>
           <svg
-            viewBox="0 0 1400 900"
+            viewBox={`0 0 ${SVG_W} ${SVG_H}`}
             className="kg-svg"
-            preserveAspectRatio="xMidYMid meet"
+            style={{ width: SVG_W * zoom, height: SVG_H * zoom, display: 'block' }}
           >
             <defs>
               <filter id="node-glow" x="-30%" y="-30%" width="160%" height="160%">
@@ -422,210 +427,199 @@ export default function KnowledgeGraph() {
               </filter>
             </defs>
 
-            {/* ── Edges: TSMC → Tier-1 ── */}
-            {T1_CY.map((cy, i) => (
-              <line
-                key={`e-t1-${i}`}
-                x1={cRight.x} y1={cRight.y}
-                x2={t1LE(cy).x} y2={t1LE(cy).y}
-                stroke={BLUE_EDGE}
-                strokeWidth={1.5}
-                opacity={0.6}
-              />
-            ))}
+            {/* Edges */}
+            {visibleEdges.map((edge, i) => {
+              const src = nodeById[edge.from];
+              const tgt = nodeById[edge.to];
+              if (!src || !tgt) return null;
+              const isSelEdge = selected?.type === 'edge' && selected.data.from === edge.from && selected.data.to === edge.to;
+              const isConnected = selectedNodeId === edge.from || selectedNodeId === edge.to;
+              const opacity = selected && !isSelEdge && !isConnected ? 0.18 : 0.55;
+              const strokeW = isSelEdge ? 3 : edge.weight * 0.6 + 0.5;
+              const srcRole = src.role as NodeRole;
+              const edgeColor = ROLE_COLORS[srcRole]?.edge ?? '#94a3b8';
+              const mx = (src.x + tgt.x) / 2;
+              const my = (src.y + tgt.y) / 2;
+              const label = truncate(edge.label, 22);
+              return (
+                <g key={`e-${i}`} onClick={() => handleEdgeClick(edge)} style={{ cursor: 'pointer' }}>
+                  <line
+                    x1={src.x} y1={src.y} x2={tgt.x} y2={tgt.y}
+                    stroke={isSelEdge ? '#f59e0b' : edgeColor}
+                    strokeWidth={isSelEdge ? strokeW + 1 : strokeW}
+                    opacity={opacity}
+                  />
+                  <text
+                    x={mx} y={my - 4}
+                    textAnchor="middle"
+                    fill="#64748b"
+                    fontSize={7.5}
+                    opacity={0.7}
+                    style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}
+                  >
+                    {label}
+                  </text>
+                </g>
+              );
+            })}
 
-            {/* ── Edges: Tier-1 → Tier-2 ── */}
-            {VIS_T2.map((_, i) => (
-              <line
-                key={`e-t2-${i}`}
-                x1={t1RE(T1_CY[i]).x} y1={t1RE(T1_CY[i]).y}
-                x2={t2LE(T2_CY[i]).x} y2={t2LE(T2_CY[i]).y}
-                stroke={BLUE2_EDGE}
-                strokeWidth={1.2}
-                strokeDasharray="4 3"
-                opacity={0.55}
-              />
-            ))}
+            {/* Nodes */}
+            {layoutNodes.map((n) => {
+              const isCenter = n.role === 'center';
+              const c = ROLE_COLORS[n.role];
+              const isSelected = selectedNodeId === n.id;
+              const isConnected = selected?.type === 'edge' && (selected.data.from === n.id || selected.data.to === n.id);
+              const dimmed = selected && !isSelected && !isConnected;
+              const rx = n.x - n.w / 2;
+              const ry = n.y - n.h / 2;
+              return (
+                <g
+                  key={n.id}
+                  onClick={() => handleNodeClick(n)}
+                  style={{ cursor: 'pointer', opacity: dimmed ? 0.25 : 1 }}
+                >
+                  <title>{n.name} ({n.ticker}) — {n.country} | {n.industry} | {n.segment}</title>
+                  <rect
+                    x={rx} y={ry} width={n.w} height={n.h} rx={4}
+                    fill={isCenter ? '#1a2332' : c.fill}
+                    stroke={isSelected ? '#f59e0b' : c.stroke}
+                    strokeWidth={isSelected ? 2.5 : 1.5}
+                    filter={isSelected ? 'url(#node-glow)' : undefined}
+                  />
+                  <text
+                    x={n.x} y={isCenter ? n.y - 10 : n.y - 8}
+                    textAnchor="middle" dominantBaseline="middle"
+                    fill={isCenter ? '#ffffff' : c.text}
+                    fontSize={isCenter ? 15 : 10}
+                    fontWeight="700"
+                    style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}
+                  >
+                    {n.ticker}
+                  </text>
+                  {!isCenter && (
+                    <>
+                      <text
+                        x={n.x} y={n.y + 2}
+                        textAnchor="middle" dominantBaseline="middle"
+                        fill={c.text} fontSize={7.5} opacity={0.7}
+                        style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}
+                      >
+                        {truncate(n.name, 16)}
+                      </text>
+                      <text
+                        x={n.x} y={n.y + 13}
+                        textAnchor="middle" dominantBaseline="middle"
+                        fill={c.text} fontSize={6.5} opacity={0.55}
+                        style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}
+                      >
+                        {n.country} · {truncate(n.segment, 12)}
+                      </text>
+                    </>
+                  )}
+                  {isCenter && (
+                    <text
+                      x={n.x} y={n.y + 12}
+                      textAnchor="middle" dominantBaseline="middle"
+                      fill="#94a3b8" fontSize={8.5}
+                      style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}
+                    >
+                      TSMC
+                    </text>
+                  )}
+                </g>
+              );
+            })}
 
-            {/* ── Edges: TSMC → Customers ── */}
-            {CUST_CY.map((cy, i) => (
-              <line
-                key={`e-c-${i}`}
-                x1={cLeft.x} y1={cLeft.y}
-                x2={custRE(cy).x} y2={custRE(cy).y}
-                stroke={GREEN_EDGE}
-                strokeWidth={1.5}
-                opacity={0.6}
-              />
-            ))}
-
-            {/* ── Edges: TSMC → Competitors ── */}
-            {COMP_CX.map((cx, i) => (
-              <line
-                key={`e-comp-${i}`}
-                x1={cBot.x} y1={cBot.y}
-                x2={compTE(cx).x} y2={compTE(cx).y}
-                stroke={ORANGE_EDGE}
-                strokeWidth={1.5}
-                opacity={0.6}
-              />
-            ))}
-
-            {/* ── Tier-2 nodes ── */}
-            {VIS_T2.map((node, i) => (
-              <NodeRect
-                key={node.id}
-                cx={T2X} cy={T2_CY[i]}
-                w={T2W} h={T2H}
-                fill={BLUE2_BG}
-                stroke={BLUE2_NODE}
-                label={node.ticker}
-                sublabel={truncate(node.name, 14)}
-                textFill={BLUE2_TEXT}
-                labelSize={9}
-                subSize={7}
-                selected={selId === node.id}
-                onClick={() => selectNode({ kind: 'supplier2', data: node })}
-              />
-            ))}
-
-            {/* ── Tier-1 nodes ── */}
-            {T1_NODES.map((node, i) => (
-              <NodeRect
-                key={node.id}
-                cx={T1X} cy={T1_CY[i]}
-                w={OW} h={OH}
-                fill={BLUE_BG}
-                stroke={BLUE_NODE}
-                label={node.ticker}
-                sublabel={truncate(node.name, 15)}
-                textFill={BLUE_TEXT}
-                labelSize={10}
-                subSize={7.5}
-                selected={selId === node.id}
-                onClick={() => selectNode({ kind: 'supplier1', data: node })}
-              />
-            ))}
-
-            {/* ── Customer nodes ── */}
-            {TOP6_CUST.map((node, i) => (
-              <NodeRect
-                key={node.id}
-                cx={CUSTX} cy={CUST_CY[i]}
-                w={OW} h={OH}
-                fill={GREEN_BG}
-                stroke={GREEN_NODE}
-                label={node.ticker}
-                sublabel={truncate(node.name, 15)}
-                textFill={GREEN_TEXT}
-                labelSize={10}
-                subSize={7.5}
-                selected={selId === node.id}
-                onClick={() => selectNode({ kind: 'customer', data: node })}
-              />
-            ))}
-
-            {/* ── Competitor nodes ── */}
-            {TOP4_COMP.map((node, i) => (
-              <NodeRect
-                key={node.id}
-                cx={COMP_CX[i]} cy={COMPY}
-                w={OW} h={OH}
-                fill={ORANGE_BG}
-                stroke={ORANGE_NODE}
-                label={node.ticker}
-                sublabel={truncate(node.name, 15)}
-                textFill={ORANGE_TEXT}
-                labelSize={10}
-                subSize={7.5}
-                selected={selId === node.id}
-                onClick={() => selectNode({ kind: 'competitor', data: node })}
-              />
-            ))}
-
-            {/* ── TSMC center node ── */}
-            <g onClick={() => setSelected(null)} style={{ cursor: 'default' }}>
-              <rect
-                x={CCX - CW / 2} y={CCY - CH / 2}
-                width={CW} height={CH} rx={6}
-                fill="#1a2332"
-                stroke="#334155"
-                strokeWidth={2}
-              />
-              <text
-                x={CCX} y={CCY - 10}
-                textAnchor="middle" dominantBaseline="middle"
-                fill="#ffffff" fontSize={18} fontWeight="700"
-                style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}
-              >
-                TSM
-              </text>
-              <text
-                x={CCX} y={CCY + 12}
-                textAnchor="middle" dominantBaseline="middle"
-                fill="#94a3b8" fontSize={8.5}
-                style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}
-              >
-                TSMC
-              </text>
-            </g>
-
-            {/* ── Section labels ── */}
-            <text x={T1X} y={135} textAnchor="middle" fill="#64748b" fontSize={9.5}
-              fontWeight="700" letterSpacing="0.08em" textDecoration="none"
-              style={{ fontFamily: 'var(--font)', textTransform: 'uppercase', pointerEvents: 'none' }}>
+            {/* Section labels */}
+            <text x={1180} y={80} textAnchor="middle" fill="#64748b" fontSize={9.5}
+              fontWeight="700" letterSpacing="0.08em"
+              style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}>
               SUPPLIERS
             </text>
-            <text x={T2X} y={135} textAnchor="middle" fill="#94a3b8" fontSize={8.5}
+            <text x={1430} y={80} textAnchor="middle" fill="#94a3b8" fontSize={8.5}
               fontWeight="700" letterSpacing="0.08em"
               style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}>
               TIER-2
             </text>
-            <text x={CUSTX} y={135} textAnchor="middle" fill="#64748b" fontSize={9.5}
+            <text x={350} y={60} textAnchor="middle" fill="#64748b" fontSize={9.5}
               fontWeight="700" letterSpacing="0.08em"
               style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}>
               CUSTOMERS
             </text>
-            <text x={CCX} y={870} textAnchor="middle" fill="#64748b" fontSize={9.5}
+            <text x={CCX} y={60} textAnchor="middle" fill="#64748b" fontSize={9.5}
               fontWeight="700" letterSpacing="0.08em"
               style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}>
-              COMPETITORS
+              COMPETITORS (bottom)
             </text>
           </svg>
         </div>
-
-        {/* ── Detail panel overlay ── */}
-        {selected && <DetailPanel node={selected} onClose={() => setSelected(null)} />}
       </div>
 
-      {/* ── Detailed Views section ── */}
-      <div className="kg-scenarios-section">
-        <h2 className="kg-section-title">Detailed Views</h2>
-        <div className="kg-scenario-grid">
-          {DETAIL_VIEW_CARDS.map((card) => (
-            <Link key={card.key} href={card.href} className="kg-scenario-card">
-              <div className="kg-scenario-icon" style={{ color: card.color }}>
-                {card.icon}
-              </div>
-              <div className="kg-scenario-body">
-                <h3 className="kg-scenario-title">{card.title}</h3>
-                <p className="kg-scenario-desc">{card.description}</p>
-              </div>
-              <div className="kg-scenario-arrow" style={{ color: card.color }}>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                  <path
-                    d="M7 4L13 10L7 16"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-            </Link>
-          ))}
+      {/* Info panel */}
+      {selected && (
+        <div className="kg-info-panel">
+          <button className="kg-info-panel-close" onClick={() => setSelected(null)} aria-label="Close panel">×</button>
+
+          {selected.type === 'node' && (() => {
+            const n = selected.data;
+            return (
+              <>
+                <span className="kg-info-panel-role" style={{ background: roleBadgeColor(n.role) }}>
+                  {n.role === 'supplier1' ? 'Tier-1 Supplier' : n.role === 'supplier2' ? 'Tier-2 Supplier' : n.role.charAt(0).toUpperCase() + n.role.slice(1)}
+                </span>
+                <h2 className="kg-info-panel-name">{n.name}</h2>
+                <div className="kg-info-panel-ticker">{n.ticker}</div>
+                <div className="kg-info-panel-tags">
+                  <span className="kg-info-panel-tag">{n.country}</span>
+                  <span className="kg-info-panel-tag">{n.industry}</span>
+                  <span className="kg-info-panel-tag">{n.segment}</span>
+                </div>
+                {n.description && <p className="kg-info-panel-desc">{n.description}</p>}
+                <div className="kg-info-panel-fin">
+                  <div className="kg-info-panel-fin-item">
+                    <span className="kg-info-panel-fin-label">Revenue</span>
+                    <span className="kg-info-panel-fin-value">{n.financials.revenue}</span>
+                  </div>
+                  <div className="kg-info-panel-fin-item">
+                    <span className="kg-info-panel-fin-label">Market Cap</span>
+                    <span className="kg-info-panel-fin-value">{n.financials.marketCap}</span>
+                  </div>
+                </div>
+                {n.articles.length > 0 && (
+                  <>
+                    <div className="kg-info-panel-articles-title">Related News</div>
+                    <div className="kg-info-panel-articles">
+                      {n.articles.map((a, i) => (
+                        <a key={i} href={a.url} className="kg-info-panel-article" target="_blank" rel="noopener noreferrer">
+                          <span className="kg-info-panel-article-title">{a.title}</span>
+                          <span className="kg-info-panel-article-meta">{a.source} · {a.date}</span>
+                        </a>
+                      ))}
+                    </div>
+                  </>
+                )}
+                {(n.role === 'supplier1' || n.role === 'supplier2') && (
+                  <Link href="/my-rmap/supplier" className="kg-detail-link" style={{ marginTop: 14, display: 'inline-block' }}>View Supplier Network →</Link>
+                )}
+                {n.role === 'customer' && (
+                  <Link href="/my-rmap/customer" className="kg-detail-link" style={{ marginTop: 14, display: 'inline-block' }}>View Customer Network →</Link>
+                )}
+                {n.role === 'competitor' && (
+                  <Link href="/my-rmap/competitor" className="kg-detail-link" style={{ marginTop: 14, display: 'inline-block' }}>View Competitor Network →</Link>
+                )}
+              </>
+            );
+          })()}
+
+          {selected.type === 'edge' && (
+            <>
+              <div className="kg-info-edge-from-to">{selected.data.from} → {selected.data.to}</div>
+              <div className="kg-info-edge-label">{selected.data.label}</div>
+              <p className="kg-info-edge-desc">{selected.data.description}</p>
+            </>
+          )}
         </div>
-      </div>
+      )}
     </div>
   );
 }
