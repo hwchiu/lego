@@ -123,13 +123,17 @@ export const supplyChainNav: NavItem[] = [
     icon: 'supplyMap',
     badge: 'NEW',
     badgeColor: '#BF3030',
+  },
+  {
+    label: 'My RMAP',
+    href: '/my-rmap',
+    icon: 'layers',
     subItems: [
-      { label: 'Supplier', href: '/supply-chain-maps/supplier', icon: 'supplier' },
-      { label: 'Customer', href: '/supply-chain-maps/customer', icon: 'customer' },
-      { label: 'Competitor', href: '/supply-chain-maps/competitor', icon: 'competitor' },
+      { label: 'Supplier', href: '/my-rmap/supplier', icon: 'supplier' },
+      { label: 'Customer', href: '/my-rmap/customer', icon: 'customer' },
+      { label: 'Competitor', href: '/my-rmap/competitor', icon: 'competitor' },
     ],
   },
-  { label: 'My RMAP', href: '#', icon: 'layers', badge: 'COMING SOON', badgeStyle: 'coming-soon' },
 ];
 
 export const bottomLinks: NavItem[] = [
