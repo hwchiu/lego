@@ -16547,8 +16547,8 @@ a.fd-hint-btn {
   background: #2d3f52;
 }
 
-/* Detailed Views section (scenario cards) */
-.kg-scenarios-section {
+/* Detailed Views section (scenario cards) — removed from KnowledgeGraph */
+/* .kg-scenarios-section {
   padding: 28px 32px 32px;
   background: var(--c-white);
 }
@@ -16613,7 +16613,7 @@ a.fd-hint-btn {
 .kg-scenario-arrow {
   flex-shrink: 0;
   opacity: 0.7;
-}
+} */
 
 /* ===== MY RMAP ===== */
 
@@ -16872,13 +16872,11 @@ a.fd-hint-btn {
 
 /* ── Responsive ── */
 @media (max-width: 900px) {
-  .kg-scenario-grid,
   .mrmap-scenario-grid {
     grid-template-columns: 1fr;
   }
 
   .kg-hero,
-  .kg-scenarios-section,
   .mrmap-hero,
   .mrmap-scenarios-section,
   .mrmap-build-section {

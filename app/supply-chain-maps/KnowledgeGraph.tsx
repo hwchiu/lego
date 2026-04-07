@@ -93,42 +93,6 @@ function SearchIcon() {
   );
 }
 
-function SupplierIcon() {
-  return (
-    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-      <rect x="4" y="14" width="18" height="13" rx="2" stroke="currentColor" strokeWidth="2" />
-      <rect x="26" y="28" width="18" height="13" rx="2" stroke="currentColor" strokeWidth="2" />
-      <path d="M22 20.5H28C31 20.5 33 22.5 33 25.5V28" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="13" cy="20.5" r="2.5" fill="currentColor" />
-      <circle cx="35" cy="34.5" r="2.5" fill="currentColor" />
-    </svg>
-  );
-}
-
-function CustomerIcon() {
-  return (
-    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-      <rect x="26" y="14" width="18" height="13" rx="2" stroke="currentColor" strokeWidth="2" />
-      <rect x="4" y="28" width="18" height="13" rx="2" stroke="currentColor" strokeWidth="2" />
-      <path d="M26 20.5H20C17 20.5 15 22.5 15 25.5V28" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="35" cy="20.5" r="2.5" fill="currentColor" />
-      <circle cx="13" cy="34.5" r="2.5" fill="currentColor" />
-    </svg>
-  );
-}
-
-function CompetitorIcon() {
-  return (
-    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-      <rect x="15" y="4" width="18" height="13" rx="2" stroke="currentColor" strokeWidth="2" />
-      <rect x="4" y="31" width="16" height="13" rx="2" stroke="currentColor" strokeWidth="2" />
-      <rect x="28" y="31" width="16" height="13" rx="2" stroke="currentColor" strokeWidth="2" />
-      <path d="M24 17V24M24 24L12 31M24 24L36 31" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <circle cx="24" cy="17" r="2" fill="currentColor" />
-    </svg>
-  );
-}
-
 // ── SVG node helper ───────────────────────────────────────────────────────────
 
 interface NodeRectProps {
@@ -280,38 +244,6 @@ function DetailPanel({ node, onClose }: { node: SelectedNode; onClose: () => voi
     </div>
   );
 }
-
-// ── Scenario cards (Detailed Views) ──────────────────────────────────────────
-
-const DETAIL_VIEW_CARDS = [
-  {
-    key: 'supplier',
-    title: 'Supplier Network',
-    description:
-      'Explore upstream supply relationships and tier-1/tier-2 supplier ecosystems for any company.',
-    href: '/my-rmap/supplier',
-    icon: <SupplierIcon />,
-    color: '#2196F3',
-  },
-  {
-    key: 'customer',
-    title: 'Customer Network',
-    description:
-      'Discover downstream customer relationships and distribution channels for a target company.',
-    href: '/my-rmap/customer',
-    icon: <CustomerIcon />,
-    color: '#43a047',
-  },
-  {
-    key: 'competitor',
-    title: 'Competitor Network',
-    description:
-      'Map out competitive relationships and peer companies within the same market ecosystem.',
-    href: '/my-rmap/competitor',
-    icon: <CompetitorIcon />,
-    color: '#ef6c00',
-  },
-];
 
 // ── Main component ────────────────────────────────────────────────────────────
 
@@ -596,35 +528,6 @@ export default function KnowledgeGraph() {
 
         {/* ── Detail panel overlay ── */}
         {selected && <DetailPanel node={selected} onClose={() => setSelected(null)} />}
-      </div>
-
-      {/* ── Detailed Views section ── */}
-      <div className="kg-scenarios-section">
-        <h2 className="kg-section-title">Detailed Views</h2>
-        <div className="kg-scenario-grid">
-          {DETAIL_VIEW_CARDS.map((card) => (
-            <Link key={card.key} href={card.href} className="kg-scenario-card">
-              <div className="kg-scenario-icon" style={{ color: card.color }}>
-                {card.icon}
-              </div>
-              <div className="kg-scenario-body">
-                <h3 className="kg-scenario-title">{card.title}</h3>
-                <p className="kg-scenario-desc">{card.description}</p>
-              </div>
-              <div className="kg-scenario-arrow" style={{ color: card.color }}>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                  <path
-                    d="M7 4L13 10L7 16"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-            </Link>
-          ))}
-        </div>
       </div>
     </div>
   );

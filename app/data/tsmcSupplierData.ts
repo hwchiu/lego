@@ -25,6 +25,7 @@ export interface SupplierNodeTSM {
   parentId?: string;
   productCategories: string[];
   industryCategory: string;
+  segment: string;
 }
 
 export interface EdgeEntity {
@@ -70,6 +71,7 @@ export const TSM_CENTER_NODE: SupplierNodeTSM = {
   tier: 1,
   productCategories: ['Logic Chips', 'Advanced Packaging'],
   industryCategory: 'Semiconductor Foundry',
+  segment: 'Foundry',
 };
 
 // ---------------------------------------------------------------------------
@@ -94,6 +96,7 @@ export const TSM_TIER1_SUPPLIERS: SupplierNodeTSM[] = [
     tier: 1,
     productCategories: ['EUV Systems', 'DUV Systems'],
     industryCategory: 'Semiconductor Equipment',
+    segment: 'Lithography',
   },
   {
     id: 'AMAT',
@@ -112,6 +115,7 @@ export const TSM_TIER1_SUPPLIERS: SupplierNodeTSM[] = [
     tier: 1,
     productCategories: ['CVD Systems', 'PVD Systems', 'CMP Equipment'],
     industryCategory: 'Semiconductor Equipment',
+    segment: 'Deposition',
   },
   {
     id: 'LRCX',
@@ -130,6 +134,7 @@ export const TSM_TIER1_SUPPLIERS: SupplierNodeTSM[] = [
     tier: 1,
     productCategories: ['Plasma Etch Systems', 'ALD Reactors'],
     industryCategory: 'Semiconductor Equipment',
+    segment: 'Etch',
   },
   {
     id: 'KLAC',
@@ -148,6 +153,7 @@ export const TSM_TIER1_SUPPLIERS: SupplierNodeTSM[] = [
     tier: 1,
     productCategories: ['Wafer Inspection', 'Metrology Systems'],
     industryCategory: 'Semiconductor Equipment',
+    segment: 'Process Control',
   },
   {
     id: 'TOELY',
@@ -166,6 +172,7 @@ export const TSM_TIER1_SUPPLIERS: SupplierNodeTSM[] = [
     tier: 1,
     productCategories: ['Coater/Developer Systems', 'Thermal CVD', 'Cleaning Equipment'],
     industryCategory: 'Semiconductor Equipment',
+    segment: 'Process Equipment',
   },
   {
     id: 'SHECY',
@@ -184,6 +191,7 @@ export const TSM_TIER1_SUPPLIERS: SupplierNodeTSM[] = [
     tier: 1,
     productCategories: ['Silicon Wafers', 'Photoresist', 'Silicones'],
     industryCategory: 'Semiconductor Materials',
+    segment: 'Silicon Wafers',
   },
   {
     id: 'SUOPY',
@@ -202,6 +210,7 @@ export const TSM_TIER1_SUPPLIERS: SupplierNodeTSM[] = [
     tier: 1,
     productCategories: ['Polished Silicon Wafers', 'Epitaxial Wafers'],
     industryCategory: 'Semiconductor Materials',
+    segment: 'Silicon Wafers',
   },
   {
     id: 'APD',
@@ -220,6 +229,7 @@ export const TSM_TIER1_SUPPLIERS: SupplierNodeTSM[] = [
     tier: 1,
     productCategories: ['Specialty Gases', 'UHP Gases', 'Gas Delivery Systems'],
     industryCategory: 'Industrial Gases',
+    segment: 'Specialty Gases',
   },
   {
     id: 'ENTG',
@@ -238,6 +248,49 @@ export const TSM_TIER1_SUPPLIERS: SupplierNodeTSM[] = [
     tier: 1,
     productCategories: ['CMP Materials', 'Filtration', 'Packaging Materials'],
     industryCategory: 'Semiconductor Materials',
+    segment: 'CMP Materials',
+  },
+  {
+    id: 'NIKON', name: 'Nikon Corporation', ticker: '7731.T', exchange: 'TSE', country: 'Japan',
+    relationship: 'DUV Lithography Supplier', supplyItems: 'DUV immersion steppers & scanners',
+    financials: { revenue: '$5.2B', grossMargin: '38.1%', marketCap: '~$4.8B' },
+    color: '#5c6bc0', tier: 1, productCategories: ['DUV Steppers', 'DUV Scanners'],
+    industryCategory: 'Semiconductor Equipment', segment: 'Lithography',
+  },
+  {
+    id: 'ASMI', name: 'ASM International', ticker: 'ASMI', exchange: 'Euronext', country: 'Netherlands',
+    relationship: 'ALD/Epitaxy Equipment Supplier', supplyItems: 'ALD, epitaxy, PECVD systems',
+    financials: { revenue: '$3.2B', grossMargin: '49.6%', marketCap: '~$18B' },
+    color: '#00897b', tier: 1, productCategories: ['ALD Systems', 'Epitaxy Equipment'],
+    industryCategory: 'Semiconductor Equipment', segment: 'Deposition',
+  },
+  {
+    id: 'MKSI', name: 'MKS Instruments', ticker: 'MKSI', exchange: 'NASDAQ', country: 'USA',
+    relationship: 'Gas & Process Control Supplier', supplyItems: 'Gas flow control, RF power, plasma systems',
+    financials: { revenue: '$3.6B', grossMargin: '45.2%', marketCap: '~$6B' },
+    color: '#455a64', tier: 1, productCategories: ['Gas Flow Control', 'RF Power Systems'],
+    industryCategory: 'Semiconductor Equipment', segment: 'Process Control',
+  },
+  {
+    id: 'ONTO', name: 'Onto Innovation', ticker: 'ONTO', exchange: 'NYSE', country: 'USA',
+    relationship: 'Overlay Metrology Supplier', supplyItems: 'Overlay metrology, defect inspection',
+    financials: { revenue: '$1.1B', grossMargin: '52.3%', marketCap: '~$6B' },
+    color: '#f57f17', tier: 1, productCategories: ['Overlay Metrology', 'Defect Inspection'],
+    industryCategory: 'Semiconductor Equipment', segment: 'Metrology',
+  },
+  {
+    id: 'FORM', name: 'FormFactor', ticker: 'FORM', exchange: 'NASDAQ', country: 'USA',
+    relationship: 'Probe Card Supplier', supplyItems: 'Probe cards for wafer-level test',
+    financials: { revenue: '$0.8B', grossMargin: '47.1%', marketCap: '~$2.2B' },
+    color: '#7b1fa2', tier: 1, productCategories: ['Probe Cards', 'Wafer Test Equipment'],
+    industryCategory: 'Semiconductor Equipment', segment: 'Test Equipment',
+  },
+  {
+    id: 'CCMP', name: 'CMC Materials (Entegris)', ticker: 'CCMP', exchange: 'NASDAQ', country: 'USA',
+    relationship: 'CMP Slurry Supplier', supplyItems: 'CMP slurries and polishing pads',
+    financials: { revenue: '$1.3B', grossMargin: '40.8%', marketCap: '~$3.5B' },
+    color: '#00695c', tier: 1, productCategories: ['CMP Slurries', 'Polishing Pads'],
+    industryCategory: 'Semiconductor Materials', segment: 'CMP Materials',
   },
 ];
 
@@ -265,6 +318,7 @@ export const TSM_TIER2_SUPPLIERS: SupplierNodeTSM[] = [
     parentId: 'ASML',
     productCategories: ['EUV Optics', 'Precision Lenses'],
     industryCategory: 'Precision Optics',
+    segment: 'Optics',
   },
   {
     id: 'CYMER',
@@ -284,11 +338,12 @@ export const TSM_TIER2_SUPPLIERS: SupplierNodeTSM[] = [
     parentId: 'ASML',
     productCategories: ['Excimer Laser Sources', 'EUV Light Sources'],
     industryCategory: 'Photonics',
+    segment: 'Light Sources',
   },
 
   // --- AMAT sub-suppliers ---
   {
-    id: 'MKSI',
+    id: 'MKSI_T2',
     name: 'MKS Instruments',
     ticker: 'MKSI',
     exchange: 'NASDAQ',
@@ -305,6 +360,7 @@ export const TSM_TIER2_SUPPLIERS: SupplierNodeTSM[] = [
     parentId: 'AMAT',
     productCategories: ['Mass Flow Controllers', 'RF Power Systems', 'Gas Analysis'],
     industryCategory: 'Semiconductor Equipment Components',
+    segment: 'Process Control',
   },
   {
     id: 'UCTT',
@@ -324,9 +380,8 @@ export const TSM_TIER2_SUPPLIERS: SupplierNodeTSM[] = [
     parentId: 'AMAT',
     productCategories: ['Gas Delivery Systems', 'Chamber Components'],
     industryCategory: 'Semiconductor Equipment Components',
+    segment: 'Cleaning Systems',
   },
-
-  // --- LRCX sub-suppliers ---
   {
     id: 'AZTA',
     name: 'Azenta (Brooks Automation)',
@@ -345,6 +400,7 @@ export const TSM_TIER2_SUPPLIERS: SupplierNodeTSM[] = [
     parentId: 'LRCX',
     productCategories: ['Wafer Handling Robots', 'Cryopumps', 'FOUP Automation'],
     industryCategory: 'Semiconductor Equipment Components',
+    segment: 'Automation',
   },
   {
     id: 'COHU',
@@ -364,9 +420,8 @@ export const TSM_TIER2_SUPPLIERS: SupplierNodeTSM[] = [
     parentId: 'LRCX',
     productCategories: ['Test Handlers', 'Semiconductor Contactors'],
     industryCategory: 'Semiconductor Test Equipment',
+    segment: 'Test Equipment',
   },
-
-  // --- KLAC sub-suppliers ---
   {
     id: 'COHR',
     name: 'Coherent Corp.',
@@ -385,9 +440,10 @@ export const TSM_TIER2_SUPPLIERS: SupplierNodeTSM[] = [
     parentId: 'KLAC',
     productCategories: ['Laser Systems', 'Photonic Components'],
     industryCategory: 'Photonics',
+    segment: 'Equipment Components',
   },
   {
-    id: 'FORM',
+    id: 'FORM_T2',
     name: 'FormFactor',
     ticker: 'FORM',
     exchange: 'NASDAQ',
@@ -404,6 +460,7 @@ export const TSM_TIER2_SUPPLIERS: SupplierNodeTSM[] = [
     parentId: 'KLAC',
     productCategories: ['Probe Cards', 'Wafer-Level Test'],
     industryCategory: 'Semiconductor Test Equipment',
+    segment: 'Equipment Components',
   },
 
   // --- TOELY sub-suppliers ---
@@ -425,6 +482,7 @@ export const TSM_TIER2_SUPPLIERS: SupplierNodeTSM[] = [
     parentId: 'TOELY',
     productCategories: ['Silicon Wafers', 'Test Wafers'],
     industryCategory: 'Semiconductor Materials',
+    segment: 'Equipment Components',
   },
   {
     id: 'NTK',
@@ -444,6 +502,7 @@ export const TSM_TIER2_SUPPLIERS: SupplierNodeTSM[] = [
     parentId: 'TOELY',
     productCategories: ['Ceramic Components', 'Electrostatic Chucks', 'Heaters'],
     industryCategory: 'Advanced Ceramics',
+    segment: 'Equipment Components',
   },
 
   // --- SHECY sub-suppliers ---
@@ -465,6 +524,7 @@ export const TSM_TIER2_SUPPLIERS: SupplierNodeTSM[] = [
     parentId: 'SHECY',
     productCategories: ['Polysilicon', 'Hyperpure Silicon'],
     industryCategory: 'Semiconductor Materials',
+    segment: 'Equipment Components',
   },
   {
     id: 'TKYMY',
@@ -484,6 +544,7 @@ export const TSM_TIER2_SUPPLIERS: SupplierNodeTSM[] = [
     parentId: 'SHECY',
     productCategories: ['Polysilicon', 'Hydrofluoric Acid', 'Fumed Silica'],
     industryCategory: 'Semiconductor Chemicals',
+    segment: 'Equipment Components',
   },
 
   // --- SUOPY sub-suppliers ---
@@ -505,6 +566,7 @@ export const TSM_TIER2_SUPPLIERS: SupplierNodeTSM[] = [
     parentId: 'SUOPY',
     productCategories: ['Polished Wafers', 'Epitaxial Wafers'],
     industryCategory: 'Semiconductor Materials',
+    segment: 'Equipment Components',
   },
   {
     id: 'SKSILTRON',
@@ -524,6 +586,7 @@ export const TSM_TIER2_SUPPLIERS: SupplierNodeTSM[] = [
     parentId: 'SUOPY',
     productCategories: ['Silicon Wafers', 'SiC Substrates'],
     industryCategory: 'Semiconductor Materials',
+    segment: 'Equipment Components',
   },
 
   // --- APD sub-suppliers ---
@@ -545,6 +608,7 @@ export const TSM_TIER2_SUPPLIERS: SupplierNodeTSM[] = [
     parentId: 'APD',
     productCategories: ['Bulk Gases', 'Specialty Gases', 'On-site Gas Plants'],
     industryCategory: 'Industrial Gases',
+    segment: 'Equipment Components',
   },
   {
     id: 'AIQUY',
@@ -564,11 +628,12 @@ export const TSM_TIER2_SUPPLIERS: SupplierNodeTSM[] = [
     parentId: 'APD',
     productCategories: ['UHP Gases', 'Gas Purification', 'Cryogenic Systems'],
     industryCategory: 'Industrial Gases',
+    segment: 'Equipment Components',
   },
 
   // --- ENTG sub-suppliers ---
   {
-    id: 'CCMP',
+    id: 'CCMP_T2',
     name: 'CMC Materials (Cabot Microelectronics)',
     ticker: 'CCMP',
     exchange: 'NASDAQ',
@@ -585,6 +650,7 @@ export const TSM_TIER2_SUPPLIERS: SupplierNodeTSM[] = [
     parentId: 'ENTG',
     productCategories: ['CMP Slurries', 'Polishing Pads'],
     industryCategory: 'Semiconductor Materials',
+    segment: 'CMP Materials',
   },
   {
     id: 'AVTR',
@@ -604,6 +670,39 @@ export const TSM_TIER2_SUPPLIERS: SupplierNodeTSM[] = [
     parentId: 'ENTG',
     productCategories: ['High-Purity Chemicals', 'Process Solvents'],
     industryCategory: 'Semiconductor Chemicals',
+    segment: 'Equipment Components',
+  },
+  {
+    id: 'CAMT', name: 'Camtek', ticker: 'CAMT', exchange: 'NASDAQ', country: 'Israel',
+    relationship: 'Tier-2 Supplier (KLAC ecosystem)', supplyItems: '3D metrology & inspection systems',
+    financials: { revenue: '$0.4B', grossMargin: '53.1%', marketCap: '~$3.5B' },
+    color: '#4fc3f7', tier: 2, parentId: 'KLAC',
+    productCategories: ['3D Metrology', 'Inspection Systems'],
+    industryCategory: 'Semiconductor Equipment', segment: 'Inspection',
+  },
+  {
+    id: 'COHU2', name: 'Cohu', ticker: 'COHU', exchange: 'NASDAQ', country: 'USA',
+    relationship: 'Tier-2 Supplier (FORM ecosystem)', supplyItems: 'Semiconductor test handlers & contactors',
+    financials: { revenue: '$0.5B', grossMargin: '41.2%', marketCap: '~$0.9B' },
+    color: '#80cbc4', tier: 2, parentId: 'FORM',
+    productCategories: ['Test Handlers', 'Contactors'],
+    industryCategory: 'Semiconductor Equipment', segment: 'Test Equipment',
+  },
+  {
+    id: 'PLAB', name: 'Photronics', ticker: 'PLAB', exchange: 'NASDAQ', country: 'USA',
+    relationship: 'Tier-2 Supplier (ASML ecosystem)', supplyItems: 'Photomasks for IC fabrication',
+    financials: { revenue: '$0.9B', grossMargin: '38.7%', marketCap: '~$1.3B' },
+    color: '#b0bec5', tier: 2, parentId: 'ASML',
+    productCategories: ['Photomasks'],
+    industryCategory: 'Semiconductor Materials', segment: 'Photomask',
+  },
+  {
+    id: 'UCTT2', name: 'Ultra Clean Holdings', ticker: 'UCTT', exchange: 'NASDAQ', country: 'USA',
+    relationship: 'Tier-2 Supplier (AMAT ecosystem)', supplyItems: 'Gas delivery systems & chamber parts cleaning',
+    financials: { revenue: '$2.2B', grossMargin: '14.3%', marketCap: '~$1B' },
+    color: '#cfd8dc', tier: 2, parentId: 'AMAT',
+    productCategories: ['Gas Delivery Systems', 'Chamber Cleaning'],
+    industryCategory: 'Semiconductor Equipment', segment: 'Cleaning Systems',
   },
 ];
 
@@ -729,7 +828,7 @@ export const EDGE_ENTITIES: EdgeEntity[] = [
   // AMAT → Tier 2 (2 edges)
   {
     from: 'AMAT',
-    to: 'MKSI',
+    to: 'MKSI_T2',
     transactionAmount: 620,
     newsCoMentionCount: 87,
     commonSupplierCount: 4,
@@ -783,7 +882,7 @@ export const EDGE_ENTITIES: EdgeEntity[] = [
   },
   {
     from: 'KLAC',
-    to: 'FORM',
+    to: 'FORM_T2',
     transactionAmount: 195,
     newsCoMentionCount: 44,
     commonSupplierCount: 1,
@@ -883,7 +982,7 @@ export const EDGE_ENTITIES: EdgeEntity[] = [
   // ENTG → Tier 2 (2 edges)
   {
     from: 'ENTG',
-    to: 'CCMP',
+    to: 'CCMP_T2',
     transactionAmount: 380,
     newsCoMentionCount: 56,
     commonSupplierCount: 3,
