@@ -240,7 +240,7 @@ input, select { font-family: var(--font); }
 /* ===== BANNER CAROUSEL ===== */
 .banner-wrap {
   flex-shrink: 0;
-  background: var(--c-orange);
+  background: #bf3030;
   position: relative;
   overflow: hidden;
   height: 40px;
