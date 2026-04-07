@@ -571,7 +571,6 @@ export default function TopNav() {
           className="topnav-action-btn topnav-action-btn--icon-only"
           title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           aria-label={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          onClick={toggleTheme}
         >
           {theme === 'dark' ? (
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
