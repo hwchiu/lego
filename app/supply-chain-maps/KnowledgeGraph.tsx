@@ -297,12 +297,12 @@ function FilterRow({ label, options, selected, onChange, expanded, onToggleExpan
         ))}
         {hiddenCount > 0 && !expanded && (
           <button className="kg-filter-more-btn" onClick={onToggleExpand}>
-            +{hiddenCount} more ▾
+            +{hiddenCount} More ▾
           </button>
         )}
         {hiddenCount > 0 && expanded && (
           <button className="kg-filter-more-btn" onClick={onToggleExpand}>
-            less ▴
+            Less ▴
           </button>
         )}
       </div>
@@ -351,9 +351,9 @@ export default function KnowledgeGraph() {
   const visibleNodes = useMemo(() => {
     return ALL_NODES.filter((n) => {
       if (n.role === 'center') return true;
-      if (filterIndustries.length > 0 && !filterIndustries.includes(n.industry)) return false;
-      if (filterSegments.length > 0 && !filterSegments.includes(n.segment)) return false;
-      if (filterCountries.length > 0 && !filterCountries.includes(n.country)) return false;
+      if (filterIndustries.length > 0 && !filterIndustries.includes(n.industry ?? '')) return false;
+      if (filterSegments.length > 0 && !filterSegments.includes(n.segment ?? '')) return false;
+      if (filterCountries.length > 0 && !filterCountries.includes(n.country ?? '')) return false;
       return true;
     });
   }, [filterIndustries, filterSegments, filterCountries]);
