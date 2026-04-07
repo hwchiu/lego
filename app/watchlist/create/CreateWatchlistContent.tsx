@@ -267,6 +267,41 @@ function getDefaultSymbolInfo(suggestionType: SuggestionItem['type']): SymbolAiI
 // Symbol lookup map for quick name resolution
 const SYMBOL_LOOKUP = new Map(SP500_COMPANIES.map((c) => [c.symbol, c.name]));
 
+// ── Relevance donut chart ──────────────────────────────────────────────────────
+function RelevanceDonut({ score }: { score: number }) {
+  const size = 36;
+  const sw = 3.5;
+  const r = (size - sw) / 2;
+  const circ = 2 * Math.PI * r;
+  const offset = circ * (1 - score / 100);
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="cwl-ai-donut" aria-hidden="true">
+      <defs>
+        <linearGradient id="donut-grad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#4fc3f7" />
+          <stop offset="100%" stopColor="#2563eb" />
+        </linearGradient>
+      </defs>
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#e5e7eb" strokeWidth={sw} />
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={r}
+        fill="none"
+        stroke="url(#donut-grad)"
+        strokeWidth={sw}
+        strokeDasharray={circ}
+        strokeDashoffset={offset}
+        strokeLinecap="round"
+        style={{ transform: 'rotate(-90deg)', transformOrigin: '50% 50%' }}
+      />
+      <text x="50%" y="50%" textAnchor="middle" dy="0.35em" fontSize="9" fontWeight="700" fill="#1d4ed8">
+        {score}
+      </text>
+    </svg>
+  );
+}
+
 // ── Tier badge colors ─────────────────────────────────────────────────────────
 const TIER_STYLE: Record<SymbolAiInfo['tier'], string> = {
   Primary:   'cwl-ai-tier cwl-ai-tier--primary',
@@ -274,17 +309,17 @@ const TIER_STYLE: Record<SymbolAiInfo['tier'], string> = {
   Supporting:'cwl-ai-tier cwl-ai-tier--supporting',
 };
 
-// ── Symbol list item ──────────────────────────────────────────────────────────
 interface SymbolItemProps {
   symbol: string;
   index: number;
+  relevance?: number;
   onDelete: (sym: string) => void;
   onDragStart: (idx: number) => void;
   onDragEnter: (idx: number) => void;
   onDragEnd: () => void;
 }
 
-function SymbolItem({ symbol, index, onDelete, onDragStart, onDragEnter, onDragEnd }: SymbolItemProps) {
+function SymbolItem({ symbol, index, relevance, onDelete, onDragStart, onDragEnter, onDragEnd }: SymbolItemProps) {
   const name = SYMBOL_LOOKUP.get(symbol) ?? '';
   return (
     <div
@@ -300,6 +335,7 @@ function SymbolItem({ symbol, index, onDelete, onDragStart, onDragEnter, onDragE
       </svg>
       <span className="cwl-symbol-badge">{symbol}</span>
       {name && <span className="cwl-symbol-name">{name}</span>}
+      {relevance !== undefined && <span className="cwl-symbol-relevance">{relevance}</span>}
       <span className="cwl-symbol-rank">#{index + 1}</span>
       <button
         className="cwl-symbol-delete"
@@ -367,29 +403,28 @@ function AiPanel({ suggestion, symbols }: AiPanelProps) {
         </div>
       )}
 
-      {/* Symbol KPI cards */}
+      {/* Symbol KPI cards — sorted by relevance (high → low) */}
       <div className="cwl-ai-kpi-section-label">Company Correlation Indicators</div>
       <div className="cwl-ai-kpi-list">
-        {symbols.map((sym) => {
+        {[...symbols]
+          .sort((a, b) => {
+            const ra = ctx?.symbolInfo[a]?.relevanceScore ?? 60;
+            const rb = ctx?.symbolInfo[b]?.relevanceScore ?? 60;
+            return rb - ra;
+          })
+          .map((sym) => {
           const info = ctx?.symbolInfo[sym] ?? getDefaultSymbolInfo(suggestion?.type ?? 'topic');
           const name = SYMBOL_LOOKUP.get(sym) ?? '';
-          const barWidth = `${info.relevanceScore}%`;
           return (
             <div key={sym} className="cwl-ai-kpi-card">
               <div className="cwl-ai-kpi-card-top">
+                {/* Relevance donut at top-left, before company name */}
+                <RelevanceDonut score={info.relevanceScore} />
                 <div className="cwl-ai-kpi-identity">
                   <span className="cwl-ai-kpi-symbol">{sym}</span>
                   {name && <span className="cwl-ai-kpi-name">{name}</span>}
                 </div>
                 <span className={TIER_STYLE[info.tier]}>{info.tier}</span>
-              </div>
-              {/* Relevance score bar */}
-              <div className="cwl-ai-score-row">
-                <span className="cwl-ai-score-label">Relevance</span>
-                <div className="cwl-ai-score-bar-wrap">
-                  <div className="cwl-ai-score-bar" style={{ width: barWidth }} />
-                </div>
-                <span className="cwl-ai-score-value">{info.relevanceScore}</span>
               </div>
               {/* Note */}
               <p className="cwl-ai-kpi-note">{info.note}</p>
@@ -462,12 +497,31 @@ export default function CreateWatchlistContent() {
     setShowDropdown(false);
     setSelectedSuggestion(item);
     setSymbols((prev) => {
+      const ctx = AI_CONTEXT[item.id];
       const existing = new Set(prev);
       const toAdd = item.symbols.filter((s) => !existing.has(s));
-      return [...prev, ...toAdd];
+      const all = [...prev, ...toAdd];
+      // Sort by relevance (high → low)
+      if (ctx) {
+        all.sort((a, b) => {
+          const ra = ctx.symbolInfo[a]?.relevanceScore ?? 60;
+          const rb = ctx.symbolInfo[b]?.relevanceScore ?? 60;
+          return rb - ra;
+        });
+      }
+      return all;
     });
     setWatchlistName((prev) => (prev.trim() ? prev : item.label));
   }
+
+  const getRelevance = useCallback(
+    (sym: string): number | undefined => {
+      if (!selectedSuggestion) return undefined;
+      const ctx = AI_CONTEXT[selectedSuggestion.id];
+      return ctx?.symbolInfo[sym]?.relevanceScore;
+    },
+    [selectedSuggestion],
+  );
 
   const handleAddSymbol = useCallback(() => {
     const parts = addSymbolInput
@@ -535,7 +589,7 @@ export default function CreateWatchlistContent() {
           <div className={`cwl-page${showAiPanel ? ' cwl-page--wide' : ''}`}>
             {/* ── Header greeting ── */}
             <div className="cwl-greeting">
-              <p className="cwl-greeting-sub">Good day, PiKa</p>
+              <p className="cwl-greeting-sub">Good day, <strong>PiKa</strong></p>
               <h1 className="cwl-greeting-title">What would you like to follow?</h1>
             </div>
 
@@ -613,15 +667,23 @@ export default function CreateWatchlistContent() {
               <div className="cwl-builder">
                 <div className="cwl-field">
                   <label className="cwl-field-label" htmlFor="cwl-name-input">Watchlist Name</label>
-                  <input
-                    id="cwl-name-input"
-                    className="cwl-name-input"
-                    type="text"
-                    placeholder="e.g. My AI Portfolio"
-                    value={watchlistName}
-                    onChange={(e) => setWatchlistName(e.target.value)}
-                    maxLength={60}
-                  />
+                  <div className="cwl-name-row">
+                    <input
+                      id="cwl-name-input"
+                      className="cwl-name-input"
+                      type="text"
+                      placeholder="e.g. My AI Portfolio"
+                      value={watchlistName}
+                      onChange={(e) => setWatchlistName(e.target.value)}
+                      maxLength={60}
+                    />
+                    <button className="cwl-submit-btn" onClick={handleSubmit} disabled={!canSubmit}>
+                      <svg viewBox="0 0 16 16" width="13" height="13" fill="none" aria-hidden="true" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M8 1.5v13M1.5 8h13" />
+                      </svg>
+                      Create Watchlist
+                    </button>
+                  </div>
                 </div>
 
                 <div className="cwl-field">
@@ -630,12 +692,6 @@ export default function CreateWatchlistContent() {
                       Companies
                       {symbols.length > 0 && <span className="cwl-symbol-count"> ({symbols.length})</span>}
                     </span>
-                    <button className="cwl-submit-btn" onClick={handleSubmit} disabled={!canSubmit}>
-                      <svg viewBox="0 0 16 16" width="13" height="13" fill="none" aria-hidden="true" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M8 1.5v13M1.5 8h13" />
-                      </svg>
-                      Create Watchlist
-                    </button>
                   </div>
 
                   <div className="cwl-add-row">
@@ -684,6 +740,7 @@ export default function CreateWatchlistContent() {
                           key={sym}
                           symbol={sym}
                           index={idx}
+                          relevance={getRelevance(sym)}
                           onDelete={handleDeleteSymbol}
                           onDragStart={handleDragStart}
                           onDragEnter={handleDragEnter}
