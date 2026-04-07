@@ -662,7 +662,8 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                 </Link>
                 <div className="cp-breadcrumb">
                   <span className="cp-breadcrumb-text">Company Overview /</span>
-                  <h1 className="cp-company-name">{companyName}</h1>
+                  <h1 className="cp-company-name">{symbol}</h1>
+                  <span className="cp-breadcrumb-subname">{companyName}</span>
                 </div>
               </div>
 

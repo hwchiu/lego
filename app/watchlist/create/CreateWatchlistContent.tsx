@@ -263,7 +263,7 @@ export default function CreateWatchlistContent() {
           <div className="cwl-page">
             {/* ── Header greeting ── */}
             <div className="cwl-greeting">
-              <p className="cwl-greeting-sub">Good day, HungWei</p>
+              <p className="cwl-greeting-sub">Good day, PiKa</p>
               <h1 className="cwl-greeting-title">What would you like to follow?</h1>
             </div>
 

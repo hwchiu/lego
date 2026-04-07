@@ -21,7 +21,7 @@ const TOOLS = [
 ];
 
 // User display name (matches TopNav)
-const USER_NAME = 'HungWei';
+const USER_NAME = 'PiKa';
 
 // Flat minimalist black SVG icons for scenario buttons
 function ScenarioIconCreateReport() {

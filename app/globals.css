@@ -1484,14 +1484,14 @@ input, select { font-family: var(--font); }
 
 .crt-td-num { text-align: right; }
 
-.crt-company-name {
-  font-weight: 600;
+.crt-company-symbol {
   font-size: 13px;
+  font-weight: 700;
   color: var(--c-text);
   white-space: nowrap;
 }
 
-.crt-company-symbol {
+.crt-company-name {
   font-size: 11px;
   color: var(--c-text-4);
   margin-top: 1px;
@@ -3376,6 +3376,13 @@ input, select { font-family: var(--font); }
   font-size: 12px;
   font-weight: 400;
   color: var(--c-text-3);
+}
+
+.cp-breadcrumb-subname {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--c-text-3);
+  margin-top: -2px;
 }
 
 .cp-company-name {
@@ -13662,11 +13669,15 @@ input, select { font-family: var(--font); }
   min-width: 0;
 }
 .fd-company-name {
-  font-size: 17px;
-  font-weight: 800;
-  color: var(--c-dark);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-text-3);
   margin: 0 0 2px;
-  letter-spacing: -0.2px;
+}
+.fd-company-name--attr {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-text-3);
 }
 .fd-company-meta {
   display: flex;
@@ -13681,6 +13692,13 @@ input, select { font-family: var(--font); }
   background: var(--c-bg);
   padding: 1px 7px;
   border-radius: 3px;
+}
+.fd-company-symbol--header {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--c-dark);
+  margin: 0 0 2px;
+  letter-spacing: -0.2px;
 }
 .fd-company-sector {
   font-size: 12px;
