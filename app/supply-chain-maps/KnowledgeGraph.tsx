@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { TSM_TIER1_SUPPLIERS, TSM_TIER2_SUPPLIERS, TSM_CENTER_NODE } from '@/app/data/tsmcSupplierData';
@@ -152,6 +152,202 @@ function buildAllNodes(): DisplayNode[] {
 }
 
 const ALL_NODES = buildAllNodes();
+
+// ── Aggregated feed items from all nodes ─────────────────────────────────────
+
+interface KgFeedItem {
+  id: string;
+  title: string;
+  ticker: string;
+  nodeId: string;
+  source: string;
+  date: string;
+  url: string;
+}
+
+const ALL_FEED_ITEMS: KgFeedItem[] = ALL_NODES.flatMap((n) =>
+  n.articles.map((a, i) => ({
+    id: `${n.id}-${i}`,
+    title: a.title,
+    ticker: n.ticker,
+    nodeId: n.id,
+    source: a.source,
+    date: a.date,
+    url: a.url,
+  })),
+);
+
+// ── Draggable node info card ──────────────────────────────────────────────────
+
+interface KgNodeInfoCardProps {
+  node: DisplayNode | null;
+  onClose: () => void;
+}
+
+function KgNodeInfoCard({ node, onClose }: KgNodeInfoCardProps) {
+  const [pos, setPos] = useState({ x: 16, y: 16 });
+  const cardDragRef = useRef<{
+    startX: number;
+    startY: number;
+    startPosX: number;
+    startPosY: number;
+  } | null>(null);
+  const cleanupRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (cleanupRef.current) cleanupRef.current();
+    };
+  }, []);
+
+  // Reset position when a new node is selected
+  useEffect(() => {
+    if (node) setPos({ x: 16, y: 16 });
+  }, [node?.id]);
+
+  function handleDragMouseDown(e: React.MouseEvent) {
+    e.preventDefault();
+    cardDragRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      startPosX: pos.x,
+      startPosY: pos.y,
+    };
+    function onMove(ev: MouseEvent) {
+      if (!cardDragRef.current) return;
+      setPos({
+        x: cardDragRef.current.startPosX + ev.clientX - cardDragRef.current.startX,
+        y: cardDragRef.current.startPosY + ev.clientY - cardDragRef.current.startY,
+      });
+    }
+    function onUp() {
+      cardDragRef.current = null;
+      cleanupRef.current = null;
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    }
+    cleanupRef.current = onUp;
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  }
+
+  if (!node) return null;
+
+  const badgeColor = roleBadgeColor(node.role);
+  const roleLabel =
+    node.role === 'supplier1'
+      ? 'Tier-1 Supplier'
+      : node.role === 'supplier2'
+        ? 'Tier-2 Supplier'
+        : node.role.charAt(0).toUpperCase() + node.role.slice(1);
+
+  return (
+    <div className="rmap-node-info-card" style={{ left: pos.x, top: pos.y }}>
+      <div className="rmap-node-info-card-header" onMouseDown={handleDragMouseDown}>
+        <span className="rmap-node-info-card-title">{node.name}</span>
+        <button className="rmap-detail-close" onClick={onClose} aria-label="Close">
+          ×
+        </button>
+      </div>
+      <div className="rmap-node-info-card-body">
+        <div className="rmap-detail-badge" style={{ background: badgeColor }}>
+          {roleLabel}
+        </div>
+        <p className="rmap-detail-ticker">
+          {node.ticker} &nbsp;·&nbsp; {node.country}
+        </p>
+        <p className="rmap-detail-country">
+          <span className="rmap-detail-label">Industry: </span>
+          <button className="rmap-detail-tag-link">{node.industry}</button>
+        </p>
+        {node.segment && (
+          <p className="rmap-detail-country" style={{ marginTop: 4 }}>
+            <span className="rmap-detail-label">Segment: </span>
+            <button className="rmap-detail-tag-link">{node.segment}</button>
+          </p>
+        )}
+        {node.description && (
+          <p className="rmap-detail-items" style={{ marginTop: 8 }}>
+            {node.description}
+          </p>
+        )}
+        <div className="rmap-detail-fins">
+          <div className="rmap-detail-fin">
+            <span className="rmap-detail-fin-label">Revenue</span>
+            <span className="rmap-detail-fin-val">{node.financials.revenue}</span>
+          </div>
+          <div className="rmap-detail-fin">
+            <span className="rmap-detail-fin-label">Market Cap</span>
+            <span className="rmap-detail-fin-val">{node.financials.marketCap}</span>
+          </div>
+        </div>
+        {node.role === 'supplier1' || node.role === 'supplier2' ? (
+          <Link href="/my-rmap/supplier" className="kg-detail-link" style={{ marginTop: 10, display: 'inline-block' }}>
+            View Supplier Network →
+          </Link>
+        ) : node.role === 'customer' ? (
+          <Link href="/my-rmap/customer" className="kg-detail-link" style={{ marginTop: 10, display: 'inline-block' }}>
+            View Customer Network →
+          </Link>
+        ) : node.role === 'competitor' ? (
+          <Link href="/my-rmap/competitor" className="kg-detail-link" style={{ marginTop: 10, display: 'inline-block' }}>
+            View Competitor Network →
+          </Link>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+// ── Feed panel (right side of graph) ─────────────────────────────────────────
+
+interface KgFeedPanelProps {
+  selectedNode: DisplayNode | null;
+}
+
+function KgFeedPanel({ selectedNode }: KgFeedPanelProps) {
+  const filteredFeed = selectedNode
+    ? ALL_FEED_ITEMS.filter((item) => item.nodeId === selectedNode.id)
+    : ALL_FEED_ITEMS;
+
+  return (
+    <div className="rmap-feed-panel">
+      <div className="rmap-feed-panel-header">
+        <span className="rmap-feed-panel-title">Updates</span>
+        <span className="rmap-feed-panel-sub">
+          {selectedNode ? selectedNode.name : 'Ecosystem News'}
+        </span>
+      </div>
+      <div className="rmap-feed-panel-list">
+        {filteredFeed.length === 0 ? (
+          <div className="rmap-feed-panel-empty">No news for {selectedNode?.name}</div>
+        ) : (
+          filteredFeed.map((item, idx) => (
+            <div
+              key={item.id}
+              className={`rmap-feed-panel-item${idx < filteredFeed.length - 1 ? ' rmap-feed-panel-item--bordered' : ''}`}
+            >
+              <div className="rmap-feed-panel-item-title">
+                <a href={item.url} className="rmap-feed-panel-item-title" target="_blank" rel="noopener noreferrer">
+                  {item.title}
+                </a>
+              </div>
+              <div className="rmap-feed-panel-item-meta">
+                <a href="#" className="rmap-feed-panel-ticker">
+                  {item.ticker}
+                </a>
+                <span className="rmap-feed-panel-dot"> · </span>
+                <span className="rmap-feed-panel-source">{item.source}</span>
+                <span className="rmap-feed-panel-dot"> · </span>
+                <span className="rmap-feed-panel-time">{item.date}</span>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
 
 // ── Layout helpers ────────────────────────────────────────────────────────────
 
@@ -475,217 +671,165 @@ export default function KnowledgeGraph() {
         <span className="kg-legend-hint">Click a node for details</span>
       </div>
 
-      {/* Graph container */}
-      <div className="kg-graph-container">
-        <div className="kg-graph-scroll" style={{ overflow: 'auto' }}>
-          <svg
-            viewBox={`0 0 ${SVG_W} ${SVG_H}`}
-            className="kg-svg"
-            style={{ width: SVG_W * zoom, height: SVG_H * zoom, display: 'block' }}
-          >
-            <defs>
-              <filter id="node-glow" x="-30%" y="-30%" width="160%" height="160%">
-                <feGaussianBlur stdDeviation="3" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
+      {/* Graph + Feed panel side by side */}
+      <div className="rmap-graph-content">
+        {/* Graph area (70%) with draggable info card overlay */}
+        <div className="rmap-svg-container" style={{ position: 'relative' }}>
+          <div className="kg-graph-container">
+            <div className="kg-graph-scroll" style={{ overflow: 'auto' }}>
+              <svg
+                viewBox={`0 0 ${SVG_W} ${SVG_H}`}
+                className="kg-svg"
+                style={{ width: SVG_W * zoom, height: SVG_H * zoom, display: 'block' }}
+              >
+                <defs>
+                  <filter id="node-glow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur stdDeviation="3" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                </defs>
 
-            {/* Edges */}
-            {visibleEdges.map((edge, i) => {
-              const src = nodeById[edge.from];
-              const tgt = nodeById[edge.to];
-              if (!src || !tgt) return null;
-              const isSelEdge = selected?.type === 'edge' && selected.data.from === edge.from && selected.data.to === edge.to;
-              const isConnected = selectedNodeId === edge.from || selectedNodeId === edge.to;
-              const opacity = selected && !isSelEdge && !isConnected ? 0.18 : 0.55;
-              const strokeW = isSelEdge ? 3 : edge.weight * 0.6 + 0.5;
-              const srcRole = src.role as NodeRole;
-              const edgeColor = ROLE_COLORS[srcRole]?.edge ?? '#94a3b8';
-              const mx = (src.x + tgt.x) / 2;
-              const my = (src.y + tgt.y) / 2;
-              const label = truncate(edge.label, 22);
-              return (
-                <g key={`e-${i}`} onClick={() => handleEdgeClick(edge)} style={{ cursor: 'pointer' }}>
-                  <line
-                    x1={src.x} y1={src.y} x2={tgt.x} y2={tgt.y}
-                    stroke={isSelEdge ? '#f59e0b' : edgeColor}
-                    strokeWidth={isSelEdge ? strokeW + 1 : strokeW}
-                    opacity={opacity}
-                  />
-                  <text
-                    x={mx} y={my - 4}
-                    textAnchor="middle"
-                    fill="#64748b"
-                    fontSize={7.5}
-                    opacity={0.7}
-                    style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}
-                  >
-                    {label}
-                  </text>
-                </g>
-              );
-            })}
-
-            {/* Nodes */}
-            {layoutNodes.map((n) => {
-              const isCenter = n.role === 'center';
-              const c = ROLE_COLORS[n.role];
-              const isSelected = selectedNodeId === n.id;
-              const isConnected = selected?.type === 'edge' && (selected.data.from === n.id || selected.data.to === n.id);
-              const dimmed = selected && !isSelected && !isConnected;
-              const rx = n.x - n.w / 2;
-              const ry = n.y - n.h / 2;
-              return (
-                <g
-                  key={n.id}
-                  onClick={() => handleNodeClick(n)}
-                  style={{ cursor: 'pointer', opacity: dimmed ? 0.25 : 1 }}
-                >
-                  <title>{n.name} ({n.ticker}) — {n.country} | {n.industry} | {n.segment}</title>
-                  <rect
-                    x={rx} y={ry} width={n.w} height={n.h} rx={4}
-                    fill={isCenter ? '#1a2332' : c.fill}
-                    stroke={isSelected ? '#f59e0b' : c.stroke}
-                    strokeWidth={isSelected ? 2.5 : 1.5}
-                    filter={isSelected ? 'url(#node-glow)' : undefined}
-                  />
-                  <text
-                    x={n.x} y={isCenter ? n.y - 10 : n.y - 8}
-                    textAnchor="middle" dominantBaseline="middle"
-                    fill={isCenter ? '#ffffff' : c.text}
-                    fontSize={isCenter ? 15 : 10}
-                    fontWeight="700"
-                    style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}
-                  >
-                    {n.ticker}
-                  </text>
-                  {!isCenter && (
-                    <>
+                {/* Edges */}
+                {visibleEdges.map((edge, i) => {
+                  const src = nodeById[edge.from];
+                  const tgt = nodeById[edge.to];
+                  if (!src || !tgt) return null;
+                  const isSelEdge = selected?.type === 'edge' && selected.data.from === edge.from && selected.data.to === edge.to;
+                  const isConnected = selectedNodeId === edge.from || selectedNodeId === edge.to;
+                  const opacity = selected && !isSelEdge && !isConnected ? 0.18 : 0.55;
+                  const strokeW = isSelEdge ? 3 : edge.weight * 0.6 + 0.5;
+                  const srcRole = src.role as NodeRole;
+                  const edgeColor = ROLE_COLORS[srcRole]?.edge ?? '#94a3b8';
+                  const mx = (src.x + tgt.x) / 2;
+                  const my = (src.y + tgt.y) / 2;
+                  const label = truncate(edge.label, 22);
+                  return (
+                    <g key={`e-${i}`} onClick={() => handleEdgeClick(edge)} style={{ cursor: 'pointer' }}>
+                      <line
+                        x1={src.x} y1={src.y} x2={tgt.x} y2={tgt.y}
+                        stroke={isSelEdge ? '#f59e0b' : edgeColor}
+                        strokeWidth={isSelEdge ? strokeW + 1 : strokeW}
+                        opacity={opacity}
+                      />
                       <text
-                        x={n.x} y={n.y + 2}
-                        textAnchor="middle" dominantBaseline="middle"
-                        fill={c.text} fontSize={7.5} opacity={0.7}
+                        x={mx} y={my - 4}
+                        textAnchor="middle"
+                        fill="#64748b"
+                        fontSize={7.5}
+                        opacity={0.7}
                         style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}
                       >
-                        {truncate(n.name, 16)}
+                        {label}
                       </text>
-                      <text
-                        x={n.x} y={n.y + 13}
-                        textAnchor="middle" dominantBaseline="middle"
-                        fill={c.text} fontSize={6.5} opacity={0.55}
-                        style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}
-                      >
-                        {n.country} · {truncate(n.segment, 12)}
-                      </text>
-                    </>
-                  )}
-                  {isCenter && (
-                    <text
-                      x={n.x} y={n.y + 12}
-                      textAnchor="middle" dominantBaseline="middle"
-                      fill="#94a3b8" fontSize={8.5}
-                      style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}
+                    </g>
+                  );
+                })}
+
+                {/* Nodes */}
+                {layoutNodes.map((n) => {
+                  const isCenter = n.role === 'center';
+                  const c = ROLE_COLORS[n.role];
+                  const isSelected = selectedNodeId === n.id;
+                  const isConnected = selected?.type === 'edge' && (selected.data.from === n.id || selected.data.to === n.id);
+                  const dimmed = selected && !isSelected && !isConnected;
+                  const rx = n.x - n.w / 2;
+                  const ry = n.y - n.h / 2;
+                  return (
+                    <g
+                      key={n.id}
+                      onClick={() => handleNodeClick(n)}
+                      style={{ cursor: 'pointer', opacity: dimmed ? 0.25 : 1 }}
                     >
-                      TSMC
-                    </text>
-                  )}
-                </g>
-              );
-            })}
+                      <title>{n.name} ({n.ticker}) — {n.country} | {n.industry} | {n.segment}</title>
+                      <rect
+                        x={rx} y={ry} width={n.w} height={n.h} rx={4}
+                        fill={isCenter ? '#1a2332' : c.fill}
+                        stroke={isSelected ? '#f59e0b' : c.stroke}
+                        strokeWidth={isSelected ? 2.5 : 1.5}
+                        filter={isSelected ? 'url(#node-glow)' : undefined}
+                      />
+                      <text
+                        x={n.x} y={isCenter ? n.y - 10 : n.y - 8}
+                        textAnchor="middle" dominantBaseline="middle"
+                        fill={isCenter ? '#ffffff' : c.text}
+                        fontSize={isCenter ? 15 : 10}
+                        fontWeight="700"
+                        style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}
+                      >
+                        {n.ticker}
+                      </text>
+                      {!isCenter && (
+                        <>
+                          <text
+                            x={n.x} y={n.y + 2}
+                            textAnchor="middle" dominantBaseline="middle"
+                            fill={c.text} fontSize={7.5} opacity={0.7}
+                            style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}
+                          >
+                            {truncate(n.name, 16)}
+                          </text>
+                          <text
+                            x={n.x} y={n.y + 13}
+                            textAnchor="middle" dominantBaseline="middle"
+                            fill={c.text} fontSize={6.5} opacity={0.55}
+                            style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}
+                          >
+                            {n.country} · {truncate(n.segment, 12)}
+                          </text>
+                        </>
+                      )}
+                      {isCenter && (
+                        <text
+                          x={n.x} y={n.y + 12}
+                          textAnchor="middle" dominantBaseline="middle"
+                          fill="#94a3b8" fontSize={8.5}
+                          style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}
+                        >
+                          TSMC
+                        </text>
+                      )}
+                    </g>
+                  );
+                })}
 
-            {/* Section labels */}
-            <text x={1180} y={80} textAnchor="middle" fill="#64748b" fontSize={9.5}
-              fontWeight="700" letterSpacing="0.08em"
-              style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}>
-              SUPPLIERS
-            </text>
-            <text x={1430} y={80} textAnchor="middle" fill="#94a3b8" fontSize={8.5}
-              fontWeight="700" letterSpacing="0.08em"
-              style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}>
-              TIER-2
-            </text>
-            <text x={350} y={60} textAnchor="middle" fill="#64748b" fontSize={9.5}
-              fontWeight="700" letterSpacing="0.08em"
-              style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}>
-              CUSTOMERS
-            </text>
-            <text x={CCX} y={60} textAnchor="middle" fill="#64748b" fontSize={9.5}
-              fontWeight="700" letterSpacing="0.08em"
-              style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}>
-              COMPETITORS (bottom)
-            </text>
-          </svg>
+                {/* Section labels */}
+                <text x={1180} y={80} textAnchor="middle" fill="#64748b" fontSize={9.5}
+                  fontWeight="700" letterSpacing="0.08em"
+                  style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}>
+                  SUPPLIERS
+                </text>
+                <text x={1430} y={80} textAnchor="middle" fill="#94a3b8" fontSize={8.5}
+                  fontWeight="700" letterSpacing="0.08em"
+                  style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}>
+                  TIER-2
+                </text>
+                <text x={350} y={60} textAnchor="middle" fill="#64748b" fontSize={9.5}
+                  fontWeight="700" letterSpacing="0.08em"
+                  style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}>
+                  CUSTOMERS
+                </text>
+                <text x={CCX} y={60} textAnchor="middle" fill="#64748b" fontSize={9.5}
+                  fontWeight="700" letterSpacing="0.08em"
+                  style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}>
+                  COMPETITORS (bottom)
+                </text>
+              </svg>
+            </div>
+          </div>
+
+          {/* Draggable node info card overlay */}
+          <KgNodeInfoCard
+            node={selected?.type === 'node' ? selected.data : null}
+            onClose={() => setSelected(null)}
+          />
         </div>
+
+        {/* News feed panel (30%) */}
+        <KgFeedPanel selectedNode={selected?.type === 'node' ? selected.data : null} />
       </div>
-
-      {/* Info panel */}
-      {selected && (
-        <div className="kg-info-panel">
-          <button className="kg-info-panel-close" onClick={() => setSelected(null)} aria-label="Close panel">×</button>
-
-          {selected.type === 'node' && (() => {
-            const n = selected.data;
-            return (
-              <>
-                <span className="kg-info-panel-role" style={{ background: roleBadgeColor(n.role) }}>
-                  {n.role === 'supplier1' ? 'Tier-1 Supplier' : n.role === 'supplier2' ? 'Tier-2 Supplier' : n.role.charAt(0).toUpperCase() + n.role.slice(1)}
-                </span>
-                <h2 className="kg-info-panel-name">{n.name}</h2>
-                <div className="kg-info-panel-ticker">{n.ticker}</div>
-                <div className="kg-info-panel-tags">
-                  <span className="kg-info-panel-tag">{n.country}</span>
-                  <span className="kg-info-panel-tag">{n.industry}</span>
-                  <span className="kg-info-panel-tag">{n.segment}</span>
-                </div>
-                {n.description && <p className="kg-info-panel-desc">{n.description}</p>}
-                <div className="kg-info-panel-fin">
-                  <div className="kg-info-panel-fin-item">
-                    <span className="kg-info-panel-fin-label">Revenue</span>
-                    <span className="kg-info-panel-fin-value">{n.financials.revenue}</span>
-                  </div>
-                  <div className="kg-info-panel-fin-item">
-                    <span className="kg-info-panel-fin-label">Market Cap</span>
-                    <span className="kg-info-panel-fin-value">{n.financials.marketCap}</span>
-                  </div>
-                </div>
-                {n.articles.length > 0 && (
-                  <>
-                    <div className="kg-info-panel-articles-title">Related News</div>
-                    <div className="kg-info-panel-articles">
-                      {n.articles.map((a, i) => (
-                        <a key={i} href={a.url} className="kg-info-panel-article" target="_blank" rel="noopener noreferrer">
-                          <span className="kg-info-panel-article-title">{a.title}</span>
-                          <span className="kg-info-panel-article-meta">{a.source} · {a.date}</span>
-                        </a>
-                      ))}
-                    </div>
-                  </>
-                )}
-                {(n.role === 'supplier1' || n.role === 'supplier2') && (
-                  <Link href="/my-rmap/supplier" className="kg-detail-link" style={{ marginTop: 14, display: 'inline-block' }}>View Supplier Network →</Link>
-                )}
-                {n.role === 'customer' && (
-                  <Link href="/my-rmap/customer" className="kg-detail-link" style={{ marginTop: 14, display: 'inline-block' }}>View Customer Network →</Link>
-                )}
-                {n.role === 'competitor' && (
-                  <Link href="/my-rmap/competitor" className="kg-detail-link" style={{ marginTop: 14, display: 'inline-block' }}>View Competitor Network →</Link>
-                )}
-              </>
-            );
-          })()}
-
-          {selected.type === 'edge' && (
-            <>
-              <div className="kg-info-edge-from-to">{selected.data.from} → {selected.data.to}</div>
-              <div className="kg-info-edge-label">{selected.data.label}</div>
-              <p className="kg-info-edge-desc">{selected.data.description}</p>
-            </>
-          )}
-        </div>
-      )}
     </div>
   );
 }
