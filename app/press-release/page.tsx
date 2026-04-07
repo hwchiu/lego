@@ -44,10 +44,10 @@ function PressReleaseCard({ pr, compact = false, lang }: PressReleaseCardProps) 
       {/* Corner triangle: blue for customer, dark-red for supplier */}
       <div className={`pr-card-tri ${pr.relationship === 'customer' ? 'pr-card-tri--customer' : 'pr-card-tri--supplier'}`} />
 
-      {/* Date top-left + company tag for compact cards */}
+      {/* Date top-left + symbol tag for compact cards */}
       <div className="pr-card-date-row">
         <div className="pr-card-date">{dateStr}</div>
-        {compact && <span className="pr-tag pr-tag--neutral pr-card-compact-company">{pr.company}</span>}
+        {compact && pr.ticker && <span className="pr-tag pr-tag--symbol pr-card-compact-company">{pr.ticker}</span>}
       </div>
 
       {/* Title */}
@@ -850,11 +850,11 @@ export default function PressReleasePage() {
               {/* Color legend */}
               <div className="pr-legend">
                 <span className="pr-legend-item">
-                  <span className="pr-legend-tri pr-legend-tri--customer" aria-hidden="true">▲</span>
+                  <span className="pr-legend-tri pr-legend-tri--customer" aria-hidden="true">●</span>
                   <span className="pr-legend-label">Customer</span>
                 </span>
                 <span className="pr-legend-item">
-                  <span className="pr-legend-tri pr-legend-tri--supplier" aria-hidden="true">▲</span>
+                  <span className="pr-legend-tri pr-legend-tri--supplier" aria-hidden="true">●</span>
                   <span className="pr-legend-label">Supplier</span>
                 </span>
               </div>
