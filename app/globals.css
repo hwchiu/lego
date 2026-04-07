@@ -6390,11 +6390,50 @@ input, select { font-family: var(--font); }
   color: var(--c-neg) !important;
 }
 
+/* Positive growth cell */
+.fin-stmt-pos {
+  color: var(--c-pos) !important;
+}
+
 .fin-stmt-currency-note {
   font-size: 11.5px;
   color: var(--c-text-4);
   font-style: italic;
   margin-bottom: 8px;
+}
+
+/* Source note for simple statement tables */
+.fin-stmt-source-note {
+  font-size: 11px;
+  color: var(--c-text-4);
+  font-style: italic;
+  margin: 0 0 10px;
+  line-height: 1.5;
+}
+
+/* Simple statement table (Balance Sheet / Cash Flow / Segment) */
+.fin-stmt-simple-table .fin-stmt-td-section {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-text-3);
+  background: var(--c-bg);
+  padding: 6px 10px;
+}
+
+.fin-stmt-simple-table .fin-stmt-section-row td {
+  background: var(--c-bg);
+  border-bottom: 1px solid var(--c-border);
+}
+
+.fin-stmt-td-section-blank {
+  background: var(--c-bg) !important;
+}
+
+.fin-stmt-simple-col-hdr {
+  white-space: nowrap;
+  min-width: 90px;
 }
 
 /* ============================================================
