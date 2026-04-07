@@ -43,12 +43,6 @@ const UNIQUE_PROCESS_LC = [
   ...new Set(ALL_COMPETITORS.flatMap((c) => c.processNodes)),
 ].map((s) => ({ val: s, lc: s.toLowerCase() }));
 
-const RISK_TYPES = [
-  { key: 'geopolitical', labelEn: 'Geopolitical Risk' },
-  { key: 'technology', labelEn: 'Technology Gap' },
-  { key: 'tariff', labelEn: 'Tariff Issues' },
-];
-
 const FILTER_TABS = ['Company', 'Industry', 'Process', 'News'] as const;
 type FilterTab = (typeof FILTER_TABS)[number];
 
@@ -187,61 +181,182 @@ interface DetailPanelProps {
 }
 
 function DetailPanel({ node, onClose }: DetailPanelProps) {
+  const [pos, setPos] = useState({ x: 16, y: 16 });
+  const cardDragRef = useRef<{
+    startX: number;
+    startY: number;
+    startPosX: number;
+    startPosY: number;
+  } | null>(null);
+  const cleanupRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (cleanupRef.current) cleanupRef.current();
+    };
+  }, []);
+
+  function handleDragMouseDown(e: React.MouseEvent) {
+    e.preventDefault();
+    cardDragRef.current = { startX: e.clientX, startY: e.clientY, startPosX: pos.x, startPosY: pos.y };
+    function onMove(ev: MouseEvent) {
+      if (!cardDragRef.current) return;
+      setPos({
+        x: cardDragRef.current.startPosX + ev.clientX - cardDragRef.current.startX,
+        y: cardDragRef.current.startPosY + ev.clientY - cardDragRef.current.startY,
+      });
+    }
+    function onUp() {
+      cardDragRef.current = null;
+      cleanupRef.current = null;
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    }
+    cleanupRef.current = onUp;
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  }
+
   if (!node) return null;
   const isCenter = node.id === CENTER_NODE_ID;
   const badgeColor = isCenter ? '#1a2332' : NODE_STRIP_COLOR;
   return (
-    <div className="rmap-detail-panel">
-      <button className="rmap-detail-close" onClick={onClose} aria-label="Close">
-        ×
-      </button>
-      <div className="rmap-detail-badge" style={{ background: badgeColor }}>
-        {isCenter ? 'Center Company' : 'Competitor'}
+    <div className="rmap-node-info-card" style={{ left: pos.x, top: pos.y }}>
+      <div className="rmap-node-info-card-header" onMouseDown={handleDragMouseDown}>
+        <span className="rmap-node-info-card-title">{node.name}</span>
+        <button className="rmap-detail-close" onClick={onClose} aria-label="Close">
+          ×
+        </button>
       </div>
-      <h3 className="rmap-detail-name">{node.name}</h3>
-      <p className="rmap-detail-ticker">
-        {node.ticker} &nbsp;·&nbsp; {node.exchange}
-      </p>
-      <p className="rmap-detail-country">
-        <span className="rmap-detail-label">Industry: </span>
-        <button className="rmap-detail-tag-link">{node.industryCategory}</button>
-      </p>
-      <p className="rmap-detail-country" style={{ marginTop: 4 }}>
-        <span className="rmap-detail-label">Country: </span>
-        <button className="rmap-detail-tag-link">{node.country}</button>
-      </p>
-      <p className="rmap-detail-country" style={{ marginTop: 4 }}>
-        <span className="rmap-detail-label">Market Share: </span>
-        <strong>{node.marketShare}%</strong>
-      </p>
-      <p className="rmap-detail-items" style={{ marginTop: 8 }}>
-        <span className="rmap-detail-label">Competitive Relationship: </span>
-        {node.relationship}
-      </p>
-      <div className="rmap-detail-fins">
-        <div className="rmap-detail-fin">
-          <span className="rmap-detail-fin-label">Revenue</span>
-          <span className="rmap-detail-fin-val">{node.financials.revenue}</span>
+      <div className="rmap-node-info-card-body">
+        <div className="rmap-detail-badge" style={{ background: badgeColor }}>
+          {isCenter ? 'Center Company' : 'Competitor'}
         </div>
-        <div className="rmap-detail-fin">
-          <span className="rmap-detail-fin-label">Gross Margin</span>
-          <span className="rmap-detail-fin-val">{node.financials.grossMargin}</span>
+        <p className="rmap-detail-ticker">
+          {node.ticker} &nbsp;·&nbsp; {node.exchange}
+        </p>
+        <p className="rmap-detail-country">
+          <span className="rmap-detail-label">Industry: </span>
+          <button className="rmap-detail-tag-link">{node.industryCategory}</button>
+        </p>
+        <p className="rmap-detail-country" style={{ marginTop: 4 }}>
+          <span className="rmap-detail-label">Country: </span>
+          <button className="rmap-detail-tag-link">{node.country}</button>
+        </p>
+        <p className="rmap-detail-country" style={{ marginTop: 4 }}>
+          <span className="rmap-detail-label">Market Share: </span>
+          <strong>{node.marketShare}%</strong>
+        </p>
+        <p className="rmap-detail-items" style={{ marginTop: 8 }}>
+          <span className="rmap-detail-label">Competitive Relationship: </span>
+          {node.relationship}
+        </p>
+        <div className="rmap-detail-fins">
+          <div className="rmap-detail-fin">
+            <span className="rmap-detail-fin-label">Revenue</span>
+            <span className="rmap-detail-fin-val">{node.financials.revenue}</span>
+          </div>
+          <div className="rmap-detail-fin">
+            <span className="rmap-detail-fin-label">Gross Margin</span>
+            <span className="rmap-detail-fin-val">{node.financials.grossMargin}</span>
+          </div>
+          <div className="rmap-detail-fin">
+            <span className="rmap-detail-fin-label">Market Cap</span>
+            <span className="rmap-detail-fin-val">{node.financials.marketCap}</span>
+          </div>
         </div>
-        <div className="rmap-detail-fin">
-          <span className="rmap-detail-fin-label">Market Cap</span>
-          <span className="rmap-detail-fin-val">{node.financials.marketCap}</span>
+        <div style={{ marginTop: 8 }}>
+          <div className="rmap-detail-label" style={{ marginBottom: 4 }}>
+            Process Nodes:
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+            {node.processNodes.map((pn) => (
+              <button key={pn} className="rmap-detail-tag rmap-detail-tag--clickable">
+                {pn}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
-      <div style={{ marginTop: 8 }}>
-        <div className="rmap-detail-label" style={{ marginBottom: 4 }}>Process Nodes:</div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-          {node.processNodes.map((pn) => (
-            <button key={pn} className="rmap-detail-tag rmap-detail-tag--clickable">
-              {pn}
-            </button>
-          ))}
-        </div>
+    </div>
+  );
+}
+
+// ── Tag filter row (reusable) ─────────────────────────────────────────────────
+
+function TagFilterRow({
+  label,
+  tags,
+  selected,
+  onToggle,
+  onClearAll,
+  singleSelect,
+}: {
+  label: string;
+  tags: string[];
+  selected: Set<string>;
+  onToggle: (tag: string) => void;
+  onClearAll: () => void;
+  singleSelect?: boolean;
+}) {
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [showAll, setShowAll] = useState(false);
+  const [hasOverflow, setHasOverflow] = useState(false);
+
+  useEffect(() => {
+    if (showAll) return;
+    const el = rowRef.current;
+    if (!el) return;
+    const check = () => setHasOverflow(el.scrollWidth > el.clientWidth);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [showAll, tags]);
+
+  return (
+    <div className={`rmap-industry-filter-row${showAll ? ' rmap-industry-filter-row--expanded' : ''}`}>
+      <span className="rmap-industry-filter-label">{label}</span>
+      <div
+        className={`rmap-industry-tags-scroll${showAll ? ' rmap-industry-tags-scroll--expanded' : ''}`}
+        ref={rowRef}
+      >
+        <button
+          className={`rmap-industry-tag rmap-industry-tag--all${selected.size === 0 ? ' rmap-industry-tag--active' : ''}`}
+          onClick={onClearAll}
+        >
+          All
+        </button>
+        {tags.map((tag) => (
+          <button
+            key={tag}
+            className={`rmap-industry-tag${selected.has(tag) ? ' rmap-industry-tag--active' : ''}`}
+            onClick={() => {
+              if (singleSelect) {
+                if (selected.has(tag)) onClearAll();
+                else {
+                  onClearAll();
+                  onToggle(tag);
+                }
+              } else {
+                onToggle(tag);
+              }
+            }}
+          >
+            {tag}
+          </button>
+        ))}
+        {showAll && hasOverflow && (
+          <button className="rmap-industry-tag rmap-industry-tag--more" onClick={() => setShowAll(false)}>
+            less
+          </button>
+        )}
       </div>
+      {!showAll && hasOverflow && (
+        <button className="rmap-industry-tag rmap-industry-tag--more" onClick={() => setShowAll(true)}>
+          more
+        </button>
+      )}
     </div>
   );
 }
@@ -252,19 +367,24 @@ interface FilterBarProps {
   selectedIndustries: Set<string>;
   onIndustryToggle: (industry: string) => void;
   onClearAllIndustries: () => void;
+  selectedProcess: Set<string>;
+  onProcessToggle: (p: string) => void;
+  onClearAllProcess: () => void;
 }
 
 const SUGGESTION_ITEMS = COMPETITOR_FEED.slice(0, 5);
 
-function FilterBar({ selectedIndustries, onIndustryToggle, onClearAllIndustries }: FilterBarProps) {
+function FilterBar({
+  selectedIndustries,
+  onIndustryToggle,
+  onClearAllIndustries,
+  selectedProcess,
+  onProcessToggle,
+  onClearAllProcess,
+}: FilterBarProps) {
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const [activeTab, setActiveTab] = useState<FilterTab>('Company');
-  const [openDropdown, setOpenDropdown] = useState<'risk' | null>(null);
-  const [selectedRisk, setSelectedRisk] = useState<string>(RISK_TYPES[0].key);
-  const industryTagsRef = useRef<HTMLDivElement>(null);
-  const [showAllTags, setShowAllTags] = useState(false);
-  const [hasTagOverflow, setHasTagOverflow] = useState(false);
 
   const q = query.toLowerCase().trim();
   const showQueryResults = q.length > 0;
@@ -292,22 +412,11 @@ function FilterBar({ selectedIndustries, onIndustryToggle, onClearAllIndustries 
     .map((p) => p.val)
     .slice(0, 3);
 
-  useEffect(() => {
-    if (showAllTags) return;
-    const el = industryTagsRef.current;
-    if (!el) return;
-    const check = () => setHasTagOverflow(el.scrollWidth > el.clientWidth);
-    check();
-    const ro = new ResizeObserver(check);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [showAllTags]);
-
   return (
     <div className="rmap-filter-bar rmap-filter-bar--above">
+      {/* Search row - full width */}
       <div className="rmap-filter-bar-row">
-        {/* Search */}
-        <div className="rmap-titled-control">
+        <div className="rmap-titled-control" style={{ flex: 1 }}>
           <div className="rmap-titled-control-label">Let&#39;s explore RMAP together…</div>
           <div className="rmap-filter-search-wrap">
             <div className="rmap-filter-search rmap-filter-search--tall">
@@ -421,83 +530,25 @@ function FilterBar({ selectedIndustries, onIndustryToggle, onClearAllIndustries 
             )}
           </div>
         </div>
-
-        {/* Risk Analysis */}
-        <div className="rmap-titled-control">
-          <div className="rmap-titled-control-label">
-            Risk Analysis
-            <span className="badge-coming-soon" style={{ marginLeft: 5 }}>
-              Coming Soon
-            </span>
-          </div>
-          <div className="rmap-risk-wrap">
-            <button
-              className="rmap-risk-btn"
-              onClick={() => setOpenDropdown(openDropdown === 'risk' ? null : 'risk')}
-            >
-              {RISK_TYPES.find((r) => r.key === selectedRisk)?.labelEn}
-              <span className="rmap-dropdown-arrow">&#9660;</span>
-            </button>
-            {openDropdown === 'risk' && (
-              <div className="rmap-risk-dropdown">
-                {RISK_TYPES.map((r) => (
-                  <button
-                    key={r.key}
-                    className={`rmap-risk-option${r.key === selectedRisk ? ' rmap-rel-option--active' : ''}`}
-                    onClick={() => {
-                      setSelectedRisk(r.key);
-                      setOpenDropdown(null);
-                    }}
-                  >
-                    {r.labelEn}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
       </div>
 
-      {/* Industry filter row */}
-      <div className={`rmap-industry-filter-row${showAllTags ? ' rmap-industry-filter-row--expanded' : ''}`}>
-        <span className="rmap-industry-filter-label">CATEGORY</span>
-        <div
-          className={`rmap-industry-tags-scroll${showAllTags ? ' rmap-industry-tags-scroll--expanded' : ''}`}
-          ref={industryTagsRef}
-        >
-          <button
-            className={`rmap-industry-tag rmap-industry-tag--all${selectedIndustries.size === 0 ? ' rmap-industry-tag--active' : ''}`}
-            onClick={onClearAllIndustries}
-          >
-            All
-          </button>
-          {UNIQUE_INDUSTRIES.map((ind) => (
-            <button
-              key={ind}
-              className={`rmap-industry-tag${selectedIndustries.has(ind) ? ' rmap-industry-tag--active' : ''}`}
-              onClick={() => onIndustryToggle(ind)}
-            >
-              {ind}
-            </button>
-          ))}
-          {showAllTags && hasTagOverflow && (
-            <button
-              className="rmap-industry-tag rmap-industry-tag--more"
-              onClick={() => setShowAllTags(false)}
-            >
-              less
-            </button>
-          )}
-        </div>
-        {!showAllTags && hasTagOverflow && (
-          <button
-            className="rmap-industry-tag rmap-industry-tag--more"
-            onClick={() => setShowAllTags(true)}
-          >
-            more
-          </button>
-        )}
-      </div>
+      {/* Category tags */}
+      <TagFilterRow
+        label="CATEGORY"
+        tags={UNIQUE_INDUSTRIES}
+        selected={selectedIndustries}
+        onToggle={onIndustryToggle}
+        onClearAll={onClearAllIndustries}
+      />
+
+      {/* Process Node tags */}
+      <TagFilterRow
+        label="PROCESS NODE"
+        tags={UNIQUE_PROCESS_LC.map((p) => p.val)}
+        selected={selectedProcess}
+        onToggle={onProcessToggle}
+        onClearAll={onClearAllProcess}
+      />
     </div>
   );
 }
@@ -652,6 +703,7 @@ export default function CompetitorGraph({ tableOnly }: CompetitorGraphProps) {
   const [panState, setPanState] = useState<PanState | null>(null);
   const [selectedNode, setSelectedNode] = useState<CompetitorNode | null>(null);
   const [selectedIndustries, setSelectedIndustries] = useState<Set<string>>(new Set());
+  const [selectedProcess, setSelectedProcess] = useState<Set<string>>(new Set());
   const [viewBox, setViewBox] = useState<ViewBoxState>(DEFAULT_VB);
   const svgRef = useRef<SVGSVGElement>(null);
   const posRef = useRef(positions);
@@ -671,6 +723,19 @@ export default function CompetitorGraph({ tableOnly }: CompetitorGraphProps) {
 
   const clearAllIndustries = useCallback(() => {
     setSelectedIndustries(new Set());
+  }, []);
+
+  const toggleProcess = useCallback((process: string) => {
+    setSelectedProcess((prev) => {
+      const next = new Set(prev);
+      if (next.has(process)) next.delete(process);
+      else next.add(process);
+      return next;
+    });
+  }, []);
+
+  const clearAllProcess = useCallback(() => {
+    setSelectedProcess(new Set());
   }, []);
 
   const applyZoom = useCallback((factor: number) => {
@@ -769,13 +834,15 @@ export default function CompetitorGraph({ tableOnly }: CompetitorGraphProps) {
   }, []);
 
   const visibleNodeIds =
-    selectedIndustries.size === 0
+    selectedIndustries.size === 0 && selectedProcess.size === 0
       ? null
       : new Set([
           CENTER_NODE_ID,
-          ...ALL_COMPETITORS.filter((c) => selectedIndustries.has(c.industryCategory)).map(
-            (c) => c.id,
-          ),
+          ...ALL_COMPETITORS.filter(
+            (c) =>
+              (selectedIndustries.size === 0 || selectedIndustries.has(c.industryCategory)) &&
+              (selectedProcess.size === 0 || c.processNodes.some((p) => selectedProcess.has(p))),
+          ).map((c) => c.id),
         ]);
 
   if (tableOnly) {
@@ -793,6 +860,9 @@ export default function CompetitorGraph({ tableOnly }: CompetitorGraphProps) {
         selectedIndustries={selectedIndustries}
         onIndustryToggle={toggleIndustry}
         onClearAllIndustries={clearAllIndustries}
+        selectedProcess={selectedProcess}
+        onProcessToggle={toggleProcess}
+        onClearAllProcess={clearAllProcess}
       />
 
       <div className="rmap-graph-content">

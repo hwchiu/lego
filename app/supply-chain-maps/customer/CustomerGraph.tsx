@@ -59,12 +59,6 @@ const EDGE_RANGE_MAP = new Map<CustomerRelationKey, { min: number; max: number }
   }),
 );
 
-const RISK_TYPES = [
-  { key: 'geopolitical', labelEn: 'Geopolitical Risk' },
-  { key: 'concentration', labelEn: 'Customer Concentration' },
-  { key: 'tariff', labelEn: 'Tariff Issues' },
-];
-
 const FILTER_TABS = ['Company', 'Industry', 'Product', 'News'] as const;
 type FilterTab = (typeof FILTER_TABS)[number];
 
@@ -215,63 +209,182 @@ interface DetailPanelProps {
 }
 
 function DetailPanel({ node, onClose }: DetailPanelProps) {
+  const [pos, setPos] = useState({ x: 16, y: 16 });
+  const cardDragRef = useRef<{
+    startX: number;
+    startY: number;
+    startPosX: number;
+    startPosY: number;
+  } | null>(null);
+  const cleanupRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (cleanupRef.current) cleanupRef.current();
+    };
+  }, []);
+
+  function handleDragMouseDown(e: React.MouseEvent) {
+    e.preventDefault();
+    cardDragRef.current = { startX: e.clientX, startY: e.clientY, startPosX: pos.x, startPosY: pos.y };
+    function onMove(ev: MouseEvent) {
+      if (!cardDragRef.current) return;
+      setPos({
+        x: cardDragRef.current.startPosX + ev.clientX - cardDragRef.current.startX,
+        y: cardDragRef.current.startPosY + ev.clientY - cardDragRef.current.startY,
+      });
+    }
+    function onUp() {
+      cardDragRef.current = null;
+      cleanupRef.current = null;
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    }
+    cleanupRef.current = onUp;
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  }
+
   if (!node) return null;
   const isCenter = node.id === CENTER_NODE_ID;
   const badgeColor = isCenter ? '#1a2332' : NODE_STRIP_COLOR;
   const edge = CUSTOMER_EDGES.find((e) => e.from === CENTER_NODE_ID && e.to === node.id);
   return (
-    <div className="rmap-detail-panel">
-      <button className="rmap-detail-close" onClick={onClose} aria-label="Close">
-        ×
-      </button>
-      <div className="rmap-detail-badge" style={{ background: badgeColor }}>
-        {isCenter ? 'Center Company' : 'Customer'}
+    <div className="rmap-node-info-card" style={{ left: pos.x, top: pos.y }}>
+      <div className="rmap-node-info-card-header" onMouseDown={handleDragMouseDown}>
+        <span className="rmap-node-info-card-title">{node.name}</span>
+        <button className="rmap-detail-close" onClick={onClose} aria-label="Close">
+          ×
+        </button>
       </div>
-      <h3 className="rmap-detail-name">{node.name}</h3>
-      <p className="rmap-detail-ticker">
-        {node.ticker} &nbsp;·&nbsp; {node.exchange}
-      </p>
-      <p className="rmap-detail-country">
-        <span className="rmap-detail-label">Industry: </span>
-        <button className="rmap-detail-tag-link">{node.industryCategory}</button>
-      </p>
-      <p className="rmap-detail-country" style={{ marginTop: 4 }}>
-        <span className="rmap-detail-label">Country: </span>
-        <button className="rmap-detail-tag-link">{node.country}</button>
-      </p>
-      {!isCenter && (
-        <p className="rmap-detail-items" style={{ marginTop: 8 }}>
-          <span className="rmap-detail-label">Purchases from TSMC: </span>
-          {node.purchaseItems}
-        </p>
-      )}
-      {edge && (
-        <p className="rmap-detail-items" style={{ marginTop: 8 }}>
-          <span className="rmap-detail-label">Annual Transaction: </span>
-          {formatAmount(edge.transactionAmount)}
-        </p>
-      )}
-      <div className="rmap-detail-fins">
-        <div className="rmap-detail-fin">
-          <span className="rmap-detail-fin-label">Revenue</span>
-          <span className="rmap-detail-fin-val">{node.financials.revenue}</span>
+      <div className="rmap-node-info-card-body">
+        <div className="rmap-detail-badge" style={{ background: badgeColor }}>
+          {isCenter ? 'Center Company' : 'Customer'}
         </div>
-        <div className="rmap-detail-fin">
-          <span className="rmap-detail-fin-label">Gross Margin</span>
-          <span className="rmap-detail-fin-val">{node.financials.grossMargin}</span>
+        <p className="rmap-detail-ticker">
+          {node.ticker} &nbsp;·&nbsp; {node.exchange}
+        </p>
+        <p className="rmap-detail-country">
+          <span className="rmap-detail-label">Industry: </span>
+          <button className="rmap-detail-tag-link">{node.industryCategory}</button>
+        </p>
+        <p className="rmap-detail-country" style={{ marginTop: 4 }}>
+          <span className="rmap-detail-label">Country: </span>
+          <button className="rmap-detail-tag-link">{node.country}</button>
+        </p>
+        {!isCenter && (
+          <p className="rmap-detail-items" style={{ marginTop: 8 }}>
+            <span className="rmap-detail-label">Purchases from TSMC: </span>
+            {node.purchaseItems}
+          </p>
+        )}
+        {edge && (
+          <p className="rmap-detail-items" style={{ marginTop: 8 }}>
+            <span className="rmap-detail-label">Annual Transaction: </span>
+            {formatAmount(edge.transactionAmount)}
+          </p>
+        )}
+        <div className="rmap-detail-fins">
+          <div className="rmap-detail-fin">
+            <span className="rmap-detail-fin-label">Revenue</span>
+            <span className="rmap-detail-fin-val">{node.financials.revenue}</span>
+          </div>
+          <div className="rmap-detail-fin">
+            <span className="rmap-detail-fin-label">Gross Margin</span>
+            <span className="rmap-detail-fin-val">{node.financials.grossMargin}</span>
+          </div>
+          <div className="rmap-detail-fin">
+            <span className="rmap-detail-fin-label">Market Cap</span>
+            <span className="rmap-detail-fin-val">{node.financials.marketCap}</span>
+          </div>
         </div>
-        <div className="rmap-detail-fin">
-          <span className="rmap-detail-fin-label">Market Cap</span>
-          <span className="rmap-detail-fin-val">{node.financials.marketCap}</span>
+        <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+          {node.productCategories.map((cat) => (
+            <button key={cat} className="rmap-detail-tag rmap-detail-tag--clickable">
+              {cat}
+            </button>
+          ))}
         </div>
       </div>
-      <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-        {node.productCategories.map((cat) => (
-          <button key={cat} className="rmap-detail-tag rmap-detail-tag--clickable">
-            {cat}
+    </div>
+  );
+}
+
+// ── Tag filter row (reusable) ─────────────────────────────────────────────────
+
+function TagFilterRow({
+  label,
+  tags,
+  selected,
+  onToggle,
+  onClearAll,
+  singleSelect,
+}: {
+  label: string;
+  tags: string[];
+  selected: Set<string>;
+  onToggle: (tag: string) => void;
+  onClearAll: () => void;
+  singleSelect?: boolean;
+}) {
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [showAll, setShowAll] = useState(false);
+  const [hasOverflow, setHasOverflow] = useState(false);
+
+  useEffect(() => {
+    if (showAll) return;
+    const el = rowRef.current;
+    if (!el) return;
+    const check = () => setHasOverflow(el.scrollWidth > el.clientWidth);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [showAll, tags]);
+
+  return (
+    <div className={`rmap-industry-filter-row${showAll ? ' rmap-industry-filter-row--expanded' : ''}`}>
+      <span className="rmap-industry-filter-label">{label}</span>
+      <div
+        className={`rmap-industry-tags-scroll${showAll ? ' rmap-industry-tags-scroll--expanded' : ''}`}
+        ref={rowRef}
+      >
+        <button
+          className={`rmap-industry-tag rmap-industry-tag--all${selected.size === 0 ? ' rmap-industry-tag--active' : ''}`}
+          onClick={onClearAll}
+        >
+          All
+        </button>
+        {tags.map((tag) => (
+          <button
+            key={tag}
+            className={`rmap-industry-tag${selected.has(tag) ? ' rmap-industry-tag--active' : ''}`}
+            onClick={() => {
+              if (singleSelect) {
+                if (selected.has(tag)) onClearAll();
+                else {
+                  onClearAll();
+                  onToggle(tag);
+                }
+              } else {
+                onToggle(tag);
+              }
+            }}
+          >
+            {tag}
           </button>
         ))}
+        {showAll && hasOverflow && (
+          <button className="rmap-industry-tag rmap-industry-tag--more" onClick={() => setShowAll(false)}>
+            less
+          </button>
+        )}
       </div>
+      {!showAll && hasOverflow && (
+        <button className="rmap-industry-tag rmap-industry-tag--more" onClick={() => setShowAll(true)}>
+          more
+        </button>
+      )}
     </div>
   );
 }
@@ -284,6 +397,9 @@ interface FilterBarProps {
   selectedIndustries: Set<string>;
   onIndustryToggle: (industry: string) => void;
   onClearAllIndustries: () => void;
+  selectedProducts: Set<string>;
+  onProductToggle: (p: string) => void;
+  onClearAllProducts: () => void;
 }
 
 const SUGGESTION_ITEMS = CUSTOMER_FEED.slice(0, 5);
@@ -294,15 +410,13 @@ function FilterBar({
   selectedIndustries,
   onIndustryToggle,
   onClearAllIndustries,
+  selectedProducts,
+  onProductToggle,
+  onClearAllProducts,
 }: FilterBarProps) {
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const [activeTab, setActiveTab] = useState<FilterTab>('Company');
-  const [openDropdown, setOpenDropdown] = useState<'rel' | 'risk' | null>(null);
-  const [selectedRisk, setSelectedRisk] = useState<string>(RISK_TYPES[0].key);
-  const industryTagsRef = useRef<HTMLDivElement>(null);
-  const [showAllTags, setShowAllTags] = useState(false);
-  const [hasTagOverflow, setHasTagOverflow] = useState(false);
 
   const q = query.toLowerCase().trim();
   const showQueryResults = q.length > 0;
@@ -330,24 +444,13 @@ function FilterBar({
     .map((p) => p.val)
     .slice(0, 3);
 
-  const relLabel = RELATION_LABEL_MAP.get(relationType) ?? '';
-
-  useEffect(() => {
-    if (showAllTags) return;
-    const el = industryTagsRef.current;
-    if (!el) return;
-    const check = () => setHasTagOverflow(el.scrollWidth > el.clientWidth);
-    check();
-    const ro = new ResizeObserver(check);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [showAllTags]);
+  const relationSelected = new Set([RELATION_LABEL_MAP.get(relationType) ?? '']);
 
   return (
     <div className="rmap-filter-bar rmap-filter-bar--above">
+      {/* Search row - full width */}
       <div className="rmap-filter-bar-row">
-        {/* Search */}
-        <div className="rmap-titled-control">
+        <div className="rmap-titled-control" style={{ flex: 1 }}>
           <div className="rmap-titled-control-label">Let&#39;s explore RMAP together…</div>
           <div className="rmap-filter-search-wrap">
             <div className="rmap-filter-search rmap-filter-search--tall">
@@ -461,113 +564,38 @@ function FilterBar({
             )}
           </div>
         </div>
-
-        {/* Relation Type */}
-        <div className="rmap-titled-control">
-          <div className="rmap-titled-control-label">Relation Type</div>
-          <div className="rmap-rel-wrap">
-            <button
-              className="rmap-rel-btn"
-              onClick={() => setOpenDropdown(openDropdown === 'rel' ? null : 'rel')}
-            >
-              {relLabel} <span className="rmap-dropdown-arrow">&#9660;</span>
-            </button>
-            {openDropdown === 'rel' && (
-              <div className="rmap-rel-dropdown">
-                {CUSTOMER_RELATION_TYPES.map((r) => (
-                  <button
-                    key={r.key}
-                    className={`rmap-rel-option${relationType === r.key ? ' rmap-rel-option--active' : ''}`}
-                    onClick={() => {
-                      onRelationChange(r.key);
-                      setOpenDropdown(null);
-                    }}
-                  >
-                    <span className="rmap-checkmark">{relationType === r.key ? '✓' : ''}</span>
-                    {r.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Risk Analysis */}
-        <div className="rmap-titled-control">
-          <div className="rmap-titled-control-label">
-            Risk Analysis
-            <span className="badge-coming-soon" style={{ marginLeft: 5 }}>
-              Coming Soon
-            </span>
-          </div>
-          <div className="rmap-risk-wrap">
-            <button
-              className="rmap-risk-btn"
-              onClick={() => setOpenDropdown(openDropdown === 'risk' ? null : 'risk')}
-            >
-              {RISK_TYPES.find((r) => r.key === selectedRisk)?.labelEn}
-              <span className="rmap-dropdown-arrow">&#9660;</span>
-            </button>
-            {openDropdown === 'risk' && (
-              <div className="rmap-risk-dropdown">
-                {RISK_TYPES.map((r) => (
-                  <button
-                    key={r.key}
-                    className={`rmap-risk-option${r.key === selectedRisk ? ' rmap-rel-option--active' : ''}`}
-                    onClick={() => {
-                      setSelectedRisk(r.key);
-                      setOpenDropdown(null);
-                    }}
-                  >
-                    {r.labelEn}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
       </div>
 
-      {/* Industry filter row */}
-      <div className={`rmap-industry-filter-row${showAllTags ? ' rmap-industry-filter-row--expanded' : ''}`}>
-        <span className="rmap-industry-filter-label">INDUSTRY</span>
-        <div
-          className={`rmap-industry-tags-scroll${showAllTags ? ' rmap-industry-tags-scroll--expanded' : ''}`}
-          ref={industryTagsRef}
-        >
-          <button
-            className={`rmap-industry-tag rmap-industry-tag--all${selectedIndustries.size === 0 ? ' rmap-industry-tag--active' : ''}`}
-            onClick={onClearAllIndustries}
-          >
-            All
-          </button>
-          {UNIQUE_INDUSTRIES.map((ind) => (
-            <button
-              key={ind}
-              className={`rmap-industry-tag${selectedIndustries.has(ind) ? ' rmap-industry-tag--active' : ''}`}
-              onClick={() => onIndustryToggle(ind)}
-            >
-              {ind}
-            </button>
-          ))}
-          {showAllTags && hasTagOverflow && (
-            <button
-              className="rmap-industry-tag rmap-industry-tag--more"
-              onClick={() => setShowAllTags(false)}
-            >
-              less
-            </button>
-          )}
-        </div>
-        {!showAllTags && hasTagOverflow && (
-          <button
-            className="rmap-industry-tag rmap-industry-tag--more"
-            onClick={() => setShowAllTags(true)}
-          >
-            more
-          </button>
-        )}
-      </div>
+      {/* Relation Type tags */}
+      <TagFilterRow
+        label="RELATION TYPE"
+        tags={CUSTOMER_RELATION_TYPES.map((r) => r.label)}
+        selected={relationSelected}
+        onToggle={(label) => {
+          const rt = CUSTOMER_RELATION_TYPES.find((r) => r.label === label);
+          if (rt) onRelationChange(rt.key);
+        }}
+        onClearAll={() => onRelationChange(CUSTOMER_RELATION_TYPES[0].key)}
+        singleSelect
+      />
+
+      {/* Industry tags */}
+      <TagFilterRow
+        label="INDUSTRY"
+        tags={UNIQUE_INDUSTRIES}
+        selected={selectedIndustries}
+        onToggle={onIndustryToggle}
+        onClearAll={onClearAllIndustries}
+      />
+
+      {/* Product Category tags */}
+      <TagFilterRow
+        label="PRODUCT CATEGORY"
+        tags={UNIQUE_PRODUCTS_LC.map((p) => p.val)}
+        selected={selectedProducts}
+        onToggle={onProductToggle}
+        onClearAll={onClearAllProducts}
+      />
     </div>
   );
 }
@@ -750,6 +778,7 @@ export default function CustomerGraph({ tableOnly }: CustomerGraphProps) {
   const [selectedNode, setSelectedNode] = useState<CustomerNode | null>(null);
   const [relationType, setRelationType] = useState<CustomerRelationKey>('transactionAmount');
   const [selectedIndustries, setSelectedIndustries] = useState<Set<string>>(new Set());
+  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
   const [viewBox, setViewBox] = useState<ViewBoxState>(DEFAULT_VB);
   const svgRef = useRef<SVGSVGElement>(null);
   const posRef = useRef(positions);
@@ -769,6 +798,19 @@ export default function CustomerGraph({ tableOnly }: CustomerGraphProps) {
 
   const clearAllIndustries = useCallback(() => {
     setSelectedIndustries(new Set());
+  }, []);
+
+  const toggleProduct = useCallback((product: string) => {
+    setSelectedProducts((prev) => {
+      const next = new Set(prev);
+      if (next.has(product)) next.delete(product);
+      else next.add(product);
+      return next;
+    });
+  }, []);
+
+  const clearAllProducts = useCallback(() => {
+    setSelectedProducts(new Set());
   }, []);
 
   const applyZoom = useCallback((factor: number) => {
@@ -867,11 +909,16 @@ export default function CustomerGraph({ tableOnly }: CustomerGraphProps) {
   }, []);
 
   const visibleNodeIds =
-    selectedIndustries.size === 0
+    selectedIndustries.size === 0 && selectedProducts.size === 0
       ? null
       : new Set([
           CENTER_NODE_ID,
-          ...ALL_CUSTOMERS.filter((c) => selectedIndustries.has(c.industryCategory)).map((c) => c.id),
+          ...ALL_CUSTOMERS.filter(
+            (c) =>
+              (selectedIndustries.size === 0 || selectedIndustries.has(c.industryCategory)) &&
+              (selectedProducts.size === 0 ||
+                c.productCategories.some((p) => selectedProducts.has(p))),
+          ).map((c) => c.id),
         ]);
 
   if (tableOnly) {
@@ -891,6 +938,9 @@ export default function CustomerGraph({ tableOnly }: CustomerGraphProps) {
         selectedIndustries={selectedIndustries}
         onIndustryToggle={toggleIndustry}
         onClearAllIndustries={clearAllIndustries}
+        selectedProducts={selectedProducts}
+        onProductToggle={toggleProduct}
+        onClearAllProducts={clearAllProducts}
       />
 
       <div className="rmap-graph-content">

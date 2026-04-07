@@ -368,60 +368,175 @@ interface DetailPanelProps {
 }
 
 function DetailPanel({ node, onClose }: DetailPanelProps) {
+  const [pos, setPos] = useState({ x: 16, y: 16 });
+  const cardDragRef = useRef<{
+    startX: number;
+    startY: number;
+    startPosX: number;
+    startPosY: number;
+  } | null>(null);
+  const cleanupRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (cleanupRef.current) cleanupRef.current();
+    };
+  }, []);
+
+  function handleDragMouseDown(e: React.MouseEvent) {
+    e.preventDefault();
+    cardDragRef.current = { startX: e.clientX, startY: e.clientY, startPosX: pos.x, startPosY: pos.y };
+    function onMove(ev: MouseEvent) {
+      if (!cardDragRef.current) return;
+      setPos({
+        x: cardDragRef.current.startPosX + ev.clientX - cardDragRef.current.startX,
+        y: cardDragRef.current.startPosY + ev.clientY - cardDragRef.current.startY,
+      });
+    }
+    function onUp() {
+      cardDragRef.current = null;
+      cleanupRef.current = null;
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    }
+    cleanupRef.current = onUp;
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  }
+
   if (!node) return null;
   const isCenter = node.id === CENTER_NODE_ID;
   const badgeColor = isCenter ? '#1a2332' : node.tier === 1 ? TIER1_STRIP_COLOR : TIER2_STRIP_COLOR;
   return (
-    <div className="rmap-detail-panel">
-      <button className="rmap-detail-close" onClick={onClose} aria-label="Close">
-        ×
-      </button>
-      <div className="rmap-detail-badge" style={{ background: badgeColor }}>
-        {isCenter ? 'Center Company' : `Tier ${node.tier}`}
+    <div className="rmap-node-info-card" style={{ left: pos.x, top: pos.y }}>
+      <div className="rmap-node-info-card-header" onMouseDown={handleDragMouseDown}>
+        <span className="rmap-node-info-card-title">{node.name}</span>
+        <button className="rmap-detail-close" onClick={onClose} aria-label="Close">
+          ×
+        </button>
       </div>
-      <h3 className="rmap-detail-name">{node.name}</h3>
-      <p className="rmap-detail-ticker">
-        {node.ticker} &nbsp;·&nbsp; {node.exchange}
-      </p>
-      {/* Industry first */}
-      <p className="rmap-detail-country">
-        <span className="rmap-detail-label">Industry: </span>
-        <button className="rmap-detail-tag-link">{node.industryCategory}</button>
-      </p>
-      {/* Country second */}
-      <p className="rmap-detail-country" style={{ marginTop: 4 }}>
-        <span className="rmap-detail-label">Country: </span>
-        <button className="rmap-detail-tag-link">{node.country}</button>
-      </p>
-      {/* Supply items third */}
-      {!isCenter && (
-        <p className="rmap-detail-items" style={{ marginTop: 8 }}>
-          <span className="rmap-detail-label">Supply Items: </span>
-          {node.supplyItems}
+      <div className="rmap-node-info-card-body">
+        <div className="rmap-detail-badge" style={{ background: badgeColor }}>
+          {isCenter ? 'Center Company' : `Tier ${node.tier}`}
+        </div>
+        <p className="rmap-detail-ticker">
+          {node.ticker} &nbsp;·&nbsp; {node.exchange}
         </p>
-      )}
-      <div className="rmap-detail-fins">
-        <div className="rmap-detail-fin">
-          <span className="rmap-detail-fin-label">Revenue</span>
-          <span className="rmap-detail-fin-val">{node.financials.revenue}</span>
+        <p className="rmap-detail-country">
+          <span className="rmap-detail-label">Industry: </span>
+          <button className="rmap-detail-tag-link">{node.industryCategory}</button>
+        </p>
+        <p className="rmap-detail-country" style={{ marginTop: 4 }}>
+          <span className="rmap-detail-label">Country: </span>
+          <button className="rmap-detail-tag-link">{node.country}</button>
+        </p>
+        {!isCenter && (
+          <p className="rmap-detail-items" style={{ marginTop: 8 }}>
+            <span className="rmap-detail-label">Supply Items: </span>
+            {node.supplyItems}
+          </p>
+        )}
+        <div className="rmap-detail-fins">
+          <div className="rmap-detail-fin">
+            <span className="rmap-detail-fin-label">Revenue</span>
+            <span className="rmap-detail-fin-val">{node.financials.revenue}</span>
+          </div>
+          <div className="rmap-detail-fin">
+            <span className="rmap-detail-fin-label">Gross Margin</span>
+            <span className="rmap-detail-fin-val">{node.financials.grossMargin}</span>
+          </div>
+          <div className="rmap-detail-fin">
+            <span className="rmap-detail-fin-label">Market Cap</span>
+            <span className="rmap-detail-fin-val">{node.financials.marketCap}</span>
+          </div>
         </div>
-        <div className="rmap-detail-fin">
-          <span className="rmap-detail-fin-label">Gross Margin</span>
-          <span className="rmap-detail-fin-val">{node.financials.grossMargin}</span>
-        </div>
-        <div className="rmap-detail-fin">
-          <span className="rmap-detail-fin-label">Market Cap</span>
-          <span className="rmap-detail-fin-val">{node.financials.marketCap}</span>
+        <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+          {node.productCategories.map((cat) => (
+            <button key={cat} className="rmap-detail-tag rmap-detail-tag--clickable">
+              {cat}
+            </button>
+          ))}
         </div>
       </div>
-      {/* Product category tags — clickable */}
-      <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-        {node.productCategories.map((cat) => (
-          <button key={cat} className="rmap-detail-tag rmap-detail-tag--clickable">
-            {cat}
+    </div>
+  );
+}
+
+// ── Tag filter row (reusable) ─────────────────────────────────────────────────
+
+function TagFilterRow({
+  label,
+  tags,
+  selected,
+  onToggle,
+  onClearAll,
+  singleSelect,
+}: {
+  label: string;
+  tags: string[];
+  selected: Set<string>;
+  onToggle: (tag: string) => void;
+  onClearAll: () => void;
+  singleSelect?: boolean;
+}) {
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [showAll, setShowAll] = useState(false);
+  const [hasOverflow, setHasOverflow] = useState(false);
+
+  useEffect(() => {
+    if (showAll) return;
+    const el = rowRef.current;
+    if (!el) return;
+    const check = () => setHasOverflow(el.scrollWidth > el.clientWidth);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [showAll, tags]);
+
+  return (
+    <div className={`rmap-industry-filter-row${showAll ? ' rmap-industry-filter-row--expanded' : ''}`}>
+      <span className="rmap-industry-filter-label">{label}</span>
+      <div
+        className={`rmap-industry-tags-scroll${showAll ? ' rmap-industry-tags-scroll--expanded' : ''}`}
+        ref={rowRef}
+      >
+        <button
+          className={`rmap-industry-tag rmap-industry-tag--all${selected.size === 0 ? ' rmap-industry-tag--active' : ''}`}
+          onClick={onClearAll}
+        >
+          All
+        </button>
+        {tags.map((tag) => (
+          <button
+            key={tag}
+            className={`rmap-industry-tag${selected.has(tag) ? ' rmap-industry-tag--active' : ''}`}
+            onClick={() => {
+              if (singleSelect) {
+                if (selected.has(tag)) onClearAll();
+                else {
+                  onClearAll();
+                  onToggle(tag);
+                }
+              } else {
+                onToggle(tag);
+              }
+            }}
+          >
+            {tag}
           </button>
         ))}
+        {showAll && hasOverflow && (
+          <button className="rmap-industry-tag rmap-industry-tag--more" onClick={() => setShowAll(false)}>
+            less
+          </button>
+        )}
       </div>
+      {!showAll && hasOverflow && (
+        <button className="rmap-industry-tag rmap-industry-tag--more" onClick={() => setShowAll(true)}>
+          more
+        </button>
+      )}
     </div>
   );
 }
@@ -432,19 +547,27 @@ interface FilterBarProps {
   relationType: RelationTypeKey;
   onRelationChange: (key: RelationTypeKey) => void;
   selectedIndustries: Set<string>;
-  onIndustryToggle: (industry: string) => void;
+  onIndustryToggle: (ind: string) => void;
   onClearAllIndustries: () => void;
+  selectedProducts: Set<string>;
+  onProductToggle: (p: string) => void;
+  onClearAllProducts: () => void;
 }
 
-function FilterBar({ relationType, onRelationChange, selectedIndustries, onIndustryToggle, onClearAllIndustries }: FilterBarProps) {
+function FilterBar({
+  relationType,
+  onRelationChange,
+  selectedIndustries,
+  onIndustryToggle,
+  onClearAllIndustries,
+  selectedProducts,
+  onProductToggle,
+  onClearAllProducts,
+}: FilterBarProps) {
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const [activeTab, setActiveTab] = useState<FilterTab>('Company');
-  const [openDropdown, setOpenDropdown] = useState<'rel' | 'risk' | null>(null);
-  const [selectedRisk, setSelectedRisk] = useState<string>(RISK_TYPES[0].key);
-  const industryTagsRef = useRef<HTMLDivElement>(null);
-  const [showAllTags, setShowAllTags] = useState(false);
-  const [hasTagOverflow, setHasTagOverflow] = useState(false);
+  const [selectedRisk, setSelectedRisk] = useState<Set<string>>(new Set());
 
   const q = query.toLowerCase().trim();
   const showQueryResults = q.length > 0;
@@ -472,246 +595,174 @@ function FilterBar({ relationType, onRelationChange, selectedIndustries, onIndus
     .map((p) => p.val)
     .slice(0, 3);
 
-  const relLabel = RELATION_LABEL_MAP.get(relationType) ?? '';
-
-  useEffect(() => {
-    if (showAllTags) return;
-    const el = industryTagsRef.current;
-    if (!el) return;
-    const check = () => setHasTagOverflow(el.scrollWidth > el.clientWidth);
-    check();
-    const ro = new ResizeObserver(check);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [showAllTags]);
+  const relationSelected = new Set([RELATION_LABEL_MAP.get(relationType) ?? '']);
 
   return (
     <div className="rmap-filter-bar rmap-filter-bar--above">
-      {/* Top row: search + relation + risk */}
+      {/* Search row - full width */}
       <div className="rmap-filter-bar-row">
-      {/* Search */}
-      <div className="rmap-titled-control">
-        <div className="rmap-titled-control-label">Let&#39;s explore RMAP together…</div>
-        <div className="rmap-filter-search-wrap">
-        <div className="rmap-filter-search rmap-filter-search--tall">
-          <svg
-            className="rmap-filter-search-icon"
-            width="15"
-            height="15"
-            viewBox="0 0 16 16"
-            fill="none"
-          >
-            <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1.6" />
-            <path d="M10.5 10.5L14 14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-          </svg>
-          <input
-            className="rmap-filter-input"
-            type="text"
-            placeholder="Search company, industry, product..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setTimeout(() => setFocused(false), 150)}
-          />
-        </div>
-        {showDropdownPanel && (
-          <div className="rmap-filter-dropdown-abs">
-            {showSuggestions ? (
-              <div className="rmap-filter-dropdown rmap-filter-dropdown--suggestion">
-                <div className="rmap-filter-suggestion-header">SUGGESTION</div>
-                {SUGGESTION_ITEMS.map((item) => (
-                  <div key={item.id} className="rmap-filter-suggestion-item">
-                    <div className="rmap-filter-suggestion-title">{item.title}</div>
-                    <div className="rmap-filter-suggestion-meta">
-                      {item.tickers.map((t, i) => (
-                        <span key={t}>
-                          {i > 0 && ' · '}
-                          <a href="#" className="rmap-filter-suggestion-ticker">
-                            {t}
-                          </a>
-                        </span>
-                      ))}
-                      <span className="rmap-filter-suggestion-source"> · {item.source}</span>
-                      <span className="rmap-filter-suggestion-time"> · {item.time}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <>
-                <div className="rmap-filter-tabs">
-                  {FILTER_TABS.map((tab) => (
-                    <button
-                      key={tab}
-                      className={`rmap-filter-tab${activeTab === tab ? ' rmap-filter-tab--active' : ''}`}
-                      onClick={() => setActiveTab(tab)}
-                    >
-                      {tab}
-                    </button>
-                  ))}
-                </div>
-                <div className="rmap-filter-dropdown">
-                  {activeTab === 'Company' && (
-                    <>
-                      {companyResults.length > 0 ? (
-                        <div className="rmap-filter-group">
-                          <div className="rmap-filter-group-label">Company</div>
-                          {companyResults.map((c, i) => (
-                            <div key={i} className="rmap-filter-item">
-                              <span>{c.label}</span>
-                              <span className="rmap-filter-item-sub">{c.sub}</span>
-                            </div>
+        <div className="rmap-titled-control" style={{ flex: 1 }}>
+          <div className="rmap-titled-control-label">Let&#39;s explore RMAP together…</div>
+          <div className="rmap-filter-search-wrap">
+            <div className="rmap-filter-search rmap-filter-search--tall">
+              <svg
+                className="rmap-filter-search-icon"
+                width="15"
+                height="15"
+                viewBox="0 0 16 16"
+                fill="none"
+              >
+                <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1.6" />
+                <path d="M10.5 10.5L14 14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              </svg>
+              <input
+                className="rmap-filter-input"
+                type="text"
+                placeholder="Search company, industry, product..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onFocus={() => setFocused(true)}
+                onBlur={() => setTimeout(() => setFocused(false), 150)}
+              />
+            </div>
+            {showDropdownPanel && (
+              <div className="rmap-filter-dropdown-abs">
+                {showSuggestions ? (
+                  <div className="rmap-filter-dropdown rmap-filter-dropdown--suggestion">
+                    <div className="rmap-filter-suggestion-header">SUGGESTION</div>
+                    {SUGGESTION_ITEMS.map((item) => (
+                      <div key={item.id} className="rmap-filter-suggestion-item">
+                        <div className="rmap-filter-suggestion-title">{item.title}</div>
+                        <div className="rmap-filter-suggestion-meta">
+                          {item.tickers.map((t, i) => (
+                            <span key={t}>
+                              {i > 0 && ' · '}
+                              <a href="#" className="rmap-filter-suggestion-ticker">
+                                {t}
+                              </a>
+                            </span>
                           ))}
+                          <span className="rmap-filter-suggestion-source"> · {item.source}</span>
+                          <span className="rmap-filter-suggestion-time"> · {item.time}</span>
                         </div>
-                      ) : (
-                        <div className="rmap-filter-empty">No results</div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <>
+                    <div className="rmap-filter-tabs">
+                      {FILTER_TABS.map((tab) => (
+                        <button
+                          key={tab}
+                          className={`rmap-filter-tab${activeTab === tab ? ' rmap-filter-tab--active' : ''}`}
+                          onClick={() => setActiveTab(tab)}
+                        >
+                          {tab}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="rmap-filter-dropdown">
+                      {activeTab === 'Company' && (
+                        <>
+                          {companyResults.length > 0 ? (
+                            <div className="rmap-filter-group">
+                              <div className="rmap-filter-group-label">Company</div>
+                              {companyResults.map((c, i) => (
+                                <div key={i} className="rmap-filter-item">
+                                  <span>{c.label}</span>
+                                  <span className="rmap-filter-item-sub">{c.sub}</span>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="rmap-filter-empty">No results</div>
+                          )}
+                        </>
                       )}
-                    </>
-                  )}
-                  {activeTab === 'Industry' && (
-                    <div className="rmap-filter-group">
-                      {industryResults.length > 0 ? (
-                        industryResults.map((ind) => (
-                          <div key={ind} className="rmap-filter-item">
-                            {ind}
-                          </div>
-                        ))
-                      ) : (
-                        <div className="rmap-filter-empty">No results</div>
+                      {activeTab === 'Industry' && (
+                        <div className="rmap-filter-group">
+                          {industryResults.length > 0 ? (
+                            industryResults.map((ind) => (
+                              <div key={ind} className="rmap-filter-item">
+                                {ind}
+                              </div>
+                            ))
+                          ) : (
+                            <div className="rmap-filter-empty">No results</div>
+                          )}
+                        </div>
+                      )}
+                      {activeTab === 'Product' && (
+                        <div className="rmap-filter-group">
+                          {productResults.length > 0 ? (
+                            productResults.map((p) => (
+                              <div key={p} className="rmap-filter-item">
+                                {p}
+                              </div>
+                            ))
+                          ) : (
+                            <div className="rmap-filter-empty">No results</div>
+                          )}
+                        </div>
+                      )}
+                      {activeTab === 'News' && (
+                        <div className="rmap-filter-empty">News search coming soon</div>
                       )}
                     </div>
-                  )}
-                  {activeTab === 'Product' && (
-                    <div className="rmap-filter-group">
-                      {productResults.length > 0 ? (
-                        productResults.map((p) => (
-                          <div key={p} className="rmap-filter-item">
-                            {p}
-                          </div>
-                        ))
-                      ) : (
-                        <div className="rmap-filter-empty">No results</div>
-                      )}
-                    </div>
-                  )}
-                  {activeTab === 'News' && (
-                    <div className="rmap-filter-empty">News search coming soon</div>
-                  )}
-                </div>
-              </>
+                  </>
+                )}
+              </div>
             )}
           </div>
-        )}
-      </div>
-      </div>
-
-      {/* Relation Type — titled control */}
-      <div className="rmap-titled-control">
-        <div className="rmap-titled-control-label">Relation Type</div>
-        <div className="rmap-rel-wrap">
-          <button
-            className="rmap-rel-btn"
-            onClick={() => setOpenDropdown(openDropdown === 'rel' ? null : 'rel')}
-          >
-            {relLabel} <span className="rmap-dropdown-arrow">&#9660;</span>
-          </button>
-          {openDropdown === 'rel' && (
-            <div className="rmap-rel-dropdown">
-              {RELATION_TYPES.map((r) => (
-                <button
-                  key={r.key}
-                  className={`rmap-rel-option${relationType === r.key ? ' rmap-rel-option--active' : ''}`}
-                  onClick={() => {
-                    onRelationChange(r.key);
-                    setOpenDropdown(null);
-                  }}
-                >
-                  <span className="rmap-checkmark">{relationType === r.key ? '✓' : ''}</span>
-                  {r.label}
-                </button>
-              ))}
-            </div>
-          )}
         </div>
       </div>
 
-      {/* Risk Analysis — titled control */}
-      <div className="rmap-titled-control">
-        <div className="rmap-titled-control-label">
-          Risk Analysis
-          <span className="badge-coming-soon" style={{ marginLeft: 5 }}>
-            Coming Soon
-          </span>
-        </div>
-        <div className="rmap-risk-wrap">
-          <button
-            className="rmap-risk-btn"
-            onClick={() => setOpenDropdown(openDropdown === 'risk' ? null : 'risk')}
-          >
-            {RISK_TYPES.find((r) => r.key === selectedRisk)?.labelEn}
-            <span className="rmap-dropdown-arrow">&#9660;</span>
-          </button>
-          {openDropdown === 'risk' && (
-            <div className="rmap-risk-dropdown">
-              {RISK_TYPES.map((r) => (
-                <button
-                  key={r.key}
-                  className={`rmap-risk-option${r.key === selectedRisk ? ' rmap-rel-option--active' : ''}`}
-                  onClick={() => {
-                    setSelectedRisk(r.key);
-                    setOpenDropdown(null);
-                  }}
-                >
-                  {r.labelEn}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-      </div>
+      {/* Relation Type tags */}
+      <TagFilterRow
+        label="RELATION TYPE"
+        tags={RELATION_TYPES.map((r) => r.label)}
+        selected={relationSelected}
+        onToggle={(label) => {
+          const rt = RELATION_TYPES.find((r) => r.label === label);
+          if (rt) onRelationChange(rt.key);
+        }}
+        onClearAll={() => onRelationChange(RELATION_TYPES[0].key)}
+        singleSelect
+      />
 
-      {/* Industry filter row */}
-      <div className={`rmap-industry-filter-row${showAllTags ? ' rmap-industry-filter-row--expanded' : ''}`}>
-        <span className="rmap-industry-filter-label">INDUSTRY</span>
-        <div
-          className={`rmap-industry-tags-scroll${showAllTags ? ' rmap-industry-tags-scroll--expanded' : ''}`}
-          ref={industryTagsRef}
-        >
-          {/* "All" tag — clears all industry filters */}
-          <button
-            className={`rmap-industry-tag rmap-industry-tag--all${selectedIndustries.size === 0 ? ' rmap-industry-tag--active' : ''}`}
-            onClick={onClearAllIndustries}
-          >
-            All
-          </button>
-          {UNIQUE_INDUSTRIES.map((ind) => (
-            <button
-              key={ind}
-              className={`rmap-industry-tag${selectedIndustries.has(ind) ? ' rmap-industry-tag--active' : ''}`}
-              onClick={() => onIndustryToggle(ind)}
-            >
-              {ind}
-            </button>
-          ))}
-          {showAllTags && hasTagOverflow && (
-            <button
-              className="rmap-industry-tag rmap-industry-tag--more"
-              onClick={() => setShowAllTags(false)}
-            >
-              less
-            </button>
-          )}
-        </div>
-        {!showAllTags && hasTagOverflow && (
-          <button
-            className="rmap-industry-tag rmap-industry-tag--more"
-            onClick={() => setShowAllTags(true)}
-          >
-            more
-          </button>
-        )}
-      </div>
+      {/* Risk Analysis tags — Coming Soon */}
+      <TagFilterRow
+        label="RISK ANALYSIS · Coming Soon"
+        tags={RISK_TYPES.map((r) => r.labelEn)}
+        selected={selectedRisk}
+        onToggle={(label) =>
+          setSelectedRisk((prev) => {
+            const next = new Set(prev);
+            if (next.has(label)) next.delete(label);
+            else next.add(label);
+            return next;
+          })
+        }
+        onClearAll={() => setSelectedRisk(new Set())}
+      />
+
+      {/* Industry tags */}
+      <TagFilterRow
+        label="INDUSTRY"
+        tags={UNIQUE_INDUSTRIES}
+        selected={selectedIndustries}
+        onToggle={onIndustryToggle}
+        onClearAll={onClearAllIndustries}
+      />
+
+      {/* Product Category tags */}
+      <TagFilterRow
+        label="PRODUCT CATEGORY"
+        tags={UNIQUE_PRODUCTS}
+        selected={selectedProducts}
+        onToggle={onProductToggle}
+        onClearAll={onClearAllProducts}
+      />
     </div>
   );
 }
@@ -874,6 +925,7 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
   const [selectedNode, setSelectedNode] = useState<SupplierNodeTSM | null>(null);
   const [relationType, setRelationType] = useState<RelationTypeKey>('transactionAmount');
   const [selectedIndustries, setSelectedIndustries] = useState<Set<string>>(new Set());
+  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
   const [viewBox, setViewBox] = useState<ViewBoxState>(DEFAULT_VB);
   const svgRef = useRef<SVGSVGElement>(null);
   const posRef = useRef(positions);
@@ -896,6 +948,22 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
 
   const clearAllIndustries = useCallback(() => {
     setSelectedIndustries(new Set());
+  }, []);
+
+  const toggleProduct = useCallback((product: string) => {
+    setSelectedProducts((prev) => {
+      const next = new Set(prev);
+      if (next.has(product)) {
+        next.delete(product);
+      } else {
+        next.add(product);
+      }
+      return next;
+    });
+  }, []);
+
+  const clearAllProducts = useCallback(() => {
+    setSelectedProducts(new Set());
   }, []);
 
   const applyZoom = useCallback((factor: number) => {
@@ -994,13 +1062,18 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
     setSelectedNode((prev) => (prev?.id === node.id ? null : node));
   }, []);
 
-  // Compute which nodes to show based on industry filter
-  const visibleNodeIds = selectedIndustries.size === 0
-    ? null // null means show all
-    : new Set([
-        CENTER_NODE_ID, // always show center
-        ...ALL_SUPPLIERS.filter((s) => selectedIndustries.has(s.industryCategory)).map((s) => s.id),
-      ]);
+  // Compute which nodes to show based on industry and product filters
+  const visibleNodeIds =
+    selectedIndustries.size === 0 && selectedProducts.size === 0
+      ? null // null means show all
+      : new Set([
+          CENTER_NODE_ID, // always show center
+          ...ALL_SUPPLIERS.filter(
+            (s) =>
+              (selectedIndustries.size === 0 || selectedIndustries.has(s.industryCategory)) &&
+              (selectedProducts.size === 0 || s.productCategories.some((p) => selectedProducts.has(p))),
+          ).map((s) => s.id),
+        ]);
 
   if (tableOnly) {
     return <SupplierTable />;
@@ -1020,6 +1093,9 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
         selectedIndustries={selectedIndustries}
         onIndustryToggle={toggleIndustry}
         onClearAllIndustries={clearAllIndustries}
+        selectedProducts={selectedProducts}
+        onProductToggle={toggleProduct}
+        onClearAllProducts={clearAllProducts}
       />
 
       {/* Graph and feed panel side by side */}

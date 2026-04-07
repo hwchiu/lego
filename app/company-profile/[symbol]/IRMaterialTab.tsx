@@ -509,29 +509,45 @@ function IRContent({
       {activeTab === 'financial-data' && (
         <>
           {financialData.map((group) => (
-            <div key={group.category} className="cp-ir-doc-group">
+            <div key={group.category} className="cp-ir-fin-group">
               <div className="cp-ir-doc-group-title">{group.category}</div>
-              <div className="cp-ir-card-grid">
-                {group.docs.map((doc, idx) => (
-                  <a
-                    key={idx}
-                    href={doc.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    download={doc.type !== 'HTML'}
-                    className="cp-data-card cp-ir-card cp-ir-doc-card"
-                  >
-                    <div className="cp-ir-doc-card-top">
-                      <DocTypeBadge type={doc.type} />
-                      <span className="cp-ir-doc-filed">Filed: {doc.filed}</span>
-                    </div>
-                    <div className="cp-ir-doc-card-label">{doc.label}</div>
-                    <div className="cp-ir-doc-card-footer">
-                      <DownloadIcon />
-                      <span>{doc.type === 'HTML' ? 'Open' : 'Download'}</span>
-                    </div>
-                  </a>
-                ))}
+              <div className="cp-ir-fin-table-wrap">
+                <table className="cp-ir-fin-table">
+                  <thead>
+                    <tr>
+                      <th className="cp-ir-fin-th">Document</th>
+                      <th className="cp-ir-fin-th cp-ir-fin-th--date">Period</th>
+                      <th className="cp-ir-fin-th cp-ir-fin-th--date">Filed</th>
+                      <th className="cp-ir-fin-th cp-ir-fin-th--type">Type</th>
+                      <th className="cp-ir-fin-th cp-ir-fin-th--action">Download</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {group.docs.map((doc, idx) => (
+                      <tr key={idx} className="cp-ir-fin-tr">
+                        <td className="cp-ir-fin-td cp-ir-fin-td--label">{doc.label}</td>
+                        <td className="cp-ir-fin-td cp-ir-fin-td--date">{doc.period}</td>
+                        <td className="cp-ir-fin-td cp-ir-fin-td--date">{doc.filed}</td>
+                        <td className="cp-ir-fin-td cp-ir-fin-td--type">
+                          <DocTypeBadge type={doc.type} />
+                        </td>
+                        <td className="cp-ir-fin-td cp-ir-fin-td--action">
+                          <a
+                            href={doc.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            download={doc.type !== 'HTML'}
+                            className="cp-ir-fin-download-btn"
+                            title={doc.type === 'HTML' ? 'Open' : 'Download'}
+                          >
+                            <DownloadIcon />
+                            <span>{doc.type === 'HTML' ? 'Open' : 'Download'}</span>
+                          </a>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           ))}
