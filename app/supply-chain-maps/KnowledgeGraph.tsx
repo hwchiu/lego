@@ -13,7 +13,6 @@ import {
   CUSTOMER_ARTICLES,
   type GraphEdge,
 } from '@/app/data/tsmcGraphData';
-
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 type NodeRole = 'center' | 'supplier1' | 'supplier2' | 'customer' | 'competitor' | 'partner';
@@ -247,14 +246,83 @@ function SearchIcon() {
   );
 }
 
+// ── FilterRow ─────────────────────────────────────────────────────────────────
+
+const TAG_SHOW_LIMIT = 5;
+
+interface FilterRowProps {
+  label: string;
+  options: string[];
+  selected: string[];
+  onChange: (values: string[]) => void;
+  expanded: boolean;
+  onToggleExpand: () => void;
+}
+
+function FilterRow({ label, options, selected, onChange, expanded, onToggleExpand }: FilterRowProps) {
+  const isAllActive = selected.length === 0;
+  const visibleOptions = expanded ? options : options.slice(0, TAG_SHOW_LIMIT);
+  const hiddenCount = options.length - TAG_SHOW_LIMIT;
+
+  function handleTagClick(value: string) {
+    if (value === 'all') {
+      onChange([]);
+      return;
+    }
+    if (selected.includes(value)) {
+      onChange(selected.filter((v) => v !== value));
+    } else {
+      onChange([...selected, value]);
+    }
+  }
+
+  return (
+    <div className="kg-filter-row">
+      <span className="kg-filter-row-label">{label}</span>
+      <div className="kg-filter-tags">
+        <button
+          className={`kg-filter-tag${isAllActive ? ' active' : ''}`}
+          onClick={() => handleTagClick('all')}
+        >
+          All
+        </button>
+        {visibleOptions.map((opt) => (
+          <button
+            key={opt}
+            className={`kg-filter-tag${selected.includes(opt) ? ' active' : ''}`}
+            onClick={() => handleTagClick(opt)}
+          >
+            {opt}
+          </button>
+        ))}
+        {hiddenCount > 0 && !expanded && (
+          <button className="kg-filter-more-btn" onClick={onToggleExpand}>
+            +{hiddenCount} More ▾
+          </button>
+        )}
+        {hiddenCount > 0 && expanded && (
+          <button className="kg-filter-more-btn" onClick={onToggleExpand}>
+            Less ▴
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function KnowledgeGraph() {
   const router = useRouter();
   const [query, setQuery] = useState('');
-  const [filterIndustry, setFilterIndustry] = useState('all');
-  const [filterSegment, setFilterSegment] = useState('all');
-  const [filterCountry, setFilterCountry] = useState('all');
+  const [filterIndustries, setFilterIndustries] = useState<string[]>([]);
+  const [filterSegments, setFilterSegments] = useState<string[]>([]);
+  const [filterCountries, setFilterCountries] = useState<string[]>([]);
+  const [expandedFilters, setExpandedFilters] = useState<Record<string, boolean>>({
+    industry: false,
+    segment: false,
+    country: false,
+  });
   const [zoom, setZoom] = useState(1);
   const [selected, setSelected] = useState<Selection>(null);
 
@@ -265,30 +333,30 @@ export default function KnowledgeGraph() {
     }
   }
 
-  // Filter options derived from all nodes
-  const allIndustries = useMemo(
-    () => ['all', ...Array.from(new Set(ALL_NODES.map((n) => n.industry).filter(Boolean))).sort()],
+  // Filter options derived from all nodes (no 'all' entry — handled by FilterRow)
+  const industryOptions = useMemo(
+    () => Array.from(new Set(ALL_NODES.map((n) => n.industry).filter(Boolean))).sort(),
     [],
   );
-  const allSegments = useMemo(
-    () => ['all', ...Array.from(new Set(ALL_NODES.map((n) => n.segment).filter(Boolean))).sort()],
+  const segmentOptions = useMemo(
+    () => Array.from(new Set(ALL_NODES.map((n) => n.segment).filter(Boolean))).sort(),
     [],
   );
-  const allCountries = useMemo(
-    () => ['all', ...Array.from(new Set(ALL_NODES.map((n) => n.country).filter(Boolean))).sort()],
+  const countryOptions = useMemo(
+    () => Array.from(new Set(ALL_NODES.map((n) => n.country).filter(Boolean))).sort(),
     [],
   );
 
-  // Filtered nodes
+  // Filtered nodes (multi-select: empty array = show all)
   const visibleNodes = useMemo(() => {
     return ALL_NODES.filter((n) => {
-      if (n.role === 'center') return true; // always show center
-      if (filterIndustry !== 'all' && n.industry !== filterIndustry) return false;
-      if (filterSegment !== 'all' && n.segment !== filterSegment) return false;
-      if (filterCountry !== 'all' && n.country !== filterCountry) return false;
+      if (n.role === 'center') return true;
+      if (filterIndustries.length > 0 && !filterIndustries.includes(n.industry ?? '')) return false;
+      if (filterSegments.length > 0 && !filterSegments.includes(n.segment ?? '')) return false;
+      if (filterCountries.length > 0 && !filterCountries.includes(n.country ?? '')) return false;
       return true;
     });
-  }, [filterIndustry, filterSegment, filterCountry]);
+  }, [filterIndustries, filterSegments, filterCountries]);
 
   const layoutNodes = useMemo(() => computeLayout(visibleNodes), [visibleNodes]);
   const nodeById = useMemo(() => {
@@ -320,9 +388,10 @@ export default function KnowledgeGraph() {
   }
 
   function resetFilters() {
-    setFilterIndustry('all');
-    setFilterSegment('all');
-    setFilterCountry('all');
+    setFilterIndustries([]);
+    setFilterSegments([]);
+    setFilterCountries([]);
+    setExpandedFilters({ industry: false, segment: false, country: false });
     setSelected(null);
   }
 
@@ -351,43 +420,40 @@ export default function KnowledgeGraph() {
 
       {/* Filter bar */}
       <div className="kg-filter-bar">
-        <span className="kg-filter-label">Filter:</span>
-
-        <select
-          className="kg-filter-select"
-          value={filterIndustry}
-          onChange={(e) => setFilterIndustry(e.target.value)}
-          aria-label="Filter by Industry"
-        >
-          {allIndustries.map((v) => (
-            <option key={v} value={v}>{v === 'all' ? 'All Industries' : v}</option>
-          ))}
-        </select>
-
-        <select
-          className="kg-filter-select"
-          value={filterSegment}
-          onChange={(e) => setFilterSegment(e.target.value)}
-          aria-label="Filter by Segment"
-        >
-          {allSegments.map((v) => (
-            <option key={v} value={v}>{v === 'all' ? 'All Segments' : v}</option>
-          ))}
-        </select>
-
-        <select
-          className="kg-filter-select"
-          value={filterCountry}
-          onChange={(e) => setFilterCountry(e.target.value)}
-          aria-label="Filter by Country"
-        >
-          {allCountries.map((v) => (
-            <option key={v} value={v}>{v === 'all' ? 'All Countries' : v}</option>
-          ))}
-        </select>
-
-        <button className="kg-filter-reset" onClick={resetFilters}>Reset</button>
-        <span className="kg-filter-count">{visibleNodes.length} nodes</span>
+        <FilterRow
+          label="Industry"
+          options={industryOptions}
+          selected={filterIndustries}
+          onChange={setFilterIndustries}
+          expanded={expandedFilters.industry}
+          onToggleExpand={() =>
+            setExpandedFilters((e) => ({ ...e, industry: !e.industry }))
+          }
+        />
+        <FilterRow
+          label="Segment"
+          options={segmentOptions}
+          selected={filterSegments}
+          onChange={setFilterSegments}
+          expanded={expandedFilters.segment}
+          onToggleExpand={() =>
+            setExpandedFilters((e) => ({ ...e, segment: !e.segment }))
+          }
+        />
+        <FilterRow
+          label="Country"
+          options={countryOptions}
+          selected={filterCountries}
+          onChange={setFilterCountries}
+          expanded={expandedFilters.country}
+          onToggleExpand={() =>
+            setExpandedFilters((e) => ({ ...e, country: !e.country }))
+          }
+        />
+        <div className="kg-filter-footer">
+          <button className="kg-filter-reset" onClick={resetFilters}>Reset</button>
+          <span className="kg-filter-count">{visibleNodes.length} nodes</span>
+        </div>
       </div>
 
       {/* Zoom controls */}
