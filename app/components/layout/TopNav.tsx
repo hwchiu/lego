@@ -660,7 +660,7 @@ export default function TopNav() {
           src="https://avatars.githubusercontent.com/hwchiu"
           alt="User Avatar"
         />
-        <span className="topnav-name">HungWei Chiu</span>
+        <span className="topnav-name">PiKa Chu</span>
       </div>
     </header>
   );
