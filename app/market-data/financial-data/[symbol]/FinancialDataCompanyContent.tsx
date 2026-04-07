@@ -169,7 +169,8 @@ export default function FinancialDataCompanyContent({ symbol }: FinancialDataCom
                 </Link>
                 <div className="cp-breadcrumb">
                   <span className="cp-breadcrumb-text">Financial Data /</span>
-                  <h1 className="cp-company-name">{company ? company.name : symbol}</h1>
+                  <h1 className="cp-company-name">{company ? company.symbol : symbol}</h1>
+                  {company && <span className="cp-breadcrumb-subname">{company.name}</span>}
                 </div>
               </div>
             </div>
@@ -180,9 +181,9 @@ export default function FinancialDataCompanyContent({ symbol }: FinancialDataCom
                 <div className="fd-company-header">
                   <CompanyBadge symbol={company.symbol} name={company.name} />
                   <div className="fd-company-info">
-                    <div className="fd-company-name">{company.name}</div>
+                    <div className="fd-company-symbol fd-company-symbol--header">{company.symbol}</div>
                     <div className="fd-company-meta">
-                      <span className="fd-company-symbol">{company.symbol}</span>
+                      <span className="fd-company-name fd-company-name--attr">{company.name}</span>
                       <span className="fd-company-sector">{company.sector}</span>
                       <span className="fd-company-cap">Market Cap: ~{company.marketCap}</span>
                     </div>

@@ -46,7 +46,7 @@ export default function CompanyRankingTable({ activeCategory = 'all' }: CompanyR
         <thead>
           <tr>
             <th className="crt-th crt-th-no">#No</th>
-            <th className="crt-th crt-th-company">Company</th>
+            <th className="crt-th crt-th-company">Symbol</th>
             <th className="crt-th crt-th-num">Mentions</th>
             <th className="crt-th crt-th-num crt-th-change">Change</th>
           </tr>
@@ -59,8 +59,8 @@ export default function CompanyRankingTable({ activeCategory = 'all' }: CompanyR
               <tr key={co.symbol} className="crt-row">
                 <td className="crt-td crt-td-no">{idx + 1}</td>
                 <td className="crt-td">
-                  <div className="crt-company-name">{co.name}</div>
                   <div className="crt-company-symbol">{co.symbol}</div>
+                  <div className="crt-company-name">{co.name}</div>
                 </td>
                 <td className="crt-td crt-td-num">
                   <div className="crt-count-bar-wrap">
