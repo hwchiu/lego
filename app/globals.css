@@ -15977,3 +15977,28 @@ a.fd-hint-btn {
 .not-found-link:hover {
   opacity: 0.88;
 }
+
+/* ===== MIC PICKS READER — LARGE SCREEN SCALE-UP ===== */
+@media (min-width: 1200px) {
+  .emp-reader-toolbar {
+    max-width: 1200px;
+  }
+  .emp-reader-stage {
+    max-width: 1280px;
+  }
+  .emp-magazine {
+    min-height: 680px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .emp-reader-toolbar {
+    max-width: 1500px;
+  }
+  .emp-reader-stage {
+    max-width: 1580px;
+  }
+  .emp-magazine {
+    min-height: 820px;
+  }
+}
