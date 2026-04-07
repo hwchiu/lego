@@ -14,6 +14,7 @@ import {
 } from '@/app/data/notifications';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { useMobileSidebar, MOBILE_BREAKPOINT } from '@/app/contexts/MobileSidebarContext';
+import { useTheme } from '@/app/contexts/ThemeContext';
 
 const POPULAR_SEARCHES = ['TSM', 'AAPL', 'NVDA'];
 
@@ -222,6 +223,7 @@ const SP500_LC = SP500_COMPANIES.map((c) => ({
 export default function TopNav() {
   const router = useRouter();
   const { lang, toggleLang } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
   const { toggleSidebar, toggleDesktopCollapsed } = useMobileSidebar();
 
   const handleMenuToggle = () => {
@@ -562,6 +564,25 @@ export default function TopNav() {
             />
           </svg>
           <span className="topnav-action-label">{lang === 'zh' ? '繁體中文' : 'English'}</span>
+        </button>
+
+        {/* Dark/Light mode toggle */}
+        <button
+          className="topnav-action-btn topnav-action-btn--icon-only"
+          title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          aria-label={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          onClick={toggleTheme}
+        >
+          {theme === 'dark' ? (
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.3" />
+              <path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+            </svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M13.5 9A5.5 5.5 0 0 1 7 2.5a5.5 5.5 0 1 0 6.5 6.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+            </svg>
+          )}
         </button>
 
         {/* Notification bell */}

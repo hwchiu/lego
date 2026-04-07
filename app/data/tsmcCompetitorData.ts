@@ -21,6 +21,7 @@ export interface CompetitorNode {
   marketShare: number;
   processNodes: string[];
   industryCategory: string;
+  segment: string;
 }
 
 export interface CompetitorFeedItem {
@@ -58,6 +59,7 @@ export const TSM_COMPETITOR_CENTER: CompetitorNode = {
   marketShare: 62.3,
   processNodes: ['2nm', '3nm', '4nm', '5nm', '7nm', '28nm'],
   industryCategory: 'Advanced Foundry',
+  segment: 'Foundry',
 };
 
 // ---------------------------------------------------------------------------
@@ -81,6 +83,7 @@ export const TSM_COMPETITORS: CompetitorNode[] = [
     marketShare: 11.3,
     processNodes: ['3nm GAA', '4nm', '5nm', '8nm', '14nm'],
     industryCategory: 'Advanced Foundry',
+    segment: 'Advanced Foundry',
   },
   {
     id: 'UMC',
@@ -98,6 +101,7 @@ export const TSM_COMPETITORS: CompetitorNode[] = [
     marketShare: 6.3,
     processNodes: ['22nm', '28nm', '40nm', '65nm'],
     industryCategory: 'Mature Node Foundry',
+    segment: 'Mature Node Foundry',
   },
   {
     id: 'GFS',
@@ -115,6 +119,7 @@ export const TSM_COMPETITORS: CompetitorNode[] = [
     marketShare: 6.0,
     processNodes: ['12nm', '14nm', '22nm', '28nm', '55nm'],
     industryCategory: 'Mature Node Foundry',
+    segment: 'Specialty Foundry',
   },
   {
     id: 'SMICY',
@@ -132,6 +137,7 @@ export const TSM_COMPETITORS: CompetitorNode[] = [
     marketShare: 5.7,
     processNodes: ['28nm', '40nm', '55nm', '90nm'],
     industryCategory: 'Mature Node Foundry',
+    segment: 'Mature Node Foundry',
   },
   {
     id: 'HHGR',
@@ -149,6 +155,7 @@ export const TSM_COMPETITORS: CompetitorNode[] = [
     marketShare: 2.2,
     processNodes: ['65nm', '90nm', '130nm', '180nm'],
     industryCategory: 'Specialty Foundry',
+    segment: 'Specialty Foundry',
   },
   {
     id: 'INTC_F',
@@ -166,6 +173,7 @@ export const TSM_COMPETITORS: CompetitorNode[] = [
     marketShare: 2.0,
     processNodes: ['Intel 3', 'Intel 18A', 'Intel 20A'],
     industryCategory: 'Advanced Foundry',
+    segment: 'Advanced Foundry',
   },
   {
     id: 'PSMC',
@@ -183,6 +191,7 @@ export const TSM_COMPETITORS: CompetitorNode[] = [
     marketShare: 1.5,
     processNodes: ['40nm', '55nm', '90nm'],
     industryCategory: 'Mature Node Foundry',
+    segment: 'DRAM/Specialty',
   },
   {
     id: 'TSEM',
@@ -200,6 +209,49 @@ export const TSM_COMPETITORS: CompetitorNode[] = [
     marketShare: 1.2,
     processNodes: ['SiGe', 'RF CMOS', '180nm', '350nm'],
     industryCategory: 'Specialty Foundry',
+    segment: 'Analog/MEMS',
+  },
+  {
+    id: 'IFXGF', name: 'Infineon Technologies', ticker: 'IFNNY', exchange: 'OTC', country: 'Germany',
+    relationship: 'IDM Competitor — Power & Auto',
+    financials: { revenue: '$14.5B', grossMargin: '45.8%', marketCap: '~$30B' },
+    color: '#009e73', marketShare: 0.4, processNodes: ['28nm', '40nm', '65nm', '130nm'],
+    industryCategory: 'Semiconductor IDM', segment: 'Power/Automotive',
+  },
+  {
+    id: 'RENESAS', name: 'Renesas Electronics', ticker: '6723.T', exchange: 'TSE', country: 'Japan',
+    relationship: 'IDM Competitor — MCU & Automotive',
+    financials: { revenue: '$12.1B', grossMargin: '52.3%', marketCap: '~$20B' },
+    color: '#d62728', marketShare: 0.3, processNodes: ['28nm', '40nm', '90nm'],
+    industryCategory: 'Semiconductor IDM', segment: 'Microcontrollers',
+  },
+  {
+    id: 'ROHM', name: 'ROHM Semiconductor', ticker: '6963.T', exchange: 'TSE', country: 'Japan',
+    relationship: 'IDM Competitor — Analog & Power',
+    financials: { revenue: '$3.8B', grossMargin: '43.6%', marketCap: '~$5B' },
+    color: '#8c564b', marketShare: 0.2, processNodes: ['65nm', '130nm', '350nm'],
+    industryCategory: 'Semiconductor IDM', segment: 'Analog/Power',
+  },
+  {
+    id: 'XFAB', name: 'X-Fab Semiconductor', ticker: 'XFAB', exchange: 'Euronext', country: 'Germany',
+    relationship: 'Specialty Foundry — Analog & MEMS',
+    financials: { revenue: '$0.8B', grossMargin: '35.2%', marketCap: '~$1.2B' },
+    color: '#1f77b4', marketShare: 0.3, processNodes: ['130nm', '180nm', '350nm'],
+    industryCategory: 'Specialty Foundry', segment: 'Analog/MEMS',
+  },
+  {
+    id: 'PSMC2', name: 'Powerchip Semiconductor (New)', ticker: '6239.TW', exchange: 'TWSE', country: 'Taiwan',
+    relationship: 'DRAM/Specialty Foundry',
+    financials: { revenue: '$2.8B', grossMargin: '28.9%', marketCap: '~$4.5B' },
+    color: '#ff7f0e', marketShare: 1.1, processNodes: ['40nm', '65nm', '90nm'],
+    industryCategory: 'Memory Foundry', segment: 'DRAM/Specialty',
+  },
+  {
+    id: 'VGSC', name: 'Vanguard International Semiconductor', ticker: '5347.TW', exchange: 'TWSE', country: 'Taiwan',
+    relationship: 'Mature Node Foundry — Power & Driver',
+    financials: { revenue: '$1.9B', grossMargin: '36.7%', marketCap: '~$4.2B' },
+    color: '#bcbd22', marketShare: 1.5, processNodes: ['90nm', '110nm', '150nm', '180nm'],
+    industryCategory: 'Mature Node Foundry', segment: 'Power/Driver IC',
   },
 ];
 
