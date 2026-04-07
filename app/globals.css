@@ -17218,7 +17218,7 @@ html.dark .cwl-ai-context-card {
 
 /* ── Dark mode sidebar ── */
 html.dark .sidebar {
-  background: #1a2332;
+  background: var(--c-dark);
   scrollbar-color: rgba(255,255,255,0.08) transparent;
 }
 html.dark .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
@@ -17235,7 +17235,7 @@ html.dark .sidebar-bottom { border-top-color: rgba(255,255,255,0.07); }
 html.dark .sidebar-bottom a { color: rgba(255,255,255,0.45); }
 html.dark .sidebar-bottom a:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.75); }
 html.dark .sidebar-star-btn { color: rgba(255,255,255,0.45); }
-html.dark .sidebar-star-btn:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.85); }
+html.dark .sidebar-star-btn:hover { background: rgba(255,255,255,0.1); }
 html.dark .sidebar-submenu { background: #1e293b; border-color: #334155; box-shadow: 4px 4px 16px rgba(0,0,0,0.45); }
 html.dark .sidebar-submenu-item { color: rgba(255,255,255,0.75); }
 html.dark .sidebar-submenu-item:hover { background: #334155; color: var(--c-white); }
