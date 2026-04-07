@@ -3752,7 +3752,7 @@ input, select { font-family: var(--font); }
 
 .cp-card-title {
   font-size: 13px;
-  font-weight: 400;
+  font-weight: 600;
   color: var(--c-text);
   text-align: center;
   margin-bottom: 12px;
@@ -3807,7 +3807,7 @@ input, select { font-family: var(--font); }
 }
 
 .cp-fin-metric-value {
-  font-size: 18px;
+  font-size: 30px;
   font-weight: 400;
   color: var(--c-text);
   display: flex;
@@ -4140,7 +4140,7 @@ input, select { font-family: var(--font); }
   flex-direction: column;
   gap: 8px;
   padding: 14px;
-  min-height: 130px;
+  min-height: 100px;
 }
 
 /* Investor Updates card */
@@ -4170,7 +4170,7 @@ input, select { font-family: var(--font); }
 }
 .cp-ir-news-card-title {
   flex: 1;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--c-text);
   line-height: 1.45;
@@ -4180,7 +4180,7 @@ input, select { font-family: var(--font); }
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--c-text-4);
   margin-top: auto;
 }
@@ -4203,7 +4203,7 @@ input, select { font-family: var(--font); }
   gap: 8px;
 }
 .cp-ir-doc-card-label {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--c-text);
   line-height: 1.4;
@@ -4212,7 +4212,7 @@ input, select { font-family: var(--font); }
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--c-accent);
   margin-top: auto;
@@ -4251,7 +4251,7 @@ input, select { font-family: var(--font); }
   margin-bottom: 6px;
 }
 .cp-ir-update-period {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--c-dark);
   background: var(--c-bg);
@@ -4259,7 +4259,7 @@ input, select { font-family: var(--font); }
   padding: 2px 7px;
 }
 .cp-ir-update-date {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--c-text-3);
 }
 .cp-ir-update-metrics {
@@ -4274,18 +4274,18 @@ input, select { font-family: var(--font); }
   gap: 1px;
 }
 .cp-ir-update-metric-label {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--c-text-3);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 .cp-ir-update-metric-value {
-  font-size: 13px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--c-text);
 }
 .cp-ir-update-highlight {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--c-text-2);
   line-height: 1.4;
 }
@@ -4318,7 +4318,7 @@ input, select { font-family: var(--font); }
   min-width: 140px;
 }
 .cp-ir-news-date {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--c-text-3);
   white-space: nowrap;
 }
@@ -4420,7 +4420,7 @@ input, select { font-family: var(--font); }
   color: var(--c-text);
 }
 .cp-ir-doc-filed {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--c-text-3);
   white-space: nowrap;
 }
