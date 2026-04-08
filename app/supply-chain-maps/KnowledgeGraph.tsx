@@ -725,7 +725,6 @@ export default function KnowledgeGraph() {
           }
         />
         <div className="kg-filter-footer">
-          <button className="kg-filter-reset" onClick={resetFilters}>Reset</button>
           <span className="kg-filter-count">{visibleNodes.length} nodes</span>
         </div>
       </div>
