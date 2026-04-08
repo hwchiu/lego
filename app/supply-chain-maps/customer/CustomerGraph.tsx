@@ -30,7 +30,7 @@ const CORNER_R = 12;
 const NODE_STRIP_COLOR = '#166534'; // green — customer direction
 
 // ID of the center node
-const CENTER_NODE_ID = 'TSM';
+const CENTER_NODE_ID = 'TC';
 
 // ── Static lookups (computed once) ───────────────────────────────────────────
 
@@ -274,7 +274,7 @@ function DetailPanel({ node, onClose }: DetailPanelProps) {
         </p>
         {!isCenter && (
           <p className="rmap-detail-items" style={{ marginTop: 8 }}>
-            <span className="rmap-detail-label">Purchases from TSMC: </span>
+            <span className="rmap-detail-label">Purchases from T Company: </span>
             {node.purchaseItems}
           </p>
         )}
@@ -678,7 +678,7 @@ function CustomerTable() {
   return (
     <div className="rmap-supplier-table-wrap">
       <div className="rmap-supplier-table-section">
-        <div className="rmap-supplier-table-title">TSMC Customers</div>
+        <div className="rmap-supplier-table-title">T Company Customers</div>
         <table className="rmap-supplier-table">
           <thead>
             <tr>
@@ -686,7 +686,7 @@ function CustomerTable() {
               <th className="rmap-supplier-th">Ticker</th>
               <th className="rmap-supplier-th">Country</th>
               <th className="rmap-supplier-th">Industry</th>
-              <th className="rmap-supplier-th">Purchases from TSMC</th>
+              <th className="rmap-supplier-th">Purchases from T Company</th>
               <th className="rmap-supplier-th rmap-supplier-th--num">Revenue</th>
               <th className="rmap-supplier-th rmap-supplier-th--num">Gross Margin</th>
               <th className="rmap-supplier-th rmap-supplier-th--num">Transaction (Annual)</th>
@@ -1021,7 +1021,7 @@ export default function CustomerGraph({ tableOnly }: CustomerGraphProps) {
             ref={svgRef}
             viewBox={vbStr}
             className="rmap-svg"
-            aria-label="TSMC Customer Relationship Graph"
+            aria-label="T Company Customer Relationship Graph"
             onMouseDown={handleSvgMouseDown}
             onMouseMove={handleSvgMouseMove}
             onMouseUp={clearDrag}
@@ -1029,7 +1029,7 @@ export default function CustomerGraph({ tableOnly }: CustomerGraphProps) {
             style={{ cursor: isGrabbing ? 'grabbing' : 'grab' }}
           >
             <defs>
-              {/* Arrow points FROM TSM (center) TO customer (outer) — supplier→customer direction */}
+              {/* Arrow points FROM TC (center) TO customer (outer) — supplier→customer direction */}
               <marker id="arr-cust" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
                 <polygon points="0 0, 8 3, 0 6" className="rmap-arrow-marker" />
               </marker>

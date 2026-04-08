@@ -203,11 +203,11 @@ const DEFAULT_COMPANY = SP500_COMPANIES.find((c) => c.symbol === DEFAULT_SYMBOL)
   name: 'Apple Inc.',
 };
 
-// ── TSM-specific data (Taiwan Semiconductor Manufacturing) ───────────────────
+// ── TC-specific data (T Company Manufacturing) ───────────────────
 
 const TSM_DATA: EarningsCompanyData = {
-  symbol: 'TSM',
-  name: 'Taiwan Semiconductor Manufacturing Company',
+  symbol: 'TC',
+  name: 'T Company',
   exchange: 'NYSE',
   price: 339.04,
   change: -2.45,
@@ -237,10 +237,10 @@ const TSM_DATA: EarningsCompanyData = {
     qualityScore: 92,
   },
   pressReleases: [
-    { date: 'Apr 16, 2026', title: 'TSMC Reports First Quarter 2026 Results', quarter: 'Q1 FY2026', url: '#' },
-    { date: 'Jan 16, 2026', title: 'TSMC Reports Fourth Quarter and Full Year 2025 Results', quarter: 'Q4 FY2025', url: '#' },
-    { date: 'Oct 16, 2025', title: 'TSMC Reports Third Quarter 2025 Results', quarter: 'Q3 FY2025', url: '#' },
-    { date: 'Jul 17, 2025', title: 'TSMC Reports Second Quarter 2025 Results', quarter: 'Q2 FY2025', url: '#' },
+    { date: 'Apr 16, 2026', title: 'T Company Reports First Quarter 2026 Results', quarter: 'Q1 FY2026', url: '#' },
+    { date: 'Jan 16, 2026', title: 'T Company Reports Fourth Quarter and Full Year 2025 Results', quarter: 'Q4 FY2025', url: '#' },
+    { date: 'Oct 16, 2025', title: 'T Company Reports Third Quarter 2025 Results', quarter: 'Q3 FY2025', url: '#' },
+    { date: 'Jul 17, 2025', title: 'T Company Reports Second Quarter 2025 Results', quarter: 'Q2 FY2025', url: '#' },
   ],
   epsHistory: [
     { quarter: 'Q2 FY2026', estimate: 2.68, actual: null },
@@ -288,7 +288,7 @@ const TSM_DATA: EarningsCompanyData = {
 };
 
 function getCompanyData(symbol: string, name: string): EarningsCompanyData {
-  if (symbol === 'TSM') return TSM_DATA;
+  if (symbol === 'TC') return TSM_DATA;
   return buildCompanyData(symbol, name);
 }
 

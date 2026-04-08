@@ -224,7 +224,7 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
   const [currency, setCurrency] = useState<Currency>('original');
 
   const isAapl = symbol === 'AAPL';
-  const isTsm  = symbol === 'TSM';
+  const isTsm  = symbol === 'TC';
 
   const aaplIncomeData = useMemo(() => (isAapl ? getAaplIncomeData() : null), [isAapl]);
   const tsmData        = useMemo(() => (isTsm  ? getTsmData()        : null), [isTsm]);

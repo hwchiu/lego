@@ -16,7 +16,7 @@ import { useLanguage } from '@/app/contexts/LanguageContext';
 import { useMobileSidebar, MOBILE_BREAKPOINT } from '@/app/contexts/MobileSidebarContext';
 import { useTheme } from '@/app/contexts/ThemeContext';
 
-const POPULAR_SEARCHES = ['TSM', 'AAPL', 'NVDA'];
+const POPULAR_SEARCHES = ['TC', 'AAPL', 'NVDA'];
 
 // ─────────────────────────────────────────────
 // Notification type icon

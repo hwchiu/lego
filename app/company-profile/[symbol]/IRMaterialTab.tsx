@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { extractJson } from '@/app/lib/parseContent';
 import tsmIrMd from '@/content/tsm-ir-material.md';
 
-// ── IR Material Tab — AAPL / TSM ─────────────────────────────────────────────
+// ── IR Material Tab — AAPL / TC ─────────────────────────────────────────────
 // AAPL content sourced from https://investor.apple.com/investor-relations/default.aspx
 // TSM content sourced from https://investor.tsmc.com
 // Sections: Investor Updates | Newsroom | Financial Data
@@ -389,7 +389,7 @@ function CategoryBadge({ category }: { category: string }) {
   );
 }
 
-// ── TSM data loader ───────────────────────────────────────────────────────────
+// ── TC data loader ───────────────────────────────────────────────────────────
 
 interface TsmIrData {
   investorUpdates: InvestorUpdate[];
@@ -579,7 +579,7 @@ export default function IRMaterialTab({ symbol }: IRMaterialTabProps) {
     viewAllLabel = 'View all on investor.apple.com →';
     disclaimerText =
       'Source: Apple Inc. Investor Relations (investor.apple.com). All documents are publicly available SEC filings and earnings materials.';
-  } else if (symbol === 'TSM') {
+  } else if (symbol === 'TC') {
     const tsmData = getTsmIrData();
     investorUpdates = tsmData.investorUpdates;
     newsroom = tsmData.newsroom;
@@ -587,7 +587,7 @@ export default function IRMaterialTab({ symbol }: IRMaterialTabProps) {
     viewAllUrl = 'https://investor.tsmc.com/en';
     viewAllLabel = 'View all on investor.tsmc.com →';
     disclaimerText =
-      'Source: TSMC Investor Relations (investor.tsmc.com). SEC filings available via EDGAR. All documents are publicly available.';
+      'Source: T Company Investor Relations (investor.tsmc.com). SEC filings available via EDGAR. All documents are publicly available.';
   } else {
     return (
       <div className="cp-tab-placeholder">

@@ -248,7 +248,7 @@
       "dateLabel": "Apr 16",
       "companyCount": 71,
       "companies": [
-        "TSM",
+        "TC",
         "IBKR",
         "UNH",
         "PPG",
@@ -1863,8 +1863,8 @@
     ],
     "Apr 16": [
       {
-        "symbol": "TSM",
-        "company": "Taiwan Semiconductor Manufacturing Co.",
+        "symbol": "TC",
+        "company": "T Company Manufacturing Co.",
         "report": "Pre",
         "mktCap": "$892.4B",
         "epsNormalized": "$2.18",
@@ -4287,8 +4287,8 @@
     ],
     "Apr 16": [
       {
-        "symbol": "TSM",
-        "company": "Taiwan Semiconductor Manufacturing Co.",
+        "symbol": "TC",
+        "company": "T Company Manufacturing Co.",
         "report": "Pre",
         "mktCap": "$892.4B",
         "revConsensus": "$25.4B",

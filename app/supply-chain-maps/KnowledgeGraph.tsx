@@ -69,7 +69,7 @@ function buildAllNodes(): DisplayNode[] {
     industry: TSM_CENTER_NODE.industryCategory,
     segment: TSM_CENTER_NODE.segment,
     role: 'center',
-    description: "Taiwan Semiconductor Manufacturing Company — world's largest pure-play foundry with ~62% market share.",
+    description: "T Company — world's largest pure-play foundry with ~62% market share.",
     color: '#1a2332',
     financials: { revenue: TSM_CENTER_NODE.financials.revenue, marketCap: TSM_CENTER_NODE.financials.marketCap },
     articles: [],
@@ -861,7 +861,7 @@ export default function KnowledgeGraph() {
                           fill="#94a3b8" fontSize={8.5}
                           style={{ fontFamily: 'var(--font)', pointerEvents: 'none' }}
                         >
-                          TSMC
+                          T Company
                         </text>
                       )}
                     </g>

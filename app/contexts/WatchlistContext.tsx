@@ -9,11 +9,11 @@ export type WatchlistId = (typeof WATCHLIST_IDS)[number];
 
 const DEFAULT_NAMES: Record<string, string> = {
   '627836': 'Watchlist1',
-  '738291': 'Watchlist-TSM',
+  '738291': 'Watchlist-TC',
   '394827': 'Watchlist2',
 };
 
-const DEFAULT_SYMBOL_ORDER = ['TSM', 'TSLA', 'QCOM', 'GOOGL', 'SONY', 'AAPL', 'NVDA', 'ASML'];
+const DEFAULT_SYMBOL_ORDER = ['TC', 'TSLA', 'QCOM', 'GOOGL', 'SONY', 'AAPL', 'NVDA', 'ASML'];
 
 const DEFAULT_ORDERS: Record<string, string[]> = {
   '627836': [...DEFAULT_SYMBOL_ORDER],

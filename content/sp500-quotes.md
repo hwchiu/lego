@@ -2191,7 +2191,7 @@
     "change": 2.44,
     "changePct": 0.19
   },
-  "TSM": {
+  "TC": {
     "price": 345.32,
     "change": 3.56,
     "changePct": 1.04

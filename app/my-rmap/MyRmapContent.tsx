@@ -70,7 +70,7 @@ function ShareIcon() {
 
 function NetworkPreview1() {
   const nodes = [
-    { x: 120, y: 80, r: 16, label: 'TSMC', fill: '#1a2332' },
+    { x: 120, y: 80, r: 16, label: 'T Company', fill: '#1a2332' },
     { x: 50, y: 40, r: 10, label: 'ASML', fill: '#2563eb' },
     { x: 190, y: 40, r: 10, label: 'NVDA', fill: '#2563eb' },
     { x: 40, y: 130, r: 10, label: 'AMAT', fill: '#2563eb' },
@@ -96,7 +96,7 @@ function NetworkPreview1() {
 }
 
 function NetworkPreview2() {
-  const center = { x: 120, y: 30, label: 'TSM', r: 14 };
+  const center = { x: 120, y: 30, label: 'TC', r: 14 };
   const tier1 = [
     { x: 40, y: 100, label: 'ASML', r: 10 },
     { x: 95, y: 100, label: 'AMAT', r: 10 },
@@ -153,7 +153,7 @@ function NetworkPreview3() {
         <line key={i} x1={hub.x} y1={hub.y} x2={r.x} y2={r.y} stroke="#e2e8f0" strokeWidth="1.5" opacity="0.8" />
       ))}
       <circle cx={hub.x} cy={hub.y} r={22} fill="#1a2332" />
-      <text x={hub.x} y={hub.y + 1} textAnchor="middle" dominantBaseline="middle" fill="#fff" fontSize={7} fontWeight="700">TSMC</text>
+      <text x={hub.x} y={hub.y + 1} textAnchor="middle" dominantBaseline="middle" fill="#fff" fontSize={7} fontWeight="700">T Company</text>
       {risks.map((r) => (
         <g key={r.label}>
           <circle cx={r.x} cy={r.y} r={r.r} fill={r.fill} opacity="0.9" />
@@ -169,8 +169,8 @@ function NetworkPreview3() {
 const SCENARIO_CARDS = [
   {
     key: 'supplier',
-    title: "TSMC's Supplier Network",
-    description: 'Explore upstream supply relationships and tier-1/tier-2 supplier ecosystems for TSMC.',
+    title: "T Company's Supplier Network",
+    description: 'Explore upstream supply relationships and tier-1/tier-2 supplier ecosystems for T Company.',
     href: '/my-rmap/supplier',
     icon: <SupplierIcon />,
     color: '#2196F3',
@@ -179,8 +179,8 @@ const SCENARIO_CARDS = [
   },
   {
     key: 'customer',
-    title: "TSMC's Customer Network",
-    description: 'Discover downstream customer relationships and distribution channels for TSMC.',
+    title: "T Company's Customer Network",
+    description: 'Discover downstream customer relationships and distribution channels for T Company.',
     href: '/my-rmap/customer',
     icon: <CustomerIcon />,
     color: '#43a047',
@@ -189,8 +189,8 @@ const SCENARIO_CARDS = [
   },
   {
     key: 'competitor',
-    title: "TSMC's Competitor Network",
-    description: 'Map out competitive relationships and peer companies in the same market ecosystem as TSMC.',
+    title: "T Company's Competitor Network",
+    description: 'Map out competitive relationships and peer companies in the same market ecosystem as T Company.',
     href: '/my-rmap/competitor',
     icon: <CompetitorIcon />,
     color: '#ef6c00',

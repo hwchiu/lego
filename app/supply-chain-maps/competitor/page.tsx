@@ -33,8 +33,8 @@ function PlusIcon() {
 const COMPETITOR_TABS = ['Network Graph', 'Table View', 'Analytics', 'Risk Heatmap'] as const;
 type CompetitorTab = (typeof COMPETITOR_TABS)[number];
 
-// Top 4 competitors by market share (excluding TSMC itself) for summary cards
-const TOP_COMPETITORS = MARKET_SHARE_DATA.filter((e) => e.id !== 'TSM')
+// Top 4 competitors by market share (excluding T Company itself) for summary cards
+const TOP_COMPETITORS = MARKET_SHARE_DATA.filter((e) => e.id !== 'TC')
   .sort((a, b) => b.marketShare - a.marketShare)
   .slice(0, 4);
 
@@ -65,9 +65,9 @@ export default function CompetitorPage() {
             <div className="rmap-company-header">
               <span className="rmap-risk-light rmap-risk-light--green" title="No active risk signals" />
               <div className="rmap-company-header-info">
-                <div className="rmap-company-header-name">TSM</div>
+                <div className="rmap-company-header-name">TC</div>
                 <div className="rmap-company-header-full">
-                  Taiwan Semiconductor Manufacturing Company
+                  T Company
                 </div>
               </div>
             </div>

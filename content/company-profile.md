@@ -15,8 +15,8 @@
       "myTags": ["Competitors", "Backend"]
     },
     {
-      "symbol": "TSM",
-      "name": "Taiwan Semiconductor Mfg.",
+      "symbol": "TC",
+      "name": "T Company",
       "localCurrency": "TWD",
       "bbgId": "200711 TW Equity",
       "stockExchange": "TWSE",
@@ -97,7 +97,7 @@
         { "quarter": "23Q2", "doi": 129, "revenue": 13507, "guidance": 16875 }
       ]
     },
-    "TSM": {
+    "TC": {
       "currentQtr": {
         "label": "23Q2",
         "revenue": 15673,

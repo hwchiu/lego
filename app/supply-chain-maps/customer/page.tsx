@@ -70,9 +70,9 @@ export default function CustomerPage() {
             <div className="rmap-company-header">
               <span className="rmap-risk-light rmap-risk-light--green" title="No active risk signals" />
               <div className="rmap-company-header-info">
-                <div className="rmap-company-header-name">TSM</div>
+                <div className="rmap-company-header-name">TC</div>
                 <div className="rmap-company-header-full">
-                  Taiwan Semiconductor Manufacturing Company
+                  T Company
                 </div>
               </div>
             </div>

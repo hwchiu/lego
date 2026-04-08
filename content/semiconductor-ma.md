@@ -1,7 +1,7 @@
 # Semiconductor & AI Industry — Key M&A Transactions
 
-Companies covered: TSMC key suppliers (ASML, Applied Materials, Lam Research, KLA),
-TSMC key customers (Apple, NVIDIA, AMD, Qualcomm, Broadcom),
+Companies covered: T Company key suppliers (ASML, Applied Materials, Lam Research, KLA),
+T Company key customers (Apple, NVIDIA, AMD, Qualcomm, Broadcom),
 and semiconductor / AI industry leaders (Intel, Samsung, Micron, Texas Instruments,
 Analog Devices, Marvell, NXP Semiconductors).
 

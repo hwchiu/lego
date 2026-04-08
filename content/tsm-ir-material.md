@@ -1,7 +1,7 @@
-# TSM (TSMC) Investor Relations Material
+# TC (T Company) Investor Relations Material
 
-Source: investor.tsmc.com, SEC EDGAR (20-F filings), TSMC press releases.
-Taiwan Semiconductor Manufacturing Company Limited (TWSE: 2330, NYSE: TSM).
+Source: investor.tsmc.com, SEC EDGAR (20-F filings), T Company press releases.
+T Company Limited (TWSE: 2330, NYSE: TC).
 
 ## IR Material
 
@@ -52,49 +52,49 @@ Taiwan Semiconductor Manufacturing Company Limited (TWSE: 2330, NYSE: TSM).
   "newsroom": [
     {
       "date": "Jan 16, 2025",
-      "title": "TSMC Reports Fourth Quarter and Full Year 2024 Results",
+      "title": "T Company Reports Fourth Quarter and Full Year 2024 Results",
       "url": "https://investor.tsmc.com/en/quarterly-results/2024/q4",
       "category": "Earnings"
     },
     {
       "date": "Oct 17, 2024",
-      "title": "TSMC Reports Third Quarter 2024 Results",
+      "title": "T Company Reports Third Quarter 2024 Results",
       "url": "https://investor.tsmc.com/en/quarterly-results/2024/q3",
       "category": "Earnings"
     },
     {
       "date": "Apr 18, 2024",
-      "title": "TSMC Announces First Quarter 2024 Results",
+      "title": "T Company Announces First Quarter 2024 Results",
       "url": "https://investor.tsmc.com/en/quarterly-results/2024/q1",
       "category": "Earnings"
     },
     {
       "date": "Apr 22, 2024",
-      "title": "TSMC Breaks Ground on First Europe Fab in Dresden, Germany",
+      "title": "T Company Breaks Ground on First Europe Fab in Dresden, Germany",
       "url": "https://newsroom.tsmc.com/en/news/2024/europe-fab-groundbreaking",
       "category": "Corporate"
     },
     {
       "date": "Mar 5, 2024",
-      "title": "TSMC Announces Arizona Fab Progress — 2nm Technology on Track for 2025",
+      "title": "T Company Announces Arizona Fab Progress — 2nm Technology on Track for 2025",
       "url": "https://investor.tsmc.com/en/speeches/2024/arizona-fab-update",
       "category": "Technology"
     },
     {
       "date": "Jan 18, 2024",
-      "title": "TSMC Reports Fourth Quarter and Full Year 2023 Results",
+      "title": "T Company Reports Fourth Quarter and Full Year 2023 Results",
       "url": "https://investor.tsmc.com/en/quarterly-results/2023/q4",
       "category": "Earnings"
     },
     {
       "date": "Oct 19, 2023",
-      "title": "TSMC Reports Third Quarter 2023 Results",
+      "title": "T Company Reports Third Quarter 2023 Results",
       "url": "https://investor.tsmc.com/en/quarterly-results/2023/q3",
       "category": "Earnings"
     },
     {
       "date": "Jul 20, 2023",
-      "title": "TSMC Reports Second Quarter 2023 Results",
+      "title": "T Company Reports Second Quarter 2023 Results",
       "url": "https://investor.tsmc.com/en/quarterly-results/2023/q2",
       "category": "Earnings"
     }
@@ -107,28 +107,28 @@ Taiwan Semiconductor Manufacturing Company Limited (TWSE: 2330, NYSE: TSM).
           "label": "FY2024 Annual Report (20-F)",
           "period": "Dec 31, 2024",
           "filed": "Apr 2025",
-          "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=TSM&type=20-F&dateb=&owner=include&count=10",
+          "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=TC&type=20-F&dateb=&owner=include&count=10",
           "type": "HTML"
         },
         {
           "label": "FY2023 Annual Report (20-F)",
           "period": "Dec 31, 2023",
           "filed": "Apr 2024",
-          "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=TSM&type=20-F&dateb=&owner=include&count=10",
+          "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=TC&type=20-F&dateb=&owner=include&count=10",
           "type": "HTML"
         },
         {
           "label": "FY2022 Annual Report (20-F)",
           "period": "Dec 31, 2022",
           "filed": "Apr 2023",
-          "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=TSM&type=20-F&dateb=&owner=include&count=10",
+          "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=TC&type=20-F&dateb=&owner=include&count=10",
           "type": "HTML"
         },
         {
           "label": "FY2021 Annual Report (20-F)",
           "period": "Dec 31, 2021",
           "filed": "Apr 2022",
-          "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=TSM&type=20-F&dateb=&owner=include&count=10",
+          "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=TC&type=20-F&dateb=&owner=include&count=10",
           "type": "HTML"
         }
       ]
