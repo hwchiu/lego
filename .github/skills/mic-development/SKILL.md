@@ -1,11 +1,11 @@
 ---
-name: tmic-development
-description: Use when building features, fixing bugs, adding pages, or modifying UI in the tMIC (lego) project. Covers component structure, CSS conventions, data layer patterns, i18n, routing, and responsive design for this Next.js static-export financial dashboard.
+name: mic-development
+description: Use when building features, fixing bugs, adding pages, or modifying UI in the MIC (lego) project. Covers component structure, CSS conventions, data layer patterns, i18n, routing, and responsive design for this Next.js static-export financial dashboard.
 ---
 
-# tMIC Development Conventions
+# MIC Development Conventions
 
-Comprehensive coding conventions and patterns for the tMIC financial dashboard — extracted from 65+ Copilot agent PRs and codebase analysis.
+Comprehensive coding conventions and patterns for the MIC financial dashboard — extracted from 65+ Copilot agent PRs and codebase analysis.
 
 ## Architecture Overview
 

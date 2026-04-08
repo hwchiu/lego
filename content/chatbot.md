@@ -1,10 +1,10 @@
 # AI Chatbot Knowledge Base
 
-This file defines the chatbot's guided navigation knowledge for tMIC.
+This file defines the chatbot's guided navigation knowledge for MIC.
 
 ```json
 {
-  "greeting": "Hi, I'm Mic! I'll guide you through tMIC based on your role. What best describes your role?",
+  "greeting": "Hi, I'm Mic! I'll guide you through MIC based on your role. What best describes your role?",
   "roles": [
     {
       "id": "region-sales",
