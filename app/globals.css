@@ -7801,6 +7801,16 @@ input, select { font-family: var(--font); }
   font-weight: 600;
   letter-spacing: 0.04em;
 }
+.de-tax-card-country {
+  display: inline-block;
+  padding: 1px 7px;
+  background: #7c3aed14;
+  color: #7c3aed;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
 .de-tax-card-date {
   font-size: 10.5px;
   color: var(--c-text-4);
@@ -17528,6 +17538,7 @@ html.dark .cwl-ai-context-card {
   color: var(--c-text-2);
   vertical-align: middle;
   white-space: nowrap;
+  background: var(--c-white);
 }
 .de-data-table tbody tr:last-child td { border-bottom: none; }
 .de-data-table tbody tr:hover td { background: var(--c-bg); }
@@ -17570,4 +17581,188 @@ html.dark .cwl-ai-context-card {
     border-left: none;
     border-right: none;
   }
+}
+
+/* ── Sortable table headers ── */
+.de-th-sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--c-text-3);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.de-th-sort-btn:hover { color: var(--c-text); }
+.de-data-table th.num .de-th-sort-btn { justify-content: flex-end; width: 100%; }
+.de-th-sort-icon { font-size: 10px; opacity: 0.5; }
+.de-th-sort-icon--active { opacity: 1; color: var(--c-accent); }
+
+/* ── Table search bar ── */
+.de-table-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.de-table-search-input {
+  flex: 1;
+  max-width: 320px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--c-border-2);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--c-text);
+  background: var(--c-white);
+  outline: none;
+}
+.de-table-search-input:focus { border-color: #93c5fd; }
+.de-table-search-count {
+  font-size: 11.5px;
+  color: var(--c-text-3);
+}
+
+/* ===== PRE-EARNING CALL TAB ===== */
+.cp-pec-wrap {
+  max-width: 860px;
+  padding: 24px 0;
+}
+.cp-pec-card {
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  margin-bottom: 24px;
+}
+.cp-pec-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.cp-pec-card-header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 0;
+}
+.cp-pec-card-company {
+  flex-shrink: 0;
+  display: inline-block;
+  padding: 3px 10px;
+  background: #1d4ed814;
+  color: #1d4ed8;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  border-radius: var(--radius-sm);
+  margin-top: 2px;
+}
+.cp-pec-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--c-text);
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+.cp-pec-card-date {
+  font-size: 12px;
+  color: var(--c-text-3);
+}
+.cp-pec-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.cp-pec-card-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--c-border);
+  background: var(--c-white);
+  color: var(--c-text-3);
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.cp-pec-card-action-btn:hover {
+  background: var(--c-bg);
+  color: var(--c-text);
+  border-color: var(--c-border-2);
+}
+.cp-pec-card-body {
+  border-top: 1px solid var(--c-border);
+  padding-top: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 28px;
+}
+.cp-pec-section-heading {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--c-text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+.cp-pec-bullet-list {
+  margin: 0;
+  padding-left: 16px;
+  list-style: disc;
+}
+.cp-pec-bullet-list li {
+  font-size: 13px;
+  color: var(--c-text-2);
+  line-height: 1.6;
+  margin-bottom: 4px;
+}
+.cp-pec-card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--c-border);
+}
+.cp-pec-tag {
+  display: inline-block;
+  padding: 3px 9px;
+  background: var(--c-bg);
+  color: var(--c-text-3);
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 20px;
+  border: 1px solid var(--c-border);
+}
+.cp-pec-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  gap: 12px;
+}
+.cp-pec-empty-icon { font-size: 32px; }
+.cp-pec-empty-text {
+  font-size: 13.5px;
+  color: var(--c-text-3);
+}
+
+/* ── Pre-Earning Call responsive ── */
+@media (max-width: 768px) {
+  .cp-pec-card { padding: 16px; }
+  .cp-pec-card-body { grid-template-columns: 1fr; }
+  .cp-pec-card-header { flex-direction: column; gap: 10px; }
+  .cp-pec-card-actions { align-self: flex-end; }
 }

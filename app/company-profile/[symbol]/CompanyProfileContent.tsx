@@ -13,6 +13,7 @@ import myTagsMd from '@/content/my-tags.md';
 import FinancialStatementTab from './FinancialStatementTab';
 import CompanyMATab from './CompanyMATab';
 import IRMaterialTab from './IRMaterialTab';
+import PreEarningCallTab from './PreEarningCallTab';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -116,7 +117,7 @@ function getLocalStorageTags(): string[] {
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
-const TABS = ['FIN. Summary', 'FIN. Statement', 'News', 'IR Material', 'M&A', 'Stock'] as const;
+const TABS = ['FIN. Summary', 'FIN. Statement', 'News', 'IR Material', 'M&A', 'Pre-Earning Call', 'Stock'] as const;
 type Tab = (typeof TABS)[number];
 
 const FIN_INDICES = [
@@ -1040,13 +1041,17 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
             {/* ── IR Material tab ── */}
             {activeTab === 'IR Material' && <IRMaterialTab symbol={symbol} />}
 
+            {/* Pre-Earning Call tab */}
+            {activeTab === 'Pre-Earning Call' && <PreEarningCallTab symbol={symbol} />}
+
             {/* Placeholder for remaining tabs */}
             {activeTab !== 'FIN. Summary' &&
               activeTab !== 'FIN. Statement' &&
               activeTab !== 'News' &&
               activeTab !== 'Stock' &&
               activeTab !== 'M&A' &&
-              activeTab !== 'IR Material' && (
+              activeTab !== 'IR Material' &&
+              activeTab !== 'Pre-Earning Call' && (
                 <div className="cp-tab-placeholder">
                   <span className="cp-tab-placeholder-text">{activeTab} — Content coming soon</span>
                 </div>

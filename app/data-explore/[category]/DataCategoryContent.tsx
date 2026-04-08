@@ -284,9 +284,18 @@ function EsgReportsTab() {
 const TAX_ACCENT = '#2563eb';
 
 function TaiwanTaxNewsTab() {
-  const items = useMemo(
-    () => [...TAIWAN_TAX_NEWS].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
-    [],
+  // Extract unique weeks sorted descending
+  const weeks = useMemo(() => {
+    const set = new Set<string>();
+    TAIWAN_TAX_NEWS.forEach((item) => set.add(item.week));
+    return Array.from(set).sort((a, b) => b.localeCompare(a));
+  }, []);
+
+  const [activeWeek, setActiveWeek] = useState(() => weeks[0] ?? '');
+
+  const filteredItems = useMemo(
+    () => TAIWAN_TAX_NEWS.filter((item) => item.week === activeWeek).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+    [activeWeek],
   );
 
   return (
@@ -295,13 +304,42 @@ function TaiwanTaxNewsTab() {
         <div className="de-tax-news-title">Weekly Taiwan Tax News Summary</div>
         <div className="de-tax-news-sub">
           Curated tax law updates from Taiwan&apos;s Ministry of Finance, National Tax Administration,
-          and major accounting firms — {items.length} items in total.
+          and major accounting firms — {TAIWAN_TAX_NEWS.length} items in total.
         </div>
       </div>
-      <div className="de-tax-news-grid">
-        {items.map((item) => (
-          <TaxNewsCard key={item.id} item={item} />
-        ))}
+
+      <div className="de-intl-tax-layout">
+        {/* Left: week sidebar */}
+        <nav className="de-intl-tax-sidebar" aria-label="Week list">
+          <div className="de-intl-tax-sidebar-title">週別 (Week)</div>
+          {weeks.map((week) => {
+            const count = TAIWAN_TAX_NEWS.filter((item) => item.week === week).length;
+            return (
+              <button
+                key={week}
+                className={`de-intl-tax-sidebar-item${activeWeek === week ? ' active' : ''}`}
+                style={activeWeek === week ? { borderLeftColor: TAX_ACCENT, color: TAX_ACCENT } : {}}
+                onClick={() => setActiveWeek(week)}
+              >
+                <span className="de-intl-tax-sidebar-item-name">{week}</span>
+                <span className="de-intl-tax-sidebar-item-count">{count}</span>
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Right: news card grid */}
+        <div className="de-intl-tax-content">
+          {filteredItems.length === 0 ? (
+            <div className="de-intl-tax-empty">No tax news available for this week.</div>
+          ) : (
+            <div className="de-intl-tax-grid">
+              {filteredItems.map((item) => (
+                <TaxNewsCard key={item.id} item={item} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -513,6 +551,96 @@ function CmTableWrapper({ children }: { children: ReactNode }) {
   );
 }
 
+// ── Sortable data hook ─────────────────────────────────────────────────────
+
+function useSortableData<T>(data: T[], getters: ((row: T) => string | number)[]) {
+  const [sortCol, setSortCol] = useState<number | null>(null);
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+  const [search, setSearch] = useState('');
+
+  function handleSort(colIndex: number) {
+    if (sortCol === colIndex) {
+      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortCol(colIndex);
+      setSortDir('asc');
+    }
+  }
+
+  const processed = useMemo(() => {
+    let rows = [...data];
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      rows = rows.filter((row) =>
+        getters.some((g) => String(g(row)).toLowerCase().includes(q)),
+      );
+    }
+    if (sortCol !== null) {
+      const getter = getters[sortCol];
+      rows.sort((a, b) => {
+        const av = getter(a);
+        const bv = getter(b);
+        const an = typeof av === 'number' ? av : Number(String(av).replace(/,/g, ''));
+        const bn = typeof bv === 'number' ? bv : Number(String(bv).replace(/,/g, ''));
+        const isNum = !isNaN(an) && !isNaN(bn) && String(av) !== '' && String(bv) !== '';
+        const cmp = isNum ? an - bn : String(av).localeCompare(String(bv));
+        return sortDir === 'asc' ? cmp : -cmp;
+      });
+    }
+    return rows;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, search, sortCol, sortDir]);
+
+  return { rows: processed, search, setSearch, sortCol, sortDir, handleSort };
+}
+
+interface ThSortProps {
+  label: string;
+  colIndex: number;
+  sortCol: number | null;
+  sortDir: 'asc' | 'desc';
+  onSort: (i: number) => void;
+  className?: string;
+}
+
+function ThSort({ label, colIndex, sortCol, sortDir, onSort, className }: ThSortProps) {
+  const isActive = sortCol === colIndex;
+  const icon = isActive ? (sortDir === 'asc' ? '▲' : '▼') : '⇅';
+  return (
+    <th className={className}>
+      <button className="de-th-sort-btn" onClick={() => onSort(colIndex)}>
+        {label}
+        <span className={`de-th-sort-icon${isActive ? ' de-th-sort-icon--active' : ''}`}>{icon}</span>
+      </button>
+    </th>
+  );
+}
+
+interface SortSearchBarProps {
+  search: string;
+  onSearch: (v: string) => void;
+  total: number;
+  filtered: number;
+}
+
+function SortSearchBar({ search, onSearch, total, filtered }: SortSearchBarProps) {
+  return (
+    <div className="de-table-search-wrap">
+      <input
+        className="de-table-search-input"
+        type="search"
+        placeholder="Search table..."
+        value={search}
+        onChange={(e) => onSearch(e.target.value)}
+        aria-label="Search table"
+      />
+      {search.trim() && (
+        <span className="de-table-search-count">{filtered} / {total}</span>
+      )}
+    </div>
+  );
+}
+
 function CmNameCell({ lang, code, nameZh, nameEn }: { lang: 'zh' | 'en'; code: string; nameZh: string; nameEn: string }) {
   return (
     <>
@@ -524,25 +652,41 @@ function CmNameCell({ lang, code, nameZh, nameEn }: { lang: 'zh' | 'en'; code: s
 
 function CmDailyQuotesTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
+  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+    CM_DAILY_QUOTES,
+    [
+      (r) => r.code,
+      (r) => (zh ? r.nameZh : r.nameEn),
+      (r) => r.vol,
+      (r) => r.amount,
+      (r) => r.open,
+      (r) => r.high,
+      (r) => r.low,
+      (r) => r.close,
+      (r) => r.change,
+      (r) => r.txn,
+    ],
+  );
   return (
     <CmTableWrapper>
+      <SortSearchBar search={search} onSearch={setSearch} total={CM_DAILY_QUOTES.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <th>{zh ? '股票代號' : 'Code'}</th>
-            <th>{zh ? '名稱' : 'Name'}</th>
-            <th className="num">{zh ? '成交股數' : 'Volume'}</th>
-            <th className="num">{zh ? '成交金額' : 'Amount (NT$)'}</th>
-            <th className="num">{zh ? '開盤價' : 'Open'}</th>
-            <th className="num">{zh ? '最高價' : 'High'}</th>
-            <th className="num">{zh ? '最低價' : 'Low'}</th>
-            <th className="num">{zh ? '收盤價' : 'Close'}</th>
-            <th className="num">{zh ? '漲跌' : 'Change'}</th>
-            <th className="num">{zh ? '成交筆數' : 'Transactions'}</th>
+            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ThSort label={zh ? '成交股數' : 'Volume'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '成交金額' : 'Amount (NT$)'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '開盤價' : 'Open'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '最高價' : 'High'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '最低價' : 'Low'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '收盤價' : 'Close'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '漲跌' : 'Change'} colIndex={8} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '成交筆數' : 'Transactions'} colIndex={9} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
           </tr>
         </thead>
         <tbody>
-          {CM_DAILY_QUOTES.map((r) => (
+          {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
               <td className="num">{r.vol}</td>
@@ -563,21 +707,26 @@ function CmDailyQuotesTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmDayTradingTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
+  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+    CM_DAY_TRADING,
+    [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.buy, (r) => r.sell, (r) => r.net, (r) => r.ratio],
+  );
   return (
     <CmTableWrapper>
+      <SortSearchBar search={search} onSearch={setSearch} total={CM_DAY_TRADING.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <th>{zh ? '股票代號' : 'Code'}</th>
-            <th>{zh ? '名稱' : 'Name'}</th>
-            <th className="num">{zh ? '當沖買進股數' : 'Day-Trade Buy'}</th>
-            <th className="num">{zh ? '當沖賣出股數' : 'Day-Trade Sell'}</th>
-            <th className="num">{zh ? '當沖成交股數' : 'Day-Trade Volume'}</th>
-            <th className="num">{zh ? '占總成交股數比' : '% of Total Vol.'}</th>
+            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ThSort label={zh ? '當沖買進股數' : 'Day-Trade Buy'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '當沖賣出股數' : 'Day-Trade Sell'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '當沖成交股數' : 'Day-Trade Volume'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '占總成交股數比' : '% of Total Vol.'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
           </tr>
         </thead>
         <tbody>
-          {CM_DAY_TRADING.map((r) => (
+          {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
               <td className="num">{r.buy}</td>
@@ -594,23 +743,28 @@ function CmDayTradingTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmMarginTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
+  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+    CM_MARGIN,
+    [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.finBuy, (r) => r.finSell, (r) => r.finBal, (r) => r.shoBuy, (r) => r.shoSell, (r) => r.shoBal],
+  );
   return (
     <CmTableWrapper>
+      <SortSearchBar search={search} onSearch={setSearch} total={CM_MARGIN.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <th>{zh ? '股票代號' : 'Code'}</th>
-            <th>{zh ? '名稱' : 'Name'}</th>
-            <th className="num">{zh ? '融資買進' : 'Margin Buy'}</th>
-            <th className="num">{zh ? '融資賣出' : 'Margin Sell'}</th>
-            <th className="num">{zh ? '融資餘額' : 'Margin Balance'}</th>
-            <th className="num">{zh ? '融券賣出' : 'Short Sell'}</th>
-            <th className="num">{zh ? '融券買進' : 'Short Buy'}</th>
-            <th className="num">{zh ? '融券餘額' : 'Short Balance'}</th>
+            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ThSort label={zh ? '融資買進' : 'Margin Buy'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '融資賣出' : 'Margin Sell'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '融資餘額' : 'Margin Balance'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '融券賣出' : 'Short Sell'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '融券買進' : 'Short Buy'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '融券餘額' : 'Short Balance'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
           </tr>
         </thead>
         <tbody>
-          {CM_MARGIN.map((r) => (
+          {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
               <td className="num">{r.finBuy}</td>
@@ -629,23 +783,28 @@ function CmMarginTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmShortSaleTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
+  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+    CM_SHORT_SALE,
+    [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.finLimit, (r) => r.finUsed, (r) => r.finRatio, (r) => r.shoLimit, (r) => r.shoUsed, (r) => r.shoRatio],
+  );
   return (
     <CmTableWrapper>
+      <SortSearchBar search={search} onSearch={setSearch} total={CM_SHORT_SALE.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <th>{zh ? '股票代號' : 'Code'}</th>
-            <th>{zh ? '名稱' : 'Name'}</th>
-            <th className="num">{zh ? '融資限額' : 'Margin Limit'}</th>
-            <th className="num">{zh ? '融資已用' : 'Margin Used'}</th>
-            <th className="num">{zh ? '融資使用率' : 'Margin Util.'}</th>
-            <th className="num">{zh ? '融券限額' : 'Short Limit'}</th>
-            <th className="num">{zh ? '融券已用' : 'Short Used'}</th>
-            <th className="num">{zh ? '融券使用率' : 'Short Util.'}</th>
+            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ThSort label={zh ? '融資限額' : 'Margin Limit'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '融資已用' : 'Margin Used'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '融資使用率' : 'Margin Util.'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '融券限額' : 'Short Limit'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '融券已用' : 'Short Used'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '融券使用率' : 'Short Util.'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
           </tr>
         </thead>
         <tbody>
-          {CM_SHORT_SALE.map((r) => (
+          {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
               <td className="num">{r.finLimit}</td>
@@ -664,22 +823,27 @@ function CmShortSaleTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmExDividendTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
+  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+    CM_EX_DIVIDEND,
+    [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.exDivDate, (r) => r.divVal, (r) => r.exRightDate, (r) => r.rightVal, (r) => r.listDate],
+  );
   return (
     <CmTableWrapper>
+      <SortSearchBar search={search} onSearch={setSearch} total={CM_EX_DIVIDEND.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <th>{zh ? '股票代號' : 'Code'}</th>
-            <th>{zh ? '名稱' : 'Name'}</th>
-            <th>{zh ? '除息日' : 'Ex-Div Date'}</th>
-            <th className="num">{zh ? '息值(元)' : 'Div. Value'}</th>
-            <th>{zh ? '除權日' : 'Ex-Right Date'}</th>
-            <th className="num">{zh ? '權值' : 'Right Value'}</th>
-            <th>{zh ? '上市日期' : 'Listing Date'}</th>
+            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ThSort label={zh ? '除息日' : 'Ex-Div Date'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ThSort label={zh ? '息值(元)' : 'Div. Value'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '除權日' : 'Ex-Right Date'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ThSort label={zh ? '權值' : 'Right Value'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '上市日期' : 'Listing Date'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
           </tr>
         </thead>
         <tbody>
-          {CM_EX_DIVIDEND.map((r) => (
+          {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
               <td>{r.exDivDate}</td>
@@ -697,21 +861,26 @@ function CmExDividendTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmForeignTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
+  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+    CM_FOREIGN,
+    [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.buy, (r) => r.sell, (r) => r.shares, (r) => r.ratio],
+  );
   return (
     <CmTableWrapper>
+      <SortSearchBar search={search} onSearch={setSearch} total={CM_FOREIGN.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <th>{zh ? '股票代號' : 'Code'}</th>
-            <th>{zh ? '名稱' : 'Name'}</th>
-            <th className="num">{zh ? '外資買進(股)' : 'Foreign Buy'}</th>
-            <th className="num">{zh ? '外資賣出(股)' : 'Foreign Sell'}</th>
-            <th className="num">{zh ? '外資持股股數' : 'Foreign Holdings'}</th>
-            <th className="num">{zh ? '持股比例' : 'Holding %'}</th>
+            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ThSort label={zh ? '外資買進(股)' : 'Foreign Buy'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '外資賣出(股)' : 'Foreign Sell'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '外資持股股數' : 'Foreign Holdings'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '持股比例' : 'Holding %'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
           </tr>
         </thead>
         <tbody>
-          {CM_FOREIGN.map((r) => (
+          {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
               <td className="num">{r.buy}</td>
@@ -728,21 +897,26 @@ function CmForeignTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmPriceLimitTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
+  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+    CM_PRICE_LIMIT,
+    [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.refPrice, (r) => r.ceiling, (r) => r.floor, (r) => r.pct],
+  );
   return (
     <CmTableWrapper>
+      <SortSearchBar search={search} onSearch={setSearch} total={CM_PRICE_LIMIT.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <th>{zh ? '股票代號' : 'Code'}</th>
-            <th>{zh ? '名稱' : 'Name'}</th>
-            <th className="num">{zh ? '參考收盤價' : 'Ref. Price'}</th>
-            <th className="num">{zh ? '漲停價格' : 'Upper Limit'}</th>
-            <th className="num">{zh ? '跌停價格' : 'Lower Limit'}</th>
-            <th className="num">{zh ? '漲跌幅限制' : 'Limit %'}</th>
+            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ThSort label={zh ? '參考收盤價' : 'Ref. Price'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '漲停價格' : 'Upper Limit'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '跌停價格' : 'Lower Limit'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '漲跌幅限制' : 'Limit %'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
           </tr>
         </thead>
         <tbody>
-          {CM_PRICE_LIMIT.map((r) => (
+          {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
               <td className="num">{r.refPrice}</td>
@@ -759,20 +933,25 @@ function CmPriceLimitTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmPeRatioTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
+  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+    CM_PE_RATIO,
+    [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.yield, (r) => r.pe, (r) => r.pb],
+  );
   return (
     <CmTableWrapper>
+      <SortSearchBar search={search} onSearch={setSearch} total={CM_PE_RATIO.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <th>{zh ? '股票代號' : 'Code'}</th>
-            <th>{zh ? '名稱' : 'Name'}</th>
-            <th className="num">{zh ? '殖利率(%)' : 'Dividend Yield (%)'}</th>
-            <th className="num">{zh ? '本益比' : 'P/E Ratio'}</th>
-            <th className="num">{zh ? '股價淨值比' : 'P/B Ratio'}</th>
+            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ThSort label={zh ? '殖利率(%)' : 'Dividend Yield (%)'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '本益比' : 'P/E Ratio'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSort label={zh ? '股價淨值比' : 'P/B Ratio'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
           </tr>
         </thead>
         <tbody>
-          {CM_PE_RATIO.map((r) => (
+          {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
               <td className="num">{r.yield}</td>
@@ -831,6 +1010,10 @@ const GOV_REG_LABOR = [
 
 function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
+  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+    GOV_REG_DISQUALIFIED,
+    [(r) => r.name, (r) => r.id, (r) => r.period, (r) => r.reason, (r) => r.agency],
+  );
   return (
     <div className="de-data-section">
       <div className="de-data-section-header">
@@ -840,18 +1023,21 @@ function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
         <span className="de-data-section-date">Source: 行政院公共工程委員會</span>
       </div>
       <div className="de-data-table-wrap">
+        <div style={{ padding: '8px 12px 0' }}>
+          <SortSearchBar search={search} onSearch={setSearch} total={GOV_REG_DISQUALIFIED.length} filtered={rows.length} />
+        </div>
         <table className="de-data-table">
           <thead>
             <tr>
-              <th>{zh ? '廠商名稱' : 'Vendor Name'}</th>
-              <th>{zh ? '統一編號' : 'Tax ID'}</th>
-              <th>{zh ? '禁止往來期間' : 'Banned Period'}</th>
-              <th>{zh ? '違法事由' : 'Violation Reason'}</th>
-              <th>{zh ? '主管機關' : 'Authority'}</th>
+              <ThSort label={zh ? '廠商名稱' : 'Vendor Name'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+              <ThSort label={zh ? '統一編號' : 'Tax ID'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+              <ThSort label={zh ? '禁止往來期間' : 'Banned Period'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+              <ThSort label={zh ? '違法事由' : 'Violation Reason'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+              <ThSort label={zh ? '主管機關' : 'Authority'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
             </tr>
           </thead>
           <tbody>
-            {GOV_REG_DISQUALIFIED.map((r) => (
+            {rows.map((r) => (
               <tr key={r.id}>
                 <td>{r.name}</td>
                 <td className="code">{r.id}</td>
@@ -869,6 +1055,10 @@ function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
+  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+    GOV_REG_POLLUTION,
+    [(r) => r.name, (r) => r.city, (r) => r.date, (r) => r.reason, (r) => r.fine, (r) => r.law],
+  );
   return (
     <div className="de-data-section">
       <div className="de-data-section-header">
@@ -878,19 +1068,22 @@ function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
         <span className="de-data-section-date">Source: 環境部</span>
       </div>
       <div className="de-data-table-wrap">
+        <div style={{ padding: '8px 12px 0' }}>
+          <SortSearchBar search={search} onSearch={setSearch} total={GOV_REG_POLLUTION.length} filtered={rows.length} />
+        </div>
         <table className="de-data-table">
           <thead>
             <tr>
-              <th>{zh ? '事業名稱' : 'Company Name'}</th>
-              <th>{zh ? '所在縣市' : 'City/County'}</th>
-              <th>{zh ? '裁處日期' : 'Penalty Date'}</th>
-              <th>{zh ? '違規事由' : 'Violation'}</th>
-              <th className="num">{zh ? '裁處金額(元)' : 'Fine (NT$)'}</th>
-              <th>{zh ? '法規依據' : 'Regulation'}</th>
+              <ThSort label={zh ? '事業名稱' : 'Company Name'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+              <ThSort label={zh ? '所在縣市' : 'City/County'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+              <ThSort label={zh ? '裁處日期' : 'Penalty Date'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+              <ThSort label={zh ? '違規事由' : 'Violation'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+              <ThSort label={zh ? '裁處金額(元)' : 'Fine (NT$)'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+              <ThSort label={zh ? '法規依據' : 'Regulation'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
             </tr>
           </thead>
           <tbody>
-            {GOV_REG_POLLUTION.map((r) => (
+            {rows.map((r) => (
               <tr key={r.name}>
                 <td>{r.name}</td>
                 <td className="muted">{r.city}</td>
@@ -909,6 +1102,10 @@ function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function GovLaborTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
+  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+    GOV_REG_LABOR,
+    [(r) => r.name, (r) => r.id, (r) => r.date, (r) => r.law, (r) => r.fine, (r) => r.detail],
+  );
   return (
     <div className="de-data-section">
       <div className="de-data-section-header">
@@ -918,19 +1115,22 @@ function GovLaborTab({ lang }: { lang: 'zh' | 'en' }) {
         <span className="de-data-section-date">Source: 勞動部</span>
       </div>
       <div className="de-data-table-wrap">
+        <div style={{ padding: '8px 12px 0' }}>
+          <SortSearchBar search={search} onSearch={setSearch} total={GOV_REG_LABOR.length} filtered={rows.length} />
+        </div>
         <table className="de-data-table">
           <thead>
             <tr>
-              <th>{zh ? '事業單位名稱' : 'Company Name'}</th>
-              <th>{zh ? '統一編號' : 'Tax ID'}</th>
-              <th>{zh ? '違法日期' : 'Violation Date'}</th>
-              <th>{zh ? '違反法規' : 'Regulation Violated'}</th>
-              <th className="num">{zh ? '裁罰金額(元)' : 'Fine (NT$)'}</th>
-              <th>{zh ? '處分情形' : 'Details'}</th>
+              <ThSort label={zh ? '事業單位名稱' : 'Company Name'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+              <ThSort label={zh ? '統一編號' : 'Tax ID'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+              <ThSort label={zh ? '違法日期' : 'Violation Date'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+              <ThSort label={zh ? '違反法規' : 'Regulation Violated'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+              <ThSort label={zh ? '裁罰金額(元)' : 'Fine (NT$)'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+              <ThSort label={zh ? '處分情形' : 'Details'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
             </tr>
           </thead>
           <tbody>
-            {GOV_REG_LABOR.map((r) => (
+            {rows.map((r) => (
               <tr key={r.id}>
                 <td>{r.name}</td>
                 <td className="code">{r.id}</td>

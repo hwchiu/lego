@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { INTERNATIONAL_TAX_NEWS, type TaxNewsItem } from '@/app/data/taxNews';
 
 // ─── Icons ───────────────────────────────────────────────────────────────────
@@ -19,25 +19,26 @@ function ExternalLinkIcon() {
   );
 }
 
-// ─── Country list ─────────────────────────────────────────────────────────────
+// ─── Constants ────────────────────────────────────────────────────────────────
 
 const TAX_ACCENT = '#2563eb';
 
-const COUNTRIES: { id: string; label: string }[] = [
-  { id: 'taiwan', label: 'Taiwan' },
-  { id: 'usa', label: 'United States' },
-  { id: 'japan', label: 'Japan' },
-  { id: 'germany', label: 'Germany' },
-  { id: 'china', label: 'China' },
-];
+const COUNTRY_LABELS: Record<string, string> = {
+  taiwan: 'Taiwan',
+  usa: 'United States',
+  japan: 'Japan',
+  germany: 'Germany',
+  china: 'China',
+};
 
 // ─── Intl Tax News Card ───────────────────────────────────────────────────────
 
 interface IntlTaxNewsCardProps {
   item: TaxNewsItem;
+  countryId: string;
 }
 
-function IntlTaxNewsCard({ item }: IntlTaxNewsCardProps) {
+function IntlTaxNewsCard({ item, countryId }: IntlTaxNewsCardProps) {
   const hasLink = item.url && item.url !== '#';
   return (
     <article className="de-tax-card">
@@ -46,6 +47,7 @@ function IntlTaxNewsCard({ item }: IntlTaxNewsCardProps) {
           {item.category}
         </span>
         <span className="de-tax-card-meta">
+          <span className="de-tax-card-country">{COUNTRY_LABELS[countryId] ?? countryId}</span>
           <span className="de-tax-card-week">{item.week}</span>
           <span className="de-tax-card-date">{item.date}</span>
         </span>
@@ -80,48 +82,74 @@ function IntlTaxNewsCard({ item }: IntlTaxNewsCardProps) {
 // ─── Main WorldMapTab component ───────────────────────────────────────────────
 
 export default function WorldMapTab() {
-  const [activeCountry, setActiveCountry] = useState(COUNTRIES[0].id);
-  const items: TaxNewsItem[] = INTERNATIONAL_TAX_NEWS[activeCountry] ?? [];
-  const totalItems = Object.values(INTERNATIONAL_TAX_NEWS).reduce((s, arr) => s + arr.length, 0);
+  // Build flat list of all items with country info
+  const allItemsWithCountry = useMemo(() => {
+    const result: { item: TaxNewsItem; countryId: string }[] = [];
+    for (const [countryId, items] of Object.entries(INTERNATIONAL_TAX_NEWS)) {
+      for (const item of items) {
+        result.push({ item, countryId });
+      }
+    }
+    return result;
+  }, []);
+
+  // Extract unique weeks sorted descending (newest first)
+  const weeks = useMemo(() => {
+    const set = new Set<string>();
+    allItemsWithCountry.forEach(({ item }) => set.add(item.week));
+    return Array.from(set).sort((a, b) => b.localeCompare(a));
+  }, [allItemsWithCountry]);
+
+  const [activeWeek, setActiveWeek] = useState(() => weeks[0] ?? '');
+
+  // Items for selected week, from all countries
+  const filteredItems = useMemo(
+    () => allItemsWithCountry.filter(({ item }) => item.week === activeWeek),
+    [allItemsWithCountry, activeWeek],
+  );
+
+  const totalItems = allItemsWithCountry.length;
+  const countryCount = Object.keys(INTERNATIONAL_TAX_NEWS).length;
 
   return (
     <div className="de-world-map-wrap">
       <div className="de-world-map-header">
         <div className="de-world-map-title">Weekly International Tax News Summary</div>
         <div className="de-world-map-sub">
-          International tax news organized by country — covering the latest tax legislation,
-          regulations, and compliance updates across <strong>{COUNTRIES.length}</strong> countries /
+          International tax news organized by week — covering the latest tax legislation,
+          regulations, and compliance updates across <strong>{countryCount}</strong> countries /
           regions, with a total of <strong>{totalItems}</strong> news items.
         </div>
       </div>
 
       <div className="de-intl-tax-layout">
-        {/* Left: country sidebar */}
-        <nav className="de-intl-tax-sidebar" aria-label="Country list">
-          <div className="de-intl-tax-sidebar-title">Countries</div>
-          {COUNTRIES.map((country) => (
-            <button
-              key={country.id}
-              className={`de-intl-tax-sidebar-item${activeCountry === country.id ? ' active' : ''}`}
-              style={activeCountry === country.id ? { borderLeftColor: TAX_ACCENT, color: TAX_ACCENT } : {}}
-              onClick={() => setActiveCountry(country.id)}
-            >
-              <span className="de-intl-tax-sidebar-item-name">{country.label}</span>
-              <span className="de-intl-tax-sidebar-item-count">
-                {INTERNATIONAL_TAX_NEWS[country.id]?.length ?? 0}
-              </span>
-            </button>
-          ))}
+        {/* Left: week sidebar */}
+        <nav className="de-intl-tax-sidebar" aria-label="Week list">
+          <div className="de-intl-tax-sidebar-title">週別 (Week)</div>
+          {weeks.map((week) => {
+            const count = allItemsWithCountry.filter(({ item }) => item.week === week).length;
+            return (
+              <button
+                key={week}
+                className={`de-intl-tax-sidebar-item${activeWeek === week ? ' active' : ''}`}
+                style={activeWeek === week ? { borderLeftColor: TAX_ACCENT, color: TAX_ACCENT } : {}}
+                onClick={() => setActiveWeek(week)}
+              >
+                <span className="de-intl-tax-sidebar-item-name">{week}</span>
+                <span className="de-intl-tax-sidebar-item-count">{count}</span>
+              </button>
+            );
+          })}
         </nav>
 
         {/* Right: news card grid */}
         <div className="de-intl-tax-content">
-          {items.length === 0 ? (
-            <div className="de-intl-tax-empty">No tax news available for this country.</div>
+          {filteredItems.length === 0 ? (
+            <div className="de-intl-tax-empty">No tax news available for this week.</div>
           ) : (
             <div className="de-intl-tax-grid">
-              {items.map((item) => (
-                <IntlTaxNewsCard key={item.id} item={item} />
+              {filteredItems.map(({ item, countryId }) => (
+                <IntlTaxNewsCard key={item.id} item={item} countryId={countryId} />
               ))}
             </div>
           )}
