@@ -4,6 +4,12 @@ export interface SP500Company {
   name: string;
 }
 
+/** Resolves symbol aliases to their canonical data symbol (e.g. TSM → TC). */
+export function resolveSymbolAlias(symbol: string): string {
+  if (symbol === 'TSM') return 'TC';
+  return symbol;
+}
+
 export const SP500_COMPANIES: SP500Company[] = [
   // Technology
   { symbol: 'AAPL', name: 'Apple Inc.' },

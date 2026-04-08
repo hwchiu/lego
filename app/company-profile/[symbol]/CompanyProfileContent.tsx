@@ -5,7 +5,7 @@ import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
-import { SP500_COMPANIES } from '@/app/data/sp500';
+import { SP500_COMPANIES, resolveSymbolAlias } from '@/app/data/sp500';
 import { newsItems } from '@/app/data/news';
 import { extractJson } from '@/app/lib/parseContent';
 import companyProfileMd from '@/content/company-profile.md';
@@ -477,7 +477,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const profileData = getProfileData();
 
   // TSM is an alias for TC (T Company)
-  const dataSymbol = symbol === 'TSM' ? 'TC' : symbol;
+  const dataSymbol = resolveSymbolAlias(symbol);
 
   // Find company info — fall back to SP500 data if no profile data
   const companyInfo = profileData.companies.find((c) => c.symbol === dataSymbol);

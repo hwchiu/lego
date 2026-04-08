@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { resolveSymbolAlias } from '@/app/data/sp500';
 import { extractJson } from '@/app/lib/parseContent';
 import tcIrMd from '@/content/tc-ir-material.md';
 
@@ -564,6 +565,7 @@ export default function IRMaterialTab({ symbol }: IRMaterialTabProps) {
   const [activeTab, setActiveTab] = useState<IRSubTab>('investor-updates');
 
   // Resolve data and config based on symbol
+  const resolvedSymbol = resolveSymbolAlias(symbol);
   let investorUpdates: InvestorUpdate[];
   let newsroom: NewsroomItem[];
   let financialData: FinancialDocGroup[];
@@ -571,7 +573,7 @@ export default function IRMaterialTab({ symbol }: IRMaterialTabProps) {
   let viewAllLabel: string;
   let disclaimerText: string;
 
-  if (symbol === 'AAPL') {
+  if (resolvedSymbol === 'AAPL') {
     investorUpdates = AAPL_INVESTOR_UPDATES;
     newsroom = AAPL_NEWSROOM;
     financialData = AAPL_FINANCIAL_DATA;
@@ -579,7 +581,7 @@ export default function IRMaterialTab({ symbol }: IRMaterialTabProps) {
     viewAllLabel = 'View all on investor.apple.com →';
     disclaimerText =
       'Source: Apple Inc. Investor Relations (investor.apple.com). All documents are publicly available SEC filings and earnings materials.';
-  } else if (symbol === 'TC' || symbol === 'TSM') {
+  } else if (resolvedSymbol === 'TC') {
     const tcData = getTcIrData();
     investorUpdates = tcData.investorUpdates;
     newsroom = tcData.newsroom;
