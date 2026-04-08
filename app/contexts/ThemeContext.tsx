@@ -19,7 +19,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem('tmic-theme') as Theme | null;
+      const stored = localStorage.getItem('mic-theme') as Theme | null;
       if (stored === 'dark' || stored === 'light') {
         setTheme(stored);
         document.documentElement.classList.toggle('dark', stored === 'dark');
@@ -33,7 +33,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setTheme((prev) => {
       const next: Theme = prev === 'light' ? 'dark' : 'light';
       try {
-        localStorage.setItem('tmic-theme', next);
+        localStorage.setItem('mic-theme', next);
         document.documentElement.classList.toggle('dark', next === 'dark');
       } catch {
         // silent fail

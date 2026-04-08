@@ -1,5 +1,5 @@
 ---
-name: tmic-ui-style
+name: mic-ui-style
 description: MIC 網站的完整視覺風格參照手冊。涵蓋設計令牌（Design Tokens）、色彩系統、字體排版、間距尺度、陰影層級、動畫系統、元件樣式模板、響應式斷點規則。建立新頁面、新元件或修改 UI 時必須參照此 Skill，確保視覺一致性。
 ---
 

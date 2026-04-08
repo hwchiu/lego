@@ -1,5 +1,5 @@
 ---
-name: tmic-development
+name: mic-development
 description: Use when building features, fixing bugs, adding pages, or modifying UI in the MIC (lego) project. Covers component structure, CSS conventions, data layer patterns, i18n, routing, and responsive design for this Next.js static-export financial dashboard.
 ---
 
