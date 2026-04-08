@@ -7141,11 +7141,10 @@ input, select { font-family: var(--font); }
 /* ── Sub-tab bar ── */
 .de-subtab-bar {
   display: flex;
+  flex-wrap: wrap;
   gap: 0;
   border-bottom: 2px solid var(--c-border);
   margin-bottom: 20px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
 }
 .de-subtab-btn {
   display: inline-flex;
