@@ -65,7 +65,7 @@ export type CustomerRelationKey = (typeof CUSTOMER_RELATION_TYPES)[number]['key'
 // Center node (TC)
 // ---------------------------------------------------------------------------
 
-export const TSM_CUSTOMER_CENTER: CustomerNode = {
+export const TC_CUSTOMER_CENTER: CustomerNode = {
   id: 'TC',
   name: 'T Company',
   ticker: 'TC',
@@ -88,7 +88,7 @@ export const TSM_CUSTOMER_CENTER: CustomerNode = {
 // Customer nodes
 // ---------------------------------------------------------------------------
 
-export const TSM_CUSTOMERS: CustomerNode[] = [
+export const TC_CUSTOMERS: CustomerNode[] = [
   {
     id: 'AAPL',
     name: 'Apple',

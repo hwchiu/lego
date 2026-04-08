@@ -3,16 +3,16 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { TSM_TIER1_SUPPLIERS, TSM_TIER2_SUPPLIERS, TSM_CENTER_NODE } from '@/app/data/tsmcSupplierData';
-import { TSM_CUSTOMERS } from '@/app/data/tsmcCustomerData';
-import { TSM_COMPETITORS } from '@/app/data/tsmcCompetitorData';
+import { TC_TIER1_SUPPLIERS, TC_TIER2_SUPPLIERS, TC_CENTER_NODE } from '@/app/data/tcSupplierData';
+import { TC_CUSTOMERS } from '@/app/data/tcCustomerData';
+import { TC_COMPETITORS } from '@/app/data/tcCompetitorData';
 import {
   STRATEGIC_PARTNERS,
   ECOSYSTEM_SUPPLIERS,
   GRAPH_EDGES,
   CUSTOMER_ARTICLES,
   type GraphEdge,
-} from '@/app/data/tsmcGraphData';
+} from '@/app/data/tcGraphData';
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 type NodeRole = 'center' | 'supplier1' | 'supplier2' | 'customer' | 'competitor' | 'partner';
@@ -62,21 +62,21 @@ function buildAllNodes(): DisplayNode[] {
 
   // Center
   nodes.push({
-    id: TSM_CENTER_NODE.id,
-    name: TSM_CENTER_NODE.name,
-    ticker: TSM_CENTER_NODE.ticker,
-    country: TSM_CENTER_NODE.country,
-    industry: TSM_CENTER_NODE.industryCategory,
-    segment: TSM_CENTER_NODE.segment,
+    id: TC_CENTER_NODE.id,
+    name: TC_CENTER_NODE.name,
+    ticker: TC_CENTER_NODE.ticker,
+    country: TC_CENTER_NODE.country,
+    industry: TC_CENTER_NODE.industryCategory,
+    segment: TC_CENTER_NODE.segment,
     role: 'center',
     description: "T Company — world's largest pure-play foundry with ~62% market share.",
     color: '#1a2332',
-    financials: { revenue: TSM_CENTER_NODE.financials.revenue, marketCap: TSM_CENTER_NODE.financials.marketCap },
+    financials: { revenue: TC_CENTER_NODE.financials.revenue, marketCap: TC_CENTER_NODE.financials.marketCap },
     articles: [],
   });
 
   // Tier-1 suppliers
-  for (const s of TSM_TIER1_SUPPLIERS) {
+  for (const s of TC_TIER1_SUPPLIERS) {
     nodes.push({
       id: s.id, name: s.name, ticker: s.ticker, country: s.country,
       industry: s.industryCategory, segment: s.segment,
@@ -88,7 +88,7 @@ function buildAllNodes(): DisplayNode[] {
   }
 
   // Tier-2 suppliers
-  for (const s of TSM_TIER2_SUPPLIERS) {
+  for (const s of TC_TIER2_SUPPLIERS) {
     nodes.push({
       id: s.id, name: s.name, ticker: s.ticker, country: s.country,
       industry: s.industryCategory, segment: s.segment,
@@ -100,7 +100,7 @@ function buildAllNodes(): DisplayNode[] {
   }
 
   // Customers
-  for (const c of TSM_CUSTOMERS) {
+  for (const c of TC_CUSTOMERS) {
     nodes.push({
       id: c.id, name: c.name, ticker: c.ticker, country: c.country,
       industry: c.industryCategory, segment: c.segment,
@@ -112,7 +112,7 @@ function buildAllNodes(): DisplayNode[] {
   }
 
   // Competitors
-  for (const comp of TSM_COMPETITORS) {
+  for (const comp of TC_COMPETITORS) {
     nodes.push({
       id: comp.id, name: comp.name, ticker: comp.ticker, country: comp.country,
       industry: comp.industryCategory, segment: comp.segment,

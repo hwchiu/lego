@@ -28,7 +28,7 @@ export interface FabLocation {
   subLocations: FabSubLocation[];
 }
 
-export const TSMC_FAB_LOCATIONS: FabLocation[] = [
+export const TC_FAB_LOCATIONS: FabLocation[] = [
   // ── Taiwan ───────────────────────────────────────────────────────────────────
   // One country marker at geographic center; sub-locations list each city
   {

@@ -205,7 +205,7 @@ const DEFAULT_COMPANY = SP500_COMPANIES.find((c) => c.symbol === DEFAULT_SYMBOL)
 
 // ── TC-specific data (T Company Manufacturing) ───────────────────
 
-const TSM_DATA: EarningsCompanyData = {
+const TC_DATA: EarningsCompanyData = {
   symbol: 'TC',
   name: 'T Company',
   exchange: 'NYSE',
@@ -288,7 +288,7 @@ const TSM_DATA: EarningsCompanyData = {
 };
 
 function getCompanyData(symbol: string, name: string): EarningsCompanyData {
-  if (symbol === 'TC') return TSM_DATA;
+  if (symbol === 'TC') return TC_DATA;
   return buildCompanyData(symbol, name);
 }
 

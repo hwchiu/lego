@@ -5,7 +5,7 @@
 // Type definitions
 // ---------------------------------------------------------------------------
 
-export interface SupplierNodeTSM {
+export interface SupplierNodeTC {
   id: string;
   name: string;
   ticker: string;
@@ -54,7 +54,7 @@ export type RelationTypeKey = (typeof RELATION_TYPES)[number]['key'];
 // Center node
 // ---------------------------------------------------------------------------
 
-export const TSM_CENTER_NODE: SupplierNodeTSM = {
+export const TC_CENTER_NODE: SupplierNodeTC = {
   id: 'TC',
   name: 'T Company',
   ticker: 'TC',
@@ -78,7 +78,7 @@ export const TSM_CENTER_NODE: SupplierNodeTSM = {
 // Tier 1 suppliers
 // ---------------------------------------------------------------------------
 
-export const TSM_TIER1_SUPPLIERS: SupplierNodeTSM[] = [
+export const TC_TIER1_SUPPLIERS: SupplierNodeTC[] = [
   {
     id: 'ASML',
     name: 'ASML Holding',
@@ -298,7 +298,7 @@ export const TSM_TIER1_SUPPLIERS: SupplierNodeTSM[] = [
 // Tier 2 suppliers
 // ---------------------------------------------------------------------------
 
-export const TSM_TIER2_SUPPLIERS: SupplierNodeTSM[] = [
+export const TC_TIER2_SUPPLIERS: SupplierNodeTC[] = [
   // --- ASML sub-suppliers ---
   {
     id: 'ZEISS',

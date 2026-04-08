@@ -6,7 +6,7 @@ import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import CompetitorGraph from './CompetitorGraph';
-import { TSM_COMPETITORS, MARKET_SHARE_DATA } from '@/app/data/tsmcCompetitorData';
+import { TC_COMPETITORS, MARKET_SHARE_DATA } from '@/app/data/tcCompetitorData';
 
 function BackArrowIcon() {
   return (
@@ -75,7 +75,7 @@ export default function CompetitorPage() {
             {/* Summary cards — competitor market shares (high → low) */}
             <div className="rmap-summary-cards">
               {TOP_COMPETITORS.map((entry) => {
-                const node = TSM_COMPETITORS.find((c) => c.id === entry.id);
+                const node = TC_COMPETITORS.find((c) => c.id === entry.id);
                 return (
                   <div key={entry.id} className="cp-data-card rmap-summary-card">
                     <div className="rmap-summary-card-title">{entry.name}</div>

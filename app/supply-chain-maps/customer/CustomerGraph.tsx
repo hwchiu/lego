@@ -2,15 +2,15 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import {
-  TSM_CUSTOMER_CENTER,
-  TSM_CUSTOMERS,
+  TC_CUSTOMER_CENTER,
+  TC_CUSTOMERS,
   CUSTOMER_EDGES,
   CUSTOMER_FEED,
   CUSTOMER_RELATION_TYPES,
   INDUSTRY_TRANSACTION_SUMMARY,
   type CustomerNode,
   type CustomerRelationKey,
-} from '@/app/data/tsmcCustomerData';
+} from '@/app/data/tcCustomerData';
 import { SP500_COMPANIES } from '@/app/data/sp500';
 
 // ── Layout constants ──────────────────────────────────────────────────────────
@@ -34,7 +34,7 @@ const CENTER_NODE_ID = 'TC';
 
 // ── Static lookups (computed once) ───────────────────────────────────────────
 
-const ALL_CUSTOMERS = TSM_CUSTOMERS;
+const ALL_CUSTOMERS = TC_CUSTOMERS;
 const UNIQUE_INDUSTRIES = [...new Set(ALL_CUSTOMERS.map((c) => c.industryCategory))];
 
 const ALL_CUSTOMERS_LC = ALL_CUSTOMERS.map((c) => ({
@@ -67,8 +67,8 @@ type FilterTab = (typeof FILTER_TABS)[number];
 const INITIAL_POSITIONS: Record<string, { x: number; y: number }> = (() => {
   const pos: Record<string, { x: number; y: number }> = {};
   pos[CENTER_NODE_ID] = { x: CX, y: CY };
-  TSM_CUSTOMERS.forEach((c, i) => {
-    const a = (2 * Math.PI * i) / TSM_CUSTOMERS.length - Math.PI / 2;
+  TC_CUSTOMERS.forEach((c, i) => {
+    const a = (2 * Math.PI * i) / TC_CUSTOMERS.length - Math.PI / 2;
     pos[c.id] = { x: CX + R1 * Math.cos(a), y: CY + R1 * Math.sin(a) };
   });
   return pos;
@@ -693,7 +693,7 @@ function CustomerTable() {
             </tr>
           </thead>
           <tbody>
-            {TSM_CUSTOMERS.map((c) => {
+            {TC_CUSTOMERS.map((c) => {
               const edge = CUSTOMER_EDGES.find((e) => e.to === c.id);
               return (
                 <tr key={c.id} className="rmap-supplier-tr">
@@ -1036,7 +1036,7 @@ export default function CustomerGraph({ tableOnly }: CustomerGraphProps) {
             </defs>
 
             {/* Center → Customer edges (supplier → customer direction) */}
-            {TSM_CUSTOMERS.map((node) => {
+            {TC_CUSTOMERS.map((node) => {
               if (visibleNodeIds && !visibleNodeIds.has(node.id)) return null;
               const cp = positions[CENTER_NODE_ID],
                 np = positions[node.id];
@@ -1069,7 +1069,7 @@ export default function CustomerGraph({ tableOnly }: CustomerGraphProps) {
             })}
 
             {/* Customer nodes */}
-            {TSM_CUSTOMERS.map((node) => {
+            {TC_CUSTOMERS.map((node) => {
               if (visibleNodeIds && !visibleNodeIds.has(node.id)) return null;
               return (
                 <CustomerNodeSvg
@@ -1085,10 +1085,10 @@ export default function CustomerGraph({ tableOnly }: CustomerGraphProps) {
 
             {/* Center node — last for top z-order */}
             <CenterNodeSvg
-              node={TSM_CUSTOMER_CENTER}
+              node={TC_CUSTOMER_CENTER}
               pos={positions[CENTER_NODE_ID]}
               selected={selectedNode?.id === CENTER_NODE_ID}
-              onClick={() => handleNodeClick(TSM_CUSTOMER_CENTER)}
+              onClick={() => handleNodeClick(TC_CUSTOMER_CENTER)}
               onMouseDown={(e) => handleNodeMouseDown(CENTER_NODE_ID, e)}
             />
           </svg>

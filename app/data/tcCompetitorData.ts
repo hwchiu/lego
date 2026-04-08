@@ -43,7 +43,7 @@ export interface MarketShareEntry {
 // Center node (TC)
 // ---------------------------------------------------------------------------
 
-export const TSM_COMPETITOR_CENTER: CompetitorNode = {
+export const TC_COMPETITOR_CENTER: CompetitorNode = {
   id: 'TC',
   name: 'T Company',
   ticker: 'TC',
@@ -66,7 +66,7 @@ export const TSM_COMPETITOR_CENTER: CompetitorNode = {
 // Competitor nodes (sorted by market share descending)
 // ---------------------------------------------------------------------------
 
-export const TSM_COMPETITORS: CompetitorNode[] = [
+export const TC_COMPETITORS: CompetitorNode[] = [
   {
     id: 'SSNLF',
     name: 'Samsung Foundry',

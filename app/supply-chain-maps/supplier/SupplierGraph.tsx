@@ -2,14 +2,14 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import {
-  TSM_CENTER_NODE,
-  TSM_TIER1_SUPPLIERS,
-  TSM_TIER2_SUPPLIERS,
+  TC_CENTER_NODE,
+  TC_TIER1_SUPPLIERS,
+  TC_TIER2_SUPPLIERS,
   EDGE_ENTITIES,
   RELATION_TYPES,
-  type SupplierNodeTSM,
+  type SupplierNodeTC,
   type RelationTypeKey,
-} from '@/app/data/tsmcSupplierData';
+} from '@/app/data/tcSupplierData';
 import { SP500_COMPANIES } from '@/app/data/sp500';
 
 // ── Layout constants ──────────────────────────────────────────────────────────
@@ -38,7 +38,7 @@ const CENTER_NODE_ID = 'TC';
 
 // ── Static lookups (computed once) ───────────────────────────────────────────
 
-const ALL_SUPPLIERS = [...TSM_TIER1_SUPPLIERS, ...TSM_TIER2_SUPPLIERS];
+const ALL_SUPPLIERS = [...TC_TIER1_SUPPLIERS, ...TC_TIER2_SUPPLIERS];
 const UNIQUE_INDUSTRIES = [...new Set(ALL_SUPPLIERS.map((s) => s.industryCategory))];
 const UNIQUE_PRODUCTS = [...new Set(ALL_SUPPLIERS.flatMap((s) => s.productCategories))];
 
@@ -162,14 +162,14 @@ const SUGGESTION_ITEMS = SUPPLY_CHAIN_FEED.slice(0, 5);
 const INITIAL_POSITIONS: Record<string, { x: number; y: number }> = (() => {
   const pos: Record<string, { x: number; y: number }> = {};
   pos[CENTER_NODE_ID] = { x: CX, y: CY };
-  TSM_TIER1_SUPPLIERS.forEach((s, i) => {
+  TC_TIER1_SUPPLIERS.forEach((s, i) => {
     const a = (2 * Math.PI * i) / 9 - Math.PI / 2;
     pos[s.id] = { x: CX + R1 * Math.cos(a), y: CY + R1 * Math.sin(a) };
   });
-  TSM_TIER2_SUPPLIERS.forEach((s) => {
-    const pIdx = TSM_TIER1_SUPPLIERS.findIndex((t) => t.id === s.parentId);
+  TC_TIER2_SUPPLIERS.forEach((s) => {
+    const pIdx = TC_TIER1_SUPPLIERS.findIndex((t) => t.id === s.parentId);
     const pAngle = (2 * Math.PI * pIdx) / 9 - Math.PI / 2;
-    const siblings = TSM_TIER2_SUPPLIERS.filter((t) => t.parentId === s.parentId);
+    const siblings = TC_TIER2_SUPPLIERS.filter((t) => t.parentId === s.parentId);
     const sIdx = siblings.findIndex((t) => t.id === s.id);
     const sCount = siblings.length;
     const halfSpan = SPREAD_RAD * (sCount - 1);
@@ -212,7 +212,7 @@ function trunc(s: string, n: number) {
 // ── SVG Node components ───────────────────────────────────────────────────────
 
 interface NodeProps {
-  node: SupplierNodeTSM;
+  node: SupplierNodeTC;
   pos: { x: number; y: number };
   selected: boolean;
   onClick: () => void;
@@ -363,7 +363,7 @@ function CenterNodeSvg({ node, pos, selected, onClick, onMouseDown }: NodeProps)
 // ── Detail panel ──────────────────────────────────────────────────────────────
 
 interface DetailPanelProps {
-  node: SupplierNodeTSM | null;
+  node: SupplierNodeTC | null;
   onClose: () => void;
 }
 
@@ -847,7 +847,7 @@ function SupplierTable() {
             </tr>
           </thead>
           <tbody>
-            {TSM_TIER1_SUPPLIERS.map((s) => (
+            {TC_TIER1_SUPPLIERS.map((s) => (
               <tr key={s.id} className="rmap-supplier-tr">
                 <td className="rmap-supplier-td rmap-supplier-td--name">{s.name}</td>
                 <td className="rmap-supplier-td rmap-supplier-td--ticker">{s.ticker}</td>
@@ -877,8 +877,8 @@ function SupplierTable() {
             </tr>
           </thead>
           <tbody>
-            {TSM_TIER2_SUPPLIERS.map((s) => {
-              const parent = TSM_TIER1_SUPPLIERS.find((t) => t.id === s.parentId);
+            {TC_TIER2_SUPPLIERS.map((s) => {
+              const parent = TC_TIER1_SUPPLIERS.find((t) => t.id === s.parentId);
               return (
                 <tr key={s.id} className="rmap-supplier-tr">
                   <td className="rmap-supplier-td rmap-supplier-td--name">{s.name}</td>
@@ -901,7 +901,7 @@ function SupplierTable() {
 // ── Feed Panel (30% width, beside graph) ─────────────────────────────────────
 
 interface FeedPanelProps {
-  selectedNode: SupplierNodeTSM | null;
+  selectedNode: SupplierNodeTC | null;
 }
 
 function FeedPanel({ selectedNode }: FeedPanelProps) {
@@ -982,7 +982,7 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
     startNodeY: number;
   } | null>(null);
   const [panState, setPanState] = useState<PanState | null>(null);
-  const [selectedNode, setSelectedNode] = useState<SupplierNodeTSM | null>(null);
+  const [selectedNode, setSelectedNode] = useState<SupplierNodeTC | null>(null);
   const [relationType, setRelationType] = useState<RelationTypeKey>('transactionAmount');
   const [selectedIndustries, setSelectedIndustries] = useState<Set<string>>(new Set());
   const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
@@ -1117,7 +1117,7 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
     setPanState(null);
   }, []);
 
-  const handleNodeClick = useCallback((node: SupplierNodeTSM) => {
+  const handleNodeClick = useCallback((node: SupplierNodeTC) => {
     if (didDragRef.current) return;
     setSelectedNode((prev) => (prev?.id === node.id ? null : node));
   }, []);
@@ -1183,9 +1183,9 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
             </defs>
 
             {/* Tier 1 → Tier 2 edges */}
-            {TSM_TIER2_SUPPLIERS.map((node) => {
+            {TC_TIER2_SUPPLIERS.map((node) => {
               if (visibleNodeIds && !visibleNodeIds.has(node.id)) return null;
-              const parent = TSM_TIER1_SUPPLIERS.find((t) => t.id === node.parentId);
+              const parent = TC_TIER1_SUPPLIERS.find((t) => t.id === node.parentId);
               if (!parent) return null;
               if (visibleNodeIds && !visibleNodeIds.has(parent.id)) return null;
               const pp = positions[parent.id],
@@ -1217,7 +1217,7 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
             })}
 
             {/* Center → Tier 1 edges */}
-            {TSM_TIER1_SUPPLIERS.map((node) => {
+            {TC_TIER1_SUPPLIERS.map((node) => {
               if (visibleNodeIds && !visibleNodeIds.has(node.id)) return null;
               const cp = positions[CENTER_NODE_ID],
                 np = positions[node.id];
@@ -1248,7 +1248,7 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
             })}
 
             {/* Tier 2 nodes */}
-            {TSM_TIER2_SUPPLIERS.map((node) => {
+            {TC_TIER2_SUPPLIERS.map((node) => {
               if (visibleNodeIds && !visibleNodeIds.has(node.id)) return null;
               return (
                 <Tier2Node
@@ -1263,7 +1263,7 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
             })}
 
             {/* Tier 1 nodes */}
-            {TSM_TIER1_SUPPLIERS.map((node) => {
+            {TC_TIER1_SUPPLIERS.map((node) => {
               if (visibleNodeIds && !visibleNodeIds.has(node.id)) return null;
               return (
                 <Tier1Node
@@ -1279,10 +1279,10 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
 
             {/* Center node — last for top z-order */}
             <CenterNodeSvg
-              node={TSM_CENTER_NODE}
+              node={TC_CENTER_NODE}
               pos={positions[CENTER_NODE_ID]}
               selected={selectedNode?.id === CENTER_NODE_ID}
-              onClick={() => handleNodeClick(TSM_CENTER_NODE)}
+              onClick={() => handleNodeClick(TC_CENTER_NODE)}
               onMouseDown={(e) => handleNodeMouseDown(CENTER_NODE_ID, e)}
             />
           </svg>

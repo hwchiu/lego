@@ -58,10 +58,10 @@ function GdpBarChart() {
 
 function FabUtilizationChart() {
   const groups = [
-    { label: "Q1'24", tsmc: 85, samsung: 72, intel: 65 },
-    { label: "Q2'24", tsmc: 88, samsung: 75, intel: 68 },
-    { label: "Q3'24", tsmc: 92, samsung: 78, intel: 70 },
-    { label: "Q4'24", tsmc: 95, samsung: 80, intel: 72 },
+    { label: "Q1'24", tc: 85, samsung: 72, intel: 65 },
+    { label: "Q2'24", tc: 88, samsung: 75, intel: 68 },
+    { label: "Q3'24", tc: 92, samsung: 78, intel: 70 },
+    { label: "Q4'24", tc: 95, samsung: 80, intel: 72 },
   ];
   const colors = ['#4fc3f7', '#ffd54f', '#ef9a9a'];
   const labels = ['T Company', '三星', '英特爾'];
@@ -76,7 +76,7 @@ function FabUtilizationChart() {
         晶圓廠產能利用率 (%)
       </text>
       {groups.map((g, gi) => {
-        const vals = [g.tsmc, g.samsung, g.intel];
+        const vals = [g.tc, g.samsung, g.intel];
         return (
           <g key={g.label}>
             {vals.map((v, bi) => {
@@ -353,11 +353,11 @@ function DataInsightFlow() {
 
 function ProcessRoadmap() {
   const nodes = [
-    { label: '7nm', year: '2018', active: true, tsmc: true, samsung: true },
-    { label: '5nm', year: '2020', active: true, tsmc: true, samsung: false },
-    { label: '3nm', year: '2022', active: true, tsmc: true, samsung: true },
-    { label: '2nm', year: '2025', active: false, tsmc: true, samsung: false },
-    { label: '1.4nm', year: '2027', active: false, tsmc: true, samsung: false },
+    { label: '7nm', year: '2018', active: true, tc: true, samsung: true },
+    { label: '5nm', year: '2020', active: true, tc: true, samsung: false },
+    { label: '3nm', year: '2022', active: true, tc: true, samsung: true },
+    { label: '2nm', year: '2025', active: false, tc: true, samsung: false },
+    { label: '1.4nm', year: '2027', active: false, tc: true, samsung: false },
   ];
   const W = 260,
     step = 50;
@@ -388,7 +388,7 @@ function ProcessRoadmap() {
             <text x={cx} y="56" textAnchor="middle" fontSize="7" fill="#6b7280">
               {n.year}
             </text>
-            {n.tsmc && (
+            {n.tc && (
               <text x={cx} y="27" textAnchor="middle" fontSize="6.5" fill="#4fc3f7" fontWeight="700">
                 T Company
               </text>
