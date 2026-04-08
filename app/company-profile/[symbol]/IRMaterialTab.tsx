@@ -585,7 +585,7 @@ export default function IRMaterialTab({ symbol }: IRMaterialTabProps) {
     newsroom = tsmData.newsroom;
     financialData = tsmData.financialData;
     viewAllUrl = 'https://investor.tsmc.com/en';
-    viewAllLabel = 'View all on investor.tsmc.com →';
+    viewAllLabel = 'View all on T Company Investor Relations →';
     disclaimerText =
       'Source: T Company Investor Relations (investor.tsmc.com). SEC filings available via EDGAR. All documents are publicly available.';
   } else {

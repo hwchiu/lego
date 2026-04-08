@@ -11,7 +11,7 @@
     "date": "2024-01-10",
     "summary": "T Company maintains ISO 9001 certification across all its manufacturing facilities, covering quality management systems for wafer fabrication, yield management, and customer delivery. ISO 9001 is the global baseline quality standard ensuring consistent process control and customer satisfaction in semiconductor manufacturing.",
     "tags": ["ISO 9001", "Quality", "Certification", "T Company"],
-    "url": "https://www.tsmc.com/english/aboutT Company/dc_qc"
+    "url": "https://www.tsmc.com/english/aboutTSMC/dc_qc"
   },
   {
     "id": "std-002",
@@ -20,7 +20,7 @@
     "date": "2024-03-05",
     "summary": "T Company holds IATF 16949 certification for automotive semiconductor production, the international standard for quality management systems in the automotive supply chain. This certification is mandatory for supplying chips to Tier 1 automotive suppliers and OEMs such as NVIDIA Drive, Bosch, and NXP Semiconductors.",
     "tags": ["IATF 16949", "Automotive", "Quality", "T Company"],
-    "url": "https://www.tsmc.com/english/aboutT Company/dc_qc"
+    "url": "https://www.tsmc.com/english/aboutTSMC/dc_qc"
   },
   {
     "id": "std-003",
@@ -38,7 +38,7 @@
     "date": "2024-04-22",
     "summary": "Key T Company business units hold ISO/IEC 27001 certification for information security management, covering IP protection, customer data security, and operational technology (OT) security in manufacturing environments. This standard is increasingly critical as chipmakers handle sensitive customer designs from Apple, NVIDIA, AMD, and Qualcomm.",
     "tags": ["ISO/IEC 27001", "Information Security", "IP Protection", "T Company"],
-    "url": "https://www.tsmc.com/english/aboutT Company/dc_qc"
+    "url": "https://www.tsmc.com/english/aboutTSMC/dc_qc"
   },
   {
     "id": "std-005",
@@ -65,7 +65,7 @@
     "date": "2024-07-08",
     "summary": "T Company received UL 2799 Zero Waste to Landfill certification for multiple fab sites, confirming that 100% of manufacturing waste is diverted from landfills through reuse, recycling, or energy recovery. This certification underscores T Company's circular economy commitments and supports customer sustainability supply chain requirements.",
     "tags": ["UL 2799", "Zero Waste", "Landfill-Free", "Circular Economy"],
-    "url": "https://esg.tsmc.com/file/public/2024-T Company-Sustainability-Report-e.pdf"
+    "url": "https://esg.tsmc.com/file/public/2024-TSMC-Sustainability-Report-e.pdf"
   },
   {
     "id": "std-008",
@@ -92,7 +92,7 @@
     "date": "2024-09-18",
     "summary": "T Company obtained third-party verified product carbon footprint (PCF) certifications for its 3nm (N3) and 5nm (N5) process nodes, in accordance with ISO 14067 and GHG Protocol Product Standard. These certifications enable Apple, NVIDIA, and AMD to accurately quantify Scope 3 emissions attributable to chip manufacturing.",
     "tags": ["Carbon Footprint", "ISO 14067", "N3", "N5"],
-    "url": "https://esg.tsmc.com/file/public/2024-T Company-Sustainability-Report-e.pdf"
+    "url": "https://esg.tsmc.com/file/public/2024-TSMC-Sustainability-Report-e.pdf"
   },
   {
     "id": "std-011",
@@ -101,7 +101,7 @@
     "date": "2024-10-05",
     "summary": "T Company's Fab 18 in Tainan received water footprint certification following ISO 14046 Water Footprint Assessment standards. This third-party verified certification quantifies water consumption and freshwater scarcity impact, supporting T Company's water neutrality goals and transparency for customers in water-stressed supply regions.",
     "tags": ["Water Footprint", "ISO 14046", "Fab 18", "Water Stewardship"],
-    "url": "https://esg.tsmc.com/file/public/2024-T Company-Sustainability-Report-e.pdf"
+    "url": "https://esg.tsmc.com/file/public/2024-TSMC-Sustainability-Report-e.pdf"
   },
   {
     "id": "std-012",
@@ -110,7 +110,7 @@
     "date": "2024-11-20",
     "summary": "T Company's supplier qualification program mandates that all critical tier-1 suppliers maintain ISO 9001 and relevant IATF 16949 certifications where applicable. This requirement cascades quality standards throughout the supply chain, encompassing ASML, Lam Research, Applied Materials, Tokyo Electron, and specialty chemical suppliers.",
     "tags": ["Supply Chain", "Supplier Standards", "ISO 9001", "Qualification"],
-    "url": "https://www.tsmc.com/english/aboutT Company/dc_qc"
+    "url": "https://www.tsmc.com/english/aboutTSMC/dc_qc"
   }
 ]
 ```

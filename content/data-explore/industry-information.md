@@ -29,7 +29,7 @@
     "date": "2025-01-08",
     "summary": "T Company's 2nm (N2) process node entered mass production in 2025, with nine N2 fabs planned including sites in Hsinchu, Taichung, Tainan, and Arizona. N2 delivers 15% speed improvement and 30% power reduction over N3, targeting Apple's A20 SoC, NVIDIA's next-gen AI GPUs, and AMD's future CPUs.",
     "tags": ["2nm", "N2", "Process Node", "Technology"],
-    "url": "https://www.notebookcheck.net/T Company-plans-nine-2nm-fabs-and-record-38-42-billion-capex-in-2025.1018499.0.html"
+    "url": "https://www.notebookcheck.net/TSMC-plans-nine-2nm-fabs-and-record-38-42-billion-capex-in-2025.1018499.0.html"
   },
   {
     "id": "ind-004",
@@ -74,7 +74,7 @@
     "date": "2025-01-16",
     "summary": "T Company set record capital expenditure guidance of $38–42 billion for 2025, focused on expanding N2 capacity, building out CoWoS packaging lines, and constructing new fabs in Arizona and Taiwan. This represents one of the largest single-year capex commitments in semiconductor history.",
     "tags": ["CapEx", "Investment", "T Company", "Expansion"],
-    "url": "https://www.notebookcheck.net/T Company-plans-nine-2nm-fabs-and-record-38-42-billion-capex-in-2025.1018499.0.html"
+    "url": "https://www.notebookcheck.net/TSMC-plans-nine-2nm-fabs-and-record-38-42-billion-capex-in-2025.1018499.0.html"
   },
   {
     "id": "ind-009",

@@ -11,7 +11,7 @@
     "date": "2024-06-15",
     "summary": "T Company published its FY2024 Sustainability Report, detailing Scope 1/2/3 emissions, water stewardship progress, diversity initiatives, and the company's pathway to net-zero by 2050. Renewable energy accounted for over 14% of total power consumption in 2024.",
     "tags": ["T Company", "Sustainability Report", "ESG", "2024"],
-    "url": "https://esg.tsmc.com/file/public/2024-T Company-Sustainability-Report-e.pdf"
+    "url": "https://esg.tsmc.com/file/public/2024-TSMC-Sustainability-Report-e.pdf"
   },
   {
     "id": "esg-002",
@@ -74,7 +74,7 @@
     "date": "2024-05-30",
     "summary": "T Company's 2024 Sustainability Report highlights advanced water recycling programs, aiming for zero liquid discharge at new fab facilities. Semiconductor manufacturing is water-intensive and T Company has invested heavily in water recovery technologies, achieving over 85% water recycling rates at leading-edge fabs.",
     "tags": ["Water", "Recycling", "Fab Operations", "Sustainability"],
-    "url": "https://esg.tsmc.com/file/public/2024-T Company-Sustainability-Report-e.pdf"
+    "url": "https://esg.tsmc.com/file/public/2024-TSMC-Sustainability-Report-e.pdf"
   },
   {
     "id": "esg-009",
@@ -83,7 +83,7 @@
     "date": "2024-07-14",
     "summary": "T Company's new fab facilities, including Fab 18 phases in Tainan and overseas Arizona Fab 21, are built to LEED certification standards. LEED buildings reduce energy consumption by 25–30% vs. conventional construction, supporting T Company's energy efficiency targets across its global manufacturing footprint.",
     "tags": ["LEED", "Green Buildings", "Fab 21", "Energy Efficiency"],
-    "url": "https://esg.tsmc.com/file/public/2024-T Company-Sustainability-Report-e.pdf"
+    "url": "https://esg.tsmc.com/file/public/2024-TSMC-Sustainability-Report-e.pdf"
   },
   {
     "id": "esg-010",
@@ -110,7 +110,7 @@
     "date": "2024-06-20",
     "summary": "T Company introduced mandatory sustainability literacy training for all 75,000+ employees in 2024. The program covers climate science, circular economy principles, and ESG governance frameworks, aiming to embed sustainability into the organization's culture from the ground up.",
     "tags": ["Human Capital", "Training", "ESG Culture", "Employees"],
-    "url": "https://esg.tsmc.com/file/public/2024-T Company-Sustainability-Report-e.pdf"
+    "url": "https://esg.tsmc.com/file/public/2024-TSMC-Sustainability-Report-e.pdf"
   },
   {
     "id": "esg-013",
@@ -119,7 +119,7 @@
     "date": "2024-03-15",
     "summary": "T Company's 2024 sustainability initiatives include enhanced circular economy programs targeting zero waste to landfill by 2030. Chemical waste is reclaimed and reused in manufacturing processes, and semiconductor scrap materials are recycled through certified third-party partners to minimize environmental impact.",
     "tags": ["Circular Economy", "Waste", "Landfill-Free", "Manufacturing"],
-    "url": "https://esg.tsmc.com/file/public/2024-T Company-Sustainability-Report-e.pdf"
+    "url": "https://esg.tsmc.com/file/public/2024-TSMC-Sustainability-Report-e.pdf"
   }
 ]
 ```
