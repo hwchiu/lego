@@ -1,0 +1,273 @@
+'use client';
+
+import { useState } from 'react';
+import type { Canvas, Task, Member, TaskStatus, TaskPriority } from '@/app/data/collaboration';
+import { useLanguage } from '@/app/contexts/LanguageContext';
+
+const STATUS_LABEL_ZH: Record<TaskStatus, string> = {
+  todo: '待處理',
+  'in-progress': '進行中',
+  done: '已完成',
+};
+
+const STATUS_LABEL_EN: Record<TaskStatus, string> = {
+  todo: 'Pending',
+  'in-progress': 'In Progress',
+  done: 'Done',
+};
+
+const STATUS_COLOR: Record<TaskStatus, string> = {
+  todo: '#6b7280',
+  'in-progress': '#2563eb',
+  done: '#16a34a',
+};
+
+const PRIORITY_LABEL_ZH: Record<TaskPriority, string> = {
+  high: '高',
+  medium: '中',
+  low: '低',
+};
+
+const PRIORITY_LABEL_EN: Record<TaskPriority, string> = {
+  high: 'High',
+  medium: 'Med',
+  low: 'Low',
+};
+
+const PRIORITY_COLOR: Record<TaskPriority, string> = {
+  high: '#dc2626',
+  medium: '#d97706',
+  low: '#6b7280',
+};
+
+interface TaskPanelProps {
+  canvas: Canvas;
+  onClose: () => void;
+}
+
+export function TaskPanel({ canvas, onClose }: TaskPanelProps) {
+  const { lang } = useLanguage();
+  const isEn = lang === 'en';
+  const STATUS_LABEL = isEn ? STATUS_LABEL_EN : STATUS_LABEL_ZH;
+  const PRIORITY_LABEL = isEn ? PRIORITY_LABEL_EN : PRIORITY_LABEL_ZH;
+
+  const [tasks, setTasks] = useState<Task[]>(canvas.tasks);
+  const [showForm, setShowForm] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
+  const [newAssigneeId, setNewAssigneeId] = useState(canvas.members[0]?.id ?? '');
+  const [newDue, setNewDue] = useState('');
+  const [newPriority, setNewPriority] = useState<TaskPriority>('medium');
+  const [filterStatus, setFilterStatus] = useState<TaskStatus | 'all'>('all');
+
+  const filtered = filterStatus === 'all' ? tasks : tasks.filter((t) => t.status === filterStatus);
+
+  function addTask() {
+    if (!newTitle.trim()) return;
+    const member = canvas.members.find((m) => m.id === newAssigneeId) ?? canvas.members[0];
+    const task: Task = {
+      id: `t-${Date.now()}`,
+      title: newTitle.trim(),
+      status: 'todo',
+      assignee: member,
+      due: newDue || '—',
+      priority: newPriority,
+    };
+    setTasks([task, ...tasks]);
+    setNewTitle('');
+    setNewDue('');
+    setNewPriority('medium');
+    setShowForm(false);
+  }
+
+  function cycleStatus(id: string) {
+    const order: TaskStatus[] = ['todo', 'in-progress', 'done'];
+    setTasks(
+      tasks.map((t) => {
+        if (t.id !== id) return t;
+        const next = order[(order.indexOf(t.status) + 1) % order.length];
+        return { ...t, status: next };
+      }),
+    );
+  }
+
+  const todoCount = tasks.filter((t) => t.status === 'todo').length;
+  const inProgressCount = tasks.filter((t) => t.status === 'in-progress').length;
+
+  return (
+    <aside className="pg-task-panel">
+      {/* Header */}
+      <div className="pg-task-header">
+        <div className="pg-task-header-left">
+          <svg viewBox="0 0 20 20" width="16" height="16" fill="none" aria-hidden="true">
+            <path
+              d="M7 3H3a1 1 0 00-1 1v12a1 1 0 001 1h14a1 1 0 001-1V4a1 1 0 00-1-1h-4"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+            <rect x="7" y="1" width="6" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M6 9l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <span>{isEn ? 'Task Tracker' : '任務追蹤'}</span>
+        </div>
+        <button className="pg-task-close" onClick={onClose} aria-label={isEn ? 'Close task panel' : '關閉任務面板'}>
+          ✕
+        </button>
+      </div>
+
+      {/* Summary bar */}
+      <div className="pg-task-summary">
+        <span className="pg-task-stat">
+          <span className="pg-task-stat-num" style={{ color: '#dc2626' }}>
+            {todoCount}
+          </span>{' '}
+          {isEn ? 'Pending' : '待處理'}
+        </span>
+        <span className="pg-task-stat-sep" />
+        <span className="pg-task-stat">
+          <span className="pg-task-stat-num" style={{ color: '#2563eb' }}>
+            {inProgressCount}
+          </span>{' '}
+          {isEn ? 'In Progress' : '進行中'}
+        </span>
+        <span className="pg-task-stat-sep" />
+        <span className="pg-task-stat">
+          <span className="pg-task-stat-num" style={{ color: '#16a34a' }}>
+            {tasks.length - todoCount - inProgressCount}
+          </span>{' '}
+          {isEn ? 'Done' : '已完成'}
+        </span>
+      </div>
+
+      {/* Filter tabs */}
+      <div className="pg-task-filter-row">
+        {(['all', 'todo', 'in-progress', 'done'] as const).map((s) => (
+          <button
+            key={s}
+            className={`pg-task-filter-btn${filterStatus === s ? ' active' : ''}`}
+            onClick={() => setFilterStatus(s)}
+          >
+            {s === 'all' ? (isEn ? 'All' : '全部') : STATUS_LABEL[s]}
+          </button>
+        ))}
+      </div>
+
+      {/* Task list */}
+      <div className="pg-task-list">
+        {filtered.map((task) => (
+          <div key={task.id} className={`pg-task-item${task.status === 'done' ? ' done' : ''}`}>
+            <button
+              className="pg-task-status-btn"
+              style={{ background: STATUS_COLOR[task.status] }}
+              onClick={() => cycleStatus(task.id)}
+              title={isEn ? 'Click to cycle status' : '點擊切換狀態'}
+            >
+              {task.status === 'done' ? '✓' : task.status === 'in-progress' ? '⟳' : '○'}
+            </button>
+            <div className="pg-task-content">
+              <div className="pg-task-title">{task.title}</div>
+              <div className="pg-task-meta">
+                <span
+                  className="pg-task-priority"
+                  style={{ background: PRIORITY_COLOR[task.priority] + '22', color: PRIORITY_COLOR[task.priority] }}
+                >
+                  {isEn ? `${PRIORITY_LABEL[task.priority]} Priority` : `${PRIORITY_LABEL[task.priority]}優先`}
+                </span>
+                <img
+                  src={task.assignee.avatar}
+                  alt={task.assignee.name}
+                  title={task.assignee.name}
+                  width={18}
+                  height={18}
+                  style={{ borderRadius: '50%', objectFit: 'cover', border: '1.5px solid #e5e7eb' }}
+                />
+                <span className="pg-task-assignee">{task.assignee.name}</span>
+                {task.due !== '—' && (
+                  <span className="pg-task-due">
+                    {/* Flat calendar icon replacing emoji */}
+                    <svg viewBox="0 0 12 12" width="11" height="11" fill="none" aria-hidden="true" style={{ display: 'inline', verticalAlign: 'middle', marginRight: 2 }}>
+                      <rect x="1" y="2" width="10" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.1" />
+                      <path d="M1 5h10" stroke="currentColor" strokeWidth="1.1" />
+                      <path d="M4 1v2M8 1v2" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+                    </svg>
+                    {task.due}
+                  </span>
+                )}
+                {task.slackRef && (
+                  <span className="pg-task-slack-ref">{task.slackRef}</span>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+        {filtered.length === 0 && (
+          <div className="pg-task-empty">{isEn ? 'No tasks match this filter' : '目前沒有符合條件的任務'}</div>
+        )}
+      </div>
+
+      {/* Add task form / button */}
+      {showForm ? (
+        <div className="pg-task-form">
+          <div className="pg-form-row">
+            <label className="pg-form-label">{isEn ? 'Task Name' : '任務名稱'}</label>
+            <input
+              className="pg-form-input"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              placeholder={isEn ? 'Enter task description...' : '輸入任務描述...'}
+              onKeyDown={(e) => e.key === 'Enter' && addTask()}
+            />
+          </div>
+          <div className="pg-form-row">
+            <label className="pg-form-label">{isEn ? 'Assignee' : '指派成員'}</label>
+            <select
+              className="pg-form-select"
+              value={newAssigneeId}
+              onChange={(e) => setNewAssigneeId(e.target.value)}
+            >
+              {canvas.members.map((m: Member) => (
+                <option key={m.id} value={m.id}>
+                  {m.name} · {m.role}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="pg-form-row-2col">
+            <div className="pg-form-row">
+              <label className="pg-form-label">{isEn ? 'Due Date' : '到期日'}</label>
+              <input
+                className="pg-form-input"
+                type="date"
+                value={newDue}
+                onChange={(e) => setNewDue(e.target.value)}
+              />
+            </div>
+            <div className="pg-form-row">
+              <label className="pg-form-label">{isEn ? 'Priority' : '優先度'}</label>
+              <select
+                className="pg-form-select"
+                value={newPriority}
+                onChange={(e) => setNewPriority(e.target.value as TaskPriority)}
+              >
+                <option value="high">{isEn ? 'High' : '高'}</option>
+                <option value="medium">{isEn ? 'Medium' : '中'}</option>
+                <option value="low">{isEn ? 'Low' : '低'}</option>
+              </select>
+            </div>
+          </div>
+          <div className="pg-form-actions">
+            <button className="pg-btn-primary" onClick={addTask}>
+              {isEn ? 'Add Task' : '新增任務'}
+            </button>
+            <button className="pg-btn-ghost" onClick={() => setShowForm(false)}>
+              {isEn ? 'Cancel' : '取消'}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button className="pg-add-task-btn" onClick={() => setShowForm(true)}>
+          <span>＋</span> {isEn ? 'Add Task' : '新增任務'}
+        </button>
+      )}
+    </aside>
+  );
+}
