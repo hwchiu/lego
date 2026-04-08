@@ -972,7 +972,7 @@ export default function DataCategoryContent({ params }: { params: { category: st
     { id: 'taiwan-tax',           label: lang === 'zh' ? '每週台灣稅務快訊' : 'Weekly Taiwan Tax News Summary' },
     { id: 'intl-tax',             label: lang === 'zh' ? '每週國際稅務快訊' : 'Weekly International Tax News Summary' },
     { id: 'disqualified-vendors', label: lang === 'zh' ? '拒絕往來廠商公告' : 'Announcement of Disqualified Vendors' },
-    { id: 'pollution-sources',    label: lang === 'zh' ? '列管事業污染源裁處資' : 'Regulatory data on industrial pollution sources' },
+    { id: 'pollution-sources',    label: lang === 'zh' ? '列管事業污染源裁處資料' : 'Regulatory data on industrial pollution sources' },
     { id: 'labor-violations',     label: lang === 'zh' ? '違反勞動法令事業單位' : 'Violations of Labor Laws' },
   ];
 
