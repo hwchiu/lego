@@ -19,7 +19,7 @@ export const TAG_I18N: Record<string, string> = {
   產業分析: 'Industry Analysis',
   消費電子: 'Consumer Electronics',
   雲端: 'Cloud',
-  台積電: 'TSMC',
+  'T Company': 'T Company',
   產業趨勢: 'Industry Trends',
   原油: 'Crude Oil',
   霍爾木茲: 'Hormuz',
@@ -221,7 +221,7 @@ const canvas2Cards: ContentCard[] = [
     imageUrl:
       'https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=600&q=75',
     text:
-      '生成式 AI 正以前所未有的速度重塑全球科技與半導體產業格局。NVIDIA 的 H200 與 GB200 系列 GPU 供不應求，交期延至 2026 Q3；台積電 CoWoS 封裝產能成為整個 AI 供應鏈的瓶頸所在。微軟、Google、Meta 與 Amazon 合計在 2025 年投入超過 $2,000 億美元的 AI 資本支出。與此同時，模型效率化趨勢（如 MoE 架構）正在改變推論端的硬體需求，對 ASIC 設計公司（如 Trainium、TPU）形成挑戰。AI PC 滲透率在 2026 年預計突破 35%，拉動 DRAM 需求大幅升溫。',
+      '生成式 AI 正以前所未有的速度重塑全球科技與半導體產業格局。NVIDIA 的 H200 與 GB200 系列 GPU 供不應求，交期延至 2026 Q3；T Company CoWoS 封裝產能成為整個 AI 供應鏈的瓶頸所在。微軟、Google、Meta 與 Amazon 合計在 2025 年投入超過 $2,000 億美元的 AI 資本支出。與此同時，模型效率化趨勢（如 MoE 架構）正在改變推論端的硬體需求，對 ASIC 設計公司（如 Trainium、TPU）形成挑戰。AI PC 滲透率在 2026 年預計突破 35%，拉動 DRAM 需求大幅升溫。',
     source: 'tMIC 研究部門 — AI 產業季度報告',
   },
   {
@@ -251,7 +251,7 @@ const canvas2Cards: ContentCard[] = [
         ['Alphabet', '$2.5T', '$96.5B', '+12%', '38%'],
         ['Meta', '$1.8T', '$52.4B', '+21%', '35%'],
         ['Amazon (AWS)', '$2.1T', '$187.8B', '+10%', '28%'],
-        ['台積電 (TSMC)', '$1.1T', '$25.5B', '+34%', '—'],
+        ['T Company (T Company)', '$1.1T', '$25.5B', '+34%', '—'],
       ],
     },
   },
@@ -310,7 +310,7 @@ const canvas3Cards: ContentCard[] = [
     addedBy: m5,
     addedAt: '2026-01-15 07:45',
     text:
-      '2026 年 1 月初，美國與伊朗之間的外交緊張再度升溫，霍爾木茲海峽的通行安全引發全球供應鏈高度警戒。該海峽每日通過約 2,100 萬桶原油，佔全球海運原油供應的近 21%。伊朗已發出警告，若衝突升級，不排除封鎖海峽。對半導體產業而言，特殊製程氣體（氖氣、氪氣）及稀土元素的替代供應鏈尚不成熟，短期內料將面臨嚴峻壓力。台積電已啟動緊急庫存盤點，並加速與日本、歐洲供應商的備援協議洽商。',
+      '2026 年 1 月初，美國與伊朗之間的外交緊張再度升溫，霍爾木茲海峽的通行安全引發全球供應鏈高度警戒。該海峽每日通過約 2,100 萬桶原油，佔全球海運原油供應的近 21%。伊朗已發出警告，若衝突升級，不排除封鎖海峽。對半導體產業而言，特殊製程氣體（氖氣、氪氣）及稀土元素的替代供應鏈尚不成熟，短期內料將面臨嚴峻壓力。T Company已啟動緊急庫存盤點，並加速與日本、歐洲供應商的備援協議洽商。',
     source: 'Reuters / tMIC 地緣風險小組',
   },
   {
@@ -342,9 +342,9 @@ const canvas3Cards: ContentCard[] = [
     tableData: {
       columns: ['商品 / 原料', '影響程度', '主要受影響業者', '替代方案', '預估恢復期'],
       rows: [
-        ['原油', '🔴 極高', 'TSMC, Samsung Fabs', '北極航線、管線調度', '視衝突時長'],
+        ['原油', '🔴 極高', 'T Company, Samsung Fabs', '北極航線、管線調度', '視衝突時長'],
         ['液化天然氣 (LNG)', '🔴 高', 'Intel, GloFo, SMIC', '美國 LNG 替代', '3–6 個月'],
-        ['半導體特殊氣體', '🟠 中高', '台積電、聯電、力積電', '日本、歐洲供應商', '2–4 個月'],
+        ['半導體特殊氣體', '🟠 中高', 'T Company、聯電、力積電', '日本、歐洲供應商', '2–4 個月'],
         ['稀土元素', '🟡 中', 'Apple, Qualcomm', '供應商多元化', '6–12 個月'],
         ['聚酯薄膜 (PET)', '🟡 低中', '面板廠 AUO / BOE', '台灣本地庫存', '1–2 個月'],
       ],
@@ -396,7 +396,7 @@ const canvas1Tasks: Task[] = [
   },
   {
     id: 't1-2',
-    title: '確認台積電在 iPhone 供應鏈中佔比與未來展望',
+    title: '確認T Company在 iPhone 供應鏈中佔比與未來展望',
     status: 'todo',
     assignee: m2,
     due: '2026-02-15',
@@ -463,7 +463,7 @@ const canvas2Tasks: Task[] = [
 const canvas3Tasks: Task[] = [
   {
     id: 't3-1',
-    title: '評估台積電特殊氣體庫存水位（目前存量可支撐幾週）',
+    title: '評估T Company特殊氣體庫存水位（目前存量可支撐幾週）',
     status: 'in-progress',
     assignee: m5,
     due: '2026-01-25',
@@ -516,7 +516,7 @@ export const canvases: Canvas[] = [
     id: 'cv2',
     title: 'AI 快速發展產業的變動',
     description: '追蹤生成式 AI 對半導體、雲端及終端裝置產業的結構性影響。',
-    tags: ['AI', 'NVIDIA', '半導體', '雲端', '台積電', '產業趨勢'],
+    tags: ['AI', 'NVIDIA', '半導體', '雲端', 'T Company', '產業趨勢'],
     members: [m3, m4, m1, m6, m7, m2],
     cards: canvas2Cards,
     tasks: canvas2Tasks,

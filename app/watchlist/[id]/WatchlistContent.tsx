@@ -174,12 +174,12 @@ const allFeedItems: FeedItem[] = [
     comments: 2,
     tags: ['News', 'Analysis'],
   },
-  // ── Crawled articles – TSM, TSLA, NVDA, QCOM (IDs 7–16) ──
+  // ── Crawled articles – TC, TSLA, NVDA, QCOM (IDs 7–16) ──
   {
     id: 7,
     avatar: 'alpha',
-    title: 'TSMC Q3 2025 Outperformance: 39% Profit Growth Driven by AI Chip Demand',
-    tickers: ['TSM'],
+    title: 'T Company Q3 2025 Outperformance: 39% Profit Growth Driven by AI Chip Demand',
+    tickers: ['TC'],
     source: 'Seeking Alpha',
     time: 'Yesterday, 8:00 AM',
     tags: ['Analysis'],
@@ -187,8 +187,8 @@ const allFeedItems: FeedItem[] = [
   {
     id: 8,
     avatar: 'alpha',
-    title: 'TSMC Raises 2025 Capex to $40B to Accelerate 3nm and 5nm Expansion',
-    tickers: ['TSM'],
+    title: 'T Company Raises 2025 Capex to $40B to Accelerate 3nm and 5nm Expansion',
+    tickers: ['TC'],
     source: 'Investors.com',
     time: 'Yesterday, 7:30 AM',
     tags: ['News', 'Press Release'],
@@ -196,8 +196,8 @@ const allFeedItems: FeedItem[] = [
   {
     id: 9,
     avatar: 'alpha',
-    title: 'NVDA vs. TSM: Which Semiconductor Stock Is the Better AI Investment?',
-    tickers: ['NVDA', 'TSM'],
+    title: 'NVDA vs. TC: Which Semiconductor Stock Is the Better AI Investment?',
+    tickers: ['NVDA', 'TC'],
     source: 'Zacks',
     time: 'Yesterday, 6:15 AM',
     tags: ['Analysis'],

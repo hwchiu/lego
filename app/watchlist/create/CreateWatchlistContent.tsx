@@ -33,7 +33,7 @@ const AI_SUGGESTIONS: SuggestionItem[] = [
     id: 'event-taiwan-us-trade',
     label: 'Taiwan-US Trade Agreement (15% Tariff)',
     type: 'event',
-    symbols: ['TSM', 'AAPL', 'QCOM', 'AVGO', 'AMAT', 'LRCX', 'INTC', 'TXN', 'MU', 'KLAC'],
+    symbols: ['TC', 'AAPL', 'QCOM', 'AVGO', 'AMAT', 'LRCX', 'INTC', 'TXN', 'MU', 'KLAC'],
   },
   {
     id: 'topic-next-gen-ai',
@@ -45,19 +45,19 @@ const AI_SUGGESTIONS: SuggestionItem[] = [
     id: 'topic-semiconductors',
     label: 'Semiconductors',
     type: 'topic',
-    symbols: ['NVDA', 'TSM', 'INTC', 'AMD', 'QCOM', 'ASML', 'AMAT', 'LRCX', 'KLAC', 'MU', 'AVGO', 'TXN'],
+    symbols: ['NVDA', 'TC', 'INTC', 'AMD', 'QCOM', 'ASML', 'AMAT', 'LRCX', 'KLAC', 'MU', 'AVGO', 'TXN'],
   },
   {
     id: 'topic-3d-fabric',
     label: '3D Fabric',
     type: 'topic',
-    symbols: ['TSM', 'NVDA', 'AMD', 'INTC', 'MU', 'AMKR', 'ASX', 'SMCI', 'AMAT', 'ENTG'],
+    symbols: ['TC', 'NVDA', 'AMD', 'INTC', 'MU', 'AMKR', 'ASX', 'SMCI', 'AMAT', 'ENTG'],
   },
   {
     id: 'topic-reciprocal-tariff',
     label: 'US Reciprocal Tariff Policy',
     type: 'topic',
-    symbols: ['AAPL', 'MSFT', 'AMZN', 'TSLA', 'NKE', 'WMT', 'COST', 'TGT', 'TSM', 'QCOM'],
+    symbols: ['AAPL', 'MSFT', 'AMZN', 'TSLA', 'NKE', 'WMT', 'COST', 'TGT', 'TC', 'QCOM'],
   },
 ];
 
@@ -133,18 +133,18 @@ const AI_CONTEXT: Record<string, SuggestionAiContext> = {
       'Taiwan-US semiconductor trade agreement with a 15% preferential tariff reshapes supply chain economics, accelerating US-based fabrication investment and benefiting companies with deep Taiwan partnerships.',
     keyFactors: [
       '15% tariff differential vs standard MFN rate (25%)',
-      'TSMC Arizona fab 2nm production timeline pull-forward',
+      'T Company Arizona fab 2nm production timeline pull-forward',
       'CHIPS Act co-investment eligibility for Taiwan partners',
       'US DoD critical-fab designation for 3nm and below',
       'Supply chain resiliency premium priced into fabless valuations',
     ],
     dataSources: ['USTR Taiwan Trade Framework 2026', 'SEMI Semiconductor Equipment Outlook', 'CHIPS Program Office Investment Report'],
     symbolInfo: {
-      TSM:  { tier: 'Primary', relevanceScore: 97, posKpis: ['Arizona Fab Utilization ↑', 'US Advanced Node Revenue ↑', 'N3E Customer Wins ↑', 'CHIPS Act Subsidy'], note: 'Direct beneficiary as the world\'s leading contract foundry' },
-      AAPL: { tier: 'Primary', relevanceScore: 90, posKpis: ['A-series Chip Cost ↓', 'US-sourced Silicon % ↑', 'Supply Chain Resilience ↑', 'Gross Margin from Chips ↑'], note: '100% of A-series & M-series chips fabbed at TSMC' },
-      QCOM: { tier: 'Primary', relevanceScore: 88, posKpis: ['Snapdragon Margin ↑', 'US-fab Premium Wafer Cost ↓', 'Auto Chip Revenue ↑', 'PC-Chip Design Wins ↑'], note: 'Qualcomm designs all SoCs at TSMC; major beneficiary' },
-      AVGO: { tier: 'Primary', relevanceScore: 86, posKpis: ['Custom Silicon ASICs ↑', 'AI Accelerator Revenue ↑', 'Networking Chip Margin ↑', 'Hyperscaler Custom Revenue'], note: 'XPU + networking silicon at TSMC advanced nodes' },
-      AMAT: { tier: 'Secondary', relevanceScore: 83, posKpis: ['WFE Equipment Spend ↑', 'Etch & Deposition Tools ↑', 'Service Revenue ↑', 'Advanced Node Mix ↑'], note: 'TSMC Arizona expansion drives ALD/CVD tool orders' },
+      TC:   { tier: 'Primary', relevanceScore: 97, posKpis: ['Arizona Fab Utilization ↑', 'US Advanced Node Revenue ↑', 'N3E Customer Wins ↑', 'CHIPS Act Subsidy'], note: 'Direct beneficiary as the world\'s leading contract foundry' },
+      AAPL: { tier: 'Primary', relevanceScore: 90, posKpis: ['A-series Chip Cost ↓', 'US-sourced Silicon % ↑', 'Supply Chain Resilience ↑', 'Gross Margin from Chips ↑'], note: '100% of A-series & M-series chips fabbed at T Company' },
+      QCOM: { tier: 'Primary', relevanceScore: 88, posKpis: ['Snapdragon Margin ↑', 'US-fab Premium Wafer Cost ↓', 'Auto Chip Revenue ↑', 'PC-Chip Design Wins ↑'], note: 'Qualcomm designs all SoCs at T Company; major beneficiary' },
+      AVGO: { tier: 'Primary', relevanceScore: 86, posKpis: ['Custom Silicon ASICs ↑', 'AI Accelerator Revenue ↑', 'Networking Chip Margin ↑', 'Hyperscaler Custom Revenue'], note: 'XPU + networking silicon at T Company advanced nodes' },
+      AMAT: { tier: 'Secondary', relevanceScore: 83, posKpis: ['WFE Equipment Spend ↑', 'Etch & Deposition Tools ↑', 'Service Revenue ↑', 'Advanced Node Mix ↑'], note: 'T Company Arizona expansion drives ALD/CVD tool orders' },
       LRCX: { tier: 'Secondary', relevanceScore: 80, posKpis: ['Etch Equipment Revenue ↑', 'DRAM/Logic WFE Share ↑', 'Installed Base Upgrades ↑', 'Customer Concentration Risk ↓'], note: 'Lam etch tools are critical for 5nm and below' },
       INTC: { tier: 'Secondary', relevanceScore: 72, posKpis: ['IFS Customer Wins ↑', 'Advanced Packaging Revenue ↑', 'Intel 18A Node Adoption ↑', 'US Foundry Market Share ↑'], note: 'Intel Foundry Services positioned as US-based alternative' },
       TXN:  { tier: 'Supporting', relevanceScore: 65, posKpis: ['300mm Sherman Fab Output ↑', 'Auto/Industrial Revenue ↑', 'US Fab % ↑', 'CHIPS Act Grant'], note: 'Texas Instruments domestic 300mm capacity expansion' },
@@ -189,7 +189,7 @@ const AI_CONTEXT: Record<string, SuggestionAiContext> = {
     dataSources: ['SEMI World Fab Forecast Q1 2026', 'Gartner Semiconductor Forecast', 'IHS Markit Auto Semiconductor Report'],
     symbolInfo: {
       NVDA: { tier: 'Primary', relevanceScore: 98, posKpis: ['AI Chip Revenue ↑', 'Data Center GPU ↑', 'HBM Memory Demand ↑', 'Advanced Packaging %'], note: 'AI chip leader; every GPU needs CoWoS advanced packaging' },
-      TSM:  { tier: 'Primary', relevanceScore: 97, posKpis: ['Advanced Node Loading ↑', 'N3/N2 Revenue ↑', 'CoWoS Capacity ↑', 'Customer Diversification'], note: 'World leader in logic foundry; 60%+ advanced node share' },
+      TC:   { tier: 'Primary', relevanceScore: 97, posKpis: ['Advanced Node Loading ↑', 'N3/N2 Revenue ↑', 'CoWoS Capacity ↑', 'Customer Diversification'], note: 'World leader in logic foundry; 60%+ advanced node share' },
       INTC: { tier: 'Secondary', relevanceScore: 72, posKpis: ['Intel 18A Yield ↑', 'IFS Foundry Revenue ↑', 'Panther Lake Tape-out ↑', 'x86 Server Revenue'], note: 'Intel foundry turnaround critical for US semiconductor independence' },
       AMD:  { tier: 'Secondary', relevanceScore: 85, posKpis: ['AI Accelerator Revenue ↑', 'EPYC Server Share ↑', 'MI300 GPU Shipments ↑', 'Chiplet Architecture Wins'], note: 'AMD EPYC + MI GPU suite benefiting from data center AI' },
       QCOM: { tier: 'Secondary', relevanceScore: 78, posKpis: ['Snapdragon Premium ASP ↑', 'QCT Revenue Growth ↑', 'Auto Chip Revenue ↑', 'IoT Platform Revenue'], note: 'Diversifying from mobile into auto, PC, and IoT' },
@@ -206,7 +206,7 @@ const AI_CONTEXT: Record<string, SuggestionAiContext> = {
     description:
       '3D integration and heterogeneous chip assembly (CoWoS, SoIC, Foveros) is the key enabler for next-gen AI chips, overcoming reticle-size limits and enabling orders-of-magnitude memory bandwidth improvements.',
     keyFactors: [
-      'CoWoS substrate bottleneck being resolved with TSMC CoWoS-S/L',
+      'CoWoS substrate bottleneck being resolved with T Company CoWoS-S/L',
       'HBM4 memory bandwidth 2× over HBM3E for AI training',
       'Intel Foveros Direct 3D stacking reaching commercial volume',
       'OSAT (AMKR, ASE) revenues growing 25% from AI packaging demand',
@@ -214,7 +214,7 @@ const AI_CONTEXT: Record<string, SuggestionAiContext> = {
     ],
     dataSources: ['SEMI 3D Advanced Packaging Report 2026', 'Yole Développement HBM Forecast', 'IEEE IEDM 2025 Packaging Proceedings'],
     symbolInfo: {
-      TSM:  { tier: 'Primary', relevanceScore: 98, posKpis: ['CoWoS Capacity Revenue ↑', 'SoIC 3D Stacking Wins ↑', 'Advanced Packaging % ↑', 'N3 + CoWoS Bundle Revenue'], note: 'TSMC CoWoS is the critical bottleneck input for AI GPUs' },
+      TC:   { tier: 'Primary', relevanceScore: 98, posKpis: ['CoWoS Capacity Revenue ↑', 'SoIC 3D Stacking Wins ↑', 'Advanced Packaging % ↑', 'N3 + CoWoS Bundle Revenue'], note: 'T Company CoWoS is the critical bottleneck input for AI GPUs' },
       NVDA: { tier: 'Primary', relevanceScore: 96, posKpis: ['Blackwell NVL72 Shipment ↑', 'HBM3E Memory Bandwidth ↑', 'Advanced Pkg Gross Margin ↑', 'GB200 NVL72 Rack Value'], note: 'Every Blackwell GPU requires CoWoS + HBM3E 3D stacking' },
       AMD:  { tier: 'Primary', relevanceScore: 88, posKpis: ['3D V-Cache Revenue ↑', 'MI350 Chiplet Wins ↑', 'Chiplet Design Royalties ↑', 'UCIe Standard Adoption'], note: 'AMD 3D V-Cache + chiplet architecture leadership' },
       INTC: { tier: 'Secondary', relevanceScore: 78, posKpis: ['Foveros Adopt Rate ↑', 'EMIB Revenue ↑', 'Advanced Packaging IFS ↑', 'Meteor Lake Volume ↑'], note: 'Intel Foveros/EMIB for heterogeneous integration' },
@@ -246,7 +246,7 @@ const AI_CONTEXT: Record<string, SuggestionAiContext> = {
       WMT:  { tier: 'Secondary', relevanceScore: 74, posKpis: ['Domestic Supplier % ↑', 'Private Label Margin ↑', 'Grocery % of Revenue ↑', 'Automation Efficiency ↑'], note: 'Walmart is diversifying sourcing; grocery (tariff-free) buffers impact' },
       COST: { tier: 'Supporting', relevanceScore: 68, posKpis: ['Kirkland Domestic % ↑', 'Membership Revenue Buffer ↑', 'Bulk Purchasing Power ↑', 'Renewal Rate Sticky'], note: 'Costco membership model provides margin buffer; bulk buying power' },
       TGT:  { tier: 'Secondary', relevanceScore: 64, posKpis: ['US Private Brand % ↑', 'Digital Revenue % ↑', 'Same-day Delivery Adoption ↑', 'Tariff Mgmt Program'], note: 'Target exposed to Chinese-sourced discretionary goods' },
-      TSM:  { tier: 'Primary', relevanceScore: 86, posKpis: ['Arizona Fab US Revenue ↑', 'Tariff-exempt US Production ↑', 'CHIPS Act Subsidy ↑', 'US Customer Priority Access'], note: 'TSMC Arizona enables US-fabricated chips exempt from tariffs' },
+      TC:   { tier: 'Primary', relevanceScore: 86, posKpis: ['Arizona Fab US Revenue ↑', 'Tariff-exempt US Production ↑', 'CHIPS Act Subsidy ↑', 'US Customer Priority Access'], note: 'T Company Arizona enables US-fabricated chips exempt from tariffs' },
       QCOM: { tier: 'Supporting', relevanceScore: 65, posKpis: ['US-designed Chip Premium ↑', 'IFA Tariff Exemption ↑', 'US Fab Partnership Value ↑', 'Patent Licensing Revenue'], note: 'Qualcomm designs in US; assembly outside; IP revenue tariff-exempt' },
     },
   },

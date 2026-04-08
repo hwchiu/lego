@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { extractJson, extractJsonBySection } from '@/app/lib/parseContent';
-import tsmFinStmtMd from '@/content/tsm-financial-statement.md';
+import tcFinStmtMd from '@/content/tc-financial-statement.md';
 import aaplFinStmtMd from '@/content/apple-financial-statement.md';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -125,10 +125,10 @@ function isSectionRow(row: string[]): boolean {
 
 // ── Data loaders ───────────────────────────────────────────────────────────────
 let _tsmParsed: { quarterlyData: QuarterData[]; annualData: AnnualData[] } | null = null;
-function getTsmData() {
+function getTcData() {
   if (!_tsmParsed) {
     _tsmParsed = extractJson<{ quarterlyData: QuarterData[]; annualData: AnnualData[] }>(
-      tsmFinStmtMd as string,
+      tcFinStmtMd as string,
     );
   }
   return _tsmParsed;
@@ -224,21 +224,21 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
   const [currency, setCurrency] = useState<Currency>('original');
 
   const isAapl = symbol === 'AAPL';
-  const isTsm  = symbol === 'TSM';
+  const isTc  = symbol === 'TC';
 
   const aaplIncomeData = useMemo(() => (isAapl ? getAaplIncomeData() : null), [isAapl]);
-  const tsmData        = useMemo(() => (isTsm  ? getTsmData()        : null), [isTsm]);
+  const tcData        = useMemo(() => (isTc  ? getTcData()        : null), [isTc]);
 
   const allQuarterlyData: QuarterData[] = isAapl
     ? (aaplIncomeData?.quarterlyData ?? [])
-    : isTsm
-      ? (tsmData?.quarterlyData ?? [])
+    : isTc
+      ? (tcData?.quarterlyData ?? [])
       : [];
 
   const allAnnualData: AnnualData[] = isAapl
     ? (aaplIncomeData?.annualData ?? [])
-    : isTsm
-      ? (tsmData?.annualData ?? [])
+    : isTc
+      ? (tcData?.annualData ?? [])
       : [];
 
   const availableYears = [...new Set(allQuarterlyData.map((q) => q.year))].sort((a, b) => a - b);
@@ -280,7 +280,7 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
     return getAaplSimpleData(statementType as 'balance' | 'cashflow' | 'segment');
   }, [isAapl, isSimpleStatement, statementType]);
 
-  if (!isAapl && !isTsm) {
+  if (!isAapl && !isTc) {
     return (
       <div className="cp-tab-placeholder">
         <span className="cp-tab-placeholder-text">

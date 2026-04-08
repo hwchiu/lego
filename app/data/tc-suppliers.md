@@ -1,23 +1,23 @@
-# TSMC Supplier Network — Edge Entities Reference
+# T Company Supplier Network — Edge Entities Reference
 
-> Sources: TSMC Annual Reports, public filings, supplier disclosures (FY2023–FY2024).  
+> Sources: T Company Annual Reports, public filings, supplier disclosures (FY2023–FY2024).  
 > `transactionAmount` in $M USD (estimated). All other counts/ratios are approximate.
 
 ---
 
-## TSM → Tier 1 Suppliers (9 edges)
+## TC → Tier 1 Suppliers (9 edges)
 
 | From | To     | Transaction ($M) | News Co-mentions | Common Suppliers | Common Customers | Cross-shareholding (%) | Common Board Members |
 |------|--------|-----------------|-----------------|-----------------|-----------------|----------------------|---------------------|
-| TSM  | ASML   | 4,800           | 342             | 3               | 8               | 0.5                  | 1                   |
-| TSM  | AMAT   | 2,900           | 287             | 8               | 12              | 0.3                  | 2                   |
-| TSM  | LRCX   | 2,300           | 251             | 6               | 10              | 0.2                  | 1                   |
-| TSM  | KLAC   | 1,900           | 198             | 4               | 7               | 0.1                  | 1                   |
-| TSM  | TOELY  | 1,600           | 176             | 5               | 9               | 0.4                  | 0                   |
-| TSM  | SHECY  | 1,500           | 143             | 7               | 4               | 0.2                  | 0                   |
-| TSM  | SUOPY  | 1,200           | 112             | 5               | 3               | 0.1                  | 0                   |
-| TSM  | APD    | 800             | 89              | 3               | 5               | 0.0                  | 0                   |
-| TSM  | ENTG   | 650             | 76              | 4               | 6               | 0.1                  | 0                   |
+| TC  | ASML   | 4,800           | 342             | 3               | 8               | 0.5                  | 1                   |
+| TC  | AMAT   | 2,900           | 287             | 8               | 12              | 0.3                  | 2                   |
+| TC  | LRCX   | 2,300           | 251             | 6               | 10              | 0.2                  | 1                   |
+| TC  | KLAC   | 1,900           | 198             | 4               | 7               | 0.1                  | 1                   |
+| TC  | TOELY  | 1,600           | 176             | 5               | 9               | 0.4                  | 0                   |
+| TC  | SHECY  | 1,500           | 143             | 7               | 4               | 0.2                  | 0                   |
+| TC  | SUOPY  | 1,200           | 112             | 5               | 3               | 0.1                  | 0                   |
+| TC  | APD    | 800             | 89              | 3               | 5               | 0.0                  | 0                   |
+| TC  | ENTG   | 650             | 76              | 4               | 6               | 0.1                  | 0                   |
 
 ---
 
@@ -96,7 +96,7 @@
 
 | ID  | Name  | Country | Industry              |
 |-----|-------|---------|-----------------------|
-| TSM | TSMC  | Taiwan  | Semiconductor Foundry |
+| TC | T Company  | Taiwan  | Semiconductor Foundry |
 
 ### Tier 1 (9 nodes)
 
@@ -137,4 +137,4 @@
 
 ---
 
-*Total edges: 27 (9 TSM→T1 + 18 T1→T2)*
+*Total edges: 27 (9 TC→T1 + 18 T1→T2)*

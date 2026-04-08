@@ -814,7 +814,7 @@ function MAListPanel() {
         </div>
         <div className="aapl-ma-source-note">
           Sources: Company press releases, Reuters, Bloomberg, TechCrunch, Wikipedia. Data covers
-          TSMC key suppliers &amp; customers and semiconductor / AI industry leaders.
+          T Company key suppliers &amp; customers and semiconductor / AI industry leaders.
         </div>
       </div>
     </div>
@@ -827,7 +827,7 @@ function MAListTab() {
       <div className="ma-content-header">
         <h3 className="ma-content-title">M&amp;A List — Semiconductor &amp; AI Companies</h3>
         <p className="ma-content-sub">
-          Key M&amp;A transactions from TSMC suppliers, customers, and leading semiconductor / AI
+          Key M&amp;A transactions from T Company suppliers, customers, and leading semiconductor / AI
           companies (1988–2026)
         </p>
       </div>

@@ -6,7 +6,7 @@ import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import CustomerGraph from './CustomerGraph';
-import { TSM_CUSTOMERS, INDUSTRY_TRANSACTION_SUMMARY } from '@/app/data/tsmcCustomerData';
+import { TC_CUSTOMERS, INDUSTRY_TRANSACTION_SUMMARY } from '@/app/data/tcCustomerData';
 
 function BackArrowIcon() {
   return (
@@ -70,9 +70,9 @@ export default function CustomerPage() {
             <div className="rmap-company-header">
               <span className="rmap-risk-light rmap-risk-light--green" title="No active risk signals" />
               <div className="rmap-company-header-info">
-                <div className="rmap-company-header-name">TSM</div>
+                <div className="rmap-company-header-name">TC</div>
                 <div className="rmap-company-header-full">
-                  Taiwan Semiconductor Manufacturing Company
+                  T Company
                 </div>
               </div>
             </div>
@@ -90,7 +90,7 @@ export default function CustomerPage() {
               ))}
               <div className="cp-data-card rmap-summary-card">
                 <div className="rmap-summary-card-title">Total Customer Count</div>
-                <div className="rmap-summary-card-value">{TSM_CUSTOMERS.length}</div>
+                <div className="rmap-summary-card-value">{TC_CUSTOMERS.length}</div>
                 <div className="rmap-summary-card-sub">Tracked downstream customers</div>
               </div>
               <div className="cp-data-card rmap-summary-card rmap-summary-card--add">

@@ -475,7 +475,7 @@ export const SP500_COMPANIES: SP500Company[] = [
   { symbol: 'COIN', name: 'Coinbase Global Inc.' },
   { symbol: 'MSTR', name: 'MicroStrategy Incorporated' },
   { symbol: 'ASML', name: 'ASML Holding N.V.' },
-  { symbol: 'TSM', name: 'Taiwan Semiconductor Manufacturing Company' },
+  { symbol: 'TC', name: 'T Company' },
   { symbol: 'SONY', name: 'Sony Group Corporation' },
   { symbol: 'SAP', name: 'SAP SE' },
   { symbol: 'ARM', name: 'Arm Holdings plc' },

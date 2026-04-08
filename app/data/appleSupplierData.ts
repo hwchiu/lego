@@ -42,9 +42,9 @@ export const APPLE_CENTER_NODE: SupplierNode = {
 
 export const APPLE_SUPPLIERS: SupplierNode[] = [
   {
-    id: 'TSM',
-    name: 'TSMC',
-    ticker: 'TSM',
+    id: 'TC',
+    name: 'T Company',
+    ticker: 'TC',
     exchange: 'NYSE / TWSE',
     country: 'Taiwan',
     relationship: 'Semiconductor Foundry',
@@ -225,7 +225,7 @@ export const APPLE_SUPPLIERS: SupplierNode[] = [
 
 // Default edge annotations (editable by user)
 export const DEFAULT_EDGE_LABELS: Record<string, string> = {
-  TSM: '',
+  TC: '',
   FOXCONN: '',
   SAMSUNG: '',
   QCOM: '',

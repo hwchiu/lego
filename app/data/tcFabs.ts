@@ -1,4 +1,4 @@
-// TSMC global fab location data — used by Government Regulations world map
+// T Company global fab location data — used by Government Regulations world map
 
 export interface FabInfo {
   id: string;
@@ -28,7 +28,7 @@ export interface FabLocation {
   subLocations: FabSubLocation[];
 }
 
-export const TSMC_FAB_LOCATIONS: FabLocation[] = [
+export const TC_FAB_LOCATIONS: FabLocation[] = [
   // ── Taiwan ───────────────────────────────────────────────────────────────────
   // One country marker at geographic center; sub-locations list each city
   {
@@ -165,7 +165,7 @@ export const TSMC_FAB_LOCATIONS: FabLocation[] = [
           {
             id: 'fab2',
             name: 'Fab 2',
-            description: 'One of TSMC\'s earliest fabs (former headquarters era). Produces mature specialty technologies and is primarily used for R&D and process qualification.',
+            description: 'One of T Company\'s earliest fabs (former headquarters era). Produces mature specialty technologies and is primarily used for R&D and process qualification.',
             node: '1µm – 2µm',
             established: '1988',
           },
@@ -190,7 +190,7 @@ export const TSMC_FAB_LOCATIONS: FabLocation[] = [
           {
             id: 'fab21-p1',
             name: 'Fab 21 Phase 1',
-            description: 'TSMC\'s first US fab (TSMC Arizona) in North Phoenix. Opened 2024. Produces N4 (4nm) chips primarily for Apple and AMD with $6.6B CHIPS Act support.',
+            description: 'T Company\'s first US fab (T Company Arizona) in North Phoenix. Opened 2024. Produces N4 (4nm) chips primarily for Apple and AMD with $6.6B CHIPS Act support.',
             node: '4nm',
             established: '2024',
           },
@@ -222,7 +222,7 @@ export const TSMC_FAB_LOCATIONS: FabLocation[] = [
           {
             id: 'jasm1',
             name: 'JASM Fab 1 (Fab 23)',
-            description: 'Japan Advanced Semiconductor Manufacturing joint venture (TSMC 86.5%, Sony 9.5%, Denso 4%) in Kikuyo, Kumamoto. Opened Feb 2024. Produces automotive, IoT, and consumer chips.',
+            description: 'Japan Advanced Semiconductor Manufacturing joint venture (T Company 86.5%, Sony 9.5%, Denso 4%) in Kikuyo, Kumamoto. Opened Feb 2024. Produces automotive, IoT, and consumer chips.',
             node: '12nm – 40nm',
             established: '2024',
           },
@@ -254,7 +254,7 @@ export const TSMC_FAB_LOCATIONS: FabLocation[] = [
           {
             id: 'esmc1',
             name: 'ESMC Fab (Fab 25 — planned)',
-            description: 'European Semiconductor Manufacturing Company joint venture (TSMC 70%, Bosch 10%, Infineon 10%, NXP 10%) in Dresden. Targets automotive and industrial specialty chips supported by EU Chips Act funding.',
+            description: 'European Semiconductor Manufacturing Company joint venture (T Company 70%, Bosch 10%, Infineon 10%, NXP 10%) in Dresden. Targets automotive and industrial specialty chips supported by EU Chips Act funding.',
             node: '12nm – 28nm',
             established: '2027 (planned)',
           },
@@ -279,7 +279,7 @@ export const TSMC_FAB_LOCATIONS: FabLocation[] = [
           {
             id: 'fab16',
             name: 'Fab 16',
-            description: 'TSMC\'s China 12-inch wafer fab in Nanjing. Produces N16 (16nm) chips and is expanding 28nm specialty capacity. Subject to US export control restrictions on advanced nodes.',
+            description: 'T Company\'s China 12-inch wafer fab in Nanjing. Produces N16 (16nm) chips and is expanding 28nm specialty capacity. Subject to US export control restrictions on advanced nodes.',
             node: '16nm – 28nm',
             established: '2018',
           },

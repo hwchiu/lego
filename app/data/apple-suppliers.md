@@ -18,11 +18,11 @@
 
 ## Tier-1 Suppliers
 
-### 1. TSMC (Taiwan Semiconductor Manufacturing Company)
+### 1. T Company (T Company)
 
 | Field | Value |
 |---|---|
-| Ticker | TSM |
+| Ticker | TC |
 | Exchange | NYSE / TWSE |
 | Country | Taiwan |
 | Relationship | Sole manufacturer of Apple Silicon (A/M-series chips) |

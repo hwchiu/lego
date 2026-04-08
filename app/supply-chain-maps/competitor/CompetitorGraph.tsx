@@ -2,11 +2,11 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import {
-  TSM_COMPETITOR_CENTER,
-  TSM_COMPETITORS,
+  TC_COMPETITOR_CENTER,
+  TC_COMPETITORS,
   COMPETITOR_FEED,
   type CompetitorNode,
-} from '@/app/data/tsmcCompetitorData';
+} from '@/app/data/tcCompetitorData';
 import { SP500_COMPANIES } from '@/app/data/sp500';
 
 // ── Layout constants ──────────────────────────────────────────────────────────
@@ -26,11 +26,11 @@ const CORNER_R = 12;
 const NODE_STRIP_COLOR = '#9a3412';
 
 // ID of the center node
-const CENTER_NODE_ID = 'TSM';
+const CENTER_NODE_ID = 'TC';
 
 // ── Static lookups (computed once) ───────────────────────────────────────────
 
-const ALL_COMPETITORS = TSM_COMPETITORS;
+const ALL_COMPETITORS = TC_COMPETITORS;
 const UNIQUE_INDUSTRIES = [...new Set(ALL_COMPETITORS.map((c) => c.industryCategory))];
 
 const ALL_COMPETITORS_LC = ALL_COMPETITORS.map((c) => ({
@@ -51,8 +51,8 @@ type FilterTab = (typeof FILTER_TABS)[number];
 const INITIAL_POSITIONS: Record<string, { x: number; y: number }> = (() => {
   const pos: Record<string, { x: number; y: number }> = {};
   pos[CENTER_NODE_ID] = { x: CX, y: CY };
-  TSM_COMPETITORS.forEach((c, i) => {
-    const a = (2 * Math.PI * i) / TSM_COMPETITORS.length - Math.PI / 2;
+  TC_COMPETITORS.forEach((c, i) => {
+    const a = (2 * Math.PI * i) / TC_COMPETITORS.length - Math.PI / 2;
     pos[c.id] = { x: CX + R1 * Math.cos(a), y: CY + R1 * Math.sin(a) };
   });
   return pos;
@@ -603,11 +603,11 @@ function FilterBar({
 // ── Competitor Table ──────────────────────────────────────────────────────────
 
 function CompetitorTable() {
-  const sorted = [...TSM_COMPETITORS].sort((a, b) => b.marketShare - a.marketShare);
+  const sorted = [...TC_COMPETITORS].sort((a, b) => b.marketShare - a.marketShare);
   return (
     <div className="rmap-supplier-table-wrap">
       <div className="rmap-supplier-table-section">
-        <div className="rmap-supplier-table-title">TSMC Competitors by Market Share</div>
+        <div className="rmap-supplier-table-title">T Company Competitors by Market Share</div>
         <table className="rmap-supplier-table">
           <thead>
             <tr>
@@ -918,7 +918,7 @@ export default function CompetitorGraph({ tableOnly }: CompetitorGraphProps) {
             ref={svgRef}
             viewBox={vbStr}
             className="rmap-svg"
-            aria-label="TSMC Competitor Relationship Graph"
+            aria-label="T Company Competitor Relationship Graph"
             onMouseDown={handleSvgMouseDown}
             onMouseMove={handleSvgMouseMove}
             onMouseUp={clearDrag}
@@ -951,7 +951,7 @@ export default function CompetitorGraph({ tableOnly }: CompetitorGraphProps) {
             </defs>
 
             {/* Competitor edges — double-headed arrows, no edge labels */}
-            {TSM_COMPETITORS.map((node) => {
+            {TC_COMPETITORS.map((node) => {
               if (visibleNodeIds && !visibleNodeIds.has(node.id)) return null;
               const cp = positions[CENTER_NODE_ID],
                 np = positions[node.id];
@@ -973,7 +973,7 @@ export default function CompetitorGraph({ tableOnly }: CompetitorGraphProps) {
             })}
 
             {/* Competitor nodes */}
-            {TSM_COMPETITORS.map((node) => {
+            {TC_COMPETITORS.map((node) => {
               if (visibleNodeIds && !visibleNodeIds.has(node.id)) return null;
               return (
                 <CompetitorNodeSvg
@@ -989,10 +989,10 @@ export default function CompetitorGraph({ tableOnly }: CompetitorGraphProps) {
 
             {/* Center node — last for top z-order */}
             <CenterNodeSvg
-              node={TSM_COMPETITOR_CENTER}
+              node={TC_COMPETITOR_CENTER}
               pos={positions[CENTER_NODE_ID]}
               selected={selectedNode?.id === CENTER_NODE_ID}
-              onClick={() => handleNodeClick(TSM_COMPETITOR_CENTER)}
+              onClick={() => handleNodeClick(TC_COMPETITOR_CENTER)}
               onMouseDown={(e) => handleNodeMouseDown(CENTER_NODE_ID, e)}
             />
           </svg>

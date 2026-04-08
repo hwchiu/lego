@@ -1,6 +1,6 @@
 # Event Categories Data
 
-Event data for 8 non-earnings market categories. Companies in scope: TSMC (TSM) and its key
+Event data for 8 non-earnings market categories. Companies in scope: T Company (TC) and its key
 customers (AAPL, NVDA, AMD, QCOM, AVGO) and suppliers (ASML, AMAT, LRCX, KLAC, SNPS, CDNS).
 All events are representative April 2025 data for display purposes.
 
@@ -23,15 +23,15 @@ All events are representative April 2025 data for display purposes.
   ],
   "Apr 9": [
     {
-      "cellLabel": "TSM",
-      "symbol": "TSM",
-      "company": "Taiwan Semiconductor",
+      "cellLabel": "TC",
+      "symbol": "TC",
+      "company": "T Company",
       "eventType": "Issuance",
       "amount": "$3.0B",
       "coupon": "4.80%",
       "maturity": "2032",
       "rating": "AA-",
-      "description": "TSMC priced a $3.0B dual-tranche senior notes offering (10-year and 5-year tranches) to fund N2 process node fab expansion in Arizona Phase 2 and Hsinchu Advanced Packaging Phase 3. Order book was 4.2x oversubscribed, reflecting strong investor confidence in AI chip demand."
+      "description": "T Company priced a $3.0B dual-tranche senior notes offering (10-year and 5-year tranches) to fund N2 process node fab expansion in Arizona Phase 2 and Hsinchu Advanced Packaging Phase 3. Order book was 4.2x oversubscribed, reflecting strong investor confidence in AI chip demand."
     }
   ],
   "Apr 10": [
@@ -109,7 +109,7 @@ All events are representative April 2025 data for display purposes.
       "coupon": "4.70%",
       "maturity": "2031",
       "rating": "A",
-      "description": "Lam Research priced $800M senior unsecured notes at 4.70% due 2031 for general corporate purposes including working capital and opportunistic share repurchases. Lam's etch and deposition equipment portfolio serves TSM's advanced node ramp and memory customer capacity expansions at Samsung and Micron."
+      "description": "Lam Research priced $800M senior unsecured notes at 4.70% due 2031 for general corporate purposes including working capital and opportunistic share repurchases. Lam's etch and deposition equipment portfolio serves TC's advanced node ramp and memory customer capacity expansions at Samsung and Micron."
     }
   ]
 }
@@ -129,7 +129,7 @@ All events are representative April 2025 data for display purposes.
       "changePct": "+2.1%",
       "weekHigh": "86.50",
       "weekLow": "83.20",
-      "relevance": "Primary substrate for TSM advanced node fabs; AMAT and LRCX process equipment consumables"
+      "relevance": "Primary substrate for TC advanced node fabs; AMAT and LRCX process equipment consumables"
     }
   ],
   "Apr 7": [
@@ -153,7 +153,7 @@ All events are representative April 2025 data for display purposes.
       "changePct": "-0.8%",
       "weekHigh": "2400",
       "weekLow": "2310",
-      "relevance": "Critical rare earth for high-temperature magnets in EUV stage systems (ASML, TSM)"
+      "relevance": "Critical rare earth for high-temperature magnets in EUV stage systems (ASML, TC)"
     }
   ],
   "Apr 9": [
@@ -166,7 +166,7 @@ All events are representative April 2025 data for display purposes.
       "changePct": "-0.8%",
       "weekHigh": "9980",
       "weekLow": "9790",
-      "relevance": "Interconnect metal for advanced packaging (CoWoS/SoIC) at TSM; used in AMAT plating systems"
+      "relevance": "Interconnect metal for advanced packaging (CoWoS/SoIC) at TC; used in AMAT plating systems"
     }
   ],
   "Apr 14": [
@@ -179,7 +179,7 @@ All events are representative April 2025 data for display purposes.
       "changePct": "+3.2%",
       "weekHigh": "995",
       "weekLow": "950",
-      "relevance": "Essential laser excimer gas for DUV/ArF lithography steps at TSM, NVDA, AMD wafer fabs"
+      "relevance": "Essential laser excimer gas for DUV/ArF lithography steps at TC, NVDA, AMD wafer fabs"
     }
   ],
   "Apr 16": [
@@ -192,7 +192,7 @@ All events are representative April 2025 data for display purposes.
       "changePct": "+0.9%",
       "weekHigh": "144.0",
       "weekLow": "140.8",
-      "relevance": "Key patterning chemical used in every wafer layer at TSM; demand tied to AAPL, NVDA, AMD production"
+      "relevance": "Key patterning chemical used in every wafer layer at TC; demand tied to AAPL, NVDA, AMD production"
     }
   ],
   "Apr 21": [
@@ -247,9 +247,9 @@ All events are representative April 2025 data for display purposes.
       "country": "Taiwan",
       "flag": "🇹🇼",
       "eventType": "Policy",
-      "title": "TSMC Phase 3 Advanced Packaging Approved",
-      "description": "Taiwan's Executive Yuan approved TSMC's Phase 3 CoWoS advanced packaging capacity expansion in Hsinchu Science Park, targeting a 50% output increase by end-2026. The NT$420B ($13B) investment is supported by a 25% tax credit under the Statute for Industrial Innovation. The expansion directly serves NVIDIA GB300, AMD MI400, and Apple A-series packaging demand.",
-      "affectedCompanies": ["TSM", "NVDA", "AMD", "AAPL"],
+      "title": "T Company Phase 3 Advanced Packaging Approved",
+      "description": "Taiwan's Executive Yuan approved T Company's Phase 3 CoWoS advanced packaging capacity expansion in Hsinchu Science Park, targeting a 50% output increase by end-2026. The NT$420B ($13B) investment is supported by a 25% tax credit under the Statute for Industrial Innovation. The expansion directly serves NVIDIA GB300, AMD MI400, and Apple A-series packaging demand.",
+      "affectedCompanies": ["TC", "NVDA", "AMD", "AAPL"],
       "impact": "High"
     }
   ],
@@ -259,9 +259,9 @@ All events are representative April 2025 data for display purposes.
       "country": "United States",
       "flag": "🇺🇸",
       "eventType": "Funding",
-      "title": "CHIPS Act Awards $2.6B Grant to TSMC Arizona",
-      "description": "The US Department of Commerce finalized a $2.6B direct grant and up to $5B in loan guarantees to TSMC's Arizona subsidiary for its N3 and N2 fabs in Phoenix. The agreement conditions 40% domestic equipment sourcing, benefiting Applied Materials, Lam Research, and KLA. TSMC Arizona is on track for first N3 wafer output in H2 2025.",
-      "affectedCompanies": ["TSM", "AMAT", "LRCX", "KLAC"],
+      "title": "CHIPS Act Awards $2.6B Grant to T Company Arizona",
+      "description": "The US Department of Commerce finalized a $2.6B direct grant and up to $5B in loan guarantees to T Company's Arizona subsidiary for its N3 and N2 fabs in Phoenix. The agreement conditions 40% domestic equipment sourcing, benefiting Applied Materials, Lam Research, and KLA. T Company Arizona is on track for first N3 wafer output in H2 2025.",
+      "affectedCompanies": ["TC", "AMAT", "LRCX", "KLAC"],
       "impact": "High"
     }
   ],
@@ -272,8 +272,8 @@ All events are representative April 2025 data for display purposes.
       "flag": "🇳🇱",
       "eventType": "Regulation",
       "title": "ASML Export Licenses Renewed for 2025–2026",
-      "description": "The Dutch Ministry of Foreign Affairs renewed ASML's export licenses for ArF immersion and DUV systems to non-restricted markets through 2026. EUV export restrictions to China remain in force. ASML reaffirmed €35B–37B revenue guidance for 2025, with High-NA EUV shipments to TSMC, Samsung, and Intel accelerating.",
-      "affectedCompanies": ["ASML", "TSM"],
+      "description": "The Dutch Ministry of Foreign Affairs renewed ASML's export licenses for ArF immersion and DUV systems to non-restricted markets through 2026. EUV export restrictions to China remain in force. ASML reaffirmed €35B–37B revenue guidance for 2025, with High-NA EUV shipments to T Company, Samsung, and Intel accelerating.",
+      "affectedCompanies": ["ASML", "TC"],
       "impact": "Medium"
     }
   ],
@@ -283,9 +283,9 @@ All events are representative April 2025 data for display purposes.
       "country": "Japan",
       "flag": "🇯🇵",
       "eventType": "Subsidy",
-      "title": "METI Approves ¥120B for TSMC Kumamoto Phase 2",
-      "description": "Japan's Ministry of Economy, Trade and Industry (METI) approved ¥120B ($800M) in additional subsidies for TSMC's Kumamoto Phase 2 fab (JASM joint venture with Sony and Denso). The 6nm/7nm facility targets automotive sensors and image processors, with Synopsys and Cadence Design selected as primary EDA partners. Production is slated for Q3 2026.",
-      "affectedCompanies": ["TSM", "SNPS", "CDNS"],
+      "title": "METI Approves ¥120B for T Company Kumamoto Phase 2",
+      "description": "Japan's Ministry of Economy, Trade and Industry (METI) approved ¥120B ($800M) in additional subsidies for T Company's Kumamoto Phase 2 fab (JASM joint venture with Sony and Denso). The 6nm/7nm facility targets automotive sensors and image processors, with Synopsys and Cadence Design selected as primary EDA partners. Production is slated for Q3 2026.",
+      "affectedCompanies": ["TC", "SNPS", "CDNS"],
       "impact": "High"
     }
   ],
@@ -381,7 +381,7 @@ All events are representative April 2025 data for display purposes.
       "changePct": "+2.1%",
       "volume": "$1.4B",
       "marketCap": "$11.8B",
-      "relevance": "Enterprise blockchain subnet launches driving custom ASIC tapeout orders at TSM 5nm — Ava Labs partnerships increasing"
+      "relevance": "Enterprise blockchain subnet launches driving custom ASIC tapeout orders at TC 5nm — Ava Labs partnerships increasing"
     }
   ]
 }
@@ -398,8 +398,8 @@ All events are representative April 2025 data for display purposes.
       "rate": "32.45",
       "change": "-0.039",
       "changePct": "-0.12%",
-      "description": "Taiwan Central Bank held benchmark rate at 2.0% in quarterly policy meeting. TWD softened mildly on broader USD strength. TSMC's USD-denominated revenue books a NT$ translation gain of ~0.1% on overseas earnings.",
-      "affectedCompanies": ["TSM"]
+      "description": "Taiwan Central Bank held benchmark rate at 2.0% in quarterly policy meeting. TWD softened mildly on broader USD strength. T Company's USD-denominated revenue books a NT$ translation gain of ~0.1% on overseas earnings.",
+      "affectedCompanies": ["TC"]
     }
   ],
   "Apr 7": [
@@ -410,7 +410,7 @@ All events are representative April 2025 data for display purposes.
       "change": "+1.21",
       "changePct": "+0.81%",
       "description": "Bank of Japan maintained accommodative stance, pushing JPY to 151.2. Weaker yen increases USD-equivalent cost of ASML EUV equipment purchased by Japanese fabs (JASM/Kumamoto). Tokyo Electron yen revenue loses USD-export pricing competitiveness.",
-      "affectedCompanies": ["ASML", "TSM"]
+      "affectedCompanies": ["ASML", "TC"]
     }
   ],
   "Apr 9": [
@@ -442,8 +442,8 @@ All events are representative April 2025 data for display purposes.
       "rate": "32.1",
       "change": "-0.35",
       "changePct": "-1.08%",
-      "description": "TWD strengthened on positive US-Taiwan trade framework discussions and TSMC's strong Q1 earnings beat. The move reduces TSMC's USD-to-NT$ translation gain but signals solid Taiwan macroeconomic fundamentals and FDI inflows.",
-      "affectedCompanies": ["TSM"]
+      "description": "TWD strengthened on positive US-Taiwan trade framework discussions and T Company's strong Q1 earnings beat. The move reduces T Company's USD-to-NT$ translation gain but signals solid Taiwan macroeconomic fundamentals and FDI inflows.",
+      "affectedCompanies": ["TC"]
     }
   ],
   "Apr 25": [
@@ -563,9 +563,9 @@ All events are representative April 2025 data for display purposes.
   ],
   "Apr 14": [
     {
-      "cellLabel": "TSM",
-      "symbol": "TSM",
-      "company": "Taiwan Semiconductor",
+      "cellLabel": "TC",
+      "symbol": "TC",
+      "company": "T Company",
       "exDate": "Apr 14",
       "payDate": "Oct 10",
       "dividend": "$2.00",
@@ -624,9 +624,9 @@ All events are representative April 2025 data for display purposes.
   ],
   "Apr 7": [
     {
-      "cellLabel": "TSM",
-      "symbol": "TSM",
-      "company": "Taiwan Semiconductor",
+      "cellLabel": "TC",
+      "symbol": "TC",
+      "company": "T Company",
       "exDate": "Apr 7",
       "payDate": "Oct 10",
       "dividend": "$2.00",
@@ -672,9 +672,9 @@ All events are representative April 2025 data for display purposes.
       "type": "Regular Cash"
     },
     {
-      "cellLabel": "TSM",
-      "symbol": "TSM",
-      "company": "Taiwan Semiconductor",
+      "cellLabel": "TC",
+      "symbol": "TC",
+      "company": "T Company",
       "exDate": "Apr 14",
       "payDate": "Oct 10",
       "dividend": "$2.00",

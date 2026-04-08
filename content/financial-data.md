@@ -1,23 +1,23 @@
-# Financial Data — TSMC Key Customers
+# Financial Data — T Company Key Customers
 
 **Disclaimer:** All financial figures below are sample/mock data for demonstration purposes only. They do not represent actual financial results and should not be used for investment decisions.
 
-Financial statements for TSMC's 10 major customers. Figures are approximate, illustrative, and based on publicly available annual and quarterly reports.
+Financial statements for T Company's 10 major customers. Figures are approximate, illustrative, and based on publicly available annual and quarterly reports.
 
 ## Company List
 
 ```json
 [
-  { "symbol": "AAPL",  "name": "Apple Inc.",                    "sector": "Technology",       "marketCap": "3.0T",  "currency": "USD", "description": "World's largest technology company; TSMC's biggest customer (~25% of revenue) for A-series and M-series chips." },
-  { "symbol": "NVDA",  "name": "NVIDIA Corporation",            "sector": "Semiconductors",   "marketCap": "2.6T",  "currency": "USD", "description": "Leading GPU and AI accelerator designer. Relies on TSMC's advanced nodes (4nm/3nm) for data-center GPUs." },
-  { "symbol": "AMD",   "name": "Advanced Micro Devices",        "sector": "Semiconductors",   "marketCap": "210B",  "currency": "USD", "description": "Fabless CPU/GPU designer. Partners with TSMC for Ryzen, EPYC, and Radeon products." },
-  { "symbol": "QCOM",  "name": "Qualcomm Incorporated",         "sector": "Semiconductors",   "marketCap": "165B",  "currency": "USD", "description": "Leader in mobile SoCs and wireless technology. Snapdragon chips are primarily manufactured at TSMC." },
-  { "symbol": "AVGO",  "name": "Broadcom Inc.",                 "sector": "Semiconductors",   "marketCap": "680B",  "currency": "USD", "description": "Diversified chip and infrastructure software company. Uses TSMC for advanced networking and custom AI ASICs." },
-  { "symbol": "MRVL",  "name": "Marvell Technology Inc.",       "sector": "Semiconductors",   "marketCap": "55B",   "currency": "USD", "description": "Specializes in data infrastructure semiconductors. TSMC manufactures its cloud-optimized chips." },
-  { "symbol": "NXPI",  "name": "NXP Semiconductors N.V.",       "sector": "Semiconductors",   "marketCap": "48B",   "currency": "USD", "description": "Automotive and IoT chip leader. Partners with TSMC for advanced automotive-grade processors." },
-  { "symbol": "STM",   "name": "STMicroelectronics N.V.",       "sector": "Semiconductors",   "marketCap": "24B",   "currency": "USD", "description": "European semiconductor leader in automotive and industrial chips. Collaborates with TSMC on FD-SOI nodes." },
-  { "symbol": "SONY",  "name": "Sony Group Corporation",        "sector": "Technology",       "marketCap": "95B",   "currency": "USD", "description": "Global electronics and entertainment conglomerate. Uses TSMC for image sensors and PlayStation chip components." },
-  { "symbol": "TXN",   "name": "Texas Instruments Incorporated","sector": "Semiconductors",   "marketCap": "145B",  "currency": "USD", "description": "Analog and embedded processing leader. Leverages TSMC for some advanced digital products alongside its own fabs." }
+  { "symbol": "AAPL",  "name": "Apple Inc.",                    "sector": "Technology",       "marketCap": "3.0T",  "currency": "USD", "description": "World's largest technology company; T Company's biggest customer (~25% of revenue) for A-series and M-series chips." },
+  { "symbol": "NVDA",  "name": "NVIDIA Corporation",            "sector": "Semiconductors",   "marketCap": "2.6T",  "currency": "USD", "description": "Leading GPU and AI accelerator designer. Relies on T Company's advanced nodes (4nm/3nm) for data-center GPUs." },
+  { "symbol": "AMD",   "name": "Advanced Micro Devices",        "sector": "Semiconductors",   "marketCap": "210B",  "currency": "USD", "description": "Fabless CPU/GPU designer. Partners with T Company for Ryzen, EPYC, and Radeon products." },
+  { "symbol": "QCOM",  "name": "Qualcomm Incorporated",         "sector": "Semiconductors",   "marketCap": "165B",  "currency": "USD", "description": "Leader in mobile SoCs and wireless technology. Snapdragon chips are primarily manufactured at T Company." },
+  { "symbol": "AVGO",  "name": "Broadcom Inc.",                 "sector": "Semiconductors",   "marketCap": "680B",  "currency": "USD", "description": "Diversified chip and infrastructure software company. Uses T Company for advanced networking and custom AI ASICs." },
+  { "symbol": "MRVL",  "name": "Marvell Technology Inc.",       "sector": "Semiconductors",   "marketCap": "55B",   "currency": "USD", "description": "Specializes in data infrastructure semiconductors. T Company manufactures its cloud-optimized chips." },
+  { "symbol": "NXPI",  "name": "NXP Semiconductors N.V.",       "sector": "Semiconductors",   "marketCap": "48B",   "currency": "USD", "description": "Automotive and IoT chip leader. Partners with T Company for advanced automotive-grade processors." },
+  { "symbol": "STM",   "name": "STMicroelectronics N.V.",       "sector": "Semiconductors",   "marketCap": "24B",   "currency": "USD", "description": "European semiconductor leader in automotive and industrial chips. Collaborates with T Company on FD-SOI nodes." },
+  { "symbol": "SONY",  "name": "Sony Group Corporation",        "sector": "Technology",       "marketCap": "95B",   "currency": "USD", "description": "Global electronics and entertainment conglomerate. Uses T Company for image sensors and PlayStation chip components." },
+  { "symbol": "TXN",   "name": "Texas Instruments Incorporated","sector": "Semiconductors",   "marketCap": "145B",  "currency": "USD", "description": "Analog and embedded processing leader. Leverages T Company for some advanced digital products alongside its own fabs." }
 ]
 ```
 

@@ -6,7 +6,7 @@ import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import SupplierGraph from './SupplierGraph';
-import { TSM_TIER1_SUPPLIERS, TSM_TIER2_SUPPLIERS, EDGE_ENTITIES } from '@/app/data/tsmcSupplierData';
+import { TC_TIER1_SUPPLIERS, TC_TIER2_SUPPLIERS, EDGE_ENTITIES } from '@/app/data/tcSupplierData';
 
 function BackArrowIcon() {
   return (
@@ -34,9 +34,9 @@ const SUPPLIER_TABS = ['Network Graph', 'Table View', 'Analytics', 'Risk Heatmap
 type SupplierTab = (typeof SUPPLIER_TABS)[number];
 
 // Compute summary stats
-const tier1Count = TSM_TIER1_SUPPLIERS.length;
-const tier2Count = TSM_TIER2_SUPPLIERS.length;
-const tier1TotalRevenue = EDGE_ENTITIES.filter((e) => e.from === 'TSM').reduce(
+const tier1Count = TC_TIER1_SUPPLIERS.length;
+const tier2Count = TC_TIER2_SUPPLIERS.length;
+const tier1TotalRevenue = EDGE_ENTITIES.filter((e) => e.from === 'TC').reduce(
   (sum, e) => sum + e.transactionAmount,
   0,
 );
@@ -73,8 +73,8 @@ export default function SupplierPage() {
             <div className="rmap-company-header">
               <span className="rmap-risk-light rmap-risk-light--green" title="No active risk signals" />
               <div className="rmap-company-header-info">
-                <div className="rmap-company-header-name">TSM</div>
-                <div className="rmap-company-header-full">Taiwan Semiconductor Manufacturing Company</div>
+                <div className="rmap-company-header-name">TC</div>
+                <div className="rmap-company-header-full">T Company</div>
               </div>
             </div>
 

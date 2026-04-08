@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Tooltip, useMap } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import L from 'leaflet';
-import type { FabLocation } from '@/app/data/tsmcFabs';
+import type { FabLocation } from '@/app/data/tcFabs';
 
 // Fix Leaflet's default marker icon URLs broken by webpack asset hashing.
 // Next.js/Webpack rewrites asset filenames, breaking Leaflet's internal URL

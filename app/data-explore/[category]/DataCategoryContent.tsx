@@ -186,13 +186,13 @@ const ESG_ACCENT = '#16a34a';
 
 // ── ESG companies list ────────────────────────────────────────────────────────
 
-const ESG_COMPANIES: { id: 'TSMC' | 'Apple'; label: string; subLabel: string }[] = [
-  { id: 'TSMC', label: 'TSMC', subLabel: 'Taiwan Semiconductor Manufacturing' },
+const ESG_COMPANIES: { id: 'T Company' | 'Apple'; label: string; subLabel: string }[] = [
+  { id: 'T Company', label: 'T Company', subLabel: 'T Company Manufacturing' },
   { id: 'Apple', label: 'Apple', subLabel: 'Apple Inc.' },
 ];
 
 function EsgReportsTab() {
-  const [selectedCompany, setSelectedCompany] = useState<'TSMC' | 'Apple'>('TSMC');
+  const [selectedCompany, setSelectedCompany] = useState<'T Company' | 'Apple'>('T Company');
 
   const reports = useMemo(
     () =>
@@ -200,7 +200,7 @@ function EsgReportsTab() {
     [selectedCompany],
   );
 
-  const sectionTitle = selectedCompany === 'TSMC' ? 'Sustainability Reports' : 'Environmental Progress Reports';
+  const sectionTitle = selectedCompany === 'T Company' ? 'Sustainability Reports' : 'Environmental Progress Reports';
   const sectionSub = ESG_COMPANIES.find((c) => c.id === selectedCompany)?.subLabel ?? '';
 
   return (

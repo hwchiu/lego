@@ -2,11 +2,11 @@
 
 import { useState } from 'react';
 import { extractJson } from '@/app/lib/parseContent';
-import tsmIrMd from '@/content/tsm-ir-material.md';
+import tcIrMd from '@/content/tc-ir-material.md';
 
-// ── IR Material Tab — AAPL / TSM ─────────────────────────────────────────────
+// ── IR Material Tab — AAPL / TC ─────────────────────────────────────────────
 // AAPL content sourced from https://investor.apple.com/investor-relations/default.aspx
-// TSM content sourced from https://investor.tsmc.com
+// TC content sourced from https://investor.tsmc.com
 // Sections: Investor Updates | Newsroom | Financial Data
 
 interface IRMaterialTabProps {
@@ -389,20 +389,20 @@ function CategoryBadge({ category }: { category: string }) {
   );
 }
 
-// ── TSM data loader ───────────────────────────────────────────────────────────
+// ── TC data loader ───────────────────────────────────────────────────────────
 
-interface TsmIrData {
+interface TcIrData {
   investorUpdates: InvestorUpdate[];
   newsroom: NewsroomItem[];
   financialData: FinancialDocGroup[];
 }
 
-let _tsmIrData: TsmIrData | null = null;
-function getTsmIrData(): TsmIrData {
-  if (!_tsmIrData) {
-    _tsmIrData = extractJson<TsmIrData>(tsmIrMd as string);
+let _tcIrData: TcIrData | null = null;
+function getTcIrData(): TcIrData {
+  if (!_tcIrData) {
+    _tcIrData = extractJson<TcIrData>(tcIrMd as string);
   }
-  return _tsmIrData;
+  return _tcIrData;
 }
 
 // ── Generic IR content renderer ───────────────────────────────────────────────
@@ -579,15 +579,15 @@ export default function IRMaterialTab({ symbol }: IRMaterialTabProps) {
     viewAllLabel = 'View all on investor.apple.com →';
     disclaimerText =
       'Source: Apple Inc. Investor Relations (investor.apple.com). All documents are publicly available SEC filings and earnings materials.';
-  } else if (symbol === 'TSM') {
-    const tsmData = getTsmIrData();
-    investorUpdates = tsmData.investorUpdates;
-    newsroom = tsmData.newsroom;
-    financialData = tsmData.financialData;
+  } else if (symbol === 'TC') {
+    const tcData = getTcIrData();
+    investorUpdates = tcData.investorUpdates;
+    newsroom = tcData.newsroom;
+    financialData = tcData.financialData;
     viewAllUrl = 'https://investor.tsmc.com/en';
-    viewAllLabel = 'View all on investor.tsmc.com →';
+    viewAllLabel = 'View all on T Company Investor Relations →';
     disclaimerText =
-      'Source: TSMC Investor Relations (investor.tsmc.com). SEC filings available via EDGAR. All documents are publicly available.';
+      'Source: T Company Investor Relations (investor.tsmc.com). SEC filings available via EDGAR. All documents are publicly available.';
   } else {
     return (
       <div className="cp-tab-placeholder">

@@ -14,20 +14,20 @@ Static seed data for the top rotating banner. Each object represents one slide i
   {
     "label": "Breaking News",
     "labelVariant": "breaking",
-    "linkText": "TSMC Reports Record Q1 2025 Revenue Driven by AI Chip Demand",
+    "linkText": "T Company Reports Record Q1 2025 Revenue Driven by AI Chip Demand",
     "linkHref": "#news"
   },
   {
     "label": "Tip",
     "labelVariant": "tip",
     "prefix": "Use the Symbol Search to explore financials: ",
-    "linkText": "Search AAPL, NVDA, TSM and more",
+    "linkText": "Search AAPL, NVDA, TC and more",
     "linkHref": "#tutorial"
   },
   {
     "label": "Breaking News",
     "labelVariant": "breaking",
-    "linkText": "Apple Expands TSMC Partnership for 2nm A-Series Chips in 2026",
+    "linkText": "Apple Expands T Company Partnership for 2nm A-Series Chips in 2026",
     "linkHref": "#news"
   },
   {
@@ -47,7 +47,7 @@ Static seed data for the top rotating banner. Each object represents one slide i
     "label": "Tip",
     "labelVariant": "tip",
     "prefix": "Track competitors and suppliers: ",
-    "linkText": "Explore the RMAP Supply Chain module for TSMC's ecosystem",
+    "linkText": "Explore the RMAP Supply Chain module for T Company's ecosystem",
     "linkHref": "/supply-chain-maps"
   },
   {

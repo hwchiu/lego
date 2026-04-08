@@ -126,8 +126,8 @@ const CAPABILITIES = [
     eyebrow: 'Natural Language Query',
     title: { zh: '自然語言查詢', en: 'Ask in Plain English' },
     desc: {
-      zh: '用日常語言直接提問，例如「TSMC 最近的供應鏈風險有哪些？」，AI 自動解析意圖並從海量資料中精準回答。',
-      en: 'Ask questions in plain language — e.g., "What are the recent supply chain risks for TSMC?" — and the AI parses your intent to deliver precise answers from massive datasets.',
+      zh: '用日常語言直接提問，例如「T Company 最近的供應鏈風險有哪些？」，AI 自動解析意圖並從海量資料中精準回答。',
+      en: 'Ask questions in plain language — e.g., "What are the recent supply chain risks for T Company?" — and the AI parses your intent to deliver precise answers from massive datasets.',
     },
   },
   {
@@ -260,7 +260,7 @@ export default function AiSearchPage() {
                     <path d="M14 14L18 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
                   </svg>
                   <span className="is-mock-search-placeholder">
-                    {lang === 'zh' ? 'TSMC 近期的供應鏈風險有哪些？' : "What are TSMC's recent supply chain risks?"}
+                    {lang === 'zh' ? 'T Company 近期的供應鏈風險有哪些？' : "What are T Company's recent supply chain risks?"}
                   </span>
                   <span className="is-mock-search-cursor" aria-hidden="true" />
                 </div>

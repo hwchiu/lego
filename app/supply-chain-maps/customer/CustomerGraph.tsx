@@ -2,15 +2,15 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import {
-  TSM_CUSTOMER_CENTER,
-  TSM_CUSTOMERS,
+  TC_CUSTOMER_CENTER,
+  TC_CUSTOMERS,
   CUSTOMER_EDGES,
   CUSTOMER_FEED,
   CUSTOMER_RELATION_TYPES,
   INDUSTRY_TRANSACTION_SUMMARY,
   type CustomerNode,
   type CustomerRelationKey,
-} from '@/app/data/tsmcCustomerData';
+} from '@/app/data/tcCustomerData';
 import { SP500_COMPANIES } from '@/app/data/sp500';
 
 // ── Layout constants ──────────────────────────────────────────────────────────
@@ -30,11 +30,11 @@ const CORNER_R = 12;
 const NODE_STRIP_COLOR = '#166534'; // green — customer direction
 
 // ID of the center node
-const CENTER_NODE_ID = 'TSM';
+const CENTER_NODE_ID = 'TC';
 
 // ── Static lookups (computed once) ───────────────────────────────────────────
 
-const ALL_CUSTOMERS = TSM_CUSTOMERS;
+const ALL_CUSTOMERS = TC_CUSTOMERS;
 const UNIQUE_INDUSTRIES = [...new Set(ALL_CUSTOMERS.map((c) => c.industryCategory))];
 
 const ALL_CUSTOMERS_LC = ALL_CUSTOMERS.map((c) => ({
@@ -67,8 +67,8 @@ type FilterTab = (typeof FILTER_TABS)[number];
 const INITIAL_POSITIONS: Record<string, { x: number; y: number }> = (() => {
   const pos: Record<string, { x: number; y: number }> = {};
   pos[CENTER_NODE_ID] = { x: CX, y: CY };
-  TSM_CUSTOMERS.forEach((c, i) => {
-    const a = (2 * Math.PI * i) / TSM_CUSTOMERS.length - Math.PI / 2;
+  TC_CUSTOMERS.forEach((c, i) => {
+    const a = (2 * Math.PI * i) / TC_CUSTOMERS.length - Math.PI / 2;
     pos[c.id] = { x: CX + R1 * Math.cos(a), y: CY + R1 * Math.sin(a) };
   });
   return pos;
@@ -274,7 +274,7 @@ function DetailPanel({ node, onClose }: DetailPanelProps) {
         </p>
         {!isCenter && (
           <p className="rmap-detail-items" style={{ marginTop: 8 }}>
-            <span className="rmap-detail-label">Purchases from TSMC: </span>
+            <span className="rmap-detail-label">Purchases from T Company: </span>
             {node.purchaseItems}
           </p>
         )}
@@ -678,7 +678,7 @@ function CustomerTable() {
   return (
     <div className="rmap-supplier-table-wrap">
       <div className="rmap-supplier-table-section">
-        <div className="rmap-supplier-table-title">TSMC Customers</div>
+        <div className="rmap-supplier-table-title">T Company Customers</div>
         <table className="rmap-supplier-table">
           <thead>
             <tr>
@@ -686,14 +686,14 @@ function CustomerTable() {
               <th className="rmap-supplier-th">Ticker</th>
               <th className="rmap-supplier-th">Country</th>
               <th className="rmap-supplier-th">Industry</th>
-              <th className="rmap-supplier-th">Purchases from TSMC</th>
+              <th className="rmap-supplier-th">Purchases from T Company</th>
               <th className="rmap-supplier-th rmap-supplier-th--num">Revenue</th>
               <th className="rmap-supplier-th rmap-supplier-th--num">Gross Margin</th>
               <th className="rmap-supplier-th rmap-supplier-th--num">Transaction (Annual)</th>
             </tr>
           </thead>
           <tbody>
-            {TSM_CUSTOMERS.map((c) => {
+            {TC_CUSTOMERS.map((c) => {
               const edge = CUSTOMER_EDGES.find((e) => e.to === c.id);
               return (
                 <tr key={c.id} className="rmap-supplier-tr">
@@ -1021,7 +1021,7 @@ export default function CustomerGraph({ tableOnly }: CustomerGraphProps) {
             ref={svgRef}
             viewBox={vbStr}
             className="rmap-svg"
-            aria-label="TSMC Customer Relationship Graph"
+            aria-label="T Company Customer Relationship Graph"
             onMouseDown={handleSvgMouseDown}
             onMouseMove={handleSvgMouseMove}
             onMouseUp={clearDrag}
@@ -1029,14 +1029,14 @@ export default function CustomerGraph({ tableOnly }: CustomerGraphProps) {
             style={{ cursor: isGrabbing ? 'grabbing' : 'grab' }}
           >
             <defs>
-              {/* Arrow points FROM TSM (center) TO customer (outer) — supplier→customer direction */}
+              {/* Arrow points FROM TC (center) TO customer (outer) — supplier→customer direction */}
               <marker id="arr-cust" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
                 <polygon points="0 0, 8 3, 0 6" className="rmap-arrow-marker" />
               </marker>
             </defs>
 
             {/* Center → Customer edges (supplier → customer direction) */}
-            {TSM_CUSTOMERS.map((node) => {
+            {TC_CUSTOMERS.map((node) => {
               if (visibleNodeIds && !visibleNodeIds.has(node.id)) return null;
               const cp = positions[CENTER_NODE_ID],
                 np = positions[node.id];
@@ -1069,7 +1069,7 @@ export default function CustomerGraph({ tableOnly }: CustomerGraphProps) {
             })}
 
             {/* Customer nodes */}
-            {TSM_CUSTOMERS.map((node) => {
+            {TC_CUSTOMERS.map((node) => {
               if (visibleNodeIds && !visibleNodeIds.has(node.id)) return null;
               return (
                 <CustomerNodeSvg
@@ -1085,10 +1085,10 @@ export default function CustomerGraph({ tableOnly }: CustomerGraphProps) {
 
             {/* Center node — last for top z-order */}
             <CenterNodeSvg
-              node={TSM_CUSTOMER_CENTER}
+              node={TC_CUSTOMER_CENTER}
               pos={positions[CENTER_NODE_ID]}
               selected={selectedNode?.id === CENTER_NODE_ID}
-              onClick={() => handleNodeClick(TSM_CUSTOMER_CENTER)}
+              onClick={() => handleNodeClick(TC_CUSTOMER_CENTER)}
               onMouseDown={(e) => handleNodeMouseDown(CENTER_NODE_ID, e)}
             />
           </svg>

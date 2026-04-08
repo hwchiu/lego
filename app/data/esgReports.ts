@@ -1,7 +1,7 @@
-// ESG Reports data — TSMC and Apple historical sustainability reports (6 years each)
+// ESG Reports data — T Company and Apple historical sustainability reports (6 years each)
 
 export interface EsgReport {
-  company: 'TSMC' | 'Apple';
+  company: 'T Company' | 'Apple';
   year: number;
   title: string;
   fiscalYear: string;
@@ -10,57 +10,57 @@ export interface EsgReport {
 }
 
 export const ESG_REPORTS: EsgReport[] = [
-  // ── TSMC Sustainability Reports ──────────────────────────────────────────────
+  // ── T Company Sustainability Reports ──────────────────────────────────────────────
   {
-    company: 'TSMC',
+    company: 'T Company',
     year: 2024,
     fiscalYear: 'FY2023',
-    title: 'TSMC 2024 Sustainability Report',
+    title: 'T Company 2024 Sustainability Report',
     description:
-      'Covers Scope 1/2/3 emissions, renewable energy adoption (14%+ of total power), water stewardship, net-zero 2050 pathway, and supply chain ESG management across TSMC global operations.',
+      'Covers Scope 1/2/3 emissions, renewable energy adoption (14%+ of total power), water stewardship, net-zero 2050 pathway, and supply chain ESG management across T Company global operations.',
     url: 'https://esg.tsmc.com/file/public/2024-TSMC-Sustainability-Report-e.pdf',
   },
   {
-    company: 'TSMC',
+    company: 'T Company',
     year: 2023,
     fiscalYear: 'FY2022',
-    title: 'TSMC 2023 Sustainability Report',
+    title: 'T Company 2023 Sustainability Report',
     description:
       'Details RE100 commitment progress, SBTi-aligned targets, Scope 3 supplier assessments, corporate governance enhancements, and diversity & inclusion milestones.',
     url: 'https://esg.tsmc.com/file/public/2023-TSMC-Sustainability-Report-e.pdf',
   },
   {
-    company: 'TSMC',
+    company: 'T Company',
     year: 2022,
     fiscalYear: 'FY2021',
-    title: 'TSMC 2022 Sustainability Report',
+    title: 'T Company 2022 Sustainability Report',
     description:
       'Focuses on climate risk management, circular economy initiatives, green manufacturing innovation, water recycling programs, and community engagement in Taiwan and overseas.',
     url: 'https://esg.tsmc.com/file/public/2022-TSMC-Sustainability-Report-e.pdf',
   },
   {
-    company: 'TSMC',
+    company: 'T Company',
     year: 2021,
     fiscalYear: 'FY2020',
-    title: 'TSMC 2021 Sustainability Report',
+    title: 'T Company 2021 Sustainability Report',
     description:
       'Highlights COVID-19 response, employee health & safety improvements, energy efficiency milestones, green building certifications, and sustainable supply chain practices.',
     url: 'https://esg.tsmc.com/file/public/2021-TSMC-Sustainability-Report-e.pdf',
   },
   {
-    company: 'TSMC',
+    company: 'T Company',
     year: 2020,
     fiscalYear: 'FY2019',
-    title: 'TSMC 2020 Sustainability Report',
+    title: 'T Company 2020 Sustainability Report',
     description:
       'Covers GHG emission intensity reductions, water recycling achievements exceeding 85%, responsible minerals sourcing policies, and human rights due diligence.',
     url: 'https://esg.tsmc.com/file/public/2020-TSMC-Sustainability-Report-e.pdf',
   },
   {
-    company: 'TSMC',
+    company: 'T Company',
     year: 2019,
     fiscalYear: 'FY2018',
-    title: 'TSMC 2019 Sustainability Report',
+    title: 'T Company 2019 Sustainability Report',
     description:
       'Presents environmental management system upgrades, workplace safety culture improvements, community investment programs, and first consolidated GRI Standards disclosure.',
     url: 'https://esg.tsmc.com/file/public/2019-TSMC-Sustainability-Report-e.pdf',
