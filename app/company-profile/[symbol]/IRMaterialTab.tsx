@@ -579,7 +579,7 @@ export default function IRMaterialTab({ symbol }: IRMaterialTabProps) {
     viewAllLabel = 'View all on investor.apple.com →';
     disclaimerText =
       'Source: Apple Inc. Investor Relations (investor.apple.com). All documents are publicly available SEC filings and earnings materials.';
-  } else if (symbol === 'TC') {
+  } else if (symbol === 'TC' || symbol === 'TSM') {
     const tcData = getTcIrData();
     investorUpdates = tcData.investorUpdates;
     newsroom = tcData.newsroom;

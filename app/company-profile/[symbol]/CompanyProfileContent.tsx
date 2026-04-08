@@ -476,8 +476,11 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   // Parse markdown data
   const profileData = getProfileData();
 
+  // TSM is an alias for TC (T Company)
+  const dataSymbol = symbol === 'TSM' ? 'TC' : symbol;
+
   // Find company info — fall back to SP500 data if no profile data
-  const companyInfo = profileData.companies.find((c) => c.symbol === symbol);
+  const companyInfo = profileData.companies.find((c) => c.symbol === dataSymbol);
   const sp500Company = SP500_COMPANIES.find((c) => c.symbol === symbol);
 
   const companyName = companyInfo?.name ?? sp500Company?.name ?? symbol;
@@ -487,7 +490,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const publicTags = companyInfo?.publicTags ?? [];
 
   // Financial data — only use if explicitly available for this symbol
-  const finData = profileData.financialData[symbol] ?? null;
+  const finData = profileData.financialData[dataSymbol] ?? null;
 
   // Load favorites & tags from localStorage
   useEffect(() => {
