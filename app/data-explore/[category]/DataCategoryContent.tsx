@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, type ReactNode } from 'react';
 import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
@@ -9,6 +9,7 @@ import { CATEGORIES_MAP, DataItem } from '@/app/data/dataExplore';
 import { ESG_REPORTS } from '@/app/data/esgReports';
 import { TAIWAN_TAX_NEWS, type TaxNewsItem } from '@/app/data/taxNews';
 import WorldMapTab from '@/app/components/GovernmentRegulationsMap';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 
 const TAGS_VISIBLE_COUNT = 6;
 
@@ -377,22 +378,611 @@ const ESG_TABS = [
   { id: 'reports', label: 'ESG Reports' },
 ];
 
-const GOV_TABS = [
-  { id: 'articles', label: 'Articles' },
-  { id: 'taiwan-tax', label: 'Weekly Taiwan Tax News Summary' },
-  { id: 'intl-tax', label: 'Weekly International Tax News Summary' },
+// ── Capital Markets data ──────────────────────────────────────────────────────
+
+const CM_COMPANIES = [
+  { code: '2330', nameZh: '台積電', nameEn: 'TSMC' },
+  { code: '2317', nameZh: '鴻海', nameEn: 'Hon Hai' },
+  { code: '2454', nameZh: '聯發科', nameEn: 'MediaTek' },
+  { code: '2881', nameZh: '富邦金', nameEn: 'Fubon Financial' },
+  { code: '2882', nameZh: '國泰金', nameEn: 'Cathay Financial' },
+  { code: '2891', nameZh: '中信金', nameEn: 'CTBC Financial' },
+  { code: '2412', nameZh: '中華電', nameEn: 'Chunghwa Telecom' },
+  { code: '3045', nameZh: '台灣大', nameEn: 'Taiwan Mobile' },
+  { code: '1301', nameZh: '台塑', nameEn: 'Formosa Plastics' },
+  { code: '1216', nameZh: '統一', nameEn: 'Uni-President' },
 ];
 
+const CM_DATE = '2025/04/07';
+
+const CM_DAILY_QUOTES = [
+  { ...CM_COMPANIES[0], vol: '28,543,000', amount: '27,891,450,000', open: '970.00', high: '975.00', low: '965.00', close: '972.00', change: '+5.00', txn: '168,432' },
+  { ...CM_COMPANIES[1], vol: '18,234,000', amount: '2,157,662,000', open: '117.50', high: '119.50', low: '117.00', close: '118.50', change: '+1.00', txn: '62,781' },
+  { ...CM_COMPANIES[2], vol: '6,124,000',  amount: '5,578,920,000', open: '900.00', high: '918.00', low: '898.00', close: '910.00', change: '+10.00', txn: '48,923' },
+  { ...CM_COMPANIES[3], vol: '12,891,000', amount: '1,093,735,000', open: '84.30',  high: '85.30',  low: '84.00',  close: '84.80', change: '+0.50', txn: '38,214' },
+  { ...CM_COMPANIES[4], vol: '15,034,000', amount: '1,458,297,000', open: '96.10',  high: '97.50',  low: '95.80',  close: '97.00', change: '+0.90', txn: '45,671' },
+  { ...CM_COMPANIES[5], vol: '9,812,000',  amount: '1,080,112,000', open: '109.00', high: '110.50', low: '108.50', close: '110.00', change: '+1.50', txn: '31,508' },
+  { ...CM_COMPANIES[6], vol: '4,231,000',  amount: '316,043,000',   open: '74.60',  high: '75.20',  low: '74.30',  close: '74.70', change: '-0.10', txn: '14,892' },
+  { ...CM_COMPANIES[7], vol: '3,178,000',  amount: '296,808,000',   open: '92.80',  high: '93.60',  low: '92.60',  close: '93.40', change: '+0.60', txn: '11,243' },
+  { ...CM_COMPANIES[8], vol: '5,892,000',  amount: '582,308,000',   open: '98.60',  high: '99.50',  low: '98.40',  close: '98.90', change: '+0.30', txn: '17,632' },
+  { ...CM_COMPANIES[9], vol: '7,341,000',  amount: '400,383,000',   open: '54.40',  high: '54.90',  low: '54.10',  close: '54.60', change: '+0.20', txn: '22,109' },
+];
+
+const CM_DAY_TRADING = [
+  { ...CM_COMPANIES[0], buy: '3,241,000', sell: '3,189,000', net: '6,430,000', ratio: '22.53%' },
+  { ...CM_COMPANIES[1], buy: '2,814,000', sell: '2,753,000', net: '5,567,000', ratio: '30.54%' },
+  { ...CM_COMPANIES[2], buy: '1,023,000', sell: '987,000',   net: '2,010,000', ratio: '32.82%' },
+  { ...CM_COMPANIES[3], buy: '1,892,000', sell: '1,871,000', net: '3,763,000', ratio: '29.19%' },
+  { ...CM_COMPANIES[4], buy: '2,134,000', sell: '2,098,000', net: '4,232,000', ratio: '28.15%' },
+  { ...CM_COMPANIES[5], buy: '1,245,000', sell: '1,213,000', net: '2,458,000', ratio: '25.05%' },
+  { ...CM_COMPANIES[6], buy: '521,000',   sell: '498,000',   net: '1,019,000', ratio: '24.09%' },
+  { ...CM_COMPANIES[7], buy: '412,000',   sell: '403,000',   net: '815,000',   ratio: '25.65%' },
+  { ...CM_COMPANIES[8], buy: '712,000',   sell: '698,000',   net: '1,410,000', ratio: '23.93%' },
+  { ...CM_COMPANIES[9], buy: '934,000',   sell: '921,000',   net: '1,855,000', ratio: '25.27%' },
+];
+
+const CM_MARGIN = [
+  { ...CM_COMPANIES[0], finBuy: '1,234,000', finSell: '892,000',   finBal: '12,451,000', shoBuy: '98,000',  shoSell: '112,000', shoBal: '892,000'  },
+  { ...CM_COMPANIES[1], finBuy: '2,341,000', finSell: '1,821,000', finBal: '21,234,000', shoBuy: '234,000', shoSell: '198,000', shoBal: '1,541,000' },
+  { ...CM_COMPANIES[2], finBuy: '892,000',   finSell: '634,000',   finBal: '8,921,000',  shoBuy: '78,000',  shoSell: '91,000',  shoBal: '654,000'   },
+  { ...CM_COMPANIES[3], finBuy: '1,892,000', finSell: '1,341,000', finBal: '18,231,000', shoBuy: '143,000', shoSell: '121,000', shoBal: '1,123,000' },
+  { ...CM_COMPANIES[4], finBuy: '1,634,000', finSell: '1,123,000', finBal: '15,892,000', shoBuy: '121,000', shoSell: '109,000', shoBal: '934,000'   },
+  { ...CM_COMPANIES[5], finBuy: '1,341,000', finSell: '987,000',   finBal: '13,451,000', shoBuy: '109,000', shoSell: '98,000',  shoBal: '823,000'   },
+  { ...CM_COMPANIES[6], finBuy: '432,000',   finSell: '321,000',   finBal: '4,231,000',  shoBuy: '34,000',  shoSell: '29,000',  shoBal: '234,000'   },
+  { ...CM_COMPANIES[7], finBuy: '323,000',   finSell: '234,000',   finBal: '3,123,000',  shoBuy: '28,000',  shoSell: '24,000',  shoBal: '198,000'   },
+  { ...CM_COMPANIES[8], finBuy: '678,000',   finSell: '534,000',   finBal: '6,789,000',  shoBuy: '56,000',  shoSell: '48,000',  shoBal: '432,000'   },
+  { ...CM_COMPANIES[9], finBuy: '892,000',   finSell: '712,000',   finBal: '8,923,000',  shoBuy: '72,000',  shoSell: '63,000',  shoBal: '543,000'   },
+];
+
+const CM_SHORT_SALE = [
+  { ...CM_COMPANIES[0], finLimit: '50,000,000', finUsed: '12,451,000', finRatio: '24.90%', shoLimit: '5,000,000', shoUsed: '892,000',   shoRatio: '17.84%' },
+  { ...CM_COMPANIES[1], finLimit: '80,000,000', finUsed: '21,234,000', finRatio: '26.54%', shoLimit: '8,000,000', shoUsed: '1,541,000', shoRatio: '19.26%' },
+  { ...CM_COMPANIES[2], finLimit: '30,000,000', finUsed: '8,921,000',  finRatio: '29.74%', shoLimit: '3,000,000', shoUsed: '654,000',   shoRatio: '21.80%' },
+  { ...CM_COMPANIES[3], finLimit: '60,000,000', finUsed: '18,231,000', finRatio: '30.39%', shoLimit: '6,000,000', shoUsed: '1,123,000', shoRatio: '18.72%' },
+  { ...CM_COMPANIES[4], finLimit: '55,000,000', finUsed: '15,892,000', finRatio: '28.89%', shoLimit: '5,500,000', shoUsed: '934,000',   shoRatio: '16.98%' },
+  { ...CM_COMPANIES[5], finLimit: '45,000,000', finUsed: '13,451,000', finRatio: '29.89%', shoLimit: '4,500,000', shoUsed: '823,000',   shoRatio: '18.29%' },
+  { ...CM_COMPANIES[6], finLimit: '20,000,000', finUsed: '4,231,000',  finRatio: '21.16%', shoLimit: '2,000,000', shoUsed: '234,000',   shoRatio: '11.70%' },
+  { ...CM_COMPANIES[7], finLimit: '15,000,000', finUsed: '3,123,000',  finRatio: '20.82%', shoLimit: '1,500,000', shoUsed: '198,000',   shoRatio: '13.20%' },
+  { ...CM_COMPANIES[8], finLimit: '25,000,000', finUsed: '6,789,000',  finRatio: '27.16%', shoLimit: '2,500,000', shoUsed: '432,000',   shoRatio: '17.28%' },
+  { ...CM_COMPANIES[9], finLimit: '30,000,000', finUsed: '8,923,000',  finRatio: '29.74%', shoLimit: '3,000,000', shoUsed: '543,000',   shoRatio: '18.10%' },
+];
+
+const CM_EX_DIVIDEND = [
+  { ...CM_COMPANIES[0], exDivDate: '2025/07/16', divVal: '4.50', exRightDate: '2025/07/16', rightVal: '—', listDate: '1994/09/05' },
+  { ...CM_COMPANIES[1], exDivDate: '2025/08/14', divVal: '5.00', exRightDate: '—',           rightVal: '—', listDate: '1991/06/11' },
+  { ...CM_COMPANIES[2], exDivDate: '2025/07/10', divVal: '93.0', exRightDate: '—',           rightVal: '—', listDate: '2001/07/23' },
+  { ...CM_COMPANIES[3], exDivDate: '2025/08/07', divVal: '2.00', exRightDate: '—',           rightVal: '—', listDate: '2003/01/02' },
+  { ...CM_COMPANIES[4], exDivDate: '2025/08/13', divVal: '2.50', exRightDate: '—',           rightVal: '—', listDate: '2002/01/02' },
+  { ...CM_COMPANIES[5], exDivDate: '2025/08/20', divVal: '1.80', exRightDate: '—',           rightVal: '—', listDate: '2002/12/30' },
+  { ...CM_COMPANIES[6], exDivDate: '2025/09/10', divVal: '4.29', exRightDate: '—',           rightVal: '—', listDate: '2000/02/11' },
+  { ...CM_COMPANIES[7], exDivDate: '2025/09/17', divVal: '3.50', exRightDate: '—',           rightVal: '—', listDate: '2002/07/09' },
+  { ...CM_COMPANIES[8], exDivDate: '2025/10/09', divVal: '4.30', exRightDate: '—',           rightVal: '—', listDate: '1986/10/13' },
+  { ...CM_COMPANIES[9], exDivDate: '2025/09/25', divVal: '1.40', exRightDate: '—',           rightVal: '—', listDate: '1989/09/12' },
+];
+
+const CM_FOREIGN = [
+  { ...CM_COMPANIES[0], buy: '8,231,000',  sell: '6,912,000', shares: '14,521,845,000', ratio: '75.12%' },
+  { ...CM_COMPANIES[1], buy: '12,341,000', sell: '9,823,000', shares: '6,234,512,000',  ratio: '44.89%' },
+  { ...CM_COMPANIES[2], buy: '2,134,000',  sell: '1,892,000', shares: '892,341,000',    ratio: '56.34%' },
+  { ...CM_COMPANIES[3], buy: '4,231,000',  sell: '3,812,000', shares: '5,234,123,000',  ratio: '38.12%' },
+  { ...CM_COMPANIES[4], buy: '3,892,000',  sell: '3,341,000', shares: '4,892,341,000',  ratio: '42.67%' },
+  { ...CM_COMPANIES[5], buy: '3,412,000',  sell: '2,923,000', shares: '4,312,567,000',  ratio: '41.23%' },
+  { ...CM_COMPANIES[6], buy: '892,000',    sell: '812,000',   shares: '1,892,341,000',  ratio: '47.31%' },
+  { ...CM_COMPANIES[7], buy: '623,000',    sell: '589,000',   shares: '823,412,000',    ratio: '29.45%' },
+  { ...CM_COMPANIES[8], buy: '1,234,000',  sell: '1,123,000', shares: '2,123,456,000',  ratio: '34.56%' },
+  { ...CM_COMPANIES[9], buy: '1,892,000',  sell: '1,712,000', shares: '2,892,341,000',  ratio: '32.81%' },
+];
+
+const CM_PRICE_LIMIT = [
+  { ...CM_COMPANIES[0], refPrice: '972.00', ceiling: '1,069.00', floor: '875.00', pct: '10%' },
+  { ...CM_COMPANIES[1], refPrice: '118.50', ceiling: '130.00',   floor: '107.00', pct: '10%' },
+  { ...CM_COMPANIES[2], refPrice: '910.00', ceiling: '1,001.00', floor: '819.00', pct: '10%' },
+  { ...CM_COMPANIES[3], refPrice: '84.80',  ceiling: '93.20',    floor: '76.40',  pct: '10%' },
+  { ...CM_COMPANIES[4], refPrice: '97.00',  ceiling: '106.50',   floor: '87.30',  pct: '10%' },
+  { ...CM_COMPANIES[5], refPrice: '110.00', ceiling: '121.00',   floor: '99.00',  pct: '10%' },
+  { ...CM_COMPANIES[6], refPrice: '74.70',  ceiling: '82.10',    floor: '67.20',  pct: '10%' },
+  { ...CM_COMPANIES[7], refPrice: '93.40',  ceiling: '102.50',   floor: '84.10',  pct: '10%' },
+  { ...CM_COMPANIES[8], refPrice: '98.90',  ceiling: '108.50',   floor: '88.90',  pct: '10%' },
+  { ...CM_COMPANIES[9], refPrice: '54.60',  ceiling: '60.00',    floor: '49.20',  pct: '10%' },
+];
+
+const CM_PE_RATIO = [
+  { ...CM_COMPANIES[0], yield: '0.46', pe: '25.34', pb: '6.12' },
+  { ...CM_COMPANIES[1], yield: '4.22', pe: '11.81', pb: '1.34' },
+  { ...CM_COMPANIES[2], yield: '10.21', pe: '9.78',  pb: '3.45' },
+  { ...CM_COMPANIES[3], yield: '2.36', pe: '10.23', pb: '1.08' },
+  { ...CM_COMPANIES[4], yield: '2.58', pe: '12.34', pb: '1.23' },
+  { ...CM_COMPANIES[5], yield: '1.64', pe: '12.89', pb: '1.12' },
+  { ...CM_COMPANIES[6], yield: '5.74', pe: '20.11', pb: '2.67' },
+  { ...CM_COMPANIES[7], yield: '3.75', pe: '22.34', pb: '2.89' },
+  { ...CM_COMPANIES[8], yield: '4.35', pe: '14.23', pb: '1.56' },
+  { ...CM_COMPANIES[9], yield: '2.56', pe: '16.78', pb: '1.43' },
+];
+
+// ── Capital Markets tab components ──────────────────────────────────────────
+
+function CmTableWrapper({ children }: { children: ReactNode }) {
+  return (
+    <div className="de-data-section">
+      <div className="de-data-section-header">
+        <span className="de-data-section-sub">Reference date: {CM_DATE}</span>
+        <span className="de-data-section-date">Source: TWSE</span>
+      </div>
+      <div className="de-data-table-wrap">{children}</div>
+    </div>
+  );
+}
+
+function CmNameCell({ lang, code, nameZh, nameEn }: { lang: 'zh' | 'en'; code: string; nameZh: string; nameEn: string }) {
+  return (
+    <>
+      <td className="code">{code}</td>
+      <td>{lang === 'zh' ? nameZh : nameEn}</td>
+    </>
+  );
+}
+
+function CmDailyQuotesTab({ lang }: { lang: 'zh' | 'en' }) {
+  const zh = lang === 'zh';
+  return (
+    <CmTableWrapper>
+      <table className="de-data-table">
+        <thead>
+          <tr>
+            <th>{zh ? '股票代號' : 'Code'}</th>
+            <th>{zh ? '名稱' : 'Name'}</th>
+            <th className="num">{zh ? '成交股數' : 'Volume'}</th>
+            <th className="num">{zh ? '成交金額' : 'Amount (NT$)'}</th>
+            <th className="num">{zh ? '開盤價' : 'Open'}</th>
+            <th className="num">{zh ? '最高價' : 'High'}</th>
+            <th className="num">{zh ? '最低價' : 'Low'}</th>
+            <th className="num">{zh ? '收盤價' : 'Close'}</th>
+            <th className="num">{zh ? '漲跌' : 'Change'}</th>
+            <th className="num">{zh ? '成交筆數' : 'Transactions'}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {CM_DAILY_QUOTES.map((r) => (
+            <tr key={r.code}>
+              <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
+              <td className="num">{r.vol}</td>
+              <td className="num">{r.amount}</td>
+              <td className="num">{r.open}</td>
+              <td className="num">{r.high}</td>
+              <td className="num">{r.low}</td>
+              <td className="num">{r.close}</td>
+              <td className={`num ${r.change.startsWith('+') ? 'pos' : r.change.startsWith('-') ? 'neg' : ''}`}>{r.change}</td>
+              <td className="num">{r.txn}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </CmTableWrapper>
+  );
+}
+
+function CmDayTradingTab({ lang }: { lang: 'zh' | 'en' }) {
+  const zh = lang === 'zh';
+  return (
+    <CmTableWrapper>
+      <table className="de-data-table">
+        <thead>
+          <tr>
+            <th>{zh ? '股票代號' : 'Code'}</th>
+            <th>{zh ? '名稱' : 'Name'}</th>
+            <th className="num">{zh ? '當沖買進股數' : 'Day-Trade Buy'}</th>
+            <th className="num">{zh ? '當沖賣出股數' : 'Day-Trade Sell'}</th>
+            <th className="num">{zh ? '當沖成交股數' : 'Day-Trade Volume'}</th>
+            <th className="num">{zh ? '占總成交股數比' : '% of Total Vol.'}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {CM_DAY_TRADING.map((r) => (
+            <tr key={r.code}>
+              <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
+              <td className="num">{r.buy}</td>
+              <td className="num">{r.sell}</td>
+              <td className="num">{r.net}</td>
+              <td className="num">{r.ratio}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </CmTableWrapper>
+  );
+}
+
+function CmMarginTab({ lang }: { lang: 'zh' | 'en' }) {
+  const zh = lang === 'zh';
+  return (
+    <CmTableWrapper>
+      <table className="de-data-table">
+        <thead>
+          <tr>
+            <th>{zh ? '股票代號' : 'Code'}</th>
+            <th>{zh ? '名稱' : 'Name'}</th>
+            <th className="num">{zh ? '融資買進' : 'Margin Buy'}</th>
+            <th className="num">{zh ? '融資賣出' : 'Margin Sell'}</th>
+            <th className="num">{zh ? '融資餘額' : 'Margin Balance'}</th>
+            <th className="num">{zh ? '融券賣出' : 'Short Sell'}</th>
+            <th className="num">{zh ? '融券買進' : 'Short Buy'}</th>
+            <th className="num">{zh ? '融券餘額' : 'Short Balance'}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {CM_MARGIN.map((r) => (
+            <tr key={r.code}>
+              <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
+              <td className="num">{r.finBuy}</td>
+              <td className="num">{r.finSell}</td>
+              <td className="num">{r.finBal}</td>
+              <td className="num">{r.shoBuy}</td>
+              <td className="num">{r.shoSell}</td>
+              <td className="num">{r.shoBal}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </CmTableWrapper>
+  );
+}
+
+function CmShortSaleTab({ lang }: { lang: 'zh' | 'en' }) {
+  const zh = lang === 'zh';
+  return (
+    <CmTableWrapper>
+      <table className="de-data-table">
+        <thead>
+          <tr>
+            <th>{zh ? '股票代號' : 'Code'}</th>
+            <th>{zh ? '名稱' : 'Name'}</th>
+            <th className="num">{zh ? '融資限額' : 'Margin Limit'}</th>
+            <th className="num">{zh ? '融資已用' : 'Margin Used'}</th>
+            <th className="num">{zh ? '融資使用率' : 'Margin Util.'}</th>
+            <th className="num">{zh ? '融券限額' : 'Short Limit'}</th>
+            <th className="num">{zh ? '融券已用' : 'Short Used'}</th>
+            <th className="num">{zh ? '融券使用率' : 'Short Util.'}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {CM_SHORT_SALE.map((r) => (
+            <tr key={r.code}>
+              <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
+              <td className="num">{r.finLimit}</td>
+              <td className="num">{r.finUsed}</td>
+              <td className="num">{r.finRatio}</td>
+              <td className="num">{r.shoLimit}</td>
+              <td className="num">{r.shoUsed}</td>
+              <td className="num">{r.shoRatio}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </CmTableWrapper>
+  );
+}
+
+function CmExDividendTab({ lang }: { lang: 'zh' | 'en' }) {
+  const zh = lang === 'zh';
+  return (
+    <CmTableWrapper>
+      <table className="de-data-table">
+        <thead>
+          <tr>
+            <th>{zh ? '股票代號' : 'Code'}</th>
+            <th>{zh ? '名稱' : 'Name'}</th>
+            <th>{zh ? '除息日' : 'Ex-Div Date'}</th>
+            <th className="num">{zh ? '息值(元)' : 'Div. Value'}</th>
+            <th>{zh ? '除權日' : 'Ex-Right Date'}</th>
+            <th className="num">{zh ? '權值' : 'Right Value'}</th>
+            <th>{zh ? '上市日期' : 'Listing Date'}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {CM_EX_DIVIDEND.map((r) => (
+            <tr key={r.code}>
+              <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
+              <td>{r.exDivDate}</td>
+              <td className="num">{r.divVal}</td>
+              <td className="muted">{r.exRightDate}</td>
+              <td className="num muted">{r.rightVal}</td>
+              <td className="muted">{r.listDate}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </CmTableWrapper>
+  );
+}
+
+function CmForeignTab({ lang }: { lang: 'zh' | 'en' }) {
+  const zh = lang === 'zh';
+  return (
+    <CmTableWrapper>
+      <table className="de-data-table">
+        <thead>
+          <tr>
+            <th>{zh ? '股票代號' : 'Code'}</th>
+            <th>{zh ? '名稱' : 'Name'}</th>
+            <th className="num">{zh ? '外資買進(股)' : 'Foreign Buy'}</th>
+            <th className="num">{zh ? '外資賣出(股)' : 'Foreign Sell'}</th>
+            <th className="num">{zh ? '外資持股股數' : 'Foreign Holdings'}</th>
+            <th className="num">{zh ? '持股比例' : 'Holding %'}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {CM_FOREIGN.map((r) => (
+            <tr key={r.code}>
+              <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
+              <td className="num">{r.buy}</td>
+              <td className="num">{r.sell}</td>
+              <td className="num">{r.shares}</td>
+              <td className="num">{r.ratio}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </CmTableWrapper>
+  );
+}
+
+function CmPriceLimitTab({ lang }: { lang: 'zh' | 'en' }) {
+  const zh = lang === 'zh';
+  return (
+    <CmTableWrapper>
+      <table className="de-data-table">
+        <thead>
+          <tr>
+            <th>{zh ? '股票代號' : 'Code'}</th>
+            <th>{zh ? '名稱' : 'Name'}</th>
+            <th className="num">{zh ? '參考收盤價' : 'Ref. Price'}</th>
+            <th className="num">{zh ? '漲停價格' : 'Upper Limit'}</th>
+            <th className="num">{zh ? '跌停價格' : 'Lower Limit'}</th>
+            <th className="num">{zh ? '漲跌幅限制' : 'Limit %'}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {CM_PRICE_LIMIT.map((r) => (
+            <tr key={r.code}>
+              <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
+              <td className="num">{r.refPrice}</td>
+              <td className="num pos">{r.ceiling}</td>
+              <td className="num neg">{r.floor}</td>
+              <td className="num">{r.pct}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </CmTableWrapper>
+  );
+}
+
+function CmPeRatioTab({ lang }: { lang: 'zh' | 'en' }) {
+  const zh = lang === 'zh';
+  return (
+    <CmTableWrapper>
+      <table className="de-data-table">
+        <thead>
+          <tr>
+            <th>{zh ? '股票代號' : 'Code'}</th>
+            <th>{zh ? '名稱' : 'Name'}</th>
+            <th className="num">{zh ? '殖利率(%)' : 'Dividend Yield (%)'}</th>
+            <th className="num">{zh ? '本益比' : 'P/E Ratio'}</th>
+            <th className="num">{zh ? '股價淨值比' : 'P/B Ratio'}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {CM_PE_RATIO.map((r) => (
+            <tr key={r.code}>
+              <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
+              <td className="num">{r.yield}</td>
+              <td className="num">{r.pe}</td>
+              <td className="num">{r.pb}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </CmTableWrapper>
+  );
+}
+
+// ── Government Regulations — new tab data ───────────────────────────────────
+
+const GOV_REG_DISQUALIFIED = [
+  { name: '豐盛工程有限公司',       id: '12345678', period: '2024/03/01–2026/02/28', reason: '偽造文書、詐欺', agency: '行政院公共工程委員會' },
+  { name: '大成建設股份有限公司',   id: '23456789', period: '2024/05/15–2025/05/14', reason: '圍標', agency: '採購機關' },
+  { name: '信義科技股份有限公司',   id: '34567890', period: '2023/11/01–2024/10/31', reason: '履約品質不符', agency: '行政院公共工程委員會' },
+  { name: '華光電子工業股份有限公司', id: '45678901', period: '2024/01/20–2025/01/19', reason: '違反採購法', agency: '採購機關' },
+  { name: '東方資訊股份有限公司',   id: '56789012', period: '2024/07/01–2026/06/30', reason: '洗錢防制', agency: '法務部' },
+  { name: '新興企業股份有限公司',   id: '67890123', period: '2023/09/01–2024/08/31', reason: '偽造標單', agency: '行政院公共工程委員會' },
+  { name: '明德科技股份有限公司',   id: '78901234', period: '2024/04/10–2025/04/09', reason: '違反採購法', agency: '採購機關' },
+  { name: '長隆機械有限公司',       id: '89012345', period: '2024/08/01–2025/07/31', reason: '未依約交貨', agency: '採購機關' },
+  { name: '興業貿易股份有限公司',   id: '90123456', period: '2023/12/01–2024/11/30', reason: '圍標', agency: '行政院公共工程委員會' },
+  { name: '金鑫企業有限公司',       id: '01234567', period: '2024/06/01–2025/05/31', reason: '不實申報', agency: '採購機關' },
+];
+
+const GOV_REG_POLLUTION = [
+  { name: '南亞塑膠工業股份有限公司', city: '桃園市', date: '2024/10/15', reason: '廢水超標排放', fine: '200,000', law: '水污染防治法' },
+  { name: '台灣化學纖維股份有限公司', city: '彰化縣', date: '2024/09/20', reason: '空氣污染物超量', fine: '300,000', law: '空氣污染防制法' },
+  { name: '長春石油化學股份有限公司', city: '雲林縣', date: '2024/08/11', reason: '有毒物質洩漏', fine: '500,000', law: '毒性化學物質管理法' },
+  { name: '中鋼股份有限公司',         city: '高雄市', date: '2024/11/03', reason: '煙塵超標', fine: '150,000', law: '空氣污染防制法' },
+  { name: '永豐餘造紙股份有限公司',   city: '苗栗縣', date: '2024/07/22', reason: '廢水處理不當', fine: '120,000', law: '水污染防治法' },
+  { name: '台灣化成工業股份有限公司', city: '台南市', date: '2024/12/05', reason: '廢棄物非法棄置', fine: '400,000', law: '廢棄物清理法' },
+  { name: '大同股份有限公司',         city: '台北市', date: '2024/06/18', reason: '噪音超標', fine: '80,000',  law: '噪音管制法' },
+  { name: '義聯鋼鐵股份有限公司',     city: '高雄市', date: '2024/05/29', reason: '廢氣排放超標', fine: '250,000', law: '空氣污染防制法' },
+  { name: '東元電機股份有限公司',     city: '桃園市', date: '2024/03/14', reason: '廢水未達標', fine: '100,000', law: '水污染防治法' },
+  { name: '宏碁股份有限公司',         city: '新北市', date: '2024/04/08', reason: '有害事業廢棄物違規', fine: '180,000', law: '廢棄物清理法' },
+];
+
+const GOV_REG_LABOR = [
+  { name: '某某製造股份有限公司',   id: '11223344', date: '2024/11/15', law: '勞動基準法第24條', fine: '60,000',  detail: '未給付加班費' },
+  { name: '大統食品股份有限公司',   id: '22334455', date: '2024/10/08', law: '勞動基準法第38條', fine: '30,000',  detail: '特別休假未依規定' },
+  { name: '晶圓代工技術股份有限公司', id: '33445566', date: '2024/09/22', law: '職業安全衛生法第6條', fine: '90,000',  detail: '安全設備未符合規定' },
+  { name: '精密機械製造有限公司',   id: '44556677', date: '2024/08/14', law: '勞動基準法第30條', fine: '45,000',  detail: '工時超過法定上限' },
+  { name: '東南電子股份有限公司',   id: '55667788', date: '2024/07/30', law: '性別平等工作法第10條', fine: '100,000', detail: '同工不同酬' },
+  { name: '長發建設股份有限公司',   id: '66778899', date: '2024/06/19', law: '職業安全衛生法第17條', fine: '120,000', detail: '未提供安全防護' },
+  { name: '寶達通訊股份有限公司',   id: '77889900', date: '2024/05/07', law: '勞動基準法第14條', fine: '50,000',  detail: '未依法訂立勞動契約' },
+  { name: '金豐紡織股份有限公司',   id: '88990011', date: '2024/04/25', law: '勞工退休金條例第14條', fine: '75,000',  detail: '未足額提撥退休金' },
+  { name: '凱旋科技股份有限公司',   id: '99001122', date: '2024/03/13', law: '勞動基準法第59條', fine: '40,000',  detail: '職災未依規補償' },
+  { name: '和順物流股份有限公司',   id: '00112233', date: '2024/02/28', law: '勞動基準法第79條', fine: '30,000',  detail: '工資記錄不全' },
+];
+
+// ── Government Regulations new tab components ────────────────────────────────
+
+function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
+  const zh = lang === 'zh';
+  return (
+    <div className="de-data-section">
+      <div className="de-data-section-header">
+        <span className="de-data-section-title">
+          {zh ? '拒絕往來廠商公告' : 'Announcement of Disqualified Vendors'}
+        </span>
+        <span className="de-data-section-date">Source: 行政院公共工程委員會</span>
+      </div>
+      <div className="de-data-table-wrap">
+        <table className="de-data-table">
+          <thead>
+            <tr>
+              <th>{zh ? '廠商名稱' : 'Vendor Name'}</th>
+              <th>{zh ? '統一編號' : 'Tax ID'}</th>
+              <th>{zh ? '禁止往來期間' : 'Banned Period'}</th>
+              <th>{zh ? '違法事由' : 'Violation Reason'}</th>
+              <th>{zh ? '主管機關' : 'Authority'}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {GOV_REG_DISQUALIFIED.map((r) => (
+              <tr key={r.id}>
+                <td>{r.name}</td>
+                <td className="code">{r.id}</td>
+                <td className="muted">{r.period}</td>
+                <td>{r.reason}</td>
+                <td className="muted">{r.agency}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
+  const zh = lang === 'zh';
+  return (
+    <div className="de-data-section">
+      <div className="de-data-section-header">
+        <span className="de-data-section-title">
+          {zh ? '列管事業污染源裁處資料' : 'Regulatory data on industrial pollution sources'}
+        </span>
+        <span className="de-data-section-date">Source: 環境部</span>
+      </div>
+      <div className="de-data-table-wrap">
+        <table className="de-data-table">
+          <thead>
+            <tr>
+              <th>{zh ? '事業名稱' : 'Company Name'}</th>
+              <th>{zh ? '所在縣市' : 'City/County'}</th>
+              <th>{zh ? '裁處日期' : 'Penalty Date'}</th>
+              <th>{zh ? '違規事由' : 'Violation'}</th>
+              <th className="num">{zh ? '裁處金額(元)' : 'Fine (NT$)'}</th>
+              <th>{zh ? '法規依據' : 'Regulation'}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {GOV_REG_POLLUTION.map((r) => (
+              <tr key={r.name}>
+                <td>{r.name}</td>
+                <td className="muted">{r.city}</td>
+                <td className="muted">{r.date}</td>
+                <td>{r.reason}</td>
+                <td className="num">{r.fine}</td>
+                <td className="muted">{r.law}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function GovLaborTab({ lang }: { lang: 'zh' | 'en' }) {
+  const zh = lang === 'zh';
+  return (
+    <div className="de-data-section">
+      <div className="de-data-section-header">
+        <span className="de-data-section-title">
+          {zh ? '違反勞動法令事業單位' : 'Violations of Labor Laws'}
+        </span>
+        <span className="de-data-section-date">Source: 勞動部</span>
+      </div>
+      <div className="de-data-table-wrap">
+        <table className="de-data-table">
+          <thead>
+            <tr>
+              <th>{zh ? '事業單位名稱' : 'Company Name'}</th>
+              <th>{zh ? '統一編號' : 'Tax ID'}</th>
+              <th>{zh ? '違法日期' : 'Violation Date'}</th>
+              <th>{zh ? '違反法規' : 'Regulation Violated'}</th>
+              <th className="num">{zh ? '裁罰金額(元)' : 'Fine (NT$)'}</th>
+              <th>{zh ? '處分情形' : 'Details'}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {GOV_REG_LABOR.map((r) => (
+              <tr key={r.id}>
+                <td>{r.name}</td>
+                <td className="code">{r.id}</td>
+                <td className="muted">{r.date}</td>
+                <td className="muted">{r.law}</td>
+                <td className="num">{r.fine}</td>
+                <td>{r.detail}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 export default function DataCategoryContent({ params }: { params: { category: string } }) {
+  const { lang } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTag, setActiveTag] = useState<string | null>(null);
-  const [activeSubTab, setActiveSubTab] = useState('articles');
 
-  const cat = CATEGORIES_MAP[params.category];
+  const isCapital = params.category === 'capital-markets';
   const isEsg = params.category === 'esg';
   const isGov = params.category === 'government-regulations';
-  const hasSubTabs = isEsg || isGov;
-  const subTabs = isEsg ? ESG_TABS : isGov ? GOV_TABS : [];
+
+  const CAPITAL_TABS = [
+    { id: 'daily-quotes',      label: lang === 'zh' ? '每日收盤行情' : 'Daily Quotes' },
+    { id: 'day-trading',       label: lang === 'zh' ? '每日沖銷交易標記及統計' : 'Objects and Statistics for Day Trading' },
+    { id: 'margin',            label: lang === 'zh' ? '融資融券餘額' : 'Margin Transaction Summary' },
+    { id: 'short-sale',        label: lang === 'zh' ? '信用額度總量管制餘額檔' : 'Daily Short Sale Balances' },
+    { id: 'ex-dividend',       label: lang === 'zh' ? '除權息及上下市資訊檔' : 'Ex-Right/Dividend and List/Delist Data' },
+    { id: 'foreign-investors', label: lang === 'zh' ? '外資投資持股統計' : 'Summary of Invested Amount of Foreign Investors' },
+    { id: 'price-limit',       label: lang === 'zh' ? '漲跌幅度表檔' : 'Price Variation Limit' },
+    { id: 'pe-ratio',          label: lang === 'zh' ? '個股日本益比、殖利率及股價淨值比' : 'Individual Stock P/E Ratio, Dividend Yield, and P/B Ratio' },
+  ];
+
+  const GOV_TABS = [
+    { id: 'articles',             label: lang === 'zh' ? '相關法規' : 'Articles' },
+    { id: 'taiwan-tax',           label: lang === 'zh' ? '每週台灣稅務快訊' : 'Weekly Taiwan Tax News Summary' },
+    { id: 'intl-tax',             label: lang === 'zh' ? '每週國際稅務快訊' : 'Weekly International Tax News Summary' },
+    { id: 'disqualified-vendors', label: lang === 'zh' ? '拒絕往來廠商公告' : 'Announcement of Disqualified Vendors' },
+    { id: 'pollution-sources',    label: lang === 'zh' ? '列管事業污染源裁處資料' : 'Regulatory data on industrial pollution sources' },
+    { id: 'labor-violations',     label: lang === 'zh' ? '違反勞動法令事業單位' : 'Violations of Labor Laws' },
+  ];
+
+  const defaultTab = isCapital ? 'daily-quotes' : 'articles';
+  const [activeSubTab, setActiveSubTab] = useState(defaultTab);
+
+  const hasSubTabs = isEsg || isGov || isCapital;
+  const subTabs = isCapital ? CAPITAL_TABS : isEsg ? ESG_TABS : isGov ? GOV_TABS : [];
+
+  const cat = CATEGORIES_MAP[params.category];
 
   const allTags = useMemo(() => {
     if (!cat) return [];
@@ -468,11 +1058,13 @@ export default function DataCategoryContent({ params }: { params: { category: st
                   </div>
                 </div>
                 <p className="de-cat-hero-desc">{cat.description}</p>
-                <div className="de-cat-hero-stats">
-                  <span className="de-cat-stat" style={{ color: cat.color }}>{cat.items.length} records</span>
-                  <span className="de-cat-stat-divider">·</span>
-                  <span className="de-cat-stat">{allTags.length} tags</span>
-                </div>
+                {!isCapital && (
+                  <div className="de-cat-hero-stats">
+                    <span className="de-cat-stat" style={{ color: cat.color }}>{cat.items.length} records</span>
+                    <span className="de-cat-stat-divider">·</span>
+                    <span className="de-cat-stat">{allTags.length} tags</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -481,7 +1073,18 @@ export default function DataCategoryContent({ params }: { params: { category: st
                 <SubTabBar tabs={subTabs} active={activeSubTab} color={cat.color} onChange={handleSubTabChange} />
               )}
 
-              {activeSubTab === 'articles' && (
+              {/* Capital Markets tabs */}
+              {isCapital && activeSubTab === 'daily-quotes'      && <CmDailyQuotesTab lang={lang} />}
+              {isCapital && activeSubTab === 'day-trading'       && <CmDayTradingTab lang={lang} />}
+              {isCapital && activeSubTab === 'margin'            && <CmMarginTab lang={lang} />}
+              {isCapital && activeSubTab === 'short-sale'        && <CmShortSaleTab lang={lang} />}
+              {isCapital && activeSubTab === 'ex-dividend'       && <CmExDividendTab lang={lang} />}
+              {isCapital && activeSubTab === 'foreign-investors' && <CmForeignTab lang={lang} />}
+              {isCapital && activeSubTab === 'price-limit'       && <CmPriceLimitTab lang={lang} />}
+              {isCapital && activeSubTab === 'pe-ratio'          && <CmPeRatioTab lang={lang} />}
+
+              {/* ESG / Gov tabs that show articles */}
+              {!isCapital && activeSubTab === 'articles' && (
                 <ArticlesTab
                   items={filteredItems}
                   accentColor={cat.color}
@@ -494,9 +1097,12 @@ export default function DataCategoryContent({ params }: { params: { category: st
                 />
               )}
 
-              {activeSubTab === 'reports' && isEsg && <EsgReportsTab />}
-              {activeSubTab === 'taiwan-tax' && isGov && <TaiwanTaxNewsTab />}
-              {activeSubTab === 'intl-tax' && isGov && <WorldMapTab />}
+              {activeSubTab === 'reports'               && isEsg  && <EsgReportsTab />}
+              {activeSubTab === 'taiwan-tax'            && isGov  && <TaiwanTaxNewsTab />}
+              {activeSubTab === 'intl-tax'              && isGov  && <WorldMapTab />}
+              {activeSubTab === 'disqualified-vendors'  && isGov  && <GovDisqualifiedTab lang={lang} />}
+              {activeSubTab === 'pollution-sources'     && isGov  && <GovPollutionTab lang={lang} />}
+              {activeSubTab === 'labor-violations'      && isGov  && <GovLaborTab lang={lang} />}
             </div>
           </div>
         </main>
