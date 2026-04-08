@@ -417,6 +417,20 @@ function FilterBar({
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const [activeTab, setActiveTab] = useState<FilterTab>('Company');
+  const [relOpen, setRelOpen] = useState(false);
+  const [industryOpen, setIndustryOpen] = useState(false);
+  const relRef = useRef<HTMLDivElement>(null);
+  const industryRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleOutside(e: MouseEvent) {
+      if (relRef.current && !relRef.current.contains(e.target as Node)) setRelOpen(false);
+      if (industryRef.current && !industryRef.current.contains(e.target as Node))
+        setIndustryOpen(false);
+    }
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, []);
 
   const q = query.toLowerCase().trim();
   const showQueryResults = q.length > 0;
@@ -444,11 +458,12 @@ function FilterBar({
     .map((p) => p.val)
     .slice(0, 3);
 
-  const relationSelected = new Set([RELATION_LABEL_MAP.get(relationType) ?? '']);
+  const selectedIndustry =
+    selectedIndustries.size === 1 ? [...selectedIndustries][0] : null;
 
   return (
     <div className="rmap-filter-bar rmap-filter-bar--above">
-      {/* Search row - full width */}
+      {/* Search + dropdown controls row */}
       <div className="rmap-filter-bar-row">
         <div className="rmap-titled-control" style={{ flex: 1 }}>
           <div className="rmap-titled-control-label">Let&#39;s explore RMAP together…</div>
@@ -564,29 +579,86 @@ function FilterBar({
             )}
           </div>
         </div>
+
+        {/* Relation Type dropdown */}
+        <div className="rmap-titled-control">
+          <div className="rmap-titled-control-label">RELATION TYPE</div>
+          <div className="rmap-rel-wrap" ref={relRef}>
+            <button
+              className="rmap-rel-btn"
+              onClick={() => {
+                setRelOpen((o) => !o);
+                setIndustryOpen(false);
+              }}
+            >
+              {RELATION_LABEL_MAP.get(relationType) ?? 'Select'}
+              <span className="rmap-dropdown-arrow">▾</span>
+            </button>
+            {relOpen && (
+              <div className="rmap-rel-dropdown">
+                {CUSTOMER_RELATION_TYPES.map((rt) => (
+                  <button
+                    key={rt.key}
+                    className={`rmap-rel-option${relationType === rt.key ? ' rmap-rel-option--active' : ''}`}
+                    onClick={() => {
+                      onRelationChange(rt.key);
+                      setRelOpen(false);
+                    }}
+                  >
+                    <span className="rmap-checkmark">{relationType === rt.key ? '✓' : ''}</span>
+                    {rt.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Industry dropdown */}
+        <div className="rmap-titled-control">
+          <div className="rmap-titled-control-label">INDUSTRY</div>
+          <div className="rmap-rel-wrap" ref={industryRef}>
+            <button
+              className="rmap-rel-btn"
+              onClick={() => {
+                setIndustryOpen((o) => !o);
+                setRelOpen(false);
+              }}
+            >
+              {selectedIndustry ?? 'All Industries'}
+              <span className="rmap-dropdown-arrow">▾</span>
+            </button>
+            {industryOpen && (
+              <div className="rmap-rel-dropdown">
+                <button
+                  className={`rmap-rel-option${!selectedIndustry ? ' rmap-rel-option--active' : ''}`}
+                  onClick={() => {
+                    onClearAllIndustries();
+                    setIndustryOpen(false);
+                  }}
+                >
+                  <span className="rmap-checkmark">{!selectedIndustry ? '✓' : ''}</span>
+                  All Industries
+                </button>
+                {UNIQUE_INDUSTRIES.map((ind) => (
+                  <button
+                    key={ind}
+                    className={`rmap-rel-option${selectedIndustry === ind ? ' rmap-rel-option--active' : ''}`}
+                    onClick={() => {
+                      onClearAllIndustries();
+                      if (selectedIndustry !== ind) onIndustryToggle(ind);
+                      setIndustryOpen(false);
+                    }}
+                  >
+                    <span className="rmap-checkmark">{selectedIndustry === ind ? '✓' : ''}</span>
+                    {ind}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-
-      {/* Relation Type tags */}
-      <TagFilterRow
-        label="RELATION TYPE"
-        tags={CUSTOMER_RELATION_TYPES.map((r) => r.label)}
-        selected={relationSelected}
-        onToggle={(label) => {
-          const rt = CUSTOMER_RELATION_TYPES.find((r) => r.label === label);
-          if (rt) onRelationChange(rt.key);
-        }}
-        onClearAll={() => onRelationChange(CUSTOMER_RELATION_TYPES[0].key)}
-        singleSelect
-      />
-
-      {/* Industry tags */}
-      <TagFilterRow
-        label="INDUSTRY"
-        tags={UNIQUE_INDUSTRIES}
-        selected={selectedIndustries}
-        onToggle={onIndustryToggle}
-        onClearAll={onClearAllIndustries}
-      />
 
       {/* Product Category tags */}
       <TagFilterRow
