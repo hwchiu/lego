@@ -1,11 +1,11 @@
 ---
 name: tmic-ui-style
-description: tMIC 網站的完整視覺風格參照手冊。涵蓋設計令牌（Design Tokens）、色彩系統、字體排版、間距尺度、陰影層級、動畫系統、元件樣式模板、響應式斷點規則。建立新頁面、新元件或修改 UI 時必須參照此 Skill，確保視覺一致性。
+description: MIC 網站的完整視覺風格參照手冊。涵蓋設計令牌（Design Tokens）、色彩系統、字體排版、間距尺度、陰影層級、動畫系統、元件樣式模板、響應式斷點規則。建立新頁面、新元件或修改 UI 時必須參照此 Skill，確保視覺一致性。
 ---
 
-# tMIC UI Style Guide
+# MIC UI Style Guide
 
-tMIC 金融資訊儀表板的完整視覺風格體系——從 `app/globals.css`（17,000+ 行）中提煉而成的可反覆參照規範。
+MIC 金融資訊儀表板的完整視覺風格體系——從 `app/globals.css`（17,000+ 行）中提煉而成的可反覆參照規範。
 
 ## 設計哲學
 

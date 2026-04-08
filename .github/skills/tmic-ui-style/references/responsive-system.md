@@ -1,6 +1,6 @@
 # 響應式系統
 
-tMIC 的 Desktop-first 響應式設計規範——斷點定義、各斷點行為、Mobile Sidebar 模式。
+MIC 的 Desktop-first 響應式設計規範——斷點定義、各斷點行為、Mobile Sidebar 模式。
 
 ## 斷點定義
 

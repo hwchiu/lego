@@ -1,6 +1,6 @@
 # Design Tokens 完整規格
 
-tMIC 設計令牌（Design Tokens）的完整參照文件，涵蓋所有 CSS 自訂屬性與衍生值。
+MIC 設計令牌（Design Tokens）的完整參照文件，涵蓋所有 CSS 自訂屬性與衍生值。
 
 ## 色彩令牌
 
