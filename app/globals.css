@@ -5100,7 +5100,7 @@ input, select { font-family: var(--font); }
   align-items: center;
   gap: 8px;
   width: 100%;
-  overflow: hidden;
+  min-width: 0;
 }
 /* Expanded modifier — allows tags to wrap to multiple lines */
 .rmap-industry-filter-row--expanded {
@@ -17489,5 +17489,86 @@ html.dark .cwl-ai-context-card {
   }
   .mrmap-scenario-card-wrap {
     position: relative;
+  }
+}
+
+/* ===== DATA EXPLORE — CAPITAL MARKETS & GOV REGS TABLES ===== */
+
+.de-data-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  margin-top: 4px;
+}
+.de-data-table-wrap::-webkit-scrollbar { height: 5px; }
+.de-data-table-wrap::-webkit-scrollbar-thumb { background: var(--c-border-2); border-radius: 3px; }
+
+.de-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.de-data-table th {
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--c-text-3);
+  background: var(--c-bg);
+  border-bottom: 1px solid var(--c-border);
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+}
+.de-data-table th.num { text-align: right; }
+
+.de-data-table tbody tr td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--c-border);
+  color: var(--c-text-2);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.de-data-table tbody tr:last-child td { border-bottom: none; }
+.de-data-table tbody tr:hover td { background: var(--c-bg); }
+.de-data-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.de-data-table td.pos { color: var(--c-pos); font-weight: 600; }
+.de-data-table td.neg { color: var(--c-neg); font-weight: 600; }
+.de-data-table td.code { font-weight: 700; color: var(--c-text); letter-spacing: 0.04em; }
+.de-data-table td.muted { color: var(--c-text-3); font-size: 11px; }
+
+.de-data-section {
+  margin-bottom: 28px;
+}
+.de-data-section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.de-data-section-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--c-text);
+}
+.de-data-section-sub {
+  font-size: 11.5px;
+  color: var(--c-text-3);
+}
+.de-data-section-date {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--c-text-4);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 768px) {
+  .de-data-table-wrap {
+    border-radius: 0;
+    margin-left: -16px;
+    margin-right: -16px;
+    border-left: none;
+    border-right: none;
   }
 }
