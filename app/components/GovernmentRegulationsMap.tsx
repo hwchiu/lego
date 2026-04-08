@@ -125,7 +125,7 @@ export default function WorldMapTab() {
       <div className="de-intl-tax-layout">
         {/* Left: week sidebar */}
         <nav className="de-intl-tax-sidebar" aria-label="Week list">
-          <div className="de-intl-tax-sidebar-title">週別 (Week)</div>
+          <div className="de-intl-tax-sidebar-title">WEEK</div>
           {weeks.map((week) => {
             const count = allItemsWithCountry.filter(({ item }) => item.week === week).length;
             return (
