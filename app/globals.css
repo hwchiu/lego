@@ -2166,7 +2166,7 @@ input, select { font-family: var(--font); }
   width: 100%;
   border-collapse: collapse;
   font-size: 12.5px;
-  min-width: 1400px;
+  min-width: 1550px;
 }
 .wl-th {
   padding: 10px 12px;
@@ -2185,6 +2185,9 @@ input, select { font-family: var(--font); }
   left: 0;
   z-index: 2;
 }
+.wl-th--sparkline {
+  min-width: 120px;
+}
 .wl-td {
   padding: 9px 12px;
   text-align: right;
@@ -2199,12 +2202,19 @@ input, select { font-family: var(--font); }
   background: var(--c-white);
   z-index: 1;
 }
+.wl-td--sparkline {
+  padding: 5px 12px;
+  vertical-align: middle;
+}
 .wl-tr:last-child .wl-td { border-bottom: none; }
 .wl-tr:hover .wl-td { background: var(--c-bg); }
 .wl-tr:hover .wl-td--sticky { background: var(--c-bg); }
 .wl-symbol {
   font-weight: 700;
   color: #2563eb;
+}
+.wl-sparkline-1y {
+  display: block;
 }
 .pos { color: var(--c-pos); }
 .neg { color: var(--c-neg); }
@@ -3751,7 +3761,7 @@ input, select { font-family: var(--font); }
 }
 
 .cp-card-title {
-  font-size: 25px;
+  font-size: 16px;
   font-weight: 600;
   color: #000000;
   text-align: center;
@@ -17766,4 +17776,148 @@ html.dark .cwl-ai-context-card {
   .cp-pec-card-body { grid-template-columns: 1fr; }
   .cp-pec-card-header { flex-direction: column; gap: 10px; }
   .cp-pec-card-actions { align-self: flex-end; }
+}
+
+/* ── Pre-Earning Call: side-by-side row layout ── */
+.cp-pec-wrap {
+  max-width: none;
+}
+.cp-pec-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+  align-items: start;
+}
+
+/* ── AI Transcript card ── */
+.cp-pec-ai-card {
+  border-color: #818cf820;
+  background: linear-gradient(160deg, #f8f9ff 0%, #ffffff 60%);
+}
+.cp-pec-ai-badge {
+  background: #6366f114 !important;
+  color: #6366f1 !important;
+}
+.cp-pec-ai-tag {
+  background: #6366f10d !important;
+  color: #6366f1 !important;
+  border-color: #818cf840 !important;
+}
+.cp-pec-ai-sentiment {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.cp-pec-ai-sentiment-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.06em;
+}
+.cp-pec-ai-sentiment--bullish {
+  background: #dcfce7;
+  color: #16a34a;
+}
+.cp-pec-ai-sentiment--neutral {
+  background: #fef9c3;
+  color: #a16207;
+}
+.cp-pec-ai-sentiment--bearish {
+  background: #fee2e2;
+  color: #dc2626;
+}
+.cp-pec-ai-score-bar {
+  width: 60px;
+  height: 5px;
+  background: var(--c-border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.cp-pec-ai-score-fill {
+  height: 100%;
+  background: #6366f1;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+.cp-pec-ai-score-label {
+  font-size: 11px;
+  color: var(--c-text-3);
+  white-space: nowrap;
+}
+.cp-pec-ai-body {
+  border-top: 1px solid var(--c-border);
+  padding-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.cp-pec-ai-block {
+  /* each analysis paragraph block */
+}
+.cp-pec-ai-text {
+  font-size: 13px;
+  color: var(--c-text-2);
+  line-height: 1.65;
+  margin: 0;
+}
+.cp-pec-ai-quotes-section {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--c-border);
+}
+.cp-pec-ai-quotes-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: var(--c-text-3);
+  width: 100%;
+  text-align: left;
+  margin-bottom: 8px;
+}
+.cp-pec-ai-quotes-toggle:hover { color: var(--c-text); }
+.cp-pec-ai-quote-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cp-pec-ai-quote-item {
+  font-size: 12.5px;
+  color: var(--c-text-2);
+  font-style: italic;
+  padding: 8px 12px;
+  border-left: 3px solid #6366f1;
+  background: #6366f108;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  line-height: 1.55;
+}
+.cp-pec-ai-risks-section {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--c-border);
+}
+.cp-pec-ai-risk-list {
+  margin: 0;
+  padding-left: 16px;
+  list-style: disc;
+}
+.cp-pec-ai-risk-item {
+  font-size: 13px;
+  color: #dc2626;
+  line-height: 1.6;
+  margin-bottom: 4px;
+}
+
+/* ── PEC row responsive ── */
+@media (max-width: 1100px) {
+  .cp-pec-row { grid-template-columns: 1fr; }
 }
