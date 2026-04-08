@@ -150,13 +150,13 @@ interface MetricConfig {
 }
 
 const METRIC_CONFIGS: Record<string, MetricConfig> = {
-  Revenue: { getValue: (d) => d.totalRevenue, color: '#E53935', label: 'Total Revenue', isPercent: false },
-  'Gross Profit': { getValue: (d) => d.grossProfit, color: '#E53935', label: 'Gross Profit', isPercent: false },
-  'Gross Margin': { getValue: (d) => d.grossMarginPct, color: '#00897B', label: 'Gross Margin (%)', isPercent: true },
-  'Operating Margin': { getValue: (d) => d.operatingMarginPct, color: '#F57C00', label: 'Operating Margin (%)', isPercent: true },
-  'Net Income': { getValue: (d) => d.netIncome, color: '#2196F3', label: 'Net Income', isPercent: false },
-  'Net Margin': { getValue: (d) => d.netMarginPct, color: '#7B1FA2', label: 'Net Margin (%)', isPercent: true },
-  'Cash & Cash Equivalents': { getValue: (d) => d.cashEquivalents, color: '#0288D1', label: 'Cash & Equivalents', isPercent: false },
+  Revenue: { getValue: (d) => d.totalRevenue, color: '#bf3030', label: 'Total Revenue', isPercent: false },
+  'Gross Profit': { getValue: (d) => d.grossProfit, color: '#bf3030', label: 'Gross Profit', isPercent: false },
+  'Gross Margin': { getValue: (d) => d.grossMarginPct, color: '#bf3030', label: 'Gross Margin (%)', isPercent: true },
+  'Operating Margin': { getValue: (d) => d.operatingMarginPct, color: '#bf3030', label: 'Operating Margin (%)', isPercent: true },
+  'Net Income': { getValue: (d) => d.netIncome, color: '#bf3030', label: 'Net Income', isPercent: false },
+  'Net Margin': { getValue: (d) => d.netMarginPct, color: '#bf3030', label: 'Net Margin (%)', isPercent: true },
+  'Cash & Cash Equivalents': { getValue: (d) => d.cashEquivalents, color: '#bf3030', label: 'Cash & Equivalents', isPercent: false },
 };
 
 interface BarChartProps {
@@ -205,7 +205,7 @@ function FinancialBarChart({ data, activeMetric }: BarChartProps) {
         return (
           <g key={tick}>
             <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y} stroke="#f0f0f0" strokeWidth="1" />
-            <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize="10" fill="#9ca3af">
+            <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize="10" fill="#000000">
               {formatTick(tick)}
             </text>
           </g>
@@ -227,7 +227,7 @@ function FinancialBarChart({ data, activeMetric }: BarChartProps) {
                 y={PAD.top + chartH - revenueH}
                 width={barW}
                 height={revenueH}
-                fill={isGuidance ? '#ef9a9a' : '#E53935'}
+                fill={isGuidance ? '#ef9a9a' : '#bf3030'}
                 opacity={isGuidance ? 0.55 : 1}
                 rx="2"
               />
@@ -236,11 +236,11 @@ function FinancialBarChart({ data, activeMetric }: BarChartProps) {
                 y={PAD.top + chartH - incomeH}
                 width={barW}
                 height={incomeH}
-                fill={isGuidance ? '#90caf9' : '#2196F3'}
+                fill={isGuidance ? '#90caf9' : '#1673EE'}
                 opacity={isGuidance ? 0.55 : 1}
                 rx="2"
               />
-              <text x={cx} y={H - 8} textAnchor="middle" fontSize="10" fill="#9ca3af">
+              <text x={cx} y={H - 8} textAnchor="middle" fontSize="10" fill="#000000">
                 {d.quarter}
               </text>
             </g>
@@ -261,7 +261,7 @@ function FinancialBarChart({ data, activeMetric }: BarChartProps) {
               opacity={isGuidance ? 0.55 : 1}
               rx="2"
             />
-            <text x={cx} y={H - 8} textAnchor="middle" fontSize="10" fill="#9ca3af">
+            <text x={cx} y={H - 8} textAnchor="middle" fontSize="10" fill="#000000">
               {d.quarter}
             </text>
           </g>
@@ -331,17 +331,17 @@ function DoiRevenueChart({ data }: DoiRevenueChartProps) {
         return (
           <g key={t}>
             <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y} stroke="#f0f0f0" strokeWidth="1" />
-            <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize="10" fill="#9ca3af">
+            <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize="10" fill="#000000">
               {doiVal}
             </text>
-            <text x={W - PAD.right + 6} y={y + 4} textAnchor="start" fontSize="10" fill="#9ca3af">
+            <text x={W - PAD.right + 6} y={y + 4} textAnchor="start" fontSize="10" fill="#000000">
               {revVal >= 1000 ? `${Math.round(revVal / 1000)}k` : revVal}
             </text>
           </g>
         );
       })}
 
-      {/* DOI bars (blue) */}
+      {/* DOI bars (primary) */}
       {data.map((d, i) => {
         const cx = PAD.left + i * step;
         const h = (d.doi / doiMax) * chartH;
@@ -352,17 +352,17 @@ function DoiRevenueChart({ data }: DoiRevenueChartProps) {
             y={PAD.top + chartH - h}
             width={barW}
             height={h}
-            fill="#2196F3"
+            fill="#bf3030"
             opacity={0.7}
             rx="2"
           />
         );
       })}
 
-      {/* Revenue line (red) */}
-      <path d={toPath(revPoints)} fill="none" stroke="#E53935" strokeWidth="2" strokeLinejoin="round" />
+      {/* Revenue line (secondary) */}
+      <path d={toPath(revPoints)} fill="none" stroke="#1673EE" strokeWidth="2" strokeLinejoin="round" />
       {revPoints.map((p, i) => (
-        <circle key={`rv-${i}`} cx={p.x} cy={p.y} r="3" fill="#E53935" />
+        <circle key={`rv-${i}`} cx={p.x} cy={p.y} r="3" fill="#1673EE" />
       ))}
 
       {/* Guidance line (gray dashed) */}
@@ -384,7 +384,7 @@ function DoiRevenueChart({ data }: DoiRevenueChartProps) {
           y={H - 8}
           textAnchor="middle"
           fontSize="10"
-          fill="#9ca3af"
+          fill="#000000"
         >
           {d.quarter}
         </text>
@@ -928,10 +928,10 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                       <div className="cp-card-title">DOI &amp; Revenue</div>
                       <div className="cp-card-divider" />
                       <div className="cp-chart-legend">
-                        <span className="cp-legend-dot cp-legend-dot--blue" />
-                        <span className="cp-legend-label cp-legend-label--blue">DOI</span>
                         <span className="cp-legend-dot cp-legend-dot--red" />
-                        <span className="cp-legend-label cp-legend-label--red">Revenue</span>
+                        <span className="cp-legend-label cp-legend-label--red">DOI</span>
+                        <span className="cp-legend-dot cp-legend-dot--blue" />
+                        <span className="cp-legend-label cp-legend-label--blue">Revenue</span>
                         <span className="cp-legend-dot" style={{ background: '#ef9a9a' }} />
                         <span className="cp-legend-label" style={{ color: '#ef9a9a' }}>Guidance</span>
                       </div>
