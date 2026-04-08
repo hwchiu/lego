@@ -1,8 +1,7 @@
 // Tax news data — Taiwan weekly tax news and per-country international tax news
 
-import taiwanTaxRaw from '@/content/data-explore/taiwan-tax-news.md';
-import internationalTaxRaw from '@/content/data-explore/international-tax-news.md';
-import { extractJson, extractJsonBySection } from '@/app/lib/parseContent';
+import taxNewsRaw from '@/content/data-explore/tax-news.md';
+import { extractJsonBySection } from '@/app/lib/parseContent';
 
 export interface TaxNewsItem {
   id: string;
@@ -19,12 +18,12 @@ export interface TaxNewsItem {
 export type InternationalTaxNews = Record<string, TaxNewsItem[]>;
 
 export const TAIWAN_TAX_NEWS: TaxNewsItem[] = extractJsonBySection<TaxNewsItem[]>(
-  taiwanTaxRaw,
+  taxNewsRaw,
   'Taiwan Tax News',
 );
 
 export const INTERNATIONAL_TAX_NEWS: InternationalTaxNews = extractJsonBySection<InternationalTaxNews>(
-  internationalTaxRaw,
+  taxNewsRaw,
   'International Tax News',
 );
 
