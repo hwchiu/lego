@@ -567,7 +567,20 @@ function FilterBar({
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const [activeTab, setActiveTab] = useState<FilterTab>('Company');
-  const [selectedRisk, setSelectedRisk] = useState<Set<string>>(new Set());
+  const [selectedRisk, setSelectedRisk] = useState('');
+  const [relOpen, setRelOpen] = useState(false);
+  const [riskOpen, setRiskOpen] = useState(false);
+  const relRef = useRef<HTMLDivElement>(null);
+  const riskRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleOutside(e: MouseEvent) {
+      if (relRef.current && !relRef.current.contains(e.target as Node)) setRelOpen(false);
+      if (riskRef.current && !riskRef.current.contains(e.target as Node)) setRiskOpen(false);
+    }
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, []);
 
   const q = query.toLowerCase().trim();
   const showQueryResults = q.length > 0;
@@ -595,11 +608,9 @@ function FilterBar({
     .map((p) => p.val)
     .slice(0, 3);
 
-  const relationSelected = new Set([RELATION_LABEL_MAP.get(relationType) ?? '']);
-
   return (
     <div className="rmap-filter-bar rmap-filter-bar--above">
-      {/* Search row - full width */}
+      {/* Search + dropdown controls row */}
       <div className="rmap-filter-bar-row">
         <div className="rmap-titled-control" style={{ flex: 1 }}>
           <div className="rmap-titled-control-label">Let&#39;s explore RMAP together…</div>
@@ -715,36 +726,85 @@ function FilterBar({
             )}
           </div>
         </div>
+
+        {/* Relation Type dropdown */}
+        <div className="rmap-titled-control">
+          <div className="rmap-titled-control-label">RELATION TYPE</div>
+          <div className="rmap-rel-wrap" ref={relRef}>
+            <button
+              className="rmap-rel-btn"
+              onClick={() => {
+                setRelOpen((o) => !o);
+                setRiskOpen(false);
+              }}
+            >
+              {RELATION_LABEL_MAP.get(relationType) ?? 'Select'}
+              <span className="rmap-dropdown-arrow">▾</span>
+            </button>
+            {relOpen && (
+              <div className="rmap-rel-dropdown">
+                {RELATION_TYPES.map((rt) => (
+                  <button
+                    key={rt.key}
+                    className={`rmap-rel-option${relationType === rt.key ? ' rmap-rel-option--active' : ''}`}
+                    onClick={() => {
+                      onRelationChange(rt.key);
+                      setRelOpen(false);
+                    }}
+                  >
+                    <span className="rmap-checkmark">{relationType === rt.key ? '✓' : ''}</span>
+                    {rt.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Risk Analysis dropdown */}
+        <div className="rmap-titled-control">
+          <div className="rmap-titled-control-label">RISK · Coming Soon</div>
+          <div className="rmap-risk-wrap" ref={riskRef}>
+            <button
+              className="rmap-risk-btn"
+              onClick={() => {
+                setRiskOpen((o) => !o);
+                setRelOpen(false);
+              }}
+            >
+              {selectedRisk || 'All Risks'}
+              <span className="rmap-dropdown-arrow">▾</span>
+            </button>
+            {riskOpen && (
+              <div className="rmap-risk-dropdown">
+                <button
+                  className={`rmap-risk-option${!selectedRisk ? ' rmap-risk-option--active' : ''}`}
+                  onClick={() => {
+                    setSelectedRisk('');
+                    setRiskOpen(false);
+                  }}
+                >
+                  <span className="rmap-checkmark">{!selectedRisk ? '✓' : ''}</span>
+                  All Risks
+                </button>
+                {RISK_TYPES.map((rt) => (
+                  <button
+                    key={rt.key}
+                    className={`rmap-risk-option${selectedRisk === rt.labelEn ? ' rmap-risk-option--active' : ''}`}
+                    onClick={() => {
+                      setSelectedRisk(selectedRisk === rt.labelEn ? '' : rt.labelEn);
+                      setRiskOpen(false);
+                    }}
+                  >
+                    <span className="rmap-checkmark">{selectedRisk === rt.labelEn ? '✓' : ''}</span>
+                    {rt.labelEn}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-
-      {/* Relation Type tags */}
-      <TagFilterRow
-        label="RELATION TYPE"
-        tags={RELATION_TYPES.map((r) => r.label)}
-        selected={relationSelected}
-        onToggle={(label) => {
-          const rt = RELATION_TYPES.find((r) => r.label === label);
-          if (rt) onRelationChange(rt.key);
-        }}
-        onClearAll={() => onRelationChange(RELATION_TYPES[0].key)}
-        singleSelect
-      />
-
-      {/* Risk Analysis tags — Coming Soon */}
-      <TagFilterRow
-        label="RISK ANALYSIS · Coming Soon"
-        tags={RISK_TYPES.map((r) => r.labelEn)}
-        selected={selectedRisk}
-        onToggle={(label) =>
-          setSelectedRisk((prev) => {
-            const next = new Set(prev);
-            if (next.has(label)) next.delete(label);
-            else next.add(label);
-            return next;
-          })
-        }
-        onClearAll={() => setSelectedRisk(new Set())}
-      />
 
       {/* Industry tags */}
       <TagFilterRow

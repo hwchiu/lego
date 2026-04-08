@@ -385,6 +385,17 @@ function FilterBar({
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const [activeTab, setActiveTab] = useState<FilterTab>('Company');
+  const [categoryOpen, setCategoryOpen] = useState(false);
+  const categoryRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleOutside(e: MouseEvent) {
+      if (categoryRef.current && !categoryRef.current.contains(e.target as Node))
+        setCategoryOpen(false);
+    }
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, []);
 
   const q = query.toLowerCase().trim();
   const showQueryResults = q.length > 0;
@@ -412,9 +423,12 @@ function FilterBar({
     .map((p) => p.val)
     .slice(0, 3);
 
+  const selectedCategory =
+    selectedIndustries.size === 1 ? [...selectedIndustries][0] : null;
+
   return (
     <div className="rmap-filter-bar rmap-filter-bar--above">
-      {/* Search row - full width */}
+      {/* Search + dropdown controls row */}
       <div className="rmap-filter-bar-row">
         <div className="rmap-titled-control" style={{ flex: 1 }}>
           <div className="rmap-titled-control-label">Let&#39;s explore RMAP together…</div>
@@ -530,16 +544,49 @@ function FilterBar({
             )}
           </div>
         </div>
-      </div>
 
-      {/* Category tags */}
-      <TagFilterRow
-        label="CATEGORY"
-        tags={UNIQUE_INDUSTRIES}
-        selected={selectedIndustries}
-        onToggle={onIndustryToggle}
-        onClearAll={onClearAllIndustries}
-      />
+        {/* Category dropdown */}
+        <div className="rmap-titled-control">
+          <div className="rmap-titled-control-label">CATEGORY</div>
+          <div className="rmap-rel-wrap" ref={categoryRef}>
+            <button
+              className="rmap-rel-btn"
+              onClick={() => setCategoryOpen((o) => !o)}
+            >
+              {selectedCategory ?? 'All Categories'}
+              <span className="rmap-dropdown-arrow">▾</span>
+            </button>
+            {categoryOpen && (
+              <div className="rmap-rel-dropdown">
+                <button
+                  className={`rmap-rel-option${!selectedCategory ? ' rmap-rel-option--active' : ''}`}
+                  onClick={() => {
+                    onClearAllIndustries();
+                    setCategoryOpen(false);
+                  }}
+                >
+                  <span className="rmap-checkmark">{!selectedCategory ? '✓' : ''}</span>
+                  All Categories
+                </button>
+                {UNIQUE_INDUSTRIES.map((ind) => (
+                  <button
+                    key={ind}
+                    className={`rmap-rel-option${selectedCategory === ind ? ' rmap-rel-option--active' : ''}`}
+                    onClick={() => {
+                      onClearAllIndustries();
+                      if (selectedCategory !== ind) onIndustryToggle(ind);
+                      setCategoryOpen(false);
+                    }}
+                  >
+                    <span className="rmap-checkmark">{selectedCategory === ind ? '✓' : ''}</span>
+                    {ind}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
       {/* Process Node tags */}
       <TagFilterRow

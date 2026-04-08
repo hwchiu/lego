@@ -5358,6 +5358,10 @@ input, select { font-family: var(--font); }
   color: #1e66f5;
   font-weight: 600;
 }
+.rmap-risk-option--active {
+  color: #1e66f5;
+  font-weight: 600;
+}
 .rmap-checkmark {
   display: inline-block;
   width: 14px;
