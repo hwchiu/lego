@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { resolveSymbolAlias } from '@/app/data/sp500';
 import { extractJson, extractJsonBySection } from '@/app/lib/parseContent';
 import tcFinStmtMd from '@/content/tc-financial-statement.md';
 import aaplFinStmtMd from '@/content/apple-financial-statement.md';
@@ -223,8 +224,9 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
   const [viewMode, setViewMode] = useState<ViewMode>('quarterly');
   const [currency, setCurrency] = useState<Currency>('original');
 
-  const isAapl = symbol === 'AAPL';
-  const isTc  = symbol === 'TC';
+  const resolvedSymbol = resolveSymbolAlias(symbol);
+  const isAapl = resolvedSymbol === 'AAPL';
+  const isTc  = resolvedSymbol === 'TC';
 
   const aaplIncomeData = useMemo(() => (isAapl ? getAaplIncomeData() : null), [isAapl]);
   const tcData        = useMemo(() => (isTc  ? getTcData()        : null), [isTc]);

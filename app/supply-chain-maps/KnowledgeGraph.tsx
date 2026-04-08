@@ -813,7 +813,7 @@ export default function KnowledgeGraph() {
                     <g
                       key={n.id}
                       onClick={() => handleNodeClick(n)}
-                      onMouseDown={(e) => e.stopPropagation()}
+                      onMouseDown={(e) => { e.stopPropagation(); didDragRef.current = false; }}
                       style={{ cursor: 'pointer', opacity: dimmed ? 0.25 : 1 }}
                     >
                       <title>{n.name} ({n.ticker}) — {n.country} | {n.industry} | {n.segment}</title>

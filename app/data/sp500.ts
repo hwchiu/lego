@@ -4,6 +4,12 @@ export interface SP500Company {
   name: string;
 }
 
+/** Resolves symbol aliases to their canonical data symbol (e.g. TSM → TC). */
+export function resolveSymbolAlias(symbol: string): string {
+  if (symbol === 'TSM') return 'TC';
+  return symbol;
+}
+
 export const SP500_COMPANIES: SP500Company[] = [
   // Technology
   { symbol: 'AAPL', name: 'Apple Inc.' },
@@ -476,6 +482,7 @@ export const SP500_COMPANIES: SP500Company[] = [
   { symbol: 'MSTR', name: 'MicroStrategy Incorporated' },
   { symbol: 'ASML', name: 'ASML Holding N.V.' },
   { symbol: 'TC', name: 'T Company' },
+  { symbol: 'TSM', name: 'T Company' },
   { symbol: 'SONY', name: 'Sony Group Corporation' },
   { symbol: 'SAP', name: 'SAP SE' },
   { symbol: 'ARM', name: 'Arm Holdings plc' },
