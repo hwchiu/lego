@@ -296,6 +296,55 @@ function Sparkline({ points, positive }: { points: number[]; positive: boolean }
   );
 }
 
+// ── Sparkline 1Y — deterministic weekly price simulation for a symbol ──────────
+function generateSparkline1Y(symbol: string): number[] {
+  const seed = symbol.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const weeks = 52;
+  const startPrice = 50 + (seed % 450);
+  const trendBias = (((seed * 13) % 21) - 10) / 1000; // -0.01 to +0.01 per week
+  const volatility = 0.015 + (seed % 20) / 1000; // 1.5% – 3.5%
+  const points: number[] = [startPrice];
+  let price = startPrice;
+  // simple pseudo-random walk using LCG
+  let s = seed;
+  for (let i = 1; i < weeks; i++) {
+    s = (s * 1664525 + 1013904223) & 0x7fffffff;
+    const rnd = (s % 10000) / 10000 - 0.5; // -0.5 to 0.5
+    price = price * (1 + trendBias + rnd * volatility * 2);
+    if (price < 1) price = 1;
+    points.push(parseFloat(price.toFixed(2)));
+  }
+  return points;
+}
+
+function Sparkline1Y({ symbol }: { symbol: string }) {
+  const points = generateSparkline1Y(symbol);
+  const positive = points[points.length - 1] >= points[0];
+  const w = 100;
+  const h = 36;
+  const max = Math.max(...points);
+  const min = Math.min(...points);
+  const range = max - min || 1;
+  const step = w / (points.length - 1);
+  const coords = points
+    .map((v, i) => `${i * step},${h - ((v - min) / range) * (h - 6) - 3}`)
+    .join(' ');
+  const color = positive ? '#16a34a' : '#dc2626';
+  const fillColor = positive ? '#16a34a18' : '#dc262618';
+  // build fill path: down to baseline and back
+  const firstX = 0;
+  const lastX = (points.length - 1) * step;
+  const firstY = h - ((points[0] - min) / range) * (h - 6) - 3;
+  const lastY = h - ((points[points.length - 1] - min) / range) * (h - 6) - 3;
+  const fillPath = `M${firstX},${firstY} ${coords.replace(/^\S+/, '')} L${lastX},${h} L${firstX},${h} Z`;
+  return (
+    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} fill="none" className="wl-sparkline-1y">
+      <path d={fillPath} fill={fillColor} />
+      <polyline points={coords} stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 // ── Alpha Avatar ──────────────────────────────────────────────────────────────
 function AlphaAvatar() {
   return (
@@ -1589,6 +1638,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                       <th className="wl-th">Cost</th>
                       <th className="wl-th">Today&apos;s Gain</th>
                       <th className="wl-th">Today&apos;s % Gain</th>
+                      <th className="wl-th wl-th--sparkline">Sparkline Graphs (1Y)</th>
                       <th className="wl-th">Revenue</th>
                       <th className="wl-th">Revenue QoQ</th>
                       <th className="wl-th">Revenue YoY</th>
@@ -1622,6 +1672,9 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                         <td className={`wl-td ${h.todayGainPct >= 0 ? 'pos' : 'neg'}`}>
                           {h.todayGainPct >= 0 ? '+' : ''}
                           {h.todayGainPct.toFixed(2)}%
+                        </td>
+                        <td className="wl-td wl-td--sparkline">
+                          <Sparkline1Y symbol={h.symbol} />
                         </td>
                         <td className="wl-td">{h.revenue}</td>
                         <td className={`wl-td ${h.revenueQoQ.startsWith('+') ? 'pos' : 'neg'}`}>
