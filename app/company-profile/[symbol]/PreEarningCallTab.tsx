@@ -259,145 +259,90 @@ export default function PreEarningCallTab({ symbol }: PreEarningCallTabProps) {
     <div className="cp-pec-wrap">
       {cards.map((card) => {
         const ai = aiTranscripts.find((a) => a.symbol === card.symbol);
+        if (!ai) return null;
         return (
-          <div key={card.symbol} className="cp-pec-row">
-            {/* ── Original PEC card ── */}
-            <article className="cp-pec-card">
+          <div key={card.symbol} className="cp-pec-center">
+            {/* ── AI Transcript card ── */}
+            <article className="cp-pec-card cp-pec-ai-card">
+              {/* AI card header */}
               <div className="cp-pec-card-header">
                 <div className="cp-pec-card-header-left">
-                  <span className="cp-pec-card-company">{card.symbol}</span>
+                  <span className="cp-pec-card-company cp-pec-ai-badge">AI</span>
                   <div>
-                    <div className="cp-pec-card-title">{card.title}</div>
-                    <div className="cp-pec-card-date">{card.date}</div>
+                    <div className="cp-pec-card-title">{ai.title}</div>
+                    <div className="cp-pec-card-date">
+                      Generated {ai.generatedAt} · Model: {ai.model}
+                    </div>
                   </div>
                 </div>
-                <div className="cp-pec-card-actions">
-                  <a
-                    href={card.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="cp-pec-card-action-btn"
-                    aria-label="Download PDF"
-                    title="Download PDF"
-                  >
-                    <DownloadIcon />
-                  </a>
-                  <a
-                    href={card.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="cp-pec-card-action-btn"
-                    aria-label="Open in new tab"
-                    title="Open in new tab"
-                  >
-                    <ExternalLinkIcon />
-                  </a>
+                <div className="cp-pec-ai-sentiment">
+                  <span className={`cp-pec-ai-sentiment-badge cp-pec-ai-sentiment--${ai.sentiment.toLowerCase()}`}>
+                    {ai.sentiment}
+                  </span>
+                  <div className="cp-pec-ai-score-bar">
+                    <div
+                      className="cp-pec-ai-score-fill"
+                      style={{ width: `${ai.sentimentScore}%` }}
+                    />
+                  </div>
+                  <span className="cp-pec-ai-score-label">{ai.sentimentScore}/100</span>
                 </div>
               </div>
 
-              <div className="cp-pec-card-body">
-                {card.sections.map((section) => (
-                  <div key={section.heading} className="cp-pec-section">
-                    <div className="cp-pec-section-heading">{section.heading}</div>
-                    <ul className="cp-pec-bullet-list">
-                      {section.bullets.map((bullet, i) => (
-                        <li key={i}>{bullet}</li>
-                      ))}
-                    </ul>
+              {/* AI analysis blocks */}
+              <div className="cp-pec-ai-body">
+                {ai.blocks.map((block) => (
+                  <div key={block.heading} className="cp-pec-ai-block">
+                    <div className="cp-pec-section-heading">{block.heading}</div>
+                    <p className="cp-pec-ai-text">{block.content}</p>
                   </div>
                 ))}
+              </div>
+
+              {/* Key quotes */}
+              <div className="cp-pec-ai-quotes-section">
+                <button
+                  className="cp-pec-ai-quotes-toggle"
+                  onClick={() => setExpandedQuotes((v) => !v)}
+                  aria-expanded={expandedQuotes}
+                >
+                  <span className="cp-pec-section-heading" style={{ margin: 0 }}>Key Quotes</span>
+                  <svg
+                    viewBox="0 0 14 14"
+                    fill="none"
+                    width="12"
+                    height="12"
+                    style={{ transition: 'transform 0.15s', transform: expandedQuotes ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                    aria-hidden="true"
+                  >
+                    <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+                {expandedQuotes && (
+                  <ul className="cp-pec-ai-quote-list">
+                    {ai.keyQuotes.map((q, i) => (
+                      <li key={i} className="cp-pec-ai-quote-item">{q}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              {/* Risks */}
+              <div className="cp-pec-ai-risks-section">
+                <div className="cp-pec-section-heading" style={{ marginBottom: 8 }}>Key Risks</div>
+                <ul className="cp-pec-ai-risk-list">
+                  {ai.risks.map((r, i) => (
+                    <li key={i} className="cp-pec-ai-risk-item">{r}</li>
+                  ))}
+                </ul>
               </div>
 
               <div className="cp-pec-card-footer">
-                {card.tags.map((tag) => (
-                  <span key={tag} className="cp-pec-tag">{tag}</span>
-                ))}
+                <span className="cp-pec-tag cp-pec-ai-tag">AI-Generated</span>
+                <span className="cp-pec-tag cp-pec-ai-tag">{ai.model}</span>
+                <span className="cp-pec-tag">{card.symbol}</span>
               </div>
             </article>
-
-            {/* ── AI Transcript card ── */}
-            {ai && (
-              <article className="cp-pec-card cp-pec-ai-card">
-                {/* AI card header */}
-                <div className="cp-pec-card-header">
-                  <div className="cp-pec-card-header-left">
-                    <span className="cp-pec-card-company cp-pec-ai-badge">AI</span>
-                    <div>
-                      <div className="cp-pec-card-title">{ai.title}</div>
-                      <div className="cp-pec-card-date">
-                        Generated {ai.generatedAt} · Model: {ai.model}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="cp-pec-ai-sentiment">
-                    <span className={`cp-pec-ai-sentiment-badge cp-pec-ai-sentiment--${ai.sentiment.toLowerCase()}`}>
-                      {ai.sentiment}
-                    </span>
-                    <div className="cp-pec-ai-score-bar">
-                      <div
-                        className="cp-pec-ai-score-fill"
-                        style={{ width: `${ai.sentimentScore}%` }}
-                      />
-                    </div>
-                    <span className="cp-pec-ai-score-label">{ai.sentimentScore}/100</span>
-                  </div>
-                </div>
-
-                {/* AI analysis blocks */}
-                <div className="cp-pec-ai-body">
-                  {ai.blocks.map((block) => (
-                    <div key={block.heading} className="cp-pec-ai-block">
-                      <div className="cp-pec-section-heading">{block.heading}</div>
-                      <p className="cp-pec-ai-text">{block.content}</p>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Key quotes */}
-                <div className="cp-pec-ai-quotes-section">
-                  <button
-                    className="cp-pec-ai-quotes-toggle"
-                    onClick={() => setExpandedQuotes((v) => !v)}
-                    aria-expanded={expandedQuotes}
-                  >
-                    <span className="cp-pec-section-heading" style={{ margin: 0 }}>Key Quotes</span>
-                    <svg
-                      viewBox="0 0 14 14"
-                      fill="none"
-                      width="12"
-                      height="12"
-                      style={{ transition: 'transform 0.15s', transform: expandedQuotes ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                      aria-hidden="true"
-                    >
-                      <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
-                  {expandedQuotes && (
-                    <ul className="cp-pec-ai-quote-list">
-                      {ai.keyQuotes.map((q, i) => (
-                        <li key={i} className="cp-pec-ai-quote-item">{q}</li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-
-                {/* Risks */}
-                <div className="cp-pec-ai-risks-section">
-                  <div className="cp-pec-section-heading" style={{ marginBottom: 8 }}>Key Risks</div>
-                  <ul className="cp-pec-ai-risk-list">
-                    {ai.risks.map((r, i) => (
-                      <li key={i} className="cp-pec-ai-risk-item">{r}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="cp-pec-card-footer">
-                  <span className="cp-pec-tag cp-pec-ai-tag">AI-Generated</span>
-                  <span className="cp-pec-tag cp-pec-ai-tag">{ai.model}</span>
-                  <span className="cp-pec-tag">{card.symbol}</span>
-                </div>
-              </article>
-            )}
           </div>
         );
       })}

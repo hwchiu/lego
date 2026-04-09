@@ -3503,7 +3503,7 @@ input, select { font-family: var(--font); }
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--c-text-4);
+  color: var(--c-text);
 }
 
 .cp-info-value {
@@ -3549,7 +3549,7 @@ input, select { font-family: var(--font); }
 .cp-tags-group-label {
   font-size: 11px;
   font-weight: 700;
-  color: var(--c-text-3);
+  color: var(--c-text);
   letter-spacing: 0.05em;
   white-space: nowrap;
 }
@@ -3812,7 +3812,7 @@ input, select { font-family: var(--font); }
 
 .cp-fin-metric-label {
   font-size: 14px;
-  color: #646464;
+  color: var(--c-text);
   font-weight: 400;
 }
 
@@ -17343,6 +17343,96 @@ html.dark .cwl-ai-context-card {
   border-color: var(--c-border);
 }
 
+/* ── Company Profile dark mode ── */
+html.dark .cp-data-card,
+html.dark .cp-pec-card,
+html.dark .cp-info-card,
+html.dark .cp-tag-suggestions,
+html.dark .cp-add-tag-row {
+  background: #1e293b;
+  border-color: var(--c-border);
+}
+html.dark .cp-pec-ai-card {
+  background: linear-gradient(160deg, #1e293b 0%, #1a2435 60%);
+  border-color: #6366f130;
+}
+html.dark .cp-card-divider,
+html.dark .cp-fin-metric-sep {
+  background: var(--c-border);
+}
+html.dark .cp-breakdown-bar-wrap {
+  background: #334155;
+}
+html.dark .cp-nav-tab {
+  color: var(--c-text-3);
+}
+html.dark .cp-nav-tab:hover {
+  color: var(--c-text);
+}
+html.dark .cp-nav-tab.active {
+  color: var(--c-text);
+  border-bottom-color: #E53935;
+}
+html.dark .cp-action-icon-btn {
+  background: #1e293b;
+  border-color: var(--c-border);
+  color: var(--c-text-3);
+}
+html.dark .cp-action-icon-btn:hover {
+  background: #334155;
+  color: var(--c-text);
+  border-color: var(--c-border-2);
+}
+html.dark .cp-pec-card-action-btn {
+  background: #1e293b;
+  border-color: var(--c-border);
+  color: var(--c-text-3);
+}
+html.dark .cp-pec-card-action-btn:hover {
+  background: #334155;
+  color: var(--c-text);
+}
+html.dark .cp-pec-ai-quote-item {
+  background: #6366f115;
+}
+html.dark .cp-back-btn {
+  color: var(--c-text-3);
+}
+html.dark .cp-back-btn:hover {
+  color: var(--c-text);
+}
+html.dark .cp-tag--public {
+  background: #1e3a5f;
+  border-color: #2563eb50;
+  color: #93c5fd;
+}
+html.dark .cp-tag--my {
+  background: #1e293b;
+  border-color: var(--c-border);
+  color: var(--c-text-2);
+}
+html.dark .cp-add-tag-input {
+  background: #0f172a;
+  border-color: var(--c-border);
+  color: var(--c-text);
+}
+html.dark .cp-tag-suggestion-item {
+  background: #1e293b;
+  color: var(--c-text-2);
+}
+html.dark .cp-tag-suggestion-item:hover {
+  background: #334155;
+}
+html.dark .cp-fin-index-tab {
+  color: #60a5fa;
+}
+html.dark .cp-fin-index-tab.active {
+  color: var(--c-text-3);
+}
+html.dark .cp-fin-index-tab:hover {
+  background: #334155;
+}
+
 /* ===== RMAP NODE INFO CARD (draggable) ===== */
 .rmap-node-info-card {
   position: absolute;
@@ -17721,7 +17811,7 @@ html.dark .cwl-ai-context-card {
 .cp-pec-section-heading {
   font-size: 11px;
   font-weight: 700;
-  color: var(--c-text-3);
+  color: var(--c-text);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-bottom: 8px;
@@ -17781,6 +17871,15 @@ html.dark .cwl-ai-context-card {
 /* ── Pre-Earning Call: side-by-side row layout ── */
 .cp-pec-wrap {
   max-width: none;
+}
+.cp-pec-center {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.cp-pec-center .cp-pec-card {
+  width: 100%;
+  max-width: 860px;
 }
 .cp-pec-row {
   display: grid;

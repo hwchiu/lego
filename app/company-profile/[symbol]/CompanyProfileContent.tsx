@@ -14,6 +14,7 @@ import FinancialStatementTab from './FinancialStatementTab';
 import CompanyMATab from './CompanyMATab';
 import IRMaterialTab from './IRMaterialTab';
 import PreEarningCallTab from './PreEarningCallTab';
+import { useTheme } from '@/app/contexts/ThemeContext';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -462,6 +463,7 @@ interface CompanyProfileContentProps {
 }
 
 export default function CompanyProfileContent({ symbol }: CompanyProfileContentProps) {
+  const { toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState<Tab>('FIN. Summary');
   const [activeFinIndex, setActiveFinIndex] = useState<string>('Revenue');
   const [isFavorite, setIsFavorite] = useState(false);
@@ -469,6 +471,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const [tagInput, setTagInput] = useState('');
   const [showTagInput, setShowTagInput] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
   const addTagInputRef = useRef<HTMLInputElement>(null);
   const tagRowRef = useRef<HTMLDivElement>(null);
   const [newsPage, setNewsPage] = useState(1);
@@ -604,6 +607,20 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     setShowSuggestions(true);
   }
 
+  function handleShare() {
+    const url = typeof window !== 'undefined' ? window.location.href : '';
+    navigator.clipboard.writeText(url).then(() => {
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    }).catch(() => {});
+  }
+
+  function handleRefresh() {
+    if (typeof window !== 'undefined') {
+      window.location.reload();
+    }
+  }
+
   // News filtered by this company's symbol tag
   const companyNews = newsItems.filter((n) => n.tags.some((t) => t.symbol === symbol));
   const newsTotalPages = Math.ceil(companyNews.length / NEWS_PAGE_SIZE);
@@ -686,9 +703,27 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                   {/* Action icons */}
                   <div className="cp-action-icons">
                     <button className="cp-action-icon-btn" title="Bookmark"><BookmarkIcon /></button>
-                    <button className="cp-action-icon-btn" title="Share"><ShareIcon /></button>
-                    <button className="cp-action-icon-btn" title="Refresh"><RefreshIcon /></button>
-                    <button className="cp-action-icon-btn" title="Settings"><SettingsIcon /></button>
+                    <button
+                      className="cp-action-icon-btn"
+                      title={shareCopied ? 'Copied!' : 'Share — Copy URL'}
+                      onClick={handleShare}
+                    >
+                      <ShareIcon />
+                    </button>
+                    <button
+                      className="cp-action-icon-btn"
+                      title="Refresh page"
+                      onClick={handleRefresh}
+                    >
+                      <RefreshIcon />
+                    </button>
+                    <button
+                      className="cp-action-icon-btn"
+                      title="Toggle Dark / Light mode"
+                      onClick={toggleTheme}
+                    >
+                      <SettingsIcon />
+                    </button>
                   </div>
                 </div>
 
