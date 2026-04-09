@@ -182,6 +182,8 @@ function SimpleStatementTable({ data, viewMode }: SimpleStatementTableProps) {
           <tr>
             <th className="fin-stmt-th-item">
               <div className="fin-stmt-th-item-inner">
+                <span className="fin-stmt-th-year">Year</span>
+                <span className="fin-stmt-th-divider" />
                 <span className="fin-stmt-th-item-label">Item</span>
               </div>
             </th>
