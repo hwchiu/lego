@@ -320,7 +320,7 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
         {/* Toolbar — hide year nav for simple statements; show Annual/Quarterly toggle for all */}
         <div className="fin-stmt-toolbar">
           <div className="fin-stmt-year-nav">
-            {statementType === 'income' && (
+            {!isSimpleStatement && (
               <>
                 <button
                   className="wl-quarter-btn"
