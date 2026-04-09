@@ -6427,7 +6427,7 @@ input, select { font-family: var(--font); }
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  color: var(--c-text-4);
+  color: var(--c-text);
   align-self: flex-end;
 }
 
@@ -6447,7 +6447,7 @@ input, select { font-family: var(--font); }
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  color: var(--c-text-4);
+  color: var(--c-text);
   align-self: flex-start;
 }
 
@@ -6512,6 +6512,10 @@ input, select { font-family: var(--font); }
 }
 
 .fin-stmt-table thead th {
+  color: var(--c-text);
+}
+
+.fin-stmt-table thead tr.sub-head th {
   color: var(--c-text);
 }
 
