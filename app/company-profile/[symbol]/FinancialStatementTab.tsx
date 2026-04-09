@@ -60,10 +60,15 @@ interface AnnualData {
 }
 
 // ── Simple table type (Balance Sheet / Cash Flow / Segment) ───────────────────
-interface SimpleStatementData {
-  source: string;
+interface SimpleStatementPeriodData {
   columns: string[];
   rows: string[][];
+}
+
+interface SimpleStatementData {
+  source: string;
+  annualData: SimpleStatementPeriodData;
+  quarterlyData: SimpleStatementPeriodData;
 }
 
 // ── Row definitions ────────────────────────────────────────────────────────────
@@ -165,12 +170,13 @@ function getAaplSimpleData(key: 'balance' | 'cashflow' | 'segment'): SimpleState
 // ── Simple statement table sub-component ──────────────────────────────────────
 interface SimpleStatementTableProps {
   data: SimpleStatementData;
+  viewMode: ViewMode;
 }
 
-function SimpleStatementTable({ data }: SimpleStatementTableProps) {
+function SimpleStatementTable({ data, viewMode }: SimpleStatementTableProps) {
+  const periodData = viewMode === 'annual' ? data.annualData : data.quarterlyData;
   return (
     <div className="fin-stmt-table-wrap">
-      <p className="fin-stmt-source-note">{data.source}</p>
       <table className="data-table fin-stmt-table fin-stmt-simple-table">
         <thead>
           <tr>
@@ -179,13 +185,13 @@ function SimpleStatementTable({ data }: SimpleStatementTableProps) {
                 <span className="fin-stmt-th-item-label">Item</span>
               </div>
             </th>
-            {data.columns.map((col) => (
+            {periodData.columns.map((col) => (
               <th key={col} className="fin-stmt-simple-col-hdr">{col}</th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {data.rows.map((row, ri) => {
+          {periodData.rows.map((row, ri) => {
             const isHeader = isSectionRow(row);
             return (
               <tr key={ri} className={isHeader ? 'fin-stmt-section-row' : ''}>
@@ -311,10 +317,10 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
 
       {/* ── Right content area ── */}
       <div className="fin-stmt-content">
-        {/* Toolbar — hide year nav & quarterly toggle for simple statements */}
+        {/* Toolbar — hide year nav for simple statements; show Annual/Quarterly toggle for all */}
         <div className="fin-stmt-toolbar">
           <div className="fin-stmt-year-nav">
-            {!isSimpleStatement && (
+            {statementType === 'income' && (
               <>
                 <button
                   className="wl-quarter-btn"
@@ -342,22 +348,20 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
           </div>
 
           <div className="fin-stmt-toolbar-right">
-            {!isSimpleStatement && (
-              <div className="toggle-group">
-                <button
-                  className={`toggle-btn${viewMode === 'annual' ? ' active' : ''}`}
-                  onClick={() => setViewMode('annual')}
-                >
-                  Annual Report
-                </button>
-                <button
-                  className={`toggle-btn${viewMode === 'quarterly' ? ' active' : ''}`}
-                  onClick={() => setViewMode('quarterly')}
-                >
-                  Quarterly Report
-                </button>
-              </div>
-            )}
+            <div className="toggle-group">
+              <button
+                className={`toggle-btn${viewMode === 'annual' ? ' active' : ''}`}
+                onClick={() => setViewMode('annual')}
+              >
+                Annual Report
+              </button>
+              <button
+                className={`toggle-btn${viewMode === 'quarterly' ? ' active' : ''}`}
+                onClick={() => setViewMode('quarterly')}
+              >
+                Quarterly Report
+              </button>
+            </div>
 
             <div className="toggle-group">
               <button
@@ -379,7 +383,7 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
         {/* ── Table ── */}
         {isSimpleStatement ? (
           simpleData ? (
-            <SimpleStatementTable data={simpleData} />
+            <SimpleStatementTable data={simpleData} viewMode={viewMode} />
           ) : (
             <div className="cp-tab-placeholder">
               <span className="cp-tab-placeholder-text">
