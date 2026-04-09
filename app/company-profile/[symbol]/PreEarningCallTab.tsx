@@ -240,8 +240,10 @@ const PEC_DATA: PecCard[] = [
 ];
 
 export default function PreEarningCallTab({ symbol }: PreEarningCallTabProps) {
-  const cards = PEC_DATA.filter((c) => c.symbol === symbol);
+  const allCards = PEC_DATA.filter((c) => c.symbol === symbol);
   const aiTranscripts = AI_TRANSCRIPT_DATA.filter((a) => a.symbol === symbol);
+  // Only show cards that have a corresponding AI transcript
+  const cards = allCards.filter((card) => aiTranscripts.some((a) => a.symbol === card.symbol));
   const [expandedQuotes, setExpandedQuotes] = useState(false);
 
   if (cards.length === 0) {
@@ -258,8 +260,7 @@ export default function PreEarningCallTab({ symbol }: PreEarningCallTabProps) {
   return (
     <div className="cp-pec-wrap">
       {cards.map((card) => {
-        const ai = aiTranscripts.find((a) => a.symbol === card.symbol);
-        if (!ai) return null;
+        const ai = aiTranscripts.find((a) => a.symbol === card.symbol)!;
         return (
           <div key={card.symbol} className="cp-pec-center">
             {/* ── AI Transcript card ── */}

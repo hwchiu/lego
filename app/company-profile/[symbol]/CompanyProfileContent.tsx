@@ -612,7 +612,21 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     navigator.clipboard.writeText(url).then(() => {
       setShareCopied(true);
       setTimeout(() => setShareCopied(false), 2000);
-    }).catch(() => {});
+    }).catch(() => {
+      // Fallback: select and copy via execCommand for browsers without clipboard API
+      try {
+        const input = document.createElement('input');
+        input.value = url;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        setShareCopied(true);
+        setTimeout(() => setShareCopied(false), 2000);
+      } catch {
+        // silent fail if all methods unavailable
+      }
+    });
   }
 
   function handleRefresh() {
@@ -701,11 +715,12 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                   </button>
 
                   {/* Action icons */}
-                  <div className="cp-action-icons">
+                  <div className="cp-action-icons" aria-live="polite" aria-atomic="true">
                     <button className="cp-action-icon-btn" title="Bookmark"><BookmarkIcon /></button>
                     <button
                       className="cp-action-icon-btn"
                       title={shareCopied ? 'Copied!' : 'Share — Copy URL'}
+                      aria-label={shareCopied ? 'URL copied to clipboard' : 'Share — Copy URL'}
                       onClick={handleShare}
                     >
                       <ShareIcon />
