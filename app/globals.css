@@ -6511,6 +6511,10 @@ input, select { font-family: var(--font); }
   min-width: 90px;
 }
 
+.fin-stmt-table thead th {
+  color: var(--c-text);
+}
+
 /* ============================================================
    DATA EXPLORE — flat minimalist design
    ============================================================ */
