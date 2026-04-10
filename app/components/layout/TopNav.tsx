@@ -220,11 +220,26 @@ const SP500_LC = SP500_COMPANIES.map((c) => ({
   nameLc: c.name.toLowerCase(),
 }));
 
+interface UserInfo {
+  name: string;
+  avatar: string;
+}
+
 export default function TopNav() {
   const router = useRouter();
   const { lang, toggleLang } = useLanguage();
   const { theme, toggleTheme } = useTheme();
   const { toggleSidebar, toggleDesktopCollapsed } = useMobileSidebar();
+
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+
+  useEffect(() => {
+    const base = process.env.NODE_ENV === 'production' ? '/lego' : '';
+    fetch(`${base}/user-info.json`)
+      .then((res) => res.json())
+      .then((data: UserInfo) => setUserInfo(data))
+      .catch(() => {/* keep null on error */});
+  }, []);
 
   const handleMenuToggle = () => {
     // window.innerWidth reflects the current viewport at click time
@@ -677,10 +692,10 @@ export default function TopNav() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className="topnav-avatar"
-          src="/images/hwchiu_github_avatar.jpg"
+          src={userInfo?.avatar ?? '/images/hwchiu_github_avatar.jpg'}
           alt="User Avatar"
         />
-        <span className="topnav-name">PiKa Chu</span>
+        <span className="topnav-name">{userInfo?.name ?? ''}</span>
       </div>
     </header>
   );
