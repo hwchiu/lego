@@ -693,7 +693,7 @@ export default function TopNav() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className="topnav-avatar"
-          src={BASE_PATH + (userInfo?.avatar ?? '/images/hwchiu_github_avatar.jpg')}
+          src={`${BASE_PATH}${userInfo?.avatar ?? '/images/hwchiu_github_avatar.jpg'}`}
           alt="User Avatar"
         />
         <span className="topnav-name">{userInfo?.name ?? ''}</span>
