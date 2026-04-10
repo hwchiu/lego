@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import NoDataIcon from './NoDataIcon';
 
 interface PreEarningCallTabProps {
   symbol: string;
@@ -250,7 +251,9 @@ export default function PreEarningCallTab({ symbol }: PreEarningCallTabProps) {
     return (
       <div className="cp-pec-wrap">
         <div className="cp-pec-empty">
-          <span className="cp-pec-empty-icon">📋</span>
+          <span className="cp-pec-empty-icon">
+            <NoDataIcon />
+          </span>
           <p className="cp-pec-empty-text">No Pre-Earning Call summary available for {symbol}.</p>
         </div>
       </div>

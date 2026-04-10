@@ -171,6 +171,8 @@ function getAaplSimpleData(key: 'balance' | 'cashflow' | 'segment'): SimpleState
 interface SimpleStatementTableProps {
   data: SimpleStatementData;
   viewMode: ViewMode;
+  yearWindowStart: number;
+  allYears: number[];
 }
 
 /** Convert a 2-digit year suffix to a full 4-digit year */
@@ -195,18 +197,8 @@ function parseColQuarter(col: string): string {
   return m ? m[1] : col;
 }
 
-function SimpleStatementTable({ data, viewMode }: SimpleStatementTableProps) {
+function SimpleStatementTable({ data, viewMode, yearWindowStart, allYears }: SimpleStatementTableProps) {
   const periodData = viewMode === 'annual' ? data.annualData : data.quarterlyData;
-
-  // Build year-navigation for quarterly mode
-  const allYears = viewMode === 'quarterly'
-    ? [...new Set(periodData.columns.map(parseColYear))].filter(Boolean).sort((a, b) => a - b)
-    : [];
-  const maxYearWindowStart = allYears.length > 1 ? allYears[allYears.length - 1] - 1 : (allYears[0] ?? 0);
-  const defaultYearStart = allYears.length > 0
-    ? Math.max(allYears[0], maxYearWindowStart)
-    : 0;
-  const [yearWindowStart, setYearWindowStart] = useState(defaultYearStart);
 
   const visibleCols = viewMode === 'quarterly'
     ? periodData.columns.filter((col) => {
@@ -231,41 +223,8 @@ function SimpleStatementTable({ data, viewMode }: SimpleStatementTableProps) {
     }
   }
 
-  const canGoPrev = viewMode === 'quarterly' && allYears.length > 0 && yearWindowStart > allYears[0];
-  const canGoNext = viewMode === 'quarterly' && yearWindowStart < maxYearWindowStart;
-  const yearLabel = viewMode === 'quarterly'
-    ? `FY${yearWindowStart}–FY${yearWindowStart + 1}`
-    : '';
-
   return (
     <div>
-      {/* Year nav toolbar for quarterly mode */}
-      {viewMode === 'quarterly' && allYears.length > 0 && (
-        <div className="fin-stmt-year-nav fin-stmt-simple-year-nav">
-          <button
-            className="wl-quarter-btn"
-            aria-label="Previous year"
-            onClick={() => setYearWindowStart((y) => Math.max(allYears[0], y - 1))}
-            disabled={!canGoPrev}
-          >
-            <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-              <path d="M9 2.5L4.5 7L9 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-          <span className="wl-quarter-label fin-stmt-year-label">{yearLabel}</span>
-          <button
-            className="wl-quarter-btn"
-            aria-label="Next year"
-            onClick={() => setYearWindowStart((y) => Math.min(maxYearWindowStart, y + 1))}
-            disabled={!canGoNext}
-          >
-            <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-              <path d="M5 2.5L9.5 7L5 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-        </div>
-      )}
-
       <div className="fin-stmt-table-wrap">
         <table className="data-table fin-stmt-table fin-stmt-simple-table">
           <thead>
@@ -408,6 +367,33 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
     return getAaplSimpleData(statementType as 'balance' | 'cashflow' | 'segment');
   }, [isAapl, isSimpleStatement, statementType]);
 
+  // ── Simple statement year navigation (lifted from SimpleStatementTable) ──────
+  const simpleAllYears = useMemo(() => {
+    if (!simpleData) return [] as number[];
+    return [...new Set(simpleData.quarterlyData.columns.map(parseColYear))].filter(Boolean).sort((a, b) => a - b);
+  }, [simpleData]);
+
+  const simpleMaxYearWindowStart = simpleAllYears.length > 1
+    ? simpleAllYears[simpleAllYears.length - 1] - 1
+    : (simpleAllYears[0] ?? 0);
+
+  // Per-statement-type year overrides; falls back to computed default so no useEffect needed.
+  const [simpleYearOverrides, setSimpleYearOverrides] = useState<Partial<Record<StatementType, number>>>({});
+  const simpleDefaultYearStart = simpleAllYears.length > 0
+    ? Math.max(simpleAllYears[0], simpleMaxYearWindowStart)
+    : 0;
+  const simpleYearWindowStart = simpleYearOverrides[statementType] ?? simpleDefaultYearStart;
+
+  function setYearOverrideForStatement(updater: (y: number) => number) {
+    setSimpleYearOverrides((prev) => ({
+      ...prev,
+      [statementType]: updater(prev[statementType] ?? simpleDefaultYearStart),
+    }));
+  }
+
+  const simpleCanGoPrev = viewMode === 'quarterly' && simpleAllYears.length > 0 && simpleYearWindowStart > simpleAllYears[0];
+  const simpleCanGoNext = viewMode === 'quarterly' && simpleYearWindowStart < simpleMaxYearWindowStart;
+
   if (!isAapl && !isTc) {
     return (
       <div className="cp-tab-placeholder">
@@ -437,9 +423,10 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
 
       {/* ── Right content area ── */}
       <div className="fin-stmt-content">
-        {/* Toolbar — hide year nav for simple statements; show Annual/Quarterly toggle for all */}
+        {/* Toolbar — year nav for all 4 statement types; Annual/Quarterly + Currency toggles */}
         <div className="fin-stmt-toolbar">
           <div className="fin-stmt-year-nav">
+            {/* Income Statement year nav */}
             {!isSimpleStatement && (
               <>
                 <button
@@ -458,6 +445,34 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
                   aria-label="Next year"
                   onClick={nextYear}
                   disabled={!canGoNext}
+                >
+                  <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                    <path d="M5 2.5L9.5 7L5 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+              </>
+            )}
+            {/* Balance Sheet / Cash Flow / Segment year nav */}
+            {isSimpleStatement && viewMode === 'quarterly' && simpleAllYears.length > 0 && (
+              <>
+                <button
+                  className="wl-quarter-btn"
+                  aria-label="Previous year"
+                  onClick={() => setYearOverrideForStatement((y) => Math.max(simpleAllYears[0], y - 1))}
+                  disabled={!simpleCanGoPrev}
+                >
+                  <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                    <path d="M9 2.5L4.5 7L9 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+                <span className="wl-quarter-label fin-stmt-year-label">
+                  FY{simpleYearWindowStart}–FY{simpleYearWindowStart + 1}
+                </span>
+                <button
+                  className="wl-quarter-btn"
+                  aria-label="Next year"
+                  onClick={() => setYearOverrideForStatement((y) => Math.min(simpleMaxYearWindowStart, y + 1))}
+                  disabled={!simpleCanGoNext}
                 >
                   <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
                     <path d="M5 2.5L9.5 7L5 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -503,7 +518,12 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
         {/* ── Table ── */}
         {isSimpleStatement ? (
           simpleData ? (
-            <SimpleStatementTable data={simpleData} viewMode={viewMode} />
+            <SimpleStatementTable
+              data={simpleData}
+              viewMode={viewMode}
+              yearWindowStart={simpleYearWindowStart}
+              allYears={simpleAllYears}
+            />
           ) : (
             <div className="cp-tab-placeholder">
               <span className="cp-tab-placeholder-text">

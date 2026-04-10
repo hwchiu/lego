@@ -17862,7 +17862,12 @@ html.dark .cp-fin-index-tab:hover {
   text-align: center;
   gap: 12px;
 }
-.cp-pec-empty-icon { font-size: 32px; }
+.cp-pec-empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #cbd5e0;
+}
 .cp-pec-empty-text {
   font-size: 13.5px;
   color: var(--c-text-3);
@@ -18232,6 +18237,124 @@ html.dark .cp-fin-index-tab:hover {
   color: var(--c-text-3);
   flex-shrink: 0;
 }
+
+/* ===== COMPANY PROFILE — DATE PICKER ===== */
+.cp-datepicker-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+.cp-datepicker-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  padding: 0 8px;
+  font-size: 12px;
+  color: var(--c-text);
+  background: var(--c-white);
+  cursor: pointer;
+  transition: border-color 0.15s;
+  user-select: none;
+}
+.cp-datepicker-input:hover { border-color: var(--c-border-2); }
+.cp-datepicker-input.active { border-color: var(--c-accent); }
+.cp-datepicker-icon { color: var(--c-text-3); flex-shrink: 0; }
+.cp-datepicker-text { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.cp-datepicker-text.placeholder { color: var(--c-text-4); }
+.cp-datepicker-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--c-text-3);
+  line-height: 1;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.cp-datepicker-clear:hover { color: var(--c-text); background: var(--c-bg); }
+
+/* Calendar popup */
+.cp-mini-cal {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 200;
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 12px;
+  min-width: 220px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+.cp-mini-cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.cp-mini-cal-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--c-text);
+}
+.cp-mini-cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--c-text-3);
+  border-radius: var(--radius-sm);
+  transition: background 0.12s, color 0.12s;
+}
+.cp-mini-cal-nav:hover { background: var(--c-bg); color: var(--c-text); }
+.cp-mini-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.cp-mini-cal-dayname {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--c-text-4);
+  text-align: center;
+  padding: 3px 0;
+}
+.cp-mini-cal-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  font-size: 11.5px;
+  color: var(--c-text);
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+  padding: 0;
+  width: 100%;
+}
+.cp-mini-cal-cell:hover { background: var(--c-bg); }
+.cp-mini-cal-cell--empty { cursor: default; pointer-events: none; }
+.cp-mini-cal-cell.today { font-weight: 700; color: var(--c-accent); }
+.cp-mini-cal-cell.selected {
+  background: var(--c-dark);
+  color: var(--c-white);
+  font-weight: 600;
+}
+.cp-mini-cal-cell.selected:hover { background: var(--c-dark); }
 
 /* fileType tag on news card */
 .cp-news-filetype-tag {

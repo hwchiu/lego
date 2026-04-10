@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import NoDataIcon from './NoDataIcon';
 
 interface AITranscriptTabProps {
   symbol: string;
@@ -125,7 +126,9 @@ export default function AITranscriptTab({ symbol }: AITranscriptTabProps) {
     return (
       <div className="cp-pec-wrap">
         <div className="cp-pec-empty">
-          <span className="cp-pec-empty-icon">🤖</span>
+          <span className="cp-pec-empty-icon">
+            <NoDataIcon />
+          </span>
           <p className="cp-pec-empty-text">No AI Transcript analysis available for {symbol}.</p>
         </div>
       </div>

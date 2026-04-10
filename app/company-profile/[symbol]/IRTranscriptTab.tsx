@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import NoDataIcon from './NoDataIcon';
 
 interface IRTranscriptTabProps {
   symbol: string;
@@ -145,7 +146,9 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
     return (
       <div className="cp-pec-wrap">
         <div className="cp-pec-empty">
-          <span className="cp-pec-empty-icon">📋</span>
+          <span className="cp-pec-empty-icon">
+            <NoDataIcon />
+          </span>
           <p className="cp-pec-empty-text">No IR Transcript available for {symbol}.</p>
         </div>
       </div>
