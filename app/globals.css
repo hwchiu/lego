@@ -2164,6 +2164,12 @@ input, select { font-family: var(--font); }
   transition: color 0.13s, border-color 0.13s;
 }
 .wl-subtab:hover { color: var(--c-text); }
+.wl-subtab:disabled,
+.wl-subtab--disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  pointer-events: none;
+}
 .wl-subtab.active {
   color: var(--c-text);
   font-weight: 700;
