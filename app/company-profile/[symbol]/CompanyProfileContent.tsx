@@ -12,8 +12,14 @@ import companyProfileMd from '@/content/company-profile.md';
 import myTagsMd from '@/content/my-tags.md';
 import FinancialStatementTab from './FinancialStatementTab';
 import CompanyMATab from './CompanyMATab';
+import InvestmentTab from './InvestmentTab';
+import AcquisitionTab from './AcquisitionTab';
+import FundingTab from './FundingTab';
 import IRMaterialTab from './IRMaterialTab';
 import PreEarningCallTab from './PreEarningCallTab';
+import IRTranscriptTab from './IRTranscriptTab';
+import AITranscriptTab from './AITranscriptTab';
+import tvConfigMd from '@/content/tradingview.md';
 import { useTheme } from '@/app/contexts/ThemeContext';
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -116,9 +122,30 @@ function getLocalStorageTags(): string[] {
   }
 }
 
+// ── TradingView config parsed from JSON ──────────────────────────────────────
+
+interface TvWidgetConfig {
+  stockChartSrc: string;
+  marketOverviewSrc: string;
+  marketOverviewConfig: Record<string, unknown>;
+}
+const TV_CONFIG: TvWidgetConfig = extractJson<TvWidgetConfig>(tvConfigMd as string);
+
 // ── Constants ────────────────────────────────────────────────────────────────
 
-const TABS = ['FIN. Summary', 'FIN. Statement', 'News', 'IR Material', 'M&A', 'Pre-Earning Call', 'Stock'] as const;
+const TABS = [
+  'FIN. Summary',
+  'FIN. Statement',
+  'News',
+  'Stock',
+  'IR Transcript',
+  'AI Transcript',
+  'Pre-Earning Call',
+  'IR Material',
+  'Investment',
+  'Acquisition',
+  'Funding',
+] as const;
 type Tab = (typeof TABS)[number];
 
 const FIN_INDICES = [
@@ -477,6 +504,14 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const [newsPage, setNewsPage] = useState(1);
   const stockContainerRef = useRef<HTMLDivElement>(null);
 
+  // News filter state
+  const [newsKeyword, setNewsKeyword] = useState('');
+  const [newsKeywordApplied, setNewsKeywordApplied] = useState('');
+  const [newsCategories, setNewsCategories] = useState<Set<string>>(new Set());
+  const [newsSources, setNewsSources] = useState<Set<string>>(new Set());
+  const [newsPeriodStart, setNewsPeriodStart] = useState('');
+  const [newsPeriodEnd, setNewsPeriodEnd] = useState('');
+
   // Parse markdown data
   const profileData = getProfileData();
 
@@ -635,10 +670,54 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     }
   }
 
-  // News filtered by this company's symbol tag
-  const companyNews = newsItems.filter((n) => n.tags.some((t) => t.symbol === symbol));
-  const newsTotalPages = Math.ceil(companyNews.length / NEWS_PAGE_SIZE);
-  const pagedNews = companyNews.slice((newsPage - 1) * NEWS_PAGE_SIZE, newsPage * NEWS_PAGE_SIZE);
+  // News filtered by this company's symbol tag, then by user filters
+  const companyNews = useMemo(() =>
+    newsItems.filter((n) => n.tags.some((t) => t.symbol === symbol)),
+  [symbol]);
+
+  // Distinct filter options from all company news
+  const distinctFileTypes = useMemo(() => [...new Set(companyNews.map((n) => n.fileType))].sort(), [companyNews]);
+  const distinctSources = useMemo(() => [...new Set(companyNews.map((n) => n.source))].sort(), [companyNews]);
+
+  const filteredNews = useMemo(() => {
+    return companyNews.filter((item) => {
+      if (newsKeywordApplied && !item.title.toLowerCase().includes(newsKeywordApplied.toLowerCase())) return false;
+      if (newsCategories.size > 0 && !newsCategories.has(item.fileType)) return false;
+      if (newsSources.size > 0 && !newsSources.has(item.source)) return false;
+      if (newsPeriodStart) {
+        const d = item.publishedAt;
+        if (d < new Date(newsPeriodStart)) return false;
+      }
+      if (newsPeriodEnd) {
+        const d = item.publishedAt;
+        const end = new Date(newsPeriodEnd);
+        end.setDate(end.getDate() + 1);
+        if (d >= end) return false;
+      }
+      return true;
+    });
+  }, [companyNews, newsKeywordApplied, newsCategories, newsSources, newsPeriodStart, newsPeriodEnd]);
+
+  const newsTotalPages = Math.ceil(filteredNews.length / NEWS_PAGE_SIZE);
+  const pagedNews = filteredNews.slice((newsPage - 1) * NEWS_PAGE_SIZE, newsPage * NEWS_PAGE_SIZE);
+
+  function toggleNewsCategory(cat: string) {
+    setNewsCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(cat)) next.delete(cat); else next.add(cat);
+      return next;
+    });
+    setNewsPage(1);
+  }
+
+  function toggleNewsSource(src: string) {
+    setNewsSources((prev) => {
+      const next = new Set(prev);
+      if (next.has(src)) next.delete(src); else next.add(src);
+      return next;
+    });
+    setNewsPage(1);
+  }
 
   // TradingView widget — inject when Stock tab becomes active
   useEffect(() => {
@@ -654,7 +733,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     const tvSymbol = `${exchange}:${symbol}`;
     const script = document.createElement('script');
     script.type = 'text/javascript';
-    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+    script.src = TV_CONFIG.stockChartSrc;
     script.async = true;
     script.innerHTML = JSON.stringify({
       autosize: true,
@@ -1009,63 +1088,187 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                   </div>
                 ) : (
                   <>
-                    <div className="cp-news-tab-grid">
-                      {pagedNews.map((item) => {
-                        const ago = Math.round((Date.now() - item.publishedAt.getTime()) / 3_600_000);
-                        const timeLabel = ago < 24 ? `${ago}h ago` : `${Math.floor(ago / 24)}d ago`;
-                        return (
-                          <a
-                            key={item.id}
-                            href={item.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="cp-news-tab-card"
-                          >
-                            <div className="cp-news-tab-card-header">
-                              <span className="cp-news-tab-source">{item.source}</span>
-                              <span className="cp-news-tab-time">{timeLabel}</span>
-                            </div>
-                            <p className="cp-news-tab-title">{item.title}</p>
-                            <div className="cp-news-tab-tags">
-                              {item.tags.map((t) => (
-                                <span
-                                  key={t.symbol}
-                                  className={`cp-news-tab-tag ${t.change >= 0 ? 'pos' : 'neg'}`}
-                                >
-                                  {t.symbol} {t.change >= 0 ? '+' : ''}{t.change}%
-                                </span>
-                              ))}
-                            </div>
-                          </a>
-                        );
-                      })}
-                    </div>
-                    {newsTotalPages > 1 && (
-                      <div className="cp-news-tab-pagination">
-                        <button
-                          className="cp-news-tab-page-btn"
-                          disabled={newsPage === 1}
-                          onClick={() => setNewsPage((p) => Math.max(1, p - 1))}
-                        >
-                          ‹ Prev
-                        </button>
-                        {Array.from({ length: newsTotalPages }, (_, i) => i + 1).map((p) => (
-                          <button
-                            key={p}
-                            className={`cp-news-tab-page-btn${newsPage === p ? ' active' : ''}`}
-                            onClick={() => setNewsPage(p)}
-                          >
-                            {p}
-                          </button>
-                        ))}
-                        <button
-                          className="cp-news-tab-page-btn"
-                          disabled={newsPage === newsTotalPages}
-                          onClick={() => setNewsPage((p) => Math.min(newsTotalPages, p + 1))}
-                        >
-                          Next ›
-                        </button>
+                    {/* ── News Filter Bar ── */}
+                    <div className="cp-news-filter-bar">
+                      {/* Keywords */}
+                      <div className="cp-news-filter-field">
+                        <label className="cp-news-filter-label">Keywords</label>
+                        <div className="cp-news-filter-input-wrap">
+                          <input
+                            type="text"
+                            className="cp-news-filter-input"
+                            placeholder="Search keywords… (Enter)"
+                            value={newsKeyword}
+                            onChange={(e) => setNewsKeyword(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') { setNewsKeywordApplied(newsKeyword); setNewsPage(1); }
+                            }}
+                          />
+                          {newsKeywordApplied && (
+                            <button className="cp-news-filter-clear-btn" onClick={() => { setNewsKeyword(''); setNewsKeywordApplied(''); setNewsPage(1); }} aria-label="Clear keyword">
+                              <svg viewBox="0 0 12 12" fill="none" width="10" height="10"><path d="M2 2L10 10M10 2L2 10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
+                            </button>
+                          )}
+                        </div>
                       </div>
+
+                      {/* News Category */}
+                      <div className="cp-news-filter-field">
+                        <label className="cp-news-filter-label">News Category</label>
+                        <div className="cp-news-multi-select">
+                          <div className="cp-news-multi-select-display">
+                            {newsCategories.size === 0 ? (
+                              <span className="cp-news-multi-placeholder">All Categories</span>
+                            ) : (
+                              [...newsCategories].map((c) => (
+                                <span key={c} className="cp-news-multi-chip">
+                                  {c}
+                                  <button onClick={() => toggleNewsCategory(c)} aria-label={`Remove ${c}`}>
+                                    <svg viewBox="0 0 10 10" fill="none" width="8" height="8"><path d="M2 2L8 8M8 2L2 8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
+                                  </button>
+                                </span>
+                              ))
+                            )}
+                          </div>
+                          <div className="cp-news-multi-options">
+                            {distinctFileTypes.map((ft) => (
+                              <button
+                                key={ft}
+                                className={`cp-news-multi-option${newsCategories.has(ft) ? ' active' : ''}`}
+                                onClick={() => toggleNewsCategory(ft)}
+                              >
+                                {newsCategories.has(ft) && (
+                                  <svg viewBox="0 0 12 12" fill="none" width="10" height="10" style={{ marginRight: 4 }}>
+                                    <path d="M2 6L5 9L10 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                  </svg>
+                                )}
+                                {ft}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* News Source */}
+                      <div className="cp-news-filter-field">
+                        <label className="cp-news-filter-label">News Source</label>
+                        <div className="cp-news-multi-select">
+                          <div className="cp-news-multi-select-display">
+                            {newsSources.size === 0 ? (
+                              <span className="cp-news-multi-placeholder">All Sources</span>
+                            ) : (
+                              [...newsSources].map((s) => (
+                                <span key={s} className="cp-news-multi-chip">
+                                  {s}
+                                  <button onClick={() => toggleNewsSource(s)} aria-label={`Remove ${s}`}>
+                                    <svg viewBox="0 0 10 10" fill="none" width="8" height="8"><path d="M2 2L8 8M8 2L2 8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
+                                  </button>
+                                </span>
+                              ))
+                            )}
+                          </div>
+                          <div className="cp-news-multi-options">
+                            {distinctSources.map((src) => (
+                              <button
+                                key={src}
+                                className={`cp-news-multi-option${newsSources.has(src) ? ' active' : ''}`}
+                                onClick={() => toggleNewsSource(src)}
+                              >
+                                {newsSources.has(src) && (
+                                  <svg viewBox="0 0 12 12" fill="none" width="10" height="10" style={{ marginRight: 4 }}>
+                                    <path d="M2 6L5 9L10 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                  </svg>
+                                )}
+                                {src}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Period */}
+                      <div className="cp-news-filter-field">
+                        <label className="cp-news-filter-label">Period</label>
+                        <div className="cp-news-period-wrap">
+                          <input
+                            type="date"
+                            className="cp-news-date-input"
+                            value={newsPeriodStart}
+                            onChange={(e) => { setNewsPeriodStart(e.target.value); setNewsPage(1); }}
+                            aria-label="Period start"
+                          />
+                          <span className="cp-news-period-sep">–</span>
+                          <input
+                            type="date"
+                            className="cp-news-date-input"
+                            value={newsPeriodEnd}
+                            onChange={(e) => { setNewsPeriodEnd(e.target.value); setNewsPage(1); }}
+                            aria-label="Period end"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {filteredNews.length === 0 ? (
+                      <div className="cp-tab-placeholder">
+                        <span className="cp-tab-placeholder-text">No news matches the current filters.</span>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="cp-news-tab-grid">
+                          {pagedNews.map((item) => {
+                            const ago = Math.round((Date.now() - item.publishedAt.getTime()) / 3_600_000);
+                            const timeLabel = ago < 24 ? `${ago}h ago` : `${Math.floor(ago / 24)}d ago`;
+                            return (
+                              <a
+                                key={item.id}
+                                href={item.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="cp-news-tab-card"
+                              >
+                                <div className="cp-news-tab-card-header">
+                                  <span className="cp-news-tab-source">{item.source}</span>
+                                  <span className="cp-news-tab-time">{timeLabel}</span>
+                                </div>
+                                <p className="cp-news-tab-title">{item.title}</p>
+                                <div className="cp-news-tab-tags">
+                                  <span className="cp-news-tab-tag cp-news-filetype-tag">
+                                    {item.fileType}
+                                  </span>
+                                </div>
+                              </a>
+                            );
+                          })}
+                        </div>
+                        {newsTotalPages > 1 && (
+                          <div className="cp-news-tab-pagination">
+                            <button
+                              className="cp-news-tab-page-btn"
+                              disabled={newsPage === 1}
+                              onClick={() => setNewsPage((p) => Math.max(1, p - 1))}
+                            >
+                              ‹ Prev
+                            </button>
+                            {Array.from({ length: newsTotalPages }, (_, i) => i + 1).map((p) => (
+                              <button
+                                key={p}
+                                className={`cp-news-tab-page-btn${newsPage === p ? ' active' : ''}`}
+                                onClick={() => setNewsPage(p)}
+                              >
+                                {p}
+                              </button>
+                            ))}
+                            <button
+                              className="cp-news-tab-page-btn"
+                              disabled={newsPage === newsTotalPages}
+                              onClick={() => setNewsPage((p) => Math.min(newsTotalPages, p + 1))}
+                            >
+                              Next ›
+                            </button>
+                          </div>
+                        )}
+                      </>
                     )}
                   </>
                 )}
@@ -1085,27 +1288,26 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
             {/* ── FIN. Statement tab ── */}
             {activeTab === 'FIN. Statement' && <FinancialStatementTab symbol={symbol} />}
 
-            {/* ── M&A tab ── */}
-            {activeTab === 'M&A' && <CompanyMATab symbol={symbol} />}
-
             {/* ── IR Material tab ── */}
             {activeTab === 'IR Material' && <IRMaterialTab symbol={symbol} />}
 
-            {/* Pre-Earning Call tab */}
-            {activeTab === 'Pre-Earning Call' && <PreEarningCallTab symbol={symbol} />}
+            {/* ── Investment tab (renamed from M&A) ── */}
+            {activeTab === 'Investment' && <InvestmentTab symbol={symbol} />}
 
-            {/* Placeholder for remaining tabs */}
-            {activeTab !== 'FIN. Summary' &&
-              activeTab !== 'FIN. Statement' &&
-              activeTab !== 'News' &&
-              activeTab !== 'Stock' &&
-              activeTab !== 'M&A' &&
-              activeTab !== 'IR Material' &&
-              activeTab !== 'Pre-Earning Call' && (
-                <div className="cp-tab-placeholder">
-                  <span className="cp-tab-placeholder-text">{activeTab} — Content coming soon</span>
-                </div>
-              )}
+            {/* ── Acquisition tab ── */}
+            {activeTab === 'Acquisition' && <AcquisitionTab symbol={symbol} />}
+
+            {/* ── Funding tab ── */}
+            {activeTab === 'Funding' && <FundingTab symbol={symbol} />}
+
+            {/* ── IR Transcript tab ── */}
+            {activeTab === 'IR Transcript' && <IRTranscriptTab symbol={symbol} />}
+
+            {/* ── AI Transcript tab ── */}
+            {activeTab === 'AI Transcript' && <AITranscriptTab symbol={symbol} />}
+
+            {/* ── Pre-Earning Call tab ── */}
+            {activeTab === 'Pre-Earning Call' && <PreEarningCallTab symbol={symbol} />}
 
           </div>
         </main>
