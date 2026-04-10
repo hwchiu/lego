@@ -29,7 +29,15 @@ interface ColDef {
   getClass?: (h: HoldingEntity) => string;
 }
 
+// Catalog column stubs — columns from watchlist-column-catalog.json that do not have
+// a real data getter yet return '-'. Explicit entries below take precedence because
+// they are spread last.
+const CATALOG_COL_STUBS: Record<string, ColDef> = Object.fromEntries(
+  Object.entries(CATALOG_COLUMN_LABELS).map(([id, label]) => [id, { label, getValue: () => '-' as string | number }]),
+);
+
 const ALL_COLUMNS: Record<string, ColDef> = {
+  ...CATALOG_COL_STUBS,
   price:             { label: 'Price',              getValue: h => h.price.toFixed(2) },
   change:            { label: 'Change',             getValue: h => `${h.change >= 0 ? '+' : ''}${h.change.toFixed(2)}`, getClass: h => h.change >= 0 ? 'pos' : 'neg' },
   changePct:         { label: 'Change %',           getValue: h => `${h.changePct >= 0 ? '+' : ''}${h.changePct.toFixed(2)}%`, getClass: h => h.changePct >= 0 ? 'pos' : 'neg' },
@@ -78,18 +86,6 @@ const ALL_COLUMNS: Record<string, ColDef> = {
   doi:               { label: 'DOI',                getValue: h => h.doi },
   lastQtrDOI:        { label: 'Last Qtr DOI',       getValue: h => h.lastQtrDOI },
 };
-
-// Catalog column stubs — every column defined in watchlist-column-catalog.json gets a
-// placeholder entry in ALL_COLUMNS so the custom-view table renderer can handle them.
-// Real value getters are added above for columns backed by mock data; catalog-only
-// columns return '-' until real data is wired in.
-(function registerCatalogColumns() {
-  Object.entries(CATALOG_COLUMN_LABELS).forEach(([id, label]) => {
-    if (!ALL_COLUMNS[id]) {
-      ALL_COLUMNS[id] = { label, getValue: () => '-' };
-    }
-  });
-})();
 
 const BUILTIN_VIEWS = ['Summary', 'Holdings', 'Health Score', 'Ratings'] as const;
 
