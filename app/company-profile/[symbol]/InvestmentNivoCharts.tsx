@@ -9,6 +9,14 @@ interface InvestmentDeal {
   valueM: number | null;
 }
 
+// ── InvestmentBarLineChartNivo props ──────────────────────────────────────────
+
+interface BarLineChartProps {
+  deals: InvestmentDeal[];
+  selectedYear?: string | null;
+  onYearClick?: (year: string | null) => void;
+}
+
 interface YearChartData {
   year: number;
   disclosedCount: number;
@@ -45,7 +53,7 @@ function buildYearData(deals: InvestmentDeal[]): YearChartData[] {
 // ── InvestmentBarLineChartNivo ─────────────────────────────────────────────────
 // Replaces the hand-rolled SVG stacked-bar + line chart.
 
-export function InvestmentBarLineChartNivo({ deals }: { deals: InvestmentDeal[] }) {
+export function InvestmentBarLineChartNivo({ deals, selectedYear, onYearClick }: BarLineChartProps) {
   const yearData = buildYearData(deals);
 
   const maxCount = Math.max(...yearData.map((d) => d.disclosedCount + d.undisclosedCount), 1);
@@ -63,6 +71,31 @@ export function InvestmentBarLineChartNivo({ deals }: { deals: InvestmentDeal[] 
 
   // Index → position lookup for the line layer fallback
   const yearToIdx = new Map(yearData.map((d, i) => [String(d.year), i]));
+
+  // Custom layer: highlights the selected year column.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const HighlightLayer = (props: any) => {
+    if (!selectedYear) return null;
+    const { bars, innerHeight } = props as {
+      bars: Array<{ x: number; width: number; data: { indexValue: string } }>;
+      innerHeight: number;
+    };
+    const matchingBars = bars.filter((b) => b.data.indexValue === selectedYear);
+    if (matchingBars.length === 0) return null;
+    const minX = Math.min(...matchingBars.map((b) => b.x));
+    const maxX = Math.max(...matchingBars.map((b) => b.x + b.width));
+    return (
+      <rect
+        x={minX - 2}
+        y={0}
+        width={maxX - minX + 4}
+        height={innerHeight}
+        fill="rgba(99,102,241,0.12)"
+        rx={3}
+        pointerEvents="none"
+      />
+    );
+  };
 
   // Custom layer: draws the line for disclosedValueM on top of the bars.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -102,17 +135,22 @@ export function InvestmentBarLineChartNivo({ deals }: { deals: InvestmentDeal[] 
             strokeLinecap="round"
           />
         )}
-        {points.map((p) => (
-          <circle
-            key={p.year}
-            cx={p.cx}
-            cy={p.cy}
-            r={3}
-            fill="#111827"
-            stroke="#fff"
-            strokeWidth="1.5"
-          />
-        ))}
+        {points.map((p) => {
+          const isSelected = selectedYear === String(p.year);
+          return (
+            <circle
+              key={p.year}
+              cx={p.cx}
+              cy={p.cy}
+              r={isSelected ? 5 : 3}
+              fill={isSelected ? '#6366f1' : '#111827'}
+              stroke="#fff"
+              strokeWidth={isSelected ? 2 : 1.5}
+              style={{ cursor: 'pointer' }}
+              onClick={() => onYearClick?.(isSelected ? null : String(p.year))}
+            />
+          );
+        })}
       </>
     );
   };
@@ -129,6 +167,8 @@ export function InvestmentBarLineChartNivo({ deals }: { deals: InvestmentDeal[] 
         colors={['#3b82f6', '#ef4444']}
         borderRadius={1}
         enableLabel={false}
+        animate={true}
+        motionConfig="gentle"
         axisBottom={{ tickSize: 0, tickPadding: 5 }}
         axisLeft={{
           tickValues: 5,
@@ -146,8 +186,12 @@ export function InvestmentBarLineChartNivo({ deals }: { deals: InvestmentDeal[] 
           legendOffset: 62,
         }}
         gridYValues={5}
+        onClick={(datum) => {
+          const yr = String(datum.indexValue);
+          onYearClick?.(yr === selectedYear ? null : yr);
+        }}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        layers={['grid', 'axes', 'bars', 'markers', LineLayer as any, 'legends', 'annotations']}
+        layers={['grid', 'axes', HighlightLayer as any, 'bars', 'markers', LineLayer as any, 'legends', 'annotations']}
         tooltip={({ indexValue, data }) => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const d = data as any;

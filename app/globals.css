@@ -8848,6 +8848,22 @@ input, select { font-family: var(--font); }
 }
 .aapl-ma-clear-btn:hover { color: var(--c-neg); border-color: var(--c-neg); }
 
+/* Year filter clear button (inline in section title) */
+.aapl-ma-year-clear-btn {
+  margin-left: 8px;
+  padding: 2px 8px;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 20px;
+  font-size: 11px;
+  color: #4f46e5;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+  vertical-align: middle;
+}
+.aapl-ma-year-clear-btn:hover { background: #c7d2fe; color: #3730a3; }
+
 /* Chart section */
 .aapl-ma-chart-section {
   background: var(--c-white);
