@@ -1,7 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import fundingData from '@/content/apple-funding.json';
+
+const FundingLineChartNivo = dynamic(
+  () => import('./InvestmentNivoCharts').then((m) => m.FundingLineChartNivo),
+  { ssr: false, loading: () => <div style={{ height: 220, background: '#f3f4f6', borderRadius: 8 }} /> },
+);
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -187,7 +193,19 @@ function AAPLFundingPanel() {
 
   const totalFunding = deals.reduce((sum, d) => sum + (d.valueM ?? 0), 0);
 
-  const sortedDeals = [...deals].sort((a, b) => b.date.localeCompare(a.date));
+  const [selectedYear, setSelectedYear] = useState<string | null>(null);
+  const tableRef = useRef<HTMLDivElement>(null);
+
+  const sortedDeals = [...deals]
+    .filter((d) => selectedYear === null || d.date.startsWith(selectedYear))
+    .sort((a, b) => b.date.localeCompare(a.date));
+
+  function handleYearClick(year: string | null) {
+    setSelectedYear(year);
+    if (year !== null) {
+      setTimeout(() => tableRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+    }
+  }
 
   return (
     <div className="aapl-ma-panel">
@@ -207,13 +225,23 @@ function AAPLFundingPanel() {
       {/* ── Line chart ── */}
       <div className="aapl-ma-chart-section">
         <div className="aapl-ma-section-title">Apple Inc. — Annual Funding Amount (USD $M)</div>
-        <FundingLineChart deals={deals} />
+        <FundingLineChartNivo deals={deals} selectedYear={selectedYear} onYearClick={handleYearClick} />
       </div>
 
       {/* ── Table ── */}
-      <div className="aapl-ma-table-section">
+      <div className="aapl-ma-table-section" ref={tableRef}>
         <div className="aapl-ma-section-title">
-          Table View ({deals.length} event{deals.length !== 1 ? 's' : ''})
+          Table View ({sortedDeals.length} event{sortedDeals.length !== 1 ? 's' : ''}
+          {selectedYear ? `, ${selectedYear}` : ''})
+          {selectedYear && (
+            <button
+              className="aapl-ma-year-clear-btn"
+              onClick={() => setSelectedYear(null)}
+              title="Clear year filter"
+            >
+              × Clear {selectedYear}
+            </button>
+          )}
         </div>
         <div className="aapl-ma-table-wrap">
           <table className="aapl-ma-table">
