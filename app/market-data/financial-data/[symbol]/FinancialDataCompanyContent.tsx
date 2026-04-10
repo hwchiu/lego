@@ -7,6 +7,7 @@ import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { getCompanies, getStatement, STATEMENT_TABS } from '@/app/data/financialData';
 import type { StatementKey } from '@/app/data/financialData';
+import { BASE_PATH } from '@/app/lib/basePath';
 
 // ─── Icons ───────────────────────────────────────────────────────────────────
 
@@ -102,16 +103,16 @@ function downloadCsv(symbol: string, companyName: string, tabKey: StatementKey) 
 // ─── Company logo map ────────────────────────────────────────────────────────
 
 const COMPANY_LOGOS: Record<string, string> = {
-  AAPL: '/images/logos/AAPL.svg',
-  NVDA: '/images/logos/NVDA.svg',
-  AMD: '/images/logos/AMD.svg',
-  QCOM: '/images/logos/QCOM.svg',
-  AVGO: '/images/logos/AVGO.svg',
-  MRVL: '/images/logos/MRVL.svg',
-  NXPI: '/images/logos/NXPI.svg',
-  STM: '/images/logos/STM.svg',
-  SONY: '/images/logos/SONY.svg',
-  TXN: '/images/logos/TXN.svg',
+  AAPL: `${BASE_PATH}/images/logos/AAPL.svg`,
+  NVDA: `${BASE_PATH}/images/logos/NVDA.svg`,
+  AMD: `${BASE_PATH}/images/logos/AMD.svg`,
+  QCOM: `${BASE_PATH}/images/logos/QCOM.svg`,
+  AVGO: `${BASE_PATH}/images/logos/AVGO.svg`,
+  MRVL: `${BASE_PATH}/images/logos/MRVL.svg`,
+  NXPI: `${BASE_PATH}/images/logos/NXPI.svg`,
+  STM: `${BASE_PATH}/images/logos/STM.svg`,
+  SONY: `${BASE_PATH}/images/logos/SONY.svg`,
+  TXN: `${BASE_PATH}/images/logos/TXN.svg`,
 };
 
 function CompanyBadge({ symbol, name }: { symbol: string; name: string }) {

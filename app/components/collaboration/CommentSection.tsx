@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { Comment, Member } from '@/app/data/collaboration';
 import { MentionTextarea } from './MentionTextarea';
+import { BASE_PATH } from '@/app/lib/basePath';
 
 interface CommentSectionProps {
   cardId: string;
@@ -143,7 +144,7 @@ export function CommentSection({
 
           {comments.map((c) => (
             <div key={c.id} className="pg-comment-item">
-              <img src={c.author.avatar} alt={c.author.name} className="pg-comment-avatar" />
+              <img src={BASE_PATH + c.author.avatar} alt={c.author.name} className="pg-comment-avatar" />
               <div className="pg-comment-content">
                 <div className="pg-comment-header">
                   <span className="pg-comment-author">{c.author.name}</span>
@@ -200,7 +201,7 @@ export function CommentSection({
 
           {/* New comment input */}
           <div className="pg-comment-form">
-            <img src={currentUser.avatar} alt={currentUser.name} className="pg-comment-avatar" />
+            <img src={BASE_PATH + currentUser.avatar} alt={currentUser.name} className="pg-comment-avatar" />
             <div style={{ flex: 1 }}>
               <MentionTextarea
                 value={newComment}

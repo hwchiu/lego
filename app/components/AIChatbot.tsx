@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import rawContent from '@/content/chatbot.md';
 import { extractJson } from '@/app/lib/parseContent';
+import { BASE_PATH } from '@/app/lib/basePath';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -48,7 +49,7 @@ const knowledge = extractJson<ChatbotKnowledge>(rawContent);
 const BOT_GREETING = knowledge.greeting;
 const ROLES = knowledge.roles;
 
-const BOT_AVATAR_URL = '/images/bot-avatar.svg';
+const BOT_AVATAR_URL = `${BASE_PATH}/images/bot-avatar.svg`;
 
 type FlowStep = 'role' | 'scenario' | 'guide' | 'done';
 

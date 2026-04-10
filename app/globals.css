@@ -624,6 +624,10 @@ input, select { font-family: var(--font); }
   transition: color 0.15s, background 0.15s;
   padding: 0;
 }
+.market-tabs-arrow--left {
+  border-left: none;
+  border-right: 1px solid var(--c-border);
+}
 .market-tabs-arrow:hover {
   color: var(--c-text);
   background: var(--c-bg);
