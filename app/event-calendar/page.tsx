@@ -8,17 +8,36 @@ import Sidebar from '@/app/components/layout/Sidebar';
 import MarketTabs from '@/app/components/calendar/MarketTabs';
 import CorpEventCategorySection from '@/app/components/calendar/CorpEventCategorySection';
 import CorpEventCategoryDetail from '@/app/components/calendar/CorpEventCategoryDetail';
-import { CORP_EVENT_CATEGORY_MAP } from '@/app/data/corpEvents';
+import { CORP_EVENT_CATEGORY_MAP, type CorpEvent } from '@/app/data/corpEvents';
 import { getDateLabel } from '@/app/lib/calendarUtils';
 
+const ALL_TAB = 'All';
+
+function mergeAllEvents(): Record<string, CorpEvent[]> {
+  const merged: Record<string, CorpEvent[]> = {};
+  for (const evtsByDate of Object.values(CORP_EVENT_CATEGORY_MAP)) {
+    for (const [date, evtList] of Object.entries(evtsByDate)) {
+      if (!merged[date]) merged[date] = [];
+      merged[date] = [...merged[date], ...evtList];
+    }
+  }
+  return merged;
+}
+
+const ALL_EVENTS_BY_DATE = mergeAllEvents();
+
 export default function EventCalendarPage() {
-  const [activeTab, setActiveTab] = useState('Share Holders Meeting');
+  const [activeTab, setActiveTab] = useState(ALL_TAB);
   const [eventCategoryDate, setEventCategoryDate] = useState<string>(() =>
     getDateLabel(new Date()),
   );
 
-  // Corp event category data
-  const corpEventsByDate = CORP_EVENT_CATEGORY_MAP[activeTab];
+  // Corp event category data — merge all when "All" tab is active
+  const corpEventsByDate = useMemo(
+    () => (activeTab === ALL_TAB ? ALL_EVENTS_BY_DATE : CORP_EVENT_CATEGORY_MAP[activeTab]),
+    [activeTab],
+  );
+
   const corpEvents = useMemo(
     () => (corpEventsByDate ? (corpEventsByDate[eventCategoryDate] ?? []) : []),
     [corpEventsByDate, eventCategoryDate],

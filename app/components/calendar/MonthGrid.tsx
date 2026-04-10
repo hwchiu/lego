@@ -29,6 +29,9 @@ function MonthCell({ day, isToday, isSelected, onSelect, countLabel, emptyLabel 
   const hasReports = day.companies && day.companies.length > 0;
   // Extract the day number from dateLabel (e.g., "Apr 1" -> "1", "Mar 30" -> "30")
   const dayNum = day.dateLabel.split(' ')[1];
+  const fullText = day.companies ? day.companies.join(', ') : '';
+  const truncated = day.companies ? truncateCompanies(day.companies) : '';
+  const isTruncated = fullText.length > truncated.length;
 
   return (
     <div
@@ -47,7 +50,12 @@ function MonthCell({ day, isToday, isSelected, onSelect, countLabel, emptyLabel 
               <span className="cell-count">{day.companyCount}</span>
               <span className="cell-count-label">{countLabel}</span>
             </div>
-            <div className="cell-co-text">{truncateCompanies(day.companies!)}</div>
+            <div className="cell-co-tooltip-wrap">
+              <div className="cell-co-text">{truncated}</div>
+              {isTruncated && (
+                <div className="cell-co-tooltip">{day.companies!.join(', ')}</div>
+              )}
+            </div>
           </>
         ) : (
           <div className="cell-empty">{emptyLabel}</div>
