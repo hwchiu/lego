@@ -1,0 +1,91 @@
+{
+  "categories": [
+    {
+      "id": "balance-sheet",
+      "label": "Balance Sheet",
+      "columns": [
+        { "id": "cashAndEquiv",              "label": "Cash & Cash Equivalents" },
+        { "id": "marketableSecurities",      "label": "Marketable Securities" },
+        { "id": "accountReceivable",         "label": "Account Receivable" },
+        { "id": "bsInventory",               "label": "Inventory" },
+        { "id": "otherCurrentAssets",        "label": "Other Current Assets" },
+        { "id": "totalCurrentAssets",        "label": "Total Current Asset" },
+        { "id": "longTermInvestments",       "label": "Long-Term Investments" },
+        { "id": "netFixedAssets",            "label": "Net Fixed Assets" },
+        { "id": "intangibleAssets",          "label": "Intangible Assets" },
+        { "id": "totalLongTermAssets",       "label": "Total Long-Term Assets" },
+        { "id": "totalAssets",               "label": "Total Asset" },
+        { "id": "stDebt",                    "label": "ST Debt" },
+        { "id": "accountPayable",            "label": "Account Payable" },
+        { "id": "otherShortTermLiabilities", "label": "Other Short-Term Liabilities" },
+        { "id": "totalCurrentLiabilities",   "label": "Total Current Liability" },
+        { "id": "longTermDebt",              "label": "Long Term Debt" },
+        { "id": "otherLongTermLiabilities",  "label": "Other Long-Term Liabilities" },
+        { "id": "totalLongTermLiabilities",  "label": "Total Long-Term Liabilities" },
+        { "id": "totalLiabilities",          "label": "Total Liability" },
+        { "id": "totalShareholdersEquity",   "label": "Total Shareholder's Equity" },
+        { "id": "totalLiabilitiesEquity",    "label": "Total Liability and Shareholder's Equity" }
+      ]
+    },
+    {
+      "id": "cash-flow-statement",
+      "label": "Cash Flow Statement",
+      "columns": [
+        { "id": "cfNetIncome",           "label": "Net income" },
+        { "id": "depreciationAmort",     "label": "Depreciation & Amortization" },
+        { "id": "cashFromOperating",     "label": "Cash From Operating Activities" },
+        { "id": "purchaseFixedAssets",   "label": "Purchase of Fixed Assets" },
+        { "id": "otherInvestingAct",     "label": "Other Investing Activities" },
+        { "id": "cashFromInvesting",     "label": "Cash From Investing Activities" },
+        { "id": "dividendsPaid",         "label": "Dividends Paid" },
+        { "id": "cfDoi",                 "label": "DOI" },
+        { "id": "changesInBorrowings",   "label": "Changes in Borrowings" },
+        { "id": "repurchasesStock",      "label": "Repurchases of common stock" },
+        { "id": "cashFromFinancing",     "label": "Cash From Financing Activities" },
+        { "id": "netChangesInCash",      "label": "Net Changes in Cash" },
+        { "id": "cashBeginBalance",      "label": "Cash Beginning Balance" },
+        { "id": "cashEndBalance",        "label": "Cash End Balance" }
+      ]
+    },
+    {
+      "id": "income-statement",
+      "label": "Income Statement",
+      "columns": [
+        { "id": "isRevenue",           "label": "Revenue" },
+        { "id": "isQoQGrowth",         "label": "QoQ Growth (%)" },
+        { "id": "isYoYGrowth",         "label": "YoY Growth (%)" },
+        { "id": "isCogs",              "label": "COGS ($)" },
+        { "id": "isGrossProfit",       "label": "Gross Profit" },
+        { "id": "isGrossMargin",       "label": "Gross Margin (%)" },
+        { "id": "isOperatingExpense",  "label": "Operating Expense" },
+        { "id": "isRdExpense",         "label": "R&D Expense" },
+        { "id": "isRdToRevenue",       "label": "R&D Expense/ Revenue (%)" },
+        { "id": "isSgaExpense",        "label": "SG&A Expense" },
+        { "id": "isOtherOpExpense",    "label": "Other OP Expense" },
+        { "id": "isOperatingIncome",   "label": "Operating Income" },
+        { "id": "isOpexToRevenue",     "label": "OP Expense/ Revenue (%)" },
+        { "id": "isOperatingMargin",   "label": "Operating Margin (%)" },
+        { "id": "isEbt",               "label": "EBT ($)" },
+        { "id": "isEbtMargin",         "label": "EBT Margin (%)" },
+        { "id": "isTaxExpense",        "label": "Tax Expense" },
+        { "id": "isNetIncome",         "label": "Net Income" },
+        { "id": "isNetMargin",         "label": "Net Margin (%)" },
+        { "id": "isEps",               "label": "EPS" },
+        { "id": "isEpsQoQ",            "label": "EPS QoQ (%)" },
+        { "id": "isMarketCap",         "label": "Market Cap ($)" }
+      ]
+    },
+    {
+      "id": "others",
+      "label": "Others",
+      "columns": [
+        { "id": "freeCashFlow",       "label": "Free Cash Flow" },
+        { "id": "roePercent",         "label": "ROE (%)" },
+        { "id": "roaPercent",         "label": "ROA (%)" },
+        { "id": "rocPercent",         "label": "ROC (%)" },
+        { "id": "roicPercent",        "label": "ROIC (%)" },
+        { "id": "capitalIntensity",   "label": "Capital Intensity (%)" }
+      ]
+    }
+  ]
+}
