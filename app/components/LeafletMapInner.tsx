@@ -9,14 +9,15 @@ import type { FabLocation } from '@/app/data/tcFabs';
 // Fix Leaflet's default marker icon URLs broken by webpack asset hashing.
 // Next.js/Webpack rewrites asset filenames, breaking Leaflet's internal URL
 // resolution. We must delete the private `_getIconUrl` method and set explicit
-// CDN paths so markers render correctly in both dev and production builds.
+// local paths so markers render correctly in both dev and production builds.
 // The `as unknown as Record<string, unknown>` cast is required because
 // `_getIconUrl` is not exposed in Leaflet's public TypeScript types.
+const BASE_PATH = process.env.NODE_ENV === 'production' ? '/lego' : '';
 delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconRetinaUrl: `${BASE_PATH}/images/leaflet/marker-icon-2x.png`,
+  iconUrl: `${BASE_PATH}/images/leaflet/marker-icon.png`,
+  shadowUrl: `${BASE_PATH}/images/leaflet/marker-shadow.png`,
 });
 
 // ─── Custom numbered marker icon ─────────────────────────────────────────────

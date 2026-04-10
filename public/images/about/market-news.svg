@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <rect width="800" height="500" fill="#2b1a32"/>
+  <!-- Grid lines -->
+  <g stroke="#9c6fc4" stroke-opacity="0.2" stroke-width="1">
+    <line x1="0" y1="100" x2="800" y2="100"/>
+    <line x1="0" y1="200" x2="800" y2="200"/>
+    <line x1="0" y1="300" x2="800" y2="300"/>
+    <line x1="0" y1="400" x2="800" y2="400"/>
+    <line x1="160" y1="0" x2="160" y2="500"/>
+    <line x1="320" y1="0" x2="320" y2="500"/>
+    <line x1="480" y1="0" x2="480" y2="500"/>
+    <line x1="640" y1="0" x2="640" y2="500"/>
+  </g>
+  <!-- Chart bars -->
+  <rect x="100" y="200" width="60" height="200" fill="#9c6fc4" opacity="0.7" rx="3"/>
+  <rect x="200" y="150" width="60" height="250" fill="#9c6fc4" opacity="0.7" rx="3"/>
+  <rect x="300" y="250" width="60" height="150" fill="#9c6fc4" opacity="0.5" rx="3"/>
+  <rect x="400" y="120" width="60" height="280" fill="#9c6fc4" opacity="0.7" rx="3"/>
+  <rect x="500" y="180" width="60" height="220" fill="#9c6fc4" opacity="0.6" rx="3"/>
+  <rect x="600" y="100" width="60" height="300" fill="#9c6fc4" opacity="0.8" rx="3"/>
+  <!-- Label -->
+  <text x="400" y="470" text-anchor="middle" font-family="sans-serif" font-size="24" fill="#9c6fc4" opacity="0.9">市場新聞儀表板</text>
+</svg>

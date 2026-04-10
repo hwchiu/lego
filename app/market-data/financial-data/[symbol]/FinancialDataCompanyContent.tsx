@@ -102,16 +102,16 @@ function downloadCsv(symbol: string, companyName: string, tabKey: StatementKey) 
 // ─── Company logo map ────────────────────────────────────────────────────────
 
 const COMPANY_LOGOS: Record<string, string> = {
-  AAPL: 'https://logo.clearbit.com/apple.com',
-  NVDA: 'https://logo.clearbit.com/nvidia.com',
-  AMD: 'https://logo.clearbit.com/amd.com',
-  QCOM: 'https://logo.clearbit.com/qualcomm.com',
-  AVGO: 'https://logo.clearbit.com/broadcom.com',
-  MRVL: 'https://logo.clearbit.com/marvell.com',
-  NXPI: 'https://logo.clearbit.com/nxp.com',
-  STM: 'https://logo.clearbit.com/st.com',
-  SONY: 'https://logo.clearbit.com/sony.com',
-  TXN: 'https://logo.clearbit.com/ti.com',
+  AAPL: '/images/logos/AAPL.svg',
+  NVDA: '/images/logos/NVDA.svg',
+  AMD: '/images/logos/AMD.svg',
+  QCOM: '/images/logos/QCOM.svg',
+  AVGO: '/images/logos/AVGO.svg',
+  MRVL: '/images/logos/MRVL.svg',
+  NXPI: '/images/logos/NXPI.svg',
+  STM: '/images/logos/STM.svg',
+  SONY: '/images/logos/SONY.svg',
+  TXN: '/images/logos/TXN.svg',
 };
 
 function CompanyBadge({ symbol, name }: { symbol: string; name: string }) {

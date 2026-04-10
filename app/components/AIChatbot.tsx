@@ -48,7 +48,7 @@ const knowledge = extractJson<ChatbotKnowledge>(rawContent);
 const BOT_GREETING = knowledge.greeting;
 const ROLES = knowledge.roles;
 
-const BOT_AVATAR_URL = 'https://i.pravatar.cc/40?img=47';
+const BOT_AVATAR_URL = '/images/bot-avatar.svg';
 
 type FlowStep = 'role' | 'scenario' | 'guide' | 'done';
 
