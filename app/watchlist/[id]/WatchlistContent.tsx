@@ -105,6 +105,7 @@ const ALL_COLUMNS: Record<string, ColDef> = {
 };
 
 const BUILTIN_VIEWS = ['Summary', 'Holdings', 'Health Score', 'Ratings'] as const;
+const DISABLED_TABS = new Set<string>(['Holdings', 'Health Score', 'Ratings']);
 
 // All data (indices, holdings, portfolio config) comes from content/*.md files.
 // The fetch script writes to MD; app/data/*.ts readers parse via extractJson().
@@ -1535,11 +1536,13 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                   const label = BUILTIN_VIEWS.includes(id as typeof BUILTIN_VIEWS[number])
                     ? id
                     : (customViews.find((v) => v.id === id)?.name ?? id);
+                  const isDisabled = DISABLED_TABS.has(id);
                   return (
                     <button
                       key={id}
-                      className={`wl-subtab${activeTab === id ? ' active' : ''}`}
-                      onClick={() => setActiveTab(id)}
+                      className={`wl-subtab${activeTab === id ? ' active' : ''}${isDisabled ? ' wl-subtab--disabled' : ''}`}
+                      onClick={isDisabled ? undefined : () => setActiveTab(id)}
+                      disabled={isDisabled}
                     >
                       {label}
                     </button>
