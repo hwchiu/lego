@@ -88,7 +88,7 @@ function AcquisitionBarLineChart({ deals }: { deals: AcquisitionDeal[] }) {
   const valueMax = Math.ceil(maxValue / 500) * 500 || 500;
 
   const barSlotW = chartW / yearData.length;
-  const barW = Math.max(2, barSlotW * 0.65);
+  const barW = Math.max(3, barSlotW * 0.65);
 
   const linePoints = yearData
     .map((d, i) => {
