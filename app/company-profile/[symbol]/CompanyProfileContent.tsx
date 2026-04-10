@@ -168,7 +168,10 @@ const DOI_REVENUE_Y_INTERVAL = 4000;
 const NEWS_PAGE_SIZE = 4;
 
 // ── Mini Calendar / Date Picker ──────────────────────────────────────────────
-
+// Month and day names are intentionally hardcoded in English (not subject to i18n)
+// because the News Period filter displays dates in a locale-neutral format for
+// international financial data context. Chinese date format would show native
+// browser date-picker UI which is inconsistent with the custom design.
 const CAL_MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',

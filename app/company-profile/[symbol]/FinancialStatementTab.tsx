@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { resolveSymbolAlias } from '@/app/data/sp500';
 import { extractJson, extractJsonBySection } from '@/app/lib/parseContent';
 import tcFinStmtMd from '@/content/tc-financial-statement.md';
@@ -377,14 +377,19 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
     ? simpleAllYears[simpleAllYears.length - 1] - 1
     : (simpleAllYears[0] ?? 0);
 
-  const [simpleYearWindowStart, setSimpleYearWindowStart] = useState(0);
+  // Per-statement-type overrides; falls back to computed default so no useEffect needed.
+  const [simpleYearOverrides, setSimpleYearOverrides] = useState<Partial<Record<StatementType, number>>>({});
+  const simpleDefaultYearStart = simpleAllYears.length > 0
+    ? Math.max(simpleAllYears[0], simpleMaxYearWindowStart)
+    : 0;
+  const simpleYearWindowStart = simpleYearOverrides[statementType] ?? simpleDefaultYearStart;
 
-  useEffect(() => {
-    if (simpleAllYears.length > 0) {
-      const defaultStart = Math.max(simpleAllYears[0], simpleMaxYearWindowStart);
-      setSimpleYearWindowStart(defaultStart);
-    }
-  }, [simpleAllYears, simpleMaxYearWindowStart]);
+  function setSimpleYearWindowStart(updater: (y: number) => number) {
+    setSimpleYearOverrides((prev) => ({
+      ...prev,
+      [statementType]: updater(prev[statementType] ?? simpleDefaultYearStart),
+    }));
+  }
 
   const simpleCanGoPrev = viewMode === 'quarterly' && simpleAllYears.length > 0 && simpleYearWindowStart > simpleAllYears[0];
   const simpleCanGoNext = viewMode === 'quarterly' && simpleYearWindowStart < simpleMaxYearWindowStart;
