@@ -2233,7 +2233,7 @@ input, select { font-family: var(--font); }
 .wl-table-wrap::-webkit-scrollbar { height: 6px; }
 .wl-table-wrap::-webkit-scrollbar-thumb { background: var(--c-border-2); border-radius: 3px; }
 .wl-table {
-  width: auto;
+  width: 100%;
   border-collapse: collapse;
   font-size: 12.5px;
   min-width: 0;
