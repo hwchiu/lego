@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import TopNav from '@/app/components/layout/TopNav';
@@ -12,6 +12,23 @@ import { holdingsData as holdingsDataMap, holdingsDataQ4_2025 } from '@/app/data
 import type { HoldingEntity } from '@/app/data/watchlistData';
 import { mainNav } from '@/app/data/navigation';
 import { useWatchlist } from '@/app/contexts/WatchlistContext';
+import { newsItems } from '@/app/data/news';
+import { pressReleases } from '@/app/data/pressReleases';
+import {
+  bondEvents,
+  dividendEvents,
+  dividendAristocratEvents,
+  dividendChampionEvents,
+  countryEvents,
+  currencyEvents,
+} from '@/app/data/eventCategories';
+import type {
+  BondEvent,
+  DividendEvent,
+  DividendGrowthEvent,
+  CountryEvent,
+  CurrencyEvent,
+} from '@/app/data/eventCategories';
 
 // ── Custom View types ─────────────────────────────────────────────────────────
 interface CustomView {
@@ -99,176 +116,6 @@ type Holding = HoldingEntity;
 
 const holdingsDataQ1: Holding[] = Object.values(holdingsDataMap);
 const holdingsDataQ4: Holding[] = Object.values(holdingsDataQ4_2025);
-
-// ── News feed items ───────────────────────────────────────────────────────────
-// Category tags sourced from content/watchlist-articles.md
-type FeedTag = 'Analysis' | 'News' | 'Warnings' | 'Transcripts' | 'Press Release';
-
-interface FeedItem {
-  id: number;
-  avatar: 'alpha' | 'user';
-  title: string;
-  tickers: string[];
-  source: string;
-  time: string;
-  comments?: number;
-  tags: FeedTag[];
-}
-
-const allFeedItems: FeedItem[] = [
-  // ── Existing articles (IDs 1–6) ──
-  {
-    id: 1,
-    avatar: 'alpha',
-    title: 'Anthropic says no sensitive data exposed in leak of code behind Claude AI agent',
-    tickers: ['GOOGL'],
-    source: 'SA News',
-    time: 'Today, 10:18 AM',
-    comments: 11,
-    tags: ['News'],
-  },
-  {
-    id: 2,
-    avatar: 'user',
-    title: "A Major Market Rotation Is Likely Coming: Here's Where I'm Loading Up",
-    tickers: ['AMZN', 'META'],
-    source: 'Samuel Smith',
-    time: 'Today, 10:17 AM',
-    tags: ['Analysis'],
-  },
-  {
-    id: 3,
-    avatar: 'alpha',
-    title: 'Most and least shorted large-cap tech stocks as of March',
-    tickers: ['AAPL', 'NVDA'],
-    source: 'SA News',
-    time: 'Today, 10:05 AM',
-    tags: ['Analysis'],
-  },
-  {
-    id: 4,
-    avatar: 'alpha',
-    title: 'AI, chip stocks tumble as Trump plans to strike Iran hard',
-    tickers: ['AMD', 'INTC'],
-    source: 'SA News',
-    time: 'Today, 10:05 AM',
-    comments: 16,
-    tags: ['News', 'Warnings'],
-  },
-  {
-    id: 5,
-    avatar: 'alpha',
-    title: 'Biggest stock movers Thursday: Oil and gas stocks, TSLA, and more',
-    tickers: ['AMD', 'NVDA'],
-    source: 'SA News',
-    time: 'Today, 9:52 AM',
-    tags: ['News'],
-  },
-  {
-    id: 6,
-    avatar: 'alpha',
-    title: "ETFs tied to Tesla slide as the EV maker's delivery miss pressures stock",
-    tickers: ['TSLA'],
-    source: 'SA News',
-    time: 'Today, 9:29 AM',
-    comments: 2,
-    tags: ['News', 'Analysis'],
-  },
-  // ── Crawled articles – TC, TSLA, NVDA, QCOM (IDs 7–16) ──
-  {
-    id: 7,
-    avatar: 'alpha',
-    title: 'T Company Q3 2025 Outperformance: 39% Profit Growth Driven by AI Chip Demand',
-    tickers: ['TC'],
-    source: 'Seeking Alpha',
-    time: 'Yesterday, 8:00 AM',
-    tags: ['Analysis'],
-  },
-  {
-    id: 8,
-    avatar: 'alpha',
-    title: 'T Company Raises 2025 Capex to $40B to Accelerate 3nm and 5nm Expansion',
-    tickers: ['TC'],
-    source: 'Investors.com',
-    time: 'Yesterday, 7:30 AM',
-    tags: ['News', 'Press Release'],
-  },
-  {
-    id: 9,
-    avatar: 'alpha',
-    title: 'NVDA vs. TC: Which Semiconductor Stock Is the Better AI Investment?',
-    tickers: ['NVDA', 'TC'],
-    source: 'Zacks',
-    time: 'Yesterday, 6:15 AM',
-    tags: ['Analysis'],
-  },
-  {
-    id: 10,
-    avatar: 'alpha',
-    title: 'Nvidia Reports Potential $8B Revenue Hit from US-China Export Restrictions',
-    tickers: ['NVDA'],
-    source: 'Reuters',
-    time: 'Apr 2, 5:00 PM',
-    comments: 24,
-    tags: ['News', 'Warnings'],
-  },
-  {
-    id: 11,
-    avatar: 'alpha',
-    title: 'SA Analyst Upgrades: TSLA, AAPL, NVDA — Bullish Momentum Resumes',
-    tickers: ['TSLA', 'NVDA'],
-    source: 'Seeking Alpha',
-    time: 'Apr 2, 3:45 PM',
-    tags: ['Analysis'],
-  },
-  {
-    id: 12,
-    avatar: 'alpha',
-    title: 'Tesla Q3 2025 Analyst Targets Range from $175 to $500 Amid EV Uncertainty',
-    tickers: ['TSLA'],
-    source: 'Bloomberg',
-    time: 'Apr 2, 2:20 PM',
-    comments: 18,
-    tags: ['Analysis', 'Warnings'],
-  },
-  {
-    id: 13,
-    avatar: 'alpha',
-    title: 'Tesla Model Q to Launch in H2 2025, Targeting Mass-Market EV Recovery',
-    tickers: ['TSLA'],
-    source: 'Bloomberg',
-    time: 'Apr 2, 1:00 PM',
-    tags: ['News'],
-  },
-  {
-    id: 14,
-    avatar: 'alpha',
-    title: 'Qualcomm Q4 2025 Earnings Beat: $11.27B Revenue Up 10% YoY',
-    tickers: ['QCOM'],
-    source: 'CNBC',
-    time: 'Apr 1, 5:30 PM',
-    comments: 7,
-    tags: ['News', 'Transcripts'],
-  },
-  {
-    id: 15,
-    avatar: 'alpha',
-    title: 'Qualcomm AI Accelerator Chips to Enter Data Center Market in 2026',
-    tickers: ['QCOM'],
-    source: 'Zacks',
-    time: 'Apr 1, 4:00 PM',
-    tags: ['Analysis', 'Press Release'],
-  },
-  {
-    id: 16,
-    avatar: 'alpha',
-    title: 'QCOM Expands Automotive AI Partnerships with Meta and Key OEMs',
-    tickers: ['QCOM'],
-    source: 'Financial Charts',
-    time: 'Apr 1, 2:45 PM',
-    tags: ['News', 'Analysis'],
-  },
-];
 
 // ── Quarter navigation helpers ────────────────────────────────────────────────
 const QUARTERS = ['Q1', 'Q2', 'Q3', 'Q4'];
@@ -1018,7 +865,23 @@ function RatingsComingSoon() {
 }
 
 // ── Main page ─────────────────────────────────────────────────────────────────
-type FeedTab = 'Latest' | 'Analysis' | 'News' | 'Warnings' | 'Transcripts' | 'Press Releases';
+type FeedTab = 'Latest' | 'News' | 'Press Release' | 'Event';
+
+// ── Unified Updates feed item ─────────────────────────────────────────────────
+interface UpdateFeedItem {
+  id: string;
+  kind: 'news' | 'press-release' | 'event';
+  title: string;
+  source: string;
+  displaySymbols: string[];
+  dateLabel: string;
+  dateMs: number;
+  description?: string;
+}
+
+function parseDateKey(dateKey: string): number {
+  try { return new Date(`${dateKey} 2026`).getTime(); } catch { return 0; }
+}
 
 export default function WatchlistPage({ params }: { params: { id: string } }) {
   const watchlistId = params.id;
@@ -1306,15 +1169,170 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
     if (activeTab === id) setActiveTab('Summary');
   }
 
-  // Feed filtering logic
-  const filteredFeedItems =
-    feedTab === 'Latest'
-      ? allFeedItems
-      : allFeedItems.filter((item) => {
-          const tabTag: FeedTag =
-            feedTab === 'Press Releases' ? 'Press Release' : (feedTab as FeedTag);
-          return item.tags.includes(tabTag);
+  // ── Updates feed: build filtered items from real data sources ────────────
+  const watchlistSymbolSet = useMemo(() => new Set(currentSymbolOrder), [currentSymbolOrder]);
+
+  const newsUpdateItems = useMemo((): UpdateFeedItem[] =>
+    newsItems
+      .filter((item) => item.tags.some((tag) => watchlistSymbolSet.has(tag.symbol)))
+      .map((item) => ({
+        id: item.id,
+        kind: 'news' as const,
+        title: item.title,
+        source: item.source,
+        displaySymbols: item.tags.filter((t) => watchlistSymbolSet.has(t.symbol)).map((t) => t.symbol),
+        dateLabel: item.publishedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        dateMs: item.publishedAt.getTime(),
+      })),
+    [watchlistSymbolSet],
+  );
+
+  const prUpdateItems = useMemo((): UpdateFeedItem[] =>
+    pressReleases
+      .filter((pr) => watchlistSymbolSet.has(pr.ticker))
+      .map((pr) => ({
+        id: pr.id,
+        kind: 'press-release' as const,
+        title: pr.title,
+        source: pr.company,
+        displaySymbols: [pr.ticker],
+        dateLabel: pr.publishedAt,
+        dateMs: new Date(pr.publishedAt).getTime(),
+        description: pr.summary,
+      })),
+    [watchlistSymbolSet],
+  );
+
+  const eventUpdateItems = useMemo((): UpdateFeedItem[] => {
+    const items: UpdateFeedItem[] = [];
+
+    Object.entries(bondEvents).forEach(([date, evts]) => {
+      evts.forEach((evt, i) => {
+        const e = evt as BondEvent;
+        if (!watchlistSymbolSet.has(e.symbol)) return;
+        items.push({
+          id: `bond-${date}-${i}`,
+          kind: 'event',
+          title: `${e.eventType}: ${e.company}`,
+          source: 'Bond Event',
+          displaySymbols: [e.symbol],
+          dateLabel: date,
+          dateMs: parseDateKey(date),
+          description: e.description,
         });
+      });
+    });
+
+    Object.entries(dividendEvents).forEach(([date, evts]) => {
+      evts.forEach((evt, i) => {
+        const e = evt as DividendEvent;
+        if (!watchlistSymbolSet.has(e.symbol)) return;
+        items.push({
+          id: `div-${date}-${i}`,
+          kind: 'event',
+          title: `Dividend: ${e.company} — ${e.dividend}`,
+          source: 'Dividend',
+          displaySymbols: [e.symbol],
+          dateLabel: date,
+          dateMs: parseDateKey(date),
+          description: `Ex-Date: ${e.exDate} · Pay Date: ${e.payDate} · Yield: ${e.yield}`,
+        });
+      });
+    });
+
+    Object.entries(dividendAristocratEvents).forEach(([date, evts]) => {
+      evts.forEach((evt, i) => {
+        const e = evt as DividendGrowthEvent;
+        if (!watchlistSymbolSet.has(e.symbol)) return;
+        items.push({
+          id: `diva-${date}-${i}`,
+          kind: 'event',
+          title: `Dividend Aristocrat: ${e.company} — ${e.dividend}`,
+          source: 'Dividend Aristocrat',
+          displaySymbols: [e.symbol],
+          dateLabel: date,
+          dateMs: parseDateKey(date),
+          description: `Ex-Date: ${e.exDate} · Consecutive Years: ${e.consecutiveYears} · Annual Growth: ${e.annualGrowth}`,
+        });
+      });
+    });
+
+    Object.entries(dividendChampionEvents).forEach(([date, evts]) => {
+      evts.forEach((evt, i) => {
+        const e = evt as DividendGrowthEvent;
+        if (!watchlistSymbolSet.has(e.symbol)) return;
+        items.push({
+          id: `divc-${date}-${i}`,
+          kind: 'event',
+          title: `Dividend Champion: ${e.company} — ${e.dividend}`,
+          source: 'Dividend Champion',
+          displaySymbols: [e.symbol],
+          dateLabel: date,
+          dateMs: parseDateKey(date),
+          description: `Ex-Date: ${e.exDate} · Annual Growth: ${e.annualGrowth}`,
+        });
+      });
+    });
+
+    Object.entries(countryEvents).forEach(([date, evts]) => {
+      evts.forEach((evt, i) => {
+        const e = evt as CountryEvent;
+        const matching = e.affectedCompanies.filter((s) => watchlistSymbolSet.has(s));
+        if (matching.length === 0) return;
+        items.push({
+          id: `country-${date}-${i}`,
+          kind: 'event',
+          title: e.title,
+          source: `Country Event · ${e.country}`,
+          displaySymbols: matching,
+          dateLabel: date,
+          dateMs: parseDateKey(date),
+          description: e.description,
+        });
+      });
+    });
+
+    Object.entries(currencyEvents).forEach(([date, evts]) => {
+      evts.forEach((evt, i) => {
+        const e = evt as CurrencyEvent;
+        const matching = e.affectedCompanies.filter((s) => watchlistSymbolSet.has(s));
+        if (matching.length === 0) return;
+        items.push({
+          id: `fx-${date}-${i}`,
+          kind: 'event',
+          title: `FX: ${e.pair} — ${e.rate}`,
+          source: 'Currency Event',
+          displaySymbols: matching,
+          dateLabel: date,
+          dateMs: parseDateKey(date),
+          description: e.description,
+        });
+      });
+    });
+
+    return items.sort((a, b) => b.dateMs - a.dateMs);
+  }, [watchlistSymbolSet]);
+
+  const latestUpdateItems = useMemo(
+    (): UpdateFeedItem[] =>
+      [...newsUpdateItems, ...prUpdateItems, ...eventUpdateItems].sort((a, b) => b.dateMs - a.dateMs),
+    [newsUpdateItems, prUpdateItems, eventUpdateItems],
+  );
+
+  const currentUpdateItems: UpdateFeedItem[] =
+    feedTab === 'Latest' ? latestUpdateItems
+    : feedTab === 'News' ? newsUpdateItems
+    : feedTab === 'Press Release' ? prUpdateItems
+    : eventUpdateItems;
+
+  // Ref for indexes track scroll
+  const indexesTrackRef = useRef<HTMLDivElement>(null);
+  function handleIndexScrollLeft() {
+    indexesTrackRef.current?.scrollBy({ left: -220, behavior: 'smooth' });
+  }
+  function handleIndexScrollRight() {
+    indexesTrackRef.current?.scrollBy({ left: 220, behavior: 'smooth' });
+  }
 
   return (
     <>
@@ -1328,7 +1346,18 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
             <section className="wl-indexes-section">
               <div className="wl-indexes-label">Stock Indexes</div>
               <div className="wl-indexes-scroll">
-                <div className="wl-indexes-track">
+                <button className="wl-arrow-btn" aria-label="Scroll left" onClick={handleIndexScrollLeft}>
+                  <svg viewBox="0 0 14 14" fill="none" width="14" height="14">
+                    <path
+                      d="M9 2.5L4.5 7L9 11.5"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+                <div className="wl-indexes-track" ref={indexesTrackRef}>
                   {stockIndexes.map((idx) => {
                     const pos = idx.change >= 0;
                     return (
@@ -1350,30 +1379,17 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                     );
                   })}
                 </div>
-                <div className="wl-indexes-arrows">
-                  <button className="wl-arrow-btn" aria-label="Scroll left">
-                    <svg viewBox="0 0 14 14" fill="none" width="14" height="14">
-                      <path
-                        d="M9 2.5L4.5 7L9 11.5"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </button>
-                  <button className="wl-arrow-btn" aria-label="Scroll right">
-                    <svg viewBox="0 0 14 14" fill="none" width="14" height="14">
-                      <path
-                        d="M5 2.5L9.5 7L5 11.5"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </button>
-                </div>
+                <button className="wl-arrow-btn" aria-label="Scroll right" onClick={handleIndexScrollRight}>
+                  <svg viewBox="0 0 14 14" fill="none" width="14" height="14">
+                    <path
+                      d="M5 2.5L9.5 7L5 11.5"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
               </div>
             </section>
 
@@ -1448,34 +1464,10 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                   )}
                 </div>
 
-                {/* Summary row */}
-                <div className="wl-portfolio-summary">
-                  {/* Eye icon */}
-                  <svg viewBox="0 0 14 14" fill="none" width="16" height="16" className="wl-eye-icon">
-                    <path
-                      d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z"
-                      stroke="currentColor"
-                      strokeWidth="1.3"
-                      strokeLinejoin="round"
-                    />
-                    <circle cx="7" cy="7" r="1.8" fill="currentColor" />
-                  </svg>
-
-                  <span className="wl-total-value">${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-
-                  <span className={`wl-daily-change ${totalGain >= 0 ? 'pos' : 'neg'}`}>
-                    <svg viewBox="0 0 14 14" fill="none" width="12" height="12">
-                      {totalGain >= 0 ? (
-                        <path d="M7 2.5L11 7H3L7 2.5Z" fill="currentColor" />
-                      ) : (
-                        <path d="M7 11.5L3 7H11L7 11.5Z" fill="currentColor" />
-                      )}
-                    </svg>
-                    {totalGain >= 0 ? '+' : ''}
-                    {totalGain.toFixed(2)} ({totalGainPct >= 0 ? '+' : ''}
-                    {totalGainPct.toFixed(2)}%)
-                  </span>
-                </div>
+                {/* Summary row — disabled (not in current development stage) */}
+                {/* <div className="wl-portfolio-summary">
+                  ...
+                </div> */}
               </div>
 
               {/* Action buttons */}
@@ -1502,24 +1494,10 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                   </svg>
                   <span className="wl-action-btn-label">Edit Watchlist</span>
                 </button>
-                <button className="wl-action-btn" onClick={() => setShowManageAlerts(true)}>
-                  {/* Alarm / bell icon */}
-                  <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                    <path
-                      d="M7 1.5a4 4 0 0 1 4 4v2.5l1 1.5H2L3 8V5.5a4 4 0 0 1 4-4Z"
-                      stroke="currentColor"
-                      strokeWidth="1.3"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M5.5 11.5a1.5 1.5 0 0 0 3 0"
-                      stroke="currentColor"
-                      strokeWidth="1.3"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <span className="wl-action-btn-label">Manage Alerts</span>
-                </button>
+                {/* Manage Alerts button — disabled (not in current development stage) */}
+                {/* <button className="wl-action-btn" onClick={() => setShowManageAlerts(true)}>
+                  ...
+                </button> */}
                 <button
                   className="wl-action-btn"
                   onClick={() => downloadHoldingsExcel(watchlistName, sortedHoldings)}
@@ -1654,7 +1632,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                     {sortedHoldings.map((h) => (
                       <tr key={h.symbol} className="wl-tr">
                         <td className="wl-td wl-td--sticky wl-symbol">
-                          <Link href={`/company-profile/${h.symbol}/`} className="wl-symbol-link">{h.symbol}</Link>
+                          <Link href={`/company-profile/${h.symbol}/`} className="wl-symbol-link" target="_blank" rel="noopener noreferrer">{h.symbol}</Link>
                         </td>
                         <td className="wl-td">{h.price.toFixed(2)}</td>
                         <td className={`wl-td ${h.change >= 0 ? 'pos' : 'neg'}`}>
@@ -1706,7 +1684,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
 
                 {/* Feed tabs */}
                 <div className="wl-feed-tabs">
-                  {(['Latest', 'Analysis', 'News', 'Warnings', 'Transcripts', 'Press Releases'] as const).map((t) => (
+                  {(['Latest', 'News', 'Press Release', 'Event'] as const).map((t) => (
                     <button
                       key={t}
                       className={`wl-feed-tab${feedTab === t ? ' active' : ''}`}
@@ -1719,21 +1697,46 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
 
                 {/* Feed list */}
                 <div className="wl-feed-list">
-                  {filteredFeedItems.length === 0 ? (
-                    <div className="wl-feed-empty">No articles in this category.</div>
+                  {currentUpdateItems.length === 0 ? (
+                    <div className="wl-feed-empty">No updates found for your watchlist companies.</div>
                   ) : (
-                    filteredFeedItems.map((item, idx) => (
-                      <div key={item.id} className={`wl-feed-item${idx < filteredFeedItems.length - 1 ? ' wl-feed-item--bordered' : ''}`}>
-                        {item.avatar === 'alpha' ? <AlphaAvatar /> : <UserAvatar />}
+                    currentUpdateItems.map((item, idx) => (
+                      <div key={item.id} className={`wl-feed-item${idx < currentUpdateItems.length - 1 ? ' wl-feed-item--bordered' : ''}`}>
+                        {item.kind === 'news' ? <AlphaAvatar /> : item.kind === 'press-release' ? (
+                          <div className="wl-feed-avatar wl-feed-avatar--pr">
+                            <svg viewBox="0 0 28 28" fill="none" width="28" height="28" aria-hidden="true">
+                              <circle cx="14" cy="14" r="14" fill="#dbeafe" />
+                              <rect x="8" y="8" width="12" height="12" rx="2" stroke="#2563eb" strokeWidth="1.4" fill="none" />
+                              <path d="M10 12h8M10 15h6" stroke="#2563eb" strokeWidth="1.3" strokeLinecap="round" />
+                            </svg>
+                          </div>
+                        ) : (
+                          <div className="wl-feed-avatar wl-feed-avatar--event">
+                            <svg viewBox="0 0 28 28" fill="none" width="28" height="28" aria-hidden="true">
+                              <circle cx="14" cy="14" r="14" fill="#fef3c7" />
+                              <rect x="8" y="9" width="12" height="11" rx="1.5" stroke="#d97706" strokeWidth="1.4" fill="none" />
+                              <path d="M11 9V7M17 9V7" stroke="#d97706" strokeWidth="1.3" strokeLinecap="round" />
+                              <path d="M8 12h12" stroke="#d97706" strokeWidth="1.2" />
+                            </svg>
+                          </div>
+                        )}
                         <div className="wl-feed-body">
                           <div className="wl-feed-title">{item.title}</div>
+                          {item.description && (
+                            <div className="wl-feed-description">{item.description}</div>
+                          )}
                           <div className="wl-feed-meta">
                             <span className="wl-feed-tickers">
-                              {item.tickers.map((t, i) => (
-                                <span key={t}>
+                              {item.displaySymbols.map((sym, i) => (
+                                <span key={sym}>
                                   {i > 0 && ', '}
-                                  <a href="#" className="wl-feed-ticker">
-                                    {t}
+                                  <a
+                                    href={`/lego/company-profile/${sym}/`}
+                                    className="wl-feed-ticker"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    {sym}
                                   </a>
                                 </span>
                               ))}
@@ -1741,35 +1744,15 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                             <span className="wl-feed-dot">•</span>
                             <span className="wl-feed-source">{item.source}</span>
                             <span className="wl-feed-dot">•</span>
-                            <span className="wl-feed-time">{item.time}</span>
-                            {item.comments !== undefined && (
+                            <span className="wl-feed-time">{item.dateLabel}</span>
+                            {item.kind !== 'event' && (
                               <>
                                 <span className="wl-feed-dot">•</span>
-                                <span className="wl-feed-comments">
-                                  <svg viewBox="0 0 14 14" fill="none" width="12" height="12">
-                                    <path
-                                      d="M1.5 2h11A.5.5 0 0 1 13 2.5v7a.5.5 0 0 1-.5.5H4L1.5 12.5V2.5A.5.5 0 0 1 2 2h-.5z"
-                                      stroke="currentColor"
-                                      strokeWidth="1.2"
-                                      strokeLinejoin="round"
-                                    />
-                                  </svg>
-                                  {item.comments} Comments
+                                <span className={`wl-feed-kind-badge wl-feed-kind-badge--${item.kind}`}>
+                                  {item.kind === 'news' ? 'News' : 'Press Release'}
                                 </span>
                               </>
                             )}
-                            <span className="wl-feed-dot">•</span>
-                            <span className="wl-feed-save">
-                              <svg viewBox="0 0 14 14" fill="none" width="12" height="12">
-                                <path
-                                  d="M3 1.5h8v11L7 10 3 12.5V1.5Z"
-                                  stroke="currentColor"
-                                  strokeWidth="1.2"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
-                              Save
-                            </span>
                           </div>
                         </div>
                       </div>
@@ -1855,9 +1838,11 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                         return (
                           <tr key={h.symbol} className="wl-tr">
                             <td className="wl-td wl-td--sticky wl-symbol">
-                              <Link href={`/company-profile/${h.symbol}/`} className="wl-symbol-link">{h.symbol}</Link>
+                              <Link href={`/company-profile/${h.symbol}/`} className="wl-symbol-link" target="_blank" rel="noopener noreferrer">{h.symbol}</Link>
                             </td>
-                            <td className="wl-td wl-company-name">{companyName}</td>
+                            <td className="wl-td wl-company-name">
+                              <Link href={`/company-profile/${h.symbol}/`} className="wl-company-link" target="_blank" rel="noopener noreferrer">{companyName}</Link>
+                            </td>
                             <td className="wl-td">{h.shares.toLocaleString()}</td>
                             <td className="wl-td">{h.cost.toFixed(2)}</td>
                             <td className="wl-td">{h.price.toFixed(2)}</td>
@@ -1925,7 +1910,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                         {sortedHoldings.map((h) => (
                           <tr key={h.symbol} className="wl-tr">
                             <td className="wl-td wl-td--sticky wl-symbol">
-                              <Link href={`/company-profile/${h.symbol}/`} className="wl-symbol-link">{h.symbol}</Link>
+                              <Link href={`/company-profile/${h.symbol}/`} className="wl-symbol-link" target="_blank" rel="noopener noreferrer">{h.symbol}</Link>
                             </td>
                             {cols.map((c) => {
                               const def = ALL_COLUMNS[c];
