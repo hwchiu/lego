@@ -173,51 +173,169 @@ interface SimpleStatementTableProps {
   viewMode: ViewMode;
 }
 
+/** Convert a 2-digit year suffix to a full 4-digit year */
+function twoDigitToFullYear(yr: number): number {
+  return yr >= 90 ? 1900 + yr : 2000 + yr;
+}
+
+/** Parse a column label like "FY24 Q1" → 2024, or "FY2024" → 2024 */
+function parseColYear(col: string): number {
+  const m2 = col.match(/FY(\d{4})/);
+  if (m2) return parseInt(m2[1], 10);
+  const m1 = col.match(/FY(\d{2})\s/);
+  if (m1) return twoDigitToFullYear(parseInt(m1[1], 10));
+  const m0 = col.match(/FY(\d{2})$/);
+  if (m0) return twoDigitToFullYear(parseInt(m0[1], 10));
+  return 0;
+}
+
+/** Parse quarter label out of "FY24 Q1" → "Q1" */
+function parseColQuarter(col: string): string {
+  const m = col.match(/(Q\d)/);
+  return m ? m[1] : col;
+}
+
 function SimpleStatementTable({ data, viewMode }: SimpleStatementTableProps) {
   const periodData = viewMode === 'annual' ? data.annualData : data.quarterlyData;
+
+  // Build year-navigation for quarterly mode
+  const allYears = viewMode === 'quarterly'
+    ? [...new Set(periodData.columns.map(parseColYear))].filter(Boolean).sort((a, b) => a - b)
+    : [];
+  const maxYearWindowStart = allYears.length > 1 ? allYears[allYears.length - 1] - 1 : (allYears[0] ?? 0);
+  const defaultYearStart = allYears.length > 0
+    ? Math.max(allYears[0], maxYearWindowStart)
+    : 0;
+  const [yearWindowStart, setYearWindowStart] = useState(defaultYearStart);
+
+  const visibleCols = viewMode === 'quarterly'
+    ? periodData.columns.filter((col) => {
+        const y = parseColYear(col);
+        return y === yearWindowStart || y === yearWindowStart + 1;
+      })
+    : periodData.columns;
+  const visibleColSet = new Set(visibleCols);
+
+  const colIndexes = periodData.columns
+    .map((col, i) => ({ col, i }))
+    .filter(({ col }) => visibleColSet.has(col));
+
+  // Group visible cols by year for quarterly thead
+  const yearGroups: { year: number; cols: string[] }[] = [];
+  if (viewMode === 'quarterly') {
+    for (const col of visibleCols) {
+      const y = parseColYear(col);
+      const last = yearGroups[yearGroups.length - 1];
+      if (last && last.year === y) last.cols.push(col);
+      else yearGroups.push({ year: y, cols: [col] });
+    }
+  }
+
+  const canGoPrev = viewMode === 'quarterly' && allYears.length > 0 && yearWindowStart > allYears[0];
+  const canGoNext = viewMode === 'quarterly' && yearWindowStart < maxYearWindowStart;
+  const yearLabel = viewMode === 'quarterly'
+    ? `FY${yearWindowStart}–FY${yearWindowStart + 1}`
+    : '';
+
   return (
-    <div className="fin-stmt-table-wrap">
-      <table className="data-table fin-stmt-table fin-stmt-simple-table">
-        <thead>
-          <tr>
-            <th className="fin-stmt-th-item">
-              <div className="fin-stmt-th-item-inner">
-                <span className="fin-stmt-th-year">Year</span>
-                <span className="fin-stmt-th-divider" />
-                <span className="fin-stmt-th-item-label">Item</span>
-              </div>
-            </th>
-            {periodData.columns.map((col) => (
-              <th key={col} className="fin-stmt-simple-col-hdr">{col}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {periodData.rows.map((row, ri) => {
-            const isHeader = isSectionRow(row);
-            return (
-              <tr key={ri} className={isHeader ? 'fin-stmt-section-row' : ''}>
-                <td className={isHeader ? 'fin-stmt-td-section' : 'fin-stmt-td-item'}>
-                  {row[0]}
-                </td>
-                {row.slice(1).map((cell, ci) => {
-                  if (isHeader) return <td key={ci} className="fin-stmt-td-section-blank" />;
-                  const isNeg = cell.startsWith('-') && cell !== '-';
-                  const isPos = cell.startsWith('+');
-                  return (
-                    <td
-                      key={ci}
-                      className={`td-num${isNeg ? ' fin-stmt-neg' : isPos ? ' fin-stmt-pos' : ''}`}
-                    >
-                      {cell || '—'}
-                    </td>
-                  );
-                })}
+    <div>
+      {/* Year nav toolbar for quarterly mode */}
+      {viewMode === 'quarterly' && allYears.length > 0 && (
+        <div className="fin-stmt-year-nav fin-stmt-simple-year-nav">
+          <button
+            className="wl-quarter-btn"
+            aria-label="Previous year"
+            onClick={() => setYearWindowStart((y) => Math.max(allYears[0], y - 1))}
+            disabled={!canGoPrev}
+          >
+            <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+              <path d="M9 2.5L4.5 7L9 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <span className="wl-quarter-label fin-stmt-year-label">{yearLabel}</span>
+          <button
+            className="wl-quarter-btn"
+            aria-label="Next year"
+            onClick={() => setYearWindowStart((y) => Math.min(maxYearWindowStart, y + 1))}
+            disabled={!canGoNext}
+          >
+            <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+              <path d="M5 2.5L9.5 7L5 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+      )}
+
+      <div className="fin-stmt-table-wrap">
+        <table className="data-table fin-stmt-table fin-stmt-simple-table">
+          <thead>
+            {viewMode === 'quarterly' && yearGroups.length > 0 ? (
+              <>
+                <tr>
+                  <th rowSpan={2} className="fin-stmt-th-item">
+                    <div className="fin-stmt-th-item-inner">
+                      <span className="fin-stmt-th-year">Year</span>
+                      <span className="fin-stmt-th-divider" />
+                      <span className="fin-stmt-th-item-label">Item</span>
+                    </div>
+                  </th>
+                  {yearGroups.map(({ year, cols }) => (
+                    <th key={year} colSpan={cols.length} className="th-group" style={{ color: '#111827' }}>
+                      FY{year}
+                    </th>
+                  ))}
+                </tr>
+                <tr className="sub-head">
+                  {visibleCols.map((col) => (
+                    <th key={col} className="sub-group-inner" style={{ color: '#111827' }}>
+                      {parseColQuarter(col)}
+                    </th>
+                  ))}
+                </tr>
+              </>
+            ) : (
+              <tr>
+                <th className="fin-stmt-th-item">
+                  <div className="fin-stmt-th-item-inner">
+                    <span className="fin-stmt-th-year">Year</span>
+                    <span className="fin-stmt-th-divider" />
+                    <span className="fin-stmt-th-item-label">Item</span>
+                  </div>
+                </th>
+                {visibleCols.map((col) => (
+                  <th key={col} className="fin-stmt-simple-col-hdr" style={{ color: '#111827' }}>{col}</th>
+                ))}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            )}
+          </thead>
+          <tbody>
+            {periodData.rows.map((row, ri) => {
+              const isHeader = isSectionRow(row);
+              return (
+                <tr key={ri} className={isHeader ? 'fin-stmt-section-row' : ''}>
+                  <td className={isHeader ? 'fin-stmt-td-section' : 'fin-stmt-td-item'}>
+                    {row[0]}
+                  </td>
+                  {colIndexes.map(({ col, i }) => {
+                    const cell = row[i + 1] ?? '';
+                    if (isHeader) return <td key={col} className="fin-stmt-td-section-blank" />;
+                    const isNeg = cell.startsWith('-') && cell !== '-';
+                    const isPos = cell.startsWith('+');
+                    return (
+                      <td
+                        key={col}
+                        className={`td-num${isNeg ? ' fin-stmt-neg' : isPos ? ' fin-stmt-pos' : ''}`}
+                      >
+                        {cell || '—'}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

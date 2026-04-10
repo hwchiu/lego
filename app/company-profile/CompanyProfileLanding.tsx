@@ -6,9 +6,17 @@ import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
-import NewsCard from '@/app/components/news/NewsCard';
-import { newsItems } from '@/app/data/news';
 import { SP500_COMPANIES } from '@/app/data/sp500';
+import { extractJson } from '@/app/lib/parseContent';
+import tvConfigMd from '@/content/tradingview.md';
+
+// TradingView config from markdown JSON
+interface TvConfig {
+  stockChartSrc: string;
+  marketOverviewSrc: string;
+  marketOverviewConfig: Record<string, unknown>;
+}
+const TV_CONFIG: TvConfig = extractJson<TvConfig>(tvConfigMd as string);
 
 // Scenario suggestion buttons
 const SCENARIOS = ['Create Report', 'Boost my day', 'Help me learn', "Let's stay current", 'Write anything'] as const;
@@ -76,9 +84,6 @@ const SCENARIO_ICONS: Record<(typeof SCENARIOS)[number], React.ReactNode> = {
   "Let's stay current": <ScenarioIconStayCurrent />,
   'Write anything': <ScenarioIconWriteAnything />,
 };
-
-// Display the 6 most-recent news items
-const LANDING_NEWS = newsItems.slice(0, 6);
 
 interface CompanyProfileLandingProps {
   favorites: string[];
@@ -148,6 +153,8 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
   const toolsBtnRef = useRef<HTMLButtonElement>(null);
   const toolsMenuRef = useRef<HTMLDivElement>(null);
 
+  const marketContainerRef = useRef<HTMLDivElement>(null);
+
   // Filter SP500 companies by query
   const filteredCompanies =
     query.trim().length > 0
@@ -183,6 +190,24 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
     }
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  // Inject TradingView Market Overview widget
+  useEffect(() => {
+    const container = marketContainerRef.current;
+    if (!container) return;
+    container.innerHTML = '';
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = TV_CONFIG.marketOverviewSrc;
+    script.async = true;
+    script.innerHTML = JSON.stringify({
+      ...TV_CONFIG.marketOverviewConfig,
+      width: '100%',
+      height: '480',
+    });
+    container.appendChild(script);
+    return () => { if (container) container.innerHTML = ''; };
   }, []);
 
   function handleSelectCompany(symbol: string) {
@@ -330,31 +355,37 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
                   {favorites.map((sym) => {
                     const co = SP500_COMPANIES.find((c) => c.symbol === sym);
                     return (
-                      <Link key={sym} href={`/company-profile/${sym}`} className="cp-favorites-tag">
-                        <span className="cp-favorites-tag-symbol">{sym}</span>
-                        {co && <span className="cp-favorites-tag-name">{co.name}</span>}
-                      </Link>
+                      <div key={sym} className="cp-favorites-tag-wrap">
+                        <Link href={`/company-profile/${sym}`} className="cp-favorites-tag">
+                          <span className="cp-favorites-tag-symbol">{sym}</span>
+                          {co && <span className="cp-favorites-tag-name">{co.name}</span>}
+                        </Link>
+                        <button
+                          className="cp-favorites-tag-remove"
+                          onClick={(e) => { e.preventDefault(); onToggleFavorite(sym); }}
+                          aria-label={`Remove ${sym} from favorites`}
+                          title="Remove from favorites"
+                        >
+                          <svg viewBox="0 0 12 12" fill="none" width="10" height="10" aria-hidden="true">
+                            <path d="M2 2L10 10M10 2L2 10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                          </svg>
+                        </button>
+                      </div>
                     );
                   })}
                 </div>
               </div>
             )}
 
-            {/* ── Latest News section ── */}
-            <div className="cp-news-section">
-              <div className="cp-news-section-header">
-                <span className="section-eyebrow">Latest News</span>
-                {favorites.length > 0 && (
-                  <span className="cp-news-personalized-badge">
-                    Personalized · {favorites.length} favorite{favorites.length > 1 ? 's' : ''}
-                  </span>
-                )}
+            {/* ── Today's Market section ── */}
+            <div className="cp-market-section">
+              <div className="cp-market-section-header">
+                <span className="section-eyebrow">Today&apos;s Market</span>
               </div>
-              <div className="cp-news-grid">
-                {LANDING_NEWS.map((item) => (
-                  <NewsCard key={item.id} item={item} />
-                ))}
-              </div>
+              <div
+                ref={marketContainerRef}
+                className="tradingview-widget-container cp-market-widget"
+              />
             </div>
           </div>
         </main>
