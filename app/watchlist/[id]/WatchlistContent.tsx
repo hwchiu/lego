@@ -104,8 +104,7 @@ const ALL_COLUMNS: Record<string, ColDef> = {
   lastQtrDOI:        { label: 'Last Qtr DOI',       getValue: h => h.lastQtrDOI },
 };
 
-const BUILTIN_VIEWS = ['Summary', 'Holdings', 'Health Score', 'Ratings'] as const;
-const DISABLED_TABS = new Set<string>(['Holdings', 'Health Score', 'Ratings']);
+const BUILTIN_VIEWS = ['Summary'] as const;
 
 // All data (indices, holdings, portfolio config) comes from content/*.md files.
 // The fetch script writes to MD; app/data/*.ts readers parse via extractJson().
@@ -634,234 +633,6 @@ function ManageViewModal({
   );
 }
 
-// ── Coming Soon panels (Health Score & Ratings) ───────────────────────────────
-function HealthScoreComingSoon() {
-  return (
-    <div className="wl-cs-wrap">
-      <span className="wl-cs-badge">Coming Soon</span>
-      <div className="wl-cs-layout">
-        {/* Gauge visualization */}
-        <div className="wl-cs-visual">
-          <svg className="wl-cs-gauge-svg" viewBox="0 0 260 165" fill="none" role="img" aria-label="Health Score gauge, score 72 out of 100">
-            <title>Health Score Gauge</title>
-            {/* Background track */}
-            <path d="M 30 140 A 100 100 0 0 1 230 140" stroke="#e5e7eb" strokeWidth="16" strokeLinecap="round" fill="none" />
-            {/* Red zone 0–33%: (30,140) → (80,53) */}
-            <path d="M 30 140 A 100 100 0 0 1 80 53" stroke="#ef4444" strokeWidth="16" strokeLinecap="round" fill="none" />
-            {/* Yellow zone 33–67%: (80,53) → (180,53) */}
-            <path d="M 80 53 A 100 100 0 0 1 180 53" stroke="#f59e0b" strokeWidth="16" strokeLinecap="round" fill="none" />
-            {/* Green zone 67–100%: (180,53) → (230,140) */}
-            <path d="M 180 53 A 100 100 0 0 1 230 140" stroke="#22c55e" strokeWidth="16" strokeLinecap="round" fill="none" />
-            {/* Needle pointing to score 72 */}
-            <line x1="130" y1="140" x2="182" y2="77" stroke="#1a2332" strokeWidth="3.5" strokeLinecap="round" />
-            {/* Pivot */}
-            <circle cx="130" cy="140" r="9" fill="#1a2332" />
-            <circle cx="130" cy="140" r="4" fill="white" />
-            {/* Score value */}
-            <text x="130" y="118" textAnchor="middle" fontSize="30" fontWeight="700" fill="#1a2332" fontFamily="system-ui,sans-serif">72</text>
-            <text x="130" y="158" textAnchor="middle" fontSize="10" fill="#6b7280" fontFamily="system-ui,sans-serif">Health Score</text>
-            {/* Zone labels */}
-            <text x="14" y="158" fontSize="9" fill="#ef4444" fontFamily="system-ui,sans-serif">Low</text>
-            <text x="120" y="26" fontSize="9" fill="#f59e0b" fontFamily="system-ui,sans-serif">Mid</text>
-            <text x="232" y="158" fontSize="9" fill="#22c55e" fontFamily="system-ui,sans-serif">High</text>
-          </svg>
-          <div className="wl-cs-score-bands">
-            <span className="wl-cs-band wl-cs-band--low">0–40 Low</span>
-            <span className="wl-cs-band wl-cs-band--mid">41–70 Mid</span>
-            <span className="wl-cs-band wl-cs-band--high">71–100 Healthy</span>
-          </div>
-        </div>
-        {/* Description and factor grid */}
-        <div className="wl-cs-info">
-          <h2 className="wl-cs-title">
-            Health Score
-          </h2>
-          <p className="wl-cs-desc">
-            A comprehensive fundamental health analysis of target companies, synthesizing key financial metrics. The system integrates financial data, growth momentum, and market positioning into an intuitive dashboard score, helping investors quickly assess a company&apos;s overall condition.
-          </p>
-          <div className="wl-cs-factors">
-            {[
-              {
-                icon: (
-                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
-                    <polyline points="2,16 7,9 12,12 18,4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                    <polyline points="14,4 18,4 18,8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                ),
-                label: 'Revenue Growth',
-              },
-              {
-                icon: (
-                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
-                    <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" />
-                    <path d="M10 6v4l3 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-                  </svg>
-                ),
-                label: 'Profitability',
-              },
-              {
-                icon: (
-                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
-                    <rect x="2" y="11" width="4" height="7" rx="1" stroke="currentColor" strokeWidth="1.5" />
-                    <rect x="8" y="7" width="4" height="11" rx="1" stroke="currentColor" strokeWidth="1.5" />
-                    <rect x="14" y="3" width="4" height="15" rx="1" stroke="currentColor" strokeWidth="1.5" />
-                  </svg>
-                ),
-                label: 'Balance Sheet',
-              },
-              {
-                icon: (
-                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
-                    <path d="M4 15c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                    <path d="M10 9V5M7 6l3-3 3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                ),
-                label: 'Cash Flow',
-              },
-              {
-                icon: (
-                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
-                    <path d="M10 2L12.4 7.5H18L13.5 11l1.9 5.5L10 13.5 4.6 16.5l1.9-5.5L2 7.5h5.6z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                  </svg>
-                ),
-                label: 'Market Position',
-              },
-              {
-                icon: (
-                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
-                    <circle cx="10" cy="7" r="3.5" stroke="currentColor" strokeWidth="1.5" />
-                    <path d="M3 18c0-3.9 3.1-7 7-7s7 3.1 7 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  </svg>
-                ),
-                label: 'Management',
-              },
-            ].map((f) => (
-              <div key={f.label} className="wl-cs-factor">
-                <span className="wl-cs-factor-icon">{f.icon}</span>
-                <span className="wl-cs-factor-label">{f.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function RatingsComingSoon() {
-  return (
-    <div className="wl-cs-wrap">
-      <span className="wl-cs-badge">Coming Soon</span>
-      <div className="wl-cs-layout">
-        {/* Star rating + analyst distribution */}
-        <div className="wl-cs-visual">
-          <div className="wl-cs-stars" role="img" aria-label="Analyst consensus rating 4.2 out of 5; shown as 4 filled stars and 1 empty star">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <svg key={i} viewBox="0 0 20 20" width="28" height="28" aria-hidden="true">
-                <path
-                  d="M10 1.5l2.4 4.86 5.36.78-3.88 3.78.92 5.33L10 13.5l-4.8 2.75.92-5.33L2.24 7.14l5.36-.78L10 1.5z"
-                  fill={i <= 4 ? '#f59e0b' : 'none'}
-                  stroke={i <= 4 ? '#f59e0b' : '#d1d5db'}
-                  strokeWidth="1.2"
-                />
-              </svg>
-            ))}
-            <span className="wl-cs-star-score">4.2 / 5</span>
-          </div>
-          <div className="wl-cs-rating-dist">
-            {[
-              { label: 'Buy', pct: 62, cls: 'buy' },
-              { label: 'Hold', pct: 25, cls: 'hold' },
-              { label: 'Sell', pct: 13, cls: 'sell' },
-            ].map((r) => (
-              <div key={r.cls} className="wl-cs-rating-row">
-                <span className={`wl-cs-rating-label wl-cs-rating-label--${r.cls}`}>{r.label}</span>
-                <div className="wl-cs-rating-bar-wrap">
-                  <div className={`wl-cs-rating-bar wl-cs-rating-bar--${r.cls}`} style={{ width: `${r.pct}%` }} />
-                </div>
-                <span className="wl-cs-rating-pct">{r.pct}%</span>
-              </div>
-            ))}
-          </div>
-          <p className="wl-cs-analyst-count">Based on 32 analyst ratings</p>
-        </div>
-        {/* Description and feature grid */}
-        <div className="wl-cs-info">
-          <h2 className="wl-cs-title">
-            Ratings
-          </h2>
-          <p className="wl-cs-desc">
-            Aggregates analyst ratings and price target data from major institutions, providing buy/hold/sell distribution, consensus scores, and rating change trends — delivering a comprehensive market perspective to inform investment decisions.
-          </p>
-          <div className="wl-cs-factors">
-            {[
-              {
-                icon: (
-                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
-                    <path d="M10 1.5l2.4 4.86 5.36.78-3.88 3.78.92 5.33L10 13.5l-4.8 2.75.92-5.33L2.24 7.14l5.36-.78L10 1.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                  </svg>
-                ),
-                label: 'Analyst Ratings',
-              },
-              {
-                icon: (
-                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
-                    <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.5" />
-                    <path d="M10 7v3l2.5 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  </svg>
-                ),
-                label: 'Price Targets',
-              },
-              {
-                icon: (
-                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
-                    <rect x="3" y="13" width="3" height="5" rx="0.5" stroke="currentColor" strokeWidth="1.5" />
-                    <rect x="8.5" y="8" width="3" height="10" rx="0.5" stroke="currentColor" strokeWidth="1.5" />
-                    <rect x="14" y="3" width="3" height="15" rx="0.5" stroke="currentColor" strokeWidth="1.5" />
-                  </svg>
-                ),
-                label: 'Rating Distribution',
-              },
-              {
-                icon: (
-                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
-                    <path d="M3 10h14M13 6l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                ),
-                label: 'Rating Changes',
-              },
-              {
-                icon: (
-                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
-                    <rect x="2" y="3" width="16" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
-                    <path d="M6 7h8M6 10h8M6 13h5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                  </svg>
-                ),
-                label: 'Institutional Coverage',
-              },
-              {
-                icon: (
-                  <svg viewBox="0 0 20 20" fill="none" width="22" height="22" aria-hidden="true">
-                    <path d="M3 15l4-5 4 3 3-4 3 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                    <circle cx="3" cy="15" r="1.2" fill="currentColor" />
-                    <circle cx="18" cy="12" r="1.2" fill="currentColor" />
-                  </svg>
-                ),
-                label: 'Sentiment Indicator',
-              },
-            ].map((f) => (
-              <div key={f.label} className="wl-cs-factor">
-                <span className="wl-cs-factor-icon">{f.icon}</span>
-                <span className="wl-cs-factor-label">{f.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ── Main page ─────────────────────────────────────────────────────────────────
 type FeedTab = 'Latest' | 'News' | 'Press Release' | 'Event';
 
@@ -1033,15 +804,6 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
   const sortedHoldings = [...currentSymbolOrder]
     .map((sym) => holdingsLookup.get(sym) ?? extraHoldings[sym])
     .filter(Boolean) as Holding[];
-
-  const totalValue = sortedHoldings.reduce((sum, h) => sum + h.price * h.shares, 0);
-  const totalGain = sortedHoldings.reduce((sum, h) => sum + h.todayGain, 0);
-  const totalGainPct = (totalGain / (totalValue - totalGain)) * 100;
-
-  // Holdings tab derived totals
-  const totalCostBasis = sortedHoldings.reduce((sum, h) => sum + h.cost * h.shares, 0);
-  const totalUnrealizedGain = totalValue - totalCostBasis;
-  const totalUnrealizedPct = totalCostBasis > 0 ? (totalUnrealizedGain / totalCostBasis) * 100 : 0;
 
   // Company name lookup map (symbol → full name)
   const companyNameMap = new Map(SP500_COMPANIES.map((c) => [c.symbol, c.name]));
@@ -1536,13 +1298,11 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                   const label = BUILTIN_VIEWS.includes(id as typeof BUILTIN_VIEWS[number])
                     ? id
                     : (customViews.find((v) => v.id === id)?.name ?? id);
-                  const isDisabled = DISABLED_TABS.has(id);
                   return (
                     <button
                       key={id}
-                      className={`wl-subtab${activeTab === id ? ' active' : ''}${isDisabled ? ' wl-subtab--disabled' : ''}`}
-                      onClick={isDisabled ? undefined : () => setActiveTab(id)}
-                      disabled={isDisabled}
+                      className={`wl-subtab${activeTab === id ? ' active' : ''}`}
+                      onClick={() => setActiveTab(id)}
                     >
                       {label}
                     </button>
@@ -1761,129 +1521,6 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                 </div>
               </section>
               </div>
-            ) : activeTab === 'Holdings' ? (
-              /* ── Holdings tab: portfolio performance view ─────────── */
-              <>
-                {/* KPI summary bar */}
-                <div className="wl-holdings-kpis">
-                  <div className="wl-holdings-kpi">
-                    <span className="wl-holdings-kpi-label">Market Value</span>
-                    <span className="wl-holdings-kpi-value">
-                      ${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </span>
-                  </div>
-                  <div className="wl-holdings-kpi">
-                    <span className="wl-holdings-kpi-label">Cost Basis</span>
-                    <span className="wl-holdings-kpi-value">
-                      ${totalCostBasis.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </span>
-                  </div>
-                  <div className="wl-holdings-kpi">
-                    <span className="wl-holdings-kpi-label">Unrealized P&amp;L</span>
-                    <span className={`wl-holdings-kpi-value ${totalUnrealizedGain >= 0 ? 'pos' : 'neg'}`}>
-                      {totalUnrealizedGain >= 0 ? '+' : ''}
-                      {totalUnrealizedGain.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      <span className="wl-holdings-kpi-pct">
-                        &nbsp;({totalUnrealizedPct >= 0 ? '+' : ''}
-                        {totalUnrealizedPct.toFixed(2)}%)
-                      </span>
-                    </span>
-                  </div>
-                  <div className="wl-holdings-kpi">
-                    <span className="wl-holdings-kpi-label">Today&apos;s P&amp;L</span>
-                    <span className={`wl-holdings-kpi-value ${totalGain >= 0 ? 'pos' : 'neg'}`}>
-                      {totalGain >= 0 ? '+' : ''}
-                      {totalGain.toFixed(2)}
-                      <span className="wl-holdings-kpi-pct">
-                        &nbsp;({totalGainPct >= 0 ? '+' : ''}
-                        {totalGainPct.toFixed(2)}%)
-                      </span>
-                    </span>
-                  </div>
-                  <div className="wl-holdings-kpi">
-                    <span className="wl-holdings-kpi-label">Positions</span>
-                    <span className="wl-holdings-kpi-value">{sortedHoldings.length}</span>
-                  </div>
-                </div>
-
-                {/* Holdings performance table */}
-                <div className="wl-table-wrap">
-                  <table className="wl-table wl-holdings-table">
-                    <thead className="wl-thead--white">
-                      <tr>
-                        <th className="wl-th wl-th--sticky">Company</th>
-                        <th className="wl-th wl-th--name">Company</th>
-                        <th className="wl-th">Shares</th>
-                        <th className="wl-th">Avg Cost</th>
-                        <th className="wl-th">Price</th>
-                        <th className="wl-th">Change</th>
-                        <th className="wl-th">Change %</th>
-                        <th className="wl-th">Market Value</th>
-                        <th className="wl-th">Cost Basis</th>
-                        <th className="wl-th">Unrealized P&amp;L</th>
-                        <th className="wl-th">Unrealized %</th>
-                        <th className="wl-th">Today&apos;s P&amp;L</th>
-                        <th className="wl-th">Today&apos;s %</th>
-                        <th className="wl-th">Weight</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {sortedHoldings.map((h) => {
-                        const marketValue = h.price * h.shares;
-                        const costBasis = h.cost * h.shares;
-                        const unrealizedGain = marketValue - costBasis;
-                        const unrealizedPct = costBasis > 0 ? (unrealizedGain / costBasis) * 100 : 0;
-                        const weight = totalValue > 0 ? (marketValue / totalValue) * 100 : 0;
-                        const companyName = companyNameMap.get(h.symbol) ?? h.symbol;
-                        return (
-                          <tr key={h.symbol} className="wl-tr">
-                            <td className="wl-td wl-td--sticky wl-symbol">
-                              <Link href={`/company-profile/${h.symbol}/`} className="wl-symbol-link" target="_blank" rel="noopener noreferrer">{h.symbol}</Link>
-                            </td>
-                            <td className="wl-td wl-company-name">
-                              <Link href={`/company-profile/${h.symbol}/`} className="wl-company-link" target="_blank" rel="noopener noreferrer">{companyName}</Link>
-                            </td>
-                            <td className="wl-td">{h.shares.toLocaleString()}</td>
-                            <td className="wl-td">{h.cost.toFixed(2)}</td>
-                            <td className="wl-td">{h.price.toFixed(2)}</td>
-                            <td className={`wl-td ${h.change >= 0 ? 'pos' : 'neg'}`}>
-                              {h.change >= 0 ? '+' : ''}
-                              {h.change.toFixed(2)}
-                            </td>
-                            <td className={`wl-td ${h.changePct >= 0 ? 'pos' : 'neg'}`}>
-                              {h.changePct >= 0 ? '+' : ''}
-                              {h.changePct.toFixed(2)}%
-                            </td>
-                            <td className="wl-td">
-                              {marketValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                            </td>
-                            <td className="wl-td">
-                              {costBasis.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                            </td>
-                            <td className={`wl-td ${unrealizedGain >= 0 ? 'pos' : 'neg'}`}>
-                              {unrealizedGain >= 0 ? '+' : ''}
-                              {unrealizedGain.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                            </td>
-                            <td className={`wl-td ${unrealizedPct >= 0 ? 'pos' : 'neg'}`}>
-                              {unrealizedPct >= 0 ? '+' : ''}
-                              {unrealizedPct.toFixed(2)}%
-                            </td>
-                            <td className={`wl-td ${h.todayGain >= 0 ? 'pos' : 'neg'}`}>
-                              {h.todayGain >= 0 ? '+' : ''}
-                              {h.todayGain.toFixed(2)}
-                            </td>
-                            <td className={`wl-td ${h.todayGainPct >= 0 ? 'pos' : 'neg'}`}>
-                              {h.todayGainPct >= 0 ? '+' : ''}
-                              {h.todayGainPct.toFixed(2)}%
-                            </td>
-                            <td className="wl-td">{weight.toFixed(2)}%</td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </>
             ) : customViews.some((v) => v.id === activeTab) ? (
               /* ── Custom View Table ─────────────────────────────────── */
               (() => {
@@ -1928,10 +1565,6 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                   </div>
                 );
               })()
-            ) : activeTab === 'Health Score' ? (
-              <HealthScoreComingSoon />
-            ) : activeTab === 'Ratings' ? (
-              <RatingsComingSoon />
             ) : null}
 
           </div>
