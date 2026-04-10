@@ -687,3 +687,221 @@ display purposes.
   ]
 }
 ```
+
+## Guidance Call
+
+```json
+{
+  "Apr 9": [
+    {
+      "cellLabel": "ASML",
+      "company": "ASML Holding N.V.",
+      "description": "ASML Q2 2025 guidance call: Management provides Q2 revenue outlook of €6.5–7.5B, gross margin guidance 51–53%, and reiterates FY2025 revenue target of €30–35B. CEO Christophe Fouquet highlights High-NA EUV order momentum and fab capacity expansion plans.",
+      "eventDate": "Apr 9, 2025",
+      "eventType": "Guidance Call",
+      "webcastLink": "https://www.asml.com/en/investors/earnings/q1-2025-guidance",
+      "irLink": "https://www.asml.com/en/investors"
+    }
+  ],
+  "Apr 16": [
+    {
+      "cellLabel": "LRCX",
+      "company": "Lam Research",
+      "description": "Lam Research Q4 FY2025 guidance call: CEO Tim Archer provides Q4 revenue outlook of $5.0B ± $300M and non-GAAP gross margin of 47.5% ± 1%. Cites accelerating NAND equipment orders and expanding CSBG service revenue as key drivers for the second half of the fiscal year.",
+      "eventDate": "Apr 16, 2025",
+      "eventType": "Guidance Call",
+      "webcastLink": "https://ir.lamresearch.com/events/q3-2025-guidance",
+      "irLink": "https://ir.lamresearch.com"
+    },
+    {
+      "cellLabel": "KLAC",
+      "company": "KLA Corporation",
+      "description": "KLA Q4 FY2025 guidance call: CEO Rick Wallace issues Q4 guidance of $3.20–3.50B revenue and EPS $8.90–10.30. Highlights rising inspection and metrology demand in advanced logic and DRAM nodes. Dividend increase of 8% to $1.70/share also announced on this call.",
+      "eventDate": "Apr 16, 2025",
+      "eventType": "Guidance Call",
+      "webcastLink": "https://ir.kla.com/events/q3-2025-guidance",
+      "irLink": "https://ir.kla.com"
+    }
+  ],
+  "Apr 22": [
+    {
+      "cellLabel": "TXN",
+      "company": "Texas Instruments",
+      "description": "Texas Instruments Q2 2025 guidance call: CFO Rafael Lizardi guides Q2 revenue $4.17–4.53B and EPS $1.21–1.47, reflecting inventory normalization progress across industrial and automotive end markets. Free cash flow per share guidance maintained at $7.00–9.00 for FY2025.",
+      "eventDate": "Apr 22, 2025",
+      "eventType": "Guidance Call",
+      "webcastLink": "https://investor.ti.com/events/q1-2025-guidance",
+      "irLink": "https://investor.ti.com"
+    },
+    {
+      "cellLabel": "QCOM",
+      "company": "Qualcomm Inc.",
+      "description": "Qualcomm Q3 FY2025 guidance call: CEO Cristiano Amon raises Q3 revenue outlook to $11.1–11.9B and non-GAAP EPS $2.65–2.85. Automotive design-win pipeline now exceeds $45B; IoT segment recovery on track with Edge AI platform momentum in industrial and consumer markets.",
+      "eventDate": "Apr 22, 2025",
+      "eventType": "Guidance Call",
+      "webcastLink": "https://investor.qualcomm.com/events/q2-2025-guidance",
+      "irLink": "https://investor.qualcomm.com"
+    }
+  ],
+  "Apr 29": [
+    {
+      "cellLabel": "AMD",
+      "company": "Advanced Micro Devices",
+      "description": "AMD Q2 2025 guidance call: CEO Lisa Su provides Q2 revenue guidance of $7.7B ± $300M, non-GAAP gross margin ~54%. Raises FY2025 AI GPU revenue outlook to $7.7B from $5.8B, driven by MI300X and upcoming MI350 ramp. Data Center segment expected to maintain double-digit sequential growth.",
+      "eventDate": "Apr 29, 2025",
+      "eventType": "Guidance Call",
+      "webcastLink": "https://ir.amd.com/events/q1-2025-guidance",
+      "irLink": "https://ir.amd.com"
+    },
+    {
+      "cellLabel": "MSFT",
+      "company": "Microsoft Corp.",
+      "description": "Microsoft Q4 FY2025 guidance call: CFO Amy Hood guides Q4 revenue $73.1–74.1B and commercial cloud revenue $45.4–45.6B. Azure growth expected to reaccelerate to 36–37% on expanded AI capacity. Copilot+PC adoption and AI services monetization to drive operating leverage in H2 FY2025.",
+      "eventDate": "Apr 29, 2025",
+      "eventType": "Guidance Call",
+      "webcastLink": "https://www.microsoft.com/en-us/investor/events/q3-fy2025-guidance",
+      "irLink": "https://www.microsoft.com/en-us/investor"
+    }
+  ]
+}
+```
+
+## Projected Earnings Release
+
+```json
+{
+  "Apr 7": [
+    {
+      "cellLabel": "MU",
+      "company": "Micron Technology",
+      "description": "Micron FQ2 2025 projected earnings release. Analysts estimate revenue of $8.0–8.5B driven by HBM3E shipments to AI GPU customers. EPS consensus at $1.43. DRAM pricing recovery and high-bandwidth memory mix shift are key variables; strong HBM demand from NVIDIA and AMD supply agreements in focus.",
+      "eventDate": "Apr 7, 2025",
+      "eventType": "Projected Earnings Release",
+      "webcastLink": "https://investor.micron.com/events/q2-2025-earnings",
+      "irLink": "https://investor.micron.com"
+    }
+  ],
+  "Apr 14": [
+    {
+      "cellLabel": "NVDA",
+      "company": "NVIDIA Corporation",
+      "description": "NVIDIA FQ1 2026 preliminary earnings projection. Consensus estimate: revenue $43–44B, non-GAAP EPS $0.93 (Blackwell GPU ramp). Data Center segment expected to surpass $40B for first time. Actual results expected late May; this projection reflects analyst model updates as Blackwell supply visibility improves.",
+      "eventDate": "Apr 14, 2025",
+      "eventType": "Projected Earnings Release",
+      "webcastLink": "https://investor.nvidia.com/financial-info/quarterly-results",
+      "irLink": "https://investor.nvidia.com"
+    }
+  ],
+  "Apr 16": [
+    {
+      "cellLabel": "ASML",
+      "company": "ASML Holding N.V.",
+      "description": "ASML Q1 2025 projected earnings release. Consensus: revenue €7.6–7.9B, EPS €5.85–6.15. Net bookings expected at €3.5–4.5B with continued High-NA EUV shipments. Projection confirmed accurate — actual release scheduled Apr 16 based on early April guidance visibility.",
+      "eventDate": "Apr 16, 2025",
+      "eventType": "Projected Earnings Release",
+      "webcastLink": "https://www.asml.com/en/investors/financial-results/q1-2025",
+      "irLink": "https://www.asml.com/en/investors"
+    },
+    {
+      "cellLabel": "LRCX",
+      "company": "Lam Research",
+      "description": "Lam Research Q3 FY2025 projected earnings release. Analyst consensus: revenue $4.6–4.8B, EPS $0.99–1.06. NAND recovery cycle and DRAM capacity additions are primary revenue drivers; deferred revenue from upgrade and service contracts adds visibility to estimates heading into the print.",
+      "eventDate": "Apr 16, 2025",
+      "eventType": "Projected Earnings Release",
+      "webcastLink": "https://ir.lamresearch.com/earnings",
+      "irLink": "https://ir.lamresearch.com"
+    },
+    {
+      "cellLabel": "KLAC",
+      "company": "KLA Corporation",
+      "description": "KLA Q3 FY2025 projected earnings release. Consensus estimates revenue $3.0–3.1B and EPS $8.15–8.45. Tight fab utilization and reticle inspection cycles support stable recurring revenue. Dividend sustainability and buyback pace also monitored alongside process control market share trends.",
+      "eventDate": "Apr 16, 2025",
+      "eventType": "Projected Earnings Release",
+      "webcastLink": "https://ir.kla.com/financial-information/financial-results",
+      "irLink": "https://ir.kla.com"
+    }
+  ],
+  "Apr 22": [
+    {
+      "cellLabel": "TXN",
+      "company": "Texas Instruments",
+      "description": "Texas Instruments Q1 2025 projected earnings release. Analyst consensus: revenue $3.95–4.10B, EPS $1.05–1.15. Industrial sector inventory draw-down and automotive demand stabilization are key upside catalysts. Analog segment gross margins watch point near 63–65%; capex trajectory for next-gen fabs also tracked.",
+      "eventDate": "Apr 22, 2025",
+      "eventType": "Projected Earnings Release",
+      "webcastLink": "https://investor.ti.com/earnings",
+      "irLink": "https://investor.ti.com"
+    },
+    {
+      "cellLabel": "QCOM",
+      "company": "Qualcomm Inc.",
+      "description": "Qualcomm Q2 FY2025 projected earnings release. Consensus: revenue $10.6–11.0B, EPS $2.77–2.88. Handset recovery, IoT segment rebound, and record automotive design-win conversion are tracked by investors. PC diversification with Snapdragon X Elite also monitored for contribution to revenue mix.",
+      "eventDate": "Apr 22, 2025",
+      "eventType": "Projected Earnings Release",
+      "webcastLink": "https://investor.qualcomm.com/earnings",
+      "irLink": "https://investor.qualcomm.com"
+    }
+  ],
+  "Apr 24": [
+    {
+      "cellLabel": "INTC",
+      "company": "Intel Corporation",
+      "description": "Intel Q1 2025 projected earnings release. Consensus: revenue $12.5–13.2B, EPS $0.06–0.12 (non-GAAP). Intel 18A process readiness and foundry services customer ramp are pivotal milestones. PC/server market recovery and Gaudi 3 AI accelerator adoption remain top investor focus areas this quarter.",
+      "eventDate": "Apr 24, 2025",
+      "eventType": "Projected Earnings Release",
+      "webcastLink": "https://www.intc.com/financial-information/earnings-calls",
+      "irLink": "https://www.intc.com"
+    }
+  ],
+  "Apr 28": [
+    {
+      "cellLabel": "AMAT",
+      "company": "Applied Materials",
+      "description": "Applied Materials Q2 FY2025 projected earnings release. Analyst estimates: revenue $7.2–7.5B, EPS $2.24–2.38. ICAPS segment (IoT, Communications, Automotive, Power, Sensors) and advanced packaging tools are demand drivers. Gate-all-around adoption by leading foundries adds further upside to estimates.",
+      "eventDate": "Apr 28, 2025",
+      "eventType": "Projected Earnings Release",
+      "webcastLink": "https://ir.appliedmaterials.com/financial-information/earnings",
+      "irLink": "https://ir.appliedmaterials.com"
+    },
+    {
+      "cellLabel": "AVGO",
+      "company": "Broadcom Inc.",
+      "description": "Broadcom Q2 FY2025 projected earnings release. Consensus: revenue $14.5–15.0B, non-GAAP EPS $1.48–1.56. Custom AI ASIC revenue from hyperscaler customers (Google, Meta, Apple) and VMware infrastructure software cross-sell synergies are the primary growth levers heading into this print.",
+      "eventDate": "Apr 28, 2025",
+      "eventType": "Projected Earnings Release",
+      "webcastLink": "https://investors.broadcom.com/financial-information/earnings",
+      "irLink": "https://investors.broadcom.com"
+    }
+  ],
+  "Apr 29": [
+    {
+      "cellLabel": "AMD",
+      "company": "Advanced Micro Devices",
+      "description": "AMD Q1 2025 projected earnings release. Consensus: revenue $7.1–7.5B, EPS $1.08–1.15. MI300X/MI350 AI GPU shipments and EPYC server CPU market share gains are top tracking metrics. Gaming segment headwinds partially offset by data center strength in the overall estimate.",
+      "eventDate": "Apr 29, 2025",
+      "eventType": "Projected Earnings Release",
+      "webcastLink": "https://ir.amd.com/financial-information/earnings",
+      "irLink": "https://ir.amd.com"
+    },
+    {
+      "cellLabel": "MSFT",
+      "company": "Microsoft Corp.",
+      "description": "Microsoft Q3 FY2025 projected earnings release. Consensus: revenue $68.4–70.5B, EPS $3.22–3.40. Azure AI capacity expansion and Copilot monetization ramp are key growth drivers. LinkedIn and gaming segments also monitored for contribution to the commercial cloud revenue mix.",
+      "eventDate": "Apr 29, 2025",
+      "eventType": "Projected Earnings Release",
+      "webcastLink": "https://www.microsoft.com/en-us/investor/earnings",
+      "irLink": "https://www.microsoft.com/en-us/investor"
+    }
+  ],
+  "Apr 30": [
+    {
+      "cellLabel": "AAPL",
+      "company": "Apple Inc.",
+      "description": "Apple FQ2 2025 projected earnings release. Consensus: revenue $93–95B, EPS $1.56–1.64. Services segment (App Store, Apple Music, iCloud) expected to set new record above $26B. iPhone 16 cycle demand in India and Southeast Asia are incremental volume drivers; tariff impact on gross margin is a key downside risk to watch.",
+      "eventDate": "Apr 30, 2025",
+      "eventType": "Projected Earnings Release",
+      "webcastLink": "https://investor.apple.com/earnings/q2-2025",
+      "irLink": "https://investor.apple.com"
+    }
+  ]
+}
+```

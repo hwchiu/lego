@@ -63,6 +63,16 @@ export const salesRevenueCallEvents = extractJsonBySection<Record<string, CorpEv
   'Sales Revenue Call',
 );
 
+export const guidanceCallEvents = extractJsonBySection<Record<string, CorpEvent[]>>(
+  rawContent,
+  'Guidance Call',
+);
+
+export const projectedEarningsReleaseEvents = extractJsonBySection<Record<string, CorpEvent[]>>(
+  rawContent,
+  'Projected Earnings Release',
+);
+
 // ─── Category registry ───────────────────────────────────────────────────────
 export const CORP_EVENT_CATEGORY_MAP: Record<string, Record<string, CorpEvent[]>> = {
   'Share Holders Meeting': shareHoldersMeetingEvents,
@@ -75,4 +85,6 @@ export const CORP_EVENT_CATEGORY_MAP: Record<string, Record<string, CorpEvent[]>
   Split: splitEvents,
   'Special Situation': specialSituationEvents,
   'Sales Revenue Call': salesRevenueCallEvents,
+  'Guidance Call': guidanceCallEvents,
+  'Projected Earnings Release': projectedEarningsReleaseEvents,
 };
