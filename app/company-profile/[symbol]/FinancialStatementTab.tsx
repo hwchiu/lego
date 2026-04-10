@@ -377,14 +377,14 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
     ? simpleAllYears[simpleAllYears.length - 1] - 1
     : (simpleAllYears[0] ?? 0);
 
-  // Per-statement-type overrides; falls back to computed default so no useEffect needed.
+  // Per-statement-type year overrides; falls back to computed default so no useEffect needed.
   const [simpleYearOverrides, setSimpleYearOverrides] = useState<Partial<Record<StatementType, number>>>({});
   const simpleDefaultYearStart = simpleAllYears.length > 0
     ? Math.max(simpleAllYears[0], simpleMaxYearWindowStart)
     : 0;
   const simpleYearWindowStart = simpleYearOverrides[statementType] ?? simpleDefaultYearStart;
 
-  function setSimpleYearWindowStart(updater: (y: number) => number) {
+  function setYearOverrideForStatement(updater: (y: number) => number) {
     setSimpleYearOverrides((prev) => ({
       ...prev,
       [statementType]: updater(prev[statementType] ?? simpleDefaultYearStart),
@@ -458,7 +458,7 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
                 <button
                   className="wl-quarter-btn"
                   aria-label="Previous year"
-                  onClick={() => setSimpleYearWindowStart((y) => Math.max(simpleAllYears[0], y - 1))}
+                  onClick={() => setYearOverrideForStatement((y) => Math.max(simpleAllYears[0], y - 1))}
                   disabled={!simpleCanGoPrev}
                 >
                   <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
@@ -471,7 +471,7 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
                 <button
                   className="wl-quarter-btn"
                   aria-label="Next year"
-                  onClick={() => setSimpleYearWindowStart((y) => Math.min(simpleMaxYearWindowStart, y + 1))}
+                  onClick={() => setYearOverrideForStatement((y) => Math.min(simpleMaxYearWindowStart, y + 1))}
                   disabled={!simpleCanGoNext}
                 >
                   <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
