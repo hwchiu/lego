@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
@@ -652,6 +652,11 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const tagRowRef = useRef<HTMLDivElement>(null);
   const [newsPage, setNewsPage] = useState(1);
   const stockContainerRef = useRef<HTMLDivElement>(null);
+  const tabsScrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollTabs = useCallback((dir: 'left' | 'right') => {
+    tabsScrollRef.current?.scrollBy({ left: dir === 'left' ? -150 : 150, behavior: 'smooth' });
+  }, []);
 
   // News filter state
   const [newsKeyword, setNewsKeyword] = useState('');
@@ -1077,16 +1082,36 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
             </div>
 
             {/* ── Navigation tabs ── */}
-            <div className="cp-nav-tabs">
-              {TABS.map((tab) => (
-                <button
-                  key={tab}
-                  className={`cp-nav-tab${activeTab === tab ? ' active' : ''}`}
-                  onClick={() => setActiveTab(tab)}
-                >
-                  {tab}
-                </button>
-              ))}
+            <div className="cp-nav-tabs-wrap">
+              <button
+                className="cp-nav-tabs-arrow cp-nav-tabs-arrow--left"
+                onClick={() => scrollTabs('left')}
+                aria-label="Scroll tabs left"
+              >
+                <svg viewBox="0 0 14 14" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M9 2L4 7l5 5" />
+                </svg>
+              </button>
+              <div className="cp-nav-tabs" ref={tabsScrollRef}>
+                {TABS.map((tab) => (
+                  <button
+                    key={tab}
+                    className={`cp-nav-tab${activeTab === tab ? ' active' : ''}`}
+                    onClick={() => setActiveTab(tab)}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+              <button
+                className="cp-nav-tabs-arrow cp-nav-tabs-arrow--right"
+                onClick={() => scrollTabs('right')}
+                aria-label="Scroll tabs right"
+              >
+                <svg viewBox="0 0 14 14" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 2l5 5-5 5" />
+                </svg>
+              </button>
             </div>
 
             {/* ── Data cards (FIN. Summary tab) ── */}
