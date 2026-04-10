@@ -12,8 +12,6 @@ interface CalendarControlsProps {
   onToggleView: () => void;
   selectedSymbol?: string;
   onSymbolSelect?: (symbol: string) => void;
-  currency?: 'USD' | 'NTD';
-  onCurrencyChange?: (currency: 'USD' | 'NTD') => void;
 }
 
 function CalendarIcon() {
@@ -49,8 +47,6 @@ export default function CalendarControls({
   onToggleView,
   selectedSymbol = '',
   onSymbolSelect,
-  currency = 'USD',
-  onCurrencyChange,
 }: CalendarControlsProps) {
   const [inputValue, setInputValue] = useState(selectedSymbol);
   const [isOpen, setIsOpen] = useState(false);
@@ -163,20 +159,6 @@ export default function CalendarControls({
           <button className="toggle-btn active cal-view-btn" onClick={onToggleView}>
             <CalendarIcon />
             {isMonthlyView ? 'Weekly View' : 'Monthly View'}
-          </button>
-        </div>
-        <div className="toggle-group">
-          <button
-            className={`toggle-btn ${currency === 'USD' ? 'active' : ''}`}
-            onClick={() => onCurrencyChange?.('USD')}
-          >
-            USD
-          </button>
-          <button
-            className={`toggle-btn ${currency === 'NTD' ? 'active' : ''}`}
-            onClick={() => onCurrencyChange?.('NTD')}
-          >
-            NTD
           </button>
         </div>
       </div>

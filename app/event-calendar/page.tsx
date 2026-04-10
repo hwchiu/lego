@@ -8,8 +8,8 @@ import Sidebar from '@/app/components/layout/Sidebar';
 import MarketTabs from '@/app/components/calendar/MarketTabs';
 import EarningsCalendarSection from '@/app/components/calendar/EarningsCalendarSection';
 import DetailTable from '@/app/components/calendar/DetailTable';
-import EventCategorySection from '@/app/components/calendar/EventCategorySection';
-import EventCategoryDetail from '@/app/components/calendar/EventCategoryDetail';
+import CorpEventCategorySection from '@/app/components/calendar/CorpEventCategorySection';
+import CorpEventCategoryDetail from '@/app/components/calendar/CorpEventCategoryDetail';
 import {
   weekDays,
   aprilMonthData,
@@ -17,7 +17,7 @@ import {
   dateRevenueData,
   usdToTwdRate,
 } from '@/app/data/earnings';
-import { EVENT_CATEGORY_MAP } from '@/app/data/eventCategories';
+import { CORP_EVENT_CATEGORY_MAP } from '@/app/data/corpEvents';
 import { getDateLabel } from '@/app/lib/calendarUtils';
 
 // Build a record count map from actual dateEpsData (not hardcoded companyCount)
@@ -31,7 +31,6 @@ export default function EventCalendarPage() {
   const [activeTab, setActiveTab] = useState('Earnings Calendar');
   const [selectedDate, setSelectedDate] = useState<string>(() => getDateLabel(new Date()));
   const [selectedSymbol, setSelectedSymbol] = useState<string>('');
-  const [currency, setCurrency] = useState<'USD' | 'NTD'>('USD');
   const [eventCategoryDate, setEventCategoryDate] = useState<string>(() =>
     getDateLabel(new Date()),
   );
@@ -65,19 +64,15 @@ export default function EventCalendarPage() {
     return COMPANY_COUNT_MAP.get(selectedDate) ?? 0;
   }, [selectedDate, selectedSymbol, epsData.length]);
 
-  // Event category data (non-earnings tabs)
-  const categoryEntry = EVENT_CATEGORY_MAP[activeTab];
-  const categoryEvents = useMemo(
-    () => (categoryEntry ? (categoryEntry.events[eventCategoryDate] ?? []) : []),
-    [categoryEntry, eventCategoryDate],
-  );
-  const categoryEventCount = useMemo(
-    () => categoryEvents.length,
-    [categoryEvents],
+  // Corp event category data (non-earnings tabs)
+  const corpEventsByDate = CORP_EVENT_CATEGORY_MAP[activeTab];
+  const corpEvents = useMemo(
+    () => (corpEventsByDate ? (corpEventsByDate[eventCategoryDate] ?? []) : []),
+    [corpEventsByDate, eventCategoryDate],
   );
 
   const isEarnings = activeTab === 'Earnings Calendar';
-  const hasCategoryData = !!categoryEntry;
+  const hasCorpCategoryData = !!corpEventsByDate;
 
   return (
     <>
@@ -96,32 +91,27 @@ export default function EventCalendarPage() {
                   onDateSelect={setSelectedDate}
                   selectedSymbol={selectedSymbol}
                   onSymbolSelect={handleSymbolSelect}
-                  currency={currency}
-                  onCurrencyChange={setCurrency}
                 />
                 <DetailTable
                   epsData={epsData}
                   revenueData={revenueData}
                   selectedDateLabel={selectedDate}
                   companyCount={companyCount}
-                  currency={currency}
+                  currency="USD"
                   usdToTwdRate={usdToTwdRate}
                 />
               </>
-            ) : hasCategoryData ? (
+            ) : hasCorpCategoryData ? (
               <>
-                <EventCategorySection
+                <CorpEventCategorySection
                   categoryLabel={activeTab}
-                  eventsByDate={categoryEntry.events}
+                  eventsByDate={corpEventsByDate}
                   onDateSelect={setEventCategoryDate}
                 />
-                <EventCategoryDetail
-                  categoryId={categoryEntry.id}
+                <CorpEventCategoryDetail
                   categoryLabel={activeTab}
-                  layout={categoryEntry.layout}
-                  events={categoryEvents}
+                  events={corpEvents}
                   selectedDateLabel={eventCategoryDate}
-                  eventCount={categoryEventCount}
                 />
               </>
             ) : (
