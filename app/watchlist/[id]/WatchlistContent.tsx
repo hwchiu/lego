@@ -12,6 +12,7 @@ import { holdingsData as holdingsDataMap, holdingsDataQ4_2025 } from '@/app/data
 import type { HoldingEntity } from '@/app/data/watchlistData';
 import { mainNav } from '@/app/data/navigation';
 import { useWatchlist } from '@/app/contexts/WatchlistContext';
+import { CATALOG_VIEW_CATEGORIES, CATALOG_COLUMN_LABELS } from '@/app/data/watchlistColumns';
 import { newsItems } from '@/app/data/news';
 import { pressReleases } from '@/app/data/pressReleases';
 import {
@@ -45,7 +46,15 @@ interface ColDef {
   getClass?: (h: HoldingEntity) => string;
 }
 
+// Catalog column stubs — columns from watchlist-column-catalog.json that do not have
+// a real data getter yet return '-'. Explicit entries below take precedence because
+// they are spread last.
+const CATALOG_COL_STUBS: Record<string, ColDef> = Object.fromEntries(
+  Object.entries(CATALOG_COLUMN_LABELS).map(([id, label]) => [id, { label, getValue: () => '-' as string | number }]),
+);
+
 const ALL_COLUMNS: Record<string, ColDef> = {
+  ...CATALOG_COL_STUBS,
   price:             { label: 'Price',              getValue: h => h.price.toFixed(2) },
   change:            { label: 'Change',             getValue: h => `${h.change >= 0 ? '+' : ''}${h.change.toFixed(2)}`, getClass: h => h.change >= 0 ? 'pos' : 'neg' },
   changePct:         { label: 'Change %',           getValue: h => `${h.changePct >= 0 ? '+' : ''}${h.changePct.toFixed(2)}%`, getClass: h => h.changePct >= 0 ? 'pos' : 'neg' },
@@ -93,18 +102,6 @@ const ALL_COLUMNS: Record<string, ColDef> = {
   netDebt:           { label: 'Net Debt',           getValue: () => '-' },
   doi:               { label: 'DOI',                getValue: h => h.doi },
   lastQtrDOI:        { label: 'Last Qtr DOI',       getValue: h => h.lastQtrDOI },
-};
-
-const VIEW_CATEGORIES: Record<string, string[]> = {
-  Trading:      ['price', 'change', 'changePct', 'volume', 'avgVolume', '52wHigh', '52wLow', 'beta', 'marketCap'],
-  Earnings:     ['nextEarning', 'revenueQoQ', 'revenueYoY', 'lastQtrRevenue', 'epsGrowthYoY'],
-  Valuation:    ['peRatio', 'forwardPE', 'psRatio', 'pbRatio', 'evEbitda', 'dividendYield', 'marketCap'],
-  Growth:       ['revenueYoY', 'revenueQoQ', 'epsGrowthYoY', 'revCagr3y'],
-  Performance:  ['todayGain', 'todayGainPct', 'return1m', 'return3m', 'return1y', 'returnYtd'],
-  Benchmarks:   ['vsSP500', 'vsNasdaq', 'vsSector', 'beta'],
-  Profitability:['grossMargin', 'operatingMargin', 'netMargin', 'roe', 'roic', 'lastQtrGrossMargin'],
-  Ownership:    ['shares', 'cost', 'revenue', 'marketValue', 'unrealizedPL', 'unrealizedPct'],
-  Debt:         ['debtEquity', 'currentRatio', 'netDebt', 'doi', 'lastQtrDOI'],
 };
 
 const BUILTIN_VIEWS = ['Summary', 'Holdings', 'Health Score', 'Ratings'] as const;
@@ -376,14 +373,14 @@ function ManageViewModal({
 
   // Create New View state
   const [viewName, setViewName] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>(Object.keys(VIEW_CATEGORIES)[0]);
+  const [selectedCategory, setSelectedCategory] = useState<string>(Object.keys(CATALOG_VIEW_CATEGORIES)[0]);
   const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
 
   // Edit Views drag state
   const editDragItem = useRef<number | null>(null);
   const editDragOver = useRef<number | null>(null);
 
-  const availableColumns = VIEW_CATEGORIES[selectedCategory] ?? [];
+  const availableColumns = CATALOG_VIEW_CATEGORIES[selectedCategory] ?? [];
 
   const handleToggleColumn = useCallback((colId: string) => {
     setSelectedColumns((prev) =>
@@ -480,7 +477,7 @@ function ManageViewModal({
                 <div className="wl-mv-panel">
                   <div className="wl-mv-panel-title">Category</div>
                   <div className="wl-mv-panel-body">
-                    {Object.keys(VIEW_CATEGORIES).map((cat) => (
+                    {Object.keys(CATALOG_VIEW_CATEGORIES).map((cat) => (
                       <button
                         key={cat}
                         className={`wl-mv-cat-item${selectedCategory === cat ? ' active' : ''}`}
@@ -497,8 +494,8 @@ function ManageViewModal({
                   <div className="wl-mv-panel-title">Available Columns</div>
                   <div className="wl-mv-panel-body">
                     {availableColumns.map((colId) => {
-                      const def = ALL_COLUMNS[colId];
-                      if (!def) return null;
+                      const label = ALL_COLUMNS[colId]?.label ?? CATALOG_COLUMN_LABELS[colId];
+                      if (!label) return null;
                       const checked = selectedColumns.includes(colId);
                       return (
                         <label key={colId} className="wl-mv-col-item">
@@ -507,7 +504,7 @@ function ManageViewModal({
                             checked={checked}
                             onChange={() => handleToggleColumn(colId)}
                           />
-                          <span>{def.label}</span>
+                          <span>{label}</span>
                         </label>
                       );
                     })}
@@ -527,8 +524,8 @@ function ManageViewModal({
                       <div className="wl-mv-empty">No columns selected yet.<br />Check columns on the left.</div>
                     ) : (
                       selectedColumns.map((colId, i) => {
-                        const def = ALL_COLUMNS[colId];
-                        if (!def) return null;
+                        const label = ALL_COLUMNS[colId]?.label ?? CATALOG_COLUMN_LABELS[colId];
+                        if (!label) return null;
                         return (
                           <div
                             key={colId}
@@ -542,10 +539,10 @@ function ManageViewModal({
                             <svg className="wl-drag-handle" viewBox="0 0 14 14" fill="none" width="12" height="12">
                               <path d="M3 4h8M3 7h8M3 10h8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
                             </svg>
-                            <span className="wl-mv-sel-label">{def.label}</span>
+                            <span className="wl-mv-sel-label">{label}</span>
                             <button
                               className="wl-drag-delete"
-                              aria-label={`Remove ${def.label}`}
+                              aria-label={`Remove ${label}`}
                               onClick={() => handleRemoveSelectedColumn(colId)}
                             >
                               <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
