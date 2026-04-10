@@ -48,6 +48,8 @@ export default function MarketTabs({ activeTab, onTabChange }: MarketTabsProps) 
     el.scrollBy({ left: SCROLL_AMOUNT_PX, behavior: 'smooth' });
   }, []);
 
+  const allTabs = ['All', ...marketTabs];
+
   return (
     <div className="market-tabs-card market-tabs-card--with-arrow">
       {canScrollLeft && (
@@ -60,7 +62,7 @@ export default function MarketTabs({ activeTab, onTabChange }: MarketTabsProps) 
         </button>
       )}
       <div className="market-tabs" ref={scrollRef}>
-        {marketTabs.map((tab) => (
+        {allTabs.map((tab) => (
           <button
             key={tab}
             className={`market-tab ${activeTab === tab ? 'active' : ''}`}

@@ -889,6 +889,42 @@ input, select { font-family: var(--font); }
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.cell-co-tooltip-wrap {
+  position: relative;
+}
+.cell-co-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--c-dark);
+  color: var(--c-white);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.5;
+  white-space: normal;
+  word-break: break-word;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  z-index: 200;
+  min-width: 120px;
+  max-width: 220px;
+  pointer-events: none;
+}
+.cell-co-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--c-dark);
+}
+.cell-co-tooltip-wrap:hover .cell-co-tooltip {
+  display: block;
+}
 .cell-empty {
   font-size: 11.5px;
   color: var(--c-text-4);
