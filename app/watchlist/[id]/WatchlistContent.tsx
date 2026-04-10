@@ -747,9 +747,15 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
   useEffect(() => {
     try {
       const storedViews = localStorage.getItem('wl-custom-views');
-      if (storedViews) setCustomViews(JSON.parse(storedViews));
+      const parsedViews: CustomView[] = storedViews ? JSON.parse(storedViews) : [];
+      if (storedViews) setCustomViews(parsedViews);
       const storedOrder = localStorage.getItem('wl-view-order');
-      if (storedOrder) setViewOrder(JSON.parse(storedOrder));
+      if (storedOrder) {
+        // Filter out legacy built-in view IDs that no longer exist
+        const validIds = new Set<string>([...BUILTIN_VIEWS, ...parsedViews.map((v) => v.id)]);
+        const filteredOrder = (JSON.parse(storedOrder) as string[]).filter((id) => validIds.has(id));
+        setViewOrder(filteredOrder.length ? filteredOrder : [...BUILTIN_VIEWS]);
+      }
       const storedHidden = localStorage.getItem('wl-hidden-views');
       if (storedHidden) setHiddenViews(new Set(JSON.parse(storedHidden)));
     } catch {
