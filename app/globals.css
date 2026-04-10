@@ -2248,6 +2248,14 @@ input, select { font-family: var(--font); }
 .wl-symbol-link:hover {
   text-decoration: underline;
 }
+.wl-company-link {
+  color: inherit;
+  text-decoration: none;
+}
+.wl-company-link:hover {
+  text-decoration: underline;
+  color: #2563eb;
+}
 .wl-sparkline-1y {
   display: block;
 }
@@ -2310,9 +2318,6 @@ input, select { font-family: var(--font); }
 }
 .wl-feed-item--bordered { border-bottom: 1px solid var(--c-border); }
 .wl-feed-avatar { flex-shrink: 0; }
-.wl-feed-avatar--alpha { }
-.wl-feed-avatar--pr { }
-.wl-feed-avatar--event { }
 .wl-feed-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
 .wl-feed-title {
   font-size: 13.5px;

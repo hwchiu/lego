@@ -1841,7 +1841,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                               <Link href={`/company-profile/${h.symbol}/`} className="wl-symbol-link" target="_blank" rel="noopener noreferrer">{h.symbol}</Link>
                             </td>
                             <td className="wl-td wl-company-name">
-                              <Link href={`/company-profile/${h.symbol}/`} className="wl-symbol-link" target="_blank" rel="noopener noreferrer">{companyName}</Link>
+                              <Link href={`/company-profile/${h.symbol}/`} className="wl-company-link" target="_blank" rel="noopener noreferrer">{companyName}</Link>
                             </td>
                             <td className="wl-td">{h.shares.toLocaleString()}</td>
                             <td className="wl-td">{h.cost.toFixed(2)}</td>
