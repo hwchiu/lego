@@ -18,7 +18,7 @@ function mergeAllEvents(): Record<string, CorpEvent[]> {
   for (const evtsByDate of Object.values(CORP_EVENT_CATEGORY_MAP)) {
     for (const [date, evtList] of Object.entries(evtsByDate)) {
       if (!merged[date]) merged[date] = [];
-      merged[date] = [...merged[date], ...evtList];
+      merged[date].push(...evtList);
     }
   }
   return merged;

@@ -23,8 +23,8 @@ interface WeekCellProps {
 
 function WeekCell({ day, isToday, isSelected, onSelect, countLabel, emptyLabel }: WeekCellProps) {
   const hasReports = day.companies && day.companies.length > 0;
-  const fullText = day.companies ? day.companies.join(', ') : '';
-  const truncated = day.companies ? truncateCompanies(day.companies) : '';
+  const fullText = hasReports ? day.companies!.join(', ') : '';
+  const truncated = hasReports ? truncateCompanies(day.companies!) : '';
   const isTruncated = fullText.length > truncated.length;
 
   return (
@@ -48,7 +48,7 @@ function WeekCell({ day, isToday, isSelected, onSelect, countLabel, emptyLabel }
             <div className="cell-co-tooltip-wrap">
               <div className="cell-co-text">{truncated}</div>
               {isTruncated && (
-                <div className="cell-co-tooltip">{day.companies!.join(', ')}</div>
+                <div className="cell-co-tooltip">{fullText}</div>
               )}
             </div>
           </>
