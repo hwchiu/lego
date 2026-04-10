@@ -682,7 +682,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const filteredNews = useMemo(() => {
     return companyNews.filter((item) => {
       if (newsKeywordApplied && !item.title.toLowerCase().includes(newsKeywordApplied.toLowerCase())) return false;
-      if (newsCategories.size > 0 && !newsCategories.has(item.fileType)) return false;
+      if (newsCategories.size > 0 && (!item.fileType || !newsCategories.has(item.fileType))) return false;
       if (newsSources.size > 0 && !newsSources.has(item.source)) return false;
       if (newsPeriodStart) {
         const d = item.publishedAt;

@@ -199,7 +199,7 @@ function SimpleStatementTable({ data, viewMode }: SimpleStatementTableProps) {
     : [];
   const maxYearWindowStart = allYears.length > 1 ? allYears[allYears.length - 1] - 1 : (allYears[0] ?? 0);
   const defaultYearStart = allYears.length > 0
-    ? Math.max(allYears[0], allYears[allYears.length - 1] - 1)
+    ? Math.max(allYears[0], maxYearWindowStart)
     : 0;
   const [yearWindowStart, setYearWindowStart] = useState(defaultYearStart);
 

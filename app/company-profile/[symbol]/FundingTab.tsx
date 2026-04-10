@@ -679,7 +679,7 @@ function HeatMapsPanel({ region }: { region: Region }) {
 const SECTIONS: { key: MASection; label: string }[] = [
   { key: 'number-value', label: 'Number & Value' },
   { key: 'largest', label: 'Largest Transactions' },
-  { key: 'heat-maps', label: 'Funding Heat Maps' },
+  { key: 'heat-maps', label: 'Activity Heat Maps' },
 ];
 
 interface FundingTabProps {

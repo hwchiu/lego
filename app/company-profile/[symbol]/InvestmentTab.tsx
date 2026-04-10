@@ -233,7 +233,7 @@ function AAPLMAPanel() {
       {/* ── Bar chart ── */}
       <div className="aapl-ma-chart-section">
         <div className="aapl-ma-section-title">
-          Apple Inc. — Annual Investment Activity (1988–2026)
+          Apple Inc. — Annual M&amp;A &amp; Investment Activity (1988–2026)
           {selectedIndustries.size > 0 && (
             <span className="aapl-ma-filter-note"> · Filtered: {[...selectedIndustries].join(', ')}</span>
           )}
