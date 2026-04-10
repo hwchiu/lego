@@ -574,14 +574,21 @@ input, select { font-family: var(--font); }
   border: 1px solid var(--c-border);
   border-radius: var(--radius);
   margin-bottom: 20px;
-  overflow-x: auto;
+  overflow: hidden;
   scrollbar-width: none;
+  position: relative;
+  display: flex;
+  align-items: stretch;
 }
 .market-tabs-card::-webkit-scrollbar { display: none; }
 .market-tabs {
   display: flex;
-  min-width: max-content;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
+.market-tabs::-webkit-scrollbar { display: none; }
 .market-tab {
   padding: 12px 15px;
   font-size: 12.5px;
@@ -592,12 +599,34 @@ input, select { font-family: var(--font); }
   border-bottom: 2px solid transparent;
   white-space: nowrap;
   transition: color 0.15s, border-color 0.15s;
+  flex-shrink: 0;
 }
 .market-tab:hover { color: var(--c-text); }
 .market-tab.active {
   color: var(--c-text);
   font-weight: 700;
   border-bottom-color: var(--c-btn-active);
+}
+.market-tabs-arrow {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--c-text-3);
+  background: var(--c-white);
+  border: none;
+  border-left: 1px solid var(--c-border);
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.15s, background 0.15s;
+  padding: 0;
+}
+.market-tabs-arrow:hover {
+  color: var(--c-text);
+  background: var(--c-bg);
 }
 
 /* ===== CALENDAR SECTION ===== */
@@ -3450,6 +3479,34 @@ input, select { font-family: var(--font); }
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+.cp-share-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.cp-share-copied {
+  position: absolute;
+  left: calc(100% + 6px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--c-dark);
+  color: var(--c-white);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: cp-share-fade-in 0.15s ease;
+  z-index: 20;
+}
+
+@keyframes cp-share-fade-in {
+  from { opacity: 0; transform: translateY(-50%) translateX(-4px); }
+  to   { opacity: 1; transform: translateY(-50%) translateX(0); }
 }
 
 .cp-action-icon-btn {
@@ -15203,6 +15260,59 @@ a.fd-hint-btn {
   color: var(--c-text-4);
   margin: 0;
 }
+
+/* ===== CORP EVENT TABLE ===== */
+.corp-event-table .corp-event-company {
+  font-weight: 600;
+  white-space: nowrap;
+  min-width: 140px;
+}
+.corp-event-table .corp-event-desc {
+  font-size: 12px;
+  color: var(--c-text-2);
+  line-height: 1.5;
+  max-width: 380px;
+}
+.corp-event-table .corp-event-date {
+  white-space: nowrap;
+  color: var(--c-text-3);
+  font-size: 12px;
+}
+.corp-event-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--c-accent);
+  text-decoration: none;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s, color 0.15s;
+}
+.corp-event-link:hover {
+  background: #e0f7fe;
+  color: #0288d1;
+}
+.corp-event-subscribe-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  color: var(--c-text-3);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.corp-event-subscribe-btn:hover {
+  background: var(--c-accent);
+  color: var(--c-white);
+  border-color: var(--c-accent);
+}
+.td-center-h { text-align: center !important; }
+.td-center { text-align: center; }
 /* RWD */
 @media (max-width: 768px) {
   .ec-cards-grid {
@@ -15217,6 +15327,9 @@ a.fd-hint-btn {
   }
   .ec-cal-header {
     gap: 10px;
+  }
+  .corp-event-table .corp-event-desc {
+    max-width: 200px;
   }
 }
 @media (max-width: 480px) {
@@ -18037,13 +18150,17 @@ html.dark .cp-fin-index-tab:hover {
 /* ===== TODAY'S MARKET SECTION (cp-market-*) ===== */
 .cp-market-section {
   margin-top: 32px;
-  padding: 0 0 24px 0;
+  padding: 0 28px 24px;
 }
 .cp-market-section-header {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 14px;
+}
+.cp-market-section-header .section-eyebrow {
+  font-size: 15px;
+  letter-spacing: 0.06em;
 }
 .cp-market-widget {
   min-height: 480px;

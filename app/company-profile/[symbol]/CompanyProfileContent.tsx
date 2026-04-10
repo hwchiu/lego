@@ -590,14 +590,6 @@ function DoiRevenueChart({ data }: DoiRevenueChartProps) {
 
 // ── Icons ────────────────────────────────────────────────────────────────────
 
-function BookmarkIcon() {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" width="16" height="16" aria-hidden="true">
-      <path d="M12 14L8 11L4 14V3C4 2.45 4.45 2 5 2H11C11.55 2 12 2.45 12 3V14Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 function ShareIcon() {
   return (
     <svg viewBox="0 0 16 16" fill="none" width="16" height="16" aria-hidden="true">
@@ -959,15 +951,19 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
 
                   {/* Action icons */}
                   <div className="cp-action-icons" aria-live="polite" aria-atomic="true">
-                    <button className="cp-action-icon-btn" title="Bookmark"><BookmarkIcon /></button>
-                    <button
-                      className="cp-action-icon-btn"
-                      title={shareCopied ? 'Copied!' : 'Share — Copy URL'}
-                      aria-label={shareCopied ? 'URL copied to clipboard' : 'Share — Copy URL'}
-                      onClick={handleShare}
-                    >
-                      <ShareIcon />
-                    </button>
+                    <div className="cp-share-wrap">
+                      <button
+                        className="cp-action-icon-btn"
+                        title={shareCopied ? 'Copied!' : 'Share — Copy URL'}
+                        aria-label={shareCopied ? 'URL copied to clipboard' : 'Share — Copy URL'}
+                        onClick={handleShare}
+                      >
+                        <ShareIcon />
+                      </button>
+                      {shareCopied && (
+                        <span className="cp-share-copied" aria-live="polite">Copied!</span>
+                      )}
+                    </div>
                     <button
                       className="cp-action-icon-btn"
                       title="Refresh page"
