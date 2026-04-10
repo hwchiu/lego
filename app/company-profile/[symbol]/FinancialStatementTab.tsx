@@ -173,14 +173,19 @@ interface SimpleStatementTableProps {
   viewMode: ViewMode;
 }
 
+/** Convert a 2-digit year suffix to a full 4-digit year */
+function twoDigitToFullYear(yr: number): number {
+  return yr >= 90 ? 1900 + yr : 2000 + yr;
+}
+
 /** Parse a column label like "FY24 Q1" → 2024, or "FY2024" → 2024 */
 function parseColYear(col: string): number {
   const m2 = col.match(/FY(\d{4})/);
   if (m2) return parseInt(m2[1], 10);
   const m1 = col.match(/FY(\d{2})\s/);
-  if (m1) { const yr = parseInt(m1[1], 10); return yr >= 90 ? 1900 + yr : 2000 + yr; }
+  if (m1) return twoDigitToFullYear(parseInt(m1[1], 10));
   const m0 = col.match(/FY(\d{2})$/);
-  if (m0) { const yr = parseInt(m0[1], 10); return yr >= 90 ? 1900 + yr : 2000 + yr; }
+  if (m0) return twoDigitToFullYear(parseInt(m0[1], 10));
   return 0;
 }
 

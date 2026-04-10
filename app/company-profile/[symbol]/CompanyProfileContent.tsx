@@ -670,10 +670,17 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     }
   }
 
+  function handleKeywordsKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') {
+      setNewsKeywordApplied(newsKeyword);
+      setNewsPage(1);
+    }
+  }
+
   // News filtered by this company's symbol tag, then by user filters
   const companyNews = useMemo(() =>
     newsItems.filter((n) => n.tags.some((t) => t.symbol === symbol)),
-  [symbol]);
+  [symbol, newsItems]);
 
   // Distinct filter options from all company news
   const distinctFileTypes = useMemo(() => [...new Set(companyNews.map((n) => n.fileType))].sort(), [companyNews]);
@@ -1100,9 +1107,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                             placeholder="Search keywords… (Enter)"
                             value={newsKeyword}
                             onChange={(e) => setNewsKeyword(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') { setNewsKeywordApplied(newsKeyword); setNewsPage(1); }
-                            }}
+                            onKeyDown={handleKeywordsKeyDown}
                           />
                           {newsKeywordApplied && (
                             <button className="cp-news-filter-clear-btn" onClick={() => { setNewsKeyword(''); setNewsKeywordApplied(''); setNewsPage(1); }} aria-label="Clear keyword">

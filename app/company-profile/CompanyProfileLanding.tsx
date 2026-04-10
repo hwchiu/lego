@@ -207,7 +207,7 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
       height: '480',
     });
     container.appendChild(script);
-    return () => { container.innerHTML = ''; };
+    return () => { if (container) container.innerHTML = ''; };
   }, []);
 
   function handleSelectCompany(symbol: string) {
