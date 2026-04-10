@@ -3,6 +3,9 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { marketTabs } from '@/app/data/navigation';
 
+const SCROLL_THRESHOLD = 2;
+const SCROLL_AMOUNT_PX = 200;
+
 interface MarketTabsProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
@@ -15,7 +18,7 @@ export default function MarketTabs({ activeTab, onTabChange }: MarketTabsProps) 
   const updateScrollState = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
-    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 2);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - SCROLL_THRESHOLD);
   }, []);
 
   useEffect(() => {
@@ -34,7 +37,7 @@ export default function MarketTabs({ activeTab, onTabChange }: MarketTabsProps) 
   const handleScrollRight = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
-    el.scrollBy({ left: 200, behavior: 'smooth' });
+    el.scrollBy({ left: SCROLL_AMOUNT_PX, behavior: 'smooth' });
   }, []);
 
   return (

@@ -574,7 +574,7 @@ input, select { font-family: var(--font); }
   border: 1px solid var(--c-border);
   border-radius: var(--radius);
   margin-bottom: 20px;
-  overflow-x: hidden;
+  overflow: hidden;
   scrollbar-width: none;
   position: relative;
   display: flex;
