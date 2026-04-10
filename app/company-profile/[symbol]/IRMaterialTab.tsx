@@ -248,10 +248,9 @@ const TAB_INDEX: Record<IRSubTab, number> = {
 interface IRContentProps {
   financialData: FinancialDocGroup[];
   activeTab: IRSubTab;
-  disclaimerText: string;
 }
 
-function IRContent({ financialData, activeTab, disclaimerText }: IRContentProps) {
+function IRContent({ financialData, activeTab }: IRContentProps) {
   const filtered = financialData.filter((g) => g.category !== 'Supplemental Revenue Data');
   const group = filtered[TAB_INDEX[activeTab]];
 
@@ -308,7 +307,6 @@ function IRContent({ financialData, activeTab, disclaimerText }: IRContentProps)
           </table>
         </div>
       </div>
-      <p className="cp-ir-disclaimer">{disclaimerText}</p>
     </div>
   );
 }
@@ -320,17 +318,12 @@ export default function IRMaterialTab({ symbol }: IRMaterialTabProps) {
 
   const resolvedSymbol = resolveSymbolAlias(symbol);
   let financialData: FinancialDocGroup[];
-  let disclaimerText: string;
 
   if (resolvedSymbol === 'AAPL') {
     financialData = AAPL_FINANCIAL_DATA;
-    disclaimerText =
-      'Source: Apple Inc. Investor Relations (investor.apple.com). All documents are publicly available SEC filings and earnings materials.';
   } else if (resolvedSymbol === 'TC') {
     const tcData = getTcIrData();
     financialData = tcData.financialData;
-    disclaimerText =
-      'Source: T Company Investor Relations (investor.tsmc.com). SEC filings available via EDGAR. All documents are publicly available.';
   } else {
     return (
       <div className="cp-tab-placeholder">
@@ -359,7 +352,6 @@ export default function IRMaterialTab({ symbol }: IRMaterialTabProps) {
       <IRContent
         financialData={financialData}
         activeTab={activeTab}
-        disclaimerText={disclaimerText}
       />
     </div>
   );

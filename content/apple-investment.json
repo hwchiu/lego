@@ -1,0 +1,184 @@
+{
+  "investments": [
+    {
+      "date": "2012-04",
+      "investedCompany": "Corning Inc.",
+      "categories": "Materials & Glass",
+      "round": "Strategic Investment",
+      "valueM": 250,
+      "investorsNum": 1,
+      "url": "https://www.apple.com/newsroom/2012/corning-advanced-glass"
+    },
+    {
+      "date": "2016-05",
+      "investedCompany": "Didi Chuxing",
+      "categories": "Mobility & Transportation",
+      "round": "Series E",
+      "valueM": 1000,
+      "investorsNum": 5,
+      "url": "https://techcrunch.com/2016/05/12/apple-1b-didi-chuxing"
+    },
+    {
+      "date": "2017-05",
+      "investedCompany": "SoftBank Vision Fund",
+      "categories": "Venture Capital",
+      "round": "Fund Investment",
+      "valueM": 1000,
+      "investorsNum": 20,
+      "url": "https://www.reuters.com/article/apple-softbank-vision-fund"
+    },
+    {
+      "date": "2017-11",
+      "investedCompany": "Corning Inc. (AMF Round 2)",
+      "categories": "Materials & Glass",
+      "round": "Strategic Investment",
+      "valueM": 200,
+      "investorsNum": 1,
+      "url": "https://www.apple.com/newsroom/2017/advanced-manufacturing-fund"
+    },
+    {
+      "date": "2018-01",
+      "investedCompany": "Finisar Corp.",
+      "categories": "Semiconductor & Optics",
+      "round": "Strategic Investment",
+      "valueM": 390,
+      "investorsNum": 1,
+      "url": "https://www.apple.com/newsroom/2018/finisar"
+    },
+    {
+      "date": "2019-04",
+      "investedCompany": "II-VI Incorporated",
+      "categories": "Semiconductor & Optics",
+      "round": "Strategic Investment",
+      "valueM": 410,
+      "investorsNum": 1,
+      "url": "https://techcrunch.com/2019/apple-ii-vi-investment"
+    },
+    {
+      "date": "2019-09",
+      "investedCompany": "Imagination Technologies",
+      "categories": "Semiconductor IP",
+      "round": "Strategic Stake",
+      "valueM": null,
+      "investorsNum": 2,
+      "url": "https://www.bloomberg.com/news/apple-imagination-technologies"
+    },
+    {
+      "date": "2020-03",
+      "investedCompany": "Satellogic",
+      "categories": "Satellite Imagery",
+      "round": "Series C",
+      "valueM": null,
+      "investorsNum": 4,
+      "url": "https://techcrunch.com/2020/satellogic-series-c"
+    },
+    {
+      "date": "2020-11",
+      "investedCompany": "Kioxia Holdings",
+      "categories": "Semiconductor & NAND",
+      "round": "Minority Stake",
+      "valueM": null,
+      "investorsNum": 3,
+      "url": "https://www.nikkei.com/article/kioxia-apple-stake"
+    },
+    {
+      "date": "2021-04",
+      "investedCompany": "Globalstar Inc.",
+      "categories": "Satellite Communications",
+      "round": "Strategic Investment",
+      "valueM": 450,
+      "investorsNum": 1,
+      "url": "https://www.bloomberg.com/news/apple-globalstar"
+    },
+    {
+      "date": "2021-09",
+      "investedCompany": "AI21 Labs",
+      "categories": "AI & Machine Learning",
+      "round": "Series B",
+      "valueM": null,
+      "investorsNum": 8,
+      "url": "https://techcrunch.com/2021/ai21-labs-series-b"
+    },
+    {
+      "date": "2022-09",
+      "investedCompany": "Globalstar Inc. (Additional)",
+      "categories": "Satellite Communications",
+      "round": "Follow-on Investment",
+      "valueM": 232,
+      "investorsNum": 1,
+      "url": "https://www.apple.com/newsroom/2022/globalstar-additional"
+    },
+    {
+      "date": "2022-11",
+      "investedCompany": "Coherent Corp.",
+      "categories": "Photonics & Optics",
+      "round": "Strategic Stake",
+      "valueM": null,
+      "investorsNum": 2,
+      "url": "https://techcrunch.com/2022/apple-coherent-investment"
+    },
+    {
+      "date": "2023-02",
+      "investedCompany": "Corning (Next-Gen Glass)",
+      "categories": "Materials & Glass",
+      "round": "Strategic Investment",
+      "valueM": 100,
+      "investorsNum": 1,
+      "url": "https://www.apple.com/newsroom/2023/corning-next-gen-glass"
+    },
+    {
+      "date": "2023-06",
+      "investedCompany": "ImagineOptix",
+      "categories": "AR/VR Optics",
+      "round": "Series C",
+      "valueM": null,
+      "investorsNum": 4,
+      "url": "https://venturebeat.com/2023/imagineoptix-series-c"
+    },
+    {
+      "date": "2024-03",
+      "investedCompany": "OpenAI",
+      "categories": "AI & Machine Learning",
+      "round": "Strategic Partnership",
+      "valueM": null,
+      "investorsNum": 6,
+      "url": "https://www.bloomberg.com/news/apple-openai-partnership"
+    },
+    {
+      "date": "2024-06",
+      "investedCompany": "TSMC Arizona Fab",
+      "categories": "Semiconductor Foundry",
+      "round": "Capacity Commitment",
+      "valueM": 3500,
+      "investorsNum": 1,
+      "url": "https://www.reuters.com/technology/apple-tsmc-arizona-capacity"
+    },
+    {
+      "date": "2024-09",
+      "investedCompany": "Globalstar (Satellite Network Expansion)",
+      "categories": "Satellite Communications",
+      "round": "Expansion Investment",
+      "valueM": 1100,
+      "investorsNum": 1,
+      "url": "https://www.apple.com/newsroom/2024/globalstar-expansion"
+    },
+    {
+      "date": "2025-02",
+      "investedCompany": "Corning (Advanced Optical Fund)",
+      "categories": "Materials & Glass",
+      "round": "Strategic Investment",
+      "valueM": 150,
+      "investorsNum": 1,
+      "url": "https://www.apple.com/newsroom/2025/corning-optical-fund"
+    },
+    {
+      "date": "2025-07",
+      "investedCompany": "Arm Holdings (IP Licensing Extension)",
+      "categories": "Semiconductor IP",
+      "round": "Licensing Fund",
+      "valueM": null,
+      "investorsNum": 1,
+      "url": "https://www.bloomberg.com/news/apple-arm-licensing-extension"
+    }
+  ]
+}

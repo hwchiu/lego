@@ -1,0 +1,424 @@
+{
+  "acquisitions": [
+    {
+      "date": "1988-01",
+      "acquiredCompany": "Network Innovations",
+      "categories": "Software & OS",
+      "valueM": null,
+      "url": "https://en.wikipedia.org/wiki/List_of_mergers_and_acquisitions_by_Apple"
+    },
+    {
+      "date": "1996-12",
+      "acquiredCompany": "NeXT",
+      "categories": "Software & OS",
+      "valueM": 427,
+      "url": "https://en.wikipedia.org/wiki/NeXT"
+    },
+    {
+      "date": "1997-09",
+      "acquiredCompany": "Sprindrift Technologies",
+      "categories": "Software & OS",
+      "valueM": null,
+      "url": "https://en.wikipedia.org/wiki/List_of_mergers_and_acquisitions_by_Apple"
+    },
+    {
+      "date": "1999-03",
+      "acquiredCompany": "Xemplar Education",
+      "categories": "Software & OS",
+      "valueM": null,
+      "url": "https://en.wikipedia.org/wiki/List_of_mergers_and_acquisitions_by_Apple"
+    },
+    {
+      "date": "2001-08",
+      "acquiredCompany": "PowerSchool",
+      "categories": "Software & OS",
+      "valueM": 62,
+      "url": "https://en.wikipedia.org/wiki/PowerSchool"
+    },
+    {
+      "date": "2002-07",
+      "acquiredCompany": "Zayante",
+      "categories": "Semiconductors",
+      "valueM": 13,
+      "url": "https://en.wikipedia.org/wiki/List_of_mergers_and_acquisitions_by_Apple"
+    },
+    {
+      "date": "2002-11",
+      "acquiredCompany": "Propel Software",
+      "categories": "Software & OS",
+      "valueM": null,
+      "url": "https://en.wikipedia.org/wiki/List_of_mergers_and_acquisitions_by_Apple"
+    },
+    {
+      "date": "2005-04",
+      "acquiredCompany": "FingerWorks",
+      "categories": "Semiconductors",
+      "valueM": null,
+      "url": "https://en.wikipedia.org/wiki/FingerWorks"
+    },
+    {
+      "date": "2006-08",
+      "acquiredCompany": "Proximity",
+      "categories": "Software & OS",
+      "valueM": null,
+      "url": "https://en.wikipedia.org/wiki/List_of_mergers_and_acquisitions_by_Apple"
+    },
+    {
+      "date": "2008-04",
+      "acquiredCompany": "PA Semi",
+      "categories": "Semiconductors",
+      "valueM": 278,
+      "url": "https://www.reuters.com/article/apple-pasemi/apple-buys-chip-design-firm-pa-semi-idUSN2332501220080423"
+    },
+    {
+      "date": "2009-07",
+      "acquiredCompany": "Placebase",
+      "categories": "Mapping & Location",
+      "valueM": null,
+      "url": "https://techcrunch.com/2009/08/04/apple-confirms-placebase-acquisition/"
+    },
+    {
+      "date": "2009-09",
+      "acquiredCompany": "Quattro Wireless",
+      "categories": "Software & OS",
+      "valueM": 275,
+      "url": "https://techcrunch.com/2010/01/04/apple-acquires-mobile-advertising-company-quattro-wireless/"
+    },
+    {
+      "date": "2009-12",
+      "acquiredCompany": "Lala",
+      "categories": "Music & Audio",
+      "valueM": 80,
+      "url": "https://techcrunch.com/2009/12/04/apple-buys-lala/"
+    },
+    {
+      "date": "2010-04",
+      "acquiredCompany": "Intrinsity",
+      "categories": "Semiconductors",
+      "valueM": 121,
+      "url": "https://www.bloomberg.com/news/articles/2010-04-27/apple-is-said-to-acquire-chip-designer-intrinsity"
+    },
+    {
+      "date": "2010-04",
+      "acquiredCompany": "Siri",
+      "categories": "AI & ML",
+      "valueM": 200,
+      "url": "https://techcrunch.com/2010/04/28/apple-acquires-siri/"
+    },
+    {
+      "date": "2010-09",
+      "acquiredCompany": "IMSense",
+      "categories": "Software & OS",
+      "valueM": null,
+      "url": "https://en.wikipedia.org/wiki/List_of_mergers_and_acquisitions_by_Apple"
+    },
+    {
+      "date": "2011-12",
+      "acquiredCompany": "Anobit Technologies",
+      "categories": "Semiconductors",
+      "valueM": 390,
+      "url": "https://www.wsj.com/articles/SB10001424052970204720204577152492930467244"
+    },
+    {
+      "date": "2012-02",
+      "acquiredCompany": "Chomp",
+      "categories": "Software & OS",
+      "valueM": null,
+      "url": "https://techcrunch.com/2012/02/23/apple-acquires-chomp/"
+    },
+    {
+      "date": "2012-07",
+      "acquiredCompany": "AuthenTec",
+      "categories": "Security & Biometrics",
+      "valueM": 356,
+      "url": "https://www.apple.com/newsroom/2012/07/27Apple-Acquires-AuthenTec/"
+    },
+    {
+      "date": "2013-07",
+      "acquiredCompany": "HopStop",
+      "categories": "Mapping & Location",
+      "valueM": null,
+      "url": "https://techcrunch.com/2013/07/19/apple-confirms-acquisition-of-hopstop-public-transit-app/"
+    },
+    {
+      "date": "2013-07",
+      "acquiredCompany": "Locationary",
+      "categories": "Mapping & Location",
+      "valueM": null,
+      "url": "https://techcrunch.com/2013/07/19/apple-acquires-locationary-to-improve-apple-maps/"
+    },
+    {
+      "date": "2013-09",
+      "acquiredCompany": "Passif Semiconductor",
+      "categories": "Semiconductors",
+      "valueM": null,
+      "url": "https://techcrunch.com/2013/09/20/apple-acquires-passif-semiconductor-low-power-bluetooth/"
+    },
+    {
+      "date": "2013-11",
+      "acquiredCompany": "PrimeSense",
+      "categories": "AR & VR",
+      "valueM": 360,
+      "url": "https://techcrunch.com/2013/11/24/apple-primesense-acquisition-confirmed/"
+    },
+    {
+      "date": "2013-12",
+      "acquiredCompany": "Topsy Labs",
+      "categories": "Social & Analytics",
+      "valueM": 200,
+      "url": "https://techcrunch.com/2013/12/02/apple-buys-topsy-a-twitter-analytics-firm-for-around-200m/"
+    },
+    {
+      "date": "2014-05",
+      "acquiredCompany": "Beats Electronics",
+      "categories": "Consumer Electronics",
+      "valueM": 3000,
+      "url": "https://www.apple.com/newsroom/2014/05/28Apple-to-Acquire-Beats-Music-Beats-Electronics/"
+    },
+    {
+      "date": "2014-05",
+      "acquiredCompany": "LuxVue Technology",
+      "categories": "Semiconductors",
+      "valueM": null,
+      "url": "https://techcrunch.com/2014/05/02/apple-confirms-acquisition-of-luxvue/"
+    },
+    {
+      "date": "2014-06",
+      "acquiredCompany": "Swell",
+      "categories": "Music & Audio",
+      "valueM": 30,
+      "url": "https://techcrunch.com/2014/07/29/apple-confirms-acquisition-of-swell-a-pandora-competitor/"
+    },
+    {
+      "date": "2014-07",
+      "acquiredCompany": "BookLamp",
+      "categories": "Software & OS",
+      "valueM": null,
+      "url": "https://techcrunch.com/2014/07/25/apple-acquires-booklamp-a-book-genome-project-that-analyzes-the-dna-of-literature/"
+    },
+    {
+      "date": "2014-07",
+      "acquiredCompany": "Spotsetter",
+      "categories": "Mapping & Location",
+      "valueM": null,
+      "url": "https://techcrunch.com/2014/07/18/apple-acquires-location-based-social-search-app-spotsetter/"
+    },
+    {
+      "date": "2015-01",
+      "acquiredCompany": "Camel Audio",
+      "categories": "Music & Audio",
+      "valueM": null,
+      "url": "https://techcrunch.com/2015/02/03/apple-acquires-camel-audio/"
+    },
+    {
+      "date": "2015-05",
+      "acquiredCompany": "LinX Computational Imaging",
+      "categories": "AI & ML",
+      "valueM": 20,
+      "url": "https://techcrunch.com/2015/04/14/apple-acquires-linx-computational-imaging/"
+    },
+    {
+      "date": "2015-08",
+      "acquiredCompany": "Coherent Navigation",
+      "categories": "Mapping & Location",
+      "valueM": null,
+      "url": "https://9to5mac.com/2015/08/02/coherent-navigation-acquisition-apple/"
+    },
+    {
+      "date": "2015-09",
+      "acquiredCompany": "Mapsense",
+      "categories": "Mapping & Location",
+      "valueM": 25,
+      "url": "https://techcrunch.com/2015/09/25/apple-acquires-mapsense/"
+    },
+    {
+      "date": "2015-10",
+      "acquiredCompany": "Perceptio",
+      "categories": "AI & ML",
+      "valueM": null,
+      "url": "https://techcrunch.com/2015/10/05/apple-acquires-perceptio-a-startup-working-on-ai-for-smartphones/"
+    },
+    {
+      "date": "2015-10",
+      "acquiredCompany": "VocalIQ",
+      "categories": "AI & ML",
+      "valueM": null,
+      "url": "https://techcrunch.com/2015/10/06/apple-vocaliq/"
+    },
+    {
+      "date": "2016-01",
+      "acquiredCompany": "Emotient",
+      "categories": "AI & ML",
+      "valueM": null,
+      "url": "https://techcrunch.com/2016/01/07/apple-emotient/"
+    },
+    {
+      "date": "2016-01",
+      "acquiredCompany": "Flyby Media",
+      "categories": "AR & VR",
+      "valueM": null,
+      "url": "https://techcrunch.com/2016/01/29/apple-has-quietly-acquired-ar-startup-flyby-media/"
+    },
+    {
+      "date": "2016-08",
+      "acquiredCompany": "Turi",
+      "categories": "AI & ML",
+      "valueM": 200,
+      "url": "https://techcrunch.com/2016/08/05/apple-acquires-turi-a-machine-learning-company/"
+    },
+    {
+      "date": "2017-01",
+      "acquiredCompany": "Workflow",
+      "categories": "Software & OS",
+      "valueM": null,
+      "url": "https://techcrunch.com/2017/03/22/apple-has-acquired-workflow-a-powerful-automation-tool-for-ipad-and-iphone/"
+    },
+    {
+      "date": "2017-02",
+      "acquiredCompany": "RealFace",
+      "categories": "AI & ML",
+      "valueM": null,
+      "url": "https://techcrunch.com/2017/02/27/apple-has-acquired-realface-a-machine-learning-facial-authentication-startup/"
+    },
+    {
+      "date": "2017-03",
+      "acquiredCompany": "SensoMotoric Instruments",
+      "categories": "AR & VR",
+      "valueM": null,
+      "url": "https://techcrunch.com/2017/06/25/apple-acquires-eye-tracking-firm-smi/"
+    },
+    {
+      "date": "2017-05",
+      "acquiredCompany": "Beddit",
+      "categories": "Health & Fitness",
+      "valueM": null,
+      "url": "https://techcrunch.com/2017/05/09/apple-acquires-beddit-a-sleep-monitoring-startup/"
+    },
+    {
+      "date": "2017-07",
+      "acquiredCompany": "Lattice Data",
+      "categories": "AI & ML",
+      "valueM": 200,
+      "url": "https://techcrunch.com/2017/05/13/apple-acquires-lattice-data-an-ai-startup-that-processes-unstructured-dark-data/"
+    },
+    {
+      "date": "2018-01",
+      "acquiredCompany": "Silk Labs",
+      "categories": "AI & ML",
+      "valueM": null,
+      "url": "https://techcrunch.com/2018/10/14/apple-acquires-silk-labs-an-on-device-ai-startup/"
+    },
+    {
+      "date": "2018-08",
+      "acquiredCompany": "Akonia Holographics",
+      "categories": "AR & VR",
+      "valueM": null,
+      "url": "https://techcrunch.com/2018/08/29/apple-acquired-ar-lens-startup-akonia-holographics/"
+    },
+    {
+      "date": "2018-09",
+      "acquiredCompany": "Shazam",
+      "categories": "Music & Audio",
+      "valueM": 400,
+      "url": "https://www.apple.com/newsroom/2018/09/apple-and-shazam-complete-acquisition/"
+    },
+    {
+      "date": "2019-01",
+      "acquiredCompany": "PullString",
+      "categories": "AI & ML",
+      "valueM": null,
+      "url": "https://techcrunch.com/2019/01/14/apple-acquires-pullstring/"
+    },
+    {
+      "date": "2019-01",
+      "acquiredCompany": "Spectral Edge",
+      "categories": "AI & ML",
+      "valueM": null,
+      "url": "https://techcrunch.com/2019/01/21/apple-spectral-edge/"
+    },
+    {
+      "date": "2019-07",
+      "acquiredCompany": "Intel Smartphone Modem Business",
+      "categories": "Semiconductors",
+      "valueM": 1000,
+      "url": "https://www.apple.com/newsroom/2019/07/apple-to-acquire-the-majority-of-intels-smartphone-modem-business/"
+    },
+    {
+      "date": "2019-10",
+      "acquiredCompany": "Camerai",
+      "categories": "AI & ML",
+      "valueM": null,
+      "url": "https://techcrunch.com/2019/10/11/apple-acquires-augmented-reality-startup-camerai/"
+    },
+    {
+      "date": "2020-03",
+      "acquiredCompany": "Dark Sky",
+      "categories": "Software & OS",
+      "valueM": null,
+      "url": "https://techcrunch.com/2020/03/31/apple-acquires-popular-weather-app-dark-sky/"
+    },
+    {
+      "date": "2020-04",
+      "acquiredCompany": "Voysis",
+      "categories": "AI & ML",
+      "valueM": null,
+      "url": "https://techcrunch.com/2020/04/07/apple-voysis/"
+    },
+    {
+      "date": "2020-05",
+      "acquiredCompany": "NextVR",
+      "categories": "AR & VR",
+      "valueM": 100,
+      "url": "https://techcrunch.com/2020/05/14/apple-acquires-nextvr-the-vr-sports-and-entertainment-firm/"
+    },
+    {
+      "date": "2020-08",
+      "acquiredCompany": "Mobeewave",
+      "categories": "Fintech & Payments",
+      "valueM": 100,
+      "url": "https://techcrunch.com/2020/08/05/apple-acquires-mobeewave-for-around-100m/"
+    },
+    {
+      "date": "2021-01",
+      "acquiredCompany": "Inductiv",
+      "categories": "AI & ML",
+      "valueM": null,
+      "url": "https://techcrunch.com/2021/02/19/apple-acquires-canadian-ai-startup-inductiv/"
+    },
+    {
+      "date": "2021-06",
+      "acquiredCompany": "AI.Music",
+      "categories": "Music & Audio",
+      "valueM": null,
+      "url": "https://techcrunch.com/2021/06/09/apple-acquires-ai-music-a-startup-that-uses-artificial-intelligence-to-create-soundtracks/"
+    },
+    {
+      "date": "2022-03",
+      "acquiredCompany": "Credit Kudos",
+      "categories": "Fintech & Payments",
+      "valueM": 150,
+      "url": "https://techcrunch.com/2022/03/24/apple-quietly-acquires-uk-open-banking-startup-credit-kudos/"
+    },
+    {
+      "date": "2023-07",
+      "acquiredCompany": "Datakalab",
+      "categories": "AI & ML",
+      "valueM": null,
+      "url": "https://techcrunch.com/2023/07/19/apple-acquires-french-ai-startup-datakalab/"
+    },
+    {
+      "date": "2024-03",
+      "acquiredCompany": "DarwinAI",
+      "categories": "AI & ML",
+      "valueM": null,
+      "url": "https://techcrunch.com/2024/03/14/apple-has-quietly-acquired-canadian-ai-startup-darwinai/"
+    },
+    {
+      "date": "2024-05",
+      "acquiredCompany": "Mira",
+      "categories": "AR & VR",
+      "valueM": null,
+      "url": "https://techcrunch.com/2024/05/01/apple-acquires-ar-headset-startup-mira/"
+    }
+  ]
+}

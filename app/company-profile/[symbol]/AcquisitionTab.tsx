@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { extractJson } from '@/app/lib/parseContent';
-import appleMaMd from '@/content/apple-ma.md';
+import acquisitionData from '@/content/apple-acquisition.json';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -15,124 +14,196 @@ type Region =
   | 'Middle East & Africa'
   | 'South America';
 
-interface AAPLDeal {
-  year: number;
+interface AcquisitionDeal {
   date: string;
-  company: string;
-  type: string;
-  industry: string;
+  acquiredCompany: string;
+  categories: string;
   valueM: number | null;
-  newsUrl: string;
+  url: string;
 }
 
-// ── Parse Apple acquisition data from markdown ───────────────────────────────
+// ── Parse Apple acquisition data from JSON ────────────────────────────────────
 
-let _aaplAcqDeals: AAPLDeal[] | null = null;
-function getAAPLDeals(): AAPLDeal[] {
+let _aaplAcqDeals: AcquisitionDeal[] | null = null;
+function getAAPLAcquisitions(): AcquisitionDeal[] {
   if (!_aaplAcqDeals) {
-    const data = extractJson<{ deals: AAPLDeal[] }>(appleMaMd as string);
-    _aaplAcqDeals = data.deals.filter((d) => d.type === 'Acquisition' || d.type === 'Asset Acquisition');
+    _aaplAcqDeals = (acquisitionData as { acquisitions: AcquisitionDeal[] }).acquisitions;
   }
   return _aaplAcqDeals;
 }
 
-// ── AAPL Bar Chart ─────────────────────────────────────────────────────────────
+// ── Stacked Bar + Line Chart ──────────────────────────────────────────────────
 
 const CHART_START_YEAR = 1988;
 const CHART_END_YEAR = 2026;
 
-function AAPLBarChart({ deals }: { deals: AAPLDeal[] }) {
-  const [tooltip, setTooltip] = useState<{ x: number; y: number; year: number; val: number } | null>(null);
+interface YearChartData {
+  year: number;
+  disclosedCount: number;
+  undisclosedCount: number;
+  disclosedValueM: number;
+}
 
+function buildYearData(deals: AcquisitionDeal[]): YearChartData[] {
   const years = Array.from(
     { length: CHART_END_YEAR - CHART_START_YEAR + 1 },
     (_, i) => CHART_START_YEAR + i,
   );
-
-  const valueByYear = new Map<number, number>();
-  for (const y of years) valueByYear.set(y, 0);
+  const map = new Map<number, YearChartData>();
+  for (const y of years) {
+    map.set(y, { year: y, disclosedCount: 0, undisclosedCount: 0, disclosedValueM: 0 });
+  }
   for (const d of deals) {
+    const yr = parseInt(d.date.slice(0, 4), 10);
+    const entry = map.get(yr);
+    if (!entry) continue;
     if (d.valueM != null) {
-      valueByYear.set(d.year, (valueByYear.get(d.year) ?? 0) + d.valueM);
+      entry.disclosedCount += 1;
+      entry.disclosedValueM += d.valueM;
+    } else {
+      entry.undisclosedCount += 1;
     }
   }
+  return years.map((y) => map.get(y)!);
+}
 
-  const maxVal = Math.max(...years.map((y) => valueByYear.get(y) ?? 0), 1);
+function AcquisitionBarLineChart({ deals }: { deals: AcquisitionDeal[] }) {
+  const [tooltip, setTooltip] = useState<{
+    x: number; y: number; year: number;
+    disclosed: number; undisclosed: number; valueM: number;
+  } | null>(null);
 
-  const W = 800;
-  const H = 200;
-  const PAD = { top: 20, right: 20, bottom: 40, left: 64 };
+  const yearData = buildYearData(deals);
+
+  const W = 820;
+  const H = 230;
+  const PAD = { top: 30, right: 70, bottom: 40, left: 50 };
   const chartW = W - PAD.left - PAD.right;
   const chartH = H - PAD.top - PAD.bottom;
-  const barW = Math.max(2, chartW / years.length - 1.5 /* bar gap */);
 
-  const yTicks = [0, 0.25, 0.5, 0.75, 1].map((t) => ({
-    t,
-    val: maxVal * t,
-    y: PAD.top + chartH * (1 - t),
-  }));
+  const maxCount = Math.max(...yearData.map((d) => d.disclosedCount + d.undisclosedCount), 1);
+  const countMax = Math.ceil(maxCount / 2) * 2 || 2;
+
+  const maxValue = Math.max(...yearData.map((d) => d.disclosedValueM), 1);
+  const valueMax = Math.ceil(maxValue / 500) * 500 || 500;
+
+  const barSlotW = chartW / yearData.length;
+  const barW = Math.max(3, barSlotW * 0.65);
+
+  const linePoints = yearData
+    .map((d, i) => {
+      const cx = PAD.left + i * barSlotW + barSlotW / 2;
+      const cy = d.disclosedValueM > 0
+        ? PAD.top + chartH - (d.disclosedValueM / valueMax) * chartH
+        : null;
+      return { cx, cy, year: d.year, value: d.disclosedValueM };
+    })
+    .filter((p) => p.cy !== null) as { cx: number; cy: number; year: number; value: number }[];
+
+  const polyline = linePoints.map((p) => `${p.cx},${p.cy}`).join(' ');
 
   return (
-    <div className="aapl-ma-chart-wrap" style={{ position: 'relative' }}>
+    <div className="aapl-inv-chart-wrap" style={{ position: 'relative' }}>
       <svg
         viewBox={`0 0 ${W} ${H}`}
         style={{ width: '100%', height: 'auto', display: 'block' }}
         onMouseLeave={() => setTooltip(null)}
       >
-        {yTicks.map(({ t, val, y }) => (
-          <g key={t}>
-            <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y} stroke="#f0f0f0" strokeWidth="1" />
-            <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize="9" fill="#9ca3af">
-              {val >= 1000 ? `$${(val / 1000).toFixed(1)}B` : val > 0 ? `$${Math.round(val)}M` : '$0'}
-            </text>
-          </g>
-        ))}
+        {[0, 0.25, 0.5, 0.75, 1].map((t) => {
+          const y = PAD.top + chartH * (1 - t);
+          return (
+            <g key={t}>
+              <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y} stroke="#f0f0f0" strokeWidth="1" />
+              <text x={PAD.left - 5} y={y + 4} textAnchor="end" fontSize="9" fill="#9ca3af">
+                {Math.round(countMax * t)}
+              </text>
+              <text x={W - PAD.right + 5} y={y + 4} textAnchor="start" fontSize="9" fill="#6b7280">
+                {Math.round(valueMax * t)}
+              </text>
+            </g>
+          );
+        })}
 
-        {years.map((year, i) => {
-          const val = valueByYear.get(year) ?? 0;
-          const barH = (val / maxVal) * chartH;
-          const cx = PAD.left + i * (chartW / years.length) + (chartW / years.length) / 2;
+        <text
+          x={PAD.left - 36}
+          y={PAD.top + chartH / 2}
+          textAnchor="middle"
+          fontSize="9"
+          fill="#6b7280"
+          transform={`rotate(-90, ${PAD.left - 36}, ${PAD.top + chartH / 2})`}
+        >
+          Count
+        </text>
+        <text
+          x={W - PAD.right + 50}
+          y={PAD.top + chartH / 2}
+          textAnchor="middle"
+          fontSize="9"
+          fill="#6b7280"
+          transform={`rotate(90, ${W - PAD.right + 50}, ${PAD.top + chartH / 2})`}
+        >
+          Value (USD $M)
+        </text>
+
+        {yearData.map((d, i) => {
+          const cx = PAD.left + i * barSlotW + barSlotW / 2;
           const x = cx - barW / 2;
-          const y = PAD.top + chartH - barH;
-          const showLabel = year % 5 === 0 || year === CHART_END_YEAR;
+          const discH = (d.disclosedCount / countMax) * chartH;
+          const undiscH = (d.undisclosedCount / countMax) * chartH;
+          const totalH = discH + undiscH;
+          const baseY = PAD.top + chartH;
+          const showLabel = d.year % 5 === 0 || d.year === CHART_END_YEAR;
+          const isHovered = tooltip?.year === d.year;
 
           return (
-            <g key={year}>
-              {barH > 0 && (
-                <rect
-                  x={x}
-                  y={y}
-                  width={barW}
-                  height={barH}
-                  fill={tooltip?.year === year ? '#1d4ed8' : '#3b82f6'}
-                  rx="1"
-                  onMouseEnter={(e) => {
-                    const svgEl = (e.target as SVGElement).closest('svg');
-                    if (!svgEl) return;
-                    const rect2 = svgEl.getBoundingClientRect();
-                    const scaleX = rect2.width / W;
-                    const scaleY = rect2.height / H;
-                    setTooltip({ x: cx * scaleX, y: (y - 4) * scaleY, year, val });
-                  }}
-                  style={{ cursor: 'pointer' }}
-                />
+            <g
+              key={d.year}
+              onMouseEnter={(e) => {
+                const svgEl = (e.currentTarget as SVGElement).closest('svg');
+                if (!svgEl) return;
+                const rect = svgEl.getBoundingClientRect();
+                const scaleX = rect.width / W;
+                const scaleY = rect.height / H;
+                setTooltip({
+                  x: cx * scaleX,
+                  y: (baseY - totalH - 6) * scaleY,
+                  year: d.year,
+                  disclosed: d.disclosedCount,
+                  undisclosed: d.undisclosedCount,
+                  valueM: d.disclosedValueM,
+                });
+              }}
+              style={{ cursor: 'pointer' }}
+            >
+              {discH > 0 && (
+                <rect x={x} y={baseY - discH} width={barW} height={discH} fill={isHovered ? '#1d4ed8' : '#3b82f6'} rx="1" />
+              )}
+              {undiscH > 0 && (
+                <rect x={x} y={baseY - discH - undiscH} width={barW} height={undiscH} fill={isHovered ? '#b91c1c' : '#ef4444'} rx="1" />
               )}
               {showLabel && (
-                <text x={cx} y={H - 6} textAnchor="middle" fontSize="8" fill="#9ca3af">
-                  {year}
-                </text>
+                <text x={cx} y={H - 6} textAnchor="middle" fontSize="8" fill="#9ca3af">{d.year}</text>
               )}
             </g>
           );
         })}
 
-        <line
-          x1={PAD.left} y1={PAD.top + chartH}
-          x2={W - PAD.right} y2={PAD.top + chartH}
-          stroke="#e5e7eb" strokeWidth="1"
-        />
-        <rect x={PAD.left} y={3} width="8" height="8" fill="#3b82f6" rx="1" />
-        <text x={PAD.left + 11} y={11} fontSize="9" fill="#374151">Deal Value (USD, disclosed only)</text>
+        <line x1={PAD.left} y1={PAD.top + chartH} x2={W - PAD.right} y2={PAD.top + chartH} stroke="#e5e7eb" strokeWidth="1" />
+
+        {polyline && (
+          <polyline points={polyline} fill="none" stroke="#111827" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" />
+        )}
+        {linePoints.map((p) => (
+          <circle key={p.year} cx={p.cx} cy={p.cy} r="3" fill="#111827" stroke="#fff" strokeWidth="1" />
+        ))}
+
+        <rect x={PAD.left} y={8} width="8" height="8" fill="#3b82f6" rx="1" />
+        <text x={PAD.left + 11} y={16} fontSize="9" fill="#374151">Count of Disclosed Value</text>
+        <rect x={PAD.left + 155} y={8} width="8" height="8" fill="#ef4444" rx="1" />
+        <text x={PAD.left + 168} y={16} fontSize="9" fill="#374151">Count of Undisclosed Value</text>
+        <line x1={PAD.left + 340} y1={12} x2={PAD.left + 355} y2={12} stroke="#111827" strokeWidth="2" />
+        <circle cx={PAD.left + 347} cy={12} r="3" fill="#111827" />
+        <text x={PAD.left + 359} y={16} fontSize="9" fill="#374151">Disclosed Value (M)</text>
       </svg>
 
       {tooltip && (
@@ -144,135 +215,127 @@ function AAPLBarChart({ deals }: { deals: AAPLDeal[] }) {
             transform: 'translate(-50%, -100%)',
             background: '#1f2937',
             color: '#fff',
-            padding: '5px 10px',
+            padding: '6px 10px',
             borderRadius: 6,
-            fontSize: 12,
+            fontSize: 11,
             pointerEvents: 'none',
             whiteSpace: 'nowrap',
             zIndex: 10,
           }}
         >
-          <strong>{tooltip.year}</strong>:{' '}
-          {tooltip.val >= 1000 ? `$${(tooltip.val / 1000).toFixed(2)}B` : `$${tooltip.val.toLocaleString()}M`}
+          <strong>{tooltip.year}</strong>
+          <div>Disclosed: {tooltip.disclosed} deal{tooltip.disclosed !== 1 ? 's' : ''}</div>
+          <div>Undisclosed: {tooltip.undisclosed} deal{tooltip.undisclosed !== 1 ? 's' : ''}</div>
+          {tooltip.valueM > 0 && (
+            <div>Value: ${tooltip.valueM >= 1000 ? `${(tooltip.valueM / 1000).toFixed(1)}B` : tooltip.valueM.toLocaleString()}M</div>
+          )}
         </div>
       )}
     </div>
   );
 }
 
-// ── AAPL M&A Panel ─────────────────────────────────────────────────────────────
+// ── AAPL Acquisition Panel ────────────────────────────────────────────────────
 
-function getTypeBadgeClass(type: string): string {
-  if (type === 'Acquisition') return 'aapl-ma-type-badge aapl-ma-type-acq';
-  if (type === 'Asset Acquisition') return 'aapl-ma-type-badge aapl-ma-type-asset';
-  return 'aapl-ma-type-badge aapl-ma-type-merger';
+function ExternalLinkIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+      <path d="M5 2H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+      <path d="M8 1h4v4M7 6l5-5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
 }
 
-function AAPLMAPanel() {
-  const deals = getAAPLDeals();
-  const allIndustries = [...new Set(deals.map((d) => d.industry))].sort();
+function AAPLAcquisitionPanel() {
+  const deals = getAAPLAcquisitions();
+  const allCategories = [...new Set(deals.map((d) => d.categories))].sort();
 
-  const [selectedIndustries, setSelectedIndustries] = useState<Set<string>>(new Set());
+  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  function toggleIndustry(ind: string) {
-    setSelectedIndustries((prev) => {
+  function toggleCategory(cat: string) {
+    setSelectedCategories((prev) => {
       const next = new Set(prev);
-      if (next.has(ind)) next.delete(ind);
-      else next.add(ind);
+      if (next.has(cat)) next.delete(cat);
+      else next.add(cat);
       return next;
     });
   }
 
-  function clearAllFilters() {
-    setSelectedIndustries(new Set());
-  }
-
-  function scrollIndustries(dir: 'left' | 'right') {
+  function scrollCategories(dir: 'left' | 'right') {
     scrollRef.current?.scrollBy({ left: dir === 'left' ? -150 : 150, behavior: 'smooth' });
   }
 
   const filteredDeals =
-    selectedIndustries.size === 0 ? deals : deals.filter((d) => selectedIndustries.has(d.industry));
+    selectedCategories.size === 0 ? deals : deals.filter((d) => selectedCategories.has(d.categories));
 
-  const sortedDeals = [...filteredDeals].sort(
-    (a, b) => b.year - a.year || b.date.localeCompare(a.date),
-  );
+  const sortedDeals = [...filteredDeals].sort((a, b) => b.date.localeCompare(a.date));
 
   return (
     <div className="aapl-ma-panel">
-      {/* ── Industry filter bar ── */}
+      {/* ── Category filter bar ── */}
       <div className="aapl-ma-filter-bar">
-        <span className="aapl-ma-filter-label">INDUSTRY</span>
-        <button className="aapl-ma-scroll-btn" onClick={() => scrollIndustries('left')} aria-label="Scroll left">‹</button>
+        <span className="aapl-ma-filter-label">CATEGORY</span>
+        <button className="aapl-ma-scroll-btn" onClick={() => scrollCategories('left')} aria-label="Scroll left">‹</button>
         <div className="aapl-ma-tags-scroll" ref={scrollRef}>
           <button
-            className={`aapl-ma-industry-tag${selectedIndustries.size === 0 ? ' aapl-ma-industry-tag--active' : ''}`}
-            onClick={clearAllFilters}
+            className={`aapl-ma-industry-tag${selectedCategories.size === 0 ? ' aapl-ma-industry-tag--active' : ''}`}
+            onClick={() => setSelectedCategories(new Set())}
           >
             All
           </button>
-          {allIndustries.map((ind) => (
+          {allCategories.map((cat) => (
             <button
-              key={ind}
-              className={`aapl-ma-industry-tag${selectedIndustries.has(ind) ? ' aapl-ma-industry-tag--active' : ''}`}
-              onClick={() => toggleIndustry(ind)}
+              key={cat}
+              className={`aapl-ma-industry-tag${selectedCategories.has(cat) ? ' aapl-ma-industry-tag--active' : ''}`}
+              onClick={() => toggleCategory(cat)}
             >
-              {ind}
+              {cat}
             </button>
           ))}
         </div>
-        <button className="aapl-ma-scroll-btn" onClick={() => scrollIndustries('right')} aria-label="Scroll right">›</button>
-        {selectedIndustries.size > 0 && (
-          <button className="aapl-ma-clear-btn" onClick={() => setSelectedIndustries(new Set())}>
+        <button className="aapl-ma-scroll-btn" onClick={() => scrollCategories('right')} aria-label="Scroll right">›</button>
+        {selectedCategories.size > 0 && (
+          <button className="aapl-ma-clear-btn" onClick={() => setSelectedCategories(new Set())}>
             Clear
           </button>
         )}
       </div>
 
-      {/* ── Bar chart ── */}
+      {/* ── Bar + Line chart ── */}
       <div className="aapl-ma-chart-section">
         <div className="aapl-ma-section-title">
-          Apple Inc. — Annual Acquisition Activity (1988–2026)
-          {selectedIndustries.size > 0 && (
-            <span className="aapl-ma-filter-note"> · Filtered: {[...selectedIndustries].join(', ')}</span>
+          Apple Inc. — Annual Acquisition Activity ({CHART_START_YEAR}–{CHART_END_YEAR})
+          {selectedCategories.size > 0 && (
+            <span className="aapl-ma-filter-note"> · Filtered: {[...selectedCategories].join(', ')}</span>
           )}
         </div>
-        <AAPLBarChart deals={filteredDeals} />
-        <div className="aapl-ma-chart-note">
-          Bars show disclosed deal values only. Undisclosed transactions are excluded from totals.
-        </div>
+        <AcquisitionBarLineChart deals={filteredDeals} />
       </div>
 
       {/* ── Table ── */}
       <div className="aapl-ma-table-section">
         <div className="aapl-ma-section-title">
-          Acquisition Transactions ({filteredDeals.length} deal{filteredDeals.length !== 1 ? 's' : ''}
-          {selectedIndustries.size > 0 ? ', filtered' : ''})
+          Table View ({filteredDeals.length} deal{filteredDeals.length !== 1 ? 's' : ''}
+          {selectedCategories.size > 0 ? ', filtered' : ''})
         </div>
         <div className="aapl-ma-table-wrap">
           <table className="aapl-ma-table">
             <thead>
               <tr>
                 <th>Date</th>
-                <th>Type</th>
-                <th>Company</th>
-                <th>Industry</th>
-                <th className="text-right">Deal Value</th>
-                <th>Source</th>
+                <th>Acquired Company</th>
+                <th>Company Categories</th>
+                <th className="text-right">Value (USD $M)</th>
+                <th>URL</th>
               </tr>
             </thead>
             <tbody>
               {sortedDeals.map((deal, i) => (
                 <tr key={i} className="aapl-ma-table-row">
                   <td className="aapl-ma-td-date">{deal.date}</td>
-                  <td>
-                    <span className={getTypeBadgeClass(deal.type)}>
-                      {deal.type}
-                    </span>
-                  </td>
-                  <td className="aapl-ma-td-company">{deal.company}</td>
-                  <td><span className="aapl-ma-industry-pill">{deal.industry}</span></td>
+                  <td className="aapl-ma-td-company">{deal.acquiredCompany}</td>
+                  <td><span className="aapl-ma-industry-pill">{deal.categories}</span></td>
                   <td className="text-right aapl-ma-td-value">
                     {deal.valueM != null ? (
                       deal.valueM >= 1000
@@ -283,11 +346,8 @@ function AAPLMAPanel() {
                     )}
                   </td>
                   <td>
-                    <a href={deal.newsUrl} target="_blank" rel="noopener noreferrer" className="aapl-ma-news-link" title="View source">
-                      <svg width="12" height="12" viewBox="0 0 13 13" fill="none" aria-hidden="true">
-                        <path d="M5 2H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-                        <path d="M8 1h4v4M7 6l5-5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
+                    <a href={deal.url} target="_blank" rel="noopener noreferrer" className="aapl-ma-news-link" title="View source">
+                      <ExternalLinkIcon />
                       Link
                     </a>
                   </td>
@@ -295,9 +355,6 @@ function AAPLMAPanel() {
               ))}
             </tbody>
           </table>
-        </div>
-        <div className="aapl-ma-source-note">
-          Sources: Apple Newsroom, TechCrunch, Reuters, Bloomberg, Wikipedia. Data current as of 2024.
         </div>
       </div>
     </div>
@@ -692,7 +749,7 @@ export default function AcquisitionTab({ symbol }: AcquisitionTabProps) {
 
   // AAPL gets a dedicated panel with industry filter, bar chart, and table
   if (symbol === 'AAPL') {
-    return <AAPLMAPanel />;
+    return <AAPLAcquisitionPanel />;
   }
 
   return (
