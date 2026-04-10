@@ -880,7 +880,7 @@ function parseDateKey(dateKey: string): number {
   try { return new Date(`${dateKey} 2026`).getTime(); } catch { return 0; }
 }
 
-export default function WatchlistArchivePage() {
+export default function WatchlistArchiveContent() {
   const watchlistId = '627836';
   const { watchlistNames, setWatchlistName, symbolOrders, setSymbolOrder, favorites, toggleFavorite, dynamicWatchlists, deletedWatchlists, deleteWatchlist } = useWatchlist();
   const router = useRouter();
