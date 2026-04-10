@@ -5,7 +5,6 @@ import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { useLanguage } from '@/app/contexts/LanguageContext';
-import { BASE_PATH } from '@/app/lib/basePath';
 
 // ── Capability icons (14×14 viewBox, flat minimal style) ──────────────────────
 
@@ -268,7 +267,7 @@ export default function AiSearchPage() {
               <div className="is-hero-img-wrap">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={`${BASE_PATH}/images/ai/ai-hero.svg`}
+                  src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=900&q=80"
                   alt={lang === 'zh' ? 'AI 搜尋技術視覺化' : 'AI Search Technology Visualization'}
                   className="is-hero-img"
                 />
@@ -348,7 +347,7 @@ export default function AiSearchPage() {
               <div className="is-preview-img-wrap">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={`${BASE_PATH}/images/ai/ai-architecture.svg`}
+                  src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200&q=80"
                   alt={lang === 'zh' ? 'AI 搜尋介面預覽' : 'AI Search Interface Preview'}
                   className="is-preview-img"
                 />
