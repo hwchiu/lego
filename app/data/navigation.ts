@@ -142,7 +142,6 @@ export const bottomLinks: NavItem[] = [
 ];
 
 export const marketTabs = [
-  'Earnings Calendar',
   'Share Holders Meeting',
   'Sales Revenue Release',
   'Dividend',
@@ -153,4 +152,6 @@ export const marketTabs = [
   'Split',
   'Special Situation',
   'Sales Revenue Call',
+  'Guidance Call',
+  'Projected Earnings Release',
 ];

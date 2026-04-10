@@ -2246,6 +2246,13 @@ input, select { font-family: var(--font); }
   font-weight: 700;
   color: #2563eb;
 }
+.wl-symbol-link {
+  color: inherit;
+  text-decoration: none;
+}
+.wl-symbol-link:hover {
+  text-decoration: underline;
+}
 .wl-sparkline-1y {
   display: block;
 }
@@ -15276,6 +15283,8 @@ a.fd-hint-btn {
   color: var(--c-text-2);
   line-height: 1.5;
   max-width: 380px;
+  white-space: normal;
+  word-break: break-word;
 }
 .corp-event-table .corp-event-date {
   white-space: nowrap;

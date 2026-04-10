@@ -1626,7 +1626,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                   <thead className="wl-thead--white">
                     <tr>
                       <th className="wl-th wl-th--sticky">
-                        Symbol
+                        Company
                         <svg viewBox="0 0 14 14" fill="none" width="10" height="10" style={{ marginLeft: 4 }}>
                           <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
@@ -1653,7 +1653,9 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                   <tbody>
                     {sortedHoldings.map((h) => (
                       <tr key={h.symbol} className="wl-tr">
-                        <td className="wl-td wl-td--sticky wl-symbol">{h.symbol}</td>
+                        <td className="wl-td wl-td--sticky wl-symbol">
+                          <Link href={`/company-profile/${h.symbol}/`} className="wl-symbol-link">{h.symbol}</Link>
+                        </td>
                         <td className="wl-td">{h.price.toFixed(2)}</td>
                         <td className={`wl-td ${h.change >= 0 ? 'pos' : 'neg'}`}>
                           {h.change >= 0 ? '+' : ''}
@@ -1826,7 +1828,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                   <table className="wl-table wl-holdings-table">
                     <thead className="wl-thead--white">
                       <tr>
-                        <th className="wl-th wl-th--sticky">Symbol</th>
+                        <th className="wl-th wl-th--sticky">Company</th>
                         <th className="wl-th wl-th--name">Company</th>
                         <th className="wl-th">Shares</th>
                         <th className="wl-th">Avg Cost</th>
@@ -1852,7 +1854,9 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                         const companyName = companyNameMap.get(h.symbol) ?? h.symbol;
                         return (
                           <tr key={h.symbol} className="wl-tr">
-                            <td className="wl-td wl-td--sticky wl-symbol">{h.symbol}</td>
+                            <td className="wl-td wl-td--sticky wl-symbol">
+                              <Link href={`/company-profile/${h.symbol}/`} className="wl-symbol-link">{h.symbol}</Link>
+                            </td>
                             <td className="wl-td wl-company-name">{companyName}</td>
                             <td className="wl-td">{h.shares.toLocaleString()}</td>
                             <td className="wl-td">{h.cost.toFixed(2)}</td>
@@ -1907,7 +1911,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                       <thead className="wl-thead--white">
                         <tr>
                           <th className="wl-th wl-th--sticky">
-                            Symbol
+                            Company
                             <svg viewBox="0 0 14 14" fill="none" width="10" height="10" style={{ marginLeft: 4 }}>
                               <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
@@ -1920,7 +1924,9 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                       <tbody>
                         {sortedHoldings.map((h) => (
                           <tr key={h.symbol} className="wl-tr">
-                            <td className="wl-td wl-td--sticky wl-symbol">{h.symbol}</td>
+                            <td className="wl-td wl-td--sticky wl-symbol">
+                              <Link href={`/company-profile/${h.symbol}/`} className="wl-symbol-link">{h.symbol}</Link>
+                            </td>
                             {cols.map((c) => {
                               const def = ALL_COLUMNS[c];
                               const cls = def.getClass ? def.getClass(h) : '';

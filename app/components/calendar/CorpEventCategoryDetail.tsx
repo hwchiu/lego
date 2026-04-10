@@ -48,7 +48,7 @@ export default function CorpEventCategoryDetail({
           {displayDate}&nbsp;·&nbsp;{count} {count === 1 ? 'Event' : 'Events'}
         </div>
         <div className="detail-tabs">
-          <button className="detail-tab active">{categoryLabel}</button>
+          <button className="detail-tab">{categoryLabel}</button>
         </div>
       </div>
 
