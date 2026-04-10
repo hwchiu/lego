@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import type { Member } from '@/app/data/collaboration';
+import { BASE_PATH } from '@/app/lib/basePath';
 
 interface MentionTextareaProps {
   value: string;
@@ -141,7 +142,7 @@ export function MentionTextarea({
               }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={m.avatar} alt={m.name} className="pg-mention-avatar" />
+              <img src={BASE_PATH + m.avatar} alt={m.name} className="pg-mention-avatar" />
               <span>{m.name}</span>
               <span className="pg-mention-role">{m.role}</span>
             </div>

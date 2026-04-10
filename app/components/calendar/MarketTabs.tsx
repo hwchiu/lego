@@ -13,11 +13,13 @@ interface MarketTabsProps {
 
 export default function MarketTabs({ activeTab, onTabChange }: MarketTabsProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
 
   const updateScrollState = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
+    setCanScrollLeft(el.scrollLeft > SCROLL_THRESHOLD);
     setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - SCROLL_THRESHOLD);
   }, []);
 
@@ -34,6 +36,12 @@ export default function MarketTabs({ activeTab, onTabChange }: MarketTabsProps) 
     };
   }, [updateScrollState]);
 
+  const handleScrollLeft = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollBy({ left: -SCROLL_AMOUNT_PX, behavior: 'smooth' });
+  }, []);
+
   const handleScrollRight = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -42,6 +50,15 @@ export default function MarketTabs({ activeTab, onTabChange }: MarketTabsProps) 
 
   return (
     <div className="market-tabs-card market-tabs-card--with-arrow">
+      {canScrollLeft && (
+        <button
+          className="market-tabs-arrow market-tabs-arrow--left"
+          onClick={handleScrollLeft}
+          aria-label="Scroll tabs left"
+        >
+          ‹
+        </button>
+      )}
       <div className="market-tabs" ref={scrollRef}>
         {marketTabs.map((tab) => (
           <button

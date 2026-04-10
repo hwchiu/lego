@@ -11,6 +11,7 @@ import { AddCardModal } from '@/app/components/collaboration/AddCardModal';
 import { canvases as initialCanvases, members, TAG_I18N } from '@/app/data/collaboration';
 import type { Canvas, ContentCard, Comment } from '@/app/data/collaboration';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { BASE_PATH } from '@/app/lib/basePath';
 
 const STORAGE_KEY = 'pg-canvas-state';
 
@@ -260,7 +261,7 @@ export default function CollaborationPlaygroundPage() {
                     {activeCanvas.members.map((m) => (
                       <img
                         key={m.id}
-                        src={m.avatar}
+                        src={BASE_PATH + m.avatar}
                         alt={m.name}
                         title={`${m.name} · ${m.role}`}
                         width={30}

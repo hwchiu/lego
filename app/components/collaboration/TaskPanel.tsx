@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { Canvas, Task, Member, TaskStatus, TaskPriority } from '@/app/data/collaboration';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { BASE_PATH } from '@/app/lib/basePath';
 
 const STATUS_LABEL_ZH: Record<TaskStatus, string> = {
   todo: '待處理',
@@ -173,7 +174,7 @@ export function TaskPanel({ canvas, onClose }: TaskPanelProps) {
                   {isEn ? `${PRIORITY_LABEL[task.priority]} Priority` : `${PRIORITY_LABEL[task.priority]}優先`}
                 </span>
                 <img
-                  src={task.assignee.avatar}
+                  src={BASE_PATH + task.assignee.avatar}
                   alt={task.assignee.name}
                   title={task.assignee.name}
                   width={18}

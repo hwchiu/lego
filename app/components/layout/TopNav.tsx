@@ -15,6 +15,7 @@ import {
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { useMobileSidebar, MOBILE_BREAKPOINT } from '@/app/contexts/MobileSidebarContext';
 import { useTheme } from '@/app/contexts/ThemeContext';
+import { BASE_PATH } from '@/app/lib/basePath';
 
 const POPULAR_SEARCHES = ['TC', 'AAPL', 'NVDA'];
 
@@ -692,7 +693,7 @@ export default function TopNav() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className="topnav-avatar"
-          src={userInfo?.avatar ?? '/images/hwchiu_github_avatar.jpg'}
+          src={BASE_PATH + (userInfo?.avatar ?? '/images/hwchiu_github_avatar.jpg')}
           alt="User Avatar"
         />
         <span className="topnav-name">{userInfo?.name ?? ''}</span>

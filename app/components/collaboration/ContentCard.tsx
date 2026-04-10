@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { ContentCard, ChartBar, Member, Comment } from '@/app/data/collaboration';
 import { CommentSection } from './CommentSection';
+import { BASE_PATH } from '@/app/lib/basePath';
 
 // ─── Bar chart (inline SVG) ───────────────────
 function BarChart({ data, unit }: { data: ChartBar[]; unit?: string }) {
@@ -450,7 +451,7 @@ function MiddleEastMap() {
 function Avatar({ src, name, size = 28 }: { src: string; name: string; size?: number }) {
   return (
     <img
-      src={src}
+      src={BASE_PATH + src}
       alt={name}
       title={name}
       width={size}
