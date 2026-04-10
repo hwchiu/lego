@@ -1,7 +1,18 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import investmentData from '@/content/apple-investment.json';
+
+const InvestmentBarLineChartNivo = dynamic(
+  () => import('./InvestmentNivoCharts').then((m) => m.InvestmentBarLineChartNivo),
+  { ssr: false, loading: () => <div style={{ height: 260, background: '#f3f4f6', borderRadius: 8 }} /> },
+);
+
+const MABarChartSmallNivo = dynamic(
+  () => import('./InvestmentNivoCharts').then((m) => m.MABarChartSmallNivo),
+  { ssr: false, loading: () => <div style={{ height: 180, background: '#f3f4f6', borderRadius: 8 }} /> },
+);
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -34,208 +45,10 @@ function getAAPLInvestments(): InvestmentDeal[] {
   return _aaplInvestments;
 }
 
-// ── Stacked Bar + Line Chart ──────────────────────────────────────────────────
+// ── AAPL Investment Panel ──────────────────────────────────────────────────────
 
 const CHART_START_YEAR = 2012;
 const CHART_END_YEAR = 2026;
-
-interface YearChartData {
-  year: number;
-  disclosedCount: number;
-  undisclosedCount: number;
-  disclosedValueM: number;
-}
-
-function buildYearData(deals: InvestmentDeal[]): YearChartData[] {
-  const years = Array.from(
-    { length: CHART_END_YEAR - CHART_START_YEAR + 1 },
-    (_, i) => CHART_START_YEAR + i,
-  );
-  const map = new Map<number, YearChartData>();
-  for (const y of years) {
-    map.set(y, { year: y, disclosedCount: 0, undisclosedCount: 0, disclosedValueM: 0 });
-  }
-  for (const d of deals) {
-    const yr = parseInt(d.date.slice(0, 4), 10);
-    const entry = map.get(yr);
-    if (!entry) continue;
-    if (d.valueM != null) {
-      entry.disclosedCount += 1;
-      entry.disclosedValueM += d.valueM;
-    } else {
-      entry.undisclosedCount += 1;
-    }
-  }
-  return years.map((y) => map.get(y)!);
-}
-
-function InvestmentBarLineChart({ deals }: { deals: InvestmentDeal[] }) {
-  const [tooltip, setTooltip] = useState<{
-    x: number; y: number; year: number;
-    disclosed: number; undisclosed: number; valueM: number;
-  } | null>(null);
-
-  const yearData = buildYearData(deals);
-
-  const W = 820;
-  const H = 230;
-  const PAD = { top: 30, right: 70, bottom: 40, left: 50 };
-  const chartW = W - PAD.left - PAD.right;
-  const chartH = H - PAD.top - PAD.bottom;
-
-  const maxCount = Math.max(...yearData.map((d) => d.disclosedCount + d.undisclosedCount), 1);
-  const countMax = Math.ceil(maxCount / 2) * 2 || 2;
-
-  const maxValue = Math.max(...yearData.map((d) => d.disclosedValueM), 1);
-  const valueMax = Math.ceil(maxValue / 500) * 500 || 500;
-
-  const barSlotW = chartW / yearData.length;
-  const barW = Math.max(3, barSlotW * 0.65);
-
-  const linePoints = yearData
-    .map((d, i) => {
-      const cx = PAD.left + i * barSlotW + barSlotW / 2;
-      const cy = d.disclosedValueM > 0
-        ? PAD.top + chartH - (d.disclosedValueM / valueMax) * chartH
-        : null;
-      return { cx, cy, year: d.year, value: d.disclosedValueM };
-    })
-    .filter((p) => p.cy !== null) as { cx: number; cy: number; year: number; value: number }[];
-
-  const polyline = linePoints.map((p) => `${p.cx},${p.cy}`).join(' ');
-
-  return (
-    <div className="aapl-inv-chart-wrap" style={{ position: 'relative' }}>
-      <svg
-        viewBox={`0 0 ${W} ${H}`}
-        style={{ width: '100%', height: 'auto', display: 'block' }}
-        onMouseLeave={() => setTooltip(null)}
-      >
-        {[0, 0.25, 0.5, 0.75, 1].map((t) => {
-          const y = PAD.top + chartH * (1 - t);
-          return (
-            <g key={t}>
-              <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y} stroke="#f0f0f0" strokeWidth="1" />
-              <text x={PAD.left - 5} y={y + 4} textAnchor="end" fontSize="9" fill="#9ca3af">
-                {Math.round(countMax * t)}
-              </text>
-              <text x={W - PAD.right + 5} y={y + 4} textAnchor="start" fontSize="9" fill="#6b7280">
-                {Math.round(valueMax * t)}
-              </text>
-            </g>
-          );
-        })}
-
-        <text
-          x={PAD.left - 36}
-          y={PAD.top + chartH / 2}
-          textAnchor="middle"
-          fontSize="9"
-          fill="#6b7280"
-          transform={`rotate(-90, ${PAD.left - 36}, ${PAD.top + chartH / 2})`}
-        >
-          Count
-        </text>
-        <text
-          x={W - PAD.right + 50}
-          y={PAD.top + chartH / 2}
-          textAnchor="middle"
-          fontSize="9"
-          fill="#6b7280"
-          transform={`rotate(90, ${W - PAD.right + 50}, ${PAD.top + chartH / 2})`}
-        >
-          Value (USD $M)
-        </text>
-
-        {yearData.map((d, i) => {
-          const cx = PAD.left + i * barSlotW + barSlotW / 2;
-          const x = cx - barW / 2;
-          const totalCount = d.disclosedCount + d.undisclosedCount;
-          const discH = totalCount > 0 ? (d.disclosedCount / countMax) * chartH : 0;
-          const undiscH = totalCount > 0 ? (d.undisclosedCount / countMax) * chartH : 0;
-          const totalH = discH + undiscH;
-          const baseY = PAD.top + chartH;
-          const isHovered = tooltip?.year === d.year;
-
-          return (
-            <g
-              key={d.year}
-              onMouseEnter={(e) => {
-                const svgEl = (e.currentTarget as SVGElement).closest('svg');
-                if (!svgEl) return;
-                const rect = svgEl.getBoundingClientRect();
-                const scaleX = rect.width / W;
-                const scaleY = rect.height / H;
-                setTooltip({
-                  x: cx * scaleX,
-                  y: (baseY - totalH - 6) * scaleY,
-                  year: d.year,
-                  disclosed: d.disclosedCount,
-                  undisclosed: d.undisclosedCount,
-                  valueM: d.disclosedValueM,
-                });
-              }}
-              style={{ cursor: 'pointer' }}
-            >
-              {discH > 0 && (
-                <rect x={x} y={baseY - discH} width={barW} height={discH} fill={isHovered ? '#1d4ed8' : '#3b82f6'} rx="1" />
-              )}
-              {undiscH > 0 && (
-                <rect x={x} y={baseY - discH - undiscH} width={barW} height={undiscH} fill={isHovered ? '#b91c1c' : '#ef4444'} rx="1" />
-              )}
-              <text x={cx} y={H - 6} textAnchor="middle" fontSize="8" fill="#9ca3af">{d.year}</text>
-            </g>
-          );
-        })}
-
-        <line x1={PAD.left} y1={PAD.top + chartH} x2={W - PAD.right} y2={PAD.top + chartH} stroke="#e5e7eb" strokeWidth="1" />
-
-        {polyline && (
-          <polyline points={polyline} fill="none" stroke="#111827" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" />
-        )}
-        {linePoints.map((p) => (
-          <circle key={p.year} cx={p.cx} cy={p.cy} r="3" fill="#111827" stroke="#fff" strokeWidth="1" />
-        ))}
-
-        <rect x={PAD.left} y={8} width="8" height="8" fill="#3b82f6" rx="1" />
-        <text x={PAD.left + 11} y={16} fontSize="9" fill="#374151">Count of Disclosed Value</text>
-        <rect x={PAD.left + 155} y={8} width="8" height="8" fill="#ef4444" rx="1" />
-        <text x={PAD.left + 168} y={16} fontSize="9" fill="#374151">Count of Undisclosed Value</text>
-        <line x1={PAD.left + 340} y1={12} x2={PAD.left + 355} y2={12} stroke="#111827" strokeWidth="2" />
-        <circle cx={PAD.left + 347} cy={12} r="3" fill="#111827" />
-        <text x={PAD.left + 359} y={16} fontSize="9" fill="#374151">Disclosed Value (M)</text>
-      </svg>
-
-      {tooltip && (
-        <div
-          style={{
-            position: 'absolute',
-            left: tooltip.x,
-            top: tooltip.y,
-            transform: 'translate(-50%, -100%)',
-            background: '#1f2937',
-            color: '#fff',
-            padding: '6px 10px',
-            borderRadius: 6,
-            fontSize: 11,
-            pointerEvents: 'none',
-            whiteSpace: 'nowrap',
-            zIndex: 10,
-          }}
-        >
-          <strong>{tooltip.year}</strong>
-          <div>Disclosed: {tooltip.disclosed} deal{tooltip.disclosed !== 1 ? 's' : ''}</div>
-          <div>Undisclosed: {tooltip.undisclosed} deal{tooltip.undisclosed !== 1 ? 's' : ''}</div>
-          {tooltip.valueM > 0 && (
-            <div>Value: ${tooltip.valueM >= 1000 ? `${(tooltip.valueM / 1000).toFixed(1)}B` : tooltip.valueM.toLocaleString()}M</div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── AAPL Investment Panel ──────────────────────────────────────────────────────
 
 function ExternalLinkIcon() {
   return (
@@ -246,14 +59,14 @@ function ExternalLinkIcon() {
   );
 }
 
-// ── AAPL Investment Panel ──────────────────────────────────────────────────────
-
 function AAPLInvestmentPanel() {
   const deals = getAAPLInvestments();
   const allCategories = [...new Set(deals.map((d) => d.categories))].sort();
 
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
+  const [selectedYear, setSelectedYear] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLDivElement>(null);
 
   function toggleCategory(cat: string) {
     setSelectedCategories((prev) => {
@@ -271,7 +84,16 @@ function AAPLInvestmentPanel() {
   const filteredDeals =
     selectedCategories.size === 0 ? deals : deals.filter((d) => selectedCategories.has(d.categories));
 
-  const sortedDeals = [...filteredDeals].sort((a, b) => b.date.localeCompare(a.date));
+  const sortedDeals = [...filteredDeals]
+    .filter((d) => selectedYear === null || d.date.startsWith(selectedYear))
+    .sort((a, b) => b.date.localeCompare(a.date));
+
+  function handleYearClick(year: string | null) {
+    setSelectedYear(year);
+    if (year !== null) {
+      setTimeout(() => tableRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+    }
+  }
 
   return (
     <div className="aapl-ma-panel">
@@ -312,14 +134,24 @@ function AAPLInvestmentPanel() {
             <span className="aapl-ma-filter-note"> · Filtered: {[...selectedCategories].join(', ')}</span>
           )}
         </div>
-        <InvestmentBarLineChart deals={filteredDeals} />
+        <InvestmentBarLineChartNivo deals={filteredDeals} selectedYear={selectedYear} onYearClick={handleYearClick} />
       </div>
 
       {/* ── Table ── */}
-      <div className="aapl-ma-table-section">
+      <div className="aapl-ma-table-section" ref={tableRef}>
         <div className="aapl-ma-section-title">
-          Table View ({filteredDeals.length} deal{filteredDeals.length !== 1 ? 's' : ''}
-          {selectedCategories.size > 0 ? ', filtered' : ''})
+          Table View ({sortedDeals.length} deal{sortedDeals.length !== 1 ? 's' : ''}
+          {selectedCategories.size > 0 ? ', filtered' : ''}
+          {selectedYear ? `, ${selectedYear}` : ''})
+          {selectedYear && (
+            <button
+              className="aapl-ma-year-clear-btn"
+              onClick={() => setSelectedYear(null)}
+              title="Clear year filter"
+            >
+              × Clear {selectedYear}
+            </button>
+          )}
         </div>
         <div className="aapl-ma-table-wrap">
           <table className="aapl-ma-table">
@@ -544,58 +376,6 @@ const REGIONS: Region[] = [
 
 // ── Chart ─────────────────────────────────────────────────────────────────────
 
-function MABarChartSmall({ data }: { data: { year: number; deals: number; value: number }[] }) {
-  const W = 520;
-  const H = 180;
-  const PAD = { top: 16, right: 52, bottom: 30, left: 52 };
-  const chartW = W - PAD.left - PAD.right;
-  const chartH = H - PAD.top - PAD.bottom;
-
-  const maxDeals = Math.max(...data.map((d) => d.deals));
-  const maxValue = Math.max(...data.map((d) => d.value));
-  const dealsMax = Math.ceil(maxDeals / 1000) * 1000;
-  const valueMax = Math.ceil(maxValue / 1000) * 1000;
-
-  const barGroupW = chartW / data.length;
-  const barW = Math.max(6, barGroupW * 0.35);
-
-  return (
-    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto' }}>
-      {[0, 0.5, 1].map((t) => {
-        const y = PAD.top + chartH * (1 - t);
-        return (
-          <g key={t}>
-            <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y} stroke="#f0f0f0" strokeWidth="1" />
-            <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize="9" fill="#9ca3af">
-              {Math.round(dealsMax * t).toLocaleString()}
-            </text>
-            <text x={W - PAD.right + 5} y={y + 4} textAnchor="start" fontSize="9" fill="#6b7280">
-              ${Math.round(valueMax * t)}B
-            </text>
-          </g>
-        );
-      })}
-      {data.map((d, i) => {
-        const cx = PAD.left + i * barGroupW + barGroupW / 2;
-        const dealH = (d.deals / dealsMax) * chartH;
-        const valH = (d.value / valueMax) * chartH;
-        return (
-          <g key={d.year}>
-            <rect x={cx - barW - 1} y={PAD.top + chartH - dealH} width={barW} height={dealH} fill="#3b82f6" opacity="0.85" rx="1" />
-            <rect x={cx + 1} y={PAD.top + chartH - valH} width={barW} height={valH} fill="#f59e0b" opacity="0.85" rx="1" />
-            <text x={cx} y={H - 6} textAnchor="middle" fontSize="9" fill="#9ca3af">{d.year}</text>
-          </g>
-        );
-      })}
-      <line x1={PAD.left} y1={PAD.top + chartH} x2={W - PAD.right} y2={PAD.top + chartH} stroke="#e5e7eb" strokeWidth="1" />
-      <rect x={PAD.left} y={5} width="8" height="8" fill="#3b82f6" rx="1" />
-      <text x={PAD.left + 11} y={13} fontSize="9" fill="#374151">Deals</text>
-      <rect x={PAD.left + 60} y={5} width="8" height="8" fill="#f59e0b" rx="1" />
-      <text x={PAD.left + 71} y={13} fontSize="9" fill="#374151">Value ($B)</text>
-    </svg>
-  );
-}
-
 function HeatMapGridSmall({ data }: { data: { sector: string; deals: number; value: number; yoy: number }[] }) {
   const maxDeals = Math.max(...data.map((d) => d.deals));
   return (
@@ -629,7 +409,7 @@ function NumberValuePanel({ region }: { region: Region }) {
 
       <div className="ma-chart-card" style={{ marginTop: 12 }}>
         <div className="ma-chart-card-title">Number of Deals &amp; Deal Value (2015–2024)</div>
-        <MABarChartSmall data={data} />
+        <MABarChartSmallNivo data={data} />
       </div>
 
       <div className="ma-table-wrap" style={{ marginTop: 12 }}>

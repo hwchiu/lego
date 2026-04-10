@@ -1,7 +1,13 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import acquisitionData from '@/content/apple-acquisition.json';
+
+const AcquisitionBarLineChartNivo = dynamic(
+  () => import('./InvestmentNivoCharts').then((m) => m.AcquisitionBarLineChartNivo),
+  { ssr: false, loading: () => <div style={{ height: 260, background: '#f3f4f6', borderRadius: 8 }} /> },
+);
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -251,7 +257,9 @@ function AAPLAcquisitionPanel() {
   const allCategories = [...new Set(deals.map((d) => d.categories))].sort();
 
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
+  const [selectedYear, setSelectedYear] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLDivElement>(null);
 
   function toggleCategory(cat: string) {
     setSelectedCategories((prev) => {
@@ -269,7 +277,16 @@ function AAPLAcquisitionPanel() {
   const filteredDeals =
     selectedCategories.size === 0 ? deals : deals.filter((d) => selectedCategories.has(d.categories));
 
-  const sortedDeals = [...filteredDeals].sort((a, b) => b.date.localeCompare(a.date));
+  const sortedDeals = [...filteredDeals]
+    .filter((d) => selectedYear === null || d.date.startsWith(selectedYear))
+    .sort((a, b) => b.date.localeCompare(a.date));
+
+  function handleYearClick(year: string | null) {
+    setSelectedYear(year);
+    if (year !== null) {
+      setTimeout(() => tableRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+    }
+  }
 
   return (
     <div className="aapl-ma-panel">
@@ -310,14 +327,24 @@ function AAPLAcquisitionPanel() {
             <span className="aapl-ma-filter-note"> · Filtered: {[...selectedCategories].join(', ')}</span>
           )}
         </div>
-        <AcquisitionBarLineChart deals={filteredDeals} />
+        <AcquisitionBarLineChartNivo deals={filteredDeals} selectedYear={selectedYear} onYearClick={handleYearClick} />
       </div>
 
       {/* ── Table ── */}
-      <div className="aapl-ma-table-section">
+      <div className="aapl-ma-table-section" ref={tableRef}>
         <div className="aapl-ma-section-title">
-          Table View ({filteredDeals.length} deal{filteredDeals.length !== 1 ? 's' : ''}
-          {selectedCategories.size > 0 ? ', filtered' : ''})
+          Table View ({sortedDeals.length} deal{sortedDeals.length !== 1 ? 's' : ''}
+          {selectedCategories.size > 0 ? ', filtered' : ''}
+          {selectedYear ? `, ${selectedYear}` : ''})
+          {selectedYear && (
+            <button
+              className="aapl-ma-year-clear-btn"
+              onClick={() => setSelectedYear(null)}
+              title="Clear year filter"
+            >
+              × Clear {selectedYear}
+            </button>
+          )}
         </div>
         <div className="aapl-ma-table-wrap">
           <table className="aapl-ma-table">
