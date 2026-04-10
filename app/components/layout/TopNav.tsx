@@ -677,7 +677,7 @@ export default function TopNav() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className="topnav-avatar"
-          src="https://avatars.githubusercontent.com/hwchiu"
+          src="/images/hwchiu_github_avatar.jpg"
           alt="User Avatar"
         />
         <span className="topnav-name">PiKa Chu</span>

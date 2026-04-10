@@ -113,17 +113,17 @@ export interface Canvas {
 }
 
 // ─────────────────────────────────────────────
-// Members (using randomuser.me portrait photos)
+// Members (using local portrait photos)
 // ─────────────────────────────────────────────
 export const members: Member[] = [
-  { id: 'm0', name: 'HungWei Chiu', avatar: 'https://avatars.githubusercontent.com/hwchiu', role: 'Founder & Lead Analyst' },
-  { id: 'm1', name: 'James Lin', avatar: 'https://randomuser.me/api/portraits/men/10.jpg', role: 'Research Analyst' },
-  { id: 'm2', name: 'Claire Chen', avatar: 'https://randomuser.me/api/portraits/women/18.jpg', role: 'Supply Chain Manager' },
-  { id: 'm3', name: 'Kevin Huang', avatar: 'https://randomuser.me/api/portraits/men/32.jpg', role: 'Market Strategist' },
-  { id: 'm4', name: 'Sherry Wang', avatar: 'https://randomuser.me/api/portraits/women/34.jpg', role: 'Data Scientist' },
-  { id: 'm5', name: 'Hugo Zhang', avatar: 'https://randomuser.me/api/portraits/men/45.jpg', role: 'Risk Analyst' },
-  { id: 'm6', name: 'Amy Wu', avatar: 'https://randomuser.me/api/portraits/women/56.jpg', role: 'Industry Researcher' },
-  { id: 'm7', name: 'Ryan Liu', avatar: 'https://randomuser.me/api/portraits/men/67.jpg', role: 'Financial Analyst' },
+  { id: 'm0', name: 'HungWei Chiu', avatar: '/images/hwchiu_github_avatar.jpg', role: 'Founder & Lead Analyst' },
+  { id: 'm1', name: 'James Lin', avatar: '/images/avatars/men-10.svg', role: 'Research Analyst' },
+  { id: 'm2', name: 'Claire Chen', avatar: '/images/avatars/women-18.svg', role: 'Supply Chain Manager' },
+  { id: 'm3', name: 'Kevin Huang', avatar: '/images/avatars/men-32.svg', role: 'Market Strategist' },
+  { id: 'm4', name: 'Sherry Wang', avatar: '/images/avatars/women-34.svg', role: 'Data Scientist' },
+  { id: 'm5', name: 'Hugo Zhang', avatar: '/images/avatars/men-45.svg', role: 'Risk Analyst' },
+  { id: 'm6', name: 'Amy Wu', avatar: '/images/avatars/women-56.svg', role: 'Industry Researcher' },
+  { id: 'm7', name: 'Ryan Liu', avatar: '/images/avatars/men-67.svg', role: 'Financial Analyst' },
 ];
 
 const [, m1, m2, m3, m4, m5, m6, m7] = members;

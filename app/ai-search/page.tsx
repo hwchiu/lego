@@ -267,7 +267,7 @@ export default function AiSearchPage() {
               </div>
               <div className="is-hero-img-wrap">
                 <Image
-                  src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=900&q=80"
+                  src="/images/ai/ai-hero.svg"
                   alt={lang === 'zh' ? 'AI 搜尋技術視覺化' : 'AI Search Technology Visualization'}
                   width={900}
                   height={560}
@@ -350,7 +350,7 @@ export default function AiSearchPage() {
               </div>
               <div className="is-preview-img-wrap">
                 <Image
-                  src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200&q=80"
+                  src="/images/ai/ai-architecture.svg"
                   alt={lang === 'zh' ? 'AI 搜尋介面預覽' : 'AI Search Interface Preview'}
                   width={1200}
                   height={600}
