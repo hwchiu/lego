@@ -1,11 +1,11 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { BASE_PATH } from '@/app/lib/basePath';
 
 // ── Feature sections data ──────────────────────────────────────────────────────
 
@@ -150,13 +150,11 @@ export default function AboutPage() {
               {FEATURES.map((f) => (
                 <div key={f.eyebrow} className={`about-site-feature${f.reverse ? ' about-site-feature--rev' : ''}`}>
                   <div className="about-site-feature-img-wrap">
-                    <Image
-                      src={f.img}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`${BASE_PATH}${f.img}`}
                       alt={f.imgAlt[lang]}
-                      width={800}
-                      height={560}
                       className="about-site-feature-img"
-                      unoptimized
                     />
                   </div>
                   <div className="about-site-feature-body">

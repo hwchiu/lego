@@ -1,11 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { BASE_PATH } from '@/app/lib/basePath';
 
 // ── Capability icons (14×14 viewBox, flat minimal style) ──────────────────────
 
@@ -266,14 +266,11 @@ export default function IntelligenceSearchPage() {
                 </div>
               </div>
               <div className="is-hero-img-wrap">
-                <Image
-                  src="/images/ai/ai-hero.svg"
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`${BASE_PATH}/images/ai/ai-hero.svg`}
                   alt={lang === 'zh' ? 'AI 搜尋技術視覺化' : 'AI Search Technology Visualization'}
-                  width={900}
-                  height={560}
                   className="is-hero-img"
-                  unoptimized
-                  priority
                 />
               </div>
             </div>
@@ -349,13 +346,11 @@ export default function IntelligenceSearchPage() {
                 </p>
               </div>
               <div className="is-preview-img-wrap">
-                <Image
-                  src="/images/ai/ai-architecture.svg"
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`${BASE_PATH}/images/ai/ai-architecture.svg`}
                   alt={lang === 'zh' ? 'AI 搜尋介面預覽' : 'AI Search Interface Preview'}
-                  width={1200}
-                  height={600}
                   className="is-preview-img"
-                  unoptimized
                 />
                 <div className="is-preview-overlay">
                   <span className="is-preview-badge">
