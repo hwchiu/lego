@@ -117,21 +117,75 @@ const FIN_DATA_TABS: { key: StatementKey; label: string }[] = [
 ];
 
 // ── FinDataTable — renders StatementData from financial-data.md ────────────────
+
+/** Returns true for a quarterly period label like "Q1 FY25" */
+function isQuarterlyPeriod(p: string): boolean {
+  return /^Q\d/.test(p);
+}
+
 function FinDataTable({ data }: { data: StatementData }) {
+  const periods = data.periods;
+
+  // Classify each period and build two-row header groups
+  type Row1Cell =
+    | { type: 'annual'; label: string }
+    | { type: 'qgroup'; yearLabel: string; count: number };
+
+  const row1Cells: Row1Cell[] = [];
+  const row2Quarters: string[] = [];
+
+  for (const p of periods) {
+    if (isQuarterlyPeriod(p)) {
+      const yr = parseColYear(p);
+      const yearLabel = `FY${yr}`;
+      const qLabel = parseColQuarter(p);
+      row2Quarters.push(qLabel);
+      const last = row1Cells[row1Cells.length - 1];
+      if (last && last.type === 'qgroup' && last.yearLabel === yearLabel) {
+        last.count++;
+      } else {
+        row1Cells.push({ type: 'qgroup', yearLabel, count: 1 });
+      }
+    } else {
+      row1Cells.push({ type: 'annual', label: p });
+    }
+  }
+
+  const hasQuarterly = row2Quarters.length > 0;
+
   return (
     <div className="fin-stmt-table-wrap">
       <table className="data-table fin-stmt-table fin-stmt-simple-table">
         <thead>
           <tr>
-            <th className="fin-stmt-th-item">
+            <th rowSpan={hasQuarterly ? 2 : 1} className="fin-stmt-th-item">
               <div className="fin-stmt-th-item-inner">
-                <span className="fin-stmt-th-item-label">Metric</span>
+                <span className="fin-stmt-th-year">Year</span>
+                <span className="fin-stmt-th-divider" />
+                <span className="fin-stmt-th-item-label">Item</span>
               </div>
             </th>
-            {data.periods.map((p, i) => (
-              <th key={i} className="fin-stmt-simple-col-hdr">{p}</th>
-            ))}
+            {row1Cells.map((cell, i) =>
+              cell.type === 'annual' ? (
+                <th key={i} rowSpan={hasQuarterly ? 2 : 1} className="fin-stmt-simple-col-hdr" style={{ color: '#111827' }}>
+                  {cell.label}
+                </th>
+              ) : (
+                <th key={i} colSpan={cell.count} className="th-group" style={{ color: '#111827' }}>
+                  {cell.yearLabel}
+                </th>
+              )
+            )}
           </tr>
+          {hasQuarterly && (
+            <tr className="sub-head">
+              {row2Quarters.map((q, i) => (
+                <th key={i} className="sub-group-inner" style={{ color: '#111827' }}>
+                  {q}
+                </th>
+              ))}
+            </tr>
+          )}
         </thead>
         <tbody>
           {Object.entries(data.items).map(([label, values], ri) => {
