@@ -169,11 +169,11 @@ function FinDataTable({ data }: { data: StatementData }) {
             </th>
             {row1Cells.map((cell, i) =>
               cell.type === 'annual' ? (
-                <th key={i} rowSpan={hasQuarterly ? 2 : 1} className="fin-stmt-simple-col-hdr" style={{ color: '#111827' }}>
+                <th key={i} rowSpan={hasQuarterly ? 2 : 1} className="fin-stmt-simple-col-hdr">
                   {cell.label}
                 </th>
               ) : (
-                <th key={i} colSpan={cell.count} className="th-group" style={{ color: '#111827' }}>
+                <th key={i} colSpan={cell.count} className="th-group">
                   {cell.yearLabel}
                 </th>
               )
@@ -182,7 +182,7 @@ function FinDataTable({ data }: { data: StatementData }) {
           {hasQuarterly && (
             <tr className="sub-head">
               {row2Quarters.map((q, i) => (
-                <th key={i} className="sub-group-inner" style={{ color: '#111827' }}>
+                <th key={i} className="sub-group-inner">
                   {q}
                 </th>
               ))}
@@ -401,14 +401,14 @@ function SimpleStatementTable({ data, viewMode, yearWindowStart, allYears }: Sim
                     </div>
                   </th>
                   {yearGroups.map(({ year, cols }) => (
-                    <th key={year} colSpan={cols.length} className="th-group" style={{ color: '#111827' }}>
+                    <th key={year} colSpan={cols.length} className="th-group">
                       FY{year}
                     </th>
                   ))}
                 </tr>
                 <tr className="sub-head">
                   {visibleCols.map((col) => (
-                    <th key={col} className="sub-group-inner" style={{ color: '#111827' }}>
+                    <th key={col} className="sub-group-inner">
                       {parseColQuarter(col)}
                     </th>
                   ))}
@@ -424,7 +424,7 @@ function SimpleStatementTable({ data, viewMode, yearWindowStart, allYears }: Sim
                   </div>
                 </th>
                 {visibleCols.map((col) => (
-                  <th key={col} className="fin-stmt-simple-col-hdr" style={{ color: '#111827' }}>{col}</th>
+                  <th key={col} className="fin-stmt-simple-col-hdr">{col}</th>
                 ))}
               </tr>
             )}

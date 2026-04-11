@@ -19099,6 +19099,167 @@ html.dark .cp-irt-btn--primary:hover { background: #38bdf8; border-color: #38bdf
 html.dark .cp-irt-btn--outline { background: #1e293b; color: #94a3b8; border-color: #334155; }
 html.dark .cp-irt-btn--outline:hover { background: #334155; border-color: #64748b; color: #f1f5f9; }
 
+/* ===== DARK MODE: data-table (Financial Statement tables) ===== */
+html.dark .data-table thead tr:first-child th {
+  background: #1e293b;
+  color: #94a3b8;
+}
+html.dark .data-table thead tr:first-child th.th-group {
+  background: #1a2537;
+  color: #94a3b8;
+}
+html.dark .data-table thead tr.sub-head th {
+  background: #1e293b;
+  color: #94a3b8;
+}
+html.dark .data-table tbody tr:hover td { background: #1a2537; }
+
+/* ===== DARK MODE: toggle-btn ===== */
+html.dark .toggle-btn.active {
+  background: #4fc3f7;
+  color: #0f172a;
+}
+
+/* ===== DARK MODE: fin-stmt sidebar & table ===== */
+html.dark .fin-stmt-sidebar {
+  background: #1e293b;
+  border-right-color: var(--c-border);
+}
+html.dark .fin-stmt-nav-item:hover {
+  background: rgba(255,255,255,0.08);
+  color: var(--c-text);
+}
+html.dark .fin-stmt-nav-item.active {
+  background: #4fc3f7;
+  color: #0f172a;
+}
+html.dark .fin-stmt-td-item {
+  background: #1a2332;
+  color: var(--c-text-2);
+}
+html.dark .fin-stmt-simple-table .fin-stmt-th-item {
+  background: #1e293b;
+}
+html.dark .fin-stmt-simple-table .fin-stmt-td-section,
+html.dark .fin-stmt-simple-table .fin-stmt-section-row td {
+  background: #0f172a;
+  color: #94a3b8;
+}
+html.dark .fin-stmt-simple-table .fin-stmt-td-section-blank {
+  background: #0f172a;
+}
+
+/* ===== DARK MODE: cp-ir-left-menu ===== */
+html.dark .cp-ir-left-tab:hover {
+  background: rgba(255,255,255,0.08);
+  color: var(--c-text-2);
+}
+html.dark .cp-ir-left-tab.active {
+  background: #4fc3f7;
+  color: #0f172a;
+}
+
+/* ===== DARK MODE: cp-ir-fin-table ===== */
+html.dark .cp-ir-fin-table-wrap {
+  border-color: var(--c-border);
+}
+html.dark .cp-ir-fin-th {
+  background: #1a2537;
+  color: #94a3b8;
+  border-bottom-color: var(--c-border);
+}
+html.dark .cp-ir-fin-tr:hover {
+  background: #1a2537;
+}
+html.dark .cp-ir-fin-td--label {
+  color: var(--c-text);
+}
+html.dark .cp-ir-fin-download-btn {
+  background: #1e293b;
+  border-color: var(--c-border);
+  color: var(--c-text-3);
+}
+html.dark .cp-ir-fin-download-btn:hover {
+  background: #334155;
+  color: var(--c-text);
+  border-color: var(--c-border-2);
+}
+
+/* ===== DARK MODE: aapl-ma components ===== */
+html.dark .aapl-ma-chart-section,
+html.dark .aapl-ma-table-section {
+  background: #1e293b;
+  border-color: var(--c-border);
+}
+html.dark .aapl-ma-year-clear-btn {
+  background: rgba(99,102,241,0.15);
+  border-color: rgba(99,102,241,0.3);
+  color: #a78bfa;
+}
+html.dark .aapl-ma-year-clear-btn:hover {
+  background: rgba(99,102,241,0.25);
+  color: #c4b5fd;
+}
+html.dark .aapl-ma-type-acq {
+  background: rgba(59,130,246,0.2);
+  color: #93c5fd;
+}
+html.dark .aapl-ma-type-asset {
+  background: rgba(245,158,11,0.2);
+  color: #fcd34d;
+}
+html.dark .aapl-ma-type-merger {
+  background: rgba(16,185,129,0.2);
+  color: #6ee7b7;
+}
+html.dark .aapl-ma-industry-pill {
+  background: rgba(99,102,241,0.2);
+  color: #c4b5fd;
+}
+
+/* ===== DARK MODE: ma-table / cpma ===== */
+html.dark .ma-table-wrap,
+html.dark .ma-chart-card {
+  background: #1e293b;
+  border-color: var(--c-border);
+}
+html.dark .ma-sector-tag {
+  background: rgba(37,99,235,0.2);
+  color: #93c5fd;
+}
+html.dark .ma-target { color: #60a5fa; }
+
+/* ===== DARK MODE: cp-news multi-select chips & options ===== */
+html.dark .cp-news-multi-chip {
+  background: rgba(59,130,246,0.2);
+  color: #93c5fd;
+}
+html.dark .cp-news-multi-chip button { color: #93c5fd; }
+html.dark .cp-news-multi-options {
+  background: #1e293b;
+  border-color: var(--c-border);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+html.dark .cp-news-multi-option:hover { background: #334155; }
+html.dark .cp-news-multi-option.active {
+  color: #60a5fa;
+  background: rgba(59,130,246,0.1);
+}
+
+/* ===== DARK MODE: cp-pec-ai sentiment badges ===== */
+html.dark .cp-pec-ai-sentiment--bullish {
+  background: rgba(22,163,74,0.2);
+  color: #4ade80;
+}
+html.dark .cp-pec-ai-sentiment--neutral {
+  background: rgba(234,179,8,0.2);
+  color: #fde047;
+}
+html.dark .cp-pec-ai-sentiment--bearish {
+  background: rgba(220,38,38,0.2);
+  color: #f87171;
+}
+
 /* ===== IR TRANSCRIPT — SECTION TOGGLE HELPERS ===== */
 .cp-irt-section-heading {
   margin: 0;
