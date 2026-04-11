@@ -721,64 +721,8 @@ interface FinIndicesChartProps {
   activeMetric: string;
 }
 
-interface AnnualFinData {
-  year: string;
-  totalRevenue: number;
-  netIncome: number;
-  grossProfit: number;
-  grossMarginPct: number;
-  operatingMarginPct: number;
-  netMarginPct: number;
-  cashEquivalents: number;
-}
-
-function aggregateFinByYear(data: FinDataPoint[]): AnnualFinData[] {
-  type Acc = {
-    totalRevenue: number;
-    netIncome: number;
-    grossProfit: number;
-    grossMarginSum: number;
-    operatingMarginSum: number;
-    netMarginSum: number;
-    cashEquivalents: number;
-    count: number;
-  };
-  const map = new Map<string, Acc>();
-  for (const d of data) {
-    const year = parseYearFromQuarter(d.quarter);
-    if (!map.has(year)) {
-      map.set(year, {
-        totalRevenue: 0, netIncome: 0, grossProfit: 0,
-        grossMarginSum: 0, operatingMarginSum: 0, netMarginSum: 0,
-        cashEquivalents: 0, count: 0,
-      });
-    }
-    const e = map.get(year)!;
-    e.totalRevenue += d.totalRevenue;
-    e.netIncome += d.netIncome;
-    e.grossProfit += d.grossProfit;
-    e.grossMarginSum += d.grossMarginPct;
-    e.operatingMarginSum += d.operatingMarginPct;
-    e.netMarginSum += d.netMarginPct;
-    e.cashEquivalents = d.cashEquivalents; // last quarter value
-    e.count += 1;
-  }
-  return [...map.entries()]
-    .sort((a, b) => a[0].localeCompare(b[0]))
-    .map(([year, e]) => ({
-      year,
-      totalRevenue: e.totalRevenue,
-      netIncome: e.netIncome,
-      grossProfit: e.grossProfit,
-      grossMarginPct: e.count > 0 ? e.grossMarginSum / e.count : 0,
-      operatingMarginPct: e.count > 0 ? e.operatingMarginSum / e.count : 0,
-      netMarginPct: e.count > 0 ? e.netMarginSum / e.count : 0,
-      cashEquivalents: e.cashEquivalents,
-    }));
-}
-
 const FIN_METRIC_CFG: Record<string, {
-  key: keyof AnnualFinData;
+  key: keyof FinDataPoint;
   isPercent: boolean;
   color: string;
   label: string;
@@ -793,7 +737,8 @@ const FIN_METRIC_CFG: Record<string, {
 };
 
 export function FinancialIndicesNivoChart({ data, activeMetric }: FinIndicesChartProps) {
-  const annual = aggregateFinByYear(data);
+  // Sort quarters chronologically: "21Q1" < "21Q2" < ... < "23Q4"
+  const quarterly = [...data].sort((a, b) => a.quarter.localeCompare(b.quarter));
   const isRevenue = activeMetric === 'Revenue';
   const cfg = FIN_METRIC_CFG[activeMetric] ?? FIN_METRIC_CFG['Revenue'];
 
@@ -807,36 +752,36 @@ export function FinancialIndicesNivoChart({ data, activeMetric }: FinIndicesChar
   if (isRevenue) {
     keys = ['totalRevenue', 'netIncome'];
     colors = ['#bf3030', '#1673EE'];
-    const maxVal = Math.max(...annual.map((d) => Math.max(d.totalRevenue, d.netIncome)), 1);
+    const maxVal = Math.max(...quarterly.map((d) => Math.max(d.totalRevenue, d.netIncome)), 1);
     yMax = Math.ceil(maxVal / 5000) * 5000 || 5000;
     yAxisLabel = 'USD $M';
     legendItems = [
       { id: 'totalRevenue', label: 'Total Revenue', color: '#bf3030' },
       { id: 'netIncome',    label: 'Net Income',    color: '#1673EE' },
     ];
-    barData = annual.map((d) => ({
-      year: d.year,
+    barData = quarterly.map((d) => ({
+      quarter: d.quarter,
       totalRevenue: d.totalRevenue,
       netIncome: d.netIncome,
     }));
   } else if (cfg.isPercent) {
     keys = [cfg.key as string];
     colors = [cfg.color];
-    const maxVal = Math.max(...annual.map((d) => Math.abs(d[cfg.key] as number)), 10);
+    const maxVal = Math.max(...quarterly.map((d) => Math.abs(d[cfg.key] as number)), 10);
     yMax = Math.ceil(maxVal / 10) * 10;
     yAxisLabel = '%';
-    barData = annual.map((d) => ({
-      year: d.year,
+    barData = quarterly.map((d) => ({
+      quarter: d.quarter,
       [cfg.key as string]: d[cfg.key] as number,
     }));
   } else {
     keys = [cfg.key as string];
     colors = [cfg.color];
-    const maxVal = Math.max(...annual.map((d) => d[cfg.key] as number), 1);
+    const maxVal = Math.max(...quarterly.map((d) => d[cfg.key] as number), 1);
     yMax = Math.ceil(maxVal / 5000) * 5000 || 5000;
     yAxisLabel = 'USD $M';
-    barData = annual.map((d) => ({
-      year: d.year,
+    barData = quarterly.map((d) => ({
+      quarter: d.quarter,
       [cfg.key as string]: d[cfg.key] as number,
     }));
   }
@@ -846,7 +791,7 @@ export function FinancialIndicesNivoChart({ data, activeMetric }: FinIndicesChar
       <ResponsiveBar
         data={barData}
         keys={keys}
-        indexBy="year"
+        indexBy="quarter"
         groupMode={isRevenue ? 'grouped' : 'stacked'}
         margin={{ top: legendItems ? 30 : 16, right: 16, bottom: 36, left: 56 }}
         valueScale={{ type: 'linear', min: 0, max: yMax }}
