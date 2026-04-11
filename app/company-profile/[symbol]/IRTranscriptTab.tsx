@@ -353,6 +353,11 @@ const IR_TRANSCRIPT_DATA: IrTranscriptCard[] = [
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
+function quarterNum(q: string): number {
+  const n = parseInt(q.replace('Q', ''), 10);
+  return isNaN(n) ? 0 : n;
+}
+
 function highlightText(text: string, keyword: string): React.ReactNode {
   if (!keyword.trim()) return text;
   const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -490,17 +495,30 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
     [symbol]
   );
 
-  // Sort cards newest-first
+  // Sort cards newest-first (by year desc, then quarter desc)
   const sortedCards = useMemo(
-    () => [...allCards].sort((a, b) => b.year - a.year || b.quarter.localeCompare(a.quarter)),
+    () => [...allCards].sort((a, b) => b.year - a.year || quarterNum(b.quarter) - quarterNum(a.quarter)),
     [allCards]
   );
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [keyword, setKeyword] = useState('');
+  const [debouncedKeyword, setDebouncedKeyword] = useState('');
   const [periodFilter, setPeriodFilter] = useState('all');
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
   const searchRef = useRef<HTMLInputElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Debounce keyword for filtering (200ms)
+  const handleKeywordChange = useCallback((value: string) => {
+    setKeyword(value);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => setDebouncedKeyword(value), 200);
+  }, []);
+
+  useEffect(() => {
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, []);
 
   // Build period options: unique years + year+qtr combos
   const periodOptions = useMemo(() => {
@@ -519,7 +537,7 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
     return opts;
   }, [sortedCards]);
 
-  // Filtered list
+  // Filtered list — uses debouncedKeyword so heavy nested search runs less often
   const filteredCards = useMemo(() => {
     let list = sortedCards;
     if (periodFilter !== 'all') {
@@ -530,8 +548,8 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
         list = list.filter((c) => String(c.year) === periodFilter);
       }
     }
-    if (keyword.trim()) {
-      const kw = keyword.toLowerCase();
+    if (debouncedKeyword.trim()) {
+      const kw = debouncedKeyword.toLowerCase();
       list = list.filter(
         (c) =>
           c.title.toLowerCase().includes(kw) ||
@@ -544,7 +562,7 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
       );
     }
     return list;
-  }, [sortedCards, periodFilter, keyword]);
+  }, [sortedCards, periodFilter, debouncedKeyword]);
 
   // Resolve selected card — default to first in filtered list (latest)
   const activeCard = useMemo(() => {
@@ -561,6 +579,8 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
 
   const handleClearSearch = useCallback(() => {
     setKeyword('');
+    setDebouncedKeyword('');
+    if (debounceRef.current) clearTimeout(debounceRef.current);
     searchRef.current?.focus();
   }, []);
 
@@ -601,7 +621,7 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
             className="cp-irt-search-input"
             placeholder="Search transcripts…"
             value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
+            onChange={(e) => handleKeywordChange(e.target.value)}
             aria-label="Search IR transcripts"
           />
           {keyword && (
