@@ -13,8 +13,14 @@ export interface CompanyInfo {
 }
 
 export interface StatementData {
-  columns: string[];
-  rows: string[][];
+  /** Ordered list of period labels (e.g. "FY2022", "Q1 FY25"). */
+  periods: string[];
+  /**
+   * Key/value map of accounting line items.
+   * Key   = item label (e.g. "Revenue ($B)")
+   * Value = array of values aligned to `periods` (same length).
+   */
+  items: Record<string, string[]>;
 }
 
 export type StatementKey = 'income' | 'balance' | 'cashflow' | 'ratios';

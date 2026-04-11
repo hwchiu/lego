@@ -56,14 +56,18 @@ function ChartIcon() {
 
 // ─── Section-row detection ───────────────────────────────────────────────────
 
-/** Rows where all non-first cells are empty are used as section headers. */
-function isSectionRow(row: string[]): boolean {
-  return row.slice(1).every((cell) => cell === '' || cell === '—');
+/**
+ * Items whose value array is all empty strings are treated as section header
+ * rows in the table. The label itself may contain decorative dashes (e.g.
+ * "— ASSETS —") which are displayed as a full-width section divider.
+ */
+function isSectionLabel(values: string[]): boolean {
+  return values.every((v) => v === '' || v === '—');
 }
 
 /** Format a cell: colour negative numbers red, positive green for ratio/growth rows. */
-function CellValue({ value, colIdx }: { value: string; colIdx: number }) {
-  if (colIdx === 0) return <>{value}</>;
+function CellValue({ value, isLabel }: { value: string; isLabel?: boolean }) {
+  if (isLabel) return <>{value}</>;
   if (value === 'N/A' || value === '—' || value === '') return <>{value}</>;
   const isNeg = value.startsWith('-') && value !== '-';
   const isPos =
@@ -81,12 +85,12 @@ function downloadCsv(symbol: string, companyName: string, tabKey: StatementKey) 
   const data = stmt[symbol];
   if (!data) return;
 
+  const headerRow = ['Metric', ...data.periods];
+  const bodyRows = Object.entries(data.items).map(([label, values]) => [label, ...values]);
   const lines = [
-    [
-      `${companyName} (${symbol}) — ${STATEMENT_TABS.find((t) => t.key === tabKey)?.label ?? tabKey}`,
-    ],
-    data.columns,
-    ...data.rows,
+    [`${companyName} (${symbol}) — ${STATEMENT_TABS.find((t) => t.key === tabKey)?.label ?? tabKey}`],
+    headerRow,
+    ...bodyRows,
   ];
   const csv = lines
     .map((row) => row.map((c) => `"${c.replace(/"/g, '""')}"`).join(','))
@@ -223,22 +227,26 @@ export default function FinancialDataCompanyContent({ symbol }: FinancialDataCom
                       <table className="fd-table">
                         <thead>
                           <tr>
-                            {stmtData.columns.map((col, i) => (
-                              <th key={i}>{col}</th>
+                            <th>Metric</th>
+                            {stmtData.periods.map((period, i) => (
+                              <th key={i}>{period}</th>
                             ))}
                           </tr>
                         </thead>
                         <tbody>
-                          {stmtData.rows.map((row, ri) =>
-                            isSectionRow(row) ? (
+                          {Object.entries(stmtData.items).map(([label, values], ri) =>
+                            isSectionLabel(values) ? (
                               <tr key={ri} className="fd-row-section">
-                                <td colSpan={stmtData.columns.length}>{row[0]}</td>
+                                <td colSpan={stmtData.periods.length + 1}>{label}</td>
                               </tr>
                             ) : (
                               <tr key={ri}>
-                                {row.map((cell, ci) => (
+                                <td>
+                                  <CellValue value={label} isLabel />
+                                </td>
+                                {values.map((cell, ci) => (
                                   <td key={ci}>
-                                    <CellValue value={cell} colIdx={ci} />
+                                    <CellValue value={cell} />
                                   </td>
                                 ))}
                               </tr>
