@@ -873,24 +873,31 @@ export function FinancialIndicesNivoChart({ data, activeMetric }: FinIndicesChar
                 : String(v),
         }}
         gridYValues={5}
-        tooltip={({ indexValue, id, value }) => (
-          <div
-            style={{
-              background: '#1f2937',
-              color: '#fff',
-              padding: '6px 10px',
-              borderRadius: 6,
-              fontSize: 11,
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <strong>{indexValue}</strong>
-            <div>
-              {id === 'totalRevenue' ? 'Revenue' : id === 'netIncome' ? 'Net Income' : cfg.label}:{' '}
-              {cfg.isPercent ? `${Number(value).toFixed(1)}%` : `$${Number(value).toLocaleString()}M`}
+        tooltip={({ indexValue, id, value }) => {
+          const seriesLabel: Record<string, string> = {
+            totalRevenue: 'Revenue',
+            netIncome: 'Net Income',
+          };
+          const label = seriesLabel[String(id)] ?? cfg.label;
+          const formattedValue = cfg.isPercent
+            ? `${Number(value).toFixed(1)}%`
+            : `$${Number(value).toLocaleString()}M`;
+          return (
+            <div
+              style={{
+                background: '#1f2937',
+                color: '#fff',
+                padding: '6px 10px',
+                borderRadius: 6,
+                fontSize: 11,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <strong>{indexValue}</strong>
+              <div>{label}: {formattedValue}</div>
             </div>
-          </div>
-        )}
+          );
+        }}
         theme={{
           grid: { line: { stroke: '#f0f0f0', strokeWidth: 1 } },
           axis: {
@@ -1033,7 +1040,6 @@ export function DoiRevenueNivoChart({ data }: DoiRevNivoChartProps) {
         margin={{ top: 16, right: 60, bottom: 36, left: 52 }}
         valueScale={{ type: 'linear', min: 0, max: doiMax }}
         colors={['#bf3030']}
-        colorBy="indexValue"
         borderRadius={2}
         enableLabel={false}
         animate={true}
@@ -1074,11 +1080,10 @@ export function DoiRevenueNivoChart({ data }: DoiRevNivoChartProps) {
               <div>DOI: {value} days</div>
               {annualEntry && (
                 <div>
-                  Revenue: $
+                  Revenue:{' '}
                   {annualEntry.revenue >= 1000
-                    ? `${(annualEntry.revenue / 1000).toFixed(1)}B`
-                    : annualEntry.revenue.toLocaleString()}
-                  M
+                    ? `$${(annualEntry.revenue / 1000).toFixed(1)}B`
+                    : `$${annualEntry.revenue.toLocaleString()}M`}
                 </div>
               )}
             </div>
