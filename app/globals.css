@@ -17634,6 +17634,9 @@ html.dark .cwl-ai-context-card {
 }
 
 /* ── Company Profile dark mode ── */
+html.dark .cp-detail-page {
+  background: var(--c-bg);
+}
 html.dark .cp-data-card,
 html.dark .cp-pec-card,
 html.dark .cp-info-card,
