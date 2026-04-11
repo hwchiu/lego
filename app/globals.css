@@ -19015,3 +19015,16 @@ html.dark .cp-irt-btn--primary { background: #4fc3f7; color: #0f172a; border-col
 html.dark .cp-irt-btn--primary:hover { background: #38bdf8; border-color: #38bdf8; }
 html.dark .cp-irt-btn--outline { background: #1e293b; color: #94a3b8; border-color: #334155; }
 html.dark .cp-irt-btn--outline:hover { background: #334155; border-color: #64748b; color: #f1f5f9; }
+
+/* ===== IR TRANSCRIPT — SECTION TOGGLE HELPERS ===== */
+.cp-irt-section-heading {
+  margin: 0;
+}
+.cp-irt-chevron {
+  flex-shrink: 0;
+  transition: transform 0.15s;
+  transform: rotate(0deg);
+}
+.cp-irt-chevron--open {
+  transform: rotate(180deg);
+}

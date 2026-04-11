@@ -353,7 +353,7 @@ const IR_TRANSCRIPT_DATA: IrTranscriptCard[] = [
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function quarterNum(q: string): number {
+function parseQuarterNumber(q: string): number {
   const n = parseInt(q.replace('Q', ''), 10);
   return isNaN(n) ? 0 : n;
 }
@@ -453,13 +453,13 @@ function TranscriptDetail({ card, keyword, expandedSections, onToggleSection }: 
                 onClick={() => onToggleSection(sectionKey)}
                 aria-expanded={isExpanded}
               >
-                <span className="cp-pec-section-heading" style={{ margin: 0 }}>{section.heading}</span>
+                <span className="cp-pec-section-heading cp-irt-section-heading">{section.heading}</span>
                 <svg
                   viewBox="0 0 14 14"
                   fill="none"
                   width="12"
                   height="12"
-                  style={{ transition: 'transform 0.15s', transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', flexShrink: 0 }}
+                  className={`cp-irt-chevron${isExpanded ? ' cp-irt-chevron--open' : ''}`}
                   aria-hidden="true"
                 >
                   <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -497,7 +497,7 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
 
   // Sort cards newest-first (by year desc, then quarter desc)
   const sortedCards = useMemo(
-    () => [...allCards].sort((a, b) => b.year - a.year || quarterNum(b.quarter) - quarterNum(a.quarter)),
+    () => [...allCards].sort((a, b) => b.year - a.year || parseQuarterNumber(b.quarter) - parseQuarterNumber(a.quarter)),
     [allCards]
   );
 
