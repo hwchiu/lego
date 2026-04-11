@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
@@ -21,6 +22,16 @@ import IRTranscriptTab from './IRTranscriptTab';
 import AITranscriptTab from './AITranscriptTab';
 import tvConfigMd from '@/content/tradingview.md';
 import { useTheme } from '@/app/contexts/ThemeContext';
+
+const FinancialIndicesNivoChart = dynamic(
+  () => import('./InvestmentNivoCharts').then((m) => m.FinancialIndicesNivoChart),
+  { ssr: false, loading: () => <div style={{ height: 200, background: '#f9fafb', borderRadius: 6 }} /> },
+);
+
+const DoiRevenueNivoChart = dynamic(
+  () => import('./InvestmentNivoCharts').then((m) => m.DoiRevenueNivoChart),
+  { ssr: false, loading: () => <div style={{ height: 200, background: '#f9fafb', borderRadius: 6 }} /> },
+);
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -159,10 +170,6 @@ const FIN_INDICES = [
 ] as const;
 
 const FAVORITES_KEY = 'cp-favorites';
-
-// Y-axis rounding intervals for SVG charts
-const BAR_CHART_Y_INTERVAL = 2000;
-const DOI_REVENUE_Y_INTERVAL = 4000;
 
 // Items per page in the News tab
 const NEWS_PAGE_SIZE = 4;
@@ -321,270 +328,6 @@ function DatePickerInput({ value, onChange, placeholder = 'Select date', onPageR
         <MiniCalendar value={value} onChange={handleChange} onClose={() => setOpen(false)} />
       )}
     </div>
-  );
-}
-
-// ── SVG Chart Components ─────────────────────────────────────────────────────
-
-// Metric config maps FIN_INDICES selection to chart rendering details
-interface MetricConfig {
-  getValue: (d: FinancialDataPoint) => number;
-  color: string;
-  label: string;
-  isPercent: boolean;
-}
-
-const METRIC_CONFIGS: Record<string, MetricConfig> = {
-  Revenue: { getValue: (d) => d.totalRevenue, color: '#bf3030', label: 'Total Revenue', isPercent: false },
-  'Gross Profit': { getValue: (d) => d.grossProfit, color: '#bf3030', label: 'Gross Profit', isPercent: false },
-  'Gross Margin': { getValue: (d) => d.grossMarginPct, color: '#bf3030', label: 'Gross Margin (%)', isPercent: true },
-  'Operating Margin': { getValue: (d) => d.operatingMarginPct, color: '#bf3030', label: 'Operating Margin (%)', isPercent: true },
-  'Net Income': { getValue: (d) => d.netIncome, color: '#bf3030', label: 'Net Income', isPercent: false },
-  'Net Margin': { getValue: (d) => d.netMarginPct, color: '#bf3030', label: 'Net Margin (%)', isPercent: true },
-  'Cash & Cash Equivalents': { getValue: (d) => d.cashEquivalents, color: '#bf3030', label: 'Cash & Equivalents', isPercent: false },
-};
-
-interface BarChartProps {
-  data: FinancialDataPoint[];
-  activeMetric: string;
-}
-
-function FinancialBarChart({ data, activeMetric }: BarChartProps) {
-  const W = 420;
-  const H = 75;
-  const PAD = { top: 8, right: 20, bottom: 18, left: 36 };
-  const chartW = W - PAD.left - PAD.right;
-  const chartH = H - PAD.top - PAD.bottom;
-
-  const isRevenue = activeMetric === 'Revenue';
-  const cfg = METRIC_CONFIGS[activeMetric] ?? METRIC_CONFIGS['Revenue'];
-
-  // For "Revenue" tab show dual bars (Revenue + Net Income); others show single bar
-  let yMax: number;
-  if (isRevenue) {
-    const maxVal = Math.max(...data.map((d) => Math.max(d.totalRevenue, d.netIncome)), 1);
-    yMax = Math.ceil(maxVal / BAR_CHART_Y_INTERVAL) * BAR_CHART_Y_INTERVAL;
-  } else if (cfg.isPercent) {
-    // Round up to nearest 10 for percentages; ensure at least 10
-    const maxVal = Math.max(...data.map((d) => Math.abs(cfg.getValue(d))), 10);
-    yMax = Math.ceil(maxVal / 10) * 10;
-  } else {
-    const maxVal = Math.max(...data.map((d) => cfg.getValue(d)), 1);
-    yMax = Math.ceil(maxVal / BAR_CHART_Y_INTERVAL) * BAR_CHART_Y_INTERVAL;
-  }
-
-  const yTicks = [0, yMax / 4, yMax / 2, (3 * yMax) / 4, yMax];
-  const barGroupW = chartW / data.length;
-  const barW = Math.max(4, barGroupW * 0.3);
-
-  const formatTick = (v: number) => {
-    if (cfg.isPercent) return `${v}%`;
-    return v >= 1000 ? `${v / 1000}k` : String(v);
-  };
-
-  return (
-    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto' }}>
-      {/* Y-axis ticks and grid lines */}
-      {yTicks.map((tick) => {
-        const y = PAD.top + chartH - (tick / yMax) * chartH;
-        return (
-          <g key={tick}>
-            <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y} stroke="#f0f0f0" strokeWidth="1" />
-            <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize="10" fill="#000000">
-              {formatTick(tick)}
-            </text>
-          </g>
-        );
-      })}
-
-      {/* Bars */}
-      {data.map((d, i) => {
-        const cx = PAD.left + i * barGroupW + barGroupW / 2;
-        const isGuidance = d.guidance !== null;
-
-        if (isRevenue) {
-          const revenueH = (d.totalRevenue / yMax) * chartH;
-          const incomeH = (d.netIncome / yMax) * chartH;
-          return (
-            <g key={d.quarter}>
-              <rect
-                x={cx - barW - 2}
-                y={PAD.top + chartH - revenueH}
-                width={barW}
-                height={revenueH}
-                fill={isGuidance ? '#ef9a9a' : '#bf3030'}
-                opacity={isGuidance ? 0.55 : 1}
-                rx="2"
-              />
-              <rect
-                x={cx + 2}
-                y={PAD.top + chartH - incomeH}
-                width={barW}
-                height={incomeH}
-                fill={isGuidance ? '#90caf9' : '#1673EE'}
-                opacity={isGuidance ? 0.55 : 1}
-                rx="2"
-              />
-              <text x={cx} y={H - 8} textAnchor="middle" fontSize="10" fill="#000000">
-                {d.quarter}
-              </text>
-            </g>
-          );
-        }
-
-        const rawVal = cfg.getValue(d);
-        const clampedVal = Math.max(0, rawVal);
-        const barH = (clampedVal / yMax) * chartH;
-        return (
-          <g key={d.quarter}>
-            <rect
-              x={cx - barW / 2}
-              y={PAD.top + chartH - barH}
-              width={barW}
-              height={barH}
-              fill={isGuidance ? '#ef9a9a' : cfg.color}
-              opacity={isGuidance ? 0.55 : 1}
-              rx="2"
-            />
-            <text x={cx} y={H - 8} textAnchor="middle" fontSize="10" fill="#000000">
-              {d.quarter}
-            </text>
-          </g>
-        );
-      })}
-
-      {/* X-axis line */}
-      <line
-        x1={PAD.left}
-        y1={PAD.top + chartH}
-        x2={W - PAD.right}
-        y2={PAD.top + chartH}
-        stroke="#e5e7eb"
-        strokeWidth="1"
-      />
-    </svg>
-  );
-}
-
-interface DoiRevenueChartProps {
-  data: DoiRevenuePoint[];
-}
-
-function DoiRevenueChart({ data }: DoiRevenueChartProps) {
-  const W = 420;
-  const H = 75;
-  const PAD = { top: 8, right: 48, bottom: 18, left: 36 };
-  const chartW = W - PAD.left - PAD.right;
-  const chartH = H - PAD.top - PAD.bottom;
-
-  const maxDoi = Math.max(...data.map((d) => d.doi), 1);
-  const doiMax = Math.ceil(maxDoi / 50) * 50;
-  const maxRevenue = Math.max(...data.map((d) => d.revenue), 1);
-  const revMax = Math.ceil(maxRevenue / DOI_REVENUE_Y_INTERVAL) * DOI_REVENUE_Y_INTERVAL;
-
-  const n = data.length;
-  const step = chartW / (n > 1 ? n - 1 : 1);
-
-  const doiPoints = data.map((d, i) => ({
-    x: PAD.left + i * step,
-    y: PAD.top + chartH - (d.doi / doiMax) * chartH,
-  }));
-
-  const revPoints = data.map((d, i) => ({
-    x: PAD.left + i * step,
-    y: PAD.top + chartH - (d.revenue / revMax) * chartH,
-  }));
-
-  const guidancePoints = data.map((d, i) => ({
-    x: PAD.left + i * step,
-    y: d.guidance ? PAD.top + chartH - (d.guidance / revMax) * chartH : null,
-  }));
-
-  const toPath = (pts: Array<{ x: number; y: number }>) =>
-    pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x},${p.y}`).join(' ');
-
-  // Bar width for DOI bars
-  const barW = Math.max(6, step * 0.3);
-
-  return (
-    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto' }}>
-      {/* Grid lines */}
-      {[0, 0.25, 0.5, 0.75, 1].map((t) => {
-        const y = PAD.top + chartH * (1 - t);
-        const doiVal = Math.round(doiMax * t);
-        const revVal = Math.round(revMax * t);
-        return (
-          <g key={t}>
-            <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y} stroke="#f0f0f0" strokeWidth="1" />
-            <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize="10" fill="#000000">
-              {doiVal}
-            </text>
-            <text x={W - PAD.right + 6} y={y + 4} textAnchor="start" fontSize="10" fill="#000000">
-              {revVal >= 1000 ? `${Math.round(revVal / 1000)}k` : revVal}
-            </text>
-          </g>
-        );
-      })}
-
-      {/* DOI bars (primary) */}
-      {data.map((d, i) => {
-        const cx = PAD.left + i * step;
-        const h = (d.doi / doiMax) * chartH;
-        return (
-          <rect
-            key={`doi-${d.quarter}`}
-            x={cx - barW / 2}
-            y={PAD.top + chartH - h}
-            width={barW}
-            height={h}
-            fill="#bf3030"
-            opacity={0.7}
-            rx="2"
-          />
-        );
-      })}
-
-      {/* Revenue line (secondary) */}
-      <path d={toPath(revPoints)} fill="none" stroke="#1673EE" strokeWidth="2" strokeLinejoin="round" />
-      {revPoints.map((p, i) => (
-        <circle key={`rv-${i}`} cx={p.x} cy={p.y} r="3" fill="#1673EE" />
-      ))}
-
-      {/* Guidance line (gray dashed) */}
-      {guidancePoints.some((p) => p.y !== null) && (
-        <>
-          {guidancePoints
-            .filter((p) => p.y !== null)
-            .map((p, i) => (
-              <circle key={`gd-${i}`} cx={p.x} cy={p.y!} r="3" fill="#ef9a9a" />
-            ))}
-        </>
-      )}
-
-      {/* X-axis labels */}
-      {data.map((d, i) => (
-        <text
-          key={`xl-${i}`}
-          x={PAD.left + i * step}
-          y={H - 8}
-          textAnchor="middle"
-          fontSize="10"
-          fill="#000000"
-        >
-          {d.quarter}
-        </text>
-      ))}
-
-      {/* Axis line */}
-      <line
-        x1={PAD.left}
-        y1={PAD.top + chartH}
-        x2={W - PAD.right}
-        y2={PAD.top + chartH}
-        stroke="#e5e7eb"
-        strokeWidth="1"
-      />
-    </svg>
   );
 }
 
@@ -1210,46 +953,13 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                           </button>
                         ))}
                       </div>
-                      <div className="cp-chart-legend">
-                        {activeFinIndex === 'Revenue' ? (
-                          <>
-                            <span className="cp-legend-dot cp-legend-dot--blue" />
-                            <span className="cp-legend-label cp-legend-label--blue">Net Income</span>
-                            <span className="cp-legend-dot cp-legend-dot--red" />
-                            <span className="cp-legend-label cp-legend-label--red">Total Revenue</span>
-                          </>
-                        ) : (
-                          <>
-                            <span
-                              className="cp-legend-dot"
-                              style={{ background: METRIC_CONFIGS[activeFinIndex]?.color ?? '#E53935' }}
-                            />
-                            <span
-                              className="cp-legend-label"
-                              style={{ color: METRIC_CONFIGS[activeFinIndex]?.color ?? '#E53935' }}
-                            >
-                              {METRIC_CONFIGS[activeFinIndex]?.label ?? activeFinIndex}
-                            </span>
-                          </>
-                        )}
-                        <span className="cp-legend-dot" style={{ background: '#ef9a9a' }} />
-                        <span className="cp-legend-label" style={{ color: '#ef9a9a' }}>Guidance</span>
-                      </div>
-                      <FinancialBarChart data={finData.financialIndices} activeMetric={activeFinIndex} />
+                      <FinancialIndicesNivoChart data={finData.financialIndices} activeMetric={activeFinIndex} />
                     </div>
 
                     <div className="cp-data-card cp-data-card--wide2">
                       <div className="cp-card-title">DOI &amp; Revenue</div>
                       <div className="cp-card-divider" />
-                      <div className="cp-chart-legend">
-                        <span className="cp-legend-dot cp-legend-dot--red" />
-                        <span className="cp-legend-label cp-legend-label--red">DOI</span>
-                        <span className="cp-legend-dot cp-legend-dot--blue" />
-                        <span className="cp-legend-label cp-legend-label--blue">Revenue</span>
-                        <span className="cp-legend-dot" style={{ background: '#ef9a9a' }} />
-                        <span className="cp-legend-label" style={{ color: '#ef9a9a' }}>Guidance</span>
-                      </div>
-                      <DoiRevenueChart data={finData.doiRevenue} />
+                      <DoiRevenueNivoChart data={finData.doiRevenue} />
                     </div>
                   </div>
 
