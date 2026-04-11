@@ -504,7 +504,8 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [keyword, setKeyword] = useState('');
   const [debouncedKeyword, setDebouncedKeyword] = useState('');
-  const [periodFilter, setPeriodFilter] = useState('all');
+  const [yearFilter, setYearFilter] = useState('all');
+  const [qtrFilter, setQtrFilter] = useState('all');
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
   const searchRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -520,33 +521,28 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   }, []);
 
-  // Build period options: unique years + year+qtr combos
-  const periodOptions = useMemo(() => {
-    const years = new Set<string>();
-    const combos: string[] = [];
-    sortedCards.forEach((c) => {
-      years.add(String(c.year));
-      combos.push(`${c.year}-${c.quarter}`);
-    });
-    const opts: { value: string; label: string }[] = [{ value: 'all', label: 'All Periods' }];
-    years.forEach((y) => opts.push({ value: y, label: y }));
-    combos.forEach((combo) => {
-      const [y, q] = combo.split('-');
-      opts.push({ value: combo, label: `${y} ${q}` });
-    });
-    return opts;
+  // Build year options: unique years sorted descending
+  const yearOptions = useMemo(() => {
+    const years = [...new Set(sortedCards.map((c) => String(c.year)))];
+    return [{ value: 'all', label: 'All Years' }, ...years.map((y) => ({ value: y, label: y }))];
+  }, [sortedCards]);
+
+  // Build quarter options: unique quarters sorted
+  const qtrOptions = useMemo(() => {
+    const qtrs = [...new Set(sortedCards.map((c) => c.quarter))].sort(
+      (a, b) => parseQuarterNumber(a) - parseQuarterNumber(b)
+    );
+    return [{ value: 'all', label: 'All Qtrs' }, ...qtrs.map((q) => ({ value: q, label: q }))];
   }, [sortedCards]);
 
   // Filtered list — uses debouncedKeyword so heavy nested search runs less often
   const filteredCards = useMemo(() => {
     let list = sortedCards;
-    if (periodFilter !== 'all') {
-      if (periodFilter.includes('-')) {
-        const [y, q] = periodFilter.split('-');
-        list = list.filter((c) => String(c.year) === y && c.quarter === q);
-      } else {
-        list = list.filter((c) => String(c.year) === periodFilter);
-      }
+    if (yearFilter !== 'all') {
+      list = list.filter((c) => String(c.year) === yearFilter);
+    }
+    if (qtrFilter !== 'all') {
+      list = list.filter((c) => c.quarter === qtrFilter);
     }
     if (debouncedKeyword.trim()) {
       const kw = debouncedKeyword.toLowerCase();
@@ -562,7 +558,7 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
       );
     }
     return list;
-  }, [sortedCards, periodFilter, debouncedKeyword]);
+  }, [sortedCards, yearFilter, qtrFilter, debouncedKeyword]);
 
   // Resolve selected card — default to first in filtered list (latest)
   const activeCard = useMemo(() => {
@@ -636,11 +632,21 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
           <span className="cp-irt-filter-label"><FilterIcon />Period</span>
           <select
             className="cp-irt-period-select"
-            value={periodFilter}
-            onChange={(e) => setPeriodFilter(e.target.value)}
-            aria-label="Filter by period"
+            value={yearFilter}
+            onChange={(e) => setYearFilter(e.target.value)}
+            aria-label="Filter by year"
           >
-            {periodOptions.map((opt) => (
+            {yearOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+          <select
+            className="cp-irt-period-select"
+            value={qtrFilter}
+            onChange={(e) => setQtrFilter(e.target.value)}
+            aria-label="Filter by quarter"
+          >
+            {qtrOptions.map((opt) => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </select>
