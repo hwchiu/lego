@@ -560,12 +560,17 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
     );
   }
 
+  // Only show Segment Report tab when the company actually has segment data (AAPL only)
+  const visibleStatementItems = STATEMENT_ITEMS.filter(
+    (item) => item.key !== 'segment' || isAapl,
+  );
+
   return (
     <div className="fin-stmt-layout">
       {/* ── Left sidebar ── */}
       <aside className="fin-stmt-sidebar">
         <nav className="fin-stmt-nav">
-          {STATEMENT_ITEMS.map((item) => (
+          {visibleStatementItems.map((item) => (
             <button
               key={item.key}
               className={`fin-stmt-nav-item${statementType === item.key ? ' active' : ''}`}
