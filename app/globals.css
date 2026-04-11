@@ -18109,6 +18109,10 @@ html.dark .cp-fin-index-tab:hover {
 .cp-pec-ai-card {
   border-color: #818cf820;
   background: linear-gradient(160deg, #f8f9ff 0%, #ffffff 60%);
+  border-left: 4px solid #6366f1;
+}
+.cp-pec-pec-card {
+  border-left: 4px solid #2563eb;
 }
 .cp-pec-ai-badge {
   background: #6366f114 !important;

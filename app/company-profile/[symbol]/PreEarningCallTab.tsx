@@ -619,10 +619,10 @@ interface PecDetailProps {
 
 function PecDetail({ card, keyword }: PecDetailProps) {
   return (
-    <article className="cp-pec-card">
+    <article className="cp-pec-card cp-pec-pec-card">
       <div className="cp-pec-card-header">
         <div className="cp-pec-card-header-left">
-          <span className="cp-pec-card-company">{card.symbol}</span>
+          <span className="cp-pec-card-company">PEC</span>
           <div>
             <div className="cp-pec-card-title">{highlightText(card.title, keyword)}</div>
             <div className="cp-pec-card-date">{card.date}</div>
