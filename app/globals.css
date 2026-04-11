@@ -19275,3 +19275,102 @@ html.dark .cp-pec-ai-sentiment--bearish {
 .cp-irt-chevron--open {
   transform: rotate(180deg);
 }
+
+/* =======================================================================
+   DARK MODE — Comprehensive site-wide background / interactive-state fixes
+   Root cause: background: var(--c-dark) resolves to #e2e8f0 (light) in
+   dark mode because --c-dark is remapped for text use.  We override every
+   element that uses it as a section-background or active-button-background.
+   ======================================================================= */
+
+/* ── /about ── */
+html.dark .about-hero { background: #1e293b; border-color: #334155; }
+html.dark .about-social-icon { background: #334155; }
+html.dark .about-social-badge { background: #1e293b; border-color: #334155; color: #94a3b8; }
+html.dark .about-social-badge:hover { background: #334155; color: #f1f5f9; border-color: #475569; }
+html.dark .about-stat-card { background: #1e293b; border-color: #334155; }
+html.dark .about-talk-card { background: #1e293b; border-color: #334155; }
+html.dark .about-talk-card--upcoming { background: rgba(30,102,245,0.12); border-color: #3b82f6; }
+html.dark .about-site-stats-strip { background: #1e293b; }
+html.dark .about-site-feature-body { background: #1e293b; border-color: #334155; }
+html.dark .about-site-pillar-card { background: #1e293b; border-color: #334155; }
+
+/* ── /collaboration-playground — canvas sidebar & list ── */
+html.dark .pg-canvas-sidebar,
+html.dark .pg-sidebar-expand-zone { background: #1e293b; border-color: #334155; }
+html.dark .pg-sidebar-expand-btn { background: #1e293b; border-color: #334155; color: #94a3b8; }
+html.dark .pg-canvas-nav-btn.active { background: rgba(56,189,248,0.15); color: #38bdf8; }
+html.dark .pg-canvas-nav-btn.active .pg-canvas-nav-count { background: rgba(56,189,248,0.2); color: #38bdf8; }
+html.dark .pg-canvas-list-item { background: #1e293b; border-color: #334155; }
+html.dark .pg-canvas-list-item.active { background: rgba(59,130,246,0.12); border-color: #3b82f6; }
+html.dark .pg-canvas-list-item:hover { background: #334155; }
+html.dark .pg-canvas-header { background: #1e293b; border-color: #334155; }
+html.dark .pg-add-card-btn { background: #4fc3f7; color: #0f172a; }
+html.dark .pg-btn-primary { background: #4fc3f7; color: #0f172a; }
+html.dark .pg-btn-primary:hover:not(:disabled) { background: #38bdf8; }
+html.dark .pg-header-btn.primary { background: #4fc3f7; color: #0f172a; border-color: #4fc3f7; }
+html.dark .pg-header-btn.primary:hover { background: #38bdf8; }
+html.dark .pg-task-filter-btn.active { background: #4fc3f7; color: #0f172a; border-color: #4fc3f7; }
+
+/* ── /event-calendar — calendar cards, week cells, tooltips ── */
+html.dark .cal-card { background: #1e293b; border-color: #334155; }
+html.dark .cal-arrow { background: #1e293b; border-color: #334155; color: #94a3b8; }
+html.dark .cal-arrow:hover { background: #334155; border-color: #475569; color: #f1f5f9; }
+html.dark .cal-month-label { background: #1e293b; border-color: #334155; color: #f1f5f9; }
+html.dark .cal-search { background: #1e293b; border-color: #334155; color: #f1f5f9; }
+html.dark .cal-search:focus { border-color: var(--c-accent); }
+html.dark .cal-search-dropdown { background: #1e293b; border-color: #334155; }
+html.dark .cal-search-option:hover { background: #334155; }
+html.dark .detail-card { background: #1e293b; border-color: #334155; }
+html.dark .market-tabs-card { background: #1e293b; border-color: #334155; }
+html.dark .market-tabs-arrow { background: #1e293b; border-color: #334155; color: #94a3b8; }
+html.dark .week-cell { border-color: #334155; background: #1e293b; }
+html.dark .week-cell-head { background: #0f172a; border-color: #334155; }
+html.dark .week-cell.today .week-cell-head { background: #1d4ed8; color: #fff; border-bottom-color: #1d4ed8; }
+html.dark .cell-co-tooltip { background: #334155; }
+html.dark .cell-co-tooltip::after { border-top-color: #334155; }
+html.dark .ec-event-card { background: #1e293b; border-color: #334155; }
+html.dark .ec-coming-soon { background: #1e293b; border-color: #334155; }
+html.dark .ec-affected-tag { background: #0f172a; border-color: #334155; color: #94a3b8; }
+
+/* ── /data-explore ── */
+html.dark .de-hero { background: #1e293b; }
+html.dark .de-cat-hero { background: #1e293b; }
+html.dark .de-filter-search { background: #1e293b; border-color: #334155; color: #f1f5f9; }
+html.dark .de-filter-search:focus { border-color: var(--c-accent); }
+html.dark .de-category-card,
+html.dark .de-recent-card,
+html.dark .de-item-card,
+html.dark .de-empty { background: #1e293b; border-color: #334155; }
+html.dark .de-tag { background: #0f172a; color: #94a3b8; }
+html.dark .de-tag-filter-btn { background: #1e293b; border-color: #334155; color: #94a3b8; }
+html.dark .de-tag-filter-btn:hover { background: #334155; color: #f1f5f9; }
+html.dark .de-related-cat-chip { background: #1e293b; border-color: #334155; color: #94a3b8; }
+html.dark .de-related-cat-chip:hover { background: #334155; color: #f1f5f9; }
+
+/* ── /ai-search (is- prefix) ── */
+html.dark .is-hero { background: #0f172a; }
+html.dark .is-howitworks-section { background: #1e293b; }
+html.dark .is-section { background: #1e293b; }
+html.dark .is-cap-card { background: #0f172a; border-color: #334155; }
+html.dark .is-preview-section { background: #0f172a; }
+
+/* ── Global shared interactive-state fixes (buttons using background: var(--c-dark)) ── */
+html.dark .search-category-btn:hover,
+html.dark .search-category-btn.active { background: #334155; color: #f1f5f9; border-color: #475569; }
+html.dark .wl-modal-done-btn,
+html.dark .wl-modal-submit-btn { background: #4fc3f7; color: #0f172a; }
+html.dark .chatbot-fab { background: #1e293b; }
+html.dark .chatbot-dialog-header { background: #1e293b; }
+html.dark .chatbot-bubble--user { background: #1e3a5f; color: #f1f5f9; }
+html.dark .chatbot-send-btn { background: #4fc3f7; color: #0f172a; }
+html.dark .chatbot-send-btn:hover:not(:disabled) { background: #38bdf8; }
+html.dark .scm-search-btn { background: #4fc3f7; color: #0f172a; }
+html.dark .scm-search-btn:hover { background: #38bdf8; }
+html.dark .pr-granularity-btn.active { background: #4fc3f7; color: #0f172a; border-color: #4fc3f7; }
+html.dark .pr-card-stack-badge { background: #4fc3f7; color: #0f172a; border-color: #1e293b; }
+html.dark .pr-timeline-node-dot { background: #4fc3f7; border-color: #1e293b; box-shadow: 0 0 0 2px #4fc3f7; }
+html.dark .pr-gallery-count { background: #334155; color: #f1f5f9; }
+html.dark .pr-list-rel-tab.active { background: #4fc3f7; color: #0f172a; border-color: #4fc3f7; }
+html.dark .pr-page-btn.active { background: #4fc3f7; color: #0f172a; border-color: #4fc3f7; }
+html.dark .cp-share-feedback-msg { background: #334155; }
