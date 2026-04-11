@@ -141,6 +141,31 @@ function CompanyBadge({ symbol, name }: { symbol: string; name: string }) {
   return <div className="fd-company-badge">{symbol.slice(0, 4)}</div>;
 }
 
+// ─── Company switcher ─────────────────────────────────────────────────────────
+
+const ALL_COMPANIES = getCompanies();
+
+function CompanySwitcher({ currentSymbol }: { currentSymbol: string }) {
+  return (
+    <div className="fd-company-switcher" role="navigation" aria-label="Switch company">
+      <span className="fd-company-switcher-label">Companies</span>
+      <div className="fd-company-switcher-list">
+        {ALL_COMPANIES.map((c) => (
+          <Link
+            key={c.symbol}
+            href={`/market-data/financial-data/${c.symbol}/`}
+            className={`fd-company-switcher-item${c.symbol === currentSymbol ? ' active' : ''}`}
+            aria-current={c.symbol === currentSymbol ? 'page' : undefined}
+          >
+            <span className="fd-company-switcher-symbol">{c.symbol}</span>
+            <span className="fd-company-switcher-name">{c.name.split(' ').slice(0, 2).join(' ')}</span>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 interface FinancialDataCompanyContentProps {
@@ -179,6 +204,9 @@ export default function FinancialDataCompanyContent({ symbol }: FinancialDataCom
                 </div>
               </div>
             </div>
+
+            {/* ── Company switcher ── */}
+            <CompanySwitcher currentSymbol={symbol} />
 
             {company ? (
               <>

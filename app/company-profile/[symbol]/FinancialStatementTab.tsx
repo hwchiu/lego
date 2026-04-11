@@ -5,6 +5,8 @@ import { resolveSymbolAlias } from '@/app/data/sp500';
 import { extractJson, extractJsonBySection } from '@/app/lib/parseContent';
 import tcFinStmtMd from '@/content/tc-financial-statement.md';
 import aaplFinStmtMd from '@/content/apple-financial-statement.md';
+import { getStatement, getCompanies } from '@/app/data/financialData';
+import type { StatementKey, StatementData } from '@/app/data/financialData';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type StatementType = 'income' | 'balance' | 'cashflow' | 'segment';
@@ -106,6 +108,122 @@ const STATEMENT_ITEMS: { key: StatementType; label: string }[] = [
   { key: 'segment',  label: 'Segment Report' },
 ];
 
+// ── Unified statement data types ───────────────────────────────────────────────
+type IncomeStructuredData = { quarterlyData: QuarterData[]; annualData: AnnualData[] };
+
+type TabDataEntry =
+  | { kind: 'income_structured'; data: IncomeStructuredData }
+  | { kind: 'simple'; data: SimpleStatementData }
+  | { kind: 'findata'; data: StatementData };
+
+type CompanyStatements = Partial<Record<StatementType, TabDataEntry>>;
+
+// ── FinDataTable — renders StatementData from financial-data.md ────────────────
+
+/** Returns true for a quarterly period label like "Q1 FY25" */
+function isQuarterlyPeriod(p: string): boolean {
+  return /^Q\d/.test(p);
+}
+
+function FinDataTable({ data }: { data: StatementData }) {
+  const periods = data.periods;
+
+  // Classify each period and build two-row header groups
+  type Row1Cell =
+    | { type: 'annual'; label: string }
+    | { type: 'qgroup'; yearLabel: string; count: number };
+
+  const row1Cells: Row1Cell[] = [];
+  const row2Quarters: string[] = [];
+
+  for (const p of periods) {
+    if (isQuarterlyPeriod(p)) {
+      const yr = parseColYear(p);
+      const yearLabel = `FY${yr}`;
+      const qLabel = parseColQuarter(p);
+      row2Quarters.push(qLabel);
+      const last = row1Cells[row1Cells.length - 1];
+      if (last && last.type === 'qgroup' && last.yearLabel === yearLabel) {
+        last.count++;
+      } else {
+        row1Cells.push({ type: 'qgroup', yearLabel, count: 1 });
+      }
+    } else {
+      row1Cells.push({ type: 'annual', label: p });
+    }
+  }
+
+  const hasQuarterly = row2Quarters.length > 0;
+
+  return (
+    <div className="fin-stmt-table-wrap">
+      <table className="data-table fin-stmt-table fin-stmt-simple-table">
+        <thead>
+          <tr>
+            <th rowSpan={hasQuarterly ? 2 : 1} className="fin-stmt-th-item">
+              <div className="fin-stmt-th-item-inner">
+                <span className="fin-stmt-th-year">Year</span>
+                <span className="fin-stmt-th-divider" />
+                <span className="fin-stmt-th-item-label">Item</span>
+              </div>
+            </th>
+            {row1Cells.map((cell, i) =>
+              cell.type === 'annual' ? (
+                <th key={i} rowSpan={hasQuarterly ? 2 : 1} className="fin-stmt-simple-col-hdr" style={{ color: '#111827' }}>
+                  {cell.label}
+                </th>
+              ) : (
+                <th key={i} colSpan={cell.count} className="th-group" style={{ color: '#111827' }}>
+                  {cell.yearLabel}
+                </th>
+              )
+            )}
+          </tr>
+          {hasQuarterly && (
+            <tr className="sub-head">
+              {row2Quarters.map((q, i) => (
+                <th key={i} className="sub-group-inner" style={{ color: '#111827' }}>
+                  {q}
+                </th>
+              ))}
+            </tr>
+          )}
+        </thead>
+        <tbody>
+          {Object.entries(data.items).map(([label, values], ri) => {
+            const isSection = values.every((v) => v === '' || v === '—');
+            return isSection ? (
+              <tr key={ri} className="fin-stmt-section-row">
+                <td colSpan={data.periods.length + 1} className="fin-stmt-td-section">
+                  {label}
+                </td>
+              </tr>
+            ) : (
+              <tr key={ri}>
+                <td className="fin-stmt-td-item">{label}</td>
+                {values.map((val, ci) => {
+                  const isNeg = val.startsWith('-') && val !== '-';
+                  const isPos =
+                    val.startsWith('+') ||
+                    (val.endsWith('%') && !val.startsWith('-') && parseFloat(val) > 0);
+                  return (
+                    <td
+                      key={ci}
+                      className={`td-num${isNeg ? ' fin-stmt-neg' : isPos ? ' fin-stmt-pos' : ''}`}
+                    >
+                      {val || '—'}
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 // ── Helpers ────────────────────────────────────────────────────────────────────
 function fmt(val: number | null, format: RowDef['format']): string {
   if (val === null || val === undefined) return '—';
@@ -165,6 +283,50 @@ function getAaplSimpleData(key: 'balance' | 'cashflow' | 'segment'): SimpleState
     );
   }
   return _aaplSimpleCache[key]!;
+}
+
+/**
+ * Returns the available financial statement sections for a given company symbol.
+ * All company-specific data-source logic is encapsulated here so the rendering
+ * component remains fully generic.  When a backend API is available, replace
+ * the body of this function with a single API call.
+ */
+function getCompanyStatements(symbol: string): CompanyStatements {
+  const result: CompanyStatements = {};
+
+  // AAPL: structured income + simple balance / cashflow / segment
+  // Checked before financial-data.md because AAPL also appears in that Company List
+  // but has richer dedicated data (including Segment Report) in its own markdown file.
+  if (symbol === 'AAPL') {
+    const incomeData = getAaplIncomeData();
+    if (incomeData?.quarterlyData?.length) {
+      result.income = { kind: 'income_structured', data: incomeData };
+    }
+    result.balance  = { kind: 'simple', data: getAaplSimpleData('balance') };
+    result.cashflow = { kind: 'simple', data: getAaplSimpleData('cashflow') };
+    result.segment  = { kind: 'simple', data: getAaplSimpleData('segment') };
+    return result;
+  }
+
+  // TC: structured income only
+  if (symbol === 'TC') {
+    const incomeData = getTcData();
+    if (incomeData?.quarterlyData?.length) {
+      result.income = { kind: 'income_structured', data: incomeData };
+    }
+    return result;
+  }
+
+  // Financial-data.md companies (income / balance / cashflow; no segment)
+  if (getCompanies().some((c) => c.symbol === symbol)) {
+    for (const key of ['income', 'balance', 'cashflow'] as const) {
+      const data = getStatement(key as StatementKey)[symbol] ?? null;
+      if (data) result[key] = { kind: 'findata', data };
+    }
+    return result;
+  }
+
+  return result; // empty → "coming soon" placeholder
 }
 
 // ── Simple statement table sub-component ──────────────────────────────────────
@@ -310,23 +472,31 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
   const [currency, setCurrency] = useState<Currency>('original');
 
   const resolvedSymbol = resolveSymbolAlias(symbol);
-  const isAapl = resolvedSymbol === 'AAPL';
-  const isTc  = resolvedSymbol === 'TC';
 
-  const aaplIncomeData = useMemo(() => (isAapl ? getAaplIncomeData() : null), [isAapl]);
-  const tcData        = useMemo(() => (isTc  ? getTcData()        : null), [isTc]);
+  // Load all available statement sections for this company.
+  // Company-specific logic is fully encapsulated in getCompanyStatements().
+  const availableStatements = useMemo(
+    () => getCompanyStatements(resolvedSymbol),
+    [resolvedSymbol],
+  );
 
-  const allQuarterlyData: QuarterData[] = isAapl
-    ? (aaplIncomeData?.quarterlyData ?? [])
-    : isTc
-      ? (tcData?.quarterlyData ?? [])
-      : [];
+  // Tabs are shown only for sections that actually have data
+  const visibleTabs = STATEMENT_ITEMS.filter((item) => availableStatements[item.key] != null);
 
-  const allAnnualData: AnnualData[] = isAapl
-    ? (aaplIncomeData?.annualData ?? [])
-    : isTc
-      ? (tcData?.annualData ?? [])
-      : [];
+  // If the active tab has no data for the current company, fall back to the first available tab
+  const effectiveType: StatementType =
+    availableStatements[statementType] != null
+      ? statementType
+      : (visibleTabs[0]?.key ?? 'income');
+
+  const currentTabData = availableStatements[effectiveType];
+
+  // ── Income structured data (QuarterData[]) — drives income year navigation ───
+  const incomeEntry = availableStatements.income;
+  const allQuarterlyData: QuarterData[] =
+    incomeEntry?.kind === 'income_structured' ? incomeEntry.data.quarterlyData : [];
+  const allAnnualData: AnnualData[] =
+    incomeEntry?.kind === 'income_structured' ? incomeEntry.data.annualData : [];
 
   const availableYears = [...new Set(allQuarterlyData.map((q) => q.year))].sort((a, b) => a - b);
   const safeAvailableYears =
@@ -359,15 +529,12 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
   const canGoPrev = viewMode === 'quarterly' && yearWindowStart > safeAvailableYears[0];
   const canGoNext = viewMode === 'quarterly' && yearWindowStart < maxYearWindowStart;
 
-  const isSimpleStatement = statementType === 'balance' || statementType === 'cashflow' || statementType === 'segment';
+  // ── Simple statement data — drives balance / cashflow / segment year nav ──────
+  const simpleData: SimpleStatementData | null = useMemo(
+    () => (currentTabData?.kind === 'simple' ? currentTabData.data : null),
+    [currentTabData],
+  );
 
-  // Simple statement data (only for AAPL)
-  const simpleData: SimpleStatementData | null = useMemo(() => {
-    if (!isAapl || !isSimpleStatement) return null;
-    return getAaplSimpleData(statementType as 'balance' | 'cashflow' | 'segment');
-  }, [isAapl, isSimpleStatement, statementType]);
-
-  // ── Simple statement year navigation (lifted from SimpleStatementTable) ──────
   const simpleAllYears = useMemo(() => {
     if (!simpleData) return [] as number[];
     return [...new Set(simpleData.quarterlyData.columns.map(parseColYear))].filter(Boolean).sort((a, b) => a - b);
@@ -377,24 +544,25 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
     ? simpleAllYears[simpleAllYears.length - 1] - 1
     : (simpleAllYears[0] ?? 0);
 
-  // Per-statement-type year overrides; falls back to computed default so no useEffect needed.
+  // Per-tab year overrides; falls back to computed default so no useEffect needed.
   const [simpleYearOverrides, setSimpleYearOverrides] = useState<Partial<Record<StatementType, number>>>({});
   const simpleDefaultYearStart = simpleAllYears.length > 0
     ? Math.max(simpleAllYears[0], simpleMaxYearWindowStart)
     : 0;
-  const simpleYearWindowStart = simpleYearOverrides[statementType] ?? simpleDefaultYearStart;
+  const simpleYearWindowStart = simpleYearOverrides[effectiveType] ?? simpleDefaultYearStart;
 
   function setYearOverrideForStatement(updater: (y: number) => number) {
     setSimpleYearOverrides((prev) => ({
       ...prev,
-      [statementType]: updater(prev[statementType] ?? simpleDefaultYearStart),
+      [effectiveType]: updater(prev[effectiveType] ?? simpleDefaultYearStart),
     }));
   }
 
   const simpleCanGoPrev = viewMode === 'quarterly' && simpleAllYears.length > 0 && simpleYearWindowStart > simpleAllYears[0];
   const simpleCanGoNext = viewMode === 'quarterly' && simpleYearWindowStart < simpleMaxYearWindowStart;
 
-  if (!isAapl && !isTc) {
+  // No data at all — show placeholder
+  if (visibleTabs.length === 0) {
     return (
       <div className="cp-tab-placeholder">
         <span className="cp-tab-placeholder-text">
@@ -404,15 +572,18 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
     );
   }
 
+  const isStructuredIncome = currentTabData?.kind === 'income_structured';
+  const isSimpleStatement  = currentTabData?.kind === 'simple';
+
   return (
     <div className="fin-stmt-layout">
       {/* ── Left sidebar ── */}
       <aside className="fin-stmt-sidebar">
         <nav className="fin-stmt-nav">
-          {STATEMENT_ITEMS.map((item) => (
+          {visibleTabs.map((item) => (
             <button
               key={item.key}
-              className={`fin-stmt-nav-item${statementType === item.key ? ' active' : ''}`}
+              className={`fin-stmt-nav-item${effectiveType === item.key ? ' active' : ''}`}
               onClick={() => setStatementType(item.key)}
             >
               {item.label}
@@ -423,100 +594,105 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
 
       {/* ── Right content area ── */}
       <div className="fin-stmt-content">
-        {/* Toolbar — year nav for all 4 statement types; Annual/Quarterly + Currency toggles */}
-        <div className="fin-stmt-toolbar">
-          <div className="fin-stmt-year-nav">
-            {/* Income Statement year nav */}
-            {!isSimpleStatement && (
-              <>
-                <button
-                  className="wl-quarter-btn"
-                  aria-label="Previous year"
-                  onClick={prevYear}
-                  disabled={!canGoPrev}
-                >
-                  <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                    <path d="M9 2.5L4.5 7L9 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-                <span className="wl-quarter-label fin-stmt-year-label">{yearLabel}</span>
-                <button
-                  className="wl-quarter-btn"
-                  aria-label="Next year"
-                  onClick={nextYear}
-                  disabled={!canGoNext}
-                >
-                  <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                    <path d="M5 2.5L9.5 7L5 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-              </>
-            )}
-            {/* Balance Sheet / Cash Flow / Segment year nav */}
-            {isSimpleStatement && viewMode === 'quarterly' && simpleAllYears.length > 0 && (
-              <>
-                <button
-                  className="wl-quarter-btn"
-                  aria-label="Previous year"
-                  onClick={() => setYearOverrideForStatement((y) => Math.max(simpleAllYears[0], y - 1))}
-                  disabled={!simpleCanGoPrev}
-                >
-                  <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                    <path d="M9 2.5L4.5 7L9 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-                <span className="wl-quarter-label fin-stmt-year-label">
-                  FY{simpleYearWindowStart}–FY{simpleYearWindowStart + 1}
-                </span>
-                <button
-                  className="wl-quarter-btn"
-                  aria-label="Next year"
-                  onClick={() => setYearOverrideForStatement((y) => Math.min(simpleMaxYearWindowStart, y + 1))}
-                  disabled={!simpleCanGoNext}
-                >
-                  <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                    <path d="M5 2.5L9.5 7L5 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-              </>
-            )}
-          </div>
-
-          <div className="fin-stmt-toolbar-right">
-            <div className="toggle-group">
-              <button
-                className={`toggle-btn${viewMode === 'annual' ? ' active' : ''}`}
-                onClick={() => setViewMode('annual')}
-              >
-                Annual Report
-              </button>
-              <button
-                className={`toggle-btn${viewMode === 'quarterly' ? ' active' : ''}`}
-                onClick={() => setViewMode('quarterly')}
-              >
-                Quarterly Report
-              </button>
+        {/* Toolbar — shown only for structured income or simple data; hidden for findata */}
+        {(isStructuredIncome || isSimpleStatement) && (
+          <div className="fin-stmt-toolbar">
+            <div className="fin-stmt-year-nav">
+              {/* Income Statement year nav */}
+              {isStructuredIncome && (
+                <>
+                  <button
+                    className="wl-quarter-btn"
+                    aria-label="Previous year"
+                    onClick={prevYear}
+                    disabled={!canGoPrev}
+                  >
+                    <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                      <path d="M9 2.5L4.5 7L9 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                  <span className="wl-quarter-label fin-stmt-year-label">{yearLabel}</span>
+                  <button
+                    className="wl-quarter-btn"
+                    aria-label="Next year"
+                    onClick={nextYear}
+                    disabled={!canGoNext}
+                  >
+                    <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                      <path d="M5 2.5L9.5 7L5 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                </>
+              )}
+              {/* Balance Sheet / Cash Flow / Segment year nav */}
+              {isSimpleStatement && viewMode === 'quarterly' && simpleAllYears.length > 0 && (
+                <>
+                  <button
+                    className="wl-quarter-btn"
+                    aria-label="Previous year"
+                    onClick={() => setYearOverrideForStatement((y) => Math.max(simpleAllYears[0], y - 1))}
+                    disabled={!simpleCanGoPrev}
+                  >
+                    <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                      <path d="M9 2.5L4.5 7L9 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                  <span className="wl-quarter-label fin-stmt-year-label">
+                    FY{simpleYearWindowStart}–FY{simpleYearWindowStart + 1}
+                  </span>
+                  <button
+                    className="wl-quarter-btn"
+                    aria-label="Next year"
+                    onClick={() => setYearOverrideForStatement((y) => Math.min(simpleMaxYearWindowStart, y + 1))}
+                    disabled={!simpleCanGoNext}
+                  >
+                    <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                      <path d="M5 2.5L9.5 7L5 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                </>
+              )}
             </div>
 
-            <div className="toggle-group">
-              <button
-                className={`toggle-btn${currency === 'original' ? ' active' : ''}`}
-                onClick={() => setCurrency('original')}
-              >
-                Original Currency
-              </button>
-              <button
-                className={`toggle-btn${currency === 'usd' ? ' active' : ''}`}
-                onClick={() => setCurrency('usd')}
-              >
-                USD
-              </button>
+            <div className="fin-stmt-toolbar-right">
+              <div className="toggle-group">
+                <button
+                  className={`toggle-btn${viewMode === 'annual' ? ' active' : ''}`}
+                  onClick={() => setViewMode('annual')}
+                >
+                  Annual Report
+                </button>
+                <button
+                  className={`toggle-btn${viewMode === 'quarterly' ? ' active' : ''}`}
+                  onClick={() => setViewMode('quarterly')}
+                >
+                  Quarterly Report
+                </button>
+              </div>
+
+              <div className="toggle-group">
+                <button
+                  className={`toggle-btn${currency === 'original' ? ' active' : ''}`}
+                  onClick={() => setCurrency('original')}
+                >
+                  Original Currency
+                </button>
+                <button
+                  className={`toggle-btn${currency === 'usd' ? ' active' : ''}`}
+                  onClick={() => setCurrency('usd')}
+                >
+                  USD
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* ── Table ── */}
-        {isSimpleStatement ? (
+        {currentTabData?.kind === 'findata' && (
+          <FinDataTable data={currentTabData.data} />
+        )}
+        {isSimpleStatement && (
           simpleData ? (
             <SimpleStatementTable
               data={simpleData}
@@ -527,11 +703,12 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
           ) : (
             <div className="cp-tab-placeholder">
               <span className="cp-tab-placeholder-text">
-                {STATEMENT_ITEMS.find((s) => s.key === statementType)?.label} — Available for AAPL
+                {STATEMENT_ITEMS.find((s) => s.key === effectiveType)?.label} — data unavailable
               </span>
             </div>
           )
-        ) : (
+        )}
+        {isStructuredIncome && (
           <div className="fin-stmt-table-wrap">
             <table className="data-table fin-stmt-table">
               <thead>
