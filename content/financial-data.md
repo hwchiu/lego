@@ -3643,7 +3643,7 @@ Financial statements for T Company's 10 major customers. Figures are approximate
         "0.49x",
         "0.50x"
       ],
-      "Days Sales Outstanding": [
+      "Days Sales Outstanding (days)": [
         "36",
         "36",
         "35",

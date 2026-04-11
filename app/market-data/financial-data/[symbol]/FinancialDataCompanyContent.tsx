@@ -56,7 +56,11 @@ function ChartIcon() {
 
 // ─── Section-row detection ───────────────────────────────────────────────────
 
-/** Item values that are all empty strings indicate a section header row. */
+/**
+ * Items whose value array is all empty strings are treated as section header
+ * rows in the table. The label itself may contain decorative dashes (e.g.
+ * "— ASSETS —") which are displayed as a full-width section divider.
+ */
 function isSectionLabel(values: string[]): boolean {
   return values.every((v) => v === '' || v === '—');
 }
