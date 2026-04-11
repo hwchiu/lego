@@ -692,3 +692,425 @@ export function FundingLineChartNivo({ deals, selectedYear, onYearClick }: Fundi
     </div>
   );
 }
+
+// ── Shared year-parsing helper ────────────────────────────────────────────────
+
+/** Parse quarter label like "21Q2" → "2021" */
+function parseYearFromQuarter(quarter: string): string {
+  const yr = parseInt(quarter.slice(0, 2), 10);
+  return String(2000 + yr);
+}
+
+// ── FinancialIndicesNivoChart ─────────────────────────────────────────────────
+// Replaces the hand-rolled SVG bar chart in the "Financial Indices" card.
+
+interface FinDataPoint {
+  quarter: string;
+  netIncome: number;
+  totalRevenue: number;
+  grossProfit: number;
+  grossMarginPct: number;
+  operatingMarginPct: number;
+  netMarginPct: number;
+  cashEquivalents: number;
+  guidance: number | null;
+}
+
+interface FinIndicesChartProps {
+  data: FinDataPoint[];
+  activeMetric: string;
+}
+
+interface AnnualFinData {
+  year: string;
+  totalRevenue: number;
+  netIncome: number;
+  grossProfit: number;
+  grossMarginPct: number;
+  operatingMarginPct: number;
+  netMarginPct: number;
+  cashEquivalents: number;
+}
+
+function aggregateFinByYear(data: FinDataPoint[]): AnnualFinData[] {
+  type Acc = {
+    totalRevenue: number;
+    netIncome: number;
+    grossProfit: number;
+    grossMarginSum: number;
+    operatingMarginSum: number;
+    netMarginSum: number;
+    cashEquivalents: number;
+    count: number;
+  };
+  const map = new Map<string, Acc>();
+  for (const d of data) {
+    const year = parseYearFromQuarter(d.quarter);
+    if (!map.has(year)) {
+      map.set(year, {
+        totalRevenue: 0, netIncome: 0, grossProfit: 0,
+        grossMarginSum: 0, operatingMarginSum: 0, netMarginSum: 0,
+        cashEquivalents: 0, count: 0,
+      });
+    }
+    const e = map.get(year)!;
+    e.totalRevenue += d.totalRevenue;
+    e.netIncome += d.netIncome;
+    e.grossProfit += d.grossProfit;
+    e.grossMarginSum += d.grossMarginPct;
+    e.operatingMarginSum += d.operatingMarginPct;
+    e.netMarginSum += d.netMarginPct;
+    e.cashEquivalents = d.cashEquivalents; // last quarter value
+    e.count += 1;
+  }
+  return [...map.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([year, e]) => ({
+      year,
+      totalRevenue: e.totalRevenue,
+      netIncome: e.netIncome,
+      grossProfit: e.grossProfit,
+      grossMarginPct: e.count > 0 ? e.grossMarginSum / e.count : 0,
+      operatingMarginPct: e.count > 0 ? e.operatingMarginSum / e.count : 0,
+      netMarginPct: e.count > 0 ? e.netMarginSum / e.count : 0,
+      cashEquivalents: e.cashEquivalents,
+    }));
+}
+
+const FIN_METRIC_CFG: Record<string, {
+  key: keyof AnnualFinData;
+  isPercent: boolean;
+  color: string;
+  label: string;
+}> = {
+  'Revenue':               { key: 'totalRevenue',       isPercent: false, color: '#bf3030', label: 'Total Revenue' },
+  'Gross Profit':          { key: 'grossProfit',         isPercent: false, color: '#bf3030', label: 'Gross Profit' },
+  'Gross Margin':          { key: 'grossMarginPct',      isPercent: true,  color: '#bf3030', label: 'Gross Margin (%)' },
+  'Operating Margin':      { key: 'operatingMarginPct',  isPercent: true,  color: '#bf3030', label: 'Operating Margin (%)' },
+  'Net Income':            { key: 'netIncome',           isPercent: false, color: '#1673EE', label: 'Net Income' },
+  'Net Margin':            { key: 'netMarginPct',        isPercent: true,  color: '#bf3030', label: 'Net Margin (%)' },
+  'Cash & Cash Equivalents': { key: 'cashEquivalents',  isPercent: false, color: '#16a34a', label: 'Cash & Equivalents' },
+};
+
+export function FinancialIndicesNivoChart({ data, activeMetric }: FinIndicesChartProps) {
+  const annual = aggregateFinByYear(data);
+  const isRevenue = activeMetric === 'Revenue';
+  const cfg = FIN_METRIC_CFG[activeMetric] ?? FIN_METRIC_CFG['Revenue'];
+
+  let barData: Record<string, string | number>[];
+  let keys: string[];
+  let colors: string[];
+  let yMax: number;
+  let yAxisLabel: string;
+  let legendItems: { id: string; label: string; color: string }[] | null = null;
+
+  if (isRevenue) {
+    keys = ['totalRevenue', 'netIncome'];
+    colors = ['#bf3030', '#1673EE'];
+    const maxVal = Math.max(...annual.map((d) => Math.max(d.totalRevenue, d.netIncome)), 1);
+    yMax = Math.ceil(maxVal / 5000) * 5000 || 5000;
+    yAxisLabel = 'USD $M';
+    legendItems = [
+      { id: 'totalRevenue', label: 'Total Revenue', color: '#bf3030' },
+      { id: 'netIncome',    label: 'Net Income',    color: '#1673EE' },
+    ];
+    barData = annual.map((d) => ({
+      year: d.year,
+      totalRevenue: d.totalRevenue,
+      netIncome: d.netIncome,
+    }));
+  } else if (cfg.isPercent) {
+    keys = [cfg.key as string];
+    colors = [cfg.color];
+    const maxVal = Math.max(...annual.map((d) => Math.abs(d[cfg.key] as number)), 10);
+    yMax = Math.ceil(maxVal / 10) * 10;
+    yAxisLabel = '%';
+    barData = annual.map((d) => ({
+      year: d.year,
+      [cfg.key as string]: d[cfg.key] as number,
+    }));
+  } else {
+    keys = [cfg.key as string];
+    colors = [cfg.color];
+    const maxVal = Math.max(...annual.map((d) => d[cfg.key] as number), 1);
+    yMax = Math.ceil(maxVal / 5000) * 5000 || 5000;
+    yAxisLabel = 'USD $M';
+    barData = annual.map((d) => ({
+      year: d.year,
+      [cfg.key as string]: d[cfg.key] as number,
+    }));
+  }
+
+  return (
+    <div style={{ height: 200 }}>
+      <ResponsiveBar
+        data={barData}
+        keys={keys}
+        indexBy="year"
+        groupMode={isRevenue ? 'grouped' : 'stacked'}
+        margin={{ top: legendItems ? 30 : 16, right: 16, bottom: 36, left: 56 }}
+        valueScale={{ type: 'linear', min: 0, max: yMax }}
+        colors={colors}
+        borderRadius={2}
+        enableLabel={false}
+        animate={true}
+        motionConfig="gentle"
+        axisBottom={{
+          tickSize: 0,
+          tickPadding: 6,
+        }}
+        axisLeft={{
+          tickValues: 5,
+          tickSize: 0,
+          legend: yAxisLabel,
+          legendPosition: 'middle',
+          legendOffset: -46,
+          format: (v) =>
+            cfg.isPercent
+              ? `${Number(v).toFixed(0)}%`
+              : Number(v) >= 1000
+                ? `${(Number(v) / 1000).toFixed(0)}k`
+                : String(v),
+        }}
+        gridYValues={5}
+        tooltip={({ indexValue, id, value }) => (
+          <div
+            style={{
+              background: '#1f2937',
+              color: '#fff',
+              padding: '6px 10px',
+              borderRadius: 6,
+              fontSize: 11,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <strong>{indexValue}</strong>
+            <div>
+              {id === 'totalRevenue' ? 'Revenue' : id === 'netIncome' ? 'Net Income' : cfg.label}:{' '}
+              {cfg.isPercent ? `${Number(value).toFixed(1)}%` : `$${Number(value).toLocaleString()}M`}
+            </div>
+          </div>
+        )}
+        theme={{
+          grid: { line: { stroke: '#f0f0f0', strokeWidth: 1 } },
+          axis: {
+            ticks: { text: { fontSize: 9, fill: '#9ca3af' } },
+            legend: { text: { fontSize: 9, fill: '#6b7280' } },
+          },
+        }}
+        legends={legendItems ? [
+          {
+            dataFrom: 'keys',
+            anchor: 'top-left',
+            direction: 'row',
+            data: legendItems,
+            itemWidth: 110,
+            itemHeight: 20,
+            translateX: 0,
+            translateY: -28,
+            symbolSize: 8,
+            symbolShape: 'square',
+            itemTextColor: '#374151',
+            itemsSpacing: 4,
+          },
+        ] : []}
+      />
+    </div>
+  );
+}
+
+// ── DoiRevenueNivoChart ───────────────────────────────────────────────────────
+// Replaces the hand-rolled SVG bar+line chart in the "DOI & Revenue" card.
+
+interface DoiRevDataPoint {
+  quarter: string;
+  doi: number;
+  revenue: number;
+  guidance: number | null;
+}
+
+interface DoiRevNivoChartProps {
+  data: DoiRevDataPoint[];
+}
+
+function aggregateDoiRevByYear(
+  data: DoiRevDataPoint[],
+): { year: string; doi: number; revenue: number }[] {
+  type Acc = { doiSum: number; doiCount: number; revenue: number };
+  const map = new Map<string, Acc>();
+  for (const d of data) {
+    const year = parseYearFromQuarter(d.quarter);
+    if (!map.has(year)) {
+      map.set(year, { doiSum: 0, doiCount: 0, revenue: 0 });
+    }
+    const e = map.get(year)!;
+    e.doiSum += d.doi;
+    e.doiCount += 1;
+    e.revenue += d.revenue;
+  }
+  return [...map.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([year, e]) => ({
+      year,
+      doi: e.doiCount > 0 ? Math.round(e.doiSum / e.doiCount) : 0,
+      revenue: e.revenue,
+    }));
+}
+
+export function DoiRevenueNivoChart({ data }: DoiRevNivoChartProps) {
+  const annual = aggregateDoiRevByYear(data);
+  if (annual.length === 0) return null;
+
+  const maxDoi = Math.max(...annual.map((d) => d.doi), 1);
+  const doiMax = Math.ceil(maxDoi / 50) * 50 || 50;
+  const maxRevenue = Math.max(...annual.map((d) => d.revenue), 1);
+  const revMax = Math.ceil(maxRevenue / 5000) * 5000 || 5000;
+
+  const barData = annual.map((d) => ({
+    year: d.year,
+    doi: d.doi,
+  }));
+
+  const yearToIdx = new Map(annual.map((d, i) => [d.year, i]));
+
+  // Custom layer: draws the Revenue line on top of DOI bars
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const RevenueLineLayer = (props: any) => {
+    const { bars, innerHeight, innerWidth } = props as {
+      bars: Array<{ x: number; width: number; data: { indexValue: string } }>;
+      innerHeight: number;
+      innerWidth: number;
+    };
+
+    const n = annual.length;
+    const slotWidth = innerWidth / n;
+
+    const points = annual.map((d) => {
+      const bar = bars.find((b) => b.data.indexValue === d.year);
+      const idx = yearToIdx.get(d.year)!;
+      const cx = bar ? bar.x + bar.width / 2 : slotWidth * idx + slotWidth / 2;
+      const cy = innerHeight - (d.revenue / revMax) * innerHeight;
+      return { cx, cy, year: d.year, revenue: d.revenue };
+    });
+
+    if (points.length === 0) return null;
+
+    const polylineStr = points.map((p) => `${p.cx},${p.cy}`).join(' ');
+
+    return (
+      <>
+        {points.length >= 2 && (
+          <polyline
+            points={polylineStr}
+            fill="none"
+            stroke="#1673EE"
+            strokeWidth="2"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+          />
+        )}
+        {points.map((p) => (
+          <circle
+            key={p.year}
+            cx={p.cx}
+            cy={p.cy}
+            r={3}
+            fill="#1673EE"
+            stroke="#fff"
+            strokeWidth={1.5}
+          />
+        ))}
+      </>
+    );
+  };
+
+  return (
+    <div style={{ height: 200 }}>
+      <ResponsiveBar
+        data={barData}
+        keys={['doi']}
+        indexBy="year"
+        margin={{ top: 16, right: 60, bottom: 36, left: 52 }}
+        valueScale={{ type: 'linear', min: 0, max: doiMax }}
+        colors={['#bf3030']}
+        colorBy="indexValue"
+        borderRadius={2}
+        enableLabel={false}
+        animate={true}
+        motionConfig="gentle"
+        axisBottom={{ tickSize: 0, tickPadding: 6 }}
+        axisLeft={{
+          tickValues: 5,
+          tickSize: 0,
+          legend: 'DOI',
+          legendPosition: 'middle',
+          legendOffset: -40,
+        }}
+        axisRight={{
+          tickValues: 5,
+          tickSize: 0,
+          format: (v) => `${Math.round((Number(v) / doiMax) * revMax)}`,
+          legend: 'USD $M',
+          legendPosition: 'middle',
+          legendOffset: 52,
+        }}
+        gridYValues={5}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        layers={['grid', 'axes', 'bars', 'markers', RevenueLineLayer as any, 'legends', 'annotations']}
+        tooltip={({ indexValue, value }) => {
+          const annualEntry = annual.find((d) => d.year === indexValue);
+          return (
+            <div
+              style={{
+                background: '#1f2937',
+                color: '#fff',
+                padding: '6px 10px',
+                borderRadius: 6,
+                fontSize: 11,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <strong>{indexValue}</strong>
+              <div>DOI: {value} days</div>
+              {annualEntry && (
+                <div>
+                  Revenue: $
+                  {annualEntry.revenue >= 1000
+                    ? `${(annualEntry.revenue / 1000).toFixed(1)}B`
+                    : annualEntry.revenue.toLocaleString()}
+                  M
+                </div>
+              )}
+            </div>
+          );
+        }}
+        theme={{
+          grid: { line: { stroke: '#f0f0f0', strokeWidth: 1 } },
+          axis: {
+            ticks: { text: { fontSize: 9, fill: '#9ca3af' } },
+            legend: { text: { fontSize: 9, fill: '#6b7280' } },
+          },
+        }}
+        legends={[
+          {
+            dataFrom: 'keys',
+            anchor: 'top-left',
+            direction: 'row',
+            data: [
+              { id: 'doi',     label: 'DOI (avg)',      color: '#bf3030' },
+              { id: 'revenue', label: 'Revenue (USD $M)', color: '#1673EE' },
+            ],
+            itemWidth: 130,
+            itemHeight: 20,
+            translateX: 0,
+            translateY: -14,
+            symbolSize: 8,
+            symbolShape: 'square',
+            itemTextColor: '#374151',
+            itemsSpacing: 4,
+          },
+        ]}
+      />
+    </div>
+  );
+}
