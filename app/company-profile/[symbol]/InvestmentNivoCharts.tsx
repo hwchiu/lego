@@ -731,9 +731,9 @@ const FIN_METRIC_CFG: Record<string, {
   'Gross Profit':          { key: 'grossProfit',         isPercent: false, color: '#bf3030', label: 'Gross Profit' },
   'Gross Margin':          { key: 'grossMarginPct',      isPercent: true,  color: '#bf3030', label: 'Gross Margin (%)' },
   'Operating Margin':      { key: 'operatingMarginPct',  isPercent: true,  color: '#bf3030', label: 'Operating Margin (%)' },
-  'Net Income':            { key: 'netIncome',           isPercent: false, color: '#1673EE', label: 'Net Income' },
+  'Net Income':            { key: 'netIncome',           isPercent: false, color: '#bf3030', label: 'Net Income' },
   'Net Margin':            { key: 'netMarginPct',        isPercent: true,  color: '#bf3030', label: 'Net Margin (%)' },
-  'Cash & Cash Equivalents': { key: 'cashEquivalents',  isPercent: false, color: '#16a34a', label: 'Cash & Equivalents' },
+  'Cash & Cash Equivalents': { key: 'cashEquivalents',  isPercent: false, color: '#bf3030', label: 'Cash & Equivalents' },
 };
 
 export function FinancialIndicesNivoChart({ data, activeMetric }: FinIndicesChartProps) {
@@ -793,7 +793,7 @@ export function FinancialIndicesNivoChart({ data, activeMetric }: FinIndicesChar
         keys={keys}
         indexBy="quarter"
         groupMode={isRevenue ? 'grouped' : 'stacked'}
-        margin={{ top: legendItems ? 30 : 16, right: 16, bottom: 36, left: 56 }}
+        margin={{ top: legendItems ? 30 : 16, right: 16, bottom: 44, left: 56 }}
         valueScale={{ type: 'linear', min: 0, max: yMax }}
         colors={colors}
         borderRadius={2}
@@ -803,6 +803,7 @@ export function FinancialIndicesNivoChart({ data, activeMetric }: FinIndicesChar
         axisBottom={{
           tickSize: 0,
           tickPadding: 6,
+          format: (v) => `20${String(v).slice(0, 2)} ${String(v).slice(2)}`,
         }}
         axisLeft={{
           tickValues: 5,
