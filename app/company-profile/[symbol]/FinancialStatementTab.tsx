@@ -5,6 +5,8 @@ import { resolveSymbolAlias } from '@/app/data/sp500';
 import { extractJson, extractJsonBySection } from '@/app/lib/parseContent';
 import tcFinStmtMd from '@/content/tc-financial-statement.md';
 import aaplFinStmtMd from '@/content/apple-financial-statement.md';
+import { getStatement, getCompanies } from '@/app/data/financialData';
+import type { StatementKey, StatementData } from '@/app/data/financialData';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type StatementType = 'income' | 'balance' | 'cashflow' | 'segment';
@@ -105,6 +107,66 @@ const STATEMENT_ITEMS: { key: StatementType; label: string }[] = [
   { key: 'cashflow', label: 'Cash Flow Statement' },
   { key: 'segment',  label: 'Segment Report' },
 ];
+
+// Tabs used for semiconductor companies sourced from financial-data.md
+const FIN_DATA_TABS: { key: StatementKey; label: string }[] = [
+  { key: 'income',   label: 'Income Statement' },
+  { key: 'balance',  label: 'Balance Sheet' },
+  { key: 'cashflow', label: 'Cash Flow Statement' },
+  { key: 'ratios',   label: 'Financial Ratios' },
+];
+
+// ── FinDataTable — renders StatementData from financial-data.md ────────────────
+function FinDataTable({ data }: { data: StatementData }) {
+  return (
+    <div className="fin-stmt-table-wrap">
+      <table className="data-table fin-stmt-table fin-stmt-simple-table">
+        <thead>
+          <tr>
+            <th className="fin-stmt-th-item">
+              <div className="fin-stmt-th-item-inner">
+                <span className="fin-stmt-th-item-label">Metric</span>
+              </div>
+            </th>
+            {data.periods.map((p, i) => (
+              <th key={i} className="fin-stmt-simple-col-hdr">{p}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {Object.entries(data.items).map(([label, values], ri) => {
+            const isSection = values.every((v) => v === '' || v === '—');
+            return isSection ? (
+              <tr key={ri} className="fin-stmt-section-row">
+                <td colSpan={data.periods.length + 1} className="fin-stmt-td-section">
+                  {label}
+                </td>
+              </tr>
+            ) : (
+              <tr key={ri}>
+                <td className="fin-stmt-td-item">{label}</td>
+                {values.map((val, ci) => {
+                  const isNeg = val.startsWith('-') && val !== '-';
+                  const isPos =
+                    val.startsWith('+') ||
+                    (val.endsWith('%') && !val.startsWith('-') && parseFloat(val) > 0);
+                  return (
+                    <td
+                      key={ci}
+                      className={`td-num${isNeg ? ' fin-stmt-neg' : isPos ? ' fin-stmt-pos' : ''}`}
+                    >
+                      {val || '—'}
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 function fmt(val: number | null, format: RowDef['format']): string {
@@ -312,6 +374,14 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
   const resolvedSymbol = resolveSymbolAlias(symbol);
   const isAapl = resolvedSymbol === 'AAPL';
   const isTc  = resolvedSymbol === 'TC';
+  const isFinData = !isAapl && !isTc && getCompanies().some((c) => c.symbol === resolvedSymbol);
+
+  // State for fin-data companies (semiconductor companies from financial-data.md)
+  const [finDataTab, setFinDataTab] = useState<StatementKey>('income');
+  const finData: StatementData | null = useMemo(() => {
+    if (!isFinData) return null;
+    return getStatement(finDataTab)[resolvedSymbol] ?? null;
+  }, [isFinData, finDataTab, resolvedSymbol]);
 
   const aaplIncomeData = useMemo(() => (isAapl ? getAaplIncomeData() : null), [isAapl]);
   const tcData        = useMemo(() => (isTc  ? getTcData()        : null), [isTc]);
@@ -394,12 +464,44 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
   const simpleCanGoPrev = viewMode === 'quarterly' && simpleAllYears.length > 0 && simpleYearWindowStart > simpleAllYears[0];
   const simpleCanGoNext = viewMode === 'quarterly' && simpleYearWindowStart < simpleMaxYearWindowStart;
 
-  if (!isAapl && !isTc) {
+  if (!isAapl && !isTc && !isFinData) {
     return (
       <div className="cp-tab-placeholder">
         <span className="cp-tab-placeholder-text">
           Financial Statement for {symbol} — Content coming soon
         </span>
+      </div>
+    );
+  }
+
+  // ── Fin-data companies (semiconductor companies from financial-data.md) ───────
+  if (isFinData) {
+    return (
+      <div className="fin-stmt-layout">
+        <aside className="fin-stmt-sidebar">
+          <nav className="fin-stmt-nav">
+            {FIN_DATA_TABS.map((tab) => (
+              <button
+                key={tab.key}
+                className={`fin-stmt-nav-item${finDataTab === tab.key ? ' active' : ''}`}
+                onClick={() => setFinDataTab(tab.key)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </nav>
+        </aside>
+        <div className="fin-stmt-content">
+          {finData ? (
+            <FinDataTable data={finData} />
+          ) : (
+            <div className="cp-tab-placeholder">
+              <span className="cp-tab-placeholder-text">
+                No financial data available for {symbol}
+              </span>
+            </div>
+          )}
+        </div>
       </div>
     );
   }
