@@ -910,20 +910,20 @@ function aggregateDoiRevByYear(
 }
 
 export function DoiRevenueNivoChart({ data }: DoiRevNivoChartProps) {
-  const annual = aggregateDoiRevByYear(data);
-  if (annual.length === 0) return null;
+  const quarterly = [...data].sort((a, b) => a.quarter.localeCompare(b.quarter));
+  if (quarterly.length === 0) return null;
 
-  const maxDoi = Math.max(...annual.map((d) => d.doi), 1);
+  const maxDoi = Math.max(...quarterly.map((d) => d.doi), 1);
   const doiMax = Math.ceil(maxDoi / 50) * 50 || 50;
-  const maxRevenue = Math.max(...annual.map((d) => d.revenue), 1);
+  const maxRevenue = Math.max(...quarterly.map((d) => d.revenue), 1);
   const revMax = Math.ceil(maxRevenue / 5000) * 5000 || 5000;
 
-  const barData = annual.map((d) => ({
-    year: d.year,
+  const barData = quarterly.map((d) => ({
+    quarter: d.quarter,
     doi: d.doi,
   }));
 
-  const yearToIdx = new Map(annual.map((d, i) => [d.year, i]));
+  const qtrToIdx = new Map(quarterly.map((d, i) => [d.quarter, i]));
 
   // Custom layer: draws the Revenue line on top of DOI bars
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -934,15 +934,15 @@ export function DoiRevenueNivoChart({ data }: DoiRevNivoChartProps) {
       innerWidth: number;
     };
 
-    const n = annual.length;
+    const n = quarterly.length;
     const slotWidth = innerWidth / n;
 
-    const points = annual.map((d) => {
-      const bar = bars.find((b) => b.data.indexValue === d.year);
-      const idx = yearToIdx.get(d.year)!;
+    const points = quarterly.map((d) => {
+      const bar = bars.find((b) => b.data.indexValue === d.quarter);
+      const idx = qtrToIdx.get(d.quarter)!;
       const cx = bar ? bar.x + bar.width / 2 : slotWidth * idx + slotWidth / 2;
       const cy = innerHeight - (d.revenue / revMax) * innerHeight;
-      return { cx, cy, year: d.year, revenue: d.revenue };
+      return { cx, cy, quarter: d.quarter, revenue: d.revenue };
     });
 
     if (points.length === 0) return null;
@@ -963,7 +963,7 @@ export function DoiRevenueNivoChart({ data }: DoiRevNivoChartProps) {
         )}
         {points.map((p) => (
           <circle
-            key={p.year}
+            key={p.quarter}
             cx={p.cx}
             cy={p.cy}
             r={3}
@@ -981,7 +981,7 @@ export function DoiRevenueNivoChart({ data }: DoiRevNivoChartProps) {
       <ResponsiveBar
         data={barData}
         keys={['doi']}
-        indexBy="year"
+        indexBy="quarter"
         margin={{ top: 16, right: 60, bottom: 36, left: 52 }}
         valueScale={{ type: 'linear', min: 0, max: doiMax }}
         colors={['#bf3030']}
@@ -1009,7 +1009,7 @@ export function DoiRevenueNivoChart({ data }: DoiRevNivoChartProps) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         layers={['grid', 'axes', 'bars', 'markers', RevenueLineLayer as any, 'legends', 'annotations']}
         tooltip={({ indexValue, value }) => {
-          const annualEntry = annual.find((d) => d.year === indexValue);
+          const qtrEntry = quarterly.find((d) => d.quarter === indexValue);
           return (
             <div
               style={{
@@ -1023,12 +1023,12 @@ export function DoiRevenueNivoChart({ data }: DoiRevNivoChartProps) {
             >
               <strong>{indexValue}</strong>
               <div>DOI: {value} days</div>
-              {annualEntry && (
+              {qtrEntry && (
                 <div>
                   Revenue:{' '}
-                  {annualEntry.revenue >= 1000
-                    ? `$${(annualEntry.revenue / 1000).toFixed(1)}B`
-                    : `$${annualEntry.revenue.toLocaleString()}M`}
+                  {qtrEntry.revenue >= 1000
+                    ? `$${(qtrEntry.revenue / 1000).toFixed(1)}B`
+                    : `$${qtrEntry.revenue.toLocaleString()}M`}
                 </div>
               )}
             </div>
@@ -1047,7 +1047,7 @@ export function DoiRevenueNivoChart({ data }: DoiRevNivoChartProps) {
             anchor: 'top-left',
             direction: 'row',
             data: [
-              { id: 'doi',     label: 'DOI (avg)',      color: '#bf3030' },
+              { id: 'doi',     label: 'DOI',            color: '#bf3030' },
               { id: 'revenue', label: 'Revenue (USD $M)', color: '#1673EE' },
             ],
             itemWidth: 130,
