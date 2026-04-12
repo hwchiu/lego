@@ -16332,7 +16332,7 @@ a.fd-hint-btn {
 }
 .is-cta-btn--primary {
   background: #fff;
-  color: var(--c-dark);
+  color: #1a2332;
 }
 .is-cta-btn--primary:hover {
   background: #e2e8f0;
@@ -19357,7 +19357,6 @@ html.dark .is-howitworks-section { background: #1e293b; }
 html.dark .is-section { background: #1e293b; }
 html.dark .is-cap-card { background: #0f172a; border-color: #334155; }
 html.dark .is-preview-section { background: #0f172a; }
-html.dark .is-cta-btn--primary { color: #1a2332; }
 
 /* ── RMAP / KnowledgeGraph ── */
 html.dark .kg-search-btn { background: #334155; color: #f1f5f9; }
