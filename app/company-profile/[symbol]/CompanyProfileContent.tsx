@@ -21,7 +21,6 @@ import PreEarningCallTab from './PreEarningCallTab';
 import IRTranscriptTab from './IRTranscriptTab';
 import AITranscriptTab from './AITranscriptTab';
 import tvConfigMd from '@/content/tradingview.md';
-import ThemeToggleButton from '@/app/components/ThemeToggleButton';
 
 const FinancialIndicesNivoChart = dynamic(
   () => import('./InvestmentNivoCharts').then((m) => m.FinancialIndicesNivoChart),
@@ -709,7 +708,6 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                     >
                       <RefreshIcon />
                     </button>
-                    <ThemeToggleButton className="cp-action-icon-btn" />
                   </div>
                 </div>
 
