@@ -38,7 +38,7 @@ export const sidebarIcons: Record<string, string> = {
   news:
     '<rect x="2" y="1.5" width="10" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M4.5 4.5h5M4.5 7h5M4.5 9.5h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>',
   marketData:
-    '<path d="M2 11H4V7H2V11ZM5.5 11H7.5V4H5.5V11ZM9 11H11V8H9V11Z" fill="currentColor"/>',
+    '<rect x="2" y="7" width="2" height="4" rx="0.5" stroke="currentColor" stroke-width="1.2"/><rect x="5.5" y="4" width="2" height="7" rx="0.5" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="8" width="2" height="3" rx="0.5" stroke="currentColor" stroke-width="1.2"/>',
   calendar:
     '<rect x="1" y="2.5" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 6H13M4.5 1V4M9.5 1V4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
   earnings:
@@ -46,25 +46,25 @@ export const sidebarIcons: Record<string, string> = {
   target:
     '<circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><circle cx="7" cy="7" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M7 1V3M7 11V13M1 7H3M11 7H13" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
   supplyMap:
-    '<circle cx="7" cy="7" r="1.5" fill="currentColor"/><circle cx="2" cy="3" r="1.5" fill="currentColor"/><circle cx="12" cy="3" r="1.5" fill="currentColor"/><circle cx="2" cy="11" r="1.5" fill="currentColor"/><circle cx="12" cy="11" r="1.5" fill="currentColor"/><path d="M3 3.5L5.5 6M11 3.5L8.5 6M3 10.5L5.5 8M11 10.5L8.5 8" stroke="currentColor" stroke-width="1.2"/>',
+    '<circle cx="7" cy="7" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="2" cy="3" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="12" cy="3" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="2" cy="11" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="12" cy="11" r="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M3.5 4L5.5 6M10.5 4L8.5 6M3.5 10L5.5 8M10.5 10L8.5 8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>',
   layers:
     '<path d="M7 1.5L1 4.5L7 7.5L13 4.5L7 1.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M1 7.5L7 10.5L13 7.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M1 10.5L7 13.5L13 10.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
   network:
-    '<circle cx="7" cy="7" r="2" stroke="currentColor" stroke-width="1.3"/><circle cx="7" cy="2" r="1" fill="currentColor"/><circle cx="7" cy="12" r="1" fill="currentColor"/><circle cx="2" cy="7" r="1" fill="currentColor"/><circle cx="12" cy="7" r="1" fill="currentColor"/><path d="M7 4V5M7 9V10M4 7H5M9 7H10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>',
+    '<circle cx="7" cy="7" r="2" stroke="currentColor" stroke-width="1.3"/><circle cx="7" cy="2" r="1" stroke="currentColor" stroke-width="1.2"/><circle cx="7" cy="12" r="1" stroke="currentColor" stroke-width="1.2"/><circle cx="2" cy="7" r="1" stroke="currentColor" stroke-width="1.2"/><circle cx="12" cy="7" r="1" stroke="currentColor" stroke-width="1.2"/><path d="M7 4V5M7 9V10M4 7H5M9 7H10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>',
   watchlist:
-    '<path d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="7" cy="7" r="1.8" fill="currentColor"/>',
+    '<path d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="7" cy="7" r="1.8" stroke="currentColor" stroke-width="1.2"/>',
   // Press Release — megaphone / announcement icon
   pressRelease:
     '<path d="M2.5 8.5V5.5H4.5L9.5 2.5V11.5L4.5 8.5H2.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M11 5C11.8 5.5 12.3 6.2 12.3 7S11.8 8.5 11 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M4.5 8.5V12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
   // Data Explore — compass icon
   dataExplore:
-    '<circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M9 5L7.8 8.2L4.5 9.5L5.7 6.3L9 5Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="currentColor" fill-opacity="0.25"/>',
+    '<circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M9 5L7.8 8.2L4.5 9.5L5.7 6.3L9 5Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>',
   // Intelligence Search — magnifying glass with a spark/crosshair inside
   intelligenceSearch:
     '<circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.3"/><path d="M8.5 8.5L12.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3.5 5.5h4M5.5 3.5v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>',
   // Collaboration Playground — two overlapping circles with a shared center dot
   collaborationPlayground:
-    '<circle cx="5" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/><circle cx="9" cy="9" r="3" stroke="currentColor" stroke-width="1.3"/><circle cx="7" cy="7" r="1.2" fill="currentColor"/>',
+    '<circle cx="5" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/><circle cx="9" cy="9" r="3" stroke="currentColor" stroke-width="1.3"/><circle cx="7" cy="7" r="1.2" stroke="currentColor" stroke-width="1.1"/>',
   // Sub-menu icons
   financialData:
     '<rect x="1.5" y="3" width="11" height="8" rx="1" stroke="currentColor" stroke-width="1.3"/><path d="M4 6.5h6M4 8.5h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>',

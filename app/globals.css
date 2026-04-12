@@ -17634,6 +17634,9 @@ html.dark .cwl-ai-context-card {
 }
 
 /* ── Company Profile dark mode ── */
+html.dark .cp-detail-page {
+  background: var(--c-bg);
+}
 html.dark .cp-data-card,
 html.dark .cp-pec-card,
 html.dark .cp-info-card,
@@ -19099,6 +19102,167 @@ html.dark .cp-irt-btn--primary:hover { background: #38bdf8; border-color: #38bdf
 html.dark .cp-irt-btn--outline { background: #1e293b; color: #94a3b8; border-color: #334155; }
 html.dark .cp-irt-btn--outline:hover { background: #334155; border-color: #64748b; color: #f1f5f9; }
 
+/* ===== DARK MODE: data-table (Financial Statement tables) ===== */
+html.dark .data-table thead tr:first-child th {
+  background: #1e293b;
+  color: #94a3b8;
+}
+html.dark .data-table thead tr:first-child th.th-group {
+  background: #1a2537;
+  color: #94a3b8;
+}
+html.dark .data-table thead tr.sub-head th {
+  background: #1e293b;
+  color: #94a3b8;
+}
+html.dark .data-table tbody tr:hover td { background: #1a2537; }
+
+/* ===== DARK MODE: toggle-btn ===== */
+html.dark .toggle-btn.active {
+  background: #4fc3f7;
+  color: #0f172a;
+}
+
+/* ===== DARK MODE: fin-stmt sidebar & table ===== */
+html.dark .fin-stmt-sidebar {
+  background: #1e293b;
+  border-right-color: var(--c-border);
+}
+html.dark .fin-stmt-nav-item:hover {
+  background: rgba(255,255,255,0.08);
+  color: var(--c-text);
+}
+html.dark .fin-stmt-nav-item.active {
+  background: #4fc3f7;
+  color: #0f172a;
+}
+html.dark .fin-stmt-td-item {
+  background: #1a2332;
+  color: var(--c-text-2);
+}
+html.dark .fin-stmt-simple-table .fin-stmt-th-item {
+  background: #1e293b;
+}
+html.dark .fin-stmt-simple-table .fin-stmt-td-section,
+html.dark .fin-stmt-simple-table .fin-stmt-section-row td {
+  background: #0f172a;
+  color: #94a3b8;
+}
+html.dark .fin-stmt-simple-table .fin-stmt-td-section-blank {
+  background: #0f172a;
+}
+
+/* ===== DARK MODE: cp-ir-left-menu ===== */
+html.dark .cp-ir-left-tab:hover {
+  background: rgba(255,255,255,0.08);
+  color: var(--c-text-2);
+}
+html.dark .cp-ir-left-tab.active {
+  background: #4fc3f7;
+  color: #0f172a;
+}
+
+/* ===== DARK MODE: cp-ir-fin-table ===== */
+html.dark .cp-ir-fin-table-wrap {
+  border-color: var(--c-border);
+}
+html.dark .cp-ir-fin-th {
+  background: #1a2537;
+  color: #94a3b8;
+  border-bottom-color: var(--c-border);
+}
+html.dark .cp-ir-fin-tr:hover {
+  background: #1a2537;
+}
+html.dark .cp-ir-fin-td--label {
+  color: var(--c-text);
+}
+html.dark .cp-ir-fin-download-btn {
+  background: #1e293b;
+  border-color: var(--c-border);
+  color: var(--c-text-3);
+}
+html.dark .cp-ir-fin-download-btn:hover {
+  background: #334155;
+  color: var(--c-text);
+  border-color: var(--c-border-2);
+}
+
+/* ===== DARK MODE: aapl-ma components ===== */
+html.dark .aapl-ma-chart-section,
+html.dark .aapl-ma-table-section {
+  background: #1e293b;
+  border-color: var(--c-border);
+}
+html.dark .aapl-ma-year-clear-btn {
+  background: rgba(99,102,241,0.15);
+  border-color: rgba(99,102,241,0.3);
+  color: #a78bfa;
+}
+html.dark .aapl-ma-year-clear-btn:hover {
+  background: rgba(99,102,241,0.25);
+  color: #c4b5fd;
+}
+html.dark .aapl-ma-type-acq {
+  background: rgba(59,130,246,0.2);
+  color: #93c5fd;
+}
+html.dark .aapl-ma-type-asset {
+  background: rgba(245,158,11,0.2);
+  color: #fcd34d;
+}
+html.dark .aapl-ma-type-merger {
+  background: rgba(16,185,129,0.2);
+  color: #6ee7b7;
+}
+html.dark .aapl-ma-industry-pill {
+  background: rgba(99,102,241,0.2);
+  color: #c4b5fd;
+}
+
+/* ===== DARK MODE: ma-table / cpma ===== */
+html.dark .ma-table-wrap,
+html.dark .ma-chart-card {
+  background: #1e293b;
+  border-color: var(--c-border);
+}
+html.dark .ma-sector-tag {
+  background: rgba(37,99,235,0.2);
+  color: #93c5fd;
+}
+html.dark .ma-target { color: #60a5fa; }
+
+/* ===== DARK MODE: cp-news multi-select chips & options ===== */
+html.dark .cp-news-multi-chip {
+  background: rgba(59,130,246,0.2);
+  color: #93c5fd;
+}
+html.dark .cp-news-multi-chip button { color: #93c5fd; }
+html.dark .cp-news-multi-options {
+  background: #1e293b;
+  border-color: var(--c-border);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+html.dark .cp-news-multi-option:hover { background: #334155; }
+html.dark .cp-news-multi-option.active {
+  color: #60a5fa;
+  background: rgba(59,130,246,0.1);
+}
+
+/* ===== DARK MODE: cp-pec-ai sentiment badges ===== */
+html.dark .cp-pec-ai-sentiment--bullish {
+  background: rgba(22,163,74,0.2);
+  color: #4ade80;
+}
+html.dark .cp-pec-ai-sentiment--neutral {
+  background: rgba(234,179,8,0.2);
+  color: #fde047;
+}
+html.dark .cp-pec-ai-sentiment--bearish {
+  background: rgba(220,38,38,0.2);
+  color: #f87171;
+}
+
 /* ===== IR TRANSCRIPT — SECTION TOGGLE HELPERS ===== */
 .cp-irt-section-heading {
   margin: 0;
@@ -19111,3 +19275,102 @@ html.dark .cp-irt-btn--outline:hover { background: #334155; border-color: #64748
 .cp-irt-chevron--open {
   transform: rotate(180deg);
 }
+
+/* =======================================================================
+   DARK MODE — Comprehensive site-wide background / interactive-state fixes
+   Root cause: background: var(--c-dark) resolves to #e2e8f0 (light) in
+   dark mode because --c-dark is remapped for text use.  We override every
+   element that uses it as a section-background or active-button-background.
+   ======================================================================= */
+
+/* ── /about ── */
+html.dark .about-hero { background: #1e293b; border-color: #334155; }
+html.dark .about-social-icon { background: #334155; }
+html.dark .about-social-badge { background: #1e293b; border-color: #334155; color: #94a3b8; }
+html.dark .about-social-badge:hover { background: #334155; color: #f1f5f9; border-color: #475569; }
+html.dark .about-stat-card { background: #1e293b; border-color: #334155; }
+html.dark .about-talk-card { background: #1e293b; border-color: #334155; }
+html.dark .about-talk-card--upcoming { background: rgba(30,102,245,0.12); border-color: #3b82f6; }
+html.dark .about-site-stats-strip { background: #1e293b; }
+html.dark .about-site-feature-body { background: #1e293b; border-color: #334155; }
+html.dark .about-site-pillar-card { background: #1e293b; border-color: #334155; }
+
+/* ── /collaboration-playground — canvas sidebar & list ── */
+html.dark .pg-canvas-sidebar,
+html.dark .pg-sidebar-expand-zone { background: #1e293b; border-color: #334155; }
+html.dark .pg-sidebar-expand-btn { background: #1e293b; border-color: #334155; color: #94a3b8; }
+html.dark .pg-canvas-nav-btn.active { background: rgba(56,189,248,0.15); color: #38bdf8; }
+html.dark .pg-canvas-nav-btn.active .pg-canvas-nav-count { background: rgba(56,189,248,0.2); color: #38bdf8; }
+html.dark .pg-canvas-list-item { background: #1e293b; border-color: #334155; }
+html.dark .pg-canvas-list-item.active { background: rgba(59,130,246,0.12); border-color: #3b82f6; }
+html.dark .pg-canvas-list-item:hover { background: #334155; }
+html.dark .pg-canvas-header { background: #1e293b; border-color: #334155; }
+html.dark .pg-add-card-btn { background: #4fc3f7; color: #0f172a; }
+html.dark .pg-btn-primary { background: #4fc3f7; color: #0f172a; }
+html.dark .pg-btn-primary:hover:not(:disabled) { background: #38bdf8; }
+html.dark .pg-header-btn.primary { background: #4fc3f7; color: #0f172a; border-color: #4fc3f7; }
+html.dark .pg-header-btn.primary:hover { background: #38bdf8; }
+html.dark .pg-task-filter-btn.active { background: #4fc3f7; color: #0f172a; border-color: #4fc3f7; }
+
+/* ── /event-calendar — calendar cards, week cells, tooltips ── */
+html.dark .cal-card { background: #1e293b; border-color: #334155; }
+html.dark .cal-arrow { background: #1e293b; border-color: #334155; color: #94a3b8; }
+html.dark .cal-arrow:hover { background: #334155; border-color: #475569; color: #f1f5f9; }
+html.dark .cal-month-label { background: #1e293b; border-color: #334155; color: #f1f5f9; }
+html.dark .cal-search { background: #1e293b; border-color: #334155; color: #f1f5f9; }
+html.dark .cal-search:focus { border-color: var(--c-accent); }
+html.dark .cal-search-dropdown { background: #1e293b; border-color: #334155; }
+html.dark .cal-search-option:hover { background: #334155; }
+html.dark .detail-card { background: #1e293b; border-color: #334155; }
+html.dark .market-tabs-card { background: #1e293b; border-color: #334155; }
+html.dark .market-tabs-arrow { background: #1e293b; border-color: #334155; color: #94a3b8; }
+html.dark .week-cell { border-color: #334155; background: #1e293b; }
+html.dark .week-cell-head { background: #0f172a; border-color: #334155; }
+html.dark .week-cell.today .week-cell-head { background: #1d4ed8; color: #fff; border-bottom-color: #1d4ed8; }
+html.dark .cell-co-tooltip { background: #334155; }
+html.dark .cell-co-tooltip::after { border-top-color: #334155; }
+html.dark .ec-event-card { background: #1e293b; border-color: #334155; }
+html.dark .ec-coming-soon { background: #1e293b; border-color: #334155; }
+html.dark .ec-affected-tag { background: #0f172a; border-color: #334155; color: #94a3b8; }
+
+/* ── /data-explore ── */
+html.dark .de-hero { background: #1e293b; }
+html.dark .de-cat-hero { background: #1e293b; }
+html.dark .de-filter-search { background: #1e293b; border-color: #334155; color: #f1f5f9; }
+html.dark .de-filter-search:focus { border-color: var(--c-accent); }
+html.dark .de-category-card,
+html.dark .de-recent-card,
+html.dark .de-item-card,
+html.dark .de-empty { background: #1e293b; border-color: #334155; }
+html.dark .de-tag { background: #0f172a; color: #94a3b8; }
+html.dark .de-tag-filter-btn { background: #1e293b; border-color: #334155; color: #94a3b8; }
+html.dark .de-tag-filter-btn:hover { background: #334155; color: #f1f5f9; }
+html.dark .de-related-cat-chip { background: #1e293b; border-color: #334155; color: #94a3b8; }
+html.dark .de-related-cat-chip:hover { background: #334155; color: #f1f5f9; }
+
+/* ── /ai-search (is- prefix) ── */
+html.dark .is-hero { background: #0f172a; }
+html.dark .is-howitworks-section { background: #1e293b; }
+html.dark .is-section { background: #1e293b; }
+html.dark .is-cap-card { background: #0f172a; border-color: #334155; }
+html.dark .is-preview-section { background: #0f172a; }
+
+/* ── Global shared interactive-state fixes (buttons using background: var(--c-dark)) ── */
+html.dark .search-category-btn:hover,
+html.dark .search-category-btn.active { background: #334155; color: #f1f5f9; border-color: #475569; }
+html.dark .wl-modal-done-btn,
+html.dark .wl-modal-submit-btn { background: #4fc3f7; color: #0f172a; }
+html.dark .chatbot-fab { background: #1e293b; }
+html.dark .chatbot-dialog-header { background: #1e293b; }
+html.dark .chatbot-bubble--user { background: #1e3a5f; color: #f1f5f9; }
+html.dark .chatbot-send-btn { background: #4fc3f7; color: #0f172a; }
+html.dark .chatbot-send-btn:hover:not(:disabled) { background: #38bdf8; }
+html.dark .scm-search-btn { background: #4fc3f7; color: #0f172a; }
+html.dark .scm-search-btn:hover { background: #38bdf8; }
+html.dark .pr-granularity-btn.active { background: #4fc3f7; color: #0f172a; border-color: #4fc3f7; }
+html.dark .pr-card-stack-badge { background: #4fc3f7; color: #0f172a; border-color: #1e293b; }
+html.dark .pr-timeline-node-dot { background: #4fc3f7; border-color: #1e293b; box-shadow: 0 0 0 2px #4fc3f7; }
+html.dark .pr-gallery-count { background: #334155; color: #f1f5f9; }
+html.dark .pr-list-rel-tab.active { background: #4fc3f7; color: #0f172a; border-color: #4fc3f7; }
+html.dark .pr-page-btn.active { background: #4fc3f7; color: #0f172a; border-color: #4fc3f7; }
+html.dark .cp-share-feedback-msg { background: #334155; }
