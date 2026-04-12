@@ -183,6 +183,7 @@ interface DetailPanelProps {
 
 function DetailPanel({ node, onClose }: DetailPanelProps) {
   const [pos, setPos] = useState({ x: 16, y: 16 });
+  const { theme } = useTheme();
   const cardDragRef = useRef<{
     startX: number;
     startY: number;
@@ -217,8 +218,6 @@ function DetailPanel({ node, onClose }: DetailPanelProps) {
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
   }
-
-  const { theme } = useTheme();
 
   if (!node) return null;
   const isCenter = node.id === CENTER_NODE_ID;
