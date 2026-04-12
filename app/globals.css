@@ -18192,9 +18192,15 @@ html.dark .cp-fin-index-tab:hover {
 
 /* ── AI Transcript card ── */
 .cp-pec-ai-card {
+  position: relative;
   border-color: #818cf820;
   background: linear-gradient(160deg, #f8f9ff 0%, #ffffff 60%);
   border-left: 4px solid #6366f1;
+}
+.cp-pec-ai-download {
+  position: absolute;
+  top: 16px;
+  right: 20px;
 }
 .cp-pec-pec-card {
   border-left: 4px solid #2563eb;
