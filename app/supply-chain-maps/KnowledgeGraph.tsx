@@ -3,6 +3,7 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTheme } from '@/app/contexts/ThemeContext';
 import { TC_TIER1_SUPPLIERS, TC_TIER2_SUPPLIERS, TC_CENTER_NODE } from '@/app/data/tcSupplierData';
 import { TC_CUSTOMERS } from '@/app/data/tcCustomerData';
 import { TC_COMPETITORS } from '@/app/data/tcCompetitorData';
@@ -526,6 +527,9 @@ function FilterRow({ label, options, selected, onChange, expanded, onToggleExpan
 
 export default function KnowledgeGraph() {
   const router = useRouter();
+  const { theme } = useTheme();
+  const centerFill = theme === 'dark' ? '#1e293b' : '#1a2332';
+  const centerStroke = '#334155';
   const [query, setQuery] = useState('');
   const [filterIndustries, setFilterIndustries] = useState<string[]>([]);
   const [filterSegments, setFilterSegments] = useState<string[]>([]);
@@ -819,8 +823,8 @@ export default function KnowledgeGraph() {
                       <title>{n.name} ({n.ticker}) — {n.country} | {n.industry} | {n.segment}</title>
                       <rect
                         x={rx} y={ry} width={n.w} height={n.h} rx={4}
-                        fill={isCenter ? '#1a2332' : c.fill}
-                        stroke={isSelected ? '#f59e0b' : c.stroke}
+                        fill={isCenter ? centerFill : c.fill}
+                        stroke={isSelected ? '#f59e0b' : isCenter ? centerStroke : c.stroke}
                         strokeWidth={isSelected ? 2.5 : 1.5}
                         filter={isSelected ? 'url(#node-glow)' : undefined}
                       />

@@ -4978,8 +4978,8 @@ input, select { font-family: var(--font); }
   filter: drop-shadow(0 2px 12px rgba(79,195,247,0.32)) !important;
 }
 .rmap-node-rect--center {
-  fill: var(--c-dark);
-  stroke: var(--c-dark);
+  fill: #1a2332;
+  stroke: #334155;
 }
 .rmap-node-rect--center.rmap-node-rect--selected {
   stroke: var(--c-accent) !important;
@@ -19900,5 +19900,130 @@ html.dark .about-site-stat-label {
 }
 html.dark .about-site-cta-section {
   background: linear-gradient(135deg, #1a2332 0%, #1e3a6e 100%);
+}
+
+/* ===== LIGHT MODE — DATA EXPLORE CATEGORY HERO ===== */
+html:not(.dark) .de-cat-hero {
+  background: linear-gradient(135deg, #f0f7ff 0%, #e8f3fc 100%);
+  border-bottom: 1px solid var(--c-border);
+}
+html:not(.dark) .de-back-btn {
+  color: var(--c-text-3);
+}
+html:not(.dark) .de-back-btn:hover {
+  color: var(--c-text);
+}
+html:not(.dark) .de-cat-hero .section-eyebrow {
+  color: #0284c7;
+}
+html:not(.dark) .de-cat-hero-title {
+  color: var(--c-text);
+}
+html:not(.dark) .de-cat-hero-desc {
+  color: var(--c-text-2);
+}
+html:not(.dark) .de-cat-stat {
+  color: var(--c-text-3);
+}
+html:not(.dark) .de-cat-stat-divider {
+  color: var(--c-border-2);
+}
+
+/* ===== DARK MODE — DATA EXPLORE CATEGORY HERO (restore original) ===== */
+html.dark .de-cat-hero {
+  background: #1a2332;
+  border-bottom: none;
+}
+html.dark .de-back-btn {
+  color: rgba(255,255,255,0.5);
+}
+html.dark .de-back-btn:hover {
+  color: rgba(255,255,255,0.85);
+}
+html.dark .de-cat-hero-title {
+  color: #ffffff;
+}
+html.dark .de-cat-hero-desc {
+  color: rgba(255,255,255,0.62);
+}
+html.dark .de-cat-stat {
+  color: rgba(255,255,255,0.6);
+}
+html.dark .de-cat-stat-divider {
+  color: rgba(255,255,255,0.25);
+}
+
+/* ===== LIGHT MODE — MARKET DATA LANDING HERO ===== */
+html:not(.dark) .md-landing-hero {
+  background: linear-gradient(135deg, #f0f7ff 0%, #e8f3fc 100%);
+  border-bottom: 1px solid var(--c-border);
+}
+html:not(.dark) .md-landing-hero .section-eyebrow {
+  color: #0284c7;
+}
+html:not(.dark) .md-landing-title {
+  color: var(--c-text);
+}
+html:not(.dark) .md-landing-sub {
+  color: var(--c-text-2);
+}
+html:not(.dark) .md-search-wrap {
+  background: var(--c-white);
+  border-color: var(--c-border-2);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+html:not(.dark) .md-search-wrap:focus-within {
+  background: var(--c-white);
+  border-color: #0284c7;
+  box-shadow: 0 0 0 2px rgba(2,132,199,0.12);
+}
+html:not(.dark) .md-search-icon {
+  color: var(--c-text-3);
+}
+html:not(.dark) .md-search-input {
+  color: var(--c-text);
+}
+html:not(.dark) .md-search-input::placeholder {
+  color: var(--c-text-4);
+}
+
+/* ===== DARK MODE — MARKET DATA LANDING HERO (restore original) ===== */
+html.dark .md-landing-hero {
+  background: linear-gradient(135deg, #1a2332 0%, #0f172a 100%);
+  border-bottom: none;
+}
+html.dark .md-landing-hero .section-eyebrow {
+  color: rgba(79,195,247,0.9);
+}
+html.dark .md-landing-title {
+  color: #ffffff;
+}
+html.dark .md-landing-sub {
+  color: rgba(255,255,255,0.65);
+}
+html.dark .md-search-wrap {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.18);
+  box-shadow: none;
+}
+html.dark .md-search-wrap:focus-within {
+  background: rgba(255,255,255,0.12);
+  border-color: var(--c-accent);
+  box-shadow: none;
+}
+html.dark .md-search-icon {
+  color: rgba(255,255,255,0.5);
+}
+html.dark .md-search-input {
+  color: #ffffff;
+}
+html.dark .md-search-input::placeholder {
+  color: rgba(255,255,255,0.4);
+}
+
+/* ===== DARK MODE — SUPPLY CHAIN / RMAP CENTER NODE ===== */
+html.dark .rmap-node-rect--center {
+  fill: #1e293b;
+  stroke: #334155;
 }
 

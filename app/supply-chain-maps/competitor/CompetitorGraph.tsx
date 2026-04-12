@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { useTheme } from '@/app/contexts/ThemeContext';
 import {
   TC_COMPETITOR_CENTER,
   TC_COMPETITORS,
@@ -217,9 +218,11 @@ function DetailPanel({ node, onClose }: DetailPanelProps) {
     window.addEventListener('mouseup', onUp);
   }
 
+  const { theme } = useTheme();
+
   if (!node) return null;
   const isCenter = node.id === CENTER_NODE_ID;
-  const badgeColor = isCenter ? '#1a2332' : NODE_STRIP_COLOR;
+  const badgeColor = isCenter ? (theme === 'dark' ? '#1e293b' : '#1a2332') : NODE_STRIP_COLOR;
   return (
     <div className="rmap-node-info-card" style={{ left: pos.x, top: pos.y }}>
       <div className="rmap-node-info-card-header" onMouseDown={handleDragMouseDown}>
