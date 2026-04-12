@@ -16332,7 +16332,7 @@ a.fd-hint-btn {
 }
 .is-cta-btn--primary {
   background: #fff;
-  color: var(--c-dark);
+  color: #1a2332;
 }
 .is-cta-btn--primary:hover {
   background: #e2e8f0;
@@ -17043,6 +17043,7 @@ a.fd-hint-btn {
 .mrmap-scenario-card {
   display: flex;
   align-items: center;
+  flex: 1;
   gap: 14px;
   padding: 16px 18px;
   background: var(--c-bg);
@@ -17766,6 +17767,8 @@ html.dark .cp-fin-index-tab:hover {
 /* ===== MY RMAP CARD UPDATES ===== */
 .mrmap-scenario-card-wrap {
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 .mrmap-scenario-share-btn {
   position: absolute;
@@ -19140,8 +19143,8 @@ html.dark .fin-stmt-td-item {
   background: #1a2332;
   color: var(--c-text-2);
 }
-html.dark .fin-stmt-simple-table .fin-stmt-th-item {
-  background: #1e293b;
+html.dark .fin-stmt-th-item {
+  background: #1e293b !important;
 }
 html.dark .fin-stmt-simple-table .fin-stmt-td-section,
 html.dark .fin-stmt-simple-table .fin-stmt-section-row td {
@@ -19327,7 +19330,7 @@ html.dark .market-tabs-arrow { background: #1e293b; border-color: #334155; color
 html.dark .week-cell { border-color: #334155; background: #1e293b; }
 html.dark .week-cell-head { background: #0f172a; border-color: #334155; }
 html.dark .week-cell.today .week-cell-head { background: #1d4ed8; color: #fff; border-bottom-color: #1d4ed8; }
-html.dark .cell-co-tooltip { background: #334155; }
+html.dark .cell-co-tooltip { background: #334155; color: #f1f5f9; }
 html.dark .cell-co-tooltip::after { border-top-color: #334155; }
 html.dark .ec-event-card { background: #1e293b; border-color: #334155; }
 html.dark .ec-coming-soon { background: #1e293b; border-color: #334155; }
@@ -19354,6 +19357,10 @@ html.dark .is-howitworks-section { background: #1e293b; }
 html.dark .is-section { background: #1e293b; }
 html.dark .is-cap-card { background: #0f172a; border-color: #334155; }
 html.dark .is-preview-section { background: #0f172a; }
+
+/* ── RMAP / KnowledgeGraph ── */
+html.dark .kg-search-btn { background: #334155; color: #f1f5f9; }
+html.dark .kg-search-btn:hover { background: #475569; }
 
 /* ── Global shared interactive-state fixes (buttons using background: var(--c-dark)) ── */
 html.dark .search-category-btn:hover,
