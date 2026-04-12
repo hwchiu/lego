@@ -43,20 +43,6 @@ function DownloadIcon() {
   );
 }
 
-function ExternalLinkIcon() {
-  return (
-    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
-      <path
-        d="M6 2H2.5A1.5 1.5 0 001 3.5v8A1.5 1.5 0 002.5 13h8A1.5 1.5 0 0012 11.5V8M8 1h5v5M13 1L6.5 7.5"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -617,7 +603,46 @@ interface PecDetailProps {
   keyword: string;
 }
 
+function buildPecMarkdown(card: PecRecord): string {
+  const lines: string[] = [
+    `# ${card.title}`,
+    '',
+    `**Date:** ${card.date}`,
+    `**Company:** ${card.companyName}`,
+    '',
+    '---',
+    '',
+  ];
+  for (const section of card.sections) {
+    lines.push(`## ${section.heading}`);
+    lines.push('');
+    for (const bullet of section.bullets) {
+      lines.push(`- ${bullet}`);
+    }
+    lines.push('');
+  }
+  if (card.tags.length > 0) {
+    lines.push('---', '', `**Tags:** ${card.tags.join(', ')}`);
+  }
+  return lines.join('\n');
+}
+
+function downloadMarkdown(filename: string, content: string) {
+  const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 function PecDetail({ card, keyword }: PecDetailProps) {
+  function handleDownload() {
+    const filename = `${card.symbol}-${card.year}-${card.quarter}-pre-earning-call.md`;
+    downloadMarkdown(filename, buildPecMarkdown(card));
+  }
+
   return (
     <article className="cp-pec-card cp-pec-pec-card">
       <div className="cp-pec-card-header">
@@ -629,19 +654,9 @@ function PecDetail({ card, keyword }: PecDetailProps) {
           </div>
         </div>
         <div className="cp-pec-card-actions">
-          <button className="cp-pec-card-action-btn" title="Download PDF" aria-label="Download PDF">
+          <button className="cp-pec-card-action-btn" title="Download Markdown" aria-label="Download Markdown" onClick={handleDownload}>
             <DownloadIcon />
           </button>
-          <a
-            className="cp-pec-card-action-btn"
-            href="#"
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Open source"
-            aria-label="Open source"
-          >
-            <ExternalLinkIcon />
-          </a>
         </div>
       </div>
 

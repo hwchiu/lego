@@ -34,6 +34,15 @@ function FilterIcon() {
   );
 }
 
+function DownloadIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" width="15" height="15" aria-hidden="true">
+      <path d="M8 2v8M5 7l3 3 3-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2 12h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 interface AiTranscriptBlock {
@@ -384,6 +393,55 @@ function highlightText(text: string, keyword: string): React.ReactNode {
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
+function buildAiMarkdown(card: AiTranscript): string {
+  const lines: string[] = [
+    `# ${card.title}`,
+    '',
+    `**Date:** ${card.date}`,
+    `**Company:** ${card.companyName}`,
+    `**Model:** ${card.model}`,
+    `**Generated:** ${card.generatedAt}`,
+    `**Sentiment:** ${card.sentiment} (${card.sentimentScore}/100)`,
+    '',
+    '---',
+    '',
+  ];
+  for (const block of card.blocks) {
+    lines.push(`## ${block.heading}`);
+    lines.push('');
+    lines.push(block.content);
+    lines.push('');
+  }
+  if (card.keyQuotes.length > 0) {
+    lines.push('## Key Quotes', '');
+    for (const quote of card.keyQuotes) {
+      lines.push(`- ${quote}`);
+    }
+    lines.push('');
+  }
+  if (card.risks.length > 0) {
+    lines.push('## Key Risks', '');
+    for (const risk of card.risks) {
+      lines.push(`- ${risk}`);
+    }
+    lines.push('');
+  }
+  if (card.tags.length > 0) {
+    lines.push('---', '', `**Tags:** ${card.tags.join(', ')}`);
+  }
+  return lines.join('\n');
+}
+
+function downloadMarkdown(filename: string, content: string) {
+  const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 interface AiListItemProps {
   card: AiTranscript;
   isActive: boolean;
@@ -417,6 +475,11 @@ interface AiTranscriptDetailProps {
 }
 
 function AiTranscriptDetail({ card, keyword, expandedQuotes, onToggleQuotes }: AiTranscriptDetailProps) {
+  function handleDownload() {
+    const filename = `${card.symbol}-${card.year}-${card.quarter}-ai-transcript.md`;
+    downloadMarkdown(filename, buildAiMarkdown(card));
+  }
+
   return (
     <article className="cp-pec-card cp-pec-ai-card">
       {/* Header */}
@@ -430,17 +493,29 @@ function AiTranscriptDetail({ card, keyword, expandedQuotes, onToggleQuotes }: A
             </div>
           </div>
         </div>
-        <div className="cp-pec-ai-sentiment">
-          <span className={`cp-pec-ai-sentiment-badge cp-pec-ai-sentiment--${card.sentiment.toLowerCase()}`}>
-            {card.sentiment}
-          </span>
-          <div className="cp-pec-ai-score-bar">
-            <div
-              className="cp-pec-ai-score-fill"
-              style={{ width: `${card.sentimentScore}%` }}
-            />
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+          <div className="cp-pec-card-actions">
+            <button
+              className="cp-pec-card-action-btn"
+              title="Download Markdown"
+              aria-label="Download Markdown"
+              onClick={handleDownload}
+            >
+              <DownloadIcon />
+            </button>
           </div>
-          <span className="cp-pec-ai-score-label">{card.sentimentScore}/100</span>
+          <div className="cp-pec-ai-sentiment">
+            <span className={`cp-pec-ai-sentiment-badge cp-pec-ai-sentiment--${card.sentiment.toLowerCase()}`}>
+              {card.sentiment}
+            </span>
+            <div className="cp-pec-ai-score-bar">
+              <div
+                className="cp-pec-ai-score-fill"
+                style={{ width: `${card.sentimentScore}%` }}
+              />
+            </div>
+            <span className="cp-pec-ai-score-label">{card.sentimentScore}/100</span>
+          </div>
         </div>
       </div>
 
