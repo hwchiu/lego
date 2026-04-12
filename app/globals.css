@@ -3892,7 +3892,7 @@ input, select { font-family: var(--font); }
 .cp-card-title {
   font-size: 16px;
   font-weight: 600;
-  color: #000000;
+  color: var(--c-text);
   text-align: center;
   margin-bottom: 12px;
   display: flex;
@@ -19374,3 +19374,224 @@ html.dark .pr-gallery-count { background: #334155; color: #f1f5f9; }
 html.dark .pr-list-rel-tab.active { background: #4fc3f7; color: #0f172a; border-color: #4fc3f7; }
 html.dark .pr-page-btn.active { background: #4fc3f7; color: #0f172a; border-color: #4fc3f7; }
 html.dark .cp-share-feedback-msg { background: #334155; }
+
+/* ======================================================================
+   DARK MODE — Hardcoded-color fixes (auto-audit 2026-04)
+   ====================================================================== */
+
+/* ── Category A: Text visibility (dark text → invisible on dark bg) ── */
+
+/* M&A heatmap text */
+html.dark .ma-heat-sector { color: var(--c-text); }
+html.dark .ma-heat-deals  { color: var(--c-text-3); }
+html.dark .ma-heat-value  { color: var(--c-text); }
+
+/* RMAP zoom controls */
+html.dark .rmap-zoom-btn              { color: var(--c-text-3); }
+html.dark .rmap-zoom-btn--graph-reset { color: var(--c-text-3); }
+
+/* RMAP company full-name subtitle */
+html.dark .rmap-company-header-full { color: var(--c-text-3); }
+
+/* Earnings — next-date box (dark teal text on light-blue bg) */
+html.dark .earn-next-date-box {
+  background: linear-gradient(135deg, #1e293b 0%, #0f2030 100%);
+  border-color: #334155;
+}
+html.dark .earn-next-date-label    { color: #7dd3fc; }
+html.dark .earn-next-date-value    { color: #f1f5f9; }
+html.dark .earn-next-date-quarter  { color: #7dd3fc; }
+html.dark .earn-next-date-est      { color: #7dd3fc; }
+html.dark .earn-next-date-est strong { color: #f1f5f9; }
+
+/* ── Category B: Light panel / section backgrounds ── */
+
+/* Company Profile landing */
+html.dark .cp-landing { background: var(--c-bg); }
+
+/* Collaboration Playground board */
+html.dark .pg-board-wrap { background: var(--c-bg); }
+
+/* User Manual scenarios section */
+html.dark .um-section--scenarios { background: #1e293b; }
+
+/* Market Data Financial Company profile — emp-* elements */
+html.dark .emp-magazine           { background: #1e293b; }
+html.dark .emp-page-footer        { background: #1e293b; border-color: var(--c-border); }
+html.dark .emp-rate-row           { background: #1e293b; }
+html.dark .emp-policy-item        { background: #1e293b; border-color: var(--c-border); }
+html.dark .emp-supply-risk-item   { background: #1e293b; border-color: var(--c-border); }
+html.dark .emp-segment-card       { background: #1e293b; border-color: var(--c-border); }
+html.dark .emp-supplier-item      { background: #1e293b; border-color: var(--c-border); }
+html.dark .emp-capability-item    { background: #1e293b; border-color: var(--c-border); }
+html.dark .emp-cover-toc-item     { background: #1e293b; border-color: var(--c-border); }
+
+/* My RMAP build result panel */
+html.dark .mrmap-build-result        { background: #1e293b; border-color: #334155; }
+html.dark .mrmap-build-result-header { color: #7dd3fc; }
+
+/* Geographic map background */
+html.dark .geo-map-wrap { background: #1a2e3b; }
+
+/* Financial Data company-switcher hover */
+html.dark .fd-company-switcher-item:hover { background: #334155; }
+
+/* Company Profile tag hover */
+html.dark .cp-tag--link:hover { background: #334155; border-color: #475569; }
+
+/* Earnings forecast bar */
+html.dark .earn-forecast-range-bar { background: #334155; }
+
+/* Data Explore tag "more" button */
+html.dark .de-tag-more-btn { background: #334155; color: var(--c-text-3); }
+
+/* ── Category C: Colored badge / tag backgrounds ── */
+
+/* Blue badges / tags */
+html.dark .news-tag {
+  background: #1e3a5f;
+  color: #93c5fd;
+  border-color: #1e3a5f;
+}
+html.dark .news-tag:hover { background: #1e3a5f; }
+html.dark .news-action-btn--active {
+  background: #1e3a5f;
+  color: #93c5fd;
+  border-color: #1e40af;
+}
+html.dark .cp-news-personalized-badge {
+  background: #1e3a5f;
+  color: #93c5fd;
+}
+html.dark .cp-ir-category-badge--earnings {
+  background: #1e3a5f;
+  color: #93c5fd;
+  border-color: #1e3a5f;
+}
+html.dark .cp-ir-doc-badge--html {
+  background: #1e3a5f;
+  color: #93c5fd;
+}
+html.dark .de-map-panel-pin-icon {
+  background: #1e3a5f;
+  color: #93c5fd;
+}
+html.dark .cwl-ai-source-tag {
+  background: #1e3a5f;
+  color: #93c5fd;
+}
+html.dark .cwl-symbol-relevance {
+  background: #1e3a5f;
+  color: #93c5fd;
+}
+html.dark .pg-mention-tag {
+  background: #1e3a5f;
+  color: #93c5fd;
+}
+html.dark .pr-tag--company {
+  background: #1e3a5f;
+  color: #93c5fd;
+}
+html.dark .pr-tag--symbol {
+  background: #1e3a5f;
+  color: #93c5fd;
+}
+
+/* Green badges / tags */
+html.dark .cp-ir-category-badge--product {
+  background: #14532d;
+  color: #86efac;
+}
+html.dark .cp-ir-doc-badge--xlsx {
+  background: #14532d;
+  color: #86efac;
+}
+html.dark .cwl-ai-kpi-chip {
+  background: #14532d;
+  color: #86efac;
+}
+html.dark .pr-tag--topic {
+  background: #14532d;
+  color: #86efac;
+}
+
+/* Red states / badges */
+html.dark .cp-ir-doc-badge--pdf {
+  background: #450a0a;
+  color: #fca5a5;
+}
+html.dark .pg-card-action-btn--delete:hover {
+  background: #450a0a;
+}
+html.dark .pg-comment-btn.delete:hover {
+  background: #450a0a;
+  border-color: #7f1d1d;
+}
+
+/* Purple / violet badges */
+html.dark .earn-press-quarter-badge {
+  background: #2e1065;
+  color: #d8b4fe;
+}
+html.dark .pg-task-slack-ref {
+  background: #2e1065;
+  color: #c4b5fd;
+}
+html.dark .rmap-detail-tag--clickable:hover {
+  background: #1e1b4b;
+  border-color: #4338ca;
+  color: #a5b4fc;
+}
+html.dark .pr-tag--industry {
+  background: #2e1065;
+  color: #d8b4fe;
+}
+html.dark .de-tax-card-country {
+  background: rgba(124, 58, 237, 0.2);
+  color: #c4b5fd;
+}
+
+/* Amber / orange badges */
+html.dark .cp-ir-category-badge--corporate {
+  background: #451a03;
+  color: #fcd34d;
+}
+html.dark .earn-upcoming-badge {
+  background: #451a03;
+  color: #fcd34d;
+}
+html.dark .cp-favorite-btn:hover {
+  background: #451a03;
+  border-color: #b45309;
+  color: #fcd34d;
+}
+
+/* Teal / cyan hover */
+html.dark .corp-event-link:hover {
+  background: #0c2233;
+  color: #7dd3fc;
+}
+
+/* Indigo active tags */
+html.dark .rmap-industry-tag--more:hover {
+  background: #1e3a5f;
+  border-color: #3b82f6;
+  color: #93c5fd;
+}
+
+/* ── Category D: Miscellaneous borders / inputs ── */
+
+/* Toggle track */
+html.dark .wl-toggle-track { background: #475569; }
+
+/* Scenario / search box borders */
+html.dark .cp-scenario-btn  { border-color: #475569; }
+html.dark .cp-search-box    { border-color: #475569; }
+html.dark .cwl-search-bar   { border-color: #475569; }
+
+/* ec-card symbol link */
+html.dark .ec-card-symbol { color: var(--c-accent); }
+
+/* Earnings quality grade is green — lighten for dark bg */
+html.dark .earn-quality-grade { color: #4ade80; }
+

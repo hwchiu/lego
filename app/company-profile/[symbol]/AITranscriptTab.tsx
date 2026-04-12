@@ -517,6 +517,11 @@ function AiTranscriptDetail({ card, keyword, expandedQuotes, onToggleQuotes }: A
             <span className="cp-pec-ai-score-label">{card.sentimentScore}/100</span>
           </div>
         </div>
+        <div className="cp-pec-card-actions">
+          <button className="cp-pec-card-action-btn" title="Download PDF" aria-label="Download PDF">
+            <DownloadIcon />
+          </button>
+        </div>
       </div>
 
       {/* AI analysis blocks */}
