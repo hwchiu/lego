@@ -21,7 +21,7 @@ import PreEarningCallTab from './PreEarningCallTab';
 import IRTranscriptTab from './IRTranscriptTab';
 import AITranscriptTab from './AITranscriptTab';
 import tvConfigMd from '@/content/tradingview.md';
-import { useTheme } from '@/app/contexts/ThemeContext';
+import ThemeToggleButton from '@/app/components/ThemeToggleButton';
 
 const FinancialIndicesNivoChart = dynamic(
   () => import('./InvestmentNivoCharts').then((m) => m.FinancialIndicesNivoChart),
@@ -352,15 +352,6 @@ function RefreshIcon() {
   );
 }
 
-function SettingsIcon() {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" width="16" height="16" aria-hidden="true">
-      <circle cx="8" cy="8" r="2" stroke="currentColor" strokeWidth="1.3" />
-      <path d="M8 2V4M8 12V14M2 8H4M12 8H14M3.5 3.5L5 5M11 11L12.5 12.5M3.5 12.5L5 11M11 5L12.5 3.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 function StarIcon({ filled }: { filled: boolean }) {
   return (
     <svg viewBox="0 0 16 16" fill="none" width="16" height="16" aria-hidden="true">
@@ -382,7 +373,6 @@ interface CompanyProfileContentProps {
 }
 
 export default function CompanyProfileContent({ symbol }: CompanyProfileContentProps) {
-  const { toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState<Tab>('FIN. Summary');
   const [activeFinIndex, setActiveFinIndex] = useState<string>('Revenue');
   const [isFavorite, setIsFavorite] = useState(false);
@@ -719,13 +709,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                     >
                       <RefreshIcon />
                     </button>
-                    <button
-                      className="cp-action-icon-btn"
-                      title="Toggle Dark / Light mode"
-                      onClick={toggleTheme}
-                    >
-                      <SettingsIcon />
-                    </button>
+                    <ThemeToggleButton className="cp-action-icon-btn" />
                   </div>
                 </div>
 
