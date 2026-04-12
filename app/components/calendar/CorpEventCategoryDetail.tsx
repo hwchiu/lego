@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useCallback } from 'react';
 import type { CorpEvent } from '@/app/data/corpEvents';
 import { monthShortToFull } from '@/app/lib/calendarUtils';
 
@@ -27,6 +28,21 @@ function SubscribeIcon() {
   );
 }
 
+function SubscribedIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+      <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M3.5 6l1.8 1.8 3.2-3.6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+async function subscribeToEvent(event: CorpEvent): Promise<void> {
+  // TODO: implement subscription API call
+  await Promise.resolve();
+  void event;
+}
+
 interface CorpEventCategoryDetailProps {
   categoryLabel: string;
   events: CorpEvent[];
@@ -40,6 +56,19 @@ export default function CorpEventCategoryDetail({
 }: CorpEventCategoryDetailProps) {
   const displayDate = formatDateLabel(selectedDateLabel);
   const count = events.length;
+  const [subscribedIndices, setSubscribedIndices] = useState<Set<number>>(new Set());
+  const [pendingIndices, setPendingIndices] = useState<Set<number>>(new Set());
+
+  const handleSubscribe = useCallback(async (event: CorpEvent, index: number) => {
+    if (subscribedIndices.has(index) || pendingIndices.has(index)) return;
+    setPendingIndices(prev => new Set(prev).add(index));
+    try {
+      await subscribeToEvent(event);
+      setSubscribedIndices(prev => new Set(prev).add(index));
+    } finally {
+      setPendingIndices(prev => { const s = new Set(prev); s.delete(index); return s; });
+    }
+  }, [subscribedIndices, pendingIndices]);
 
   return (
     <div className="detail-card">
@@ -71,53 +100,63 @@ export default function CorpEventCategoryDetail({
               </tr>
             </thead>
             <tbody>
-              {events.map((e, i) => (
-                <tr key={i}>
-                  <td className="td-symbol corp-event-company">{e.company}</td>
-                  <td className="corp-event-desc">{e.description}</td>
-                  <td className="corp-event-date">{e.eventDate}</td>
-                  <td>
-                    <span className="ec-type-badge">{e.eventType}</span>
-                  </td>
-                  <td className="td-center">
-                    {e.webcastLink ? (
-                      <a
-                        href={e.webcastLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="corp-event-link"
-                        title="Webcast"
+              {events.map((e, i) => {
+                const isSubscribed = subscribedIndices.has(i);
+                const isPending = pendingIndices.has(i);
+                return (
+                  <tr key={i}>
+                    <td className="td-symbol corp-event-company">{e.company}</td>
+                    <td className="corp-event-desc">{e.description}</td>
+                    <td className="corp-event-date">{e.eventDate}</td>
+                    <td>
+                      <span className="ec-type-badge">{e.eventType}</span>
+                    </td>
+                    <td className="td-center">
+                      {e.webcastLink ? (
+                        <a
+                          href={e.webcastLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="corp-event-link"
+                          title="Webcast"
+                        >
+                          <ExternalLinkIcon />
+                          <span>Webcast</span>
+                        </a>
+                      ) : (
+                        <span className="td-na">—</span>
+                      )}
+                    </td>
+                    <td className="td-center">
+                      {e.irLink ? (
+                        <a
+                          href={e.irLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="corp-event-link"
+                          title="IR Page"
+                        >
+                          <ExternalLinkIcon />
+                          <span>IR</span>
+                        </a>
+                      ) : (
+                        <span className="td-na">—</span>
+                      )}
+                    </td>
+                    <td className="td-center">
+                      <button
+                        className={`corp-event-subscribe-btn${isSubscribed ? ' subscribed' : ''}`}
+                        title={isSubscribed ? 'Subscribed' : 'Subscribe to this event'}
+                        onClick={() => handleSubscribe(e, i)}
+                        disabled={isPending || isSubscribed}
+                        aria-pressed={isSubscribed}
                       >
-                        <ExternalLinkIcon />
-                        <span>Webcast</span>
-                      </a>
-                    ) : (
-                      <span className="td-na">—</span>
-                    )}
-                  </td>
-                  <td className="td-center">
-                    {e.irLink ? (
-                      <a
-                        href={e.irLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="corp-event-link"
-                        title="IR Page"
-                      >
-                        <ExternalLinkIcon />
-                        <span>IR</span>
-                      </a>
-                    ) : (
-                      <span className="td-na">—</span>
-                    )}
-                  </td>
-                  <td className="td-center">
-                    <button className="corp-event-subscribe-btn" title="Subscribe to this event">
-                      <SubscribeIcon />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                        {isSubscribed ? <SubscribedIcon /> : <SubscribeIcon />}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

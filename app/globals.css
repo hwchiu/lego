@@ -13884,7 +13884,7 @@ input, select { font-family: var(--font); }
 }
 .topnav-notif-tab.active .topnav-notif-tab-count {
   background: var(--c-dark);
-  color: #fff;
+  color: var(--c-white);
 }
 /* List */
 .topnav-notif-list {
@@ -15479,6 +15479,16 @@ a.fd-hint-btn {
   background: var(--c-accent);
   color: var(--c-white);
   border-color: var(--c-accent);
+}
+.corp-event-subscribe-btn.subscribed {
+  background: var(--c-pos);
+  color: var(--c-white);
+  border-color: var(--c-pos);
+  cursor: default;
+}
+.corp-event-subscribe-btn:disabled:not(.subscribed) {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 .td-center-h { text-align: center !important; }
 .td-center { text-align: center; }
@@ -19429,6 +19439,7 @@ html.dark .pg-board-wrap { background: var(--c-bg); }
 html.dark .um-section--scenarios { background: #1e293b; }
 
 /* Market Data Financial Company profile — emp-* elements */
+html.dark .emp-reader-toolbar     { background: #1e293b; }
 html.dark .emp-magazine           { background: #1e293b; }
 html.dark .emp-page-footer        { background: #1e293b; border-color: var(--c-border); }
 html.dark .emp-rate-row           { background: #1e293b; }
