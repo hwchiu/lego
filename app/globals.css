@@ -3892,7 +3892,7 @@ input, select { font-family: var(--font); }
 .cp-card-title {
   font-size: 16px;
   font-weight: 600;
-  color: #000000;
+  color: var(--c-text);
   text-align: center;
   margin-bottom: 12px;
   display: flex;
