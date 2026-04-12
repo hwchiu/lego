@@ -493,17 +493,7 @@ function AiTranscriptDetail({ card, keyword, expandedQuotes, onToggleQuotes }: A
             </div>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-          <div className="cp-pec-card-actions">
-            <button
-              className="cp-pec-card-action-btn"
-              title="Download Markdown"
-              aria-label="Download Markdown"
-              onClick={handleDownload}
-            >
-              <DownloadIcon />
-            </button>
-          </div>
+        <div>
           <div className="cp-pec-ai-sentiment">
             <span className={`cp-pec-ai-sentiment-badge cp-pec-ai-sentiment--${card.sentiment.toLowerCase()}`}>
               {card.sentiment}
@@ -517,6 +507,18 @@ function AiTranscriptDetail({ card, keyword, expandedQuotes, onToggleQuotes }: A
             <span className="cp-pec-ai-score-label">{card.sentimentScore}/100</span>
           </div>
         </div>
+      </div>
+
+      {/* Download button — top-right corner */}
+      <div className="cp-pec-card-actions cp-pec-ai-download">
+        <button
+          className="cp-pec-card-action-btn"
+          title="Download Markdown"
+          aria-label="Download Markdown"
+          onClick={handleDownload}
+        >
+          <DownloadIcon />
+        </button>
       </div>
 
       {/* AI analysis blocks */}
