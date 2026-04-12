@@ -69,7 +69,7 @@ function NotifTypeIcon({ type }: { type: NotificationType }) {
               strokeWidth="1.3"
               strokeLinejoin="round"
             />
-            <circle cx="10" cy="4" r="1" fill="currentColor" />
+            <circle cx="10" cy="4" r="1" stroke="currentColor" strokeWidth="1.2" />
           </svg>
         </span>
       );
