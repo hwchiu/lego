@@ -19867,7 +19867,7 @@ html.dark .de-hero-search-icon {
 
 /* ===== LIGHT MODE — ABOUT PAGE DARK SECTIONS ===== */
 html:not(.dark) .about-site-stats-strip {
-  background: #f8fafc;
+  background: var(--c-bg);
   border-top: 1px solid var(--c-border);
   border-bottom: 1px solid var(--c-border);
 }
@@ -19875,7 +19875,7 @@ html:not(.dark) .about-site-stat-item {
   border-right-color: var(--c-border);
 }
 html:not(.dark) .about-site-stat-value {
-  color: #0f172a;
+  color: var(--c-text);
 }
 html:not(.dark) .about-site-stat-label {
   color: var(--c-text-3);
