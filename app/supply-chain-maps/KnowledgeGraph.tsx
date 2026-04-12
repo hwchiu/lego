@@ -529,7 +529,6 @@ export default function KnowledgeGraph() {
   const router = useRouter();
   const { theme } = useTheme();
   const centerFill = theme === 'dark' ? '#1e293b' : '#1a2332';
-  const centerStroke = '#334155';
   const [query, setQuery] = useState('');
   const [filterIndustries, setFilterIndustries] = useState<string[]>([]);
   const [filterSegments, setFilterSegments] = useState<string[]>([]);
@@ -824,7 +823,7 @@ export default function KnowledgeGraph() {
                       <rect
                         x={rx} y={ry} width={n.w} height={n.h} rx={4}
                         fill={isCenter ? centerFill : c.fill}
-                        stroke={isSelected ? '#f59e0b' : isCenter ? centerStroke : c.stroke}
+                        stroke={isSelected ? '#f59e0b' : isCenter ? '#334155' : c.stroke}
                         strokeWidth={isSelected ? 2.5 : 1.5}
                         filter={isSelected ? 'url(#node-glow)' : undefined}
                       />
