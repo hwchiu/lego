@@ -405,7 +405,46 @@ interface TranscriptDetailProps {
   onToggleSection: (key: string) => void;
 }
 
+function buildIrtMarkdown(card: IrTranscriptCard): string {
+  const lines: string[] = [
+    `# ${card.title}`,
+    '',
+    `**Date:** ${card.date}`,
+    `**Company:** ${card.companyName}`,
+    '',
+    '---',
+    '',
+  ];
+  for (const section of card.sections) {
+    lines.push(`## ${section.heading}`);
+    lines.push('');
+    for (const bullet of section.bullets) {
+      lines.push(`- ${bullet}`);
+    }
+    lines.push('');
+  }
+  if (card.tags.length > 0) {
+    lines.push('---', '', `**Tags:** ${card.tags.join(', ')}`);
+  }
+  return lines.join('\n');
+}
+
+function downloadMarkdown(filename: string, content: string) {
+  const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 function TranscriptDetail({ card, keyword, expandedSections, onToggleSection }: TranscriptDetailProps) {
+  function handleDownload() {
+    const filename = `${card.symbol}-${card.year}-${card.quarter}-ir-transcript.md`;
+    downloadMarkdown(filename, buildIrtMarkdown(card));
+  }
+
   return (
     <article className="cp-pec-card cp-irt-card">
       {/* Header */}
@@ -417,26 +456,24 @@ function TranscriptDetail({ card, keyword, expandedSections, onToggleSection }: 
             <div className="cp-pec-card-date">{card.date}</div>
           </div>
         </div>
-        <div className="cp-irt-actions">
-          <a
-            href={card.fileUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cp-irt-btn cp-irt-btn--primary"
-            title="Download transcript"
+        <div className="cp-pec-card-actions">
+          <button
+            className="cp-pec-card-action-btn"
+            title="Download Markdown"
+            aria-label="Download Markdown"
+            onClick={handleDownload}
           >
             <DownloadIcon />
-            <span>Download</span>
-          </a>
+          </button>
           <a
             href={card.fileUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="cp-irt-btn cp-irt-btn--outline"
+            className="cp-pec-card-action-btn"
             title="Open source"
+            aria-label="Open source"
           >
             <ExternalLinkIcon />
-            <span>Source</span>
           </a>
         </div>
       </div>
