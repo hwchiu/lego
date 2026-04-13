@@ -155,7 +155,7 @@ export default function DataExplorePage() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <div className="de-hero-img-wrap">
                 <img
-                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=900&q=80"
+                  src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=900&q=80"
                   alt=""
                   className="de-hero-img"
                   aria-hidden="true"
