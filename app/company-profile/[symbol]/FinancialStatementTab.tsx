@@ -19,8 +19,8 @@ interface QuarterData {
   year: number;
   quarter: number;
   revenue: number;
-  seqGrowth: number | null;
-  yoyGrowth: number | null;
+  seqGrowth: string | null;
+  yoyGrowth: string | null;
   cogs: number;
   grossProfit: number;
   grossMargin: number;
@@ -42,8 +42,8 @@ interface AnnualData {
   label: string;
   year: number;
   revenue: number;
-  seqGrowth: number | null;
-  yoyGrowth: number | null;
+  seqGrowth: string | null;
+  yoyGrowth: string | null;
   cogs: number;
   grossProfit: number;
   grossMargin: number;
@@ -74,32 +74,21 @@ interface SimpleStatementData {
 }
 
 // ── Row definitions ────────────────────────────────────────────────────────────
+/**
+ * Row definition loaded from the data file's "Row Definitions" section.
+ * `val_unit` replaces the old hardcoded `format` field and follows the same
+ * FlatFinRecord val_unit vocabulary:
+ *   "Million" | "Billion" → monetary values (appended as unit suffix)
+ *   "Percent"             → percentage to 2 dp (e.g. margins)
+ *   "Growth"              → percentage change to 2 dp (sign carried in data)
+ *   "Dollar"              → dollar-denominated value (EPS)
+ *   "MarketCap"           → dollar value in billions
+ */
 interface RowDef {
   key: keyof QuarterData | keyof AnnualData;
   label: string;
-  format: 'money' | 'percent' | 'eps' | 'marketcap' | 'growth';
+  val_unit: string;
 }
-
-const ROW_DEFS: RowDef[] = [
-  { key: 'revenue',      label: 'Revenue ($M)',           format: 'money' },
-  { key: 'seqGrowth',   label: 'Sequential Growth (%)',   format: 'growth' },
-  { key: 'yoyGrowth',   label: 'YoY Growth (%)',          format: 'growth' },
-  { key: 'cogs',        label: 'COGS ($M)',               format: 'money' },
-  { key: 'grossProfit', label: 'Gross Profit ($M)',        format: 'money' },
-  { key: 'grossMargin', label: 'Gross Margin (%)',         format: 'percent' },
-  { key: 'opEx',        label: 'Operating Expense ($M)',  format: 'money' },
-  { key: 'rdExpense',   label: 'R&D Expense ($M)',         format: 'money' },
-  { key: 'sgaExpense',  label: 'SG&A Expense ($M)',        format: 'money' },
-  { key: 'opIncome',    label: 'Operating Income ($M)',   format: 'money' },
-  { key: 'opMargin',    label: 'Operating Margin (%)',    format: 'percent' },
-  { key: 'ebt',         label: 'EBT ($M)',                format: 'money' },
-  { key: 'ebtMargin',   label: 'EBT Margin (%)',          format: 'percent' },
-  { key: 'taxExpense',  label: 'Tax Expense ($M)',        format: 'money' },
-  { key: 'netIncome',   label: 'Net Income ($M)',         format: 'money' },
-  { key: 'netMargin',   label: 'Net Margin (%)',          format: 'percent' },
-  { key: 'eps',         label: 'Earnings per Share ($)',  format: 'eps' },
-  { key: 'marketCap',   label: 'Market Cap ($B)',         format: 'marketcap' },
-];
 
 const STATEMENT_ITEMS: { key: StatementType; label: string }[] = [
   { key: 'income',   label: 'Income Statement' },
@@ -225,20 +214,54 @@ function FinDataTable({ data }: { data: StatementData }) {
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
-function fmt(val: number | null, format: RowDef['format']): string {
-  if (val === null || val === undefined) return '—';
-  switch (format) {
-    case 'money':    return val.toLocaleString('en-US');
-    case 'percent':  return val.toFixed(2) + '%';
-    case 'growth': { const sign = val >= 0 ? '+' : ''; return sign + val.toFixed(2) + '%'; }
-    case 'eps':      return '$' + val.toFixed(2);
-    case 'marketcap':return '$' + val.toLocaleString('en-US') + 'B';
-    default:         return String(val);
+/**
+ * Formats a value using the val_unit from the data record.
+ *
+ *   "Percent"   → xx.xx% (margins; no sign prefix)
+ *   "Growth"    → xx.xx% (growth values; sign already carried in the string data)
+ *   "Million"   → localized number + "M"
+ *   "Billion"   → localized number + "B"
+ *   "Dollar"    → $xx.xx (EPS)
+ *   "MarketCap" → $localized_numberB
+ *
+ * `val` may be a pre-signed string (Growth) or a number (all other units).
+ */
+function fmt(val: number | string | null, valUnit: string): string {
+  if (val === null || val === undefined || val === '') return '—';
+  switch (valUnit) {
+    case 'Percent': {
+      const n = typeof val === 'string' ? parseFloat(val) : val;
+      return isNaN(n as number) ? String(val) : (n as number).toFixed(2) + '%';
+    }
+    case 'Growth': {
+      // val is a signed string like "+3.3" or "-1.4"; preserve the sign prefix
+      if (typeof val === 'string') {
+        const n = parseFloat(val);
+        if (isNaN(n)) return val + '%';
+        const sign = val.startsWith('+') ? '+' : '';
+        return sign + n.toFixed(2) + '%';
+      }
+      const sign = (val as number) >= 0 ? '+' : '';
+      return sign + (val as number).toFixed(2) + '%';
+    }
+    case 'Million':
+      return (typeof val === 'number' ? val.toLocaleString('en-US') : val) + 'M';
+    case 'Billion':
+      return (typeof val === 'number' ? val.toLocaleString('en-US') : val) + 'B';
+    case 'Dollar':
+      return '$' + (typeof val === 'number' ? val.toFixed(2) : val);
+    case 'MarketCap':
+      return '$' + (typeof val === 'number' ? val.toLocaleString('en-US') : val) + 'B';
+    default:
+      return String(val);
   }
 }
 
-function getCellClass(val: number | null, format: RowDef['format']): string {
-  if (format === 'growth' && val !== null) return val < 0 ? 'fin-stmt-neg' : '';
+function getCellClass(val: number | string | null, valUnit: string): string {
+  if (valUnit === 'Growth' && val !== null) {
+    const n = typeof val === 'string' ? parseFloat(val) : val;
+    return (n as number) < 0 ? 'fin-stmt-neg' : '';
+  }
   return '';
 }
 
@@ -267,6 +290,19 @@ function getAaplIncomeData() {
     );
   }
   return _aaplIncomeParsed;
+}
+
+/**
+ * Row definitions are stored in each data file's "Row Definitions" JSON section.
+ * Both TC and AAPL share the same QuarterData / AnnualData structure, so the same
+ * row def schema applies to both.  We load from the TC file as the canonical source.
+ */
+let _incomeRowDefs: RowDef[] | null = null;
+function getIncomeRowDefs(): RowDef[] {
+  if (!_incomeRowDefs) {
+    _incomeRowDefs = extractJsonBySection<RowDef[]>(tcFinStmtMd as string, 'Row Definitions');
+  }
+  return _incomeRowDefs;
 }
 
 const _aaplSimpleCache: Partial<Record<'balance' | 'cashflow' | 'segment', SimpleStatementData>> = {};
@@ -503,6 +539,12 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
     incomeEntry?.kind === 'income_structured' ? incomeEntry.data.quarterlyData : [];
   const allAnnualData: AnnualData[] =
     incomeEntry?.kind === 'income_structured' ? incomeEntry.data.annualData : [];
+
+  // Row definitions loaded from the data file (replaces the former hardcoded ROW_DEFS const)
+  const rowDefs = useMemo(
+    () => (incomeEntry?.kind === 'income_structured' ? getIncomeRowDefs() : []),
+    [incomeEntry],
+  );
 
   const availableYears = [...new Set(allQuarterlyData.map((q) => q.year))].sort((a, b) => a - b);
   const safeAvailableYears =
@@ -760,23 +802,23 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
                 )}
               </thead>
               <tbody>
-                {ROW_DEFS.map((row) => (
+                {rowDefs.map((row) => (
                   <tr key={row.key}>
                     <td className="fin-stmt-td-item">{row.label}</td>
                     {viewMode === 'quarterly'
                       ? visibleQuarters.map((q) => {
-                          const raw = q[row.key as keyof QuarterData] as number | null;
+                          const raw = q[row.key as keyof QuarterData] as number | string | null;
                           return (
-                            <td key={q.label} className={`td-num ${getCellClass(raw, row.format)}`}>
-                              {fmt(raw, row.format)}
+                            <td key={q.label} className={`td-num ${getCellClass(raw, row.val_unit)}`}>
+                              {fmt(raw, row.val_unit)}
                             </td>
                           );
                         })
                       : visibleAnnual.map((a) => {
-                          const raw = a[row.key as keyof AnnualData] as number | null;
+                          const raw = a[row.key as keyof AnnualData] as number | string | null;
                           return (
-                            <td key={a.label} className={`td-num ${getCellClass(raw, row.format)}`}>
-                              {fmt(raw, row.format)}
+                            <td key={a.label} className={`td-num ${getCellClass(raw, row.val_unit)}`}>
+                              {fmt(raw, row.val_unit)}
                             </td>
                           );
                         })}
