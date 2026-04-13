@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { resolveSymbolAlias } from '@/app/data/sp500';
-import { extractJson, extractJsonBySection } from '@/app/lib/parseContent';
+import { extractJsonBySection } from '@/app/lib/parseContent';
 import tcFinStmtMd from '@/content/tc-financial-statement.md';
 import aaplFinStmtMd from '@/content/apple-financial-statement.md';
 import { getStatement, getCompanies, flatToStatementData } from '@/app/data/financialData';
@@ -171,52 +171,76 @@ function isSectionRow(row: string[]): boolean {
 // ── Data loaders ───────────────────────────────────────────────────────────────
 
 /**
- * Config map for companies whose income data lives in a dedicated markdown file.
- * `mdContent`  – the imported markdown string
- * `section`    – section heading to parse (undefined → parse first JSON block)
+ * Config map for companies whose statement data lives in a dedicated markdown file.
+ * Each key is a company symbol; the value holds the markdown content and the
+ * section heading for each statement type (income / balance / cashflow).
  */
-const MD_INCOME_CONFIG: Record<string, { mdContent: string; section?: string }> = {
-  TC:   { mdContent: tcFinStmtMd as string },
-  AAPL: { mdContent: aaplFinStmtMd as string, section: 'Income Statement' },
-};
-
-/** Shared per-symbol cache for markdown-sourced income StatementData. */
-const _mdIncomeCache: Record<string, StatementData | null> = {};
-
-/**
- * Loads a company's income statement from its dedicated markdown file and
- * converts the FlatFinRecord[] array to StatementData.
- * Returns null if the symbol has no markdown config or no matching records.
- */
-function getMarkdownIncomeData(symbol: string): StatementData | null {
-  if (symbol in _mdIncomeCache) return _mdIncomeCache[symbol];
-  const config = MD_INCOME_CONFIG[symbol];
-  if (!config) {
-    _mdIncomeCache[symbol] = null;
-    return null;
-  }
-  const records = config.section
-    ? extractJsonBySection<FlatFinRecord[]>(config.mdContent, config.section)
-    : extractJson<FlatFinRecord[]>(config.mdContent);
-  const stmtMap = flatToStatementData(records, 'income');
-  _mdIncomeCache[symbol] = stmtMap[symbol] ?? null;
-  return _mdIncomeCache[symbol];
-}
-
-const _aaplSimpleCache: Partial<Record<'balance' | 'cashflow' | 'segment', SimpleStatementData>> = {};
-function getAaplSimpleData(key: 'balance' | 'cashflow' | 'segment'): SimpleStatementData {
-  if (!_aaplSimpleCache[key]) {
-    const sectionMap: Record<typeof key, string> = {
+const MD_FIN_CONFIG: Record<
+  string,
+  { mdContent: string; sections: Partial<Record<'income' | 'balance' | 'cashflow', string>> }
+> = {
+  TC: {
+    mdContent: tcFinStmtMd as string,
+    sections: {
+      income:   'Income Statement',
       balance:  'Balance Sheet',
       cashflow: 'Cash Flow Statement',
-      segment:  'Segment Report',
-    };
-    _aaplSimpleCache[key] = extractJsonBySection<SimpleStatementData>(
+    },
+  },
+  AAPL: {
+    mdContent: aaplFinStmtMd as string,
+    sections: {
+      income:   'Income Statement',
+      balance:  'Balance Sheet',
+      cashflow: 'Cash Flow Statement',
+    },
+  },
+};
+
+/** Per-symbol, per-type cache for markdown-sourced StatementData. */
+const _mdFinCache: Record<string, Partial<Record<'income' | 'balance' | 'cashflow', StatementData | null>>> = {};
+
+/**
+ * Shared loader: given a company symbol and a statement type, reads the matching
+ * section from the company's dedicated markdown file, converts the FlatFinRecord[]
+ * array to StatementData, and returns it (or null when no data is found).
+ *
+ * This function is the single entry-point for all markdown-sourced financial data
+ * so that Income Statement, Balance Sheet, and Cash Flow Statement all share the
+ * same backend logic and data format.
+ */
+function getMarkdownFinData(symbol: string, type: 'income' | 'balance' | 'cashflow'): StatementData | null {
+  if (!_mdFinCache[symbol]) _mdFinCache[symbol] = {};
+  const cache = _mdFinCache[symbol];
+  if (type in cache) return cache[type] ?? null;
+
+  const config = MD_FIN_CONFIG[symbol];
+  if (!config) {
+    cache[type] = null;
+    return null;
+  }
+
+  const section = config.sections[type];
+  if (!section) {
+    cache[type] = null;
+    return null;
+  }
+
+  const records = extractJsonBySection<FlatFinRecord[]>(config.mdContent, section);
+  const stmtMap = flatToStatementData(records, type);
+  cache[type] = stmtMap[symbol] ?? null;
+  return cache[type] ?? null;
+}
+
+const _aaplSimpleCache: Partial<Record<'segment', SimpleStatementData>> = {};
+function getAaplSegmentData(): SimpleStatementData {
+  if (!_aaplSimpleCache.segment) {
+    _aaplSimpleCache.segment = extractJsonBySection<SimpleStatementData>(
       aaplFinStmtMd as string,
-      sectionMap[key],
+      'Segment Report',
     );
   }
-  return _aaplSimpleCache[key]!;
+  return _aaplSimpleCache.segment!;
 }
 
 /**
@@ -228,22 +252,18 @@ function getAaplSimpleData(key: 'balance' | 'cashflow' | 'segment'): SimpleState
 function getCompanyStatements(symbol: string): CompanyStatements {
   const result: CompanyStatements = {};
 
-  // AAPL: flat FlatFinRecord income + simple balance / cashflow / segment.
-  // Checked before financial-data.md because AAPL also appears in that Company List
-  // but has richer dedicated data (including Segment Report) in its own markdown file.
-  if (symbol === 'AAPL') {
-    const incomeData = getMarkdownIncomeData(symbol);
-    if (incomeData) result.income = { kind: 'findata', data: incomeData };
-    result.balance  = { kind: 'simple', data: getAaplSimpleData('balance') };
-    result.cashflow = { kind: 'simple', data: getAaplSimpleData('cashflow') };
-    result.segment  = { kind: 'simple', data: getAaplSimpleData('segment') };
-    return result;
-  }
-
-  // TC: flat FlatFinRecord income only
-  if (symbol === 'TC') {
-    const incomeData = getMarkdownIncomeData(symbol);
-    if (incomeData) result.income = { kind: 'findata', data: incomeData };
+  // Companies with dedicated markdown files (AAPL, TC, …).
+  // Checked before financial-data.md because AAPL also appears in that Company
+  // List but has richer dedicated data in its own markdown file.
+  if (MD_FIN_CONFIG[symbol]) {
+    for (const type of ['income', 'balance', 'cashflow'] as const) {
+      const data = getMarkdownFinData(symbol, type);
+      if (data) result[type] = { kind: 'findata', data };
+    }
+    // AAPL also exposes a Segment Report in the legacy SimpleStatementData format
+    if (symbol === 'AAPL') {
+      result.segment = { kind: 'simple', data: getAaplSegmentData() };
+    }
     return result;
   }
 
