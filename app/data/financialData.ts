@@ -119,7 +119,7 @@ function parsePeriodSortKey(p: string): number {
  * filtering to records whose rpt_fin_type matches `type`.
  * Period ordering: annual first (chronological), then quarterly (chronological).
  */
-function flatToStatementData(
+export function flatToStatementData(
   records: FlatFinRecord[],
   type: string,
 ): Record<string, StatementData> {

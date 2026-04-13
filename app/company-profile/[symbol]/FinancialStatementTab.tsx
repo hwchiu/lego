@@ -5,61 +5,13 @@ import { resolveSymbolAlias } from '@/app/data/sp500';
 import { extractJson, extractJsonBySection } from '@/app/lib/parseContent';
 import tcFinStmtMd from '@/content/tc-financial-statement.md';
 import aaplFinStmtMd from '@/content/apple-financial-statement.md';
-import { getStatement, getCompanies } from '@/app/data/financialData';
-import type { StatementKey, StatementData } from '@/app/data/financialData';
+import { getStatement, getCompanies, flatToStatementData } from '@/app/data/financialData';
+import type { StatementKey, StatementData, FlatFinRecord } from '@/app/data/financialData';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type StatementType = 'income' | 'balance' | 'cashflow' | 'segment';
 type ViewMode = 'quarterly' | 'annual';
 type Currency = 'original' | 'usd';
-
-// ── Income Statement types ─────────────────────────────────────────────────────
-interface QuarterData {
-  label: string;
-  year: number;
-  quarter: number;
-  revenue: number;
-  seqGrowth: string | null;
-  yoyGrowth: string | null;
-  cogs: number;
-  grossProfit: number;
-  grossMargin: number;
-  opEx: number;
-  rdExpense: number;
-  sgaExpense: number;
-  opIncome: number;
-  opMargin: number;
-  ebt: number;
-  ebtMargin: number;
-  taxExpense: number;
-  netIncome: number;
-  netMargin: number;
-  eps: number;
-  marketCap: number;
-}
-
-interface AnnualData {
-  label: string;
-  year: number;
-  revenue: number;
-  seqGrowth: string | null;
-  yoyGrowth: string | null;
-  cogs: number;
-  grossProfit: number;
-  grossMargin: number;
-  opEx: number;
-  rdExpense: number;
-  sgaExpense: number;
-  opIncome: number;
-  opMargin: number;
-  ebt: number;
-  ebtMargin: number;
-  taxExpense: number;
-  netIncome: number;
-  netMargin: number;
-  eps: number;
-  marketCap: number;
-}
 
 // ── Simple table type (Balance Sheet / Cash Flow / Segment) ───────────────────
 interface SimpleStatementPeriodData {
@@ -73,23 +25,6 @@ interface SimpleStatementData {
   quarterlyData: SimpleStatementPeriodData;
 }
 
-// ── Row definitions ────────────────────────────────────────────────────────────
-/**
- * Row definition loaded from the data file's "Row Definitions" section.
- * `val_unit` replaces the old hardcoded `format` field and follows the same
- * FlatFinRecord val_unit vocabulary:
- *   "Million" | "Billion" → monetary values (appended as unit suffix)
- *   "Percent"             → percentage to 2 dp (e.g. margins)
- *   "Growth"              → percentage change to 2 dp (sign carried in data)
- *   "Dollar"              → dollar-denominated value (EPS)
- *   "MarketCap"           → dollar value in billions
- */
-interface RowDef {
-  key: keyof QuarterData | keyof AnnualData;
-  label: string;
-  val_unit: string;
-}
-
 const STATEMENT_ITEMS: { key: StatementType; label: string }[] = [
   { key: 'income',   label: 'Income Statement' },
   { key: 'balance',  label: 'Balance Sheet' },
@@ -98,10 +33,7 @@ const STATEMENT_ITEMS: { key: StatementType; label: string }[] = [
 ];
 
 // ── Unified statement data types ───────────────────────────────────────────────
-type IncomeStructuredData = { quarterlyData: QuarterData[]; annualData: AnnualData[] };
-
 type TabDataEntry =
-  | { kind: 'income_structured'; data: IncomeStructuredData }
   | { kind: 'simple'; data: SimpleStatementData }
   | { kind: 'findata'; data: StatementData };
 
@@ -213,98 +145,33 @@ function FinDataTable({ data }: { data: StatementData }) {
   );
 }
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
-/**
- * Formats a value using the val_unit from the data record.
- *
- *   "Percent"   → xx.xx% (margins; no sign prefix)
- *   "Growth"    → xx.xx% (growth values; sign already carried in the string data)
- *   "Million"   → localized number + "M"
- *   "Billion"   → localized number + "B"
- *   "Dollar"    → $xx.xx (EPS)
- *   "MarketCap" → $localized_numberB
- *
- * `val` may be a pre-signed string (Growth) or a number (all other units).
- */
-function fmt(val: number | string | null, valUnit: string): string {
-  if (val === null || val === undefined || val === '') return '—';
-  switch (valUnit) {
-    case 'Percent': {
-      const n = typeof val === 'string' ? parseFloat(val) : val;
-      return isNaN(n as number) ? String(val) : (n as number).toFixed(2) + '%';
-    }
-    case 'Growth': {
-      // val is a signed string like "+3.3" or "-1.4"; preserve the sign prefix
-      if (typeof val === 'string') {
-        const n = parseFloat(val);
-        if (isNaN(n)) return val + '%';
-        // Handle sign explicitly: negative uses toFixed's natural '-'; positive preserves '+'
-        if (n < 0) return n.toFixed(2) + '%';
-        const prefix = val.startsWith('+') ? '+' : '';
-        return prefix + n.toFixed(2) + '%';
-      }
-      const sign = (val as number) >= 0 ? '+' : '';
-      return sign + (val as number).toFixed(2) + '%';
-    }
-    case 'Million':
-      return (typeof val === 'number' ? val.toLocaleString('en-US') : val) + 'M';
-    case 'Billion':
-      return (typeof val === 'number' ? val.toLocaleString('en-US') : val) + 'B';
-    case 'Dollar':
-      return '$' + (typeof val === 'number' ? val.toFixed(2) : val);
-    case 'MarketCap':
-      return '$' + (typeof val === 'number' ? val.toLocaleString('en-US') : val) + 'B';
-    default:
-      return String(val);
-  }
-}
-
-function getCellClass(val: number | string | null, valUnit: string): string {
-  if (valUnit === 'Growth' && val !== null) {
-    const n = typeof val === 'string' ? parseFloat(val) : val;
-    return (n as number) < 0 ? 'fin-stmt-neg' : '';
-  }
-  return '';
-}
-
 /** Returns true for section-header rows (all data cells are empty). */
 function isSectionRow(row: string[]): boolean {
   return row.slice(1).every((c) => c === '' || c === '—');
 }
 
 // ── Data loaders ───────────────────────────────────────────────────────────────
-let _tsmParsed: { quarterlyData: QuarterData[]; annualData: AnnualData[] } | null = null;
-function getTcData() {
-  if (!_tsmParsed) {
-    _tsmParsed = extractJson<{ quarterlyData: QuarterData[]; annualData: AnnualData[] }>(
-      tcFinStmtMd as string,
-    );
+
+/** Loads TC income statement as FlatFinRecord[] and converts to StatementData. */
+let _tcIncomeData: StatementData | null = null;
+function getTcIncomeData(): StatementData | null {
+  if (!_tcIncomeData) {
+    const records = extractJson<FlatFinRecord[]>(tcFinStmtMd as string);
+    const stmtMap = flatToStatementData(records, 'income');
+    _tcIncomeData = stmtMap['TC'] ?? null;
   }
-  return _tsmParsed;
+  return _tcIncomeData;
 }
 
-let _aaplIncomeParsed: { quarterlyData: QuarterData[]; annualData: AnnualData[] } | null = null;
-function getAaplIncomeData() {
-  if (!_aaplIncomeParsed) {
-    _aaplIncomeParsed = extractJsonBySection<{ quarterlyData: QuarterData[]; annualData: AnnualData[] }>(
-      aaplFinStmtMd as string,
-      'Income Statement',
-    );
+/** Loads AAPL income statement as FlatFinRecord[] and converts to StatementData. */
+let _aaplIncomeData: StatementData | null = null;
+function getAaplIncomeData(): StatementData | null {
+  if (!_aaplIncomeData) {
+    const records = extractJsonBySection<FlatFinRecord[]>(aaplFinStmtMd as string, 'Income Statement');
+    const stmtMap = flatToStatementData(records, 'income');
+    _aaplIncomeData = stmtMap['AAPL'] ?? null;
   }
-  return _aaplIncomeParsed;
-}
-
-/**
- * Row definitions are stored in each data file's "Row Definitions" JSON section.
- * Both TC and AAPL share the same QuarterData / AnnualData structure, so the same
- * row def schema applies to both.  We load from the TC file as the canonical source.
- */
-let _incomeRowDefs: RowDef[] | null = null;
-function getIncomeRowDefs(): RowDef[] {
-  if (!_incomeRowDefs) {
-    _incomeRowDefs = extractJsonBySection<RowDef[]>(tcFinStmtMd as string, 'Row Definitions');
-  }
-  return _incomeRowDefs;
+  return _aaplIncomeData;
 }
 
 const _aaplSimpleCache: Partial<Record<'balance' | 'cashflow' | 'segment', SimpleStatementData>> = {};
@@ -332,26 +199,22 @@ function getAaplSimpleData(key: 'balance' | 'cashflow' | 'segment'): SimpleState
 function getCompanyStatements(symbol: string): CompanyStatements {
   const result: CompanyStatements = {};
 
-  // AAPL: structured income + simple balance / cashflow / segment
+  // AAPL: flat FlatFinRecord income + simple balance / cashflow / segment.
   // Checked before financial-data.md because AAPL also appears in that Company List
   // but has richer dedicated data (including Segment Report) in its own markdown file.
   if (symbol === 'AAPL') {
     const incomeData = getAaplIncomeData();
-    if (incomeData?.quarterlyData?.length) {
-      result.income = { kind: 'income_structured', data: incomeData };
-    }
+    if (incomeData) result.income = { kind: 'findata', data: incomeData };
     result.balance  = { kind: 'simple', data: getAaplSimpleData('balance') };
     result.cashflow = { kind: 'simple', data: getAaplSimpleData('cashflow') };
     result.segment  = { kind: 'simple', data: getAaplSimpleData('segment') };
     return result;
   }
 
-  // TC: structured income only
+  // TC: flat FlatFinRecord income only
   if (symbol === 'TC') {
-    const incomeData = getTcData();
-    if (incomeData?.quarterlyData?.length) {
-      result.income = { kind: 'income_structured', data: incomeData };
-    }
+    const incomeData = getTcIncomeData();
+    if (incomeData) result.income = { kind: 'findata', data: incomeData };
     return result;
   }
 
@@ -535,50 +398,6 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
 
   const currentTabData = availableStatements[effectiveType];
 
-  // ── Income structured data (QuarterData[]) — drives income year navigation ───
-  const incomeEntry = availableStatements.income;
-  const allQuarterlyData: QuarterData[] =
-    incomeEntry?.kind === 'income_structured' ? incomeEntry.data.quarterlyData : [];
-  const allAnnualData: AnnualData[] =
-    incomeEntry?.kind === 'income_structured' ? incomeEntry.data.annualData : [];
-
-  // Row definitions loaded from the data file (replaces the former hardcoded ROW_DEFS const)
-  const rowDefs = useMemo(
-    () => (incomeEntry?.kind === 'income_structured' ? getIncomeRowDefs() : []),
-    [incomeEntry],
-  );
-
-  const availableYears = [...new Set(allQuarterlyData.map((q) => q.year))].sort((a, b) => a - b);
-  const safeAvailableYears =
-    availableYears.length > 0
-      ? availableYears
-      : [new Date().getFullYear() - 1, new Date().getFullYear()];
-  const maxYearWindowStart = safeAvailableYears[safeAvailableYears.length - 1] - 1;
-  const defaultStart = Math.max(
-    safeAvailableYears[0],
-    safeAvailableYears[safeAvailableYears.length - 1] - 1,
-  );
-  const [yearWindowStart, setYearWindowStart] = useState(defaultStart);
-
-  const prevYear = () => setYearWindowStart((y) => Math.max(safeAvailableYears[0], y - 1));
-  const nextYear = () => setYearWindowStart((y) => Math.min(maxYearWindowStart, y + 1));
-
-  const visibleQuarters = allQuarterlyData.filter(
-    (q) => q.year === yearWindowStart || q.year === yearWindowStart + 1,
-  );
-  const visibleAnnual = allAnnualData;
-
-  const minYear = safeAvailableYears[0];
-  const maxYear = safeAvailableYears[safeAvailableYears.length - 1];
-
-  const yearLabel =
-    viewMode === 'quarterly'
-      ? `FY${yearWindowStart}–FY${yearWindowStart + 1}`
-      : `FY${minYear}–FY${maxYear}`;
-
-  const canGoPrev = viewMode === 'quarterly' && yearWindowStart > safeAvailableYears[0];
-  const canGoNext = viewMode === 'quarterly' && yearWindowStart < maxYearWindowStart;
-
   // ── Simple statement data — drives balance / cashflow / segment year nav ──────
   const simpleData: SimpleStatementData | null = useMemo(
     () => (currentTabData?.kind === 'simple' ? currentTabData.data : null),
@@ -622,8 +441,7 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
     );
   }
 
-  const isStructuredIncome = currentTabData?.kind === 'income_structured';
-  const isSimpleStatement  = currentTabData?.kind === 'simple';
+  const isSimpleStatement = currentTabData?.kind === 'simple';
 
   return (
     <div className="fin-stmt-layout">
@@ -644,38 +462,12 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
 
       {/* ── Right content area ── */}
       <div className="fin-stmt-content">
-        {/* Toolbar — shown only for structured income or simple data; hidden for findata */}
-        {(isStructuredIncome || isSimpleStatement) && (
+        {/* Toolbar — shown only for simple (Balance Sheet / Cash Flow / Segment) */}
+        {isSimpleStatement && (
           <div className="fin-stmt-toolbar">
             <div className="fin-stmt-year-nav">
-              {/* Income Statement year nav */}
-              {isStructuredIncome && (
-                <>
-                  <button
-                    className="wl-quarter-btn"
-                    aria-label="Previous year"
-                    onClick={prevYear}
-                    disabled={!canGoPrev}
-                  >
-                    <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                      <path d="M9 2.5L4.5 7L9 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
-                  <span className="wl-quarter-label fin-stmt-year-label">{yearLabel}</span>
-                  <button
-                    className="wl-quarter-btn"
-                    aria-label="Next year"
-                    onClick={nextYear}
-                    disabled={!canGoNext}
-                  >
-                    <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                      <path d="M5 2.5L9.5 7L5 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
-                </>
-              )}
               {/* Balance Sheet / Cash Flow / Segment year nav */}
-              {isSimpleStatement && viewMode === 'quarterly' && simpleAllYears.length > 0 && (
+              {viewMode === 'quarterly' && simpleAllYears.length > 0 && (
                 <>
                   <button
                     className="wl-quarter-btn"
@@ -757,78 +549,6 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
               </span>
             </div>
           )
-        )}
-        {isStructuredIncome && (
-          <div className="fin-stmt-table-wrap">
-            <table className="data-table fin-stmt-table">
-              <thead>
-                {viewMode === 'quarterly' ? (
-                  <>
-                    <tr>
-                      <th rowSpan={2} className="fin-stmt-th-item">
-                        <div className="fin-stmt-th-item-inner">
-                          <span className="fin-stmt-th-year">Year</span>
-                          <span className="fin-stmt-th-divider" />
-                          <span className="fin-stmt-th-item-label">Item</span>
-                        </div>
-                      </th>
-                      {Array.from(new Set(visibleQuarters.map((q) => q.year))).map((yr) => (
-                        <th
-                          key={yr}
-                          colSpan={visibleQuarters.filter((q) => q.year === yr).length}
-                          className="th-group"
-                        >
-                          FY{yr}
-                        </th>
-                      ))}
-                    </tr>
-                    <tr className="sub-head">
-                      {visibleQuarters.map((q) => (
-                        <th key={q.label} className="sub-group-inner">Q{q.quarter}</th>
-                      ))}
-                    </tr>
-                  </>
-                ) : (
-                  <tr>
-                    <th className="fin-stmt-th-item">
-                      <div className="fin-stmt-th-item-inner">
-                        <span className="fin-stmt-th-year">Year</span>
-                        <span className="fin-stmt-th-divider" />
-                        <span className="fin-stmt-th-item-label">Item</span>
-                      </div>
-                    </th>
-                    {visibleAnnual.map((a) => (
-                      <th key={a.label}>{a.label}</th>
-                    ))}
-                  </tr>
-                )}
-              </thead>
-              <tbody>
-                {rowDefs.map((row) => (
-                  <tr key={row.key}>
-                    <td className="fin-stmt-td-item">{row.label}</td>
-                    {viewMode === 'quarterly'
-                      ? visibleQuarters.map((q) => {
-                          const raw = q[row.key as keyof QuarterData] as number | string | null;
-                          return (
-                            <td key={q.label} className={`td-num ${getCellClass(raw, row.val_unit)}`}>
-                              {fmt(raw, row.val_unit)}
-                            </td>
-                          );
-                        })
-                      : visibleAnnual.map((a) => {
-                          const raw = a[row.key as keyof AnnualData] as number | string | null;
-                          return (
-                            <td key={a.label} className={`td-num ${getCellClass(raw, row.val_unit)}`}>
-                              {fmt(raw, row.val_unit)}
-                            </td>
-                          );
-                        })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
         )}
       </div>
     </div>
