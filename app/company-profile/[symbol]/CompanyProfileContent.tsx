@@ -16,7 +16,7 @@ import CompanyMATab from './CompanyMATab';
 import InvestmentTab from './InvestmentTab';
 import AcquisitionTab from './AcquisitionTab';
 import FundingTab from './FundingTab';
-import IRMaterialTab from './IRMaterialTab';
+import IRMaterialTab, { getIRMaterialData } from './IRMaterialTab';
 import PreEarningCallTab from './PreEarningCallTab';
 import IRTranscriptTab from './IRTranscriptTab';
 import AITranscriptTab from './AITranscriptTab';
@@ -416,6 +416,12 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
 
   // Financial data — only use if explicitly available for this symbol
   const finData = profileData.financialData[dataSymbol] ?? null;
+
+  // Compute visible tabs — hide IR Material when no data exists for this symbol
+  const visibleTabs = useMemo(
+    () => TABS.filter((tab) => tab !== 'IR Material' || getIRMaterialData(symbol) !== null),
+    [symbol],
+  );
 
   // Load favorites & tags from localStorage
   useEffect(() => {
@@ -818,7 +824,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                 </svg>
               </button>
               <div className="cp-nav-tabs" ref={tabsScrollRef}>
-                {TABS.map((tab) => (
+                {visibleTabs.map((tab) => (
                   <button
                     key={tab}
                     className={`cp-nav-tab${activeTab === tab ? ' active' : ''}`}
