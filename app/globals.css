@@ -18902,7 +18902,7 @@ html.dark .cp-fin-index-tab:hover {
 }
 
 .aapl-funding-total-card {
-  background: linear-gradient(135deg, #1a2332 0%, #2d3748 100%);
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
   color: #fff;
   border-radius: var(--radius-lg);
   padding: 18px 24px;
@@ -18941,7 +18941,7 @@ html.dark .cp-nav-tabs-arrow:hover {
   background: rgba(255,255,255,0.05);
 }
 html.dark .aapl-funding-total-card {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background: linear-gradient(135deg, #1a2332 0%, #2d3748 100%);
 }
 html.dark .aapl-inv-chart-wrap {
   background: #1e293b;

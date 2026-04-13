@@ -17,7 +17,7 @@ const CAT_IMAGES: Record<string, string> = {
   'esg': 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=900&q=80',
   'government-regulations': 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=900&q=80',
   'international-standards': 'https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=900&q=80',
-  'industry-information': 'https://images.unsplash.com/photo-1565514020179-026b92b2d70b?w=900&q=80',
+  'industry-information': 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=900&q=80',
   'company-operations': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=900&q=80',
   'capital-markets': 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80',
 };
