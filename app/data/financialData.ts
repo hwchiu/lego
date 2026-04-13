@@ -78,6 +78,9 @@ const SECTION_MAP: Record<StatementKey, string> = {
 
 // ─── Flat-array → StatementData converter ────────────────────────────────────
 
+/** Sentinel value for the calendar_quarter / fiscal_quarter fields of annual records. */
+const ANNUAL_QUARTER = 'NA';
+
 /**
  * Derives a canonical period label from calendar_year + calendar_quarter.
  * This ensures table columns always reflect calendar dates.
@@ -85,7 +88,7 @@ const SECTION_MAP: Record<StatementKey, string> = {
  *   quarterly → "Q1 2023"
  */
 function periodLabel(calendarYear: number, calendarQuarter: string): string {
-  if (calendarQuarter === 'NA') return `FY${calendarYear}`;
+  if (calendarQuarter === ANNUAL_QUARTER) return `FY${calendarYear}`;
   return `${calendarQuarter} ${calendarYear}`;
 }
 
@@ -94,7 +97,9 @@ function periodLabel(calendarYear: number, calendarQuarter: string): string {
  *  Example: FY2022 → 20220, Q1 2025 → 20251, Q4 2025 → 20254.
  */
 function periodSortKey(calendarYear: number, calendarQuarter: string): number {
-  const qn = calendarQuarter === 'NA' ? 0 : parseInt(calendarQuarter.slice(1), 10);
+  if (calendarQuarter === ANNUAL_QUARTER) return calendarYear * 10;
+  const m = calendarQuarter.match(/^Q(\d)$/);
+  const qn = m ? parseInt(m[1], 10) : 0;
   return calendarYear * 10 + qn;
 }
 
@@ -105,7 +110,7 @@ function parsePeriodSortKey(p: string): number {
   if (mq) return periodSortKey(parseInt(mq[2], 10), mq[1]);
   // Annual: "FY2022"
   const ma = p.match(/^FY(\d+)$/);
-  if (ma) return periodSortKey(parseInt(ma[1], 10), 'NA');
+  if (ma) return periodSortKey(parseInt(ma[1], 10), ANNUAL_QUARTER);
   return 0;
 }
 
