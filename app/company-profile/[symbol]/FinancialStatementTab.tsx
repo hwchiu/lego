@@ -434,13 +434,13 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
   );
 
   const simpleAllYears = useMemo(() => {
-    if (!simpleData) return [] as number[];
+    if (!simpleData) return [];
     return [...new Set(simpleData.quarterlyData.columns.map(parseColYear))].filter(Boolean).sort((a, b) => a - b);
   }, [simpleData]);
 
   // ── FinData (Income Statement) year nav ───────────────────────────────────────
   const finDataAllYears = useMemo(() => {
-    if (currentTabData?.kind !== 'findata') return [] as number[];
+    if (currentTabData?.kind !== 'findata') return [];
     return [...new Set(
       currentTabData.data.periods.filter(isQuarterlyPeriod).map(parseColYear),
     )].filter(Boolean).sort((a, b) => a - b);
