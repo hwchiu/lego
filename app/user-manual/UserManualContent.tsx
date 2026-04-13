@@ -412,6 +412,14 @@ export default function UserManualContent() {
                   Select your role below to explore guided scenarios covering every platform module.
                 </p>
               </div>
+              <div className="um-hero-img-wrap">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=900&q=80"
+                  alt="Financial analytics dashboard"
+                  className="um-hero-img"
+                />
+              </div>
             </div>
 
             {/* ── Stats strip ── */}
