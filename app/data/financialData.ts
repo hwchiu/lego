@@ -98,9 +98,9 @@ function periodLabel(calendarYear: number, calendarQuarter: string): string {
  */
 function periodSortKey(calendarYear: number, calendarQuarter: string): number {
   if (calendarQuarter === ANNUAL_QUARTER) return calendarYear * 10;
-  const m = calendarQuarter.match(/^Q(\d)$/);
-  const qn = m ? parseInt(m[1], 10) : 0;
-  return calendarYear * 10 + qn;
+  const m = calendarQuarter.match(/^Q([1-4])$/);
+  if (!m) return calendarYear * 10 + 5; // unknown quarter: sort after Q4
+  return calendarYear * 10 + parseInt(m[1], 10);
 }
 
 /** Parse a canonical period label back to a sort key. */
