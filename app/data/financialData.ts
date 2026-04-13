@@ -24,17 +24,24 @@ export interface StatementData {
 }
 
 /**
- * Flat financial record format used in the Income Statement section of
- * financial-data.md.  Each record represents one cell in the statement table.
+ * Flat financial record format used in the Income Statement, Balance Sheet, and
+ * Cash Flow Statement sections of financial-data.md.
+ * Each record represents one cell in a statement table.
  *
  * Fields:
- *   rpt_fin_type      – which report/tab this row belongs to (e.g. "income")
+ *   rpt_fin_type      – which report/tab this row belongs to ("income" | "balance" | "cashflow")
  *   rpt_fin_item      – row label in the table (e.g. "Revenue ($B)")
  *   co_cd             – company symbol (e.g. "AAPL")
- *   curr_cd           – currency code (e.g. "USD")
+ *   curr_cd           – ISO currency code (e.g. "USD")
  *   fiscal_year       – fiscal year as a 4-digit number
- *   calendar_quarter  – quarter within the year ("Q1"–"Q4") or "NA" for annual
- *   fld_val           – the displayed cell value (string to preserve formatting)
+ *   fiscal_quarter    – fiscal quarter ("Q1"–"Q4") or "NA" for annual records
+ *   calendar_year     – calendar year as a 4-digit number (used for table display)
+ *   calendar_quarter  – calendar quarter ("Q1"–"Q4") or "NA" for annual records (used for table display)
+ *   fld_val           – the displayed cell value (string to preserve original formatting)
+ *   doc_amt           – numeric representation of fld_val (for calculations)
+ *   val_unit          – unit of the value ("Billion" | "Percent" | "Dollar" | "NA")
+ *   op_seg            – operating segment ("NA" when not segment-specific)
+ *   update_dt         – last data update timestamp
  */
 export interface FlatFinRecord {
   rpt_fin_type: string;
@@ -42,8 +49,14 @@ export interface FlatFinRecord {
   co_cd: string;
   curr_cd: string;
   fiscal_year: number;
+  fiscal_quarter: string;
+  calendar_year: number;
   calendar_quarter: string;
   fld_val: string;
+  doc_amt: number;
+  val_unit: string;
+  op_seg: string;
+  update_dt: string;
 }
 
 export type StatementKey = 'income' | 'balance' | 'cashflow' | 'ratios';
@@ -66,28 +79,31 @@ const SECTION_MAP: Record<StatementKey, string> = {
 // ─── Flat-array → StatementData converter ────────────────────────────────────
 
 /**
- * Derives a canonical period label from fiscal_year + calendar_quarter.
+ * Derives a canonical period label from calendar_year + calendar_quarter.
+ * This ensures table columns always reflect calendar dates.
  *   annual  → "FY2022"
- *   quarterly → "Q1 FY2025"
+ *   quarterly → "Q1 2023"
  */
-function periodLabel(fiscalYear: number, calendarQuarter: string): string {
-  if (calendarQuarter === 'NA') return `FY${fiscalYear}`;
-  return `${calendarQuarter} FY${fiscalYear}`;
+function periodLabel(calendarYear: number, calendarQuarter: string): string {
+  if (calendarQuarter === 'NA') return `FY${calendarYear}`;
+  return `${calendarQuarter} ${calendarYear}`;
 }
 
 /** Sort key for a period so that annual sorts before quarterly, both chronological.
  *  Annual gets quarter offset 0; Q1–Q4 get offsets 1–4.
- *  Example: FY2022 → 20220, Q1 FY2025 → 20251, Q4 FY2025 → 20254.
+ *  Example: FY2022 → 20220, Q1 2025 → 20251, Q4 2025 → 20254.
  */
-function periodSortKey(fiscalYear: number, calendarQuarter: string): number {
+function periodSortKey(calendarYear: number, calendarQuarter: string): number {
   const qn = calendarQuarter === 'NA' ? 0 : parseInt(calendarQuarter.slice(1), 10);
-  return fiscalYear * 10 + qn;
+  return calendarYear * 10 + qn;
 }
 
 /** Parse a canonical period label back to a sort key. */
 function parsePeriodSortKey(p: string): number {
-  const mq = p.match(/^(Q\d)\s+FY(\d+)$/);
+  // Quarterly: "Q1 2025"
+  const mq = p.match(/^(Q\d)\s+(\d{4})$/);
   if (mq) return periodSortKey(parseInt(mq[2], 10), mq[1]);
+  // Annual: "FY2022"
   const ma = p.match(/^FY(\d+)$/);
   if (ma) return periodSortKey(parseInt(ma[1], 10), 'NA');
   return 0;
@@ -111,8 +127,8 @@ function flatToStatementData(
   for (const rec of records) {
     if (rec.rpt_fin_type !== type) continue;
 
-    const { co_cd, rpt_fin_item, fiscal_year, calendar_quarter, fld_val } = rec;
-    const label = periodLabel(fiscal_year, calendar_quarter);
+    const { co_cd, rpt_fin_item, calendar_year, calendar_quarter, fld_val } = rec;
+    const label = periodLabel(calendar_year, calendar_quarter);
 
     if (!cellMap[co_cd]) {
       cellMap[co_cd] = {};
@@ -164,13 +180,12 @@ const _stmtCache: Partial<Record<StatementKey, Record<string, StatementData>>> =
 export function getStatement(key: StatementKey): Record<string, StatementData> {
   if (_stmtCache[key]) return _stmtCache[key]!;
 
-  if (key === 'income') {
-    // Income Statement uses the new flat-array format
+  if (key === 'income' || key === 'balance' || key === 'cashflow') {
+    // Income Statement, Balance Sheet, and Cash Flow use the flat-array format
     const records = extractJsonBySection<FlatFinRecord[]>(rawContent, SECTION_MAP[key]);
-    _stmtCache[key] = flatToStatementData(records, 'income');
+    _stmtCache[key] = flatToStatementData(records, key);
   } else {
-    // Balance Sheet, Cash Flow Statement, Financial Ratios still use the legacy
-    // nested { company: { periods, items } } format
+    // Financial Ratios still uses the legacy nested { company: { periods, items } } format
     _stmtCache[key] = extractJsonBySection<Record<string, StatementData>>(
       rawContent,
       SECTION_MAP[key],

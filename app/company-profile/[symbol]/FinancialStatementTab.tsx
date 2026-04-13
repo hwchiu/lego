@@ -120,7 +120,7 @@ type CompanyStatements = Partial<Record<StatementType, TabDataEntry>>;
 
 // ── FinDataTable — renders StatementData from financial-data.md ────────────────
 
-/** Returns true for a quarterly period label like "Q1 FY25" */
+/** Returns true for a quarterly period label like "Q1 2025" */
 function isQuarterlyPeriod(p: string): boolean {
   return /^Q\d/.test(p);
 }
@@ -342,8 +342,14 @@ function twoDigitToFullYear(yr: number): number {
   return yr >= 90 ? 1900 + yr : 2000 + yr;
 }
 
-/** Parse a column label like "FY24 Q1" → 2024, or "FY2024" → 2024 */
+/** Parse a column label → full 4-digit year.
+ *  Handles formats: "FY2024", "FY24 Q1", "FY24", "Q1 2025"
+ */
 function parseColYear(col: string): number {
+  // New flat-format quarterly: "Q1 2025"
+  const mq = col.match(/^Q\d\s+(\d{4})$/);
+  if (mq) return parseInt(mq[1], 10);
+  // Legacy formats: "FY2024", "FY24 Q1", "FY24"
   const m2 = col.match(/FY(\d{4})/);
   if (m2) return parseInt(m2[1], 10);
   const m1 = col.match(/FY(\d{2})\s/);
