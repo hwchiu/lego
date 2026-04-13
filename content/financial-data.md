@@ -24,986 +24,5588 @@ Financial statements for T Company's 10 major customers. Figures are approximate
 ## Income Statement
 
 ```json
-{
-  "AAPL": {
-    "periods": [
-      "FY2022",
-      "FY2023",
-      "FY2024",
-      "Q1 FY25",
-      "Q2 FY25"
-    ],
-    "items": {
-      "Revenue ($B)": [
-        "394.3",
-        "383.3",
-        "391.0",
-        "124.3",
-        "95.4"
-      ],
-      "Cost of Revenue ($B)": [
-        "223.5",
-        "214.1",
-        "210.4",
-        "65.5",
-        "52.0"
-      ],
-      "Gross Profit ($B)": [
-        "170.8",
-        "169.1",
-        "180.7",
-        "58.8",
-        "43.3"
-      ],
-      "Gross Margin (%)": [
-        "43.3%",
-        "44.1%",
-        "46.2%",
-        "47.3%",
-        "45.4%"
-      ],
-      "R&D Expense ($B)": [
-        "26.3",
-        "29.9",
-        "31.4",
-        "8.0",
-        "8.0"
-      ],
-      "SG&A Expense ($B)": [
-        "25.1",
-        "24.9",
-        "26.0",
-        "6.4",
-        "6.2"
-      ],
-      "Operating Income ($B)": [
-        "119.4",
-        "114.3",
-        "123.2",
-        "44.4",
-        "29.1"
-      ],
-      "Operating Margin (%)": [
-        "30.3%",
-        "29.8%",
-        "31.5%",
-        "35.7%",
-        "30.5%"
-      ],
-      "Net Income ($B)": [
-        "99.8",
-        "97.0",
-        "93.7",
-        "36.3",
-        "24.8"
-      ],
-      "Net Margin (%)": [
-        "25.3%",
-        "25.3%",
-        "24.0%",
-        "29.2%",
-        "26.0%"
-      ],
-      "EPS (diluted)": [
-        "$6.11",
-        "$6.13",
-        "$6.08",
-        "$2.40",
-        "$1.65"
-      ]
-    }
+[
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "394.3"
   },
-  "NVDA": {
-    "periods": [
-      "FY2022",
-      "FY2023",
-      "FY2024",
-      "Q1 FY25",
-      "Q2 FY25"
-    ],
-    "items": {
-      "Revenue ($B)": [
-        "26.9",
-        "26.9",
-        "60.9",
-        "26.0",
-        "30.0"
-      ],
-      "Cost of Revenue ($B)": [
-        "11.6",
-        "11.6",
-        "16.6",
-        "6.5",
-        "7.5"
-      ],
-      "Gross Profit ($B)": [
-        "15.3",
-        "15.3",
-        "44.3",
-        "19.5",
-        "22.5"
-      ],
-      "Gross Margin (%)": [
-        "56.9%",
-        "56.9%",
-        "72.7%",
-        "75.0%",
-        "75.0%"
-      ],
-      "R&D Expense ($B)": [
-        "7.0",
-        "7.3",
-        "8.7",
-        "2.7",
-        "3.1"
-      ],
-      "SG&A Expense ($B)": [
-        "2.2",
-        "2.4",
-        "2.7",
-        "0.7",
-        "0.8"
-      ],
-      "Operating Income ($B)": [
-        "6.1",
-        "5.6",
-        "32.9",
-        "16.1",
-        "18.6"
-      ],
-      "Operating Margin (%)": [
-        "22.7%",
-        "20.8%",
-        "54.1%",
-        "61.9%",
-        "62.0%"
-      ],
-      "Net Income ($B)": [
-        "4.4",
-        "4.4",
-        "29.8",
-        "14.9",
-        "16.6"
-      ],
-      "Net Margin (%)": [
-        "16.4%",
-        "16.4%",
-        "49.0%",
-        "57.3%",
-        "55.3%"
-      ],
-      "EPS (diluted)": [
-        "$1.74",
-        "$1.74",
-        "$11.93",
-        "$5.98",
-        "$6.63"
-      ],
-      "Adj. EPS (non-GAAP)": [
-        "$3.34",
-        "$3.34",
-        "$12.96",
-        "$6.12",
-        "$6.80"
-      ]
-    }
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "383.3"
   },
-  "AMD": {
-    "periods": [
-      "FY2022",
-      "FY2023",
-      "FY2024",
-      "Q1 FY25",
-      "Q2 FY25"
-    ],
-    "items": {
-      "Revenue ($B)": [
-        "23.6",
-        "22.7",
-        "25.8",
-        "7.4",
-        "7.7"
-      ],
-      "Cost of Revenue ($B)": [
-        "11.5",
-        "11.1",
-        "12.0",
-        "3.5",
-        "3.6"
-      ],
-      "Gross Profit ($B)": [
-        "12.1",
-        "11.6",
-        "13.8",
-        "3.9",
-        "4.1"
-      ],
-      "Gross Margin (%)": [
-        "51.3%",
-        "51.1%",
-        "53.5%",
-        "52.7%",
-        "53.2%"
-      ],
-      "R&D Expense ($B)": [
-        "5.0",
-        "5.9",
-        "6.3",
-        "1.7",
-        "1.8"
-      ],
-      "SG&A Expense ($B)": [
-        "1.8",
-        "1.8",
-        "2.0",
-        "0.5",
-        "0.5"
-      ],
-      "Amortization of Acquired Intangibles ($B)": [
-        "3.6",
-        "3.6",
-        "3.4",
-        "0.9",
-        "0.9"
-      ],
-      "Operating Income ($B)": [
-        "1.3",
-        "-0.1",
-        "1.0",
-        "0.5",
-        "0.6"
-      ],
-      "Adj. Operating Income ($B)": [
-        "4.8",
-        "4.0",
-        "4.5",
-        "1.3",
-        "1.5"
-      ],
-      "Operating Margin (%)": [
-        "5.5%",
-        "-0.4%",
-        "3.9%",
-        "6.8%",
-        "7.8%"
-      ],
-      "Adj. Operating Margin (%)": [
-        "20.3%",
-        "17.6%",
-        "17.4%",
-        "17.6%",
-        "19.5%"
-      ],
-      "Net Income ($B)": [
-        "1.3",
-        "0.9",
-        "1.6",
-        "0.7",
-        "0.8"
-      ],
-      "Net Margin (%)": [
-        "5.5%",
-        "4.0%",
-        "6.2%",
-        "9.5%",
-        "10.4%"
-      ],
-      "EPS (diluted)": [
-        "$0.84",
-        "$0.53",
-        "$0.94",
-        "$0.47",
-        "$0.49"
-      ]
-    }
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "391.0"
   },
-  "QCOM": {
-    "periods": [
-      "FY2022",
-      "FY2023",
-      "FY2024",
-      "Q1 FY25",
-      "Q2 FY25"
-    ],
-    "items": {
-      "Revenue ($B)": [
-        "44.2",
-        "35.8",
-        "38.9",
-        "11.7",
-        "10.8"
-      ],
-      "QCT (Chipset) Revenue ($B)": [
-        "37.5",
-        "29.4",
-        "32.5",
-        "9.7",
-        "9.0"
-      ],
-      "QTL (Licensing) Revenue ($B)": [
-        "6.7",
-        "6.4",
-        "6.4",
-        "2.0",
-        "1.8"
-      ],
-      "Cost of Revenue ($B)": [
-        "20.0",
-        "16.5",
-        "17.5",
-        "5.2",
-        "4.7"
-      ],
-      "Gross Profit ($B)": [
-        "24.2",
-        "19.3",
-        "21.4",
-        "6.5",
-        "6.1"
-      ],
-      "Gross Margin (%)": [
-        "54.8%",
-        "53.9%",
-        "55.0%",
-        "55.6%",
-        "56.5%"
-      ],
-      "R&D Expense ($B)": [
-        "9.4",
-        "9.0",
-        "9.0",
-        "2.4",
-        "2.4"
-      ],
-      "SG&A Expense ($B)": [
-        "2.2",
-        "2.1",
-        "2.1",
-        "0.5",
-        "0.5"
-      ],
-      "Operating Income ($B)": [
-        "12.6",
-        "8.2",
-        "10.3",
-        "3.6",
-        "3.2"
-      ],
-      "Operating Margin (%)": [
-        "28.5%",
-        "22.9%",
-        "26.5%",
-        "30.8%",
-        "29.6%"
-      ],
-      "Net Income ($B)": [
-        "12.9",
-        "7.2",
-        "10.1",
-        "3.1",
-        "2.8"
-      ],
-      "Net Margin (%)": [
-        "29.2%",
-        "20.1%",
-        "26.0%",
-        "26.5%",
-        "25.9%"
-      ],
-      "EPS (diluted)": [
-        "$10.29",
-        "$6.01",
-        "$8.40",
-        "$2.85",
-        "$2.70"
-      ]
-    }
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "124.3"
   },
-  "AVGO": {
-    "periods": [
-      "FY2022",
-      "FY2023",
-      "FY2024",
-      "Q1 FY25",
-      "Q2 FY25"
-    ],
-    "items": {
-      "Revenue ($B)": [
-        "33.2",
-        "35.8",
-        "51.6",
-        "14.9",
-        "14.1"
-      ],
-      "Semiconductor Revenue ($B)": [
-        "28.3",
-        "28.2",
-        "30.1",
-        "8.2",
-        "7.8"
-      ],
-      "Infrastructure Software Revenue ($B)": [
-        "4.9",
-        "7.6",
-        "21.5",
-        "6.7",
-        "6.3"
-      ],
-      "Cost of Revenue ($B)": [
-        "12.8",
-        "11.8",
-        "18.5",
-        "5.3",
-        "5.0"
-      ],
-      "Gross Profit ($B)": [
-        "20.4",
-        "24.0",
-        "33.1",
-        "9.6",
-        "9.1"
-      ],
-      "Gross Margin (%)": [
-        "61.4%",
-        "67.0%",
-        "64.1%",
-        "64.4%",
-        "64.5%"
-      ],
-      "R&D Expense ($B)": [
-        "5.1",
-        "5.3",
-        "9.3",
-        "3.0",
-        "2.7"
-      ],
-      "SG&A Expense ($B)": [
-        "1.5",
-        "1.5",
-        "2.5",
-        "0.8",
-        "0.8"
-      ],
-      "Amortization of Intangibles ($B)": [
-        "4.6",
-        "4.8",
-        "5.2",
-        "1.8",
-        "1.8"
-      ],
-      "Operating Income ($B)": [
-        "13.8",
-        "17.2",
-        "21.3",
-        "5.8",
-        "5.6"
-      ],
-      "Operating Margin (%)": [
-        "41.6%",
-        "48.0%",
-        "41.3%",
-        "38.9%",
-        "39.7%"
-      ],
-      "Net Income ($B)": [
-        "11.5",
-        "14.1",
-        "5.9",
-        "5.5",
-        "5.4"
-      ],
-      "Net Margin (%)": [
-        "34.6%",
-        "39.4%",
-        "11.4%",
-        "36.9%",
-        "38.3%"
-      ],
-      "EPS (diluted)": [
-        "$24.37",
-        "$30.53",
-        "$4.38",
-        "$1.14",
-        "$1.14"
-      ]
-    }
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "95.4"
   },
-  "MRVL": {
-    "periods": [
-      "FY2023",
-      "FY2024",
-      "FY2025",
-      "Q1 FY26",
-      "Q2 FY26"
-    ],
-    "items": {
-      "Net Revenue ($B)": [
-        "5.9",
-        "5.5",
-        "5.8",
-        "1.9",
-        "2.0"
-      ],
-      "Cost of Goods Sold ($B)": [
-        "2.7",
-        "2.6",
-        "2.6",
-        "0.8",
-        "0.8"
-      ],
-      "Gross Profit ($B)": [
-        "3.2",
-        "2.9",
-        "3.2",
-        "1.1",
-        "1.2"
-      ],
-      "Gross Margin (%)": [
-        "54.2%",
-        "52.7%",
-        "55.2%",
-        "57.9%",
-        "60.0%"
-      ],
-      "Total Operating Expenses ($B)": [
-        "2.8",
-        "2.9",
-        "3.0",
-        "0.8",
-        "0.8"
-      ],
-      "Operating Income ($B)": [
-        "0.4",
-        "0.0",
-        "0.2",
-        "0.3",
-        "0.4"
-      ],
-      "Operating Margin (%)": [
-        "6.8%",
-        "0.0%",
-        "3.4%",
-        "15.8%",
-        "20.0%"
-      ],
-      "Net Income (Loss) ($B)": [
-        "0.2",
-        "-0.1",
-        "0.1",
-        "0.3",
-        "0.4"
-      ],
-      "Net Margin (%)": [
-        "3.4%",
-        "-1.8%",
-        "1.7%",
-        "15.8%",
-        "20.0%"
-      ],
-      "EPS (diluted)": [
-        "$0.23",
-        "-$0.13",
-        "$0.12",
-        "$0.29",
-        "$0.35"
-      ]
-    }
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "223.5"
   },
-  "NXPI": {
-    "periods": [
-      "FY2022",
-      "FY2023",
-      "FY2024",
-      "Q1 FY25",
-      "Q2 FY25"
-    ],
-    "items": {
-      "Revenue ($B)": [
-        "13.2",
-        "13.3",
-        "12.6",
-        "3.1",
-        "3.0"
-      ],
-      "Cost of Revenue ($B)": [
-        "6.2",
-        "6.2",
-        "6.0",
-        "1.5",
-        "1.5"
-      ],
-      "Gross Profit ($B)": [
-        "7.0",
-        "7.1",
-        "6.6",
-        "1.6",
-        "1.5"
-      ],
-      "Gross Margin (%)": [
-        "53.0%",
-        "53.4%",
-        "52.4%",
-        "51.6%",
-        "50.0%"
-      ],
-      "R&D Expense ($B)": [
-        "2.0",
-        "2.1",
-        "2.1",
-        "0.5",
-        "0.5"
-      ],
-      "SG&A Expense ($B)": [
-        "0.6",
-        "0.6",
-        "0.6",
-        "0.2",
-        "0.2"
-      ],
-      "Operating Income ($B)": [
-        "4.4",
-        "4.4",
-        "3.9",
-        "0.9",
-        "0.8"
-      ],
-      "Operating Margin (%)": [
-        "33.3%",
-        "33.1%",
-        "31.0%",
-        "29.0%",
-        "26.7%"
-      ],
-      "Net Income ($B)": [
-        "3.3",
-        "3.1",
-        "2.7",
-        "0.6",
-        "0.6"
-      ],
-      "Net Margin (%)": [
-        "25.0%",
-        "23.3%",
-        "21.4%",
-        "19.4%",
-        "20.0%"
-      ],
-      "EPS (diluted)": [
-        "$12.26",
-        "$11.79",
-        "$10.54",
-        "$2.28",
-        "$2.17"
-      ]
-    }
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "214.1"
   },
-  "STM": {
-    "periods": [
-      "FY2022",
-      "FY2023",
-      "FY2024",
-      "Q1 FY25",
-      "Q2 FY25"
-    ],
-    "items": {
-      "Net Revenues ($B)": [
-        "16.1",
-        "17.3",
-        "13.3",
-        "2.9",
-        "2.7"
-      ],
-      "Cost of Sales ($B)": [
-        "8.0",
-        "8.5",
-        "7.6",
-        "1.8",
-        "1.7"
-      ],
-      "Gross Profit ($B)": [
-        "8.1",
-        "8.8",
-        "5.7",
-        "1.1",
-        "1.0"
-      ],
-      "Manufacturing Gross Margin (%)": [
-        "53.2%",
-        "53.9%",
-        "47.1%",
-        "41.8%",
-        "40.2%"
-      ],
-      "Overall Gross Margin (%)": [
-        "50.3%",
-        "50.9%",
-        "42.9%",
-        "37.9%",
-        "37.0%"
-      ],
-      "R&D Expense ($B)": [
-        "2.0",
-        "2.3",
-        "2.3",
-        "0.6",
-        "0.6"
-      ],
-      "Selling, General & Administrative ($B)": [
-        "0.9",
-        "1.0",
-        "1.0",
-        "0.3",
-        "0.3"
-      ],
-      "Impairment & Restructuring ($B)": [
-        "0.0",
-        "0.0",
-        "0.3",
-        "0.1",
-        "0.1"
-      ],
-      "Operating Income ($B)": [
-        "5.2",
-        "5.5",
-        "2.4",
-        "0.2",
-        "0.1"
-      ],
-      "Operating Margin (%)": [
-        "32.3%",
-        "31.8%",
-        "18.0%",
-        "6.9%",
-        "3.7%"
-      ],
-      "Net Income ($B)": [
-        "4.2",
-        "4.2",
-        "1.6",
-        "0.1",
-        "0.1"
-      ],
-      "Net Margin (%)": [
-        "26.1%",
-        "24.3%",
-        "12.0%",
-        "3.4%",
-        "3.7%"
-      ],
-      "EPS (diluted)": [
-        "$4.40",
-        "$4.42",
-        "$1.72",
-        "$0.12",
-        "$0.09"
-      ]
-    }
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "210.4"
   },
-  "SONY": {
-    "periods": [
-      "FY2022",
-      "FY2023",
-      "FY2024",
-      "Q1 FY25",
-      "Q2 FY25"
-    ],
-    "items": {
-      "Total Sales & Financial Services Revenue ($B)": [
-        "83.0",
-        "87.6",
-        "86.6",
-        "21.0",
-        "20.5"
-      ],
-      "Game & Network Services Revenue ($B)": [
-        "25.3",
-        "26.5",
-        "27.6",
-        "6.5",
-        "6.3"
-      ],
-      "Music Revenue ($B)": [
-        "9.8",
-        "10.3",
-        "11.0",
-        "2.7",
-        "2.7"
-      ],
-      "Pictures Revenue ($B)": [
-        "9.1",
-        "9.8",
-        "9.6",
-        "2.3",
-        "2.3"
-      ],
-      "Electronics Products & Solutions ($B)": [
-        "20.5",
-        "21.0",
-        "20.8",
-        "5.0",
-        "4.8"
-      ],
-      "Imaging & Sensing Solutions ($B)": [
-        "11.4",
-        "12.0",
-        "10.0",
-        "2.5",
-        "2.4"
-      ],
-      "Cost of Sales ($B)": [
-        "57.5",
-        "60.0",
-        "58.6",
-        "14.5",
-        "14.2"
-      ],
-      "Gross Profit ($B)": [
-        "25.5",
-        "27.6",
-        "28.0",
-        "6.5",
-        "6.3"
-      ],
-      "Gross Margin (%)": [
-        "30.7%",
-        "31.5%",
-        "32.3%",
-        "31.0%",
-        "30.7%"
-      ],
-      "Selling, General & Administrative ($B)": [
-        "7.8",
-        "8.1",
-        "8.0",
-        "2.0",
-        "2.0"
-      ],
-      "R&D Expense ($B)": [
-        "5.9",
-        "6.4",
-        "6.7",
-        "1.7",
-        "1.7"
-      ],
-      "Operating Income ($B)": [
-        "11.8",
-        "13.1",
-        "13.3",
-        "2.8",
-        "2.6"
-      ],
-      "Operating Margin (%)": [
-        "14.2%",
-        "15.0%",
-        "15.4%",
-        "13.3%",
-        "12.7%"
-      ],
-      "Net Income Attributable to Sony ($B)": [
-        "9.8",
-        "10.0",
-        "8.9",
-        "2.0",
-        "1.9"
-      ],
-      "Net Margin (%)": [
-        "11.8%",
-        "11.4%",
-        "10.3%",
-        "9.5%",
-        "9.3%"
-      ]
-    }
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "65.5"
   },
-  "TXN": {
-    "periods": [
-      "FY2022",
-      "FY2023",
-      "FY2024",
-      "Q1 FY25",
-      "Q2 FY25"
-    ],
-    "items": {
-      "Revenue ($B)": [
-        "20.0",
-        "17.5",
-        "15.6",
-        "3.7",
-        "3.9"
-      ],
-      "Cost of Revenue ($B)": [
-        "7.2",
-        "6.9",
-        "7.1",
-        "1.8",
-        "1.9"
-      ],
-      "Gross Profit ($B)": [
-        "12.8",
-        "10.6",
-        "8.5",
-        "1.9",
-        "2.0"
-      ],
-      "Gross Margin (%)": [
-        "64.0%",
-        "60.6%",
-        "54.5%",
-        "51.4%",
-        "51.3%"
-      ],
-      "R&D Expense ($B)": [
-        "1.7",
-        "1.9",
-        "1.9",
-        "0.5",
-        "0.5"
-      ],
-      "SG&A Expense ($B)": [
-        "0.8",
-        "0.8",
-        "0.8",
-        "0.2",
-        "0.2"
-      ],
-      "Operating Income ($B)": [
-        "10.3",
-        "7.9",
-        "5.8",
-        "1.2",
-        "1.3"
-      ],
-      "Operating Margin (%)": [
-        "51.5%",
-        "45.1%",
-        "37.2%",
-        "32.4%",
-        "33.3%"
-      ],
-      "Net Income ($B)": [
-        "8.7",
-        "6.5",
-        "4.8",
-        "1.0",
-        "1.1"
-      ],
-      "Net Margin (%)": [
-        "43.5%",
-        "37.1%",
-        "30.8%",
-        "27.0%",
-        "28.2%"
-      ],
-      "EPS (diluted)": [
-        "$9.39",
-        "$7.17",
-        "$5.26",
-        "$1.10",
-        "$1.20"
-      ]
-    }
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "52.0"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "170.8"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "169.1"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "180.7"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "58.8"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "43.3"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "43.3%"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "44.1%"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "46.2%"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "47.3%"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "45.4%"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "26.3"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "29.9"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "31.4"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "8.0"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "8.0"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "25.1"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "24.9"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "26.0"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "6.4"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "6.2"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "119.4"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "114.3"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "123.2"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "44.4"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "29.1"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "30.3%"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "29.8%"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "31.5%"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "35.7%"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "30.5%"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "99.8"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "97.0"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "93.7"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "36.3"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "24.8"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "25.3%"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "25.3%"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "24.0%"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "29.2%"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "26.0%"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "$6.11"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "$6.13"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "$6.08"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "$2.40"
+  },
+  {
+    "co_cd": "AAPL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "$1.65"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "26.9"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "26.9"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "60.9"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "26.0"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "30.0"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "11.6"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "11.6"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "16.6"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "6.5"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "7.5"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "15.3"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "15.3"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "44.3"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "19.5"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "22.5"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "56.9%"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "56.9%"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "72.7%"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "75.0%"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "75.0%"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "7.0"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "7.3"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "8.7"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "2.7"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "3.1"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "2.2"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "2.4"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "2.7"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.7"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.8"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "6.1"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "5.6"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "32.9"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "16.1"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "18.6"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "22.7%"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "20.8%"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "54.1%"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "61.9%"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "62.0%"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "4.4"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "4.4"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "29.8"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "14.9"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "16.6"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "16.4%"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "16.4%"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "49.0%"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "57.3%"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "55.3%"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "$1.74"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "$1.74"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "$11.93"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "$5.98"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "$6.63"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Adj. EPS (non-GAAP)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "$3.34"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Adj. EPS (non-GAAP)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "$3.34"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Adj. EPS (non-GAAP)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "$12.96"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Adj. EPS (non-GAAP)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "$6.12"
+  },
+  {
+    "co_cd": "NVDA",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Adj. EPS (non-GAAP)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "$6.80"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "23.6"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "22.7"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "25.8"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "7.4"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "7.7"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "11.5"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "11.1"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "12.0"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "3.5"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "3.6"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "12.1"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "11.6"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "13.8"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "3.9"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "4.1"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "51.3%"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "51.1%"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "53.5%"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "52.7%"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "53.2%"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "5.0"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "5.9"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "6.3"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "1.7"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "1.8"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "1.8"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "1.8"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "2.0"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.5"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.5"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Amortization of Acquired Intangibles ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "3.6"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Amortization of Acquired Intangibles ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "3.6"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Amortization of Acquired Intangibles ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "3.4"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Amortization of Acquired Intangibles ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.9"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Amortization of Acquired Intangibles ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.9"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "1.3"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "-0.1"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "1.0"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.5"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.6"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Adj. Operating Income ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "4.8"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Adj. Operating Income ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "4.0"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Adj. Operating Income ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "4.5"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Adj. Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "1.3"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Adj. Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "1.5"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "5.5%"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "-0.4%"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "3.9%"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "6.8%"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "7.8%"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Adj. Operating Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "20.3%"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Adj. Operating Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "17.6%"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Adj. Operating Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "17.4%"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Adj. Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "17.6%"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Adj. Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "19.5%"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "1.3"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "0.9"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "1.6"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.7"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.8"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "5.5%"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "4.0%"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "6.2%"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "9.5%"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "10.4%"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "$0.84"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "$0.53"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "$0.94"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "$0.47"
+  },
+  {
+    "co_cd": "AMD",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "$0.49"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "44.2"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "35.8"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "38.9"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "11.7"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "10.8"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "QCT (Chipset) Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "37.5"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "QCT (Chipset) Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "29.4"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "QCT (Chipset) Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "32.5"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "QCT (Chipset) Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "9.7"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "QCT (Chipset) Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "9.0"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "QTL (Licensing) Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "6.7"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "QTL (Licensing) Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "6.4"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "QTL (Licensing) Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "6.4"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "QTL (Licensing) Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "2.0"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "QTL (Licensing) Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "1.8"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "20.0"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "16.5"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "17.5"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "5.2"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "4.7"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "24.2"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "19.3"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "21.4"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "6.5"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "6.1"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "54.8%"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "53.9%"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "55.0%"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "55.6%"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "56.5%"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "9.4"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "9.0"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "9.0"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "2.4"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "2.4"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "2.2"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "2.1"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "2.1"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.5"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.5"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "12.6"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "8.2"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "10.3"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "3.6"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "3.2"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "28.5%"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "22.9%"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "26.5%"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "30.8%"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "29.6%"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "12.9"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "7.2"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "10.1"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "3.1"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "2.8"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "29.2%"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "20.1%"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "26.0%"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "26.5%"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "25.9%"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "$10.29"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "$6.01"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "$8.40"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "$2.85"
+  },
+  {
+    "co_cd": "QCOM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "$2.70"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "33.2"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "35.8"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "51.6"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "14.9"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "14.1"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Semiconductor Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "28.3"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Semiconductor Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "28.2"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Semiconductor Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "30.1"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Semiconductor Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "8.2"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Semiconductor Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "7.8"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Infrastructure Software Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "4.9"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Infrastructure Software Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "7.6"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Infrastructure Software Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "21.5"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Infrastructure Software Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "6.7"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Infrastructure Software Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "6.3"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "12.8"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "11.8"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "18.5"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "5.3"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "5.0"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "20.4"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "24.0"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "33.1"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "9.6"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "9.1"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "61.4%"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "67.0%"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "64.1%"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "64.4%"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "64.5%"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "5.1"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "5.3"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "9.3"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "3.0"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "2.7"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "1.5"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "1.5"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "2.5"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.8"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.8"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Amortization of Intangibles ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "4.6"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Amortization of Intangibles ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "4.8"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Amortization of Intangibles ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "5.2"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Amortization of Intangibles ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "1.8"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Amortization of Intangibles ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "1.8"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "13.8"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "17.2"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "21.3"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "5.8"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "5.6"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "41.6%"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "48.0%"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "41.3%"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "38.9%"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "39.7%"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "11.5"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "14.1"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "5.9"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "5.5"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "5.4"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "34.6%"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "39.4%"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "11.4%"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "36.9%"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "38.3%"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "$24.37"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "$30.53"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "$4.38"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "$1.14"
+  },
+  {
+    "co_cd": "AVGO",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "$1.14"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "5.9"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "5.5"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "NA",
+    "fld_val": "5.8"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Revenue ($B)",
+    "fiscal_year": 2026,
+    "calendar_quarter": "Q1",
+    "fld_val": "1.9"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Revenue ($B)",
+    "fiscal_year": 2026,
+    "calendar_quarter": "Q2",
+    "fld_val": "2.0"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Goods Sold ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "2.7"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Goods Sold ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "2.6"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Goods Sold ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "NA",
+    "fld_val": "2.6"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Goods Sold ($B)",
+    "fiscal_year": 2026,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.8"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Goods Sold ($B)",
+    "fiscal_year": 2026,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.8"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "3.2"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "2.9"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "NA",
+    "fld_val": "3.2"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2026,
+    "calendar_quarter": "Q1",
+    "fld_val": "1.1"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2026,
+    "calendar_quarter": "Q2",
+    "fld_val": "1.2"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "54.2%"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "52.7%"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "NA",
+    "fld_val": "55.2%"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2026,
+    "calendar_quarter": "Q1",
+    "fld_val": "57.9%"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2026,
+    "calendar_quarter": "Q2",
+    "fld_val": "60.0%"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Total Operating Expenses ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "2.8"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Total Operating Expenses ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "2.9"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Total Operating Expenses ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "NA",
+    "fld_val": "3.0"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Total Operating Expenses ($B)",
+    "fiscal_year": 2026,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.8"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Total Operating Expenses ($B)",
+    "fiscal_year": 2026,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.8"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "0.4"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "0.0"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "NA",
+    "fld_val": "0.2"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2026,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.3"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2026,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.4"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "6.8%"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "0.0%"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "NA",
+    "fld_val": "3.4%"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2026,
+    "calendar_quarter": "Q1",
+    "fld_val": "15.8%"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2026,
+    "calendar_quarter": "Q2",
+    "fld_val": "20.0%"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income (Loss) ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "0.2"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income (Loss) ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "-0.1"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income (Loss) ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "NA",
+    "fld_val": "0.1"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income (Loss) ($B)",
+    "fiscal_year": 2026,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.3"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income (Loss) ($B)",
+    "fiscal_year": 2026,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.4"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "3.4%"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "-1.8%"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "NA",
+    "fld_val": "1.7%"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2026,
+    "calendar_quarter": "Q1",
+    "fld_val": "15.8%"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2026,
+    "calendar_quarter": "Q2",
+    "fld_val": "20.0%"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "$0.23"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "-$0.13"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "NA",
+    "fld_val": "$0.12"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2026,
+    "calendar_quarter": "Q1",
+    "fld_val": "$0.29"
+  },
+  {
+    "co_cd": "MRVL",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2026,
+    "calendar_quarter": "Q2",
+    "fld_val": "$0.35"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "13.2"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "13.3"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "12.6"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "3.1"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "3.0"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "6.2"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "6.2"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "6.0"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "1.5"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "1.5"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "7.0"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "7.1"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "6.6"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "1.6"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "1.5"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "53.0%"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "53.4%"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "52.4%"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "51.6%"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "50.0%"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "2.0"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "2.1"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "2.1"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.5"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.5"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "0.6"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "0.6"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "0.6"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.2"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.2"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "4.4"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "4.4"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "3.9"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.9"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.8"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "33.3%"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "33.1%"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "31.0%"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "29.0%"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "26.7%"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "3.3"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "3.1"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "2.7"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.6"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.6"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "25.0%"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "23.3%"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "21.4%"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "19.4%"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "20.0%"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "$12.26"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "$11.79"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "$10.54"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "$2.28"
+  },
+  {
+    "co_cd": "NXPI",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "$2.17"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Revenues ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "16.1"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Revenues ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "17.3"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Revenues ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "13.3"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Revenues ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "2.9"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Revenues ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "2.7"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Sales ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "8.0"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Sales ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "8.5"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Sales ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "7.6"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Sales ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "1.8"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Sales ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "1.7"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "8.1"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "8.8"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "5.7"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "1.1"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "1.0"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Manufacturing Gross Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "53.2%"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Manufacturing Gross Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "53.9%"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Manufacturing Gross Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "47.1%"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Manufacturing Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "41.8%"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Manufacturing Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "40.2%"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Overall Gross Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "50.3%"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Overall Gross Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "50.9%"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Overall Gross Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "42.9%"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Overall Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "37.9%"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Overall Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "37.0%"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "2.0"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "2.3"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "2.3"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.6"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.6"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Selling, General & Administrative ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "0.9"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Selling, General & Administrative ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "1.0"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Selling, General & Administrative ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "1.0"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Selling, General & Administrative ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.3"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Selling, General & Administrative ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.3"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Impairment & Restructuring ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "0.0"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Impairment & Restructuring ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "0.0"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Impairment & Restructuring ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "0.3"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Impairment & Restructuring ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.1"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Impairment & Restructuring ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.1"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "5.2"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "5.5"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "2.4"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.2"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.1"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "32.3%"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "31.8%"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "18.0%"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "6.9%"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "3.7%"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "4.2"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "4.2"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "1.6"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.1"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.1"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "26.1%"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "24.3%"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "12.0%"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "3.4%"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "3.7%"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "$4.40"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "$4.42"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "$1.72"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "$0.12"
+  },
+  {
+    "co_cd": "STM",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "$0.09"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Total Sales & Financial Services Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "83.0"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Total Sales & Financial Services Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "87.6"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Total Sales & Financial Services Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "86.6"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Total Sales & Financial Services Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "21.0"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Total Sales & Financial Services Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "20.5"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Game & Network Services Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "25.3"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Game & Network Services Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "26.5"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Game & Network Services Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "27.6"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Game & Network Services Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "6.5"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Game & Network Services Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "6.3"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Music Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "9.8"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Music Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "10.3"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Music Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "11.0"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Music Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "2.7"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Music Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "2.7"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Pictures Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "9.1"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Pictures Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "9.8"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Pictures Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "9.6"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Pictures Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "2.3"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Pictures Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "2.3"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Electronics Products & Solutions ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "20.5"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Electronics Products & Solutions ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "21.0"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Electronics Products & Solutions ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "20.8"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Electronics Products & Solutions ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "5.0"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Electronics Products & Solutions ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "4.8"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Imaging & Sensing Solutions ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "11.4"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Imaging & Sensing Solutions ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "12.0"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Imaging & Sensing Solutions ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "10.0"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Imaging & Sensing Solutions ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "2.5"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Imaging & Sensing Solutions ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "2.4"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Sales ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "57.5"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Sales ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "60.0"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Sales ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "58.6"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Sales ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "14.5"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Sales ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "14.2"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "25.5"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "27.6"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "28.0"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "6.5"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "6.3"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "30.7%"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "31.5%"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "32.3%"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "31.0%"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "30.7%"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Selling, General & Administrative ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "7.8"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Selling, General & Administrative ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "8.1"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Selling, General & Administrative ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "8.0"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Selling, General & Administrative ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "2.0"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Selling, General & Administrative ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "2.0"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "5.9"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "6.4"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "6.7"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "1.7"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "1.7"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "11.8"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "13.1"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "13.3"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "2.8"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "2.6"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "14.2%"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "15.0%"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "15.4%"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "13.3%"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "12.7%"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income Attributable to Sony ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "9.8"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income Attributable to Sony ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "10.0"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income Attributable to Sony ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "8.9"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income Attributable to Sony ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "2.0"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income Attributable to Sony ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "1.9"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "11.8%"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "11.4%"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "10.3%"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "9.5%"
+  },
+  {
+    "co_cd": "SONY",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "9.3%"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "20.0"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "17.5"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "15.6"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "3.7"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "3.9"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "7.2"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "6.9"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "7.1"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "1.8"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Cost of Revenue ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "1.9"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "12.8"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "10.6"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "8.5"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "1.9"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Profit ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "2.0"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "64.0%"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "60.6%"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "54.5%"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "51.4%"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Gross Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "51.3%"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "1.7"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "1.9"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "1.9"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.5"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "R&D Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.5"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "0.8"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "0.8"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "0.8"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "0.2"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "SG&A Expense ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "0.2"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "10.3"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "7.9"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "5.8"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "1.2"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "1.3"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "51.5%"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "45.1%"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "37.2%"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "32.4%"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Operating Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "33.3%"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "8.7"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "6.5"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "4.8"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "1.0"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Income ($B)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "1.1"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "43.5%"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "37.1%"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "30.8%"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "27.0%"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "Net Margin (%)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "28.2%"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2022,
+    "calendar_quarter": "NA",
+    "fld_val": "$9.39"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2023,
+    "calendar_quarter": "NA",
+    "fld_val": "$7.17"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2024,
+    "calendar_quarter": "NA",
+    "fld_val": "$5.26"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q1",
+    "fld_val": "$1.10"
+  },
+  {
+    "co_cd": "TXN",
+    "curr_cd": "USD",
+    "rpt_fin_type": "income",
+    "rpt_fin_item": "EPS (diluted)",
+    "fiscal_year": 2025,
+    "calendar_quarter": "Q2",
+    "fld_val": "$1.20"
   }
-}
+]
 ```
 
 ## Balance Sheet
