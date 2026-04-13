@@ -18204,6 +18204,11 @@ html.dark .cp-fin-index-tab:hover {
   letter-spacing: 0.1em;
   margin-bottom: 8px;
 }
+.cp-pec-notice {
+  font-size: 11px;
+  color: #8b0000;
+  padding: 6px 16px;
+}
 .cp-pec-bullet-list {
   margin: 0;
   padding-left: 16px;

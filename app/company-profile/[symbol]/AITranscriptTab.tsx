@@ -495,6 +495,9 @@ function AiTranscriptDetail({ card, keyword, expandedQuotes, onToggleQuotes }: A
         </div>
       </div>
 
+      {/* Notice */}
+      <div className="cp-pec-notice">Notice: BD/IT team continue to improve the AI tool. Currently the summarized transcript is for reference purpose only. (Contact Window: Alex Chang 張汶傑)</div>
+
       {/* Download button — top-right corner */}
       <div className="cp-pec-card-actions cp-pec-ai-download">
         <button

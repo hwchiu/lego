@@ -660,6 +660,9 @@ function PecDetail({ card, keyword }: PecDetailProps) {
         </div>
       </div>
 
+      {/* Notice */}
+      <div className="cp-pec-notice">Notice: BD/IT team continue to improve the AI tool. Currently the summarized transcript is for reference purpose only. (Contact Window: Alex Chang 張汶傑)</div>
+
       <div className="cp-pec-card-body">
         {card.sections.map((section) => (
           <div key={section.heading}>
