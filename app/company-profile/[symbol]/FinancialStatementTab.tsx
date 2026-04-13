@@ -152,26 +152,37 @@ function isSectionRow(row: string[]): boolean {
 
 // ── Data loaders ───────────────────────────────────────────────────────────────
 
-/** Loads TC income statement as FlatFinRecord[] and converts to StatementData. */
-let _tcIncomeData: StatementData | null = null;
-function getTcIncomeData(): StatementData | null {
-  if (!_tcIncomeData) {
-    const records = extractJson<FlatFinRecord[]>(tcFinStmtMd as string);
-    const stmtMap = flatToStatementData(records, 'income');
-    _tcIncomeData = stmtMap['TC'] ?? null;
-  }
-  return _tcIncomeData;
-}
+/**
+ * Config map for companies whose income data lives in a dedicated markdown file.
+ * `mdContent`  – the imported markdown string
+ * `section`    – section heading to parse (undefined → parse first JSON block)
+ */
+const MD_INCOME_CONFIG: Record<string, { mdContent: string; section?: string }> = {
+  TC:   { mdContent: tcFinStmtMd as string },
+  AAPL: { mdContent: aaplFinStmtMd as string, section: 'Income Statement' },
+};
 
-/** Loads AAPL income statement as FlatFinRecord[] and converts to StatementData. */
-let _aaplIncomeData: StatementData | null = null;
-function getAaplIncomeData(): StatementData | null {
-  if (!_aaplIncomeData) {
-    const records = extractJsonBySection<FlatFinRecord[]>(aaplFinStmtMd as string, 'Income Statement');
-    const stmtMap = flatToStatementData(records, 'income');
-    _aaplIncomeData = stmtMap['AAPL'] ?? null;
+/** Shared per-symbol cache for markdown-sourced income StatementData. */
+const _mdIncomeCache: Record<string, StatementData | null> = {};
+
+/**
+ * Loads a company's income statement from its dedicated markdown file and
+ * converts the FlatFinRecord[] array to StatementData.
+ * Returns null if the symbol has no markdown config or no matching records.
+ */
+function getMarkdownIncomeData(symbol: string): StatementData | null {
+  if (symbol in _mdIncomeCache) return _mdIncomeCache[symbol];
+  const config = MD_INCOME_CONFIG[symbol];
+  if (!config) {
+    _mdIncomeCache[symbol] = null;
+    return null;
   }
-  return _aaplIncomeData;
+  const records = config.section
+    ? extractJsonBySection<FlatFinRecord[]>(config.mdContent, config.section)
+    : extractJson<FlatFinRecord[]>(config.mdContent);
+  const stmtMap = flatToStatementData(records, 'income');
+  _mdIncomeCache[symbol] = stmtMap[symbol] ?? null;
+  return _mdIncomeCache[symbol];
 }
 
 const _aaplSimpleCache: Partial<Record<'balance' | 'cashflow' | 'segment', SimpleStatementData>> = {};
@@ -203,7 +214,7 @@ function getCompanyStatements(symbol: string): CompanyStatements {
   // Checked before financial-data.md because AAPL also appears in that Company List
   // but has richer dedicated data (including Segment Report) in its own markdown file.
   if (symbol === 'AAPL') {
-    const incomeData = getAaplIncomeData();
+    const incomeData = getMarkdownIncomeData(symbol);
     if (incomeData) result.income = { kind: 'findata', data: incomeData };
     result.balance  = { kind: 'simple', data: getAaplSimpleData('balance') };
     result.cashflow = { kind: 'simple', data: getAaplSimpleData('cashflow') };
@@ -213,7 +224,7 @@ function getCompanyStatements(symbol: string): CompanyStatements {
 
   // TC: flat FlatFinRecord income only
   if (symbol === 'TC') {
-    const incomeData = getTcIncomeData();
+    const incomeData = getMarkdownIncomeData(symbol);
     if (incomeData) result.income = { kind: 'findata', data: incomeData };
     return result;
   }
