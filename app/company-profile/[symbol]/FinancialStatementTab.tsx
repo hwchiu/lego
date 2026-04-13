@@ -46,8 +46,25 @@ function isQuarterlyPeriod(p: string): boolean {
   return /^Q\d/.test(p);
 }
 
-function FinDataTable({ data }: { data: StatementData }) {
-  const periods = data.periods;
+function FinDataTable({
+  data,
+  viewMode,
+  yearWindowStart,
+}: {
+  data: StatementData;
+  viewMode: ViewMode;
+  yearWindowStart: number;
+}) {
+  // Filter periods to only those relevant for the current viewMode / year window
+  const periodIdxs = data.periods
+    .map((p, i) => ({ p, i }))
+    .filter(({ p }) => {
+      if (viewMode === 'annual') return !isQuarterlyPeriod(p);
+      const y = parseColYear(p);
+      return isQuarterlyPeriod(p) && (y === yearWindowStart || y === yearWindowStart + 1);
+    });
+
+  const periods = periodIdxs.map(({ p }) => p);
 
   // Classify each period and build two-row header groups
   type Row1Cell =
@@ -111,25 +128,26 @@ function FinDataTable({ data }: { data: StatementData }) {
           )}
         </thead>
         <tbody>
-          {Object.entries(data.items).map(([label, values], ri) => {
-            const isSection = values.every((v) => v === '' || v === '—');
+          {Object.entries(data.items).map(([label, allValues], ri) => {
+            const isSection = allValues.every((v) => v === '' || v === '—');
             return isSection ? (
               <tr key={ri} className="fin-stmt-section-row">
-                <td colSpan={data.periods.length + 1} className="fin-stmt-td-section">
+                <td colSpan={periods.length + 1} className="fin-stmt-td-section">
                   {label}
                 </td>
               </tr>
             ) : (
               <tr key={ri}>
                 <td className="fin-stmt-td-item">{label}</td>
-                {values.map((val, ci) => {
+                {periodIdxs.map(({ p, i }) => {
+                  const val = allValues[i] ?? '';
                   const isNeg = val.startsWith('-') && val !== '-';
                   const isPos =
                     val.startsWith('+') ||
                     (val.endsWith('%') && !val.startsWith('-') && parseFloat(val) > 0);
                   return (
                     <td
-                      key={ci}
+                      key={p}
                       className={`td-num${isNeg ? ' fin-stmt-neg' : isPos ? ' fin-stmt-pos' : ''}`}
                     >
                       {val || '—'}
@@ -416,18 +434,29 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
   );
 
   const simpleAllYears = useMemo(() => {
-    if (!simpleData) return [] as number[];
+    if (!simpleData) return [];
     return [...new Set(simpleData.quarterlyData.columns.map(parseColYear))].filter(Boolean).sort((a, b) => a - b);
   }, [simpleData]);
 
-  const simpleMaxYearWindowStart = simpleAllYears.length > 1
-    ? simpleAllYears[simpleAllYears.length - 1] - 1
-    : (simpleAllYears[0] ?? 0);
+  // ── FinData (Income Statement) year nav ───────────────────────────────────────
+  const finDataAllYears = useMemo(() => {
+    if (currentTabData?.kind !== 'findata') return [];
+    return [...new Set(
+      currentTabData.data.periods.filter(isQuarterlyPeriod).map(parseColYear),
+    )].filter(Boolean).sort((a, b) => a - b);
+  }, [currentTabData]);
+
+  // Unified year list: works for both 'simple' and 'findata' tabs
+  const activeAllYears = simpleData ? simpleAllYears : finDataAllYears;
+
+  const activeMaxYearWindowStart = activeAllYears.length > 1
+    ? activeAllYears[activeAllYears.length - 1] - 1
+    : (activeAllYears[0] ?? 0);
 
   // Per-tab year overrides; falls back to computed default so no useEffect needed.
   const [simpleYearOverrides, setSimpleYearOverrides] = useState<Partial<Record<StatementType, number>>>({});
-  const simpleDefaultYearStart = simpleAllYears.length > 0
-    ? Math.max(simpleAllYears[0], simpleMaxYearWindowStart)
+  const simpleDefaultYearStart = activeAllYears.length > 0
+    ? Math.max(activeAllYears[0], activeMaxYearWindowStart)
     : 0;
   const simpleYearWindowStart = simpleYearOverrides[effectiveType] ?? simpleDefaultYearStart;
 
@@ -438,8 +467,8 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
     }));
   }
 
-  const simpleCanGoPrev = viewMode === 'quarterly' && simpleAllYears.length > 0 && simpleYearWindowStart > simpleAllYears[0];
-  const simpleCanGoNext = viewMode === 'quarterly' && simpleYearWindowStart < simpleMaxYearWindowStart;
+  const simpleCanGoPrev = viewMode === 'quarterly' && activeAllYears.length > 0 && simpleYearWindowStart > activeAllYears[0];
+  const simpleCanGoNext = viewMode === 'quarterly' && simpleYearWindowStart < activeMaxYearWindowStart;
 
   // No data at all — show placeholder
   if (visibleTabs.length === 0) {
@@ -473,17 +502,16 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
 
       {/* ── Right content area ── */}
       <div className="fin-stmt-content">
-        {/* Toolbar — shown only for simple (Balance Sheet / Cash Flow / Segment) */}
-        {isSimpleStatement && (
+        {/* Toolbar — shown for all tabs that have data */}
+        {currentTabData != null && (
           <div className="fin-stmt-toolbar">
             <div className="fin-stmt-year-nav">
-              {/* Balance Sheet / Cash Flow / Segment year nav */}
-              {viewMode === 'quarterly' && simpleAllYears.length > 0 && (
+              {viewMode === 'quarterly' && activeAllYears.length > 0 && (
                 <>
                   <button
                     className="wl-quarter-btn"
                     aria-label="Previous year"
-                    onClick={() => setYearOverrideForStatement((y) => Math.max(simpleAllYears[0], y - 1))}
+                    onClick={() => setYearOverrideForStatement((y) => Math.max(activeAllYears[0], y - 1))}
                     disabled={!simpleCanGoPrev}
                   >
                     <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
@@ -496,7 +524,7 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
                   <button
                     className="wl-quarter-btn"
                     aria-label="Next year"
-                    onClick={() => setYearOverrideForStatement((y) => Math.min(simpleMaxYearWindowStart, y + 1))}
+                    onClick={() => setYearOverrideForStatement((y) => Math.min(activeMaxYearWindowStart, y + 1))}
                     disabled={!simpleCanGoNext}
                   >
                     <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
@@ -543,7 +571,11 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
 
         {/* ── Table ── */}
         {currentTabData?.kind === 'findata' && (
-          <FinDataTable data={currentTabData.data} />
+          <FinDataTable
+            data={currentTabData.data}
+            viewMode={viewMode}
+            yearWindowStart={simpleYearWindowStart}
+          />
         )}
         {isSimpleStatement && (
           simpleData ? (
