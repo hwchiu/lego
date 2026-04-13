@@ -13,6 +13,15 @@ import { useLanguage } from '@/app/contexts/LanguageContext';
 
 const TAGS_VISIBLE_COUNT = 6;
 
+const CAT_IMAGES: Record<string, string> = {
+  'esg': 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=900&q=80',
+  'government-regulations': 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=900&q=80',
+  'international-standards': 'https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=900&q=80',
+  'industry-information': 'https://images.unsplash.com/photo-1565514020179-026b92b2d70b?w=900&q=80',
+  'company-operations': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=900&q=80',
+  'capital-markets': 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80',
+};
+
 function formatDate(iso: string): string {
   const d = new Date(iso);
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
@@ -1245,6 +1254,16 @@ export default function DataCategoryContent({ params }: { params: { category: st
         <main className="main-content">
           <div className="de-page">
             <div className="de-cat-hero" style={{ borderColor: cat.color }}>
+              <div className="de-cat-hero-overlay" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <div className="de-cat-hero-img-wrap">
+                <img
+                  src={CAT_IMAGES[cat.slug] ?? 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=900&q=80'}
+                  alt=""
+                  className="de-cat-hero-img"
+                  aria-hidden="true"
+                />
+              </div>
               <div className="de-cat-hero-inner">
                 <Link href="/data-explore" className="de-back-btn">
                   <BackArrowIcon />

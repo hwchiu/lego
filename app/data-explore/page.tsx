@@ -151,6 +151,16 @@ export default function DataExplorePage() {
 
             {/* ── Hero ── */}
             <div className="de-hero">
+              <div className="de-hero-overlay" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <div className="de-hero-img-wrap">
+                <img
+                  src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=900&q=80"
+                  alt=""
+                  className="de-hero-img"
+                  aria-hidden="true"
+                />
+              </div>
               <div className="de-hero-inner">
                 <div className="section-eyebrow">Data Explore</div>
                 <h1 className="de-hero-title">Data Explore</h1>
