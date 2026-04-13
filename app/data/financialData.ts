@@ -75,11 +75,22 @@ function periodLabel(fiscalYear: number, calendarQuarter: string): string {
   return `${calendarQuarter} FY${fiscalYear}`;
 }
 
-/** Sort key for a period so that annual < quarterly, both chronological. */
+/** Sort key for a period so that annual sorts before quarterly, both chronological.
+ *  Annual gets quarter offset 0; Q1–Q4 get offsets 1–4.
+ *  Example: FY2022 → 20220, Q1 FY2025 → 20251, Q4 FY2025 → 20254.
+ */
 function periodSortKey(fiscalYear: number, calendarQuarter: string): number {
   const qn = calendarQuarter === 'NA' ? 0 : parseInt(calendarQuarter.slice(1), 10);
-  // annual records carry a large negative quarter so they sort before quarterly
-  return fiscalYear * 10 + (calendarQuarter === 'NA' ? -1 : qn);
+  return fiscalYear * 10 + qn;
+}
+
+/** Parse a canonical period label back to a sort key. */
+function parsePeriodSortKey(p: string): number {
+  const mq = p.match(/^(Q\d)\s+FY(\d+)$/);
+  if (mq) return periodSortKey(parseInt(mq[2], 10), mq[1]);
+  const ma = p.match(/^FY(\d+)$/);
+  if (ma) return periodSortKey(parseInt(ma[1], 10), 'NA');
+  return 0;
 }
 
 /**
@@ -121,14 +132,6 @@ function flatToStatementData(
 
   // Second pass: assemble StatementData with sorted periods
   const result: Record<string, StatementData> = {};
-
-  const parsePeriodSortKey = (p: string): number => {
-    const mq = p.match(/^(Q\d)\s+FY(\d+)$/);
-    if (mq) return periodSortKey(parseInt(mq[2], 10), mq[1]);
-    const ma = p.match(/^FY(\d+)$/);
-    if (ma) return periodSortKey(parseInt(ma[1], 10), 'NA');
-    return 0;
-  };
 
   for (const co_cd of Object.keys(cellMap)) {
     const sortedPeriods = [...periodSets[co_cd]].sort(
