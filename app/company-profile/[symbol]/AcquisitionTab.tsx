@@ -182,10 +182,10 @@ function AcquisitionBarLineChart({ deals }: { deals: AcquisitionDeal[] }) {
               style={{ cursor: 'pointer' }}
             >
               {discH > 0 && (
-                <rect x={x} y={baseY - discH} width={barW} height={discH} fill={isHovered ? '#1d4ed8' : '#3b82f6'} rx="1" />
+                <rect x={x} y={baseY - discH} width={barW} height={discH} fill={isHovered ? '#8a1f1f' : '#bf3030'} rx="1" />
               )}
               {undiscH > 0 && (
-                <rect x={x} y={baseY - discH - undiscH} width={barW} height={undiscH} fill={isHovered ? '#b91c1c' : '#ef4444'} rx="1" />
+                <rect x={x} y={baseY - discH - undiscH} width={barW} height={undiscH} fill={isHovered ? '#0e4eb5' : '#1673EE'} rx="1" />
               )}
               {showLabel && (
                 <text x={cx} y={H - 6} textAnchor="middle" fontSize="8" fill="#9ca3af">{d.year}</text>
@@ -203,9 +203,9 @@ function AcquisitionBarLineChart({ deals }: { deals: AcquisitionDeal[] }) {
           <circle key={p.year} cx={p.cx} cy={p.cy} r="3" fill="#111827" stroke="#fff" strokeWidth="1" />
         ))}
 
-        <rect x={PAD.left} y={8} width="8" height="8" fill="#3b82f6" rx="1" />
+        <rect x={PAD.left} y={8} width="8" height="8" fill="#bf3030" rx="1" />
         <text x={PAD.left + 11} y={16} fontSize="9" fill="#374151">Count of Disclosed Value</text>
-        <rect x={PAD.left + 155} y={8} width="8" height="8" fill="#ef4444" rx="1" />
+        <rect x={PAD.left + 155} y={8} width="8" height="8" fill="#1673EE" rx="1" />
         <text x={PAD.left + 168} y={16} fontSize="9" fill="#374151">Count of Undisclosed Value</text>
         <line x1={PAD.left + 340} y1={12} x2={PAD.left + 355} y2={12} stroke="#111827" strokeWidth="2" />
         <circle cx={PAD.left + 347} cy={12} r="3" fill="#111827" />
@@ -600,16 +600,16 @@ function MABarChartSmall({ data }: { data: { year: number; deals: number; value:
         const valH = (d.value / valueMax) * chartH;
         return (
           <g key={d.year}>
-            <rect x={cx - barW - 1} y={PAD.top + chartH - dealH} width={barW} height={dealH} fill="#3b82f6" opacity="0.85" rx="1" />
-            <rect x={cx + 1} y={PAD.top + chartH - valH} width={barW} height={valH} fill="#f59e0b" opacity="0.85" rx="1" />
+            <rect x={cx - barW - 1} y={PAD.top + chartH - dealH} width={barW} height={dealH} fill="#bf3030" opacity="0.85" rx="1" />
+            <rect x={cx + 1} y={PAD.top + chartH - valH} width={barW} height={valH} fill="#1673EE" opacity="0.85" rx="1" />
             <text x={cx} y={H - 6} textAnchor="middle" fontSize="9" fill="#9ca3af">{d.year}</text>
           </g>
         );
       })}
       <line x1={PAD.left} y1={PAD.top + chartH} x2={W - PAD.right} y2={PAD.top + chartH} stroke="#e5e7eb" strokeWidth="1" />
-      <rect x={PAD.left} y={5} width="8" height="8" fill="#3b82f6" rx="1" />
+      <rect x={PAD.left} y={5} width="8" height="8" fill="#bf3030" rx="1" />
       <text x={PAD.left + 11} y={13} fontSize="9" fill="#374151">Deals</text>
-      <rect x={PAD.left + 60} y={5} width="8" height="8" fill="#f59e0b" rx="1" />
+      <rect x={PAD.left + 60} y={5} width="8" height="8" fill="#1673EE" rx="1" />
       <text x={PAD.left + 71} y={13} fontSize="9" fill="#374151">Value ($B)</text>
     </svg>
   );

@@ -501,16 +501,16 @@ function MABarChartSmall({ data }: { data: { year: number; deals: number; value:
         const valH = (d.value / valueMax) * chartH;
         return (
           <g key={d.year}>
-            <rect x={cx - barW - 1} y={PAD.top + chartH - dealH} width={barW} height={dealH} fill="#3b82f6" opacity="0.85" rx="1" />
-            <rect x={cx + 1} y={PAD.top + chartH - valH} width={barW} height={valH} fill="#f59e0b" opacity="0.85" rx="1" />
+            <rect x={cx - barW - 1} y={PAD.top + chartH - dealH} width={barW} height={dealH} fill="#bf3030" opacity="0.85" rx="1" />
+            <rect x={cx + 1} y={PAD.top + chartH - valH} width={barW} height={valH} fill="#1673EE" opacity="0.85" rx="1" />
             <text x={cx} y={H - 6} textAnchor="middle" fontSize="9" fill="#9ca3af">{d.year}</text>
           </g>
         );
       })}
       <line x1={PAD.left} y1={PAD.top + chartH} x2={W - PAD.right} y2={PAD.top + chartH} stroke="#e5e7eb" strokeWidth="1" />
-      <rect x={PAD.left} y={5} width="8" height="8" fill="#3b82f6" rx="1" />
+      <rect x={PAD.left} y={5} width="8" height="8" fill="#bf3030" rx="1" />
       <text x={PAD.left + 11} y={13} fontSize="9" fill="#374151">Deals</text>
-      <rect x={PAD.left + 60} y={5} width="8" height="8" fill="#f59e0b" rx="1" />
+      <rect x={PAD.left + 60} y={5} width="8" height="8" fill="#1673EE" rx="1" />
       <text x={PAD.left + 71} y={13} fontSize="9" fill="#374151">Value ($B)</text>
     </svg>
   );

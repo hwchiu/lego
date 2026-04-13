@@ -165,7 +165,7 @@ export function InvestmentBarLineChartNivo({ deals, selectedYear, onYearClick }:
         groupMode="stacked"
         margin={{ top: 30, right: 75, bottom: 40, left: 55 }}
         valueScale={{ type: 'linear', min: 0, max: countMax }}
-        colors={['#3b82f6', '#ef4444']}
+        colors={['#bf3030', '#1673EE']}
         borderRadius={1}
         enableLabel={false}
         animate={true}
@@ -239,8 +239,8 @@ export function InvestmentBarLineChartNivo({ deals, selectedYear, onYearClick }:
             anchor: 'top-left',
             direction: 'row',
             data: [
-              { id: 'disclosedCount', label: 'Count of Disclosed Value', color: '#3b82f6' },
-              { id: 'undisclosedCount', label: 'Count of Undisclosed Value', color: '#ef4444' },
+              { id: 'disclosedCount', label: 'Count of Disclosed Value', color: '#bf3030' },
+              { id: 'undisclosedCount', label: 'Count of Undisclosed Value', color: '#1673EE' },
               { id: 'line', label: 'Disclosed Value (M)', color: '#111827' },
             ],
             itemWidth: 175,
@@ -287,7 +287,7 @@ export function MABarChartSmallNivo({
         groupMode="grouped"
         margin={{ top: 20, right: 55, bottom: 30, left: 55 }}
         valueScale={{ type: 'linear', min: 0, max: sharedMax }}
-        colors={['#3b82f6', '#f59e0b']}
+        colors={['#bf3030', '#1673EE']}
         borderRadius={1}
         enableLabel={false}
         axisBottom={{ tickSize: 0, tickPadding: 5 }}
@@ -312,8 +312,8 @@ export function MABarChartSmallNivo({
             anchor: 'top-left',
             direction: 'row',
             data: [
-              { id: 'deals', label: 'Deals', color: '#3b82f6' },
-              { id: 'value', label: 'Value ($B)', color: '#f59e0b' },
+              { id: 'deals', label: 'Deals', color: '#bf3030' },
+              { id: 'value', label: 'Value ($B)', color: '#1673EE' },
             ],
             itemWidth: 80,
             itemHeight: 20,
@@ -468,7 +468,7 @@ export function AcquisitionBarLineChartNivo({ deals, selectedYear, onYearClick }
         groupMode="stacked"
         margin={{ top: 30, right: 75, bottom: 40, left: 55 }}
         valueScale={{ type: 'linear', min: 0, max: countMax }}
-        colors={['#3b82f6', '#ef4444']}
+        colors={['#bf3030', '#1673EE']}
         borderRadius={1}
         enableLabel={false}
         animate={true}
@@ -538,8 +538,8 @@ export function AcquisitionBarLineChartNivo({ deals, selectedYear, onYearClick }
             anchor: 'top-left',
             direction: 'row',
             data: [
-              { id: 'disclosedCount', label: 'Count of Disclosed Value', color: '#3b82f6' },
-              { id: 'undisclosedCount', label: 'Count of Undisclosed Value', color: '#ef4444' },
+              { id: 'disclosedCount', label: 'Count of Disclosed Value', color: '#bf3030' },
+              { id: 'undisclosedCount', label: 'Count of Undisclosed Value', color: '#1673EE' },
               { id: 'line', label: 'Disclosed Value (M)', color: '#111827' },
             ],
             itemWidth: 175,
@@ -631,10 +631,10 @@ export function FundingLineChartNivo({ deals, selectedYear, onYearClick }: Fundi
         curve="monotoneX"
         animate={true}
         motionConfig="gentle"
-        colors={['#3b82f6']}
+        colors={['#bf3030']}
         lineWidth={2}
         pointSize={8}
-        pointColor="#3b82f6"
+        pointColor="#bf3030"
         pointBorderColor="#fff"
         pointBorderWidth={2}
         enableArea={true}
