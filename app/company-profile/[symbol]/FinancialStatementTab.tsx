@@ -238,8 +238,10 @@ function fmt(val: number | string | null, valUnit: string): string {
       if (typeof val === 'string') {
         const n = parseFloat(val);
         if (isNaN(n)) return val + '%';
-        const sign = val.startsWith('+') ? '+' : '';
-        return sign + n.toFixed(2) + '%';
+        // Handle sign explicitly: negative uses toFixed's natural '-'; positive preserves '+'
+        if (n < 0) return n.toFixed(2) + '%';
+        const prefix = val.startsWith('+') ? '+' : '';
+        return prefix + n.toFixed(2) + '%';
       }
       const sign = (val as number) >= 0 ? '+' : '';
       return sign + (val as number).toFixed(2) + '%';
