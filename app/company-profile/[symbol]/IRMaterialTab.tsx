@@ -235,6 +235,27 @@ function getTcIrData(): TcIrData {
   return _tcIrData;
 }
 
+// ── IR data registry ──────────────────────────────────────────────────────────
+// Maps resolved symbol → loader function. Add new companies here to enable
+// their IR Material tab automatically — no further changes required.
+
+const IR_DATA_REGISTRY: Record<string, () => FinancialDocGroup[]> = {
+  AAPL: () => AAPL_FINANCIAL_DATA,
+  TC: () => getTcIrData().financialData,
+};
+
+/**
+ * Returns the IR Material financial data for the given symbol, or null if none exists.
+ * Uses resolveSymbolAlias so aliases (e.g. TSM → TC) are handled transparently.
+ */
+export function getIRMaterialData(symbol: string): FinancialDocGroup[] | null {
+  const resolvedSymbol = resolveSymbolAlias(symbol);
+  const loader = IR_DATA_REGISTRY[resolvedSymbol];
+  if (!loader) return null;
+  const data = loader();
+  return data && data.length > 0 ? data : null;
+}
+
 // ── Tab index map ─────────────────────────────────────────────────────────────
 
 const TAB_INDEX: Record<IRSubTab, number> = {
@@ -316,15 +337,9 @@ function IRContent({ financialData, activeTab }: IRContentProps) {
 export default function IRMaterialTab({ symbol }: IRMaterialTabProps) {
   const [activeTab, setActiveTab] = useState<IRSubTab>('annual-reports');
 
-  const resolvedSymbol = resolveSymbolAlias(symbol);
-  let financialData: FinancialDocGroup[];
+  const financialData = getIRMaterialData(symbol);
 
-  if (resolvedSymbol === 'AAPL') {
-    financialData = AAPL_FINANCIAL_DATA;
-  } else if (resolvedSymbol === 'TC') {
-    const tcData = getTcIrData();
-    financialData = tcData.financialData;
-  } else {
+  if (!financialData) {
     return (
       <div className="cp-tab-placeholder">
         <span className="cp-tab-placeholder-text">
