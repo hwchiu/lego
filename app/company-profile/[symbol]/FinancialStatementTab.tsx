@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { resolveSymbolAlias } from '@/app/data/sp500';
-import { extractJson, extractJsonBySection } from '@/app/lib/parseContent';
+import { extractJsonBySection } from '@/app/lib/parseContent';
 import tcFinStmtMd from '@/content/tc-financial-statement.md';
 import aaplFinStmtMd from '@/content/apple-financial-statement.md';
 import { getStatement, getCompanies, flatToStatementData } from '@/app/data/financialData';
@@ -13,7 +13,7 @@ type StatementType = 'income' | 'balance' | 'cashflow' | 'segment';
 type ViewMode = 'quarterly' | 'annual';
 type Currency = 'original' | 'usd';
 
-// ── Simple table type (Balance Sheet / Cash Flow / Segment) ───────────────────
+// ── Simple table type (legacy — kept for type completeness) ───────────────────
 interface SimpleStatementPeriodData {
   columns: string[];
   rows: string[][];
@@ -23,6 +23,109 @@ interface SimpleStatementData {
   source: string;
   annualData: SimpleStatementPeriodData;
   quarterlyData: SimpleStatementPeriodData;
+}
+
+// ── Segment Report flat record type ───────────────────────────────────────────
+interface SegmentRecord {
+  calendar_year: number;
+  calendar_quarter: string;
+  fiscal_year: number;
+  fiscal_quarter: string;
+  anal_seg_level1: string;
+  anal_seg_level2?: string;
+  anal_seg_level3?: string;
+  co_cd: string;
+  co_name?: string;
+  curr_cd: string;
+  sale_type: string;
+  fld_val: number | null;
+  curr_num?: number | null;
+  fld_val_yoy?: number | null;
+  fld_val_qoq?: number | null;
+  curr_num_yoy?: number | null;
+  curr_num_qoq?: number | null;
+  category?: string;
+  update_dt?: string;
+}
+
+/** Format a numeric segment value for display based on sale_type. */
+function formatSegmentValue(val: number | null, saleType: string): string {
+  if (val === null || val === undefined) return '—';
+  const isPct = saleType.includes('(%)');
+  const isGrowth = /growth|yoy/i.test(saleType);
+  if (isPct && isGrowth) {
+    const sign = val > 0 ? '+' : '';
+    return `${sign}${val}%`;
+  }
+  if (isPct) return `${val}%`;
+  // Numeric: add thousands separator
+  return Math.round(val) === val
+    ? val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    : val.toFixed(1);
+}
+
+/** Convert SegmentRecord[] to StatementData (same period-label logic as flatToStatementData). */
+function segmentToStatementData(records: SegmentRecord[], co_cd: string): StatementData | null {
+  const filtered = records.filter((r) => r.co_cd === co_cd);
+  if (!filtered.length) return null;
+
+  const ANNUAL_QUARTER = 'NA';
+
+  function pLabel(calYear: number, calQ: string): string {
+    return calQ === ANNUAL_QUARTER ? `FY${calYear}` : `${calQ} ${calYear}`;
+  }
+  function pSortKey(calYear: number, calQ: string): number {
+    if (calQ === ANNUAL_QUARTER) return calYear * 10;
+    const m = calQ.match(/^Q([1-4])$/);
+    return calYear * 10 + (m ? parseInt(m[1], 10) : 5);
+  }
+
+  // Collect all periods
+  const periodSet = new Set<string>();
+  const sortKeyMap = new Map<string, number>();
+  for (const rec of filtered) {
+    const lbl = pLabel(rec.calendar_year, rec.calendar_quarter);
+    periodSet.add(lbl);
+    sortKeyMap.set(lbl, pSortKey(rec.calendar_year, rec.calendar_quarter));
+  }
+  const periods = [...periodSet].sort((a, b) => (sortKeyMap.get(a) ?? 0) - (sortKeyMap.get(b) ?? 0));
+
+  // Collect sale_type (section) and anal_seg_level1 (row) ordering
+  const saleTypeOrder: string[] = [];
+  const saleTypeSeen = new Set<string>();
+  const itemOrders: Record<string, string[]> = {};
+  const itemSeen: Record<string, Set<string>> = {};
+  const valueMap: Record<string, Record<string, string>> = {};
+
+  for (const rec of filtered) {
+    const { sale_type, anal_seg_level1, calendar_year, calendar_quarter, fld_val } = rec;
+    if (!saleTypeSeen.has(sale_type)) {
+      saleTypeOrder.push(sale_type);
+      saleTypeSeen.add(sale_type);
+      itemOrders[sale_type] = [];
+      itemSeen[sale_type] = new Set();
+    }
+    if (!itemSeen[sale_type].has(anal_seg_level1)) {
+      itemOrders[sale_type].push(anal_seg_level1);
+      itemSeen[sale_type].add(anal_seg_level1);
+    }
+    const lbl = pLabel(calendar_year, calendar_quarter);
+    const key = `${sale_type}__${anal_seg_level1}`;
+    if (!valueMap[key]) valueMap[key] = {};
+    valueMap[key][lbl] = formatSegmentValue(fld_val, sale_type);
+  }
+
+  // Build items map: section header row (all-empty) + data rows
+  const items: Record<string, string[]> = {};
+  for (const saleType of saleTypeOrder) {
+    items[saleType] = periods.map(() => '');              // section header
+    for (const segName of itemOrders[saleType]) {
+      const key = `${saleType}__${segName}`;
+      items[segName] = periods.map((p) => valueMap[key]?.[p] ?? '');
+    }
+  }
+
+  return { periods, items };
 }
 
 const STATEMENT_ITEMS: { key: StatementType; label: string }[] = [
@@ -171,52 +274,73 @@ function isSectionRow(row: string[]): boolean {
 // ── Data loaders ───────────────────────────────────────────────────────────────
 
 /**
- * Config map for companies whose income data lives in a dedicated markdown file.
- * `mdContent`  – the imported markdown string
- * `section`    – section heading to parse (undefined → parse first JSON block)
+ * Config map for companies whose statement data lives in a dedicated markdown file.
+ * Each key is a company symbol; the value holds the markdown content and the
+ * section heading for each statement type (income / balance / cashflow).
  */
-const MD_INCOME_CONFIG: Record<string, { mdContent: string; section?: string }> = {
-  TC:   { mdContent: tcFinStmtMd as string },
-  AAPL: { mdContent: aaplFinStmtMd as string, section: 'Income Statement' },
-};
-
-/** Shared per-symbol cache for markdown-sourced income StatementData. */
-const _mdIncomeCache: Record<string, StatementData | null> = {};
-
-/**
- * Loads a company's income statement from its dedicated markdown file and
- * converts the FlatFinRecord[] array to StatementData.
- * Returns null if the symbol has no markdown config or no matching records.
- */
-function getMarkdownIncomeData(symbol: string): StatementData | null {
-  if (symbol in _mdIncomeCache) return _mdIncomeCache[symbol];
-  const config = MD_INCOME_CONFIG[symbol];
-  if (!config) {
-    _mdIncomeCache[symbol] = null;
-    return null;
-  }
-  const records = config.section
-    ? extractJsonBySection<FlatFinRecord[]>(config.mdContent, config.section)
-    : extractJson<FlatFinRecord[]>(config.mdContent);
-  const stmtMap = flatToStatementData(records, 'income');
-  _mdIncomeCache[symbol] = stmtMap[symbol] ?? null;
-  return _mdIncomeCache[symbol];
-}
-
-const _aaplSimpleCache: Partial<Record<'balance' | 'cashflow' | 'segment', SimpleStatementData>> = {};
-function getAaplSimpleData(key: 'balance' | 'cashflow' | 'segment'): SimpleStatementData {
-  if (!_aaplSimpleCache[key]) {
-    const sectionMap: Record<typeof key, string> = {
+const MD_FIN_CONFIG: Record<
+  string,
+  { mdContent: string; sections: Partial<Record<'income' | 'balance' | 'cashflow', string>> }
+> = {
+  TC: {
+    mdContent: tcFinStmtMd as string,
+    sections: {
+      income:   'Income Statement',
       balance:  'Balance Sheet',
       cashflow: 'Cash Flow Statement',
-      segment:  'Segment Report',
-    };
-    _aaplSimpleCache[key] = extractJsonBySection<SimpleStatementData>(
-      aaplFinStmtMd as string,
-      sectionMap[key],
-    );
+    },
+  },
+  AAPL: {
+    mdContent: aaplFinStmtMd as string,
+    sections: {
+      income:   'Income Statement',
+      balance:  'Balance Sheet',
+      cashflow: 'Cash Flow Statement',
+    },
+  },
+};
+
+/** Per-symbol, per-type cache for markdown-sourced StatementData. */
+const _mdFinCache: Record<string, Partial<Record<'income' | 'balance' | 'cashflow', StatementData | null>>> = {};
+
+/**
+ * Shared loader: given a company symbol and a statement type, reads the matching
+ * section from the company's dedicated markdown file, converts the FlatFinRecord[]
+ * array to StatementData, and returns it (or null when no data is found).
+ *
+ * This function is the single entry-point for all markdown-sourced financial data
+ * so that Income Statement, Balance Sheet, and Cash Flow Statement all share the
+ * same backend logic and data format.
+ */
+function getMarkdownFinData(symbol: string, type: 'income' | 'balance' | 'cashflow'): StatementData | null {
+  if (!_mdFinCache[symbol]) _mdFinCache[symbol] = {};
+  const cache = _mdFinCache[symbol];
+  if (type in cache) return cache[type] ?? null;
+
+  const config = MD_FIN_CONFIG[symbol];
+  if (!config) {
+    cache[type] = null;
+    return null;
   }
-  return _aaplSimpleCache[key]!;
+
+  const section = config.sections[type];
+  if (!section) {
+    cache[type] = null;
+    return null;
+  }
+
+  const records = extractJsonBySection<FlatFinRecord[]>(config.mdContent, section);
+  const stmtMap = flatToStatementData(records, type);
+  cache[type] = stmtMap[symbol] ?? null;
+  return cache[type] ?? null;
+}
+
+let _aaplSegmentCache: StatementData | null | undefined = undefined;
+function getAaplSegmentData(): StatementData | null {
+  if (_aaplSegmentCache !== undefined) return _aaplSegmentCache;
+  const records = extractJsonBySection<SegmentRecord[]>(aaplFinStmtMd as string, 'Segment Report');
+  _aaplSegmentCache = segmentToStatementData(records, 'AAPL');
+  return _aaplSegmentCache;
 }
 
 /**
@@ -228,22 +352,19 @@ function getAaplSimpleData(key: 'balance' | 'cashflow' | 'segment'): SimpleState
 function getCompanyStatements(symbol: string): CompanyStatements {
   const result: CompanyStatements = {};
 
-  // AAPL: flat FlatFinRecord income + simple balance / cashflow / segment.
-  // Checked before financial-data.md because AAPL also appears in that Company List
-  // but has richer dedicated data (including Segment Report) in its own markdown file.
-  if (symbol === 'AAPL') {
-    const incomeData = getMarkdownIncomeData(symbol);
-    if (incomeData) result.income = { kind: 'findata', data: incomeData };
-    result.balance  = { kind: 'simple', data: getAaplSimpleData('balance') };
-    result.cashflow = { kind: 'simple', data: getAaplSimpleData('cashflow') };
-    result.segment  = { kind: 'simple', data: getAaplSimpleData('segment') };
-    return result;
-  }
-
-  // TC: flat FlatFinRecord income only
-  if (symbol === 'TC') {
-    const incomeData = getMarkdownIncomeData(symbol);
-    if (incomeData) result.income = { kind: 'findata', data: incomeData };
+  // Companies with dedicated markdown files (AAPL, TC, …).
+  // Checked before financial-data.md because AAPL also appears in that Company
+  // List but has richer dedicated data in its own markdown file.
+  if (MD_FIN_CONFIG[symbol]) {
+    for (const type of ['income', 'balance', 'cashflow'] as const) {
+      const data = getMarkdownFinData(symbol, type);
+      if (data) result[type] = { kind: 'findata', data };
+    }
+    // AAPL Segment Report — uses SegmentRecord[] flat format, same calendar_year/calendar_quarter approach
+    if (symbol === 'AAPL') {
+      const segData = getAaplSegmentData();
+      if (segData) result.segment = { kind: 'findata', data: segData };
+    }
     return result;
   }
 
