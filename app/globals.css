@@ -16002,7 +16002,7 @@ a.fd-hint-btn {
 .is-hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(110deg, rgba(26,35,50,0.98) 40%, rgba(26,35,50,0.55) 100%);
+  background: linear-gradient(110deg, rgba(26,35,50,0.98) 40%, rgba(26,35,50,0) 100%);
   z-index: 1;
 }
 .is-hero-content {
@@ -20065,7 +20065,7 @@ html.dark .is-hero {
   border-bottom: none;
 }
 html.dark .is-hero-overlay {
-  background: linear-gradient(110deg, rgba(26,35,50,0.98) 40%, rgba(26,35,50,0.55) 100%);
+  background: linear-gradient(110deg, rgba(26,35,50,0.98) 40%, rgba(26,35,50,0) 100%);
 }
 html.dark .is-hero-coming-badge {
   background: rgba(255,255,255,0.12);
