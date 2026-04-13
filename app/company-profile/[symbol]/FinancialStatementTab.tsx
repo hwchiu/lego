@@ -13,7 +13,7 @@ type StatementType = 'income' | 'balance' | 'cashflow' | 'segment';
 type ViewMode = 'quarterly' | 'annual';
 type Currency = 'original' | 'usd';
 
-// ── Simple table type (Balance Sheet / Cash Flow / Segment) ───────────────────
+// ── Simple table type (legacy — kept for type completeness) ───────────────────
 interface SimpleStatementPeriodData {
   columns: string[];
   rows: string[][];
@@ -23,6 +23,109 @@ interface SimpleStatementData {
   source: string;
   annualData: SimpleStatementPeriodData;
   quarterlyData: SimpleStatementPeriodData;
+}
+
+// ── Segment Report flat record type ───────────────────────────────────────────
+interface SegmentRecord {
+  calendar_year: number;
+  calendar_quarter: string;
+  fiscal_year: number;
+  fiscal_quarter: string;
+  anal_seg_level1: string;
+  anal_seg_level2?: string;
+  anal_seg_level3?: string;
+  co_cd: string;
+  co_name?: string;
+  curr_cd: string;
+  sale_type: string;
+  fld_val: number | null;
+  curr_num?: number | null;
+  fld_val_yoy?: number | null;
+  fld_val_qoq?: number | null;
+  curr_num_yoy?: number | null;
+  curr_num_qoq?: number | null;
+  category?: string;
+  update_dt?: string;
+}
+
+/** Format a numeric segment value for display based on sale_type. */
+function formatSegmentValue(val: number | null, saleType: string): string {
+  if (val === null || val === undefined) return '—';
+  const isPct = saleType.includes('(%)');
+  const isGrowth = /growth|yoy/i.test(saleType);
+  if (isPct && isGrowth) {
+    const sign = val > 0 ? '+' : '';
+    return `${sign}${val}%`;
+  }
+  if (isPct) return `${val}%`;
+  // Numeric: add thousands separator
+  return Math.round(val) === val
+    ? val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    : val.toFixed(1);
+}
+
+/** Convert SegmentRecord[] to StatementData (same period-label logic as flatToStatementData). */
+function segmentToStatementData(records: SegmentRecord[], co_cd: string): StatementData | null {
+  const filtered = records.filter((r) => r.co_cd === co_cd);
+  if (!filtered.length) return null;
+
+  const ANNUAL_QUARTER = 'NA';
+
+  function pLabel(calYear: number, calQ: string): string {
+    return calQ === ANNUAL_QUARTER ? `FY${calYear}` : `${calQ} ${calYear}`;
+  }
+  function pSortKey(calYear: number, calQ: string): number {
+    if (calQ === ANNUAL_QUARTER) return calYear * 10;
+    const m = calQ.match(/^Q([1-4])$/);
+    return calYear * 10 + (m ? parseInt(m[1], 10) : 5);
+  }
+
+  // Collect all periods
+  const periodSet = new Set<string>();
+  const sortKeyMap = new Map<string, number>();
+  for (const rec of filtered) {
+    const lbl = pLabel(rec.calendar_year, rec.calendar_quarter);
+    periodSet.add(lbl);
+    sortKeyMap.set(lbl, pSortKey(rec.calendar_year, rec.calendar_quarter));
+  }
+  const periods = [...periodSet].sort((a, b) => (sortKeyMap.get(a) ?? 0) - (sortKeyMap.get(b) ?? 0));
+
+  // Collect sale_type (section) and anal_seg_level1 (row) ordering
+  const saleTypeOrder: string[] = [];
+  const saleTypeSeen = new Set<string>();
+  const itemOrders: Record<string, string[]> = {};
+  const itemSeen: Record<string, Set<string>> = {};
+  const valueMap: Record<string, Record<string, string>> = {};
+
+  for (const rec of filtered) {
+    const { sale_type, anal_seg_level1, calendar_year, calendar_quarter, fld_val } = rec;
+    if (!saleTypeSeen.has(sale_type)) {
+      saleTypeOrder.push(sale_type);
+      saleTypeSeen.add(sale_type);
+      itemOrders[sale_type] = [];
+      itemSeen[sale_type] = new Set();
+    }
+    if (!itemSeen[sale_type].has(anal_seg_level1)) {
+      itemOrders[sale_type].push(anal_seg_level1);
+      itemSeen[sale_type].add(anal_seg_level1);
+    }
+    const lbl = pLabel(calendar_year, calendar_quarter);
+    const key = `${sale_type}__${anal_seg_level1}`;
+    if (!valueMap[key]) valueMap[key] = {};
+    valueMap[key][lbl] = formatSegmentValue(fld_val, sale_type);
+  }
+
+  // Build items map: section header row (all-empty) + data rows
+  const items: Record<string, string[]> = {};
+  for (const saleType of saleTypeOrder) {
+    items[saleType] = periods.map(() => '');              // section header
+    for (const segName of itemOrders[saleType]) {
+      const key = `${saleType}__${segName}`;
+      items[segName] = periods.map((p) => valueMap[key]?.[p] ?? '');
+    }
+  }
+
+  return { periods, items };
 }
 
 const STATEMENT_ITEMS: { key: StatementType; label: string }[] = [
@@ -232,15 +335,12 @@ function getMarkdownFinData(symbol: string, type: 'income' | 'balance' | 'cashfl
   return cache[type] ?? null;
 }
 
-const _aaplSimpleCache: Partial<Record<'segment', SimpleStatementData>> = {};
-function getAaplSegmentData(): SimpleStatementData {
-  if (!_aaplSimpleCache.segment) {
-    _aaplSimpleCache.segment = extractJsonBySection<SimpleStatementData>(
-      aaplFinStmtMd as string,
-      'Segment Report',
-    );
-  }
-  return _aaplSimpleCache.segment!;
+let _aaplSegmentCache: StatementData | null | undefined = undefined;
+function getAaplSegmentData(): StatementData | null {
+  if (_aaplSegmentCache !== undefined) return _aaplSegmentCache;
+  const records = extractJsonBySection<SegmentRecord[]>(aaplFinStmtMd as string, 'Segment Report');
+  _aaplSegmentCache = segmentToStatementData(records, 'AAPL');
+  return _aaplSegmentCache;
 }
 
 /**
@@ -260,9 +360,10 @@ function getCompanyStatements(symbol: string): CompanyStatements {
       const data = getMarkdownFinData(symbol, type);
       if (data) result[type] = { kind: 'findata', data };
     }
-    // AAPL also exposes a Segment Report in the legacy SimpleStatementData format
+    // AAPL Segment Report — uses SegmentRecord[] flat format, same calendar_year/calendar_quarter approach
     if (symbol === 'AAPL') {
-      result.segment = { kind: 'simple', data: getAaplSegmentData() };
+      const segData = getAaplSegmentData();
+      if (segData) result.segment = { kind: 'findata', data: segData };
     }
     return result;
   }
