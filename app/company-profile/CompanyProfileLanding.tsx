@@ -7,16 +7,8 @@ import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { SP500_COMPANIES } from '@/app/data/sp500';
-import { extractJson } from '@/app/lib/parseContent';
-import tvConfigMd from '@/content/tradingview.md';
-
-// TradingView config from markdown JSON
-interface TvConfig {
-  stockChartSrc: string;
-  marketOverviewSrc: string;
-  marketOverviewConfig: Record<string, unknown>;
-}
-const TV_CONFIG: TvConfig = extractJson<TvConfig>(tvConfigMd as string);
+import { newsItems } from '@/app/data/news';
+import NewsCard from '@/app/components/news/NewsCard';
 
 // Scenario suggestion buttons
 const SCENARIOS = ['Create Report', 'Boost my day', 'Help me learn', "Let's stay current", 'Write anything'] as const;
@@ -153,8 +145,6 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
   const toolsBtnRef = useRef<HTMLButtonElement>(null);
   const toolsMenuRef = useRef<HTMLDivElement>(null);
 
-  const marketContainerRef = useRef<HTMLDivElement>(null);
-
   // Filter SP500 companies by query
   const filteredCompanies =
     query.trim().length > 0
@@ -190,24 +180,6 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
     }
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
-  }, []);
-
-  // Inject TradingView Market Overview widget
-  useEffect(() => {
-    const container = marketContainerRef.current;
-    if (!container) return;
-    container.innerHTML = '';
-    const script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = TV_CONFIG.marketOverviewSrc;
-    script.async = true;
-    script.innerHTML = JSON.stringify({
-      ...TV_CONFIG.marketOverviewConfig,
-      width: '100%',
-      height: '480',
-    });
-    container.appendChild(script);
-    return () => { if (container) container.innerHTML = ''; };
   }, []);
 
   function handleSelectCompany(symbol: string) {
@@ -377,15 +349,17 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
               </div>
             )}
 
-            {/* ── Today's Market section ── */}
-            <div className="cp-market-section">
-              <div className="cp-market-section-header">
-                <span className="section-eyebrow">Today&apos;s Market</span>
+            {/* ── Latest News section ── */}
+            <div className="cp-news-section">
+              <div className="cp-news-section-header">
+                <span className="section-eyebrow">Latest News</span>
+                <span className="cp-news-personalized-badge">Personalized</span>
               </div>
-              <div
-                ref={marketContainerRef}
-                className="tradingview-widget-container cp-market-widget"
-              />
+              <div className="cp-news-grid">
+                {newsItems.slice(0, 6).map((item) => (
+                  <NewsCard key={item.id} item={item} />
+                ))}
+              </div>
             </div>
           </div>
         </main>
