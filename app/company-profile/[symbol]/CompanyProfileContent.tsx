@@ -6,7 +6,7 @@ import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
-import { SP500_COMPANIES, resolveSymbolAlias } from '@/app/data/sp500';
+import { COMPANY_MASTER_LIST, resolveSymbolAlias } from '@/app/data/companyMaster';
 import { newsItems } from '@/app/data/news';
 import { extractJson } from '@/app/lib/parseContent';
 import companyProfileMd from '@/content/company-profile.md';
@@ -406,9 +406,9 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
 
   // Find company info — fall back to SP500 data if no profile data
   const companyInfo = profileData.companies.find((c) => c.symbol === dataSymbol);
-  const sp500Company = SP500_COMPANIES.find((c) => c.symbol === symbol);
+  const masterCompany = COMPANY_MASTER_LIST.find((c) => c.symbol === symbol);
 
-  const companyName = companyInfo?.name ?? sp500Company?.name ?? symbol;
+  const companyName = companyInfo?.name ?? masterCompany?.name ?? symbol;
   const localCurrency = companyInfo?.localCurrency ?? 'USD';
   const bbgId = companyInfo?.bbgId ?? `—`;
   const stockExchange = companyInfo?.stockExchange ?? '—';

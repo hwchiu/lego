@@ -5,7 +5,7 @@ import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
-import { SP500_COMPANIES } from '@/app/data/sp500';
+import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -198,7 +198,7 @@ function buildCompanyData(symbol: string, name: string): EarningsCompanyData {
 
 // Pre-build data for AAPL as default
 const DEFAULT_SYMBOL = 'AAPL';
-const DEFAULT_COMPANY = SP500_COMPANIES.find((c) => c.symbol === DEFAULT_SYMBOL) ?? {
+const DEFAULT_COMPANY = COMPANY_MASTER_LIST.find((c) => c.symbol === DEFAULT_SYMBOL) ?? {
   symbol: DEFAULT_SYMBOL,
   name: 'Apple Inc.',
 };
@@ -900,14 +900,14 @@ export default function EarningsContent() {
 
   const filteredCompanies =
     searchQuery.trim().length > 0
-      ? SP500_COMPANIES.filter(
+      ? COMPANY_MASTER_LIST.filter(
           (c) =>
             c.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
             c.name.toLowerCase().includes(searchQuery.toLowerCase()),
         ).slice(0, 8)
       : [];
 
-  const selectedCompany = SP500_COMPANIES.find((c) => c.symbol === selectedSymbol) ?? DEFAULT_COMPANY;
+  const selectedCompany = COMPANY_MASTER_LIST.find((c) => c.symbol === selectedSymbol) ?? DEFAULT_COMPANY;
   const companyData = getCompanyData(selectedCompany.symbol, selectedCompany.name);
 
   function renderTabContent() {
@@ -984,7 +984,7 @@ export default function EarningsContent() {
                 <span className="earn-recently-label">Recently Viewed</span>
                 <div className="earn-recently-tags">
                   {recentlyViewed.map((sym) => {
-                    const co = SP500_COMPANIES.find((c) => c.symbol === sym);
+                    const co = COMPANY_MASTER_LIST.find((c) => c.symbol === sym);
                     return (
                       <button
                         key={sym}

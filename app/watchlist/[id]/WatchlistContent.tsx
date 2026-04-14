@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
-import { SP500_COMPANIES } from '@/app/data/sp500';
+import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 import { stockIndexes } from '@/app/data/marketIndices';
 import { holdingsData as holdingsDataMap, holdingsDataQ4_2025 } from '@/app/data/watchlistData';
 import type { HoldingEntity } from '@/app/data/watchlistData';
@@ -803,7 +803,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
     .filter(Boolean) as Holding[];
 
   // Company name lookup map (symbol → full name)
-  const companyNameMap = new Map(SP500_COMPANIES.map((c) => [c.symbol, c.name]));
+  const companyNameMap = new Map(COMPANY_MASTER_LIST.map((c) => [c.symbol, c.name]));
 
   // Drag handlers for Edit Watchlist symbol reorder
   function handleDragStart(index: number) {
@@ -830,7 +830,7 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
   // Add Symbol search suggestions
   const addSuggestions =
     addSymbolQuery.trim().length > 0
-      ? SP500_COMPANIES.filter(
+      ? COMPANY_MASTER_LIST.filter(
           (c) =>
             c.symbol.toLowerCase().includes(addSymbolQuery.toLowerCase()) ||
             c.name.toLowerCase().includes(addSymbolQuery.toLowerCase()),

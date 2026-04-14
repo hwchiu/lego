@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { resolveSymbolAlias } from '@/app/data/sp500';
+import { resolveSymbolAlias } from '@/app/data/companyMaster';
 import { extractJsonBySection } from '@/app/lib/parseContent';
 import tcFinStmtMd from '@/content/tc-financial-statement.md';
 import aaplFinStmtMd from '@/content/apple-financial-statement.md';

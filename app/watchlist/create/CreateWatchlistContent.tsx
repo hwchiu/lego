@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
-import { SP500_COMPANIES } from '@/app/data/sp500';
+import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 import { useWatchlist } from '@/app/contexts/WatchlistContext';
 
 // ── AI Suggestion data ────────────────────────────────────────────────────────
@@ -265,7 +265,7 @@ function getDefaultSymbolInfo(suggestionType: SuggestionItem['type']): SymbolAiI
 }
 
 // Symbol lookup map for quick name resolution
-const SYMBOL_LOOKUP = new Map(SP500_COMPANIES.map((c) => [c.symbol, c.name]));
+const SYMBOL_LOOKUP = new Map(COMPANY_MASTER_LIST.map((c) => [c.symbol, c.name]));
 
 // ── Relevance donut chart ──────────────────────────────────────────────────────
 function RelevanceDonut({ score }: { score: number }) {
@@ -542,7 +542,7 @@ export default function CreateWatchlistContent() {
   useEffect(() => {
     const q = addSymbolInput.toUpperCase().trim();
     if (!q) { setAddSuggestions([]); return; }
-    const matches = SP500_COMPANIES.filter(
+    const matches = COMPANY_MASTER_LIST.filter(
       (c) => c.symbol.startsWith(q) || c.name.toLowerCase().includes(q.toLowerCase()),
     ).slice(0, 5);
     setAddSuggestions(matches);

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 
-import { SP500_COMPANIES } from '@/app/data/sp500';
+import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 
 interface CalendarControlsProps {
   displayLabel: string;
@@ -61,7 +61,7 @@ export default function CalendarControls({
   const suggestions = useMemo(() => {
     const q = inputValue.trim().toUpperCase();
     if (!q) return [];
-    return SP500_COMPANIES.filter(
+    return COMPANY_MASTER_LIST.filter(
       (c) => c.symbol.startsWith(q) || c.name.toUpperCase().includes(q),
     ).slice(0, 8);
   }, [inputValue]);

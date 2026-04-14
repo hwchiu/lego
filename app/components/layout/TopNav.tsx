@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { SP500_COMPANIES } from '@/app/data/sp500';
+import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 import { newsItems } from '@/app/data/news';
 import {
   newsNotifications,
@@ -215,7 +215,7 @@ const NEWS_ITEMS_LC = newsItems.map((n) => ({
 }));
 
 // Pre-computed lowercase SP500 companies for faster filtering
-const SP500_LC = SP500_COMPANIES.map((c) => ({
+const COMPANY_MASTER_LC = COMPANY_MASTER_LIST.map((c) => ({
   ...c,
   symbolLc: c.symbol.toLowerCase(),
   nameLc: c.name.toLowerCase(),
@@ -281,7 +281,7 @@ export default function TopNav() {
   // Filter companies (used for 'All' and 'Company' categories)
   const filteredCompanies =
     (activeCategory === 'Company' || activeCategory === 'All') && q.length > 0
-      ? SP500_LC.filter((c) => c.symbolLc.includes(q) || c.nameLc.includes(q)).slice(
+      ? COMPANY_MASTER_LC.filter((c) => c.symbolLc.includes(q) || c.nameLc.includes(q)).slice(
           0,
           activeCategory === 'All' ? 4 : 8,
         )

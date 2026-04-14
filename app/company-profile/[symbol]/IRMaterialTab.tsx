@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { resolveSymbolAlias } from '@/app/data/sp500';
+import { resolveSymbolAlias } from '@/app/data/companyMaster';
 import { extractJson } from '@/app/lib/parseContent';
 import tcIrMd from '@/content/tc-ir-material.md';
 
