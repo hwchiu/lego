@@ -132,18 +132,24 @@ export default function CorpEventCategorySection({
   const [summaryMap, setSummaryMap] = useState<CalendarSummaryMap>({});
   // Track which month keys have already been loaded to avoid redundant fetches
   const loadedMonthKeys = useRef<Set<string>>(new Set());
+  const summaryAbortRef = useRef<AbortController | null>(null);
 
   /** Fetch summary when new month keys are needed (cross-month or new month). */
   const fetchSummary = useCallback(async (monthKeys: string[]) => {
     const hasNew = monthKeys.some((k) => !loadedMonthKeys.current.has(k));
     if (!hasNew) return;
+    summaryAbortRef.current?.abort();
+    const ctrl = new AbortController();
+    summaryAbortRef.current = ctrl;
     try {
       const items = await getEventCalendarSummary();
-      const newMap = buildCalendarSummaryMap(items);
-      setSummaryMap(newMap);
-      for (const k of monthKeys) loadedMonthKeys.current.add(k);
+      if (!ctrl.signal.aborted) {
+        const newMap = buildCalendarSummaryMap(items);
+        setSummaryMap(newMap);
+        for (const k of monthKeys) loadedMonthKeys.current.add(k);
+      }
     } catch {
-      // silently ignore fetch errors
+      // silently ignore fetch errors (e.g. during SSR/build or network failure)
     }
   }, []);
 
@@ -160,6 +166,7 @@ export default function CorpEventCategorySection({
           return keys;
         })();
     void fetchSummary(initialKeys);
+    return () => { summaryAbortRef.current?.abort(); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -49,6 +49,7 @@ const DETAIL_URL = '/lego/data/event-calendar-detail.json';
 /** Fetch the summary JSON used to populate calendar cells. */
 export async function getEventCalendarSummary(): Promise<EventCalendarSummaryItem[]> {
   const res = await fetch(SUMMARY_URL);
+  if (!res.ok) throw new Error(`Failed to fetch event calendar summary: ${res.status}`);
   return res.json() as Promise<EventCalendarSummaryItem[]>;
 }
 
@@ -62,6 +63,7 @@ export async function getEventCalendarDetail(
   category: string,
 ): Promise<EventCalendarDetailItem[]> {
   const res = await fetch(DETAIL_URL);
+  if (!res.ok) throw new Error(`Failed to fetch event calendar detail: ${res.status}`);
   const allItems = (await res.json()) as EventCalendarDetailItem[];
 
   // Filter by date

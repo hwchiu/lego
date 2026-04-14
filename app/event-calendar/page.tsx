@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
@@ -19,42 +19,34 @@ export default function EventCalendarPage() {
     getDateLabel(new Date()),
   );
   const [detailEvents, setDetailEvents] = useState<EventCalendarDetailItem[]>([]);
+  const abortRef = useRef<AbortController | null>(null);
 
-  /** Fetch detail rows for a given date and category. */
+  /** Fetch detail rows for a given date and category, aborting any in-flight request. */
   const fetchDetail = useCallback(async (dateLabel: string, category: string) => {
+    abortRef.current?.abort();
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
     try {
       const events = await getEventCalendarDetail(dateLabel, category);
-      setDetailEvents(events);
+      if (!ctrl.signal.aborted) setDetailEvents(events);
     } catch {
-      setDetailEvents([]);
+      if (!ctrl.signal.aborted) setDetailEvents([]);
     }
   }, []);
 
-  // On page load: fetch detail for today + "All"
-  useEffect(() => {
-    void fetchDetail(getDateLabel(new Date()), ALL_TAB);
-  }, [fetchDetail]);
-
-  // When the active tab changes, re-fetch detail for the current selected date
+  // Fetch detail whenever the selected date or active tab changes (also runs on mount)
   useEffect(() => {
     void fetchDetail(selectedDateLabel, activeTab);
+    return () => { abortRef.current?.abort(); };
   }, [activeTab, selectedDateLabel, fetchDetail]);
 
-  const handleDateSelect = useCallback(
-    (dateLabel: string) => {
-      setSelectedDateLabel(dateLabel);
-      void fetchDetail(dateLabel, activeTab);
-    },
-    [activeTab, fetchDetail],
-  );
+  const handleDateSelect = useCallback((dateLabel: string) => {
+    setSelectedDateLabel(dateLabel);
+  }, []);
 
-  const handleTabChange = useCallback(
-    (tab: string) => {
-      setActiveTab(tab);
-      void fetchDetail(selectedDateLabel, tab);
-    },
-    [selectedDateLabel, fetchDetail],
-  );
+  const handleTabChange = useCallback((tab: string) => {
+    setActiveTab(tab);
+  }, []);
 
   return (
     <>
