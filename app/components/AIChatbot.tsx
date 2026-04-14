@@ -5,6 +5,7 @@ import Link from 'next/link';
 import rawContent from '@/content/chatbot.md';
 import { extractJson } from '@/app/lib/parseContent';
 import { BASE_PATH } from '@/app/lib/basePath';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -51,6 +52,18 @@ const ROLES = knowledge.roles;
 
 const BOT_AVATAR_URL = `${BASE_PATH}/images/bot-avatar.svg`;
 
+// ── AI preset question — entering this exact text triggers AI simulation ──────
+const AI_PRESET_QUESTION_ZH = 'T Company 近期的供應鏈風險有哪些？';
+const AI_PRESET_QUESTION_EN = "What are T Company's recent supply chain risks?";
+
+function isPresetQuestion(text: string): boolean {
+  const t = text.trim();
+  return t === AI_PRESET_QUESTION_ZH || t === AI_PRESET_QUESTION_EN;
+}
+
+// Simulated AI-calculated amount for the task
+const AI_SIMULATED_AMOUNT = 15000;
+
 type FlowStep = 'role' | 'scenario' | 'guide' | 'done';
 
 // Chat bubble icon
@@ -79,10 +92,18 @@ function ExternalLinkIcon() {
 }
 
 export default function AIChatbot() {
+  const { lang } = useLanguage();
   const [open, setOpen] = useState(false);
   const [flowStep, setFlowStep] = useState<FlowStep>('role');
   const [selectedRole, setSelectedRole] = useState<RoleData | null>(null);
   const msgIdRef = useRef(1);
+
+  // Task input & amount fields
+  const [taskInput, setTaskInput] = useState('');
+  const [showAmountInput, setShowAmountInput] = useState(false);
+  const [amountValue, setAmountValue] = useState('');
+
+  const presetQuestion = lang === 'zh' ? AI_PRESET_QUESTION_ZH : AI_PRESET_QUESTION_EN;
 
   function nextId() {
     msgIdRef.current += 1;
@@ -129,6 +150,9 @@ export default function AIChatbot() {
     setFlowStep('role');
     setSelectedRole(null);
     msgIdRef.current = 1;
+    setTaskInput('');
+    setShowAmountInput(false);
+    setAmountValue('');
     setMessages([
       {
         id: 0,
@@ -206,6 +230,55 @@ export default function AIChatbot() {
         setTimeout(() => resetFlow(), 400);
       }
     }
+  }
+
+  // ── Start task: check preset question → AI sim or billing amount ──────────────
+  function handleStartTask() {
+    const text = taskInput.trim();
+    if (!text) return;
+    if (isPresetQuestion(text)) {
+      // Trigger AI simulation — show the guided flow result inline
+      addUserMessage(text);
+      setTaskInput('');
+      setShowAmountInput(false);
+      setTimeout(() => {
+        addBotMessage({
+          text: `AI Analysis: Based on "${text}", here are T Company's recent supply chain risks:\n\n• Over-concentration on a single advanced-node foundry partner\n• Geopolitical tension affecting cross-strait logistics\n• Rare earth material shortages impacting CoWoS packaging capacity\n• Lead-time extension for HBM memory stacks from key suppliers`,
+          steps: [
+            'Review Supply Chain Maps → Supplier for Tier 1 & Tier 2 exposure.',
+            'Check Market News for latest disruption signals.',
+            'Visit Company Profile → Supply Chain tab for real-time risk scores.',
+          ],
+          links: [
+            { label: 'Supplier Map', href: '/supply-chain-maps/supplier' },
+            { label: 'Market News', href: '/market-news' },
+          ],
+        });
+      }, 600);
+    } else {
+      // Non-preset question — show amount input for billing
+      addUserMessage(text);
+      setTaskInput('');
+      setShowAmountInput(true);
+      setAmountValue('');
+      setTimeout(() => {
+        addBotMessage({
+          text: 'Please enter the amount for this task, or select "AI Estimate" to use the AI-calculated total.',
+        });
+      }, 400);
+    }
+  }
+
+  function handleAmountSubmit() {
+    const num = parseFloat(amountValue);
+    if (isNaN(num)) return;
+    const formatted = num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    addUserMessage(`Task submitted — Amount: $${formatted}`);
+    setShowAmountInput(false);
+    setAmountValue('');
+    setTimeout(() => {
+      addBotMessage({ text: `✓ Task recorded with amount $${formatted}. Is there anything else I can help you with?` });
+    }, 400);
   }
 
   // Drag support
@@ -370,9 +443,60 @@ export default function AIChatbot() {
             <div ref={bottomRef} />
           </div>
 
+          {/* Task input row */}
+          <div className="chatbot-dialog-input-row">
+            <input
+              className="chatbot-input"
+              value={taskInput}
+              onChange={(e) => setTaskInput(e.target.value)}
+              placeholder={presetQuestion}
+              onKeyDown={(e) => e.key === 'Enter' && handleStartTask()}
+              aria-label="Enter question or task"
+              disabled={showAmountInput}
+            />
+            <button
+              className="chatbot-start-task-btn"
+              onClick={handleStartTask}
+              disabled={!taskInput.trim() || showAmountInput}
+              title="Start task"
+            >
+              Start task
+            </button>
+          </div>
+
+          {/* Amount input row — shown when non-preset question entered */}
+          {showAmountInput && (
+            <div className="chatbot-amount-row">
+              <input
+                className="chatbot-amount-input"
+                type="number"
+                min="0"
+                step="0.01"
+                value={amountValue}
+                onChange={(e) => setAmountValue(e.target.value)}
+                placeholder="Enter amount…"
+                aria-label="Task amount"
+              />
+              <button
+                className="chatbot-amount-ai-btn"
+                onClick={() => setAmountValue(String(AI_SIMULATED_AMOUNT))}
+                title="Fill in AI-calculated amount"
+              >
+                AI Estimate
+              </button>
+              <button
+                className="chatbot-amount-submit-btn"
+                onClick={handleAmountSubmit}
+                disabled={!amountValue || isNaN(parseFloat(amountValue))}
+              >
+                Submit
+              </button>
+            </div>
+          )}
+
           {/* Footer hint */}
           <div className="chatbot-dialog-footer-hint">
-            Select an option above to continue · <button className="chatbot-restart-link" onClick={resetFlow}>Restart</button>
+            Type a question above or select an option · <button className="chatbot-restart-link" onClick={resetFlow}>Restart</button>
           </div>
         </div>
       )}
