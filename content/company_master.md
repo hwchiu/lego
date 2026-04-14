@@ -7221,22 +7221,6 @@
     "IS_PRE_EARNING_CALL": "N"
   },
   {
-    "CO_CD": "TC",
-    "CO_NAME": "TSMC",
-    "CO_SHORT_NAME": "T",
-    "IS_FIN_ALIVE": "N",
-    "IS_IR_ALIVE": "Y",
-    "IS_NEWS_ALIVE": "N",
-    "IS_TRANSCRIPT_ALIVE": "Y",
-    "IS_INVEST_ALIVE": "N",
-    "IS_ACQ_ALIVE": "Y",
-    "IS_FUND_ALIVE": "N",
-    "IS_STOCK_CHART_ALIVE": "Y",
-    "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y",
-    "IS_PRE_EARNING_CALL": "Y"
-  },
-  {
     "CO_CD": "TSM",
     "CO_NAME": "TSMC",
     "CO_SHORT_NAME": "T",
