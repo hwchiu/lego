@@ -46,11 +46,53 @@ export type CalendarSummaryMap = Record<string, CalendarCellData>;
 const SUMMARY_URL = '/lego/data/event-calendar-summary.json';
 const DETAIL_URL = '/lego/data/event-calendar-detail.json';
 
-/** Fetch the summary JSON used to populate calendar cells. */
+/**
+ * Fetch the summary JSON used to populate calendar cells (all categories).
+ * Use `getEventCalendarSummaryByCategory` when a specific category filter is needed.
+ */
 export async function getEventCalendarSummary(): Promise<EventCalendarSummaryItem[]> {
   const res = await fetch(SUMMARY_URL);
   if (!res.ok) throw new Error(`Failed to fetch event calendar summary: ${res.status}`);
   return res.json() as Promise<EventCalendarSummaryItem[]>;
+}
+
+/**
+ * Compute a per-date summary filtered by event category, derived from the detail JSON.
+ * When category is "All", delegates to getEventCalendarSummary() for efficiency.
+ * @param category  Event category label, or "All" for the full unfiltered summary
+ */
+export async function getEventCalendarSummaryByCategory(
+  category: string,
+): Promise<EventCalendarSummaryItem[]> {
+  if (category === 'All') return getEventCalendarSummary();
+
+  const res = await fetch(DETAIL_URL);
+  if (!res.ok) throw new Error(`Failed to fetch event calendar detail: ${res.status}`);
+  const allItems = (await res.json()) as EventCalendarDetailItem[];
+
+  // Filter by category and group by date
+  const grouped: Record<string, { companies: Set<string>; count: number }> = {};
+  for (const item of allItems) {
+    if (item.EVENT_TYPE !== category) continue;
+    const d = new Date(item.EVENT_DATETIME);
+    if (isNaN(d.getTime())) continue;
+    const month = d.getMonth() + 1;
+    const day = d.getDate();
+    const key = `${month}-${day}`;
+    if (!grouped[key]) grouped[key] = { companies: new Set(), count: 0 };
+    grouped[key].companies.add(item.CO_CD);
+    grouped[key].count += 1;
+  }
+
+  return Object.entries(grouped).map(([key, val]) => {
+    const [month, day] = key.split('-');
+    return {
+      EVENT_MONTH: month,
+      EVENT_DATE: day,
+      EVENT_COUNT: String(val.count),
+      EVENT_COMPANY_LIST: Array.from(val.companies).join(', '),
+    };
+  });
 }
 
 /**

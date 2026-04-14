@@ -6,7 +6,7 @@ import MonthGrid from '@/app/components/calendar/MonthGrid';
 import WeekGrid from '@/app/components/calendar/WeekGrid';
 import type { WeekDay } from '@/app/data/earnings';
 import {
-  getEventCalendarSummary,
+  getEventCalendarSummaryByCategory,
   buildCalendarSummaryMap,
   type CalendarSummaryMap,
 } from '@/app/lib/eventCalendarApi';
@@ -130,32 +130,41 @@ export default function CorpEventCategorySection({
 
   // Summary data fetched from API
   const [summaryMap, setSummaryMap] = useState<CalendarSummaryMap>({});
-  // Track which month keys have already been loaded to avoid redundant fetches
-  const loadedMonthKeys = useRef<Set<string>>(new Set());
+  // Cache keys include category so switching category always triggers a re-fetch
+  const loadedCacheKeys = useRef<Set<string>>(new Set());
   const summaryAbortRef = useRef<AbortController | null>(null);
 
-  /** Fetch summary when new month keys are needed (cross-month or new month). */
-  const fetchSummary = useCallback(async (monthKeys: string[]) => {
-    const hasNew = monthKeys.some((k) => !loadedMonthKeys.current.has(k));
-    if (!hasNew) return;
-    summaryAbortRef.current?.abort();
-    const ctrl = new AbortController();
-    summaryAbortRef.current = ctrl;
-    try {
-      const items = await getEventCalendarSummary();
-      if (!ctrl.signal.aborted) {
-        const newMap = buildCalendarSummaryMap(items);
-        setSummaryMap(newMap);
-        for (const k of monthKeys) loadedMonthKeys.current.add(k);
-      }
-    } catch {
-      // silently ignore fetch errors (e.g. during SSR/build or network failure)
-    }
-  }, []);
+  /** Build a cache key that is specific to both month and category. */
+  const cacheKey = useCallback(
+    (monthKey: string) => `${monthKey}:${categoryLabel}`,
+    [categoryLabel],
+  );
 
-  // On page load: fetch summary for the currently visible months
+  /** Fetch summary when new month+category keys are needed. */
+  const fetchSummary = useCallback(
+    async (monthKeys: string[]) => {
+      const hasNew = monthKeys.some((k) => !loadedCacheKeys.current.has(cacheKey(k)));
+      if (!hasNew) return;
+      summaryAbortRef.current?.abort();
+      const ctrl = new AbortController();
+      summaryAbortRef.current = ctrl;
+      try {
+        const items = await getEventCalendarSummaryByCategory(categoryLabel);
+        if (!ctrl.signal.aborted) {
+          const newMap = buildCalendarSummaryMap(items);
+          setSummaryMap(newMap);
+          for (const k of monthKeys) loadedCacheKeys.current.add(cacheKey(k));
+        }
+      } catch {
+        // silently ignore fetch errors (e.g. during SSR/build or network failure)
+      }
+    },
+    [categoryLabel, cacheKey],
+  );
+
+  // Re-fetch when category changes or on initial mount
   useEffect(() => {
-    const initialKeys = isMonthlyView
+    const currentKeys = isMonthlyView
       ? [`${year}-${month}`]
       : (() => {
           const weekEnd = new Date(weekStart);
@@ -165,10 +174,10 @@ export default function CorpEventCategorySection({
           if (!keys.includes(endKey)) keys.push(endKey);
           return keys;
         })();
-    void fetchSummary(initialKeys);
+    void fetchSummary(currentKeys);
     return () => { summaryAbortRef.current?.abort(); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [categoryLabel]);
 
   const handleSelectDate = useCallback(
     (dateLabel: string) => {
