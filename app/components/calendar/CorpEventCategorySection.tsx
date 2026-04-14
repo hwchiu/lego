@@ -140,8 +140,22 @@ export default function CorpEventCategorySection({
     [eventType],
   );
 
+  /** Derive the month keys for the currently visible period. */
+  const currentMonthKeys = useCallback(
+    (monthly: boolean, yr: number, mo: number, ws: Date): string[] => {
+      if (monthly) return [`${yr}-${mo}`];
+      const weekEnd = new Date(ws);
+      weekEnd.setDate(ws.getDate() + 6);
+      const keys = [`${ws.getFullYear()}-${ws.getMonth()}`];
+      const endKey = `${weekEnd.getFullYear()}-${weekEnd.getMonth()}`;
+      if (!keys.includes(endKey)) keys.push(endKey);
+      return keys;
+    },
+    [],
+  );
+
   /**
-   * Fetch summary when new month+category keys are needed.
+   * Fetch summary for the given month keys and merge into the existing map.
    * monthKeys format: ["year-monthIndex"] where monthIndex is 0-based (JS Date.getMonth()).
    */
   const fetchSummary = useCallback(
@@ -162,7 +176,8 @@ export default function CorpEventCategorySection({
         if (!ctrl.signal.aborted) {
           const merged = results.flat();
           const newMap = buildCalendarSummaryMap(merged);
-          setSummaryMap(newMap);
+          // Merge new data into existing map so previously-fetched months are preserved
+          setSummaryMap((prev) => ({ ...prev, ...newMap }));
           for (const k of monthKeys) loadedCacheKeys.current.add(cacheKey(k));
         }
       } catch {
@@ -172,22 +187,23 @@ export default function CorpEventCategorySection({
     [eventType, cacheKey],
   );
 
-  // Re-fetch when category changes or on initial mount
+  // When the event category changes, clear the cached data and re-fetch for the current period
   useEffect(() => {
-    const currentKeys = isMonthlyView
-      ? [`${year}-${month}`]
-      : (() => {
-          const weekEnd = new Date(weekStart);
-          weekEnd.setDate(weekStart.getDate() + 6);
-          const keys = [`${weekStart.getFullYear()}-${weekStart.getMonth()}`];
-          const endKey = `${weekEnd.getFullYear()}-${weekEnd.getMonth()}`;
-          if (!keys.includes(endKey)) keys.push(endKey);
-          return keys;
-        })();
-    void fetchSummary(currentKeys);
+    summaryAbortRef.current?.abort();
+    setSummaryMap({});
+    loadedCacheKeys.current = new Set();
+    const keys = currentMonthKeys(isMonthlyView, year, month, weekStart);
+    void fetchSummary(keys);
     return () => { summaryAbortRef.current?.abort(); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventType]);
+
+  // When the view mode toggles, ensure data for the newly visible period is fetched
+  useEffect(() => {
+    const keys = currentMonthKeys(isMonthlyView, year, month, weekStart);
+    void fetchSummary(keys);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMonthlyView]);
 
   const handleSelectDate = useCallback(
     (dateLabel: string) => {
@@ -199,53 +215,45 @@ export default function CorpEventCategorySection({
 
   const prev = useCallback(() => {
     if (isMonthlyView) {
-      setMonth((m) => {
-        const newMonth = m === 0 ? 11 : m - 1;
-        const newYear = m === 0 ? year - 1 : year;
-        void fetchSummary([`${newYear}-${newMonth}`]);
-        if (m === 0) setYear((y) => y - 1);
-        return newMonth;
-      });
+      const newMonth = month === 0 ? 11 : month - 1;
+      const newYear = month === 0 ? year - 1 : year;
+      setMonth(newMonth);
+      setYear(newYear);
+      void fetchSummary([`${newYear}-${newMonth}`]);
     } else {
-      setWeekStart((ws) => {
-        const d = new Date(ws);
-        d.setDate(d.getDate() - 7);
-        const weekEnd = new Date(d);
-        weekEnd.setDate(d.getDate() + 6);
-        // Detect cross-month: load both months if the week spans two months
-        const keys = [`${d.getFullYear()}-${d.getMonth()}`];
-        const endKey = `${weekEnd.getFullYear()}-${weekEnd.getMonth()}`;
-        if (!keys.includes(endKey)) keys.push(endKey);
-        void fetchSummary(keys);
-        return d;
-      });
+      const d = new Date(weekStart);
+      d.setDate(d.getDate() - 7);
+      const weekEnd = new Date(d);
+      weekEnd.setDate(d.getDate() + 6);
+      // Detect cross-month: load both months if the week spans two months
+      const keys = [`${d.getFullYear()}-${d.getMonth()}`];
+      const endKey = `${weekEnd.getFullYear()}-${weekEnd.getMonth()}`;
+      if (!keys.includes(endKey)) keys.push(endKey);
+      setWeekStart(d);
+      void fetchSummary(keys);
     }
-  }, [isMonthlyView, year, fetchSummary]);
+  }, [isMonthlyView, month, year, weekStart, fetchSummary]);
 
   const next = useCallback(() => {
     if (isMonthlyView) {
-      setMonth((m) => {
-        const newMonth = m === 11 ? 0 : m + 1;
-        const newYear = m === 11 ? year + 1 : year;
-        void fetchSummary([`${newYear}-${newMonth}`]);
-        if (m === 11) setYear((y) => y + 1);
-        return newMonth;
-      });
+      const newMonth = month === 11 ? 0 : month + 1;
+      const newYear = month === 11 ? year + 1 : year;
+      setMonth(newMonth);
+      setYear(newYear);
+      void fetchSummary([`${newYear}-${newMonth}`]);
     } else {
-      setWeekStart((ws) => {
-        const d = new Date(ws);
-        d.setDate(d.getDate() + 7);
-        const weekEnd = new Date(d);
-        weekEnd.setDate(d.getDate() + 6);
-        // Detect cross-month: load both months if the week spans two months
-        const keys = [`${d.getFullYear()}-${d.getMonth()}`];
-        const endKey = `${weekEnd.getFullYear()}-${weekEnd.getMonth()}`;
-        if (!keys.includes(endKey)) keys.push(endKey);
-        void fetchSummary(keys);
-        return d;
-      });
+      const d = new Date(weekStart);
+      d.setDate(d.getDate() + 7);
+      const weekEnd = new Date(d);
+      weekEnd.setDate(d.getDate() + 6);
+      // Detect cross-month: load both months if the week spans two months
+      const keys = [`${d.getFullYear()}-${d.getMonth()}`];
+      const endKey = `${weekEnd.getFullYear()}-${weekEnd.getMonth()}`;
+      if (!keys.includes(endKey)) keys.push(endKey);
+      setWeekStart(d);
+      void fetchSummary(keys);
     }
-  }, [isMonthlyView, year, fetchSummary]);
+  }, [isMonthlyView, month, year, weekStart, fetchSummary]);
 
   const displayLabel = useMemo(() => {
     if (isMonthlyView) return `${MONTH_FULL[month]} ${year}`;
