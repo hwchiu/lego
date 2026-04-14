@@ -37,15 +37,14 @@ const INDEX_MAP = [
 const BATCH_SIZE = 50;
 const BATCH_DELAY_MS = 500;
 
-// ── Read S&P 500 symbol list from sp500.ts ───────────────────────────────────
+// ── Read S&P 500 symbol list from content/company_master.md ─────────────────
 
 function readSP500Symbols() {
-  const src = readFileSync(resolve(__dirname, '..', 'app', 'data', 'sp500.ts'), 'utf-8');
-  const symbols = [];
-  for (const match of src.matchAll(/symbol:\s*'([^']+)'/g)) {
-    symbols.push(match[1]);
-  }
-  return symbols;
+  const src = readFileSync(resolve(CONTENT_DIR, 'company_master.md'), 'utf-8');
+  const match = src.match(/```json\s*([\s\S]*?)\s*```/);
+  if (!match) return [];
+  const companies = JSON.parse(match[1]);
+  return companies.map((c) => c.CO_CD);
 }
 
 // ── Read portfolio config from watchlist-data.md (single source of truth) ─────

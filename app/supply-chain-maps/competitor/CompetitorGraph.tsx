@@ -8,7 +8,7 @@ import {
   COMPETITOR_FEED,
   type CompetitorNode,
 } from '@/app/data/tcCompetitorData';
-import { SP500_COMPANIES } from '@/app/data/sp500';
+import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 
 // ── Layout constants ──────────────────────────────────────────────────────────
 
@@ -409,13 +409,13 @@ function FilterBar({
   ).map((c) => ({ label: c.name, sub: c.ticker }));
 
   const competitorTickers = new Set(competitorMatches.map((c) => c.sub));
-  const sp500Matches = SP500_COMPANIES.filter(
+  const masterMatches = COMPANY_MASTER_LIST.filter(
     (c) => c.name.toLowerCase().includes(q) || c.symbol.toLowerCase().includes(q),
   ).map((c) => ({ label: c.name, sub: c.symbol }));
 
   const companyResults = [
     ...competitorMatches,
-    ...sp500Matches.filter((c) => !competitorTickers.has(c.sub)),
+    ...masterMatches.filter((c) => !competitorTickers.has(c.sub)),
   ].slice(0, 3);
 
   const industryResults = UNIQUE_INDUSTRIES_LC.filter((ind) => ind.lc.includes(q))

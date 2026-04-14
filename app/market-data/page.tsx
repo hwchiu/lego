@@ -6,7 +6,7 @@ import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
-import { SP500_COMPANIES } from '@/app/data/sp500';
+import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
 
@@ -37,7 +37,7 @@ export default function MarketDataPage() {
 
   const filteredCompanies =
     query.trim().length > 0
-      ? SP500_COMPANIES.filter(
+      ? COMPANY_MASTER_LIST.filter(
           (c) =>
             c.symbol.toLowerCase().includes(query.toLowerCase()) ||
             c.name.toLowerCase().includes(query.toLowerCase()),

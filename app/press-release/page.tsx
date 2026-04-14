@@ -5,7 +5,7 @@ import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { useLanguage } from '@/app/contexts/LanguageContext';
-import { SP500_COMPANIES } from '@/app/data/sp500';
+import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 import {
   pressReleases,
   allTopics,
@@ -720,7 +720,7 @@ function ListView({ items, lang, companyFilter }: ListViewProps) {
 export default function PressReleasePage() {
   const [activeTab, setActiveTab] = useState<PRTab>('timeline');
   const [companyFilter, setCompanyFilter] = useState('');
-  const [companySuggestions, setCompanySuggestions] = useState<typeof SP500_COMPANIES>([]);
+  const [companySuggestions, setCompanySuggestions] = useState<typeof COMPANY_MASTER_LIST>([]);
   const companyInputRef = useRef<HTMLInputElement>(null);
   const companyWrapRef = useRef<HTMLDivElement>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -730,7 +730,7 @@ export default function PressReleasePage() {
     setCompanyFilter(val);
     if (val.trim().length > 0) {
       const q = val.toUpperCase();
-      const suggestions = SP500_COMPANIES.filter(
+      const suggestions = COMPANY_MASTER_LIST.filter(
         (c) =>
           c.symbol.startsWith(q) ||
           c.name.toLowerCase().includes(val.toLowerCase()),

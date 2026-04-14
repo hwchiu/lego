@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { resolveSymbolAlias } from '@/app/data/sp500';
 import { extractJson } from '@/app/lib/parseContent';
 import tcIrMd from '@/content/tc-ir-material.md';
 
@@ -246,11 +245,9 @@ const IR_DATA_REGISTRY: Record<string, () => FinancialDocGroup[]> = {
 
 /**
  * Returns the IR Material financial data for the given symbol, or null if none exists.
- * Uses resolveSymbolAlias so aliases (e.g. TSM → TC) are handled transparently.
  */
 export function getIRMaterialData(symbol: string): FinancialDocGroup[] | null {
-  const resolvedSymbol = resolveSymbolAlias(symbol);
-  const loader = IR_DATA_REGISTRY[resolvedSymbol];
+  const loader = IR_DATA_REGISTRY[symbol];
   if (!loader) return null;
   const data = loader();
   return data && data.length > 0 ? data : null;

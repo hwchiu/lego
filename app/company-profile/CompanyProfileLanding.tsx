@@ -6,7 +6,7 @@ import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
-import { SP500_COMPANIES } from '@/app/data/sp500';
+import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 import { newsItems } from '@/app/data/news';
 import NewsCard from '@/app/components/news/NewsCard';
 
@@ -148,7 +148,7 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
   // Filter SP500 companies by query
   const filteredCompanies =
     query.trim().length > 0
-      ? SP500_COMPANIES.filter(
+      ? COMPANY_MASTER_LIST.filter(
           (c) =>
             c.symbol.toLowerCase().includes(query.toLowerCase()) ||
             c.name.toLowerCase().includes(query.toLowerCase()),
@@ -325,7 +325,7 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
                 </div>
                 <div className="cp-favorites-tags">
                   {favorites.map((sym) => {
-                    const co = SP500_COMPANIES.find((c) => c.symbol === sym);
+                    const co = COMPANY_MASTER_LIST.find((c) => c.symbol === sym);
                     return (
                       <div key={sym} className="cp-favorites-tag-wrap">
                         <Link href={`/company-profile/${sym}`} className="cp-favorites-tag">

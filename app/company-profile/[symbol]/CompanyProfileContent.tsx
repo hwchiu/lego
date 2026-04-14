@@ -6,7 +6,7 @@ import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
-import { SP500_COMPANIES, resolveSymbolAlias } from '@/app/data/sp500';
+import { COMPANY_MASTER_LIST, getCompanyByCode } from '@/app/data/companyMaster';
 import { newsItems } from '@/app/data/news';
 import { extractJson } from '@/app/lib/parseContent';
 import companyProfileMd from '@/content/company-profile.md';
@@ -16,7 +16,7 @@ import CompanyMATab from './CompanyMATab';
 import InvestmentTab from './InvestmentTab';
 import AcquisitionTab from './AcquisitionTab';
 import FundingTab from './FundingTab';
-import IRMaterialTab, { getIRMaterialData } from './IRMaterialTab';
+import IRMaterialTab from './IRMaterialTab';
 import PreEarningCallTab from './PreEarningCallTab';
 import IRTranscriptTab from './IRTranscriptTab';
 import AITranscriptTab from './AITranscriptTab';
@@ -401,27 +401,40 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   // Parse markdown data
   const profileData = getProfileData();
 
-  // TSM is an alias for TC (T Company)
-  const dataSymbol = resolveSymbolAlias(symbol);
+  // Find company info — fall back to companyMaster data if no profile data
+  const companyInfo = profileData.companies.find((c) => c.symbol === symbol);
+  const masterCompany = COMPANY_MASTER_LIST.find((c) => c.symbol === symbol);
 
-  // Find company info — fall back to SP500 data if no profile data
-  const companyInfo = profileData.companies.find((c) => c.symbol === dataSymbol);
-  const sp500Company = SP500_COMPANIES.find((c) => c.symbol === symbol);
-
-  const companyName = companyInfo?.name ?? sp500Company?.name ?? symbol;
+  const companyName = companyInfo?.name ?? masterCompany?.name ?? symbol;
   const localCurrency = companyInfo?.localCurrency ?? 'USD';
   const bbgId = companyInfo?.bbgId ?? `—`;
   const stockExchange = companyInfo?.stockExchange ?? '—';
   const publicTags = companyInfo?.publicTags ?? [];
 
   // Financial data — only use if explicitly available for this symbol
-  const finData = profileData.financialData[dataSymbol] ?? null;
+  const finData = profileData.financialData[symbol] ?? null;
 
-  // Compute visible tabs — hide IR Material when no data exists for this symbol
-  const visibleTabs = useMemo(
-    () => TABS.filter((tab) => tab !== 'IR Material' || getIRMaterialData(symbol) !== null),
-    [symbol],
-  );
+  // Compute visible tabs based on IS_*_ALIVE flags in company master data
+  const visibleTabs = useMemo(() => {
+    const master = getCompanyByCode(symbol);
+    return TABS.filter((tab) => {
+      if (!master) return false;
+      switch (tab) {
+        case 'FIN. Summary':
+        case 'FIN. Statement':   return master.IS_FIN_ALIVE === 'Y';
+        case 'IR Material':      return master.IS_IR_ALIVE === 'Y';
+        case 'News':             return master.IS_NEWS_ALIVE === 'Y';
+        case 'IR Transcript':    return master.IS_TRANSCRIPT_ALIVE === 'Y';
+        case 'AI Transcript':    return master.IS_AI_TRANSCRIPT_ALIVE === 'Y';
+        case 'Pre-Earning Call': return master.IS_PRE_EARNING_CALL === 'Y';
+        case 'Investment':       return master.IS_INVEST_ALIVE === 'Y';
+        case 'Acquisition':      return master.IS_ACQ_ALIVE === 'Y';
+        case 'Funding':          return master.IS_FUND_ALIVE === 'Y';
+        case 'Stock':            return master.IS_STOCK_CHART_ALIVE === 'Y';
+        default:                 return true;
+      }
+    });
+  }, [symbol]);
 
   // Load favorites & tags from localStorage
   useEffect(() => {
@@ -804,10 +817,6 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                 <div className="cp-info-card">
                   <span className="cp-info-label">BBG ID</span>
                   <span className="cp-info-value">{bbgId}</span>
-                </div>
-                <div className="cp-info-card">
-                  <span className="cp-info-label">Stock Exchange</span>
-                  <span className="cp-info-value">{stockExchange}</span>
                 </div>
               </div>
             </div>

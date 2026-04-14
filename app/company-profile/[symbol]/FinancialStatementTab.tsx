@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { resolveSymbolAlias } from '@/app/data/sp500';
 import { extractJsonBySection } from '@/app/lib/parseContent';
 import tcFinStmtMd from '@/content/tc-financial-statement.md';
 import aaplFinStmtMd from '@/content/apple-financial-statement.md';
@@ -528,13 +527,11 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
   const [viewMode, setViewMode] = useState<ViewMode>('quarterly');
   const [currency, setCurrency] = useState<Currency>('original');
 
-  const resolvedSymbol = resolveSymbolAlias(symbol);
-
   // Load all available statement sections for this company.
   // Company-specific logic is fully encapsulated in getCompanyStatements().
   const availableStatements = useMemo(
-    () => getCompanyStatements(resolvedSymbol),
-    [resolvedSymbol],
+    () => getCompanyStatements(symbol),
+    [symbol],
   );
 
   // Tabs are shown only for sections that actually have data
