@@ -805,10 +805,6 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                   <span className="cp-info-label">BBG ID</span>
                   <span className="cp-info-value">{bbgId}</span>
                 </div>
-                <div className="cp-info-card">
-                  <span className="cp-info-label">Stock Exchange</span>
-                  <span className="cp-info-value">{stockExchange}</span>
-                </div>
               </div>
             </div>
 
