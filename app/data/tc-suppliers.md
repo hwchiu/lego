@@ -1,6 +1,6 @@
-# T Company Supplier Network — Edge Entities Reference
+# TSMC Supplier Network — Edge Entities Reference
 
-> Sources: T Company Annual Reports, public filings, supplier disclosures (FY2023–FY2024).  
+> Sources: TSMC Annual Reports, public filings, supplier disclosures (FY2023–FY2024).  
 > `transactionAmount` in $M USD (estimated). All other counts/ratios are approximate.
 
 ---
@@ -96,7 +96,7 @@
 
 | ID  | Name  | Country | Industry              |
 |-----|-------|---------|-----------------------|
-| TC | T Company  | Taiwan  | Semiconductor Foundry |
+| TC | TSMC  | Taiwan  | Semiconductor Foundry |
 
 ### Tier 1 (9 nodes)
 

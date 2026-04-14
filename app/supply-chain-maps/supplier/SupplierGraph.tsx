@@ -85,7 +85,7 @@ interface FeedItem {
 const SUPPLY_CHAIN_FEED: FeedItem[] = [
   {
     id: 1,
-    title: 'ASML Confirms EUV Machine Deliveries to T Company On Track for 2nm Node',
+    title: 'ASML Confirms EUV Machine Deliveries to TSMC On Track for 2nm Node',
     tickers: ['ASML', 'TC'],
     source: 'Reuters',
     time: 'Today, 9:15 AM',
@@ -99,21 +99,21 @@ const SUPPLY_CHAIN_FEED: FeedItem[] = [
   },
   {
     id: 3,
-    title: 'Lam Research Expands ALD Capacity to Meet T Company 3nm Production Demand',
+    title: 'Lam Research Expands ALD Capacity to Meet TSMC 3nm Production Demand',
     tickers: ['LRCX', 'TC'],
     source: 'Seeking Alpha',
     time: 'Yesterday, 6:00 PM',
   },
   {
     id: 4,
-    title: 'T Company Q1 2025: Supplier Risk Assessment — Geopolitical Tensions in Focus',
+    title: 'TSMC Q1 2025: Supplier Risk Assessment — Geopolitical Tensions in Focus',
     tickers: ['TC', 'ASML'],
     source: 'SA News',
     time: 'Yesterday, 4:45 PM',
   },
   {
     id: 5,
-    title: 'KLA Corp Upgrades Process Control Tools for T Company Advanced Packaging Lines',
+    title: 'KLA Corp Upgrades Process Control Tools for TSMC Advanced Packaging Lines',
     tickers: ['KLAC', 'TC'],
     source: 'Zacks',
     time: 'Apr 2, 3:00 PM',
@@ -127,28 +127,28 @@ const SUPPLY_CHAIN_FEED: FeedItem[] = [
   },
   {
     id: 7,
-    title: 'Shin-Etsu Chemical Raises Silicon Wafer Prices Ahead of T Company Capacity Expansion',
+    title: 'Shin-Etsu Chemical Raises Silicon Wafer Prices Ahead of TSMC Capacity Expansion',
     tickers: ['SHECY', 'TC'],
     source: 'Nikkei',
     time: 'Apr 1, 9:30 AM',
   },
   {
     id: 8,
-    title: 'Air Products Signs 10-Year UHP Gas Supply Agreement with T Company Arizona Fab',
+    title: 'Air Products Signs 10-Year UHP Gas Supply Agreement with TSMC Arizona Fab',
     tickers: ['APD', 'TC'],
     source: 'PR Newswire',
     time: 'Mar 31, 2:00 PM',
   },
   {
     id: 9,
-    title: 'Entegris Launches Next-Gen CMP Slurry Optimized for T Company N2 Process Node',
+    title: 'Entegris Launches Next-Gen CMP Slurry Optimized for TSMC N2 Process Node',
     tickers: ['ENTG', 'TC'],
     source: 'Business Wire',
     time: 'Mar 31, 10:00 AM',
   },
   {
     id: 10,
-    title: 'Tokyo Electron Wins Major T Company Order for Thermal CVD Equipment Fleet',
+    title: 'Tokyo Electron Wins Major TSMC Order for Thermal CVD Equipment Fleet',
     tickers: ['TOELY', 'TC'],
     source: 'Nikkei Asia',
     time: 'Mar 30, 8:00 AM',
@@ -1168,7 +1168,7 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
             ref={svgRef}
             viewBox={vbStr}
             className="rmap-svg"
-            aria-label="T Company Supplier Relationship Graph"
+            aria-label="TSMC Supplier Relationship Graph"
             onMouseDown={handleSvgMouseDown}
             onMouseMove={handleSvgMouseMove}
             onMouseUp={clearDrag}

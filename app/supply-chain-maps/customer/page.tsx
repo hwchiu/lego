@@ -72,7 +72,7 @@ export default function CustomerPage() {
               <div className="rmap-company-header-info">
                 <div className="rmap-company-header-name">TC</div>
                 <div className="rmap-company-header-full">
-                  T Company
+                  TSMC
                 </div>
               </div>
             </div>

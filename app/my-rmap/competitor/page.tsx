@@ -66,7 +66,7 @@ export default function MyRmapCompetitorPage() {
               <div className="rmap-company-header-info">
                 <div className="rmap-company-header-name">TC</div>
                 <div className="rmap-company-header-full">
-                  T Company
+                  TSMC
                 </div>
               </div>
             </div>

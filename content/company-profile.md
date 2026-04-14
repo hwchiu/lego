@@ -16,7 +16,7 @@
     },
     {
       "symbol": "TC",
-      "name": "T Company",
+      "name": "TSMC",
       "localCurrency": "TWD",
       "bbgId": "200711 TW Equity",
       "stockExchange": "TWSE",

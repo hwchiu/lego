@@ -196,13 +196,13 @@ const ESG_ACCENT = '#16a34a';
 
 // ── ESG companies list ────────────────────────────────────────────────────────
 
-const ESG_COMPANIES: { id: 'T Company' | 'Apple'; label: string; subLabel: string }[] = [
-  { id: 'T Company', label: 'T Company', subLabel: 'T Company Manufacturing' },
-  { id: 'Apple', label: 'Apple', subLabel: 'Apple Inc.' },
+const ESG_COMPANIES: { id: string; label: string; subLabel: string; sectionTitle: string }[] = [
+  { id: 'TSMC', label: 'TSMC', subLabel: 'TSMC Manufacturing', sectionTitle: 'Sustainability Reports' },
+  { id: 'Apple', label: 'Apple', subLabel: 'Apple Inc.', sectionTitle: 'Environmental Progress Reports' },
 ];
 
 function EsgReportsTab() {
-  const [selectedCompany, setSelectedCompany] = useState<'T Company' | 'Apple'>('T Company');
+  const [selectedCompany, setSelectedCompany] = useState<string>('TSMC');
 
   const reports = useMemo(
     () =>
@@ -210,8 +210,9 @@ function EsgReportsTab() {
     [selectedCompany],
   );
 
-  const sectionTitle = selectedCompany === 'T Company' ? 'Sustainability Reports' : 'Environmental Progress Reports';
-  const sectionSub = ESG_COMPANIES.find((c) => c.id === selectedCompany)?.subLabel ?? '';
+  const selectedEntry = ESG_COMPANIES.find((c) => c.id === selectedCompany);
+  const sectionTitle = selectedEntry?.sectionTitle ?? '';
+  const sectionSub = selectedEntry?.subLabel ?? '';
 
   return (
     <div className="de-esg-layout">

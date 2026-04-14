@@ -43,7 +43,7 @@ export const APPLE_CENTER_NODE: SupplierNode = {
 export const APPLE_SUPPLIERS: SupplierNode[] = [
   {
     id: 'TC',
-    name: 'T Company',
+    name: 'TSMC',
     ticker: 'TC',
     exchange: 'NYSE / TWSE',
     country: 'Taiwan',

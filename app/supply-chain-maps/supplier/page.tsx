@@ -74,7 +74,7 @@ export default function SupplierPage() {
               <span className="rmap-risk-light rmap-risk-light--green" title="No active risk signals" />
               <div className="rmap-company-header-info">
                 <div className="rmap-company-header-name">TC</div>
-                <div className="rmap-company-header-full">T Company</div>
+                <div className="rmap-company-header-full">TSMC</div>
               </div>
             </div>
 

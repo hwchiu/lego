@@ -1,5 +1,5 @@
-// T Company (T Company) supplier network data
-// Sources: T Company Annual Reports, public filings, supplier disclosures (FY2023–FY2024)
+// TSMC (TSMC) supplier network data
+// Sources: TSMC Annual Reports, public filings, supplier disclosures (FY2023–FY2024)
 
 // ---------------------------------------------------------------------------
 // Type definitions
@@ -56,7 +56,7 @@ export type RelationTypeKey = (typeof RELATION_TYPES)[number]['key'];
 
 export const TC_CENTER_NODE: SupplierNodeTC = {
   id: 'TC',
-  name: 'T Company',
+  name: 'TSMC',
   ticker: 'TC',
   exchange: 'NYSE / TWSE',
   country: 'Taiwan',

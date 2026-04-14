@@ -203,11 +203,11 @@ const DEFAULT_COMPANY = COMPANY_MASTER_LIST.find((c) => c.symbol === DEFAULT_SYM
   name: 'Apple Inc.',
 };
 
-// ── TC-specific data (T Company Manufacturing) ───────────────────
+// ── TC-specific data (TSMC Manufacturing) ───────────────────
 
 const TC_DATA: EarningsCompanyData = {
   symbol: 'TC',
-  name: 'T Company',
+  name: 'TSMC',
   exchange: 'NYSE',
   price: 339.04,
   change: -2.45,
@@ -237,10 +237,10 @@ const TC_DATA: EarningsCompanyData = {
     qualityScore: 92,
   },
   pressReleases: [
-    { date: 'Apr 16, 2026', title: 'T Company Reports First Quarter 2026 Results', quarter: 'Q1 FY2026', url: '#' },
-    { date: 'Jan 16, 2026', title: 'T Company Reports Fourth Quarter and Full Year 2025 Results', quarter: 'Q4 FY2025', url: '#' },
-    { date: 'Oct 16, 2025', title: 'T Company Reports Third Quarter 2025 Results', quarter: 'Q3 FY2025', url: '#' },
-    { date: 'Jul 17, 2025', title: 'T Company Reports Second Quarter 2025 Results', quarter: 'Q2 FY2025', url: '#' },
+    { date: 'Apr 16, 2026', title: 'TSMC Reports First Quarter 2026 Results', quarter: 'Q1 FY2026', url: '#' },
+    { date: 'Jan 16, 2026', title: 'TSMC Reports Fourth Quarter and Full Year 2025 Results', quarter: 'Q4 FY2025', url: '#' },
+    { date: 'Oct 16, 2025', title: 'TSMC Reports Third Quarter 2025 Results', quarter: 'Q3 FY2025', url: '#' },
+    { date: 'Jul 17, 2025', title: 'TSMC Reports Second Quarter 2025 Results', quarter: 'Q2 FY2025', url: '#' },
   ],
   epsHistory: [
     { quarter: 'Q2 FY2026', estimate: 2.68, actual: null },

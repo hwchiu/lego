@@ -65,13 +65,13 @@ Companies with significant Taiwan-US trade flows and supply chain exposure:
 
 | Symbol | Company | Reason |
 |--------|---------|--------|
-| TC | T Company (T Company) | World's largest contract chipmaker; central to Taiwan-US trade |
+| TC | TSMC (TSMC) | World's largest contract chipmaker; central to Taiwan-US trade |
 | AAPL | Apple | >90% of iPhone production in Asia; direct tariff exposure |
 | QCOM | Qualcomm | Fabless; chips manufactured in Taiwan |
 | AVGO | Broadcom | Semiconductor & infrastructure; Taiwan manufacturing reliance |
 | AMAT | Applied Materials | Semiconductor equipment exported to Taiwan fabs |
 | LRCX | Lam Research | Key etch & deposition tools for Taiwan fabs |
-| INTC | Intel | Expanding into contract manufacturing; competes with T Company |
+| INTC | Intel | Expanding into contract manufacturing; competes with TSMC |
 | TXN | Texas Instruments | Analog chips; significant Taiwan manufacturing |
 | MU | Micron Technology | Memory chips; Taiwan production facilities |
 | KLAC | KLA Corporation | Wafer inspection tools; critical Taiwan supply chain |
@@ -122,7 +122,7 @@ Core semiconductor manufacturers and equipment companies driving chip innovation
 | Symbol | Company | Reason |
 |--------|---------|--------|
 | NVDA | NVIDIA | GPU/AI accelerator dominance |
-| TC | T Company | World's leading pure-play foundry |
+| TC | TSMC | World's leading pure-play foundry |
 | INTC | Intel | Diversified chipmaker; IDM 2.0 strategy |
 | AMD | AMD | CPU/GPU market share gains vs INTC/NVDA |
 | QCOM | Qualcomm | Mobile SoC and RF chip leader |
@@ -150,7 +150,7 @@ Companies pioneering 3D chip stacking, advanced packaging, and heterogeneous int
 
 | Symbol | Company | Reason |
 |--------|---------|--------|
-| TC | T Company | CoWoS, SoIC, and InFO advanced packaging leader |
+| TC | TSMC | CoWoS, SoIC, and InFO advanced packaging leader |
 | NVDA | NVIDIA | H100/B200 use CoWoS HBM packaging |
 | AMD | AMD | 3D V-Cache stacking; chiplet architecture |
 | INTC | Intel | Foveros 3D stacking and EMIB interconnect |
@@ -185,7 +185,7 @@ Companies with significant exposure to US reciprocal tariff policy affecting imp
 | WMT | Walmart | Import-heavy retail; ~70% of goods from overseas |
 | COST | Costco | Significant private-label imports affected by tariffs |
 | TGT | Target | Heavy reliance on imported apparel and electronics |
-| TC | T Company | Semiconductor tariffs threaten chip supply cost |
+| TC | TSMC | Semiconductor tariffs threaten chip supply cost |
 | QCOM | Qualcomm | Chip designs manufactured overseas; US tariff exposure |
 
 ```json

@@ -176,7 +176,7 @@ export const CATEGORIES: Category[] = [
     icon: <EsgIcon />,
     color: '#16a34a',
     description:
-      'Environmental, Social, and Governance disclosures covering T Company and its supply chain partners — sustainability reports, carbon targets, renewable energy, and social governance.',
+      'Environmental, Social, and Governance disclosures covering TSMC and its supply chain partners — sustainability reports, carbon targets, renewable energy, and social governance.',
     items: extractJson<DataItem[]>(esgRaw),
   },
   {
@@ -185,7 +185,7 @@ export const CATEGORIES: Category[] = [
     icon: <GovernmentIcon />,
     color: '#2563eb',
     description:
-      'Regulatory frameworks, export controls, semiconductor subsidies, and trade policies affecting T Company and the broader semiconductor supply chain — including US CHIPS Act, BIS rules, and allied nation policies.',
+      'Regulatory frameworks, export controls, semiconductor subsidies, and trade policies affecting TSMC and the broader semiconductor supply chain — including US CHIPS Act, BIS rules, and allied nation policies.',
     items: extractJson<DataItem[]>(govRegsRaw),
   },
   {
@@ -194,7 +194,7 @@ export const CATEGORIES: Category[] = [
     icon: <StandardsIcon />,
     color: '#7c3aed',
     description:
-      'ISO certifications, IEC standards, SEMI standards, and quality management frameworks adopted by T Company and its supply chain — covering quality, environmental, information security, and product compliance.',
+      'ISO certifications, IEC standards, SEMI standards, and quality management frameworks adopted by TSMC and its supply chain — covering quality, environmental, information security, and product compliance.',
     items: extractJson<DataItem[]>(intlStdRaw),
   },
   {
@@ -203,7 +203,7 @@ export const CATEGORIES: Category[] = [
     icon: <IndustryIcon />,
     color: '#ea580c',
     description:
-      'Semiconductor industry trends, technology roadmaps, equipment supply chain, fab expansions, and advanced packaging developments related to T Company and its ecosystem.',
+      'Semiconductor industry trends, technology roadmaps, equipment supply chain, fab expansions, and advanced packaging developments related to TSMC and its ecosystem.',
     items: extractJson<DataItem[]>(industryRaw),
   },
   {
@@ -212,7 +212,7 @@ export const CATEGORIES: Category[] = [
     icon: <CompanyOpsIcon />,
     color: '#0891b2',
     description:
-      'Quarterly earnings, annual financial results, operational metrics, customer relationships, and strategic business developments for T Company and key supply chain companies.',
+      'Quarterly earnings, annual financial results, operational metrics, customer relationships, and strategic business developments for TSMC and key supply chain companies.',
     items: extractJson<DataItem[]>(companyOpsRaw),
   },
   {
@@ -221,7 +221,7 @@ export const CATEGORIES: Category[] = [
     icon: <CapitalMarketsIcon />,
     color: '#be123c',
     description:
-      'Investment analysis, analyst ratings, price targets, institutional ownership, and capital market events for T Company (TC ADR) and associated semiconductor sector equities.',
+      'Investment analysis, analyst ratings, price targets, institutional ownership, and capital market events for TSMC (TC ADR) and associated semiconductor sector equities.',
     items: extractJson<DataItem[]>(capitalRaw),
   },
 ];

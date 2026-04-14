@@ -5,7 +5,7 @@
     {
       "id": "n-1",
       "type": "news",
-      "title": "T Company Reports Record Q3 2025 Revenue of $33.1B, Beats Estimates",
+      "title": "TSMC Reports Record Q3 2025 Revenue of $33.1B, Beats Estimates",
       "source": "SA News",
       "time": "Today, 9:10 AM",
       "read": false
@@ -37,7 +37,7 @@
     {
       "id": "n-5",
       "type": "transcript",
-      "title": "T Company Q3 2025 Earnings Call Transcript Now Available",
+      "title": "TSMC Q3 2025 Earnings Call Transcript Now Available",
       "source": "Seeking Alpha",
       "time": "Yesterday, 4:00 PM",
       "read": false
