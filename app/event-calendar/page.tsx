@@ -60,7 +60,7 @@ export default function EventCalendarPage() {
             <MarketTabs activeTab={activeTab} onTabChange={handleTabChange} />
 
             <CorpEventCategorySection
-              categoryLabel={activeTab}
+              eventType={activeTab}
               onDateSelect={handleDateSelect}
             />
             <CorpEventCategoryDetail

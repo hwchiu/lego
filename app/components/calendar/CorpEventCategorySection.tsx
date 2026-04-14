@@ -111,12 +111,12 @@ function ChevronRight() {
 }
 
 interface CorpEventCategorySectionProps {
-  categoryLabel: string;
+  eventType: string;
   onDateSelect?: (dateLabel: string) => void;
 }
 
 export default function CorpEventCategorySection({
-  categoryLabel,
+  eventType,
   onDateSelect,
 }: CorpEventCategorySectionProps) {
   const today = useMemo(() => new Date(), []);
@@ -136,8 +136,8 @@ export default function CorpEventCategorySection({
 
   /** Build a cache key that is specific to both month and category. */
   const cacheKey = useCallback(
-    (monthKey: string) => `${monthKey}:${categoryLabel}`,
-    [categoryLabel],
+    (monthKey: string) => `${monthKey}:${eventType}`,
+    [eventType],
   );
 
   /**
@@ -156,7 +156,7 @@ export default function CorpEventCategorySection({
         const fetches = monthKeys.map((k) => {
           const monthIdx = parseInt(k.split('-')[1], 10);
           // API expects 1-based month string
-          return getEventCalendarSummary(String(monthIdx + 1), categoryLabel);
+          return getEventCalendarSummary(String(monthIdx + 1), eventType);
         });
         const results = await Promise.all(fetches);
         if (!ctrl.signal.aborted) {
@@ -169,7 +169,7 @@ export default function CorpEventCategorySection({
         // silently ignore fetch errors (e.g. during SSR/build or network failure)
       }
     },
-    [categoryLabel, cacheKey],
+    [eventType, cacheKey],
   );
 
   // Re-fetch when category changes or on initial mount
@@ -187,7 +187,7 @@ export default function CorpEventCategorySection({
     void fetchSummary(currentKeys);
     return () => { summaryAbortRef.current?.abort(); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoryLabel]);
+  }, [eventType]);
 
   const handleSelectDate = useCallback(
     (dateLabel: string) => {
@@ -267,7 +267,7 @@ export default function CorpEventCategorySection({
   return (
     <div className="cal-card">
       <div className="cal-header ec-cal-header">
-        <div className="cal-eyebrow">{categoryLabel}</div>
+        <div className="cal-eyebrow">{eventType}</div>
         <div className="cal-month-nav">
           <button className="cal-arrow" onClick={prev} aria-label="Previous">
             <ChevronLeft />
