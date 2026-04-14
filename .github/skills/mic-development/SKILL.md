@@ -290,6 +290,30 @@ Add entry to `app/data/navigation.ts`:
 { label: 'Feature Name', href: '/feature-name', icon: 'iconKey', badge: 'NEW' }
 ```
 
+## Dependency Management
+
+### ⚠️ 重要：package-lock.json 與 package.json 必須同步
+
+**問題：** 直接編輯 `package.json` 而未執行 `npm install`，會導致 `package-lock.json` 與 `package.json` 不同步，造成 CI 建置失敗（`npm ci` 在兩者不一致時會報錯）。
+
+**規則：**
+- **新增/移除套件** → 使用 `npm install <pkg>` / `npm uninstall <pkg>`，不要手動編輯 `package.json`
+- **升級套件版本** → 使用 `npm install <pkg>@<version>`，不要只改 `package.json` 的版本號
+- **手動編輯 `package.json` 後** → 必須立即執行 `npm install` 以更新 `package-lock.json`
+- **提交時** → `package.json` 與 `package-lock.json` 必須一起提交
+
+```bash
+# ✅ 正確做法
+npm install react-query@5.0.0          # 安裝並自動更新 lock file
+npm uninstall some-package             # 移除並自動更新 lock file
+
+# ❌ 錯誤做法
+# 直接編輯 package.json 的版本號後就提交，沒有執行 npm install
+
+# 驗證是否同步
+npm ci --dry-run    # 若 lock file 與 package.json 不一致，此命令會報錯
+```
+
 ## Build & Deploy
 
 ```bash
