@@ -37,12 +37,6 @@ export interface CompanyMasterItem {
   name: string;
 }
 
-/** Resolves symbol aliases to their canonical data symbol (e.g. TSM → TC). */
-export function resolveSymbolAlias(symbol: string): string {
-  if (symbol === 'TSM') return 'TC';
-  return symbol;
-}
-
 /** Full company list derived from master data. */
 export const COMPANY_MASTER_LIST: CompanyMasterItem[] = COMPANY_MASTER_DATA.map((c) => ({
   symbol: c.CO_CD,
