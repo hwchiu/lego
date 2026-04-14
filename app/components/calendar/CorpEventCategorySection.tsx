@@ -1,18 +1,22 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 
 import MonthGrid from '@/app/components/calendar/MonthGrid';
 import WeekGrid from '@/app/components/calendar/WeekGrid';
 import type { WeekDay } from '@/app/data/earnings';
-import type { CorpEvent } from '@/app/data/corpEvents';
+import {
+  getEventCalendarSummary,
+  buildCalendarSummaryMap,
+  type CalendarSummaryMap,
+} from '@/app/lib/eventCalendarApi';
 import { DAY_LABELS, MONTH_SHORT, MONTH_FULL, getDateLabel, getWeekStart } from '@/app/lib/calendarUtils';
 
 function buildMonthDays(
   year: number,
   month: number,
   todayLabel: string,
-  eventsByDate: Record<string, CorpEvent[]>,
+  summaryMap: CalendarSummaryMap,
 ): WeekDay[] {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDay = new Date(year, month, 1).getDay();
@@ -24,27 +28,27 @@ function buildMonthDays(
   for (let i = 0; i < firstDay; i++) {
     const prevMonthDay = daysInPrevMonth - firstDay + 1 + i;
     const dateLabel = `${MONTH_SHORT[prevMonthIdx]} ${prevMonthDay}`;
-    const evts = eventsByDate[dateLabel] ?? [];
+    const cell = summaryMap[dateLabel];
     days.push({
       dayLabel: DAY_LABELS[i],
       dateLabel,
       isOutOfMonth: true,
       isToday: dateLabel === todayLabel,
-      companies: evts.map((e) => e.cellLabel),
-      companyCount: evts.length,
+      companies: cell?.companies ?? [],
+      companyCount: cell?.count ?? 0,
     });
   }
 
   for (let d = 1; d <= daysInMonth; d++) {
     const dateLabel = `${MONTH_SHORT[month]} ${d}`;
     const dayOfWeek = (firstDay + d - 1) % 7;
-    const evts = eventsByDate[dateLabel] ?? [];
+    const cell = summaryMap[dateLabel];
     days.push({
       dayLabel: DAY_LABELS[dayOfWeek],
       dateLabel,
       isToday: dateLabel === todayLabel,
-      companies: evts.map((e) => e.cellLabel),
-      companyCount: evts.length,
+      companies: cell?.companies ?? [],
+      companyCount: cell?.count ?? 0,
     });
   }
 
@@ -54,14 +58,14 @@ function buildMonthDays(
   for (let i = 1; i <= trailingCount; i++) {
     const dateLabel = `${MONTH_SHORT[nextMonthIdx]} ${i}`;
     const dayOfWeek = (lastDayOfWeek + i) % 7;
-    const evts = eventsByDate[dateLabel] ?? [];
+    const cell = summaryMap[dateLabel];
     days.push({
       dayLabel: DAY_LABELS[dayOfWeek],
       dateLabel,
       isOutOfMonth: true,
       isToday: dateLabel === todayLabel,
-      companies: evts.map((e) => e.cellLabel),
-      companyCount: evts.length,
+      companies: cell?.companies ?? [],
+      companyCount: cell?.count ?? 0,
     });
   }
 
@@ -71,20 +75,20 @@ function buildMonthDays(
 function buildWeekDays(
   weekStart: Date,
   todayLabel: string,
-  eventsByDate: Record<string, CorpEvent[]>,
+  summaryMap: CalendarSummaryMap,
 ): WeekDay[] {
   const days: WeekDay[] = [];
   for (let i = 0; i < 7; i++) {
     const d = new Date(weekStart);
     d.setDate(weekStart.getDate() + i);
     const dateLabel = getDateLabel(d);
-    const evts = eventsByDate[dateLabel] ?? [];
+    const cell = summaryMap[dateLabel];
     days.push({
       dayLabel: DAY_LABELS[i],
       dateLabel,
       isToday: dateLabel === todayLabel,
-      companies: evts.map((e) => e.cellLabel),
-      companyCount: evts.length,
+      companies: cell?.companies ?? [],
+      companyCount: cell?.count ?? 0,
     });
   }
   return days;
@@ -107,14 +111,12 @@ function ChevronRight() {
 }
 
 interface CorpEventCategorySectionProps {
-  categoryLabel: string;
-  eventsByDate: Record<string, CorpEvent[]>;
+  eventType: string;
   onDateSelect?: (dateLabel: string) => void;
 }
 
 export default function CorpEventCategorySection({
-  categoryLabel,
-  eventsByDate,
+  eventType,
   onDateSelect,
 }: CorpEventCategorySectionProps) {
   const today = useMemo(() => new Date(), []);
@@ -126,6 +128,67 @@ export default function CorpEventCategorySection({
   const [isMonthlyView, setIsMonthlyView] = useState(false);
   const [selectedDateLabel, setSelectedDateLabel] = useState<string>(todayLabel);
 
+  // Summary data fetched from API
+  const [summaryMap, setSummaryMap] = useState<CalendarSummaryMap>({});
+  // Cache keys include category so switching category always triggers a re-fetch
+  const loadedCacheKeys = useRef<Set<string>>(new Set());
+  const summaryAbortRef = useRef<AbortController | null>(null);
+
+  /** Build a cache key that is specific to both month and category. */
+  const cacheKey = useCallback(
+    (monthKey: string) => `${monthKey}:${eventType}`,
+    [eventType],
+  );
+
+  /**
+   * Fetch summary when new month+category keys are needed.
+   * monthKeys format: ["year-monthIndex"] where monthIndex is 0-based (JS Date.getMonth()).
+   */
+  const fetchSummary = useCallback(
+    async (monthKeys: string[]) => {
+      const hasNew = monthKeys.some((k) => !loadedCacheKeys.current.has(cacheKey(k)));
+      if (!hasNew) return;
+      summaryAbortRef.current?.abort();
+      const ctrl = new AbortController();
+      summaryAbortRef.current = ctrl;
+      try {
+        // Fetch for each month in parallel; monthKeys use 0-based month index
+        const fetches = monthKeys.map((k) => {
+          const monthIdx = parseInt(k.split('-')[1], 10);
+          // API expects 1-based month string
+          return getEventCalendarSummary(String(monthIdx + 1), eventType);
+        });
+        const results = await Promise.all(fetches);
+        if (!ctrl.signal.aborted) {
+          const merged = results.flat();
+          const newMap = buildCalendarSummaryMap(merged);
+          setSummaryMap(newMap);
+          for (const k of monthKeys) loadedCacheKeys.current.add(cacheKey(k));
+        }
+      } catch {
+        // silently ignore fetch errors (e.g. during SSR/build or network failure)
+      }
+    },
+    [eventType, cacheKey],
+  );
+
+  // Re-fetch when category changes or on initial mount
+  useEffect(() => {
+    const currentKeys = isMonthlyView
+      ? [`${year}-${month}`]
+      : (() => {
+          const weekEnd = new Date(weekStart);
+          weekEnd.setDate(weekStart.getDate() + 6);
+          const keys = [`${weekStart.getFullYear()}-${weekStart.getMonth()}`];
+          const endKey = `${weekEnd.getFullYear()}-${weekEnd.getMonth()}`;
+          if (!keys.includes(endKey)) keys.push(endKey);
+          return keys;
+        })();
+    void fetchSummary(currentKeys);
+    return () => { summaryAbortRef.current?.abort(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eventType]);
+
   const handleSelectDate = useCallback(
     (dateLabel: string) => {
       setSelectedDateLabel(dateLabel);
@@ -136,37 +199,53 @@ export default function CorpEventCategorySection({
 
   const prev = useCallback(() => {
     if (isMonthlyView) {
-      if (month === 0) {
-        setMonth(11);
-        setYear((y) => y - 1);
-      } else {
-        setMonth((m) => m - 1);
-      }
+      setMonth((m) => {
+        const newMonth = m === 0 ? 11 : m - 1;
+        const newYear = m === 0 ? year - 1 : year;
+        void fetchSummary([`${newYear}-${newMonth}`]);
+        if (m === 0) setYear((y) => y - 1);
+        return newMonth;
+      });
     } else {
       setWeekStart((ws) => {
         const d = new Date(ws);
         d.setDate(d.getDate() - 7);
+        const weekEnd = new Date(d);
+        weekEnd.setDate(d.getDate() + 6);
+        // Detect cross-month: load both months if the week spans two months
+        const keys = [`${d.getFullYear()}-${d.getMonth()}`];
+        const endKey = `${weekEnd.getFullYear()}-${weekEnd.getMonth()}`;
+        if (!keys.includes(endKey)) keys.push(endKey);
+        void fetchSummary(keys);
         return d;
       });
     }
-  }, [isMonthlyView, month]);
+  }, [isMonthlyView, year, fetchSummary]);
 
   const next = useCallback(() => {
     if (isMonthlyView) {
-      if (month === 11) {
-        setMonth(0);
-        setYear((y) => y + 1);
-      } else {
-        setMonth((m) => m + 1);
-      }
+      setMonth((m) => {
+        const newMonth = m === 11 ? 0 : m + 1;
+        const newYear = m === 11 ? year + 1 : year;
+        void fetchSummary([`${newYear}-${newMonth}`]);
+        if (m === 11) setYear((y) => y + 1);
+        return newMonth;
+      });
     } else {
       setWeekStart((ws) => {
         const d = new Date(ws);
         d.setDate(d.getDate() + 7);
+        const weekEnd = new Date(d);
+        weekEnd.setDate(d.getDate() + 6);
+        // Detect cross-month: load both months if the week spans two months
+        const keys = [`${d.getFullYear()}-${d.getMonth()}`];
+        const endKey = `${weekEnd.getFullYear()}-${weekEnd.getMonth()}`;
+        if (!keys.includes(endKey)) keys.push(endKey);
+        void fetchSummary(keys);
         return d;
       });
     }
-  }, [isMonthlyView, month]);
+  }, [isMonthlyView, year, fetchSummary]);
 
   const displayLabel = useMemo(() => {
     if (isMonthlyView) return `${MONTH_FULL[month]} ${year}`;
@@ -176,19 +255,19 @@ export default function CorpEventCategorySection({
   }, [isMonthlyView, month, year, weekStart]);
 
   const monthDays = useMemo(
-    () => buildMonthDays(year, month, todayLabel, eventsByDate),
-    [year, month, todayLabel, eventsByDate],
+    () => buildMonthDays(year, month, todayLabel, summaryMap),
+    [year, month, todayLabel, summaryMap],
   );
 
   const currentWeekDays = useMemo(
-    () => buildWeekDays(weekStart, todayLabel, eventsByDate),
-    [weekStart, todayLabel, eventsByDate],
+    () => buildWeekDays(weekStart, todayLabel, summaryMap),
+    [weekStart, todayLabel, summaryMap],
   );
 
   return (
     <div className="cal-card">
       <div className="cal-header ec-cal-header">
-        <div className="cal-eyebrow">{categoryLabel}</div>
+        <div className="cal-eyebrow">{eventType}</div>
         <div className="cal-month-nav">
           <button className="cal-arrow" onClick={prev} aria-label="Previous">
             <ChevronLeft />
