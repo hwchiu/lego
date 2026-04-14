@@ -6,7 +6,7 @@ import MonthGrid from '@/app/components/calendar/MonthGrid';
 import WeekGrid from '@/app/components/calendar/WeekGrid';
 import type { WeekDay } from '@/app/data/earnings';
 import {
-  getEventCalendarSummaryByCategory,
+  getEventCalendarSummary,
   buildCalendarSummaryMap,
   type CalendarSummaryMap,
 } from '@/app/lib/eventCalendarApi';
@@ -140,7 +140,10 @@ export default function CorpEventCategorySection({
     [categoryLabel],
   );
 
-  /** Fetch summary when new month+category keys are needed. */
+  /**
+   * Fetch summary when new month+category keys are needed.
+   * monthKeys format: ["year-monthIndex"] where monthIndex is 0-based (JS Date.getMonth()).
+   */
   const fetchSummary = useCallback(
     async (monthKeys: string[]) => {
       const hasNew = monthKeys.some((k) => !loadedCacheKeys.current.has(cacheKey(k)));
@@ -149,9 +152,16 @@ export default function CorpEventCategorySection({
       const ctrl = new AbortController();
       summaryAbortRef.current = ctrl;
       try {
-        const items = await getEventCalendarSummaryByCategory(categoryLabel);
+        // Fetch for each month in parallel; monthKeys use 0-based month index
+        const fetches = monthKeys.map((k) => {
+          const monthIdx = parseInt(k.split('-')[1], 10);
+          // API expects 1-based month string
+          return getEventCalendarSummary(String(monthIdx + 1), categoryLabel);
+        });
+        const results = await Promise.all(fetches);
         if (!ctrl.signal.aborted) {
-          const newMap = buildCalendarSummaryMap(items);
+          const merged = results.flat();
+          const newMap = buildCalendarSummaryMap(merged);
           setSummaryMap(newMap);
           for (const k of monthKeys) loadedCacheKeys.current.add(cacheKey(k));
         }

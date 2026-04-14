@@ -7,6 +7,7 @@ export interface EventCalendarSummaryItem {
   EVENT_DATE: string;
   EVENT_COUNT: string;
   EVENT_COMPANY_LIST: string;
+  EVENT_TYPE: string;
 }
 
 export interface EventCalendarDetailItem {
@@ -47,52 +48,20 @@ const SUMMARY_URL = '/lego/data/event-calendar-summary.json';
 const DETAIL_URL = '/lego/data/event-calendar-detail.json';
 
 /**
- * Fetch the summary JSON used to populate calendar cells (all categories).
- * Use `getEventCalendarSummaryByCategory` when a specific category filter is needed.
+ * Fetch summary items for a given month and event category.
+ * @param month      Calendar month number as a string, e.g. "4" for April
+ * @param eventType  Event category label, or "All" for the full unfiltered summary
  */
-export async function getEventCalendarSummary(): Promise<EventCalendarSummaryItem[]> {
+export async function getEventCalendarSummary(
+  month: string,
+  eventType: string,
+): Promise<EventCalendarSummaryItem[]> {
   const res = await fetch(SUMMARY_URL);
   if (!res.ok) throw new Error(`Failed to fetch event calendar summary: ${res.status}`);
-  return res.json() as Promise<EventCalendarSummaryItem[]>;
-}
-
-/**
- * Compute a per-date summary filtered by event category, derived from the detail JSON.
- * When category is "All", delegates to getEventCalendarSummary() for efficiency.
- * @param category  Event category label, or "All" for the full unfiltered summary
- */
-export async function getEventCalendarSummaryByCategory(
-  category: string,
-): Promise<EventCalendarSummaryItem[]> {
-  if (category === 'All') return getEventCalendarSummary();
-
-  const res = await fetch(DETAIL_URL);
-  if (!res.ok) throw new Error(`Failed to fetch event calendar detail: ${res.status}`);
-  const allItems = (await res.json()) as EventCalendarDetailItem[];
-
-  // Filter by category and group by date
-  const grouped: Record<string, { companies: Set<string>; count: number }> = {};
-  for (const item of allItems) {
-    if (item.EVENT_TYPE !== category) continue;
-    const d = new Date(item.EVENT_DATETIME);
-    if (isNaN(d.getTime())) continue;
-    const month = d.getMonth() + 1;
-    const day = d.getDate();
-    const key = `${month}-${day}`;
-    if (!grouped[key]) grouped[key] = { companies: new Set(), count: 0 };
-    grouped[key].companies.add(item.CO_CD);
-    grouped[key].count += 1;
-  }
-
-  return Object.entries(grouped).map(([key, val]) => {
-    const [month, day] = key.split('-');
-    return {
-      EVENT_MONTH: month,
-      EVENT_DATE: day,
-      EVENT_COUNT: String(val.count),
-      EVENT_COMPANY_LIST: Array.from(val.companies).join(', '),
-    };
-  });
+  const allItems = (await res.json()) as EventCalendarSummaryItem[];
+  return allItems.filter(
+    (item) => item.EVENT_MONTH === month && item.EVENT_TYPE === eventType,
+  );
 }
 
 /**

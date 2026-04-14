@@ -3,72 +3,455 @@
     "EVENT_MONTH": "4",
     "EVENT_DATE": "7",
     "EVENT_COUNT": "9",
-    "EVENT_COMPANY_LIST": "AAPL, AMAT, AVGO, MSFT, NVDA, INTC, MU"
+    "EVENT_COMPANY_LIST": "AAPL, AMAT, AVGO, INTC, MSFT, MU, NVDA",
+    "EVENT_TYPE": "All"
   },
   {
     "EVENT_MONTH": "4",
     "EVENT_DATE": "9",
     "EVENT_COUNT": "10",
-    "EVENT_COMPANY_LIST": "MSFT, NVDA, AMD, AAPL, ASML"
+    "EVENT_COMPANY_LIST": "AAPL, AMD, ASML, MSFT, NVDA",
+    "EVENT_TYPE": "All"
   },
   {
     "EVENT_MONTH": "4",
     "EVENT_DATE": "10",
     "EVENT_COUNT": "2",
-    "EVENT_COMPANY_LIST": "TXN, QCOM"
+    "EVENT_COMPANY_LIST": "QCOM, TXN",
+    "EVENT_TYPE": "All"
   },
   {
     "EVENT_MONTH": "4",
     "EVENT_DATE": "14",
     "EVENT_COUNT": "9",
-    "EVENT_COMPANY_LIST": "NVDA, AVGO, ASML, AMD, AAPL, MU"
+    "EVENT_COMPANY_LIST": "AAPL, AMD, ASML, AVGO, MU, NVDA",
+    "EVENT_TYPE": "All"
   },
   {
     "EVENT_MONTH": "4",
     "EVENT_DATE": "16",
     "EVENT_COUNT": "10",
-    "EVENT_COMPANY_LIST": "ASML, AMD, LRCX, KLAC, AMAT"
+    "EVENT_COMPANY_LIST": "AMAT, AMD, ASML, KLAC, LRCX",
+    "EVENT_TYPE": "All"
   },
   {
     "EVENT_MONTH": "4",
     "EVENT_DATE": "17",
     "EVENT_COUNT": "1",
-    "EVENT_COMPANY_LIST": "AMAT"
+    "EVENT_COMPANY_LIST": "AMAT",
+    "EVENT_TYPE": "All"
   },
   {
     "EVENT_MONTH": "4",
     "EVENT_DATE": "21",
     "EVENT_COUNT": "1",
-    "EVENT_COMPANY_LIST": "AMD"
+    "EVENT_COMPANY_LIST": "AMD",
+    "EVENT_TYPE": "All"
   },
   {
     "EVENT_MONTH": "4",
     "EVENT_DATE": "22",
     "EVENT_COUNT": "17",
-    "EVENT_COMPANY_LIST": "QCOM, TXN, AVGO, MU, AMAT"
+    "EVENT_COMPANY_LIST": "AMAT, AVGO, MU, QCOM, TXN",
+    "EVENT_TYPE": "All"
   },
   {
     "EVENT_MONTH": "4",
     "EVENT_DATE": "24",
     "EVENT_COUNT": "3",
-    "EVENT_COMPANY_LIST": "KLAC, MSFT, INTC"
+    "EVENT_COMPANY_LIST": "INTC, KLAC, MSFT",
+    "EVENT_TYPE": "All"
   },
   {
     "EVENT_MONTH": "4",
     "EVENT_DATE": "28",
     "EVENT_COUNT": "6",
-    "EVENT_COMPANY_LIST": "ASML, TXN, AMAT, AVGO"
+    "EVENT_COMPANY_LIST": "AMAT, ASML, AVGO, TXN",
+    "EVENT_TYPE": "All"
   },
   {
     "EVENT_MONTH": "4",
     "EVENT_DATE": "29",
     "EVENT_COUNT": "10",
-    "EVENT_COMPANY_LIST": "LRCX, QCOM, AMD, MSFT"
+    "EVENT_COMPANY_LIST": "AMD, LRCX, MSFT, QCOM",
+    "EVENT_TYPE": "All"
   },
   {
     "EVENT_MONTH": "4",
     "EVENT_DATE": "30",
     "EVENT_COUNT": "1",
-    "EVENT_COMPANY_LIST": "AAPL"
+    "EVENT_COMPANY_LIST": "AAPL",
+    "EVENT_TYPE": "All"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "7",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "NVDA",
+    "EVENT_TYPE": "Analysts Investors Meeting"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "7",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "NVDA",
+    "EVENT_TYPE": "Conference"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "7",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "AAPL, MSFT",
+    "EVENT_TYPE": "Confirmed Earnings Release"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "7",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "AVGO",
+    "EVENT_TYPE": "Dividend"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "7",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "MU",
+    "EVENT_TYPE": "Projected Earnings Release"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "7",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "AMAT",
+    "EVENT_TYPE": "Sales Revenue Release"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "7",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "AAPL",
+    "EVENT_TYPE": "Share Holders Meeting"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "7",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "INTC",
+    "EVENT_TYPE": "Special Situation"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "9",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "AAPL, ASML",
+    "EVENT_TYPE": "Conference"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "9",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "NVDA",
+    "EVENT_TYPE": "Confirmed Earnings Release"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "9",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "ASML",
+    "EVENT_TYPE": "Earnings"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "9",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "ASML",
+    "EVENT_TYPE": "Guidance Call"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "9",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "ASML",
+    "EVENT_TYPE": "Sales Revenue Call"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "9",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "AMD, NVDA",
+    "EVENT_TYPE": "Sales Revenue Release"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "9",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "MSFT",
+    "EVENT_TYPE": "Share Holders Meeting"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "9",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "NVDA",
+    "EVENT_TYPE": "Split"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "10",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "QCOM, TXN",
+    "EVENT_TYPE": "Dividend"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "14",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "AAPL, MU",
+    "EVENT_TYPE": "Analysts Investors Meeting"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "14",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "AMD, ASML",
+    "EVENT_TYPE": "Confirmed Earnings Release"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "14",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "NVDA",
+    "EVENT_TYPE": "Projected Earnings Release"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "14",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "AVGO, NVDA",
+    "EVENT_TYPE": "Share Holders Meeting"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "14",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "AMD, AVGO",
+    "EVENT_TYPE": "Special Situation"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "16",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "AMD",
+    "EVENT_TYPE": "Conference"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "16",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "KLAC, LRCX",
+    "EVENT_TYPE": "Earnings"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "16",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "KLAC, LRCX",
+    "EVENT_TYPE": "Guidance Call"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "16",
+    "EVENT_COUNT": "3",
+    "EVENT_COMPANY_LIST": "ASML, KLAC, LRCX",
+    "EVENT_TYPE": "Projected Earnings Release"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "16",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "AMAT",
+    "EVENT_TYPE": "Sales Revenue Call"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "16",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "ASML",
+    "EVENT_TYPE": "Sales Revenue Release"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "17",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "AMAT",
+    "EVENT_TYPE": "Dividend"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "21",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "AMD",
+    "EVENT_TYPE": "Share Holders Meeting"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "22",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "AMAT",
+    "EVENT_TYPE": "Analysts Investors Meeting"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "22",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "AVGO, MU",
+    "EVENT_TYPE": "Conference"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "22",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "AVGO, QCOM",
+    "EVENT_TYPE": "Confirmed Earnings Release"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "22",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "QCOM, TXN",
+    "EVENT_TYPE": "Earnings"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "22",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "QCOM, TXN",
+    "EVENT_TYPE": "Guidance Call"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "22",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "QCOM, TXN",
+    "EVENT_TYPE": "Projected Earnings Release"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "22",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "QCOM, TXN",
+    "EVENT_TYPE": "Sales Revenue Call"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "22",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "QCOM, TXN",
+    "EVENT_TYPE": "Sales Revenue Release"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "22",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "QCOM",
+    "EVENT_TYPE": "Special Situation"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "22",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "AVGO",
+    "EVENT_TYPE": "Split"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "24",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "KLAC, MSFT",
+    "EVENT_TYPE": "Dividend"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "24",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "INTC",
+    "EVENT_TYPE": "Projected Earnings Release"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "28",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "ASML",
+    "EVENT_TYPE": "Analysts Investors Meeting"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "28",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "AMAT, AVGO",
+    "EVENT_TYPE": "Projected Earnings Release"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "28",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "ASML, TXN",
+    "EVENT_TYPE": "Share Holders Meeting"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "28",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "ASML",
+    "EVENT_TYPE": "Special Situation"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "29",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "QCOM",
+    "EVENT_TYPE": "Conference"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "29",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "AMD, MSFT",
+    "EVENT_TYPE": "Earnings"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "29",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "AMD, MSFT",
+    "EVENT_TYPE": "Guidance Call"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "29",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "AMD, MSFT",
+    "EVENT_TYPE": "Projected Earnings Release"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "29",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "AMD, LRCX",
+    "EVENT_TYPE": "Sales Revenue Call"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "29",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "LRCX",
+    "EVENT_TYPE": "Sales Revenue Release"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "30",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "AAPL",
+    "EVENT_TYPE": "Projected Earnings Release"
   }
 ]
