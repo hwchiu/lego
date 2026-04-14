@@ -49,18 +49,18 @@ const DETAIL_URL = '/lego/data/event-calendar-detail.json';
 
 /**
  * Fetch summary items for a given month and event category.
- * @param month      Calendar month number as a string, e.g. "4" for April
- * @param eventType  Event category label, or "All" for the full unfiltered summary
+ * @param month          Calendar month number as a string, e.g. "4" for April
+ * @param categoryLabel  Event category label, or "All" for the full unfiltered summary
  */
 export async function getEventCalendarSummary(
   month: string,
-  eventType: string,
+  categoryLabel: string,
 ): Promise<EventCalendarSummaryItem[]> {
   const res = await fetch(SUMMARY_URL);
   if (!res.ok) throw new Error(`Failed to fetch event calendar summary: ${res.status}`);
   const allItems = (await res.json()) as EventCalendarSummaryItem[];
   return allItems.filter(
-    (item) => item.EVENT_MONTH === month && item.EVENT_TYPE === eventType,
+    (item) => item.EVENT_MONTH === month && item.EVENT_TYPE === categoryLabel,
   );
 }
 
