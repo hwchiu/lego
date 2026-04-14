@@ -7222,7 +7222,7 @@
   },
   {
     "CO_CD": "TC",
-    "CO_NAME": "T Company",
+    "CO_NAME": "TSMC",
     "CO_SHORT_NAME": "T",
     "IS_FIN_ALIVE": "N",
     "IS_IR_ALIVE": "Y",
@@ -7238,7 +7238,7 @@
   },
   {
     "CO_CD": "TSM",
-    "CO_NAME": "T Company",
+    "CO_NAME": "TSMC",
     "CO_SHORT_NAME": "T",
     "IS_FIN_ALIVE": "Y",
     "IS_IR_ALIVE": "N",

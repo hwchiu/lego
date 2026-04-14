@@ -20,7 +20,7 @@ export const NAV_LABELS: Record<string, { zh: string; en: string }> = {
   'M&A': { zh: '企業併購', en: 'M&A' },
   'Financial Data': { zh: '財務數據', en: 'Financial Data' },
   Watchlist1: { zh: '自選清單 1', en: 'Watchlist 1' },
-  'Watchlist-TC': { zh: 'T Company清單', en: 'Watchlist-TC' },
+  'Watchlist-TC': { zh: 'TSMC清單', en: 'Watchlist-TC' },
   Watchlist2: { zh: '自選清單 2', en: 'Watchlist 2' },
   'Create Watchlist': { zh: '建立清單', en: 'Create Watchlist' },
 

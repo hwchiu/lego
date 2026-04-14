@@ -1,7 +1,7 @@
-# TC (T Company) Investor Relations Material
+# TC (TSMC) Investor Relations Material
 
-Source: investor.tsmc.com, SEC EDGAR (20-F filings), T Company press releases.
-T Company Limited (TWSE: 2330, NYSE: TC).
+Source: investor.tsmc.com, SEC EDGAR (20-F filings), TSMC press releases.
+TSMC Limited (TWSE: 2330, NYSE: TC).
 
 ## IR Material
 
@@ -52,49 +52,49 @@ T Company Limited (TWSE: 2330, NYSE: TC).
   "newsroom": [
     {
       "date": "Jan 16, 2025",
-      "title": "T Company Reports Fourth Quarter and Full Year 2024 Results",
+      "title": "TSMC Reports Fourth Quarter and Full Year 2024 Results",
       "url": "https://investor.tsmc.com/en/quarterly-results/2024/q4",
       "category": "Earnings"
     },
     {
       "date": "Oct 17, 2024",
-      "title": "T Company Reports Third Quarter 2024 Results",
+      "title": "TSMC Reports Third Quarter 2024 Results",
       "url": "https://investor.tsmc.com/en/quarterly-results/2024/q3",
       "category": "Earnings"
     },
     {
       "date": "Apr 18, 2024",
-      "title": "T Company Announces First Quarter 2024 Results",
+      "title": "TSMC Announces First Quarter 2024 Results",
       "url": "https://investor.tsmc.com/en/quarterly-results/2024/q1",
       "category": "Earnings"
     },
     {
       "date": "Apr 22, 2024",
-      "title": "T Company Breaks Ground on First Europe Fab in Dresden, Germany",
+      "title": "TSMC Breaks Ground on First Europe Fab in Dresden, Germany",
       "url": "https://newsroom.tsmc.com/en/news/2024/europe-fab-groundbreaking",
       "category": "Corporate"
     },
     {
       "date": "Mar 5, 2024",
-      "title": "T Company Announces Arizona Fab Progress — 2nm Technology on Track for 2025",
+      "title": "TSMC Announces Arizona Fab Progress — 2nm Technology on Track for 2025",
       "url": "https://investor.tsmc.com/en/speeches/2024/arizona-fab-update",
       "category": "Technology"
     },
     {
       "date": "Jan 18, 2024",
-      "title": "T Company Reports Fourth Quarter and Full Year 2023 Results",
+      "title": "TSMC Reports Fourth Quarter and Full Year 2023 Results",
       "url": "https://investor.tsmc.com/en/quarterly-results/2023/q4",
       "category": "Earnings"
     },
     {
       "date": "Oct 19, 2023",
-      "title": "T Company Reports Third Quarter 2023 Results",
+      "title": "TSMC Reports Third Quarter 2023 Results",
       "url": "https://investor.tsmc.com/en/quarterly-results/2023/q3",
       "category": "Earnings"
     },
     {
       "date": "Jul 20, 2023",
-      "title": "T Company Reports Second Quarter 2023 Results",
+      "title": "TSMC Reports Second Quarter 2023 Results",
       "url": "https://investor.tsmc.com/en/quarterly-results/2023/q2",
       "category": "Earnings"
     }

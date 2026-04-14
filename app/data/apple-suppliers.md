@@ -18,7 +18,7 @@
 
 ## Tier-1 Suppliers
 
-### 1. T Company (T Company)
+### 1. TSMC (TSMC)
 
 | Field | Value |
 |---|---|

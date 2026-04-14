@@ -609,7 +609,7 @@ function CompetitorTable() {
   return (
     <div className="rmap-supplier-table-wrap">
       <div className="rmap-supplier-table-section">
-        <div className="rmap-supplier-table-title">T Company Competitors by Market Share</div>
+        <div className="rmap-supplier-table-title">TSMC Competitors by Market Share</div>
         <table className="rmap-supplier-table">
           <thead>
             <tr>
@@ -920,7 +920,7 @@ export default function CompetitorGraph({ tableOnly }: CompetitorGraphProps) {
             ref={svgRef}
             viewBox={vbStr}
             className="rmap-svg"
-            aria-label="T Company Competitor Relationship Graph"
+            aria-label="TSMC Competitor Relationship Graph"
             onMouseDown={handleSvgMouseDown}
             onMouseMove={handleSvgMouseMove}
             onMouseUp={clearDrag}

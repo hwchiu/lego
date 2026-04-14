@@ -1,9 +1,9 @@
-# TC (T Company) Financial Statement Data
+# TC (TSMC) Financial Statement Data
 
-Source: T Company (T Company) 20-F SEC filings,
+Source: TSMC (TSMC) 20-F SEC filings,
 quarterly earnings releases, and investor.tsmc.com. All monetary values in USD millions
-unless noted. T Company fiscal year follows calendar year (Q1=Jan-Mar, Q2=Apr-Jun,
-Q3=Jul-Sep, Q4=Oct-Dec). EPS is for TC ADR (1 ADR = 5 T Company common shares).
+unless noted. TSMC fiscal year follows calendar year (Q1=Jan-Mar, Q2=Apr-Jun,
+Q3=Jul-Sep, Q4=Oct-Dec). EPS is for TC ADR (1 ADR = 5 TSMC common shares).
 Note: marketCap values are in USD billions ($B), not millions.
 
 ## Income Statement

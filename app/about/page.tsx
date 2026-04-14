@@ -24,8 +24,8 @@ const FEATURES = [
     eyebrow: 'Supply Chain Maps',
     title: { zh: '供應鏈關係圖譜', en: 'Supply Chain Network Maps' },
     desc: {
-      zh: '以互動式視覺化圖譜呈現 T Company 等龍頭企業的多層供應商網絡，支援 Tier 1 / Tier 2 關係追蹤、地緣風險標記與即時供應鏈新聞整合。',
-      en: 'Visualizes multi-tier supplier networks of leading companies like T Company with interactive maps, supporting Tier 1/Tier 2 tracking, geopolitical risk markers, and real-time supply chain news.',
+      zh: '以互動式視覺化圖譜呈現 TSMC 等龍頭企業的多層供應商網絡，支援 Tier 1 / Tier 2 關係追蹤、地緣風險標記與即時供應鏈新聞整合。',
+      en: 'Visualizes multi-tier supplier networks of leading companies like TSMC with interactive maps, supporting Tier 1/Tier 2 tracking, geopolitical risk markers, and real-time supply chain news.',
     },
     img: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80',
     imgAlt: { zh: '供應鏈網絡圖', en: 'Supply Chain Network Graph' },

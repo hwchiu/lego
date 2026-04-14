@@ -1,7 +1,7 @@
-# T Company Customer Network Data
+# TSMC Customer Network Data
 
-> Sources: T Company Annual Reports, company 10-K filings, public revenue disclosures (FY2023–FY2024).
-> `transactionAmount` in $M USD (estimated annual wafer revenue from T Company).
+> Sources: TSMC Annual Reports, company 10-K filings, public revenue disclosures (FY2023–FY2024).
+> `transactionAmount` in $M USD (estimated annual wafer revenue from TSMC).
 
 ---
 
@@ -299,7 +299,7 @@
 [
   {
     "id": 1,
-    "title": "Apple Secures Exclusive T Company 3nm Capacity for iPhone 16 Pro A17 Pro Chip Through 2025",
+    "title": "Apple Secures Exclusive TSMC 3nm Capacity for iPhone 16 Pro A17 Pro Chip Through 2025",
     "tickers": ["AAPL", "TC"],
     "source": "Bloomberg",
     "time": "Today, 9:15 AM",
@@ -307,7 +307,7 @@
   },
   {
     "id": 2,
-    "title": "NVIDIA Places Record T Company CoWoS-L Orders for H200 and Upcoming B100 GPU Production",
+    "title": "NVIDIA Places Record TSMC CoWoS-L Orders for H200 and Upcoming B100 GPU Production",
     "tickers": ["NVDA", "TC"],
     "source": "Reuters",
     "time": "Today, 8:30 AM",
@@ -315,7 +315,7 @@
   },
   {
     "id": 3,
-    "title": "AMD's Instinct MI300X Ramps at T Company N5, Signals Strong AI Datacenter Demand in 2025",
+    "title": "AMD's Instinct MI300X Ramps at TSMC N5, Signals Strong AI Datacenter Demand in 2025",
     "tickers": ["AMD", "TC"],
     "source": "Seeking Alpha",
     "time": "Yesterday, 6:00 PM",
@@ -323,7 +323,7 @@
   },
   {
     "id": 4,
-    "title": "Qualcomm Snapdragon 8 Gen 4 Tape-Out at T Company N3E Confirmed for Late 2024 Volume Ramp",
+    "title": "Qualcomm Snapdragon 8 Gen 4 Tape-Out at TSMC N3E Confirmed for Late 2024 Volume Ramp",
     "tickers": ["QCOM", "TC"],
     "source": "AnandTech",
     "time": "Yesterday, 4:45 PM",
@@ -331,7 +331,7 @@
   },
   {
     "id": 5,
-    "title": "Broadcom's Custom XPU Business on Track for $10B Revenue, All Chips Fabbed at T Company",
+    "title": "Broadcom's Custom XPU Business on Track for $10B Revenue, All Chips Fabbed at TSMC",
     "tickers": ["AVGO", "TC"],
     "source": "Financial Times",
     "time": "Apr 2, 3:00 PM",
@@ -339,7 +339,7 @@
   },
   {
     "id": 6,
-    "title": "MediaTek Dimensity 9400 Tape-Out at T Company N3E, Targets Flagship Android Market",
+    "title": "MediaTek Dimensity 9400 Tape-Out at TSMC N3E, Targets Flagship Android Market",
     "tickers": ["MTKMF", "TC"],
     "source": "Nikkei Asia",
     "time": "Apr 2, 11:00 AM",
@@ -347,7 +347,7 @@
   },
   {
     "id": 7,
-    "title": "Marvell Unveils Next-Gen Custom AI Silicon Platform Built on T Company 3nm Process",
+    "title": "Marvell Unveils Next-Gen Custom AI Silicon Platform Built on TSMC 3nm Process",
     "tickers": ["MRVL", "TC"],
     "source": "Business Wire",
     "time": "Apr 1, 9:30 AM",
@@ -355,7 +355,7 @@
   },
   {
     "id": 8,
-    "title": "Intel Foundry Services Transfers Meteor Lake Tile Production to T Company to Meet Holiday Demand",
+    "title": "Intel Foundry Services Transfers Meteor Lake Tile Production to TSMC to Meet Holiday Demand",
     "tickers": ["INTC", "TC"],
     "source": "Tom's Hardware",
     "time": "Mar 31, 2:00 PM",
@@ -363,7 +363,7 @@
   },
   {
     "id": 9,
-    "title": "Sony's Next-Gen Image Sensor Adopts T Company Stacked Process, Enabling 8K at 60fps",
+    "title": "Sony's Next-Gen Image Sensor Adopts TSMC Stacked Process, Enabling 8K at 60fps",
     "tickers": ["SONY", "TC"],
     "source": "Nikkei",
     "time": "Mar 31, 10:00 AM",
@@ -371,7 +371,7 @@
   },
   {
     "id": 10,
-    "title": "Texas Instruments Dual-Sources Key Analog Lines from T Company Specialty Fabs Amid Tariff Risks",
+    "title": "Texas Instruments Dual-Sources Key Analog Lines from TSMC Specialty Fabs Amid Tariff Risks",
     "tickers": ["TXN", "TC"],
     "source": "Reuters",
     "time": "Mar 30, 8:00 AM",
@@ -379,7 +379,7 @@
   },
   {
     "id": 11,
-    "title": "T Company Arizona Fab Begins 4nm Apple Silicon Production, Easing US Geopolitical Supply Concerns",
+    "title": "TSMC Arizona Fab Begins 4nm Apple Silicon Production, Easing US Geopolitical Supply Concerns",
     "tickers": ["TC", "AAPL"],
     "source": "The Verge",
     "time": "Mar 29, 2:00 PM",
@@ -387,7 +387,7 @@
   },
   {
     "id": 12,
-    "title": "NVIDIA and T Company Sign Long-Term Advanced Packaging Deal for CoWoS and SoIC Technologies",
+    "title": "NVIDIA and TSMC Sign Long-Term Advanced Packaging Deal for CoWoS and SoIC Technologies",
     "tickers": ["NVDA", "TC"],
     "source": "SA News",
     "time": "Mar 28, 11:00 AM",

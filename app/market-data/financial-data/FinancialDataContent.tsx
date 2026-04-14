@@ -79,7 +79,7 @@ export default function FinancialDataContent() {
               <div className="section-eyebrow">Market Data</div>
               <h1 className="fd-page-title">Financial Data</h1>
               <p className="fd-page-sub">
-                Browse financial statements, balance sheets, and cash flow reports for T Company&apos;s
+                Browse financial statements, balance sheets, and cash flow reports for TSMC&apos;s
                 key customers and partners.
               </p>
             </div>
@@ -127,7 +127,7 @@ export default function FinancialDataContent() {
                 </div>
                 <p className="fd-empty-title">Select a Company</p>
                 <p className="fd-empty-sub">
-                  Search for a company symbol above, or choose from T Company&apos;s key customers
+                  Search for a company symbol above, or choose from TSMC&apos;s key customers
                   below.
                 </p>
                 <div className="fd-hint-grid">

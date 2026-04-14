@@ -276,7 +276,7 @@ function DetailPanel({ node, onClose }: DetailPanelProps) {
         </p>
         {!isCenter && (
           <p className="rmap-detail-items" style={{ marginTop: 8 }}>
-            <span className="rmap-detail-label">Purchases from T Company: </span>
+            <span className="rmap-detail-label">Purchases from TSMC: </span>
             {node.purchaseItems}
           </p>
         )}
@@ -680,7 +680,7 @@ function CustomerTable() {
   return (
     <div className="rmap-supplier-table-wrap">
       <div className="rmap-supplier-table-section">
-        <div className="rmap-supplier-table-title">T Company Customers</div>
+        <div className="rmap-supplier-table-title">TSMC Customers</div>
         <table className="rmap-supplier-table">
           <thead>
             <tr>
@@ -688,7 +688,7 @@ function CustomerTable() {
               <th className="rmap-supplier-th">Ticker</th>
               <th className="rmap-supplier-th">Country</th>
               <th className="rmap-supplier-th">Industry</th>
-              <th className="rmap-supplier-th">Purchases from T Company</th>
+              <th className="rmap-supplier-th">Purchases from TSMC</th>
               <th className="rmap-supplier-th rmap-supplier-th--num">Revenue</th>
               <th className="rmap-supplier-th rmap-supplier-th--num">Gross Margin</th>
               <th className="rmap-supplier-th rmap-supplier-th--num">Transaction (Annual)</th>
@@ -1023,7 +1023,7 @@ export default function CustomerGraph({ tableOnly }: CustomerGraphProps) {
             ref={svgRef}
             viewBox={vbStr}
             className="rmap-svg"
-            aria-label="T Company Customer Relationship Graph"
+            aria-label="TSMC Customer Relationship Graph"
             onMouseDown={handleSvgMouseDown}
             onMouseMove={handleSvgMouseMove}
             onMouseUp={clearDrag}
