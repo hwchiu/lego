@@ -17,7 +17,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "MSFT",
@@ -32,7 +33,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "NVDA",
@@ -47,7 +49,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "GOOGL",
@@ -62,7 +65,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "GOOG",
@@ -77,7 +81,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "META",
@@ -92,7 +97,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "AMZN",
@@ -107,7 +113,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "TSLA",
@@ -122,7 +129,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "AVGO",
@@ -137,7 +145,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ORCL",
@@ -152,7 +161,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "CRM",
@@ -167,7 +177,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ADBE",
@@ -182,7 +193,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "AMD",
@@ -197,7 +209,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "QCOM",
@@ -212,7 +225,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "TXN",
@@ -227,7 +241,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "INTC",
@@ -242,7 +257,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "AMAT",
@@ -257,7 +273,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "MU",
@@ -272,7 +289,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "LRCX",
@@ -287,7 +305,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "KLAC",
@@ -302,7 +321,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "MCHP",
@@ -317,7 +337,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "ADI",
@@ -332,7 +353,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "NXPI",
@@ -347,7 +369,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CDNS",
@@ -362,7 +385,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "SNPS",
@@ -377,7 +401,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "FTNT",
@@ -392,7 +417,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "PANW",
@@ -407,7 +433,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CRWD",
@@ -422,7 +449,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "NOW",
@@ -437,7 +465,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "INTU",
@@ -452,7 +481,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "TEAM",
@@ -467,7 +497,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "DDOG",
@@ -482,7 +513,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "ZS",
@@ -497,7 +529,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "SNOW",
@@ -512,7 +545,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "NET",
@@ -527,7 +561,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "HPQ",
@@ -542,7 +577,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "HPE",
@@ -557,7 +593,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "IBM",
@@ -572,7 +609,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "ACN",
@@ -587,7 +625,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "IT",
@@ -602,7 +641,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "CTSH",
@@ -617,7 +657,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "FFIV",
@@ -632,7 +673,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "NTAP",
@@ -647,7 +689,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "STX",
@@ -662,7 +705,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "WDC",
@@ -677,7 +721,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "VRSN",
@@ -692,7 +737,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "AKAM",
@@ -707,7 +753,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CDW",
@@ -722,7 +769,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "GEN",
@@ -737,7 +785,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ANSS",
@@ -752,7 +801,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "PTC",
@@ -767,7 +817,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "PAYC",
@@ -782,7 +833,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "PAYX",
@@ -797,7 +849,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "ADP",
@@ -812,7 +865,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "FIS",
@@ -827,7 +881,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "FISV",
@@ -842,7 +897,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "GPN",
@@ -857,7 +913,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "EPAM",
@@ -872,7 +929,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "JKHY",
@@ -887,7 +945,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "OKTA",
@@ -902,7 +961,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "MDB",
@@ -917,7 +977,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "TWLO",
@@ -932,7 +993,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ZM",
@@ -947,7 +1009,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "UBER",
@@ -962,7 +1025,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "LYFT",
@@ -977,7 +1041,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "DASH",
@@ -992,7 +1057,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "ABNB",
@@ -1007,7 +1073,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "RBLX",
@@ -1022,7 +1089,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "U",
@@ -1037,7 +1105,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "DKNG",
@@ -1052,7 +1121,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "TTD",
@@ -1067,7 +1137,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "APP",
@@ -1082,7 +1153,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "JPM",
@@ -1097,7 +1169,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "BAC",
@@ -1112,7 +1185,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "WFC",
@@ -1127,7 +1201,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "GS",
@@ -1142,7 +1217,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "MS",
@@ -1157,7 +1233,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "C",
@@ -1172,7 +1249,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "USB",
@@ -1187,7 +1265,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "PNC",
@@ -1202,7 +1281,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "TFC",
@@ -1217,7 +1297,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "COF",
@@ -1232,7 +1313,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "AXP",
@@ -1247,7 +1329,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "BK",
@@ -1262,7 +1345,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "STT",
@@ -1277,7 +1361,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "SCHW",
@@ -1292,7 +1377,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "BLK",
@@ -1307,7 +1393,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "ICE",
@@ -1322,7 +1409,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "CME",
@@ -1337,7 +1425,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "SPGI",
@@ -1352,7 +1441,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "MSCI",
@@ -1367,7 +1457,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "NDAQ",
@@ -1382,7 +1473,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CB",
@@ -1397,7 +1489,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "AIG",
@@ -1412,7 +1505,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "MET",
@@ -1427,7 +1521,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "PRU",
@@ -1442,7 +1537,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "AFL",
@@ -1457,7 +1553,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ALL",
@@ -1472,7 +1569,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "TRV",
@@ -1487,7 +1585,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "HIG",
@@ -1502,7 +1601,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "AMP",
@@ -1517,7 +1617,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "RJF",
@@ -1532,7 +1633,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "HBAN",
@@ -1547,7 +1649,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "RF",
@@ -1562,7 +1665,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "CFG",
@@ -1577,7 +1681,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "KEY",
@@ -1592,7 +1697,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "FITB",
@@ -1607,7 +1713,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "MTB",
@@ -1622,7 +1729,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "NTRS",
@@ -1637,7 +1745,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ZION",
@@ -1652,7 +1761,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "WRB",
@@ -1667,7 +1777,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "RE",
@@ -1682,7 +1793,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "PGR",
@@ -1697,7 +1809,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "CINF",
@@ -1712,7 +1825,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "GL",
@@ -1727,7 +1841,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "LNC",
@@ -1742,7 +1857,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "UNH",
@@ -1757,7 +1873,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "JNJ",
@@ -1772,7 +1889,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "LLY",
@@ -1787,7 +1905,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "MRK",
@@ -1802,7 +1921,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ABBV",
@@ -1817,7 +1937,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "ABT",
@@ -1832,7 +1953,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "TMO",
@@ -1847,7 +1969,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "DHR",
@@ -1862,7 +1985,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "BMY",
@@ -1877,7 +2001,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "AMGN",
@@ -1892,7 +2017,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "GILD",
@@ -1907,7 +2033,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "REGN",
@@ -1922,7 +2049,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "VRTX",
@@ -1937,7 +2065,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "BIIB",
@@ -1952,7 +2081,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "MRNA",
@@ -1967,7 +2097,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CVS",
@@ -1982,7 +2113,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CI",
@@ -1997,7 +2129,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "HUM",
@@ -2012,7 +2145,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "MCK",
@@ -2027,7 +2161,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "CAH",
@@ -2042,7 +2177,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ABC",
@@ -2057,7 +2193,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "BAX",
@@ -2072,7 +2209,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "BDX",
@@ -2087,7 +2225,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "BSX",
@@ -2102,7 +2241,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "EW",
@@ -2117,7 +2257,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "HOLX",
@@ -2132,7 +2273,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "IDXX",
@@ -2147,7 +2289,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "IQV",
@@ -2162,7 +2305,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ISRG",
@@ -2177,7 +2321,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "MDT",
@@ -2192,7 +2337,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "RMD",
@@ -2207,7 +2353,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "STE",
@@ -2222,7 +2369,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "SYK",
@@ -2237,7 +2385,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "WAT",
@@ -2252,7 +2401,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ZBH",
@@ -2267,7 +2417,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ALGN",
@@ -2282,7 +2433,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "DXCM",
@@ -2297,7 +2449,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "PODD",
@@ -2312,7 +2465,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "PFE",
@@ -2327,7 +2481,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ZTS",
@@ -2342,7 +2497,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "COO",
@@ -2357,7 +2513,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "HSIC",
@@ -2372,7 +2529,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "MOH",
@@ -2387,7 +2545,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CNC",
@@ -2402,7 +2561,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "DVA",
@@ -2417,7 +2577,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "VTRS",
@@ -2432,7 +2593,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "OMI",
@@ -2447,7 +2609,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "PDCO",
@@ -2462,7 +2625,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "TECH",
@@ -2477,7 +2641,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "MTD",
@@ -2492,7 +2657,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "PKI",
@@ -2507,7 +2673,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "HD",
@@ -2522,7 +2689,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "NKE",
@@ -2537,7 +2705,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "SBUX",
@@ -2552,7 +2721,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "TJX",
@@ -2567,7 +2737,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "BKNG",
@@ -2582,7 +2753,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "EXPE",
@@ -2597,7 +2769,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "MAR",
@@ -2612,7 +2785,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "HLT",
@@ -2627,7 +2801,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "LVS",
@@ -2642,7 +2817,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "MGM",
@@ -2657,7 +2833,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "WYNN",
@@ -2672,7 +2849,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "RCL",
@@ -2687,7 +2865,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "CCL",
@@ -2702,7 +2881,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "NCLH",
@@ -2717,7 +2897,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "F",
@@ -2732,7 +2913,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "GM",
@@ -2747,7 +2929,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "APTV",
@@ -2762,7 +2945,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "BWA",
@@ -2777,7 +2961,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "PHM",
@@ -2792,7 +2977,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "DHI",
@@ -2807,7 +2993,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "LEN",
@@ -2822,7 +3009,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "NVR",
@@ -2837,7 +3025,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "TOL",
@@ -2852,7 +3041,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "DRI",
@@ -2867,7 +3057,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CMG",
@@ -2882,7 +3073,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "YUM",
@@ -2897,7 +3089,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "QSR",
@@ -2912,7 +3105,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "ROST",
@@ -2927,7 +3121,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ULTA",
@@ -2942,7 +3137,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "BBY",
@@ -2957,7 +3153,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "KMX",
@@ -2972,7 +3169,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "AZO",
@@ -2987,7 +3185,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "TSCO",
@@ -3002,7 +3201,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "LULU",
@@ -3017,7 +3217,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "RL",
@@ -3032,7 +3233,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "VFC",
@@ -3047,7 +3249,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "TPR",
@@ -3062,7 +3265,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CPRI",
@@ -3077,7 +3281,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "HBI",
@@ -3092,7 +3297,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "PVH",
@@ -3107,7 +3313,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "ETSY",
@@ -3122,7 +3329,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "W",
@@ -3137,7 +3345,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "TGT",
@@ -3152,7 +3361,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "DLTR",
@@ -3167,7 +3377,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "DG",
@@ -3182,7 +3393,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "FIVE",
@@ -3197,7 +3409,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "BBWI",
@@ -3212,7 +3425,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "GPS",
@@ -3227,7 +3441,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ANF",
@@ -3242,7 +3457,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "WMT",
@@ -3257,7 +3473,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "PG",
@@ -3272,7 +3489,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "KO",
@@ -3287,7 +3505,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "PEP",
@@ -3302,7 +3521,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "COST",
@@ -3317,7 +3537,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "PM",
@@ -3332,7 +3553,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "MO",
@@ -3347,7 +3569,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CL",
@@ -3362,7 +3585,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "KMB",
@@ -3377,7 +3601,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CHD",
@@ -3392,7 +3617,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CLX",
@@ -3407,7 +3633,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "KHC",
@@ -3422,7 +3649,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "GIS",
@@ -3437,7 +3665,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "K",
@@ -3452,7 +3681,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CPB",
@@ -3467,7 +3697,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "HRL",
@@ -3482,7 +3713,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "MKC",
@@ -3497,7 +3729,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "SJM",
@@ -3512,7 +3745,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CAG",
@@ -3527,7 +3761,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "HSY",
@@ -3542,7 +3777,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "MDLZ",
@@ -3557,7 +3793,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "STZ",
@@ -3572,7 +3809,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "TAP",
@@ -3587,7 +3825,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "MNST",
@@ -3602,7 +3841,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "EL",
@@ -3617,7 +3857,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "KR",
@@ -3632,7 +3873,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "SYY",
@@ -3647,7 +3889,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "TSN",
@@ -3662,7 +3905,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "POST",
@@ -3677,7 +3921,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "CELH",
@@ -3692,7 +3937,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "COTY",
@@ -3707,7 +3953,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "SFM",
@@ -3722,7 +3969,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "USFD",
@@ -3737,7 +3985,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "PFGC",
@@ -3752,7 +4001,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "XOM",
@@ -3767,7 +4017,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "CVX",
@@ -3782,7 +4033,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "COP",
@@ -3797,7 +4049,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "EOG",
@@ -3812,7 +4065,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "OXY",
@@ -3827,7 +4081,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "PXD",
@@ -3842,7 +4097,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "DVN",
@@ -3857,7 +4113,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "MPC",
@@ -3872,7 +4129,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "VLO",
@@ -3887,7 +4145,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "PSX",
@@ -3902,7 +4161,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "HES",
@@ -3917,7 +4177,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "HAL",
@@ -3932,7 +4193,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "SLB",
@@ -3947,7 +4209,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "BKR",
@@ -3962,7 +4225,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "NOV",
@@ -3977,7 +4241,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "OKE",
@@ -3992,7 +4257,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "WMB",
@@ -4007,7 +4273,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "KMI",
@@ -4022,7 +4289,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "FANG",
@@ -4037,7 +4305,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "MRO",
@@ -4052,7 +4321,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "APA",
@@ -4067,7 +4337,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "CTRA",
@@ -4082,7 +4353,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "EQT",
@@ -4097,7 +4369,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "PR",
@@ -4112,7 +4385,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "MTDR",
@@ -4127,7 +4401,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CAT",
@@ -4142,7 +4417,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "BA",
@@ -4157,7 +4433,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "MMM",
@@ -4172,7 +4449,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "GE",
@@ -4187,7 +4465,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "HON",
@@ -4202,7 +4481,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "RTX",
@@ -4217,7 +4497,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "LMT",
@@ -4232,7 +4513,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "NOC",
@@ -4247,7 +4529,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "GD",
@@ -4262,7 +4545,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "LHX",
@@ -4277,7 +4561,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "HII",
@@ -4292,7 +4577,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "TDG",
@@ -4307,7 +4593,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "HWM",
@@ -4322,7 +4609,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "TXT",
@@ -4337,7 +4625,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "SPR",
@@ -4352,7 +4641,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "DE",
@@ -4367,7 +4657,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "EMR",
@@ -4382,7 +4673,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ETN",
@@ -4397,7 +4689,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ROK",
@@ -4412,7 +4705,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "AME",
@@ -4427,7 +4721,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "LDOS",
@@ -4442,7 +4737,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "SAIC",
@@ -4457,7 +4753,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CACI",
@@ -4472,7 +4769,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "BOOZ",
@@ -4487,7 +4785,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "UPS",
@@ -4502,7 +4801,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "FDX",
@@ -4517,7 +4817,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CSX",
@@ -4532,7 +4833,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "NSC",
@@ -4547,7 +4849,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "UNP",
@@ -4562,7 +4865,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "DAL",
@@ -4577,7 +4881,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "UAL",
@@ -4592,7 +4897,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "AAL",
@@ -4607,7 +4913,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "LUV",
@@ -4622,7 +4929,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ALK",
@@ -4637,7 +4945,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "JBLU",
@@ -4652,7 +4961,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "GWW",
@@ -4667,7 +4977,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "MSC",
@@ -4682,7 +4993,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "FAST",
@@ -4697,7 +5009,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "GNRC",
@@ -4712,7 +5025,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "XYL",
@@ -4727,7 +5041,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "IEX",
@@ -4742,7 +5057,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "FTV",
@@ -4757,7 +5073,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "CARR",
@@ -4772,7 +5089,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "OTIS",
@@ -4787,7 +5105,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "PWR",
@@ -4802,7 +5121,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "J",
@@ -4817,7 +5137,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "PCAR",
@@ -4832,7 +5153,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CMI",
@@ -4847,7 +5169,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "CPRT",
@@ -4862,7 +5185,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CTAS",
@@ -4877,7 +5201,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "RSG",
@@ -4892,7 +5217,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "WM",
@@ -4907,7 +5233,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "RCM",
@@ -4922,7 +5249,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "TRMK",
@@ -4937,7 +5265,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "LIN",
@@ -4952,7 +5281,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "APD",
@@ -4967,7 +5297,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ECL",
@@ -4982,7 +5313,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "SHW",
@@ -4997,7 +5329,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "PPG",
@@ -5012,7 +5345,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "NEM",
@@ -5027,7 +5361,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "FCX",
@@ -5042,7 +5377,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "NUE",
@@ -5057,7 +5393,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "STLD",
@@ -5072,7 +5409,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "RS",
@@ -5087,7 +5425,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "IP",
@@ -5102,7 +5441,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "PKG",
@@ -5117,7 +5457,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "WRK",
@@ -5132,7 +5473,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "SEE",
@@ -5147,7 +5489,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "SON",
@@ -5162,7 +5505,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "ALB",
@@ -5177,7 +5521,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "CF",
@@ -5192,7 +5537,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "MOS",
@@ -5207,7 +5553,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "IFF",
@@ -5222,7 +5569,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "DD",
@@ -5237,7 +5585,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "DOW",
@@ -5252,7 +5601,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "LYB",
@@ -5267,7 +5617,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "HUN",
@@ -5282,7 +5633,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CC",
@@ -5297,7 +5649,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CTVA",
@@ -5312,7 +5665,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "FMC",
@@ -5327,7 +5681,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "NEE",
@@ -5342,7 +5697,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "DUK",
@@ -5357,7 +5713,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "SO",
@@ -5372,7 +5729,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "D",
@@ -5387,7 +5745,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "AEP",
@@ -5402,7 +5761,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "EXC",
@@ -5417,7 +5777,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "PCG",
@@ -5432,7 +5793,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "ED",
@@ -5447,7 +5809,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "XEL",
@@ -5462,7 +5825,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "WEC",
@@ -5477,7 +5841,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ES",
@@ -5492,7 +5857,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "ETR",
@@ -5507,7 +5873,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "FE",
@@ -5522,7 +5889,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "AES",
@@ -5537,7 +5905,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "PPL",
@@ -5552,7 +5921,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CMS",
@@ -5567,7 +5937,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "NI",
@@ -5582,7 +5953,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "LNT",
@@ -5597,7 +5969,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "EVRG",
@@ -5612,7 +5985,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "PNW",
@@ -5627,7 +6001,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "NRG",
@@ -5642,7 +6017,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CEG",
@@ -5657,7 +6033,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "VST",
@@ -5672,7 +6049,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "SRE",
@@ -5687,7 +6065,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "AWK",
@@ -5702,7 +6081,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "PLD",
@@ -5717,7 +6097,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "AMT",
@@ -5732,7 +6113,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "CCI",
@@ -5747,7 +6129,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "EQIX",
@@ -5762,7 +6145,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "SPG",
@@ -5777,7 +6161,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "O",
@@ -5792,7 +6177,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "VICI",
@@ -5807,7 +6193,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "PSA",
@@ -5822,7 +6209,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "EQR",
@@ -5837,7 +6225,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "AVB",
@@ -5852,7 +6241,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "INVH",
@@ -5867,7 +6257,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "DLR",
@@ -5882,7 +6273,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "ARE",
@@ -5897,7 +6289,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "VTR",
@@ -5912,7 +6305,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "WELL",
@@ -5927,7 +6321,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "DOC",
@@ -5942,7 +6337,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "KIM",
@@ -5957,7 +6353,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "REG",
@@ -5972,7 +6369,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "FRT",
@@ -5987,7 +6385,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "NNN",
@@ -6002,7 +6401,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "WPC",
@@ -6017,7 +6417,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "SUI",
@@ -6032,7 +6433,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "UDR",
@@ -6047,7 +6449,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "ESS",
@@ -6062,7 +6465,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "MAA",
@@ -6077,7 +6481,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CPT",
@@ -6092,7 +6497,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "IRM",
@@ -6107,7 +6513,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "CBRE",
@@ -6122,7 +6529,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "JLL",
@@ -6137,7 +6545,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "T",
@@ -6152,7 +6561,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "VZ",
@@ -6167,7 +6577,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "TMUS",
@@ -6182,7 +6593,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "NFLX",
@@ -6197,7 +6609,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "DIS",
@@ -6212,7 +6625,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "CMCSA",
@@ -6227,7 +6641,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "CHTR",
@@ -6242,7 +6657,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "FOXA",
@@ -6257,7 +6673,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "FOX",
@@ -6272,7 +6689,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "PARA",
@@ -6287,7 +6705,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "WBD",
@@ -6302,7 +6721,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "OMC",
@@ -6317,7 +6737,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "IPG",
@@ -6332,7 +6753,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "TTWO",
@@ -6347,7 +6769,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "EA",
@@ -6362,7 +6785,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ATVI",
@@ -6377,7 +6801,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "LYV",
@@ -6392,7 +6817,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "MTCH",
@@ -6407,7 +6833,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "SNAP",
@@ -6422,7 +6849,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "PINS",
@@ -6437,7 +6865,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "RDDT",
@@ -6452,7 +6881,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ZG",
@@ -6467,7 +6897,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ON",
@@ -6482,7 +6913,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "MRVL",
@@ -6497,7 +6929,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "MPWR",
@@ -6512,7 +6945,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "SWKS",
@@ -6527,7 +6961,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "QRVO",
@@ -6542,7 +6977,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "ENPH",
@@ -6557,7 +6993,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "SEDG",
@@ -6572,7 +7009,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "ACLS",
@@ -6587,7 +7025,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "COHR",
@@ -6602,7 +7041,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "WOLF",
@@ -6617,7 +7057,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "V",
@@ -6632,7 +7073,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "MA",
@@ -6647,7 +7089,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "PYPL",
@@ -6662,7 +7105,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "SQ",
@@ -6677,7 +7121,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "AFRM",
@@ -6692,7 +7137,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "SOFI",
@@ -6707,7 +7153,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "HOOD",
@@ -6722,7 +7169,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "COIN",
@@ -6737,7 +7185,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "MSTR",
@@ -6752,7 +7201,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "ASML",
@@ -6767,7 +7217,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "TC",
@@ -6782,7 +7233,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "Y"
   },
   {
     "CO_CD": "TSM",
@@ -6797,7 +7249,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "SONY",
@@ -6812,7 +7265,8 @@
     "IS_FUND_ALIVE": "N",
     "IS_STOCK_CHART_ALIVE": "Y",
     "IS_AI_TRANSCRIPT_ALIVE": "N",
-    "IS_EVENT_ALIVE": "Y"
+    "IS_EVENT_ALIVE": "Y",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "SAP",
@@ -6827,7 +7281,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "N"
   },
   {
     "CO_CD": "ARM",
@@ -6842,7 +7297,8 @@
     "IS_FUND_ALIVE": "Y",
     "IS_STOCK_CHART_ALIVE": "N",
     "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N"
+    "IS_EVENT_ALIVE": "N",
+    "IS_PRE_EARNING_CALL": "Y"
   }
 ]
 ```

@@ -16,6 +16,7 @@ export interface CompanyMaster {
   IS_STOCK_CHART_ALIVE: 'Y' | 'N';
   IS_AI_TRANSCRIPT_ALIVE: 'Y' | 'N';
   IS_EVENT_ALIVE: 'Y' | 'N';
+  IS_PRE_EARNING_CALL: 'Y' | 'N';
 }
 
 export const COMPANY_MASTER_DATA: CompanyMaster[] = extractJson<CompanyMaster[]>(rawContent);
