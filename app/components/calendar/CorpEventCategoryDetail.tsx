@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import type { CorpEvent } from '@/app/data/corpEvents';
-import { monthShortToFull } from '@/app/lib/calendarUtils';
+import type { EventCalendarDetailItem } from '@/app/lib/eventCalendarApi';
+import { monthShortToFull, MONTH_SHORT } from '@/app/lib/calendarUtils';
 
 function formatDateLabel(dateLabel: string | undefined): string {
   if (!dateLabel) return '—';
@@ -37,7 +37,15 @@ function SubscribedIcon() {
   );
 }
 
-async function subscribeToEvent(event: CorpEvent): Promise<void> {
+function formatEventDatetime(eventDatetime: string): string {
+  if (!eventDatetime) return '—';
+  const d = new Date(eventDatetime);
+  if (isNaN(d.getTime())) return eventDatetime;
+  const month = MONTH_SHORT[d.getMonth()];
+  return `${month} ${d.getDate()}, ${d.getFullYear()}`;
+}
+
+async function subscribeToEvent(event: EventCalendarDetailItem): Promise<void> {
   // TODO: implement subscription API call
   await Promise.resolve();
   void event;
@@ -45,7 +53,7 @@ async function subscribeToEvent(event: CorpEvent): Promise<void> {
 
 interface CorpEventCategoryDetailProps {
   categoryLabel: string;
-  events: CorpEvent[];
+  events: EventCalendarDetailItem[];
   selectedDateLabel?: string;
 }
 
@@ -59,7 +67,7 @@ export default function CorpEventCategoryDetail({
   const [subscribedIndices, setSubscribedIndices] = useState<Set<number>>(new Set());
   const [pendingIndices, setPendingIndices] = useState<Set<number>>(new Set());
 
-  const handleSubscribe = useCallback(async (event: CorpEvent, index: number) => {
+  const handleSubscribe = useCallback(async (event: EventCalendarDetailItem, index: number) => {
     if (subscribedIndices.has(index) || pendingIndices.has(index)) return;
     setPendingIndices(prev => new Set(prev).add(index));
     try {
@@ -104,17 +112,17 @@ export default function CorpEventCategoryDetail({
                 const isSubscribed = subscribedIndices.has(i);
                 const isPending = pendingIndices.has(i);
                 return (
-                  <tr key={i}>
-                    <td className="td-symbol corp-event-company">{e.company}</td>
-                    <td className="corp-event-desc">{e.description}</td>
-                    <td className="corp-event-date">{e.eventDate}</td>
+                  <tr key={e.EVENT_ID || i}>
+                    <td className="td-symbol corp-event-company">{e.COMPANY_NAME}</td>
+                    <td className="corp-event-desc">{e.DESCRIPTION}</td>
+                    <td className="corp-event-date">{formatEventDatetime(e.EVENT_DATETIME)}</td>
                     <td>
-                      <span className="ec-type-badge">{e.eventType}</span>
+                      <span className="ec-type-badge">{e.EVENT_TYPE}</span>
                     </td>
                     <td className="td-center">
-                      {e.webcastLink ? (
+                      {e.WEBCAST_LINK ? (
                         <a
-                          href={e.webcastLink}
+                          href={e.WEBCAST_LINK}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="corp-event-link"
@@ -128,9 +136,9 @@ export default function CorpEventCategoryDetail({
                       )}
                     </td>
                     <td className="td-center">
-                      {e.irLink ? (
+                      {e.IR_LINK ? (
                         <a
-                          href={e.irLink}
+                          href={e.IR_LINK}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="corp-event-link"

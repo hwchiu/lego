@@ -1,0 +1,74 @@
+[
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "7",
+    "EVENT_COUNT": "9",
+    "EVENT_COMPANY_LIST": "AAPL, AMAT, AVGO, MSFT, NVDA, INTC, MU"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "9",
+    "EVENT_COUNT": "10",
+    "EVENT_COMPANY_LIST": "MSFT, NVDA, AMD, AAPL, ASML"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "10",
+    "EVENT_COUNT": "2",
+    "EVENT_COMPANY_LIST": "TXN, QCOM"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "14",
+    "EVENT_COUNT": "9",
+    "EVENT_COMPANY_LIST": "NVDA, AVGO, ASML, AMD, AAPL, MU"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "16",
+    "EVENT_COUNT": "10",
+    "EVENT_COMPANY_LIST": "ASML, AMD, LRCX, KLAC, AMAT"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "17",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "AMAT"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "21",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "AMD"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "22",
+    "EVENT_COUNT": "17",
+    "EVENT_COMPANY_LIST": "QCOM, TXN, AVGO, MU, AMAT"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "24",
+    "EVENT_COUNT": "3",
+    "EVENT_COMPANY_LIST": "KLAC, MSFT, INTC"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "28",
+    "EVENT_COUNT": "6",
+    "EVENT_COMPANY_LIST": "ASML, TXN, AMAT, AVGO"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "29",
+    "EVENT_COUNT": "10",
+    "EVENT_COMPANY_LIST": "LRCX, QCOM, AMD, MSFT"
+  },
+  {
+    "EVENT_MONTH": "4",
+    "EVENT_DATE": "30",
+    "EVENT_COUNT": "1",
+    "EVENT_COMPANY_LIST": "AAPL"
+  }
+]
