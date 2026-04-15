@@ -492,8 +492,10 @@ export default function FavoritesContent() {
                   {currentUpdateItems.length === 0 ? (
                     <div className="wl-feed-empty">No updates found for your watchlist companies.</div>
                   ) : (
-                    currentUpdateItems.map((item, idx) => (
-                      <div key={item.id} className={`wl-feed-item${idx < currentUpdateItems.length - 1 ? ' wl-feed-item--bordered' : ''}`}>
+                    currentUpdateItems.map((item, idx) => {
+                      const isBordered = idx < currentUpdateItems.length - 1;
+                      return (
+                      <div key={item.id} className={isBordered ? 'wl-feed-item wl-feed-item--bordered' : 'wl-feed-item'}>
                         {item.kind === 'news' ? <AlphaAvatar /> : item.kind === 'press-release' ? (
                           <div className="wl-feed-avatar wl-feed-avatar--pr">
                             <svg viewBox="0 0 28 28" fill="none" width="28" height="28" aria-hidden="true">
@@ -548,7 +550,8 @@ export default function FavoritesContent() {
                           </div>
                         </div>
                       </div>
-                    ))
+                      );
+                    })
                   )}
                 </div>
               </section>
