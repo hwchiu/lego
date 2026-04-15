@@ -106,8 +106,8 @@ function SubMenu({
     }
   }, [anchorRef]);
 
-  // Detect if this is the watchlist submenu (contains a watchlistId item)
-  const isWatchlistMenu = items.some((item) => item.watchlistId);
+  // Detect if this is the watchlist submenu (contains watchlist-related items)
+  const isWatchlistMenu = items.some((item) => item.watchlistId || item.href.startsWith('/watchlist/'));
 
   // Filter out deleted watchlists from both static items and dynamic lists
   const visibleItems = isWatchlistMenu
