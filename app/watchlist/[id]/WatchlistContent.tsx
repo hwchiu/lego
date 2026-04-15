@@ -644,12 +644,35 @@ function parseDateKey(dateKey: string): number {
 }
 
 export default function WatchlistPage({ params }: { params: { id: string } }) {
+  return <WatchlistContent params={params} />;
+}
+
+interface WatchlistContentProps {
+  params: { id: string };
+  initialSymbols?: string[];
+  watchlistNameOverride?: string;
+  useOverrideName?: boolean;
+  forceFavoriteStar?: boolean;
+  disableDeleteWatchlist?: boolean;
+}
+
+export function WatchlistContent({
+  params,
+  initialSymbols,
+  watchlistNameOverride,
+  useOverrideName = false,
+  forceFavoriteStar = false,
+  disableDeleteWatchlist = false,
+}: WatchlistContentProps) {
   const watchlistId = params.id;
   const { watchlistNames, setWatchlistName, symbolOrders, setSymbolOrder, favorites, toggleFavorite, dynamicWatchlists, deletedWatchlists, deleteWatchlist } = useWatchlist();
   const router = useRouter();
 
-  const watchlistName = watchlistNames[watchlistId] ?? 'Watchlist';
-  const currentSymbolOrder = symbolOrders[watchlistId] ?? holdingsDataQ1.map((h) => h.symbol);
+  const watchlistName =
+    useOverrideName && watchlistNameOverride
+      ? watchlistNameOverride
+      : (watchlistNames[watchlistId] ?? 'Watchlist');
+  const currentSymbolOrder = symbolOrders[watchlistId] ?? initialSymbols ?? holdingsDataQ1.map((h) => h.symbol);
 
   const [activeTab, setActiveTab] = useState<string>('Summary');
   const [feedTab, setFeedTab] = useState<FeedTab>('Latest');
@@ -851,6 +874,10 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
   }
 
   function handleDeleteWatchlist() {
+    if (disableDeleteWatchlist) {
+      setShowEditWatchlist(false);
+      return;
+    }
     deleteWatchlist(watchlistId);
     setShowEditWatchlist(false);
     // Navigate to another available watchlist, excluding the one just deleted
@@ -1106,13 +1133,16 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                 <div className="wl-portfolio-title-row" ref={titleDropdownRef}>
                   {/* Star / favorite button */}
                   <button
-                    className={`wl-star-btn${favorites.has(watchlistId) ? ' starred' : ''}`}
-                    onClick={() => toggleFavorite(watchlistId)}
-                    aria-label={favorites.has(watchlistId) ? 'Remove from favorites' : 'Add to favorites'}
-                    title={favorites.has(watchlistId) ? 'Remove from favorites' : 'Add to favorites'}
+                    className={`wl-star-btn${(forceFavoriteStar || favorites.has(watchlistId)) ? ' starred' : ''}`}
+                    onClick={() => {
+                      if (!forceFavoriteStar) toggleFavorite(watchlistId);
+                    }}
+                    disabled={forceFavoriteStar}
+                    aria-label={(forceFavoriteStar || favorites.has(watchlistId)) ? 'Remove from favorites' : 'Add to favorites'}
+                    title={(forceFavoriteStar || favorites.has(watchlistId)) ? 'Remove from favorites' : 'Add to favorites'}
                   >
                     <svg viewBox="0 0 14 14" width="15" height="15" fill="none" aria-hidden="true">
-                      {favorites.has(watchlistId) ? (
+                      {(forceFavoriteStar || favorites.has(watchlistId)) ? (
                         <path
                           d="M7 1.5l1.5 3.3L12.5 5l-2.5 2.6.6 3.7L7 9.6l-3.6 1.7.6-3.7L1.5 5l3.8-.7z"
                           fill="#f59e0b"
@@ -1592,10 +1622,11 @@ export default function WatchlistPage({ params }: { params: { id: string } }) {
                 </div>
               </div>
 
-              {/* Delete Watchlist button */}
-              <button className="wl-modal-delete-wl-btn" onClick={handleDeleteWatchlist}>
-                Delete Watchlist
-              </button>
+              {!disableDeleteWatchlist && (
+                <button className="wl-modal-delete-wl-btn" onClick={handleDeleteWatchlist}>
+                  Delete Watchlist
+                </button>
+              )}
             </div>
           </div>
         </div>

@@ -7,7 +7,7 @@ import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { COMPANY_MASTER_LIST, getCompanyByCode } from '@/app/data/companyMaster';
-import { newsItems } from '@/app/data/news';
+import { newsItems, newsCategories as newsCategoryOptions } from '@/app/data/news';
 import { extractJson } from '@/app/lib/parseContent';
 import { getFavoritesByUserAcct } from '@/app/lib/getFavoritesByUserAcct';
 import companyProfileMd from '@/content/company-profile.md';
@@ -157,6 +157,10 @@ const TABS = [
   'Acquisition',
   'Funding',
 ] as const;
+
+const NEWS_CATEGORY_LABEL_MAP: Record<string, string> = Object.fromEntries(
+  newsCategoryOptions.map((category) => [category.key, category.label]),
+);
 type Tab = (typeof TABS)[number];
 
 const FIN_INDICES = [
@@ -1113,6 +1117,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                           {pagedNews.map((item) => {
                             const ago = Math.round((Date.now() - item.publishedAt.getTime()) / 3_600_000);
                             const timeLabel = ago < 24 ? `${ago}h ago` : `${Math.floor(ago / 24)}d ago`;
+                            const categoryLabel = NEWS_CATEGORY_LABEL_MAP[item.category] ?? item.category;
                             return (
                               <a
                                 key={item.id}
@@ -1124,12 +1129,12 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                                 <div className="cp-news-tab-card-header">
                                   <div className="cp-news-tab-source-wrap">
                                     <span className="cp-news-tab-source">{item.source}</span>
-                                    <span className="cp-news-tab-inline-cat">{item.category}</span>
                                   </div>
                                   <span className="cp-news-tab-time">{timeLabel}</span>
                                 </div>
                                 <p className="cp-news-tab-title">{item.title}</p>
                                 <p className="cp-news-tab-content">{item.content}</p>
+                                <span className={`cp-news-tab-inline-cat cp-news-tab-inline-cat--${item.category}`}>{categoryLabel}</span>
                               </a>
                             );
                           })}
