@@ -521,7 +521,7 @@ export default function FavoritesContent() {
                     currentUpdateItems.map((item, idx) => {
                       const isBordered = idx < currentUpdateItems.length - 1;
                       return (
-                      <div key={item.id} className={`wl-feed-item${isBordered ? ' wl-feed-item--bordered' : ''}`}>
+                      <div key={item.id} className={`wl-feed-item${isBordered ? ' wl-feed-item--bordered' : ''}`} >
                         <FeedItemAvatar kind={item.kind} />
                         <div className="wl-feed-body">
                           <div className="wl-feed-title">{item.title}</div>
