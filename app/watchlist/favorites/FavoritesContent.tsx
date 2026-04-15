@@ -236,7 +236,7 @@ export default function FavoritesContent() {
                     {holdings.length === 0 ? (
                       <tr>
                         <td className="wl-td" colSpan={10} style={{ textAlign: 'center', color: 'var(--c-muted, #6b7280)', padding: '24px 0' }}>
-                          No favourite companies yet. Add companies from their Company Profile page.
+                          No favorite companies yet. Add companies from their Company Profile page.
                         </td>
                       </tr>
                     ) : (
