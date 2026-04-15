@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import CompanyProfileLanding from './CompanyProfileLanding';
+import { getFavoritesByUserAcct } from '@/app/lib/getFavoritesByUserAcct';
 
 const FAVORITES_KEY = 'cp-favorites';
 
@@ -11,7 +12,11 @@ export default function CompanyProfilePage() {
   useEffect(() => {
     try {
       const stored = localStorage.getItem(FAVORITES_KEY);
-      if (stored) setFavorites(JSON.parse(stored) as string[]);
+      if (stored) {
+        setFavorites(JSON.parse(stored) as string[]);
+      } else {
+        setFavorites(getFavoritesByUserAcct('demoUser'));
+      }
     } catch {
       // ignore
     }

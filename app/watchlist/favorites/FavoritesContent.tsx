@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import TopNav from '@/app/components/layout/TopNav';
@@ -12,9 +12,81 @@ import type { HoldingEntity } from '@/app/data/watchlistData';
 import { mainNav } from '@/app/data/navigation';
 import { useWatchlist } from '@/app/contexts/WatchlistContext';
 import { getFavoritesByUserAcct } from '@/app/lib/getFavoritesByUserAcct';
+import { newsItems } from '@/app/data/news';
+import { pressReleases } from '@/app/data/pressReleases';
+import {
+  bondEvents,
+  dividendEvents,
+  dividendAristocratEvents,
+  dividendChampionEvents,
+  countryEvents,
+  currencyEvents,
+} from '@/app/data/eventCategories';
+import type {
+  BondEvent,
+  DividendEvent,
+  DividendGrowthEvent,
+  CountryEvent,
+  CurrencyEvent,
+} from '@/app/data/eventCategories';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type Holding = HoldingEntity;
+type FeedTab = 'Latest' | 'News' | 'Press Release' | 'Event';
+
+interface UpdateFeedItem {
+  id: string;
+  kind: 'news' | 'press-release' | 'event';
+  title: string;
+  source: string;
+  displaySymbols: string[];
+  dateLabel: string;
+  dateMs: number;
+  description?: string;
+}
+
+function parseDateKey(dateKey: string): number {
+  try { return new Date(`${dateKey} 2026`).getTime(); } catch { return 0; }
+}
+
+function AlphaAvatar() {
+  return (
+    <div className="wl-feed-avatar wl-feed-avatar--alpha">
+      <svg viewBox="0 0 28 28" fill="none" width="28" height="28">
+        <circle cx="14" cy="14" r="14" fill="#e5e7eb" />
+        <text x="14" y="19" textAnchor="middle" fontSize="14" fill="#9ca3af" fontFamily="serif">
+          α
+        </text>
+      </svg>
+    </div>
+  );
+}
+
+function FeedItemAvatar({ kind }: { kind: UpdateFeedItem['kind'] }) {
+  if (kind === 'news') return <AlphaAvatar />;
+  if (kind === 'press-release') {
+    return (
+      <div className="wl-feed-avatar wl-feed-avatar--pr">
+        <svg viewBox="0 0 28 28" fill="none" width="28" height="28" aria-hidden="true">
+          <circle cx="14" cy="14" r="14" fill="#dbeafe" />
+          <rect x="8" y="8" width="12" height="12" rx="2" stroke="#2563eb" strokeWidth="1.4" fill="none" />
+          <path d="M10 12h8M10 15h6" stroke="#2563eb" strokeWidth="1.3" strokeLinecap="round" />
+        </svg>
+      </div>
+    );
+  }
+
+  return (
+    <div className="wl-feed-avatar wl-feed-avatar--event">
+      <svg viewBox="0 0 28 28" fill="none" width="28" height="28" aria-hidden="true">
+        <circle cx="14" cy="14" r="14" fill="#fef3c7" />
+        <rect x="8" y="9" width="12" height="11" rx="1.5" stroke="#d97706" strokeWidth="1.4" fill="none" />
+        <path d="M11 9V7M17 9V7" stroke="#d97706" strokeWidth="1.3" strokeLinecap="round" />
+        <path d="M8 12h12" stroke="#d97706" strokeWidth="1.2" />
+      </svg>
+    </div>
+  );
+}
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const userAcct = 'demoUser';
@@ -59,6 +131,7 @@ function createPlaceholderHolding(symbol: string): Holding {
 export default function FavoritesContent() {
   const router = useRouter();
   const { watchlistNames, dynamicWatchlists, deletedWatchlists } = useWatchlist();
+  const [feedTab, setFeedTab] = useState<FeedTab>('Latest');
 
   // Title dropdown
   const [showTitleDropdown, setShowTitleDropdown] = useState(false);
@@ -67,9 +140,6 @@ export default function FavoritesContent() {
   // Add Company modal
   const [showAddCompany, setShowAddCompany] = useState(false);
   const [addQuery, setAddQuery] = useState('');
-
-  // Company master lookup
-  const companyNameMap = new Map(COMPANY_MASTER_LIST.map((c) => [c.symbol, c.name]));
 
   // Holdings lookup from watchlist data
   const holdingsLookup = new Map(Object.values(holdingsDataMap).map((h) => [h.symbol, h]));
@@ -81,6 +151,161 @@ export default function FavoritesContent() {
   const holdings: Holding[] = favoriteSymbols.map(
     (sym) => holdingsLookup.get(sym) ?? createPlaceholderHolding(sym),
   );
+
+  const watchlistSymbolSet = useMemo(() => new Set(favoriteSymbols), [favoriteSymbols]);
+
+  const newsUpdateItems = useMemo((): UpdateFeedItem[] =>
+    newsItems
+      .filter((item) => item.tags.some((tag) => watchlistSymbolSet.has(tag.symbol)))
+      .map((item) => ({
+        id: item.id,
+        kind: 'news' as const,
+        title: item.title,
+        source: item.source,
+        displaySymbols: item.tags.filter((t) => watchlistSymbolSet.has(t.symbol)).map((t) => t.symbol),
+        dateLabel: item.publishedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        dateMs: item.publishedAt.getTime(),
+      })),
+    [watchlistSymbolSet],
+  );
+
+  const prUpdateItems = useMemo((): UpdateFeedItem[] =>
+    pressReleases
+      .filter((pr) => watchlistSymbolSet.has(pr.ticker))
+      .map((pr) => ({
+        id: pr.id,
+        kind: 'press-release' as const,
+        title: pr.title,
+        source: pr.company,
+        displaySymbols: [pr.ticker],
+        dateLabel: pr.publishedAt,
+        dateMs: new Date(pr.publishedAt).getTime(),
+        description: pr.summary,
+      })),
+    [watchlistSymbolSet],
+  );
+
+  const eventUpdateItems = useMemo((): UpdateFeedItem[] => {
+    const items: UpdateFeedItem[] = [];
+
+    Object.entries(bondEvents).forEach(([date, evts]) => {
+      evts.forEach((evt, i) => {
+        const e = evt as BondEvent;
+        if (!watchlistSymbolSet.has(e.symbol)) return;
+        items.push({
+          id: `bond-${date}-${i}`,
+          kind: 'event',
+          title: `${e.eventType}: ${e.company}`,
+          source: 'Bond Event',
+          displaySymbols: [e.symbol],
+          dateLabel: date,
+          dateMs: parseDateKey(date),
+          description: e.description,
+        });
+      });
+    });
+
+    Object.entries(dividendEvents).forEach(([date, evts]) => {
+      evts.forEach((evt, i) => {
+        const e = evt as DividendEvent;
+        if (!watchlistSymbolSet.has(e.symbol)) return;
+        items.push({
+          id: `div-${date}-${i}`,
+          kind: 'event',
+          title: `Dividend: ${e.company} — ${e.dividend}`,
+          source: 'Dividend',
+          displaySymbols: [e.symbol],
+          dateLabel: date,
+          dateMs: parseDateKey(date),
+          description: `Ex-Date: ${e.exDate} · Pay Date: ${e.payDate} · Yield: ${e.yield}`,
+        });
+      });
+    });
+
+    Object.entries(dividendAristocratEvents).forEach(([date, evts]) => {
+      evts.forEach((evt, i) => {
+        const e = evt as DividendGrowthEvent;
+        if (!watchlistSymbolSet.has(e.symbol)) return;
+        items.push({
+          id: `diva-${date}-${i}`,
+          kind: 'event',
+          title: `Dividend Aristocrat: ${e.company} — ${e.dividend}`,
+          source: 'Dividend Aristocrat',
+          displaySymbols: [e.symbol],
+          dateLabel: date,
+          dateMs: parseDateKey(date),
+          description: `Ex-Date: ${e.exDate} · Consecutive Years: ${e.consecutiveYears} · Annual Growth: ${e.annualGrowth}`,
+        });
+      });
+    });
+
+    Object.entries(dividendChampionEvents).forEach(([date, evts]) => {
+      evts.forEach((evt, i) => {
+        const e = evt as DividendGrowthEvent;
+        if (!watchlistSymbolSet.has(e.symbol)) return;
+        items.push({
+          id: `divc-${date}-${i}`,
+          kind: 'event',
+          title: `Dividend Champion: ${e.company} — ${e.dividend}`,
+          source: 'Dividend Champion',
+          displaySymbols: [e.symbol],
+          dateLabel: date,
+          dateMs: parseDateKey(date),
+          description: `Ex-Date: ${e.exDate} · Annual Growth: ${e.annualGrowth}`,
+        });
+      });
+    });
+
+    Object.entries(countryEvents).forEach(([date, evts]) => {
+      evts.forEach((evt, i) => {
+        const e = evt as CountryEvent;
+        const matching = e.affectedCompanies.filter((s) => watchlistSymbolSet.has(s));
+        if (matching.length === 0) return;
+        items.push({
+          id: `country-${date}-${i}`,
+          kind: 'event',
+          title: e.title,
+          source: `Country Event · ${e.country}`,
+          displaySymbols: matching,
+          dateLabel: date,
+          dateMs: parseDateKey(date),
+          description: e.description,
+        });
+      });
+    });
+
+    Object.entries(currencyEvents).forEach(([date, evts]) => {
+      evts.forEach((evt, i) => {
+        const e = evt as CurrencyEvent;
+        const matching = e.affectedCompanies.filter((s) => watchlistSymbolSet.has(s));
+        if (matching.length === 0) return;
+        items.push({
+          id: `fx-${date}-${i}`,
+          kind: 'event',
+          title: `FX: ${e.pair} — ${e.rate}`,
+          source: 'Currency Event',
+          displaySymbols: matching,
+          dateLabel: date,
+          dateMs: parseDateKey(date),
+          description: e.description,
+        });
+      });
+    });
+
+    return items.sort((a, b) => b.dateMs - a.dateMs);
+  }, [watchlistSymbolSet]);
+
+  const latestUpdateItems = useMemo(
+    (): UpdateFeedItem[] =>
+      [...newsUpdateItems, ...prUpdateItems, ...eventUpdateItems].sort((a, b) => b.dateMs - a.dateMs),
+    [newsUpdateItems, prUpdateItems, eventUpdateItems],
+  );
+
+  const currentUpdateItems: UpdateFeedItem[] =
+    feedTab === 'Latest' ? latestUpdateItems
+    : feedTab === 'News' ? newsUpdateItems
+    : feedTab === 'Press Release' ? prUpdateItems
+    : eventUpdateItems;
 
   // Watchlist sub-items for the title dropdown
   const watchlistSubItems = (mainNav.find((item) => item.icon === 'watchlist')?.subItems ?? []).filter(
@@ -210,7 +435,7 @@ export default function FavoritesContent() {
               <button className="wl-subtab active">Summary</button>
             </div>
 
-            <div className="wl-content-area">
+            <div className="wl-content-area wl-content-area--split">
               <div className="wl-table-wrap">
                 <table className="wl-table">
                   <thead className="wl-thead--white">
@@ -251,9 +476,6 @@ export default function FavoritesContent() {
                             >
                               {h.symbol}
                             </Link>
-                            {companyNameMap.has(h.symbol) && (
-                              <span className="wl-symbol-name">{companyNameMap.get(h.symbol)}</span>
-                            )}
                           </td>
                           <td className="wl-td">{h.revenue}</td>
                           <td className={`wl-td ${h.revenueQoQ.startsWith('+') ? 'pos' : 'neg'}`}>
@@ -274,6 +496,74 @@ export default function FavoritesContent() {
                   </tbody>
                 </table>
               </div>
+
+              <section className="wl-feed-section">
+                <div className="wl-feed-header">
+                  <span className="wl-feed-header-title">Updates</span>
+                </div>
+
+                <div className="wl-feed-tabs">
+                  {(['Latest', 'News', 'Press Release', 'Event'] as const).map((t) => (
+                    <button
+                      key={t}
+                      className={`wl-feed-tab${feedTab === t ? ' active' : ''}`}
+                      onClick={() => setFeedTab(t)}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="wl-feed-list">
+                  {currentUpdateItems.length === 0 ? (
+                    <div className="wl-feed-empty">No updates found for your watchlist companies.</div>
+                  ) : (
+                    currentUpdateItems.map((item, idx) => {
+                      const isBordered = idx < currentUpdateItems.length - 1;
+                      return (
+                      <div key={item.id} className={`wl-feed-item${isBordered ? ' wl-feed-item--bordered' : ''}`} >
+                        <FeedItemAvatar kind={item.kind} />
+                        <div className="wl-feed-body">
+                          <div className="wl-feed-title">{item.title}</div>
+                          {item.description && (
+                            <div className="wl-feed-description">{item.description}</div>
+                          )}
+                          <div className="wl-feed-meta">
+                            <span className="wl-feed-tickers">
+                              {item.displaySymbols.map((sym, i) => (
+                                <span key={sym}>
+                                  {i > 0 && ', '}
+                                  <a
+                                    href={`/lego/company-profile/${sym}/`}
+                                    className="wl-feed-ticker"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    {sym}
+                                  </a>
+                                </span>
+                              ))}
+                            </span>
+                            <span className="wl-feed-dot">•</span>
+                            <span className="wl-feed-source">{item.source}</span>
+                            <span className="wl-feed-dot">•</span>
+                            <span className="wl-feed-time">{item.dateLabel}</span>
+                            {item.kind !== 'event' && (
+                              <>
+                                <span className="wl-feed-dot">•</span>
+                                <span className={`wl-feed-kind-badge wl-feed-kind-badge--${item.kind}`}>
+                                  {item.kind === 'news' ? 'News' : 'Press Release'}
+                                </span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      );
+                    })
+                  )}
+                </div>
+              </section>
             </div>
           </div>
         </main>

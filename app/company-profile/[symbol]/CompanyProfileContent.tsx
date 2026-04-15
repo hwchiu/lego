@@ -9,6 +9,7 @@ import Sidebar from '@/app/components/layout/Sidebar';
 import { COMPANY_MASTER_LIST, getCompanyByCode } from '@/app/data/companyMaster';
 import { newsItems } from '@/app/data/news';
 import { extractJson } from '@/app/lib/parseContent';
+import { getFavoritesByUserAcct } from '@/app/lib/getFavoritesByUserAcct';
 import companyProfileMd from '@/content/company-profile.md';
 import myTagsMd from '@/content/my-tags.md';
 import FinancialStatementTab from './FinancialStatementTab';
@@ -486,7 +487,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
       const next = !prev;
       try {
         const stored = localStorage.getItem('cp-favorites');
-        const arr: string[] = stored ? JSON.parse(stored) : [];
+        const arr: string[] = stored ? JSON.parse(stored) : getFavoritesByUserAcct('demoUser');
         const updated = next ? [...arr.filter((s) => s !== symbol), symbol] : arr.filter((s) => s !== symbol);
         localStorage.setItem('cp-favorites', JSON.stringify(updated));
       } catch {
