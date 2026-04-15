@@ -411,8 +411,6 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const masterCompany = COMPANY_MASTER_LIST.find((c) => c.symbol === symbol);
 
   const companyName = companyInfo?.name ?? masterCompany?.name ?? symbol;
-  const localCurrency = companyInfo?.localCurrency ?? 'USD';
-  const bbgId = companyInfo?.bbgId ?? `—`;
   const stockExchange = companyInfo?.stockExchange ?? '—';
   const publicTags = companyInfo?.publicTags ?? [];
 
@@ -813,20 +811,6 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                       )}
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-
-            {/* ── Company info cards ── */}
-            <div className="cp-info-tags-row">
-              <div className="cp-info-cards">
-                <div className="cp-info-card">
-                  <span className="cp-info-label">Local Currency</span>
-                  <span className="cp-info-value">{localCurrency}</span>
-                </div>
-                <div className="cp-info-card">
-                  <span className="cp-info-label">BBG ID</span>
-                  <span className="cp-info-value">{bbgId}</span>
                 </div>
               </div>
             </div>
