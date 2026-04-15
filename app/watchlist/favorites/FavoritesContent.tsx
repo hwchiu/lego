@@ -17,6 +17,7 @@ export default function FavoritesContent() {
       useOverrideName
       forceFavoriteStar
       disableDeleteWatchlist
+      disableNameEdit
     />
   );
 }

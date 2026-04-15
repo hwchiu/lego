@@ -654,6 +654,7 @@ interface WatchlistContentProps {
   useOverrideName?: boolean;
   forceFavoriteStar?: boolean;
   disableDeleteWatchlist?: boolean;
+  disableNameEdit?: boolean;
 }
 
 export function WatchlistContent({
@@ -663,6 +664,7 @@ export function WatchlistContent({
   useOverrideName = false,
   forceFavoriteStar = false,
   disableDeleteWatchlist = false,
+  disableNameEdit = false,
 }: WatchlistContentProps) {
   const watchlistId = params.id;
   const { watchlistNames, setWatchlistName, symbolOrders, setSymbolOrder, favorites, toggleFavorite, dynamicWatchlists, deletedWatchlists, deleteWatchlist } = useWatchlist();
@@ -1585,6 +1587,8 @@ export function WatchlistContent({
                   type="text"
                   value={editWatchlistName}
                   onChange={(e) => setEditWatchlistName(e.target.value)}
+                  readOnly={disableNameEdit}
+                  style={disableNameEdit ? { opacity: 0.6, cursor: 'not-allowed' } : undefined}
                 />
               </div>
               <div>
