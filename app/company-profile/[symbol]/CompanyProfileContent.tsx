@@ -171,7 +171,7 @@ const FIN_INDICES = [
 const FAVORITES_KEY = 'cp-favorites';
 
 // Items per page in the News tab
-const NEWS_PAGE_SIZE = 4;
+const NEWS_PAGE_SIZE = 8;
 
 // ── Mini Calendar / Date Picker ──────────────────────────────────────────────
 // Month and day names are intentionally hardcoded in English to match international
@@ -588,13 +588,18 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   [symbol, newsItems]);
 
   // Distinct filter options from all company news
-  const distinctFileTypes = useMemo(() => [...new Set(companyNews.map((n) => n.fileType))].sort(), [companyNews]);
+  const distinctCategories = useMemo(() => [...new Set(companyNews.map((n) => n.category))].sort(), [companyNews]);
   const distinctSources = useMemo(() => [...new Set(companyNews.map((n) => n.source))].sort(), [companyNews]);
 
   const filteredNews = useMemo(() => {
+    const keywordLower = newsKeywordApplied.trim().toLowerCase();
+
     return companyNews.filter((item) => {
-      if (newsKeywordApplied && !item.title.toLowerCase().includes(newsKeywordApplied.toLowerCase())) return false;
-      if (newsCategories.size > 0 && (!item.fileType || !newsCategories.has(item.fileType))) return false;
+      if (keywordLower) {
+        const searchable = `${item.title} ${item.content}`.toLowerCase();
+        if (!searchable.includes(keywordLower)) return false;
+      }
+      if (newsCategories.size > 0 && (!item.category || !newsCategories.has(item.category))) return false;
       if (newsSources.size > 0 && !newsSources.has(item.source)) return false;
       if (newsPeriodStart) {
         const d = item.publishedAt;
@@ -1021,7 +1026,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                             )}
                           </div>
                           <div className="cp-news-multi-options">
-                            {distinctFileTypes.map((ft) => (
+                            {distinctCategories.map((ft) => (
                               <button
                                 key={ft}
                                 className={`cp-news-multi-option${newsCategories.has(ft) ? ' active' : ''}`}
@@ -1116,15 +1121,14 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                                 className="cp-news-tab-card"
                               >
                                 <div className="cp-news-tab-card-header">
-                                  <span className="cp-news-tab-source">{item.source}</span>
+                                  <div className="cp-news-tab-source-wrap">
+                                    <span className="cp-news-tab-source">{item.source}</span>
+                                    <span className="cp-news-tab-inline-cat">{item.category}</span>
+                                  </div>
                                   <span className="cp-news-tab-time">{timeLabel}</span>
                                 </div>
                                 <p className="cp-news-tab-title">{item.title}</p>
-                                <div className="cp-news-tab-tags">
-                                  <span className="cp-news-tab-tag cp-news-filetype-tag">
-                                    {item.fileType}
-                                  </span>
-                                </div>
+                                <p className="cp-news-tab-content">{item.content}</p>
                               </a>
                             );
                           })}
