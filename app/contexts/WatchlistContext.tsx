@@ -4,22 +4,12 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { DYNAMIC_WATCHLIST_IDS } from '@/app/data/watchlistData';
 
 // Default watchlist IDs and names (matches navigation.ts sub-items)
-export const WATCHLIST_IDS = ['627836', '738291', '394827'] as const;
+export const WATCHLIST_IDS = [] as const;
 export type WatchlistId = (typeof WATCHLIST_IDS)[number];
 
-const DEFAULT_NAMES: Record<string, string> = {
-  '627836': 'Watchlist1',
-  '738291': 'Watchlist-TC',
-  '394827': 'Watchlist2',
-};
+const DEFAULT_NAMES: Record<string, string> = {};
 
-const DEFAULT_SYMBOL_ORDER = ['TC', 'TSLA', 'QCOM', 'GOOGL', 'SONY', 'AAPL', 'NVDA', 'ASML'];
-
-const DEFAULT_ORDERS: Record<string, string[]> = {
-  '627836': [...DEFAULT_SYMBOL_ORDER],
-  '738291': [...DEFAULT_SYMBOL_ORDER],
-  '394827': [...DEFAULT_SYMBOL_ORDER],
-};
+const DEFAULT_ORDERS: Record<string, string[]> = {};
 
 export interface DynamicWatchlist {
   id: string;
