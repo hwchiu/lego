@@ -4147,7 +4147,6 @@ input, select { font-family: var(--font); }
   font-weight: 600;
   padding: 2px 7px;
   border-radius: 12px;
-  margin-top: auto;
   color: #1e40af;
   border: 1px solid #93c5fd;
   background: #eff6ff;

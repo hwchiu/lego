@@ -14,6 +14,7 @@ export default function FavoritesContent() {
       params={{ id: 'favorites' }}
       initialSymbols={favoriteSymbols}
       watchlistNameOverride="Favorites"
+      useOverrideName
       forceFavoriteStar
       disableDeleteWatchlist
     />

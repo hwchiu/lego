@@ -651,6 +651,7 @@ interface WatchlistContentProps {
   params: { id: string };
   initialSymbols?: string[];
   watchlistNameOverride?: string;
+  useOverrideName?: boolean;
   forceFavoriteStar?: boolean;
   disableDeleteWatchlist?: boolean;
 }
@@ -659,6 +660,7 @@ export function WatchlistContent({
   params,
   initialSymbols,
   watchlistNameOverride,
+  useOverrideName = false,
   forceFavoriteStar = false,
   disableDeleteWatchlist = false,
 }: WatchlistContentProps) {
@@ -666,7 +668,10 @@ export function WatchlistContent({
   const { watchlistNames, setWatchlistName, symbolOrders, setSymbolOrder, favorites, toggleFavorite, dynamicWatchlists, deletedWatchlists, deleteWatchlist } = useWatchlist();
   const router = useRouter();
 
-  const watchlistName = watchlistNameOverride ?? watchlistNames[watchlistId] ?? 'Watchlist';
+  const watchlistName =
+    useOverrideName && watchlistNameOverride
+      ? watchlistNameOverride
+      : (watchlistNames[watchlistId] ?? 'Watchlist');
   const currentSymbolOrder = symbolOrders[watchlistId] ?? initialSymbols ?? holdingsDataQ1.map((h) => h.symbol);
 
   const [activeTab, setActiveTab] = useState<string>('Summary');
@@ -1132,6 +1137,7 @@ export function WatchlistContent({
                     onClick={() => {
                       if (!forceFavoriteStar) toggleFavorite(watchlistId);
                     }}
+                    disabled={forceFavoriteStar}
                     aria-label={(forceFavoriteStar || favorites.has(watchlistId)) ? 'Remove from favorites' : 'Add to favorites'}
                     title={(forceFavoriteStar || favorites.has(watchlistId)) ? 'Remove from favorites' : 'Add to favorites'}
                   >

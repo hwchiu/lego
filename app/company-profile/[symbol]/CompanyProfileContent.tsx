@@ -157,6 +157,10 @@ const TABS = [
   'Acquisition',
   'Funding',
 ] as const;
+
+const NEWS_CATEGORY_LABEL_MAP: Record<string, string> = Object.fromEntries(
+  newsCategoryOptions.map((category) => [category.key, category.label]),
+);
 type Tab = (typeof TABS)[number];
 
 const FIN_INDICES = [
@@ -1113,7 +1117,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                           {pagedNews.map((item) => {
                             const ago = Math.round((Date.now() - item.publishedAt.getTime()) / 3_600_000);
                             const timeLabel = ago < 24 ? `${ago}h ago` : `${Math.floor(ago / 24)}d ago`;
-                            const categoryLabel = newsCategoryOptions.find((category) => category.key === item.category)?.label ?? item.category;
+                            const categoryLabel = NEWS_CATEGORY_LABEL_MAP[item.category] ?? item.category;
                             return (
                               <a
                                 key={item.id}
