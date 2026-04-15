@@ -7221,22 +7221,6 @@
     "IS_PRE_EARNING_CALL": "N"
   },
   {
-    "CO_CD": "TSM",
-    "CO_NAME": "TSMC",
-    "CO_SHORT_NAME": "T",
-    "IS_FIN_ALIVE": "Y",
-    "IS_IR_ALIVE": "N",
-    "IS_NEWS_ALIVE": "Y",
-    "IS_TRANSCRIPT_ALIVE": "N",
-    "IS_INVEST_ALIVE": "Y",
-    "IS_ACQ_ALIVE": "N",
-    "IS_FUND_ALIVE": "Y",
-    "IS_STOCK_CHART_ALIVE": "N",
-    "IS_AI_TRANSCRIPT_ALIVE": "Y",
-    "IS_EVENT_ALIVE": "N",
-    "IS_PRE_EARNING_CALL": "N"
-  },
-  {
     "CO_CD": "SONY",
     "CO_NAME": "Sony Group Corporation",
     "CO_SHORT_NAME": "Sony",
