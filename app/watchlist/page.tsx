@@ -22,10 +22,10 @@ export default function WatchlistRedirect() {
       } else if (dynamic.length > 0) {
         router.replace(`/watchlist/${dynamic[0].id}`);
       } else {
-        router.replace('/watchlist/create/');
+        router.replace('/watchlist/favorites/');
       }
     } catch {
-      router.replace('/watchlist/627836');
+      router.replace('/watchlist/favorites/');
     }
   }, [router]);
 

@@ -1484,7 +1484,7 @@ export default function WatchlistArchiveContent() {
                       strokeLinecap="round"
                     />
                   </svg>
-                  <span className="wl-action-btn-label">Add Symbol</span>
+                  <span className="wl-action-btn-label">Add Company</span>
                 </button>
                 <button className="wl-action-btn" onClick={handleEditWatchlistClick}>
                   <svg viewBox="0 0 14 14" fill="none" width="13" height="13">

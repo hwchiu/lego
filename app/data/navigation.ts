@@ -91,12 +91,10 @@ export const mainNav: NavItem[] = [
   { label: 'Company Profile', href: '/company-profile', icon: 'home' },
   {
     label: 'Watchlist',
-    href: '/watchlist/627836',
+    href: '/watchlist/favorites',
     icon: 'watchlist',
     subItems: [
-      { label: 'Watchlist1', href: '/watchlist/627836', watchlistId: '627836' },
-      { label: 'Watchlist-TC', href: '/watchlist/738291', watchlistId: '738291' },
-      { label: 'Watchlist2', href: '/watchlist/394827', watchlistId: '394827' },
+      { label: 'Favorites', href: '/watchlist/favorites' },
       { label: 'Create Watchlist', href: '/watchlist/create', dividerBefore: true, iconRight: 'add' },
     ],
   },
