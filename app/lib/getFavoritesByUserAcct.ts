@@ -6,8 +6,9 @@ import favoritesData from '@/app/data/FavoritesCompanyList.json';
  */
 export function getFavoritesByUserAcct(_userAcct: string): string[] {
   // _userAcct is accepted as a parameter for future extensibility.
-  const firstEntry = Array.isArray(favoritesData) && favoritesData.length > 0 ? favoritesData[0] : undefined;
-  const entry = firstEntry as { co_cd?: string[] } | undefined;
+  const entry = (Array.isArray(favoritesData) && favoritesData.length > 0
+    ? favoritesData[0]
+    : undefined) as { co_cd?: string[] } | undefined;
   const fallback = entry?.co_cd ?? [];
 
   if (typeof window === 'undefined') {

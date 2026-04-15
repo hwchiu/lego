@@ -24,8 +24,7 @@ export default function CompanyProfilePage() {
 
   function handleToggleFavorite(symbol: string) {
     setFavorites((prev) => {
-      const base = prev.length > 0 ? prev : getFavoritesByUserAcct('demoUser');
-      const next = base.includes(symbol) ? base.filter((s) => s !== symbol) : [...base, symbol];
+      const next = prev.includes(symbol) ? prev.filter((s) => s !== symbol) : [...prev, symbol];
       try {
         localStorage.setItem(FAVORITES_KEY, JSON.stringify(next));
       } catch {
