@@ -4140,13 +4140,59 @@ input, select { font-family: var(--font); }
 }
 
 .cp-news-tab-inline-cat {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
   font-size: 10px;
   font-weight: 600;
   padding: 2px 7px;
   border-radius: 12px;
-  color: var(--c-text-2);
-  border: 1px solid var(--c-border-2);
-  background: var(--c-white);
+  margin-top: auto;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+  background: #eff6ff;
+}
+
+.cp-news-tab-inline-cat--semiconductor {
+  color: #1e40af;
+  border-color: #93c5fd;
+  background: #eff6ff;
+}
+
+.cp-news-tab-inline-cat--tech {
+  color: #065f46;
+  border-color: #6ee7b7;
+  background: #ecfdf5;
+}
+
+.cp-news-tab-inline-cat--investment {
+  color: #7c2d12;
+  border-color: #fdba74;
+  background: #fff7ed;
+}
+
+.cp-news-tab-inline-cat--ai {
+  color: #6b21a8;
+  border-color: #d8b4fe;
+  background: #faf5ff;
+}
+
+.cp-news-tab-inline-cat--supplyChain {
+  color: #0f766e;
+  border-color: #99f6e4;
+  background: #f0fdfa;
+}
+
+.cp-news-tab-inline-cat--earnings {
+  color: #166534;
+  border-color: #86efac;
+  background: #f0fdf4;
+}
+
+.cp-news-tab-inline-cat--policy {
+  color: #991b1b;
+  border-color: #fca5a5;
+  background: #fef2f2;
 }
 
 .cp-news-tab-time {
