@@ -62,6 +62,32 @@ function AlphaAvatar() {
   );
 }
 
+function FeedItemAvatar({ kind }: { kind: UpdateFeedItem['kind'] }) {
+  if (kind === 'news') return <AlphaAvatar />;
+  if (kind === 'press-release') {
+    return (
+      <div className="wl-feed-avatar wl-feed-avatar--pr">
+        <svg viewBox="0 0 28 28" fill="none" width="28" height="28" aria-hidden="true">
+          <circle cx="14" cy="14" r="14" fill="#dbeafe" />
+          <rect x="8" y="8" width="12" height="12" rx="2" stroke="#2563eb" strokeWidth="1.4" fill="none" />
+          <path d="M10 12h8M10 15h6" stroke="#2563eb" strokeWidth="1.3" strokeLinecap="round" />
+        </svg>
+      </div>
+    );
+  }
+
+  return (
+    <div className="wl-feed-avatar wl-feed-avatar--event">
+      <svg viewBox="0 0 28 28" fill="none" width="28" height="28" aria-hidden="true">
+        <circle cx="14" cy="14" r="14" fill="#fef3c7" />
+        <rect x="8" y="9" width="12" height="11" rx="1.5" stroke="#d97706" strokeWidth="1.4" fill="none" />
+        <path d="M11 9V7M17 9V7" stroke="#d97706" strokeWidth="1.3" strokeLinecap="round" />
+        <path d="M8 12h12" stroke="#d97706" strokeWidth="1.2" />
+      </svg>
+    </div>
+  );
+}
+
 // ── Constants ─────────────────────────────────────────────────────────────────
 const userAcct = 'demoUser';
 
@@ -496,24 +522,7 @@ export default function FavoritesContent() {
                       const isBordered = idx < currentUpdateItems.length - 1;
                       return (
                       <div key={item.id} className={isBordered ? 'wl-feed-item wl-feed-item--bordered' : 'wl-feed-item'}>
-                        {item.kind === 'news' ? <AlphaAvatar /> : item.kind === 'press-release' ? (
-                          <div className="wl-feed-avatar wl-feed-avatar--pr">
-                            <svg viewBox="0 0 28 28" fill="none" width="28" height="28" aria-hidden="true">
-                              <circle cx="14" cy="14" r="14" fill="#dbeafe" />
-                              <rect x="8" y="8" width="12" height="12" rx="2" stroke="#2563eb" strokeWidth="1.4" fill="none" />
-                              <path d="M10 12h8M10 15h6" stroke="#2563eb" strokeWidth="1.3" strokeLinecap="round" />
-                            </svg>
-                          </div>
-                        ) : (
-                          <div className="wl-feed-avatar wl-feed-avatar--event">
-                            <svg viewBox="0 0 28 28" fill="none" width="28" height="28" aria-hidden="true">
-                              <circle cx="14" cy="14" r="14" fill="#fef3c7" />
-                              <rect x="8" y="9" width="12" height="11" rx="1.5" stroke="#d97706" strokeWidth="1.4" fill="none" />
-                              <path d="M11 9V7M17 9V7" stroke="#d97706" strokeWidth="1.3" strokeLinecap="round" />
-                              <path d="M8 12h12" stroke="#d97706" strokeWidth="1.2" />
-                            </svg>
-                          </div>
-                        )}
+                        <FeedItemAvatar kind={item.kind} />
                         <div className="wl-feed-body">
                           <div className="wl-feed-title">{item.title}</div>
                           {item.description && (
