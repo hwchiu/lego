@@ -14,6 +14,7 @@ import { mainNav } from '@/app/data/navigation';
 import { useWatchlist } from '@/app/contexts/WatchlistContext';
 import { CATALOG_VIEW_CATEGORIES, CATALOG_COLUMN_LABELS } from '@/app/data/watchlistColumns';
 import { newsItems } from '@/app/data/news';
+import NewsCard from '@/app/components/news/NewsCard';
 import { pressReleases } from '@/app/data/pressReleases';
 import { CORP_EVENT_CATEGORY_MAP } from '@/app/data/corpEvents';
 import type { CorpEvent } from '@/app/data/corpEvents';
@@ -945,19 +946,23 @@ export function WatchlistContent({
   // ── Updates feed: build filtered items from real data sources ────────────
   const watchlistSymbolSet = useMemo(() => new Set(currentSymbolOrder), [currentSymbolOrder]);
 
-  const newsUpdateItems = useMemo((): UpdateFeedItem[] =>
-    newsItems
-      .filter((item) => item.tags.some((tag) => watchlistSymbolSet.has(tag.symbol)))
-      .map((item) => ({
-        id: item.id,
-        kind: 'news' as const,
-        title: item.title,
-        source: item.source,
-        displaySymbols: item.tags.filter((t) => watchlistSymbolSet.has(t.symbol)).map((t) => t.symbol),
-        dateLabel: item.publishedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        dateMs: item.publishedAt.getTime(),
-      })),
+  // Full NewsItem[] filtered by watchlist — used by the dedicated News tab (NewsCard rendering)
+  const filteredNewsItems = useMemo(
+    () => newsItems.filter((item) => item.tags.some((tag) => watchlistSymbolSet.has(tag.symbol))),
     [watchlistSymbolSet],
+  );
+
+  const newsUpdateItems = useMemo((): UpdateFeedItem[] =>
+    filteredNewsItems.map((item) => ({
+      id: item.id,
+      kind: 'news' as const,
+      title: item.title,
+      source: item.source,
+      displaySymbols: item.tags.filter((t) => watchlistSymbolSet.has(t.symbol)).map((t) => t.symbol),
+      dateLabel: item.publishedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      dateMs: item.publishedAt.getTime(),
+    })),
+    [filteredNewsItems, watchlistSymbolSet],
   );
 
   const prUpdateItems = useMemo((): UpdateFeedItem[] =>
@@ -1322,6 +1327,16 @@ export function WatchlistContent({
                       <span className="wl-feed-coming-soon-title">Coming Soon</span>
                       <span className="wl-feed-coming-soon-desc">Press Release content is under development and will be available soon.</span>
                     </div>
+                  ) : feedTab === 'News' ? (
+                    filteredNewsItems.length === 0 ? (
+                      <div className="wl-feed-empty">No news found for your watchlist companies.</div>
+                    ) : (
+                      <div className="wl-feed-news-grid">
+                        {filteredNewsItems.map((item) => (
+                          <NewsCard key={item.id} item={item} />
+                        ))}
+                      </div>
+                    )
                   ) : currentUpdateItems.length === 0 ? (
                     <div className="wl-feed-empty">No updates found for your watchlist companies.</div>
                   ) : (

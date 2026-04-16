@@ -3018,6 +3018,16 @@ input, select { font-family: var(--font); }
   color: var(--c-text-4);
   text-align: center;
 }
+/* News tab — card grid inside feed section */
+.wl-feed-news-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 16px 20px;
+}
+@media (max-width: 860px) {
+  .wl-feed-news-grid { grid-template-columns: 1fr; }
+}
 /* Feed tab "Coming Soon" badge */
 .wl-feed-tab-coming-soon {
   font-size: 9px;
