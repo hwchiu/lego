@@ -1691,11 +1691,19 @@ input, select { font-family: var(--font); }
   gap: 4px;
   transition: box-shadow 0.15s, border-color 0.15s;
   min-width: 0;
+  cursor: pointer;
+  user-select: none;
 }
 
 .chr-card:hover {
   border-color: #bf3030;
   box-shadow: 0 2px 8px rgba(191, 48, 48, 0.15);
+}
+
+.chr-card--active {
+  border-color: #bf3030;
+  box-shadow: 0 2px 8px rgba(191, 48, 48, 0.22);
+  background: #fef2f2;
 }
 
 .chr-card-top {

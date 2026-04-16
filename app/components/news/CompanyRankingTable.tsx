@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { newsItems, type NewsCategory } from '@/app/data/news';
 
 const SPARKLINE_DAYS = 7;
+const TOP_N = 10;
 // Use end-of-day April 2 so all same-day articles are included
 const NOW_REF = new Date('2026-04-03T00:00:00+08:00').getTime();
 const DAY_MS = 86_400_000;
@@ -45,6 +46,7 @@ function computeTopCompanies(category: NewsCategory = 'all'): CompanyData[] {
       dailyCounts: daily,
     }))
     .sort((a, b) => b.totalMentions - a.totalMentions)
+    .slice(0, TOP_N)
     .map((co, i) => ({ ...co, rank: i + 1 }));
 }
 
@@ -86,9 +88,11 @@ function Sparkline({ data, width = 84, height = 38 }: SparklineProps) {
 
 interface CompanyRankingTableProps {
   activeCategory?: NewsCategory;
+  selectedSymbol?: string;
+  onCompanyClick?: (symbol: string | null) => void;
 }
 
-export default function CompanyRankingTable({ activeCategory = 'all' }: CompanyRankingTableProps) {
+export default function CompanyRankingTable({ activeCategory = 'all', selectedSymbol, onCompanyClick }: CompanyRankingTableProps) {
   const companies = computeTopCompanies(activeCategory);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -97,11 +101,16 @@ export default function CompanyRankingTable({ activeCategory = 'all' }: CompanyR
     scrollRef.current.scrollBy({ left: dir === 'left' ? -156 : 156, behavior: 'smooth' });
   }
 
+  function handleCardClick(symbol: string) {
+    if (onCompanyClick) {
+      onCompanyClick(selectedSymbol === symbol ? null : symbol);
+    }
+  }
+
   return (
     <div className="chr-root">
       <div className="chr-header">
         <span className="insight-block-title">Company Heat Ranking</span>
-        <span className="chr-subtitle">Weekly mentions · Top {companies.length}</span>
       </div>
       <div className="chr-carousel-wrap">
         <button
@@ -121,7 +130,14 @@ export default function CompanyRankingTable({ activeCategory = 'all' }: CompanyR
         </button>
         <div className="chr-track" ref={scrollRef}>
           {companies.map((co) => (
-            <div key={co.symbol} className="chr-card">
+            <div
+              key={co.symbol}
+              className={`chr-card${selectedSymbol === co.symbol ? ' chr-card--active' : ''}`}
+              onClick={() => handleCardClick(co.symbol)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleCardClick(co.symbol); }}
+            >
               <div className="chr-card-top">
                 <span className="chr-card-rank">#{co.rank}</span>
                 <span className="chr-card-symbol">{co.symbol}</span>

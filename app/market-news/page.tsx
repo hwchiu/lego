@@ -20,6 +20,7 @@ export default function MarketNewsPage() {
   const [filterKeywordApplied, setFilterKeywordApplied] = useState('');
   const [filterPeriodStart, setFilterPeriodStart] = useState('');
   const [filterPeriodEnd, setFilterPeriodEnd] = useState('');
+  const [filterCompanySymbol, setFilterCompanySymbol] = useState<string | null>(null);
 
   const categoryFiltered =
     activeCategory === 'all'
@@ -33,6 +34,9 @@ export default function MarketNewsPage() {
         const searchable = `${item.title} ${item.content}`.toLowerCase();
         if (!searchable.includes(kw)) return false;
       }
+      if (filterCompanySymbol) {
+        if (!item.tags.some((t) => t.symbol === filterCompanySymbol)) return false;
+      }
       if (filterPeriodStart) {
         if (item.publishedAt < new Date(filterPeriodStart)) return false;
       }
@@ -43,14 +47,14 @@ export default function MarketNewsPage() {
       }
       return true;
     });
-  }, [categoryFiltered, filterKeywordApplied, filterPeriodStart, filterPeriodEnd]);
+  }, [categoryFiltered, filterKeywordApplied, filterCompanySymbol, filterPeriodStart, filterPeriodEnd]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paged = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
   useEffect(() => {
     setPage(0);
-  }, [activeCategory, filterKeywordApplied, filterPeriodStart, filterPeriodEnd]);
+  }, [activeCategory, filterKeywordApplied, filterCompanySymbol, filterPeriodStart, filterPeriodEnd]);
 
   const goTo = (p: number) => setPage(Math.max(0, Math.min(p, totalPages - 1)));
 
@@ -58,6 +62,15 @@ export default function MarketNewsPage() {
     if (e.key === 'Enter') {
       setFilterKeywordApplied(filterKeyword);
     }
+  }
+
+  function handleClearKeyword() {
+    setFilterKeyword('');
+    setFilterKeywordApplied('');
+  }
+
+  function handleCompanyClick(symbol: string | null) {
+    setFilterCompanySymbol(symbol);
   }
 
   return (
@@ -75,10 +88,16 @@ export default function MarketNewsPage() {
             <div className="mn-filter-bar">
               <div className="mn-filter-field mn-filter-field--keyword">
                 <label className="cp-news-filter-label">Keywords</label>
-                <div className="cp-news-filter-input-wrap">
+                <div className="cp-irt-search-box">
+                  <span className="cp-irt-search-icon">
+                    <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
+                      <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.4" />
+                      <path d="M9.5 9.5L13 13" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                    </svg>
+                  </span>
                   <input
                     type="text"
-                    className="cp-news-filter-input"
+                    className="cp-irt-search-input"
                     placeholder="Search keywords… (Enter)"
                     value={filterKeyword}
                     onChange={(e) => setFilterKeyword(e.target.value)}
@@ -86,8 +105,9 @@ export default function MarketNewsPage() {
                   />
                   {filterKeywordApplied && (
                     <button
-                      className="cp-news-filter-clear-btn"
-                      onClick={() => { setFilterKeyword(''); setFilterKeywordApplied(''); }}
+                      className="cp-irt-search-clear"
+                      onClick={handleClearKeyword}
+                      title="Clear search"
                       aria-label="Clear keyword"
                     >
                       <svg viewBox="0 0 12 12" fill="none" width="10" height="10">
@@ -103,6 +123,7 @@ export default function MarketNewsPage() {
                   <input
                     type="date"
                     className="cp-news-date-input"
+                    lang="en"
                     value={filterPeriodStart}
                     onChange={(e) => setFilterPeriodStart(e.target.value)}
                     aria-label="Start date"
@@ -111,6 +132,7 @@ export default function MarketNewsPage() {
                   <input
                     type="date"
                     className="cp-news-date-input"
+                    lang="en"
                     value={filterPeriodEnd}
                     onChange={(e) => setFilterPeriodEnd(e.target.value)}
                     aria-label="End date"
@@ -119,9 +141,9 @@ export default function MarketNewsPage() {
               </div>
             </div>
 
-            <NewsCategoryTabs active={activeCategory} onChange={setActiveCategory} />
+            <NewsCategoryTabs active={activeCategory} onChange={(cat) => { setActiveCategory(cat); setFilterCompanySymbol(null); }} />
             <div className="company-ranking-below-tabs">
-              <CompanyRankingTable activeCategory={activeCategory} />
+              <CompanyRankingTable activeCategory={activeCategory} selectedSymbol={filterCompanySymbol ?? undefined} onCompanyClick={handleCompanyClick} />
             </div>
             <div className="news-pager-layout">
               <button
