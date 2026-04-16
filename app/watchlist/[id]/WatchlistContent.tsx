@@ -841,12 +841,19 @@ export function WatchlistContent({
   }
 
   // Add Symbol search suggestions
+  const addSuggestionQuery = addSymbolQuery.split(',').pop()?.trim() ?? '';
+  const alreadyEnteredSymbols = addSymbolQuery
+    .split(',')
+    .slice(0, -1)
+    .map((s) => s.trim().toUpperCase())
+    .filter(Boolean);
   const addSuggestions =
-    addSymbolQuery.trim().length > 0
+    addSuggestionQuery.length > 0
       ? COMPANY_MASTER_LIST.filter(
           (c) =>
-            c.symbol.toLowerCase().includes(addSymbolQuery.toLowerCase()) ||
-            c.name.toLowerCase().includes(addSymbolQuery.toLowerCase()),
+            !alreadyEnteredSymbols.includes(c.symbol.toUpperCase()) &&
+            (c.symbol.toLowerCase().includes(addSuggestionQuery.toLowerCase()) ||
+              c.name.toLowerCase().includes(addSuggestionQuery.toLowerCase())),
         ).slice(0, 12)
       : [];
 
@@ -1142,27 +1149,7 @@ export function WatchlistContent({
                 {/* <button className="wl-action-btn" onClick={() => setShowManageAlerts(true)}>
                   ...
                 </button> */}
-                <button
-                  className="wl-action-btn"
-                  onClick={() => downloadHoldingsExcel(watchlistName, sortedHoldings)}
-                >
-                  <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                    <path
-                      d="M7 1v8M4.5 6.5L7 9l2.5-2.5"
-                      stroke="currentColor"
-                      strokeWidth="1.3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M2 10.5c0 .5.5 1 1 1h8c.5 0 1-.5 1-1"
-                      stroke="currentColor"
-                      strokeWidth="1.3"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <span className="wl-action-btn-label">Download</span>
-                </button>
+
                 <button className="wl-action-btn" onClick={() => setSplitLayout((v) => !v)}>
                   {/* Layout icon — two-column grid */}
                   <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
@@ -1573,7 +1560,7 @@ export function WatchlistContent({
         <div className="wl-modal-overlay" onClick={() => setShowAddSymbol(false)}>
           <div className="wl-modal" onClick={(e) => e.stopPropagation()}>
             <div className="wl-modal-header">
-              <span className="wl-modal-title">Add Symbols to Follow</span>
+              <span className="wl-modal-title">Add Companies to Follow</span>
               <div className="wl-modal-header-actions">
                 <button className="wl-modal-cancel-btn" onClick={handleAddSymbolClose}>
                   Cancel
@@ -1589,7 +1576,7 @@ export function WatchlistContent({
                 <input
                   className="wl-add-search-input"
                   type="text"
-                  placeholder="Add Symbols (e.g AAPL, TSLA, etc...)"
+                  placeholder="Add Companies (e.g AAPL, TSLA, etc...)"
                   value={addSymbolQuery}
                   onChange={(e) => setAddSymbolQuery(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleAddSymbolSubmit()}
@@ -1597,7 +1584,7 @@ export function WatchlistContent({
                 />
               </div>
               <div className="wl-add-hint">
-                Enter symbols separated by commas to add to your portfolio.
+                Enter Companies separated by commas to add to your Watchlist.
               </div>
               {addSuggestions.length > 0 && (
                 <div className="wl-add-suggestions">
