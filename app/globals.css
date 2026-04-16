@@ -1601,6 +1601,46 @@ input, select { font-family: var(--font); }
 .crt-change.pos { color: var(--c-pos); }
 .crt-change.neg { color: var(--c-neg); }
 
+/* ===== COMPANY RANKING TABLE — SPARKLINE COLUMN ===== */
+.crt-th-trend { text-align: center; width: 70px; }
+.crt-td-trend { text-align: center; }
+.crt-count-bar-wrap { max-width: 80px; }
+
+.crt-sparkline {
+  display: block;
+  overflow: visible;
+}
+.crt-sparkline-line {
+  fill: none;
+  stroke: var(--c-accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.crt-sparkline-dot {
+  fill: var(--c-accent);
+}
+
+/* ===== MARKET NEWS FILTER BAR ===== */
+.mn-filter-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.mn-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.mn-filter-field--keyword {
+  min-width: 200px;
+}
+.mn-filter-field--period {
+  min-width: 260px;
+}
+
 /* ===== GEO MAP ===== */
 .insight-block--map {
   min-height: 320px;
@@ -3955,7 +3995,7 @@ input, select { font-family: var(--font); }
 .cp-fin-metric-value.neg { color: var(--c-neg); }
 
 .cp-fin-metric-note {
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 400;
   color: var(--c-text-4);
   margin-top: 1px;
