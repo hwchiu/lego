@@ -93,6 +93,7 @@ export default function NewsCard({ item }: NewsCardProps) {
       </div>
       <div className="news-card-source">{item.source}</div>
       <h3 className="news-card-title">{item.title}</h3>
+      {item.content && <p className="news-card-content">{item.content}</p>}
       <div className="news-card-meta">
         <div className="news-card-tags">
           {item.tags.map((tag) => (
