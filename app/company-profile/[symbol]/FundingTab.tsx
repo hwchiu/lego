@@ -94,7 +94,7 @@ function FundingPanel({ symbol }: { symbol: string }) {
     .sort((a, b) => b.publ_dt.localeCompare(a.publ_dt));
 
   // Build chart data: convert money_raised_usd to millions for chart compatibility
-  const chartDeals = records.map((r) => ({
+  const chartDataPoints = records.map((r) => ({
     date: r.publ_dt.slice(0, 7), // "YYYY-MM"
     valueM: r.money_raised_usd != null ? r.money_raised_usd / 1_000_000 : null,
   }));
@@ -122,7 +122,7 @@ function FundingPanel({ symbol }: { symbol: string }) {
       {/* ── Line chart ── */}
       <div className="aapl-ma-chart-section">
         <div className="aapl-ma-section-title">{companyName} — Annual Funding Amount (USD $M)</div>
-        <FundingLineChartNivo deals={chartDeals} selectedYear={selectedYear} onYearClick={handleYearClick} />
+        <FundingLineChartNivo deals={chartDataPoints} selectedYear={selectedYear} onYearClick={handleYearClick} />
       </div>
 
       {/* ── Table ── */}

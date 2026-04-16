@@ -637,8 +637,9 @@ export function FundingLineChartNivo({ deals, selectedYear, onYearClick }: Fundi
     return (
       <g>
         {points.map((point) => {
+          if (point.data.y == null) return null;
           const val = Number(point.data.y);
-          if (val == null || isNaN(val)) return null;
+          if (isNaN(val)) return null;
           return (
             <text
               key={point.id}
