@@ -91,7 +91,7 @@ function getInvestName(coCd: string): string {
   return match?.invest_name ?? coCd;
 }
 
-// ── AAPL Investment Panel ──────────────────────────────────────────────────────
+// ── Company Investment Panel ───────────────────────────────────────────────────
 
 const CHART_START_YEAR = 2012;
 const CHART_END_YEAR = 2026;
