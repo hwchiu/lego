@@ -1694,8 +1694,8 @@ input, select { font-family: var(--font); }
 }
 
 .chr-card:hover {
-  border-color: var(--c-accent);
-  box-shadow: 0 2px 8px rgba(79, 195, 247, 0.18);
+  border-color: #bf3030;
+  box-shadow: 0 2px 8px rgba(191, 48, 48, 0.15);
 }
 
 .chr-card-top {
@@ -1738,7 +1738,7 @@ input, select { font-family: var(--font); }
 .chr-count-num {
   font-size: 22px;
   font-weight: 800;
-  color: var(--c-accent);
+  color: #bf3030;
   line-height: 1;
 }
 
@@ -1760,14 +1760,14 @@ input, select { font-family: var(--font); }
 
 .chr-sparkline-line {
   fill: none;
-  stroke: var(--c-accent);
+  stroke: #bf3030;
   stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .chr-sparkline-dot {
-  fill: var(--c-accent);
+  fill: #bf3030;
 }
 
 .chr-sparkline-flat {
