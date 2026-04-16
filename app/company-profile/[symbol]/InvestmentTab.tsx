@@ -25,6 +25,28 @@ type Region =
   | 'Middle East & Africa'
   | 'South America';
 
+interface InvestmentRaw {
+  org_url: string;
+  fund_type: string;
+  fund_amount: number | null;
+  fund_amount_curr: string;
+  money_raised_curr: string;
+  trans_name: string;
+  fund_amount_usd: number | null;
+  co_cd: string;
+  update_dt: string;
+  data_type: string;
+  publ_dt: string;
+  org_catg: string | null;
+  create_dt: string;
+  money_raised_usd: number | null;
+  trans_name_url: string;
+  org_name: string;
+  money_raised: number | null;
+  invest_name: string;
+  invest_num: string | null;
+}
+
 interface InvestmentDeal {
   date: string;
   investedCompany: string;
@@ -37,10 +59,26 @@ interface InvestmentDeal {
 
 // ── Parse Apple investment data from JSON ────────────────────────────────────
 
+function mapRawToDeal(raw: InvestmentRaw): InvestmentDeal {
+  // publ_dt format: "YYYY-MM-DD HH:MM:SS.s" → extract "YYYY-MM-DD"
+  const datePart = raw.publ_dt.slice(0, 10);
+  return {
+    date: datePart,
+    investedCompany: raw.org_name,
+    categories: raw.org_catg ?? '',
+    round: raw.fund_type,
+    // money_raised_usd is in raw USD → convert to millions for display
+    valueM: raw.money_raised_usd != null ? raw.money_raised_usd / 1000000 : null,
+    investorsNum: raw.invest_num != null ? parseInt(raw.invest_num, 10) : null,
+    url: raw.trans_name_url,
+  };
+}
+
 let _aaplInvestments: InvestmentDeal[] | null = null;
 function getAAPLInvestments(): InvestmentDeal[] {
   if (!_aaplInvestments) {
-    _aaplInvestments = (investmentData as { investments: InvestmentDeal[] }).investments;
+    const rawData = investmentData as InvestmentRaw[];
+    _aaplInvestments = rawData.map(mapRawToDeal);
   }
   return _aaplInvestments;
 }
