@@ -55,7 +55,7 @@ const USD_TO_MILLIONS = 1_000_000;
 
 function mapRawToDeal(raw: AcquisitionRaw): AcquisitionDeal {
   // publ_dt format: "YYYY-MM-DD HH:MM:SS.s" → extract "YYYY-MM-DD"
-  const datePart = raw.publ_dt.slice(0, 10);
+  const datePart = raw.publ_dt ? raw.publ_dt.slice(0, 10) : '';
   return {
     date: datePart,
     acquiredCompany: raw.target_name,
@@ -69,11 +69,9 @@ const _acquisitionCache = new Map<string, AcquisitionDeal[]>();
 function getAcquisitions(coCd: string): AcquisitionDeal[] {
   if (!_acquisitionCache.has(coCd)) {
     const rawData = acquisitionData as AcquisitionRaw[];
-    const companyMaster = getCompanyByCode(coCd);
-    const companyShortName = companyMaster?.CO_SHORT_NAME ?? coCd;
     _acquisitionCache.set(
       coCd,
-      rawData.filter((r) => r.acq_name === companyShortName).map(mapRawToDeal),
+      rawData.filter((r) => r.co_cd === coCd).map(mapRawToDeal),
     );
   }
   return _acquisitionCache.get(coCd)!;
