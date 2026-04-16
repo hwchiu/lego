@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import acquisitionData from '@/content/apple-acquisition.json';
+import { getCompanyByCode } from '@/app/data/companyMaster';
 
 const AcquisitionBarLineChartNivo = dynamic(
   () => import('./InvestmentNivoCharts').then((m) => m.AcquisitionBarLineChartNivo),
@@ -20,6 +21,26 @@ type Region =
   | 'Middle East & Africa'
   | 'South America';
 
+/** Raw record shape from the JSON data file */
+interface AcquisitionRaw {
+  price_usd: number | null;
+  target_name: string;
+  target_url: string | null;
+  acq_name: string;
+  publ_dt_prcsn: string | null;
+  trans_name: string | null;
+  price_curr: string | null;
+  acq_url: string;
+  co_cd: string | null;
+  price: number | null;
+  acq_catg: string;
+  update_dt: string | null;
+  publ_dt: string;
+  create_dt: string | null;
+  trans_name_url: string | null;
+}
+
+/** Display-friendly deal record used by chart and table */
 interface AcquisitionDeal {
   date: string;
   acquiredCompany: string;
@@ -28,14 +49,40 @@ interface AcquisitionDeal {
   url: string;
 }
 
-// ── Parse Apple acquisition data from JSON ────────────────────────────────────
+// ── Parse acquisition data from JSON, filtered by co_cd ──────────────────────
 
-let _aaplAcqDeals: AcquisitionDeal[] | null = null;
-function getAAPLAcquisitions(): AcquisitionDeal[] {
-  if (!_aaplAcqDeals) {
-    _aaplAcqDeals = (acquisitionData as { acquisitions: AcquisitionDeal[] }).acquisitions;
+const USD_TO_MILLIONS = 1_000_000;
+
+function mapRawToDeal(raw: AcquisitionRaw): AcquisitionDeal {
+  // publ_dt format: "YYYY-MM-DD HH:MM:SS.s" → extract "YYYY-MM-DD"
+  const datePart = raw.publ_dt.slice(0, 10);
+  return {
+    date: datePart,
+    acquiredCompany: raw.target_name,
+    categories: raw.acq_catg,
+    valueM: raw.price_usd != null ? raw.price_usd / USD_TO_MILLIONS : null,
+    url: raw.acq_url,
+  };
+}
+
+const _acquisitionCache = new Map<string, AcquisitionDeal[]>();
+function getAcquisitions(coCd: string): AcquisitionDeal[] {
+  if (!_acquisitionCache.has(coCd)) {
+    const rawData = acquisitionData as AcquisitionRaw[];
+    const companyMaster = getCompanyByCode(coCd);
+    const companyShortName = companyMaster?.CO_SHORT_NAME ?? coCd;
+    _acquisitionCache.set(
+      coCd,
+      rawData.filter((r) => r.acq_name === companyShortName).map(mapRawToDeal),
+    );
   }
-  return _aaplAcqDeals;
+  return _acquisitionCache.get(coCd)!;
+}
+
+/** Get the display name for a given co_cd. */
+function getAcqDisplayName(coCd: string): string {
+  const companyMaster = getCompanyByCode(coCd);
+  return companyMaster?.CO_NAME ?? coCd;
 }
 
 // ── Stacked Bar + Line Chart ──────────────────────────────────────────────────
@@ -241,7 +288,7 @@ function AcquisitionBarLineChart({ deals }: { deals: AcquisitionDeal[] }) {
   );
 }
 
-// ── AAPL Acquisition Panel ────────────────────────────────────────────────────
+// ── Company Acquisition Panel ─────────────────────────────────────────────────
 
 function ExternalLinkIcon() {
   return (
@@ -252,8 +299,9 @@ function ExternalLinkIcon() {
   );
 }
 
-function AAPLAcquisitionPanel() {
-  const deals = getAAPLAcquisitions();
+function CompanyAcquisitionPanel({ symbol }: { symbol: string }) {
+  const deals = getAcquisitions(symbol);
+  const companyName = getAcqDisplayName(symbol);
   const allCategories = [...new Set(deals.map((d) => d.categories))].sort();
 
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
@@ -322,7 +370,7 @@ function AAPLAcquisitionPanel() {
       {/* ── Bar + Line chart ── */}
       <div className="aapl-ma-chart-section">
         <div className="aapl-ma-section-title">
-          Apple Inc. — Annual Acquisition Activity ({CHART_START_YEAR}–{CHART_END_YEAR})
+          {companyName} — Annual Acquisition Activity ({CHART_START_YEAR}–{CHART_END_YEAR})
           {selectedCategories.size > 0 && (
             <span className="aapl-ma-filter-note"> · Filtered: {[...selectedCategories].join(', ')}</span>
           )}
@@ -774,9 +822,10 @@ export default function AcquisitionTab({ symbol }: AcquisitionTabProps) {
   const [activeSection, setActiveSection] = useState<MASection>('number-value');
   const [activeRegion, setActiveRegion] = useState<Region>('Worldwide');
 
-  // AAPL gets a dedicated panel with industry filter, bar chart, and table
-  if (symbol === 'AAPL') {
-    return <AAPLAcquisitionPanel />;
+  // Companies with acquisition data get the dedicated panel with industry filter, bar chart, and table
+  const deals = getAcquisitions(symbol);
+  if (deals.length > 0) {
+    return <CompanyAcquisitionPanel symbol={symbol} />;
   }
 
   return (
