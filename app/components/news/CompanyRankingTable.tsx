@@ -1,32 +1,87 @@
 'use client';
 
+import { useRef } from 'react';
 import { newsItems, type NewsCategory } from '@/app/data/news';
-import rawContent from '@/content/company-changes.md';
-import { extractJson } from '@/app/lib/parseContent';
 
-// Compute top-5 companies by mention count, optionally filtered by category
-function computeTopCompanies(category: NewsCategory = 'all') {
-  const filtered = category === 'all' ? newsItems : newsItems.filter((n) => n.category === category);
-  const countMap: Record<string, { name: string; count: number }> = {};
-  for (const item of filtered) {
-    for (const tag of item.tags) {
-      if (!countMap[tag.symbol]) {
-        countMap[tag.symbol] = { name: tag.name, count: 0 };
-      }
-      countMap[tag.symbol].count += 1;
-    }
-  }
-  return Object.entries(countMap)
-    .map(([symbol, { name, count }]) => ({ symbol, name, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
+const SPARKLINE_DAYS = 7;
+// Use end-of-day April 2 so all same-day articles are included
+const NOW_REF = new Date('2026-04-03T00:00:00+08:00').getTime();
+const DAY_MS = 86_400_000;
+
+interface CompanyData {
+  rank: number;
+  symbol: string;
+  name: string;
+  totalMentions: number;
+  dailyCounts: number[]; // length SPARKLINE_DAYS, index 0 = oldest, last = most recent
 }
 
-// Seeded mock changes loaded from markdown (one per company rank slot)
-const MOCK_CHANGES: number[] = extractJson<number[]>(rawContent);
+function computeTopCompanies(category: NewsCategory = 'all'): CompanyData[] {
+  const filtered =
+    category === 'all' ? newsItems : newsItems.filter((n) => n.category === category);
 
-function getMockChange(index: number): number {
-  return MOCK_CHANGES[index % MOCK_CHANGES.length];
+  const map: Record<string, { name: string; total: number; daily: number[] }> = {};
+
+  for (const item of filtered) {
+    const daysAgo = Math.floor((NOW_REF - item.publishedAt.getTime()) / DAY_MS);
+    const dayIndex = SPARKLINE_DAYS - 1 - Math.min(Math.max(0, daysAgo), SPARKLINE_DAYS - 1);
+
+    for (const tag of item.tags) {
+      if (!map[tag.symbol]) {
+        map[tag.symbol] = { name: tag.name, total: 0, daily: new Array(SPARKLINE_DAYS).fill(0) };
+      }
+      map[tag.symbol].total += 1;
+      if (daysAgo >= 0 && daysAgo < SPARKLINE_DAYS) {
+        map[tag.symbol].daily[dayIndex] += 1;
+      }
+    }
+  }
+
+  return Object.entries(map)
+    .map(([symbol, { name, total, daily }]) => ({
+      symbol,
+      name,
+      totalMentions: total,
+      dailyCounts: daily,
+    }))
+    .sort((a, b) => b.totalMentions - a.totalMentions)
+    .map((co, i) => ({ ...co, rank: i + 1 }));
+}
+
+interface SparklineProps {
+  data: number[];
+  width?: number;
+  height?: number;
+}
+
+function Sparkline({ data, width = 84, height = 38 }: SparklineProps) {
+  const safeData = data.map((d) => (typeof d === 'number' && isFinite(d) ? d : 0));
+  const allZero = safeData.every((d) => d === 0);
+  if (allZero) {
+    return (
+      <svg width={width} height={height} className="chr-sparkline">
+        <line x1={0} y1={height / 2} x2={width} y2={height / 2} className="chr-sparkline-flat" />
+      </svg>
+    );
+  }
+
+  const max = Math.max(...safeData, 1);
+  const n = safeData.length;
+  const pts = safeData.map((v, i) => {
+    const x = n > 1 ? (i / (n - 1)) * width : width / 2;
+    const y = height - (v / max) * (height - 8) - 4;
+    return { x, y };
+  });
+
+  const polyPoints = pts.map(({ x, y }) => `${x},${y}`).join(' ');
+  const last = pts[pts.length - 1];
+
+  return (
+    <svg width={width} height={height} className="chr-sparkline">
+      <polyline points={polyPoints} className="chr-sparkline-line" />
+      <circle cx={last.x} cy={last.y} r={2.5} className="chr-sparkline-dot" />
+    </svg>
+  );
 }
 
 interface CompanyRankingTableProps {
@@ -35,52 +90,68 @@ interface CompanyRankingTableProps {
 
 export default function CompanyRankingTable({ activeCategory = 'all' }: CompanyRankingTableProps) {
   const companies = computeTopCompanies(activeCategory);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  function scroll(dir: 'left' | 'right') {
+    if (!scrollRef.current) return;
+    scrollRef.current.scrollBy({ left: dir === 'left' ? -156 : 156, behavior: 'smooth' });
+  }
 
   return (
-    <div className="insight-block">
-      <div className="insight-block-title">
-        Company Heat Ranking
+    <div className="chr-root">
+      <div className="chr-header">
+        <span className="insight-block-title">Company Heat Ranking</span>
+        <span className="chr-subtitle">Weekly mentions · Top {companies.length}</span>
       </div>
-      <div className="company-rank-table-wrap">
-      <table className="company-rank-table">
-        <thead>
-          <tr>
-            <th className="crt-th crt-th-no">#No</th>
-            <th className="crt-th crt-th-company">Symbol</th>
-            <th className="crt-th crt-th-num">Mentions</th>
-            <th className="crt-th crt-th-num crt-th-change">Change</th>
-          </tr>
-        </thead>
-        <tbody>
-          {companies.map((co, idx) => {
-            const change = getMockChange(idx);
-            const isPos = change >= 0;
-            return (
-              <tr key={co.symbol} className="crt-row">
-                <td className="crt-td crt-td-no">{idx + 1}</td>
-                <td className="crt-td">
-                  <div className="crt-company-symbol">{co.symbol}</div>
-                  <div className="crt-company-name">{co.name}</div>
-                </td>
-                <td className="crt-td crt-td-num">
-                  <div className="crt-count-bar-wrap">
-                    <div
-                      className="crt-count-bar"
-                      style={{ width: `${(co.count / companies[0].count) * 100}%` }}
-                    />
-                    <span className="crt-count-value">{co.count}</span>
-                  </div>
-                </td>
-                <td className="crt-td crt-td-num crt-td-change">
-                  <span className={isPos ? 'crt-change pos' : 'crt-change neg'}>
-                    {isPos ? '▲' : '▼'} {Math.abs(change).toFixed(1)}%
-                  </span>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <div className="chr-carousel-wrap">
+        <button
+          className="chr-nav-btn"
+          onClick={() => scroll('left')}
+          aria-label="Scroll left"
+        >
+          <svg viewBox="0 0 14 14" width="14" height="14" fill="none" aria-hidden="true">
+            <path
+              d="M9 2L4 7L9 12"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+        <div className="chr-track" ref={scrollRef}>
+          {companies.map((co) => (
+            <div key={co.symbol} className="chr-card">
+              <div className="chr-card-top">
+                <span className="chr-card-rank">#{co.rank}</span>
+                <span className="chr-card-symbol">{co.symbol}</span>
+              </div>
+              <div className="chr-card-name">{co.name}</div>
+              <div className="chr-card-count">
+                <span className="chr-count-num">{co.totalMentions}</span>
+                <span className="chr-count-label">mentions</span>
+              </div>
+              <div className="chr-card-sparkline">
+                <Sparkline data={co.dailyCounts} />
+              </div>
+            </div>
+          ))}
+        </div>
+        <button
+          className="chr-nav-btn"
+          onClick={() => scroll('right')}
+          aria-label="Scroll right"
+        >
+          <svg viewBox="0 0 14 14" width="14" height="14" fill="none" aria-hidden="true">
+            <path
+              d="M5 2L10 7L5 12"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
       </div>
     </div>
   );

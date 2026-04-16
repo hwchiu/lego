@@ -1601,6 +1601,203 @@ input, select { font-family: var(--font); }
 .crt-change.pos { color: var(--c-pos); }
 .crt-change.neg { color: var(--c-neg); }
 
+/* ===== COMPANY RANKING TABLE — SPARKLINE COLUMN ===== */
+.crt-th-trend { text-align: center; width: 70px; }
+.crt-td-trend { text-align: center; }
+.crt-count-bar-wrap { max-width: 80px; }
+
+.crt-sparkline {
+  display: block;
+  overflow: visible;
+}
+.crt-sparkline-line {
+  fill: none;
+  stroke: var(--c-accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.crt-sparkline-dot {
+  fill: var(--c-accent);
+}
+
+/* ===== MARKET NEWS FILTER BAR ===== */
+.mn-filter-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.mn-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.mn-filter-field--keyword {
+  min-width: 200px;
+}
+.mn-filter-field--period {
+  min-width: 260px;
+}
+
+/* ===== COMPANY HEAT RANKING CAROUSEL ===== */
+.chr-root {
+  width: 100%;
+}
+
+.chr-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.chr-subtitle {
+  font-size: 11px;
+  color: var(--c-text-4);
+  font-weight: 400;
+}
+
+.chr-carousel-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chr-track {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  flex: 1;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 4px 0;
+}
+
+.chr-track::-webkit-scrollbar {
+  display: none;
+}
+
+.chr-card {
+  flex: 0 0 130px;
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: box-shadow 0.15s, border-color 0.15s;
+  min-width: 0;
+}
+
+.chr-card:hover {
+  border-color: #bf3030;
+  box-shadow: 0 2px 8px rgba(191, 48, 48, 0.15);
+}
+
+.chr-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chr-card-rank {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--c-text-4);
+  background: var(--c-bg);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+.chr-card-symbol {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--c-text);
+  letter-spacing: 0.03em;
+}
+
+.chr-card-name {
+  font-size: 10.5px;
+  color: var(--c-text-4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chr-card-count {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.chr-count-num {
+  font-size: 22px;
+  font-weight: 800;
+  color: #bf3030;
+  line-height: 1;
+}
+
+.chr-count-label {
+  font-size: 10px;
+  color: var(--c-text-4);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.chr-card-sparkline {
+  margin-top: 6px;
+}
+
+.chr-sparkline {
+  display: block;
+  overflow: visible;
+}
+
+.chr-sparkline-line {
+  fill: none;
+  stroke: #bf3030;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chr-sparkline-dot {
+  fill: #bf3030;
+}
+
+.chr-sparkline-flat {
+  stroke: var(--c-border);
+  stroke-width: 1;
+  stroke-dasharray: 3 2;
+}
+
+.chr-nav-btn {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--c-border);
+  border-radius: 50%;
+  background: var(--c-white);
+  color: var(--c-text-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  padding: 0;
+}
+
+.chr-nav-btn:hover {
+  background: var(--c-bg);
+  border-color: var(--c-accent);
+  color: var(--c-accent);
+}
+
 /* ===== GEO MAP ===== */
 .insight-block--map {
   min-height: 320px;
@@ -3955,7 +4152,7 @@ input, select { font-family: var(--font); }
 .cp-fin-metric-value.neg { color: var(--c-neg); }
 
 .cp-fin-metric-note {
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 400;
   color: var(--c-text-4);
   margin-top: 1px;
