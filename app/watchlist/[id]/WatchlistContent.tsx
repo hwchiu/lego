@@ -841,10 +841,9 @@ export function WatchlistContent({
   }
 
   // Add Symbol search suggestions
-  const addSuggestionQuery = addSymbolQuery.split(',').pop()?.trim() ?? '';
-  const alreadyEnteredSymbols = addSymbolQuery
-    .split(',')
-    .slice(0, -1)
+  const addSymbolParts = addSymbolQuery.split(',');
+  const addSuggestionQuery = (addSymbolParts.pop() ?? '').trim();
+  const alreadyEnteredSymbols = addSymbolParts
     .map((s) => s.trim().toUpperCase())
     .filter(Boolean);
   const addSuggestions =
