@@ -84,7 +84,7 @@
 ## Entity Data
 
 > Auto-updated by `scripts/fetch-stock-data.mjs`.
-> Last updated: 2026-04-15T22:10:09.007Z
+> Last updated: 2026-04-16T02:14:14.138Z
 
 Full holding-table data for every tracked symbol. User-added symbols are persisted in `localStorage` under the key `wl-extra-holdings`.
 
@@ -304,11 +304,11 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "AVGO": {
     "symbol": "AVGO",
     "price": 396.72,
-    "change": 15.99,
+    "change": 16,
     "changePct": 4.2,
     "shares": 25,
     "cost": 620.3,
-    "todayGain": 399.75,
+    "todayGain": 400,
     "todayGainPct": 4.2,
     "revenue": "$68.28B",
     "revenueQoQ": "N/A",
