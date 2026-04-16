@@ -353,10 +353,9 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
             <div className="cp-news-section">
               <div className="cp-news-section-header">
                 <span className="section-eyebrow">Latest News</span>
-                <span className="cp-news-personalized-badge">Personalized</span>
               </div>
               <div className="cp-news-grid">
-                {newsItems.slice(0, 6).map((item) => (
+                {[...newsItems].sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime()).slice(0, 6).map((item) => (
                   <NewsCard key={item.id} item={item} />
                 ))}
               </div>
