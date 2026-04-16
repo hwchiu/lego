@@ -992,18 +992,31 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                       {/* Keywords */}
                       <div className="cp-news-filter-field">
                         <label className="cp-news-filter-label">Keywords</label>
-                        <div className="cp-news-filter-input-wrap">
+                        <div className="cp-irt-search-box">
+                          <span className="cp-irt-search-icon">
+                            <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
+                              <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.4" />
+                              <path d="M9.5 9.5L13 13" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                            </svg>
+                          </span>
                           <input
                             type="text"
-                            className="cp-news-filter-input"
+                            className="cp-irt-search-input"
                             placeholder="Search keywords… (Enter)"
                             value={newsKeyword}
                             onChange={(e) => setNewsKeyword(e.target.value)}
                             onKeyDown={handleKeywordsKeyDown}
                           />
                           {newsKeywordApplied && (
-                            <button className="cp-news-filter-clear-btn" onClick={() => { setNewsKeyword(''); setNewsKeywordApplied(''); setNewsPage(1); }} aria-label="Clear keyword">
-                              <svg viewBox="0 0 12 12" fill="none" width="10" height="10"><path d="M2 2L10 10M10 2L2 10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
+                            <button
+                              className="cp-irt-search-clear"
+                              onClick={() => { setNewsKeyword(''); setNewsKeywordApplied(''); setNewsPage(1); }}
+                              title="Clear search"
+                              aria-label="Clear keyword"
+                            >
+                              <svg viewBox="0 0 12 12" fill="none" width="10" height="10">
+                                <path d="M2 2L10 10M10 2L2 10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                              </svg>
                             </button>
                           )}
                         </div>
