@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import investmentData from '@/content/apple-investment.json';
+import investmentData from '@/content/investment.json';
 
 const InvestmentBarLineChartNivo = dynamic(
   () => import('./InvestmentNivoCharts').then((m) => m.InvestmentBarLineChartNivo),
@@ -57,7 +57,7 @@ interface InvestmentDeal {
   url: string;
 }
 
-// ── Parse Apple investment data from JSON ────────────────────────────────────
+// ── Parse investment data from JSON, filtered by co_cd ───────────────────────
 
 const USD_TO_MILLIONS = 1_000_000;
 
@@ -75,13 +75,20 @@ function mapRawToDeal(raw: InvestmentRaw): InvestmentDeal {
   };
 }
 
-let _aaplInvestments: InvestmentDeal[] | null = null;
-function getAAPLInvestments(): InvestmentDeal[] {
-  if (!_aaplInvestments) {
+const _investmentCache = new Map<string, InvestmentDeal[]>();
+function getInvestments(coCd: string): InvestmentDeal[] {
+  if (!_investmentCache.has(coCd)) {
     const rawData = investmentData as InvestmentRaw[];
-    _aaplInvestments = rawData.map(mapRawToDeal);
+    _investmentCache.set(coCd, rawData.filter((r) => r.co_cd === coCd).map(mapRawToDeal));
   }
-  return _aaplInvestments;
+  return _investmentCache.get(coCd)!;
+}
+
+/** Get the invest_name for a given co_cd from the first matching record. */
+function getInvestName(coCd: string): string {
+  const rawData = investmentData as InvestmentRaw[];
+  const match = rawData.find((r) => r.co_cd === coCd);
+  return match?.invest_name ?? coCd;
 }
 
 // ── AAPL Investment Panel ──────────────────────────────────────────────────────
@@ -98,8 +105,9 @@ function ExternalLinkIcon() {
   );
 }
 
-function AAPLInvestmentPanel() {
-  const deals = getAAPLInvestments();
+function CompanyInvestmentPanel({ symbol }: { symbol: string }) {
+  const deals = getInvestments(symbol);
+  const companyName = getInvestName(symbol);
   const allCategories = [...new Set(deals.map((d) => d.categories))].sort();
 
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
@@ -168,7 +176,7 @@ function AAPLInvestmentPanel() {
       {/* ── Bar + Line chart ── */}
       <div className="aapl-ma-chart-section">
         <div className="aapl-ma-section-title">
-          Apple Inc. — Annual Investment Activity ({CHART_START_YEAR}–{CHART_END_YEAR})
+          {companyName} — Annual Investment Activity ({CHART_START_YEAR}–{CHART_END_YEAR})
           {selectedCategories.size > 0 && (
             <span className="aapl-ma-filter-note"> · Filtered: {[...selectedCategories].join(', ')}</span>
           )}
@@ -574,9 +582,11 @@ export default function InvestmentTab({ symbol }: InvestmentTabProps) {
   const [activeSection, setActiveSection] = useState<MASection>('number-value');
   const [activeRegion, setActiveRegion] = useState<Region>('Worldwide');
 
-  // AAPL gets a dedicated panel with industry filter, bar chart, and table
-  if (symbol === 'AAPL') {
-    return <AAPLInvestmentPanel />;
+  // Show the company investment panel filtered by co_cd for companies with data;
+  // fall back to generic M&A overview otherwise.
+  const companyDeals = getInvestments(symbol);
+  if (companyDeals.length > 0) {
+    return <CompanyInvestmentPanel symbol={symbol} />;
   }
 
   return (
