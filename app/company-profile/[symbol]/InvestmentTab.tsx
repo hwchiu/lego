@@ -59,6 +59,8 @@ interface InvestmentDeal {
 
 // ── Parse Apple investment data from JSON ────────────────────────────────────
 
+const USD_TO_MILLIONS = 1_000_000;
+
 function mapRawToDeal(raw: InvestmentRaw): InvestmentDeal {
   // publ_dt format: "YYYY-MM-DD HH:MM:SS.s" → extract "YYYY-MM-DD"
   const datePart = raw.publ_dt.slice(0, 10);
@@ -67,8 +69,7 @@ function mapRawToDeal(raw: InvestmentRaw): InvestmentDeal {
     investedCompany: raw.org_name,
     categories: raw.org_catg ?? '',
     round: raw.fund_type,
-    // money_raised_usd is in raw USD → convert to millions for display
-    valueM: raw.money_raised_usd != null ? raw.money_raised_usd / 1000000 : null,
+    valueM: raw.money_raised_usd != null ? raw.money_raised_usd / USD_TO_MILLIONS : null,
     investorsNum: raw.invest_num != null ? parseInt(raw.invest_num, 10) : null,
     url: raw.trans_name_url,
   };
