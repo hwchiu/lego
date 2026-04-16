@@ -70,6 +70,7 @@ interface DoiRevenuePoint {
 }
 
 interface CompanyFinancialData {
+  currentCalendarQuarter: string;
   currentQtr: {
     label: string;
     revenue: number;
@@ -77,6 +78,7 @@ interface CompanyFinancialData {
     revenueQoQ: number;
     grossMargin: number;
     grossMarginNote: string;
+    lastQuarterRevenue: number;
     doi: number;
   };
   nextQtr: {
@@ -815,6 +817,16 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
               </div>
             </div>
 
+            {/* ── Current Calendar Quarter card ── */}
+            {finData && (
+              <div className="cp-quarter-card-row">
+                <div className="cp-quarter-card">
+                  <div className="cp-quarter-card-title">Current Calendar Quarter</div>
+                  <div className="cp-quarter-card-value">{finData.currentCalendarQuarter}</div>
+                </div>
+              </div>
+            )}
+
             {/* ── Navigation tabs ── */}
             <div className="cp-nav-tabs-wrap">
               <button
@@ -862,6 +874,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                       <div className="cp-fin-metric">
                         <div className="cp-fin-metric-label">Revenue ({finData.currentQtr.revenueUnit})</div>
                         <div className="cp-fin-metric-value">{finData.currentQtr.revenue.toLocaleString()}</div>
+                        <div className="cp-fin-metric-note">Last Quarter: {finData.currentQtr.lastQuarterRevenue.toLocaleString()}</div>
                       </div>
                       <div className="cp-fin-metric-sep" />
                       <div className="cp-fin-metric">
@@ -876,7 +889,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                         <div className="cp-fin-metric-value">
                           {finData.currentQtr.grossMargin}%
                         </div>
-                        <div className="cp-fin-metric-note">{finData.currentQtr.grossMarginNote}</div>
+                        <div className="cp-fin-metric-note">{finData.currentQtr.grossMarginNote}: {finData.currentQtr.lastQuarterRevenue.toLocaleString()}</div>
                       </div>
                       <div className="cp-fin-metric-sep" />
                       <div className="cp-fin-metric">

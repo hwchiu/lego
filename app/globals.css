@@ -3807,6 +3807,41 @@ input, select { font-family: var(--font); }
   border-bottom-color: #E53935;
 }
 
+/* Current Calendar Quarter card row (below breadcrumb/topbar) */
+.cp-quarter-card-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.cp-quarter-card {
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 8px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 160px;
+}
+
+.cp-quarter-card-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--c-text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.cp-quarter-card-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--c-text);
+  letter-spacing: -0.3px;
+}
+
 /* Data cards area */
 .cp-cards-area {
   display: flex;
