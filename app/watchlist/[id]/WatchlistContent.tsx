@@ -962,7 +962,7 @@ export function WatchlistContent({
       dateLabel: item.publishedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       dateMs: item.publishedAt.getTime(),
     })),
-    [filteredNewsItems, watchlistSymbolSet],
+    [filteredNewsItems],
   );
 
   const prUpdateItems = useMemo((): UpdateFeedItem[] =>
