@@ -53,6 +53,7 @@
   ],
   "financialData": {
     "NVDA": {
+      "currentCalendarQuarter": "23Q2",
       "currentQtr": {
         "label": "23Q2",
         "revenue": 13507,
@@ -60,6 +61,7 @@
         "revenueQoQ": 87.8,
         "grossMargin": 70.0,
         "grossMarginNote": "Last Quarter",
+        "lastQuarterRevenue": 7192,
         "doi": 129
       },
       "nextQtr": {
@@ -98,6 +100,7 @@
       ]
     },
     "TC": {
+      "currentCalendarQuarter": "23Q2",
       "currentQtr": {
         "label": "23Q2",
         "revenue": 15673,
@@ -105,6 +108,7 @@
         "revenueQoQ": 10.2,
         "grossMargin": 54.1,
         "grossMarginNote": "Last Quarter",
+        "lastQuarterRevenue": 16726,
         "doi": 88
       },
       "nextQtr": {
@@ -144,6 +148,7 @@
       ]
     },
     "AAPL": {
+      "currentCalendarQuarter": "23Q3",
       "currentQtr": {
         "label": "23Q3",
         "revenue": 81797,
@@ -151,6 +156,7 @@
         "revenueQoQ": -13.1,
         "grossMargin": 44.5,
         "grossMarginNote": "Last Quarter",
+        "lastQuarterRevenue": 94836,
         "doi": 6
       },
       "nextQtr": {
