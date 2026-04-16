@@ -15,21 +15,8 @@ import { useWatchlist } from '@/app/contexts/WatchlistContext';
 import { CATALOG_VIEW_CATEGORIES, CATALOG_COLUMN_LABELS } from '@/app/data/watchlistColumns';
 import { newsItems } from '@/app/data/news';
 import { pressReleases } from '@/app/data/pressReleases';
-import {
-  bondEvents,
-  dividendEvents,
-  dividendAristocratEvents,
-  dividendChampionEvents,
-  countryEvents,
-  currencyEvents,
-} from '@/app/data/eventCategories';
-import type {
-  BondEvent,
-  DividendEvent,
-  DividendGrowthEvent,
-  CountryEvent,
-  CurrencyEvent,
-} from '@/app/data/eventCategories';
+import { CORP_EVENT_CATEGORY_MAP } from '@/app/data/corpEvents';
+import type { CorpEvent } from '@/app/data/corpEvents';
 
 // ── Custom View types ─────────────────────────────────────────────────────────
 interface CustomView {
@@ -992,106 +979,20 @@ export function WatchlistContent({
   const eventUpdateItems = useMemo((): UpdateFeedItem[] => {
     const items: UpdateFeedItem[] = [];
 
-    Object.entries(bondEvents).forEach(([date, evts]) => {
-      evts.forEach((evt, i) => {
-        const e = evt as BondEvent;
-        if (!watchlistSymbolSet.has(e.symbol)) return;
-        items.push({
-          id: `bond-${date}-${i}`,
-          kind: 'event',
-          title: `${e.eventType}: ${e.company}`,
-          source: 'Bond Event',
-          displaySymbols: [e.symbol],
-          dateLabel: date,
-          dateMs: parseDateKey(date),
-          description: e.description,
-        });
-      });
-    });
-
-    Object.entries(dividendEvents).forEach(([date, evts]) => {
-      evts.forEach((evt, i) => {
-        const e = evt as DividendEvent;
-        if (!watchlistSymbolSet.has(e.symbol)) return;
-        items.push({
-          id: `div-${date}-${i}`,
-          kind: 'event',
-          title: `Dividend: ${e.company} — ${e.dividend}`,
-          source: 'Dividend',
-          displaySymbols: [e.symbol],
-          dateLabel: date,
-          dateMs: parseDateKey(date),
-          description: `Ex-Date: ${e.exDate} · Pay Date: ${e.payDate} · Yield: ${e.yield}`,
-        });
-      });
-    });
-
-    Object.entries(dividendAristocratEvents).forEach(([date, evts]) => {
-      evts.forEach((evt, i) => {
-        const e = evt as DividendGrowthEvent;
-        if (!watchlistSymbolSet.has(e.symbol)) return;
-        items.push({
-          id: `diva-${date}-${i}`,
-          kind: 'event',
-          title: `Dividend Aristocrat: ${e.company} — ${e.dividend}`,
-          source: 'Dividend Aristocrat',
-          displaySymbols: [e.symbol],
-          dateLabel: date,
-          dateMs: parseDateKey(date),
-          description: `Ex-Date: ${e.exDate} · Consecutive Years: ${e.consecutiveYears} · Annual Growth: ${e.annualGrowth}`,
-        });
-      });
-    });
-
-    Object.entries(dividendChampionEvents).forEach(([date, evts]) => {
-      evts.forEach((evt, i) => {
-        const e = evt as DividendGrowthEvent;
-        if (!watchlistSymbolSet.has(e.symbol)) return;
-        items.push({
-          id: `divc-${date}-${i}`,
-          kind: 'event',
-          title: `Dividend Champion: ${e.company} — ${e.dividend}`,
-          source: 'Dividend Champion',
-          displaySymbols: [e.symbol],
-          dateLabel: date,
-          dateMs: parseDateKey(date),
-          description: `Ex-Date: ${e.exDate} · Annual Growth: ${e.annualGrowth}`,
-        });
-      });
-    });
-
-    Object.entries(countryEvents).forEach(([date, evts]) => {
-      evts.forEach((evt, i) => {
-        const e = evt as CountryEvent;
-        const matching = e.affectedCompanies.filter((s) => watchlistSymbolSet.has(s));
-        if (matching.length === 0) return;
-        items.push({
-          id: `country-${date}-${i}`,
-          kind: 'event',
-          title: e.title,
-          source: `Country Event · ${e.country}`,
-          displaySymbols: matching,
-          dateLabel: date,
-          dateMs: parseDateKey(date),
-          description: e.description,
-        });
-      });
-    });
-
-    Object.entries(currencyEvents).forEach(([date, evts]) => {
-      evts.forEach((evt, i) => {
-        const e = evt as CurrencyEvent;
-        const matching = e.affectedCompanies.filter((s) => watchlistSymbolSet.has(s));
-        if (matching.length === 0) return;
-        items.push({
-          id: `fx-${date}-${i}`,
-          kind: 'event',
-          title: `FX: ${e.pair} — ${e.rate}`,
-          source: 'Currency Event',
-          displaySymbols: matching,
-          dateLabel: date,
-          dateMs: parseDateKey(date),
-          description: e.description,
+    Object.entries(CORP_EVENT_CATEGORY_MAP).forEach(([category, dateMap]) => {
+      Object.entries(dateMap).forEach(([date, evts]) => {
+        evts.forEach((evt: CorpEvent, i: number) => {
+          if (!watchlistSymbolSet.has(evt.cellLabel)) return;
+          items.push({
+            id: `corp-${category}-${date}-${i}`,
+            kind: 'event',
+            title: `${evt.eventType}: ${evt.company}`,
+            source: evt.eventType,
+            displaySymbols: [evt.cellLabel],
+            dateLabel: evt.eventDate,
+            dateMs: new Date(evt.eventDate).getTime() || parseDateKey(date),
+            description: evt.description,
+          });
         });
       });
     });
@@ -1108,8 +1009,8 @@ export function WatchlistContent({
   const currentUpdateItems: UpdateFeedItem[] =
     feedTab === 'Latest' ? latestUpdateItems
     : feedTab === 'News' ? newsUpdateItems
-    : feedTab === 'Press Release' ? prUpdateItems
-    : eventUpdateItems;
+    : feedTab === 'Event' ? eventUpdateItems
+    : prUpdateItems;
 
   // Ref for indexes track scroll
   const indexesTrackRef = useRef<HTMLDivElement>(null);
@@ -1392,7 +1293,7 @@ export function WatchlistContent({
 
                 {/* Feed tabs */}
                 <div className="wl-feed-tabs">
-                  {(['Latest', 'News', 'Press Release', 'Event'] as const).map((t) => (
+                  {(['Latest', 'News', 'Event'] as const).map((t) => (
                     <button
                       key={t}
                       className={`wl-feed-tab${feedTab === t ? ' active' : ''}`}
@@ -1401,11 +1302,27 @@ export function WatchlistContent({
                       {t}
                     </button>
                   ))}
+                  <button
+                    className={`wl-feed-tab${feedTab === 'Press Release' ? ' active' : ''}`}
+                    onClick={() => setFeedTab('Press Release')}
+                  >
+                    Press Release
+                    <span className="wl-feed-tab-coming-soon">Coming Soon</span>
+                  </button>
                 </div>
 
                 {/* Feed list */}
                 <div className="wl-feed-list">
-                  {currentUpdateItems.length === 0 ? (
+                  {feedTab === 'Press Release' ? (
+                    <div className="wl-feed-coming-soon">
+                      <svg viewBox="0 0 24 24" fill="none" width="32" height="32" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10" stroke="#9ca3af" strokeWidth="1.5" fill="none" />
+                        <path d="M12 7v5l3 3" stroke="#9ca3af" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <span className="wl-feed-coming-soon-title">Coming Soon</span>
+                      <span className="wl-feed-coming-soon-desc">Press Release content is under development and will be available soon.</span>
+                    </div>
+                  ) : currentUpdateItems.length === 0 ? (
                     <div className="wl-feed-empty">No updates found for your watchlist companies.</div>
                   ) : (
                     currentUpdateItems.map((item, idx) => (
