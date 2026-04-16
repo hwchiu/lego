@@ -990,7 +990,7 @@ export function WatchlistContent({
             source: evt.eventType,
             displaySymbols: [evt.cellLabel],
             dateLabel: evt.eventDate,
-            dateMs: new Date(evt.eventDate).getTime() || parseDateKey(date),
+            dateMs: (() => { const t = new Date(evt.eventDate).getTime(); return isNaN(t) ? parseDateKey(date) : t; })(),
             description: evt.description,
           });
         });
