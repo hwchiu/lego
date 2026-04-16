@@ -583,6 +583,13 @@ function buildFundingYearData(deals: FundingDealMinimal[]) {
   return years.map((y) => ({ year: y, totalValueM: yearMap.get(y)! }));
 }
 
+/** Format a value in millions with $ prefix for chart labels */
+function formatChartLabel(valueM: number): string {
+  if (valueM >= 1000) return `$${(valueM / 1000).toFixed(1)}B`;
+  if (valueM >= 1) return `$${Math.round(valueM).toLocaleString()}M`;
+  return `$${valueM.toFixed(2)}M`;
+}
+
 export function FundingLineChartNivo({ deals, selectedYear, onYearClick }: FundingLineChartProps) {
   const yearData = buildFundingYearData(deals);
   if (yearData.length === 0) return null;
@@ -621,6 +628,37 @@ export function FundingLineChartNivo({ deals, selectedYear, onYearClick }: Fundi
     );
   };
 
+  // Custom layer: renders data point labels with $ prefix
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const PointLabelsLayer = (props: any) => {
+    const { points } = props as {
+      points: Array<{ id: string; x: number; y: number; data: { y: number | null } }>;
+    };
+    return (
+      <g>
+        {points.map((point) => {
+          if (point.data.y == null) return null;
+          const val = Number(point.data.y);
+          if (isNaN(val)) return null;
+          return (
+            <text
+              key={point.id}
+              x={point.x}
+              y={point.y - 10}
+              textAnchor="middle"
+              fontSize={9}
+              fontWeight={600}
+              fill="#374151"
+              pointerEvents="none"
+            >
+              {formatChartLabel(val)}
+            </text>
+          );
+        })}
+      </g>
+    );
+  };
+
   return (
     <div style={{ height: 220 }}>
       <ResponsiveLine
@@ -645,7 +683,7 @@ export function FundingLineChartNivo({ deals, selectedYear, onYearClick }: Fundi
           if (yr && yr !== 'undefined') onYearClick?.(yr === selectedYear ? null : yr);
         }}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        layers={['grid', 'markers', 'axes', HighlightLayer as any, 'areas', 'lines', 'points', 'slices', 'mesh', 'legends']}
+        layers={['grid', 'markers', 'axes', HighlightLayer as any, 'areas', 'lines', 'points', PointLabelsLayer as any, 'slices', 'mesh', 'legends']}
         axisBottom={{
           tickSize: 0,
           tickPadding: 5,

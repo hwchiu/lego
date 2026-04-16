@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import fundingData from '@/content/apple-funding.json';
+import fundingData from '@/content/funding.json';
 
 const FundingLineChartNivo = dynamic(
   () => import('./InvestmentNivoCharts').then((m) => m.FundingLineChartNivo),
@@ -20,164 +20,44 @@ type Region =
   | 'Middle East & Africa'
   | 'South America';
 
-interface FundingDeal {
-  date: string;
-  investors: string;
-  round: string;
-  numInvestors: number | null;
-  valueM: number | null;
-  url: string;
+interface FundingRecord {
+  org_url: string;
+  fund_type: string;
+  fund_amount: number | null;
+  fund_amount_curr: string;
+  money_raised_curr: string;
+  trans_name: string;
+  fund_amount_usd: number | null;
+  co_cd: string;
+  update_dt: string;
+  data_type: string;
+  publ_dt: string;
+  org_catg: string;
+  create_dt: string;
+  money_raised_usd: number | null;
+  trans_name_url: string;
+  org_name: string;
+  money_raised: number | null;
+  invest_name: string;
+  invest_num: string | null;
 }
 
-// ── Parse Apple funding data from JSON ───────────────────────────────────────
+// ── Parse funding data from JSON, filtered by co_cd ─────────────────────────
 
-let _aaplFundings: FundingDeal[] | null = null;
-function getAAPLFundings(): FundingDeal[] {
-  if (!_aaplFundings) {
-    _aaplFundings = (fundingData as { fundings: FundingDeal[] }).fundings;
-  }
-  return _aaplFundings;
+const allFundingRecords = fundingData as FundingRecord[];
+
+function getFundingsByCompany(coCd: string): FundingRecord[] {
+  return allFundingRecords.filter((r) => r.co_cd === coCd);
 }
 
-// ── Funding Line Chart ────────────────────────────────────────────────────────
+// ── Helpers ──────────────────────────────────────────────────────────────────
 
-interface YearFundingData {
-  year: number;
-  totalValueM: number;
+/** Extract YYYY-MM-DD from publ_dt string like "2022-02-16 00:00:00.0" */
+function formatDate(publDt: string): string {
+  return publDt.slice(0, 10);
 }
 
-function buildFundingYearData(deals: FundingDeal[]): YearFundingData[] {
-  const yearMap = new Map<number, number>();
-  for (const d of deals) {
-    const yr = parseInt(d.date.slice(0, 4), 10);
-    if (d.valueM != null) {
-      yearMap.set(yr, (yearMap.get(yr) ?? 0) + d.valueM);
-    }
-  }
-  const years = [...yearMap.keys()].sort((a, b) => a - b);
-  return years.map((y) => ({ year: y, totalValueM: yearMap.get(y)! }));
-}
-
-function FundingLineChart({ deals }: { deals: FundingDeal[] }) {
-  const [tooltip, setTooltip] = useState<{
-    x: number; y: number; year: number; valueM: number;
-  } | null>(null);
-
-  const yearData = buildFundingYearData(deals);
-  if (yearData.length === 0) return null;
-
-  const W = 820;
-  const H = 200;
-  const PAD = { top: 24, right: 30, bottom: 40, left: 80 };
-  const chartW = W - PAD.left - PAD.right;
-  const chartH = H - PAD.top - PAD.bottom;
-
-  const maxValue = Math.max(...yearData.map((d) => d.totalValueM), 1);
-  const valueMax = Math.ceil(maxValue / 5000) * 5000 || 5000;
-
-  const minYear = yearData[0].year;
-  const maxYear = yearData[yearData.length - 1].year;
-  const yearRange = maxYear - minYear || 1;
-
-  const points = yearData.map((d) => {
-    const x = PAD.left + ((d.year - minYear) / yearRange) * chartW;
-    const y = PAD.top + chartH - (d.totalValueM / valueMax) * chartH;
-    return { x, y, year: d.year, value: d.totalValueM };
-  });
-
-  const polyline = points.map((p) => `${p.x},${p.y}`).join(' ');
-
-  return (
-    <div style={{ position: 'relative' }}>
-      <svg
-        viewBox={`0 0 ${W} ${H}`}
-        style={{ width: '100%', height: 'auto', display: 'block' }}
-        onMouseLeave={() => setTooltip(null)}
-      >
-        {[0, 0.25, 0.5, 0.75, 1].map((t) => {
-          const y = PAD.top + chartH * (1 - t);
-          return (
-            <g key={t}>
-              <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y} stroke="#f0f0f0" strokeWidth="1" />
-              <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize="9" fill="#9ca3af">
-                {valueMax * t >= 1000 ? `$${((valueMax * t) / 1000).toFixed(0)}B` : `$${Math.round(valueMax * t)}M`}
-              </text>
-            </g>
-          );
-        })}
-
-        <text
-          x={PAD.left - 60}
-          y={PAD.top + chartH / 2}
-          textAnchor="middle"
-          fontSize="9"
-          fill="#6b7280"
-          transform={`rotate(-90, ${PAD.left - 60}, ${PAD.top + chartH / 2})`}
-        >
-          USD $M
-        </text>
-
-        {/* X-axis year labels */}
-        {yearData.map((d) => {
-          const x = PAD.left + ((d.year - minYear) / yearRange) * chartW;
-          return (
-            <text key={d.year} x={x} y={H - 6} textAnchor="middle" fontSize="9" fill="#9ca3af">
-              {d.year}
-            </text>
-          );
-        })}
-
-        <line x1={PAD.left} y1={PAD.top + chartH} x2={W - PAD.right} y2={PAD.top + chartH} stroke="#e5e7eb" strokeWidth="1" />
-
-        <polyline points={polyline} fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
-        {points.map((p) => (
-          <circle
-            key={p.year}
-            cx={p.x} cy={p.y} r="4"
-            fill="#3b82f6" stroke="#fff" strokeWidth="1.5"
-            style={{ cursor: 'pointer' }}
-            onMouseEnter={(e) => {
-              const svgEl = (e.currentTarget as SVGElement).closest('svg');
-              if (!svgEl) return;
-              const rect = svgEl.getBoundingClientRect();
-              const scaleX = rect.width / W;
-              const scaleY = rect.height / H;
-              setTooltip({ x: p.x * scaleX, y: (p.y - 8) * scaleY, year: p.year, valueM: p.value });
-            }}
-          />
-        ))}
-      </svg>
-
-      {tooltip && (
-        <div
-          style={{
-            position: 'absolute',
-            left: tooltip.x,
-            top: tooltip.y,
-            transform: 'translate(-50%, -100%)',
-            background: '#1f2937',
-            color: '#fff',
-            padding: '6px 10px',
-            borderRadius: 6,
-            fontSize: 11,
-            pointerEvents: 'none',
-            whiteSpace: 'nowrap',
-            zIndex: 10,
-          }}
-        >
-          <strong>{tooltip.year}</strong>
-          <div>
-            {tooltip.valueM >= 1000
-              ? `$${(tooltip.valueM / 1000).toFixed(1)}B`
-              : `$${tooltip.valueM.toLocaleString()}M`}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── AAPL Funding Panel ────────────────────────────────────────────────────────
+// ── Funding Panel (used for any company with funding data) ───────────────────
 
 function ExternalLinkIcon() {
   return (
@@ -188,17 +68,36 @@ function ExternalLinkIcon() {
   );
 }
 
-function AAPLFundingPanel() {
-  const deals = getAAPLFundings();
+/** Format USD value for display: ≥1B → "$X.XB", else "$X,XXXM" */
+function formatUsdValueM(valueM: number): string {
+  return valueM >= 1000
+    ? `$${(valueM / 1000).toFixed(1)}B`
+    : `$${valueM.toLocaleString()}M`;
+}
 
-  const totalFunding = deals.reduce((sum, d) => sum + (d.valueM ?? 0), 0);
+function FundingPanel({ symbol }: { symbol: string }) {
+  const records = getFundingsByCompany(symbol);
+
+  // Summary card uses fund_amount_usd (converted to millions for display)
+  const totalFundingUsd = records.reduce((sum, r) => sum + (r.fund_amount_usd ?? 0), 0);
+  const totalFundingM = totalFundingUsd / 1_000_000;
+
+  // Derive company name from first record
+  const companyName = records.length > 0 ? records[0].org_name : symbol;
 
   const [selectedYear, setSelectedYear] = useState<string | null>(null);
   const tableRef = useRef<HTMLDivElement>(null);
 
-  const sortedDeals = [...deals]
-    .filter((d) => selectedYear === null || d.date.startsWith(selectedYear))
-    .sort((a, b) => b.date.localeCompare(a.date));
+  // Filter + sort by publ_dt (newest first)
+  const sortedRecords = [...records]
+    .filter((r) => selectedYear === null || r.publ_dt.startsWith(selectedYear))
+    .sort((a, b) => b.publ_dt.localeCompare(a.publ_dt));
+
+  // Build chart data: convert money_raised_usd to millions for chart compatibility
+  const chartDataPoints = records.map((r) => ({
+    date: r.publ_dt.slice(0, 7), // "YYYY-MM"
+    valueM: r.money_raised_usd != null ? r.money_raised_usd / 1_000_000 : null,
+  }));
 
   function handleYearClick(year: string | null) {
     setSelectedYear(year);
@@ -214,24 +113,22 @@ function AAPLFundingPanel() {
         <div className="aapl-funding-total-card">
           <div className="aapl-funding-total-title">Total Funding Amount (USD $M)</div>
           <div className="aapl-funding-total-value">
-            {totalFunding >= 1000
-              ? `$${(totalFunding / 1000).toFixed(1)}B`
-              : `$${totalFunding.toLocaleString()}M`}
+            {formatUsdValueM(totalFundingM)}
           </div>
-          <div className="aapl-funding-total-sub">{deals.length} funding events recorded</div>
+          <div className="aapl-funding-total-sub">{records.length} funding events recorded</div>
         </div>
       </div>
 
       {/* ── Line chart ── */}
       <div className="aapl-ma-chart-section">
-        <div className="aapl-ma-section-title">Apple Inc. — Annual Funding Amount (USD $M)</div>
-        <FundingLineChartNivo deals={deals} selectedYear={selectedYear} onYearClick={handleYearClick} />
+        <div className="aapl-ma-section-title">{companyName} — Annual Funding Amount (USD $M)</div>
+        <FundingLineChartNivo deals={chartDataPoints} selectedYear={selectedYear} onYearClick={handleYearClick} />
       </div>
 
       {/* ── Table ── */}
       <div className="aapl-ma-table-section" ref={tableRef}>
         <div className="aapl-ma-section-title">
-          Table View ({sortedDeals.length} event{sortedDeals.length !== 1 ? 's' : ''}
+          Table View ({sortedRecords.length} event{sortedRecords.length !== 1 ? 's' : ''}
           {selectedYear ? `, ${selectedYear}` : ''})
           {selectedYear && (
             <button
@@ -256,31 +153,34 @@ function AAPLFundingPanel() {
               </tr>
             </thead>
             <tbody>
-              {sortedDeals.map((deal, i) => (
-                <tr key={i} className="aapl-ma-table-row">
-                  <td className="aapl-ma-td-date">{deal.date}</td>
-                  <td className="aapl-ma-td-company">{deal.investors}</td>
-                  <td><span className="aapl-ma-type-badge aapl-ma-type-acq">{deal.round}</span></td>
-                  <td className="text-right">
-                    {deal.numInvestors != null ? deal.numInvestors : <span className="aapl-ma-undisclosed">—</span>}
-                  </td>
-                  <td className="text-right aapl-ma-td-value">
-                    {deal.valueM != null ? (
-                      deal.valueM >= 1000
-                        ? `$${(deal.valueM / 1000).toFixed(2)}B`
-                        : `$${deal.valueM.toLocaleString()}M`
-                    ) : (
-                      <span className="aapl-ma-undisclosed">Undisclosed</span>
-                    )}
-                  </td>
-                  <td>
-                    <a href={deal.url} target="_blank" rel="noopener noreferrer" className="aapl-ma-news-link" title="View source">
-                      <ExternalLinkIcon />
-                      Link
-                    </a>
-                  </td>
-                </tr>
-              ))}
+              {sortedRecords.map((record, i) => {
+                const valueM = record.money_raised_usd != null ? record.money_raised_usd / 1_000_000 : null;
+                return (
+                  <tr key={i} className="aapl-ma-table-row">
+                    <td className="aapl-ma-td-date">{formatDate(record.publ_dt)}</td>
+                    <td className="aapl-ma-td-company">{record.invest_name}</td>
+                    <td><span className="aapl-ma-type-badge aapl-ma-type-acq">{record.fund_type}</span></td>
+                    <td className="text-right">
+                      {record.invest_num != null ? record.invest_num : <span className="aapl-ma-undisclosed">—</span>}
+                    </td>
+                    <td className="text-right aapl-ma-td-value">
+                      {valueM != null ? (
+                        valueM >= 1000
+                          ? `$${(valueM / 1000).toFixed(2)}B`
+                          : `$${valueM.toLocaleString()}M`
+                      ) : (
+                        <span className="aapl-ma-undisclosed">Undisclosed</span>
+                      )}
+                    </td>
+                    <td>
+                      <a href={record.trans_name_url} target="_blank" rel="noopener noreferrer" className="aapl-ma-news-link" title="View source">
+                        <ExternalLinkIcon />
+                        Link
+                      </a>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -675,9 +575,10 @@ export default function FundingTab({ symbol }: FundingTabProps) {
   const [activeSection, setActiveSection] = useState<MASection>('number-value');
   const [activeRegion, setActiveRegion] = useState<Region>('Worldwide');
 
-  // AAPL gets a dedicated panel with industry filter, bar chart, and table
-  if (symbol === 'AAPL') {
-    return <AAPLFundingPanel />;
+  // Show dedicated funding panel for companies with funding data (filtered by co_cd)
+  const companyFundings = getFundingsByCompany(symbol);
+  if (companyFundings.length > 0) {
+    return <FundingPanel symbol={symbol} />;
   }
 
   return (
