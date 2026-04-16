@@ -136,7 +136,7 @@ export default function CompanyRankingTable({ activeCategory = 'all', selectedSy
               onClick={() => handleCardClick(co.symbol)}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleCardClick(co.symbol); }}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCardClick(co.symbol); } }}
             >
               <div className="chr-card-top">
                 <span className="chr-card-rank">#{co.rank}</span>
