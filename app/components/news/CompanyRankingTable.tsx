@@ -1,9 +1,7 @@
 'use client';
 
+import { ResponsiveBar } from '@nivo/bar';
 import { newsItems, type NewsCategory } from '@/app/data/news';
-import rawContent from '@/content/company-changes.md';
-import rawSparklines from '@/content/company-sparklines.md';
-import { extractJson } from '@/app/lib/parseContent';
 
 // Compute top-5 companies by mention count, optionally filtered by category
 function computeTopCompanies(category: NewsCategory = 'all') {
@@ -23,54 +21,13 @@ function computeTopCompanies(category: NewsCategory = 'all') {
     .slice(0, 5);
 }
 
-// Seeded mock changes loaded from markdown (one per company rank slot)
-const MOCK_CHANGES: number[] = extractJson<number[]>(rawContent);
-
-// Weekly trend data per symbol
-const SPARKLINE_DATA: Record<string, number[]> = extractJson<Record<string, number[]>>(rawSparklines);
-
-function getMockChange(index: number): number {
-  return MOCK_CHANGES[index % MOCK_CHANGES.length];
-}
-
-interface SparklineProps {
-  data: number[];
-  width?: number;
-  height?: number;
-}
-
-function Sparkline({ data, width = 64, height = 22 }: SparklineProps) {
-  if (!data || data.length < 2) return null;
-  const min = Math.min(...data);
-  const max = Math.max(...data);
-  const range = max - min || 1;
-  const padX = 2;
-  const padY = 2;
-  const innerW = width - padX * 2;
-  const innerH = height - padY * 2;
-  const points = data.map((v, i) => {
-    const x = padX + (i / (data.length - 1)) * innerW;
-    const y = padY + (1 - (v - min) / range) * innerH;
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  });
-  const lastPoint = points[points.length - 1].split(',');
-  return (
-    <svg
-      className="crt-sparkline"
-      width={width}
-      height={height}
-      viewBox={`0 0 ${width} ${height}`}
-      aria-hidden="true"
-    >
-      <polyline className="crt-sparkline-line" points={points.join(' ')} />
-      <circle
-        className="crt-sparkline-dot"
-        cx={lastPoint[0]}
-        cy={lastPoint[1]}
-        r="2"
-      />
-    </svg>
-  );
+interface BarDatum {
+  [key: string]: string | number;
+  id: string;
+  rank: number;
+  symbol: string;
+  company: string;
+  mentions: number;
 }
 
 interface CompanyRankingTableProps {
@@ -80,56 +37,92 @@ interface CompanyRankingTableProps {
 export default function CompanyRankingTable({ activeCategory = 'all' }: CompanyRankingTableProps) {
   const companies = computeTopCompanies(activeCategory);
 
+  // nivo horizontal bar renders bottom→top, so reverse so #1 appears at the top
+  const chartData: BarDatum[] = [...companies]
+    .reverse()
+    .map((co, revIdx) => ({
+      id: co.symbol,
+      rank: companies.length - revIdx,
+      symbol: co.symbol,
+      company: co.name,
+      mentions: co.count,
+    }));
+
+  const chartHeight = companies.length * 46 + 36;
+
   return (
-    <div className="insight-block">
-      <div className="insight-block-title">
-        Company Heat Ranking
-      </div>
-      <div className="company-rank-table-wrap">
-      <table className="company-rank-table">
-        <thead>
-          <tr>
-            <th className="crt-th crt-th-no">#No</th>
-            <th className="crt-th crt-th-company">Company</th>
-            <th className="crt-th crt-th-num">Mentions</th>
-            <th className="crt-th crt-th-trend">Trend</th>
-            <th className="crt-th crt-th-num crt-th-change">Change</th>
-          </tr>
-        </thead>
-        <tbody>
-          {companies.map((co, idx) => {
-            const change = getMockChange(idx);
-            const isPos = change >= 0;
-            const sparkData = SPARKLINE_DATA[co.symbol] ?? [];
+    <div className="insight-block insight-block--ranking">
+      <div className="insight-block-title">Company Heat Ranking</div>
+      <div style={{ height: chartHeight }}>
+        <ResponsiveBar
+          data={chartData}
+          keys={['mentions']}
+          indexBy="id"
+          layout="horizontal"
+          margin={{ top: 4, right: 40, bottom: 28, left: 120 }}
+          valueScale={{ type: 'linear', min: 0 }}
+          padding={0.38}
+          colors={['#4fc3f7']}
+          borderRadius={3}
+          animate={true}
+          motionConfig="gentle"
+          enableLabel={true}
+          label={(d) => String(d.value)}
+          labelSkipWidth={18}
+          labelTextColor="#fff"
+          axisLeft={{
+            tickSize: 0,
+            tickPadding: 10,
+            renderTick: (tick) => {
+              const datum = chartData.find((d) => d.id === tick.value);
+              if (!datum) return <g />;
+              return (
+                <g transform={`translate(${tick.x},${tick.y})`}>
+                  <text
+                    textAnchor="end"
+                    dominantBaseline="auto"
+                    style={{ fontSize: 11, fontWeight: 700, fill: '#111827' }}
+                    dy="-2"
+                  >
+                    {datum.rank}. {datum.symbol}
+                  </text>
+                  <text
+                    textAnchor="end"
+                    dominantBaseline="hanging"
+                    style={{ fontSize: 10, fill: '#9ca3af' }}
+                    dy="4"
+                  >
+                    {datum.company}
+                  </text>
+                </g>
+              );
+            },
+          }}
+          axisBottom={{
+            tickSize: 0,
+            tickPadding: 5,
+            tickValues: 4,
+          }}
+          gridXValues={4}
+          isInteractive={true}
+          tooltip={({ data }) => {
+            const d = data as unknown as BarDatum;
             return (
-              <tr key={co.symbol} className="crt-row">
-                <td className="crt-td crt-td-no">{idx + 1}</td>
-                <td className="crt-td">
-                  <div className="crt-company-symbol">{co.symbol}</div>
-                  <div className="crt-company-name">{co.name}</div>
-                </td>
-                <td className="crt-td crt-td-num">
-                  <div className="crt-count-bar-wrap">
-                    <div
-                      className="crt-count-bar"
-                      style={{ width: `${(co.count / companies[0].count) * 100}%` }}
-                    />
-                    <span className="crt-count-value">{co.count}</span>
-                  </div>
-                </td>
-                <td className="crt-td crt-td-trend">
-                  <Sparkline data={sparkData} />
-                </td>
-                <td className="crt-td crt-td-num crt-td-change">
-                  <span className={isPos ? 'crt-change pos' : 'crt-change neg'}>
-                    {isPos ? '▲' : '▼'} {Math.abs(change).toFixed(1)}%
-                  </span>
-                </td>
-              </tr>
+              <div className="crt-nivo-tooltip">
+                <span className="crt-nivo-tooltip-rank">#{d.rank}</span>
+                <span className="crt-nivo-tooltip-symbol">{d.symbol}</span>
+                <span className="crt-nivo-tooltip-name">{d.company}</span>
+                <span className="crt-nivo-tooltip-count">{d.mentions} mentions</span>
+              </div>
             );
-          })}
-        </tbody>
-      </table>
+          }}
+          theme={{
+            grid: { line: { stroke: '#f0f0f0', strokeWidth: 1 } },
+            axis: {
+              ticks: { text: { fontSize: 10, fill: '#6b7280' } },
+            },
+          }}
+        />
       </div>
     </div>
   );

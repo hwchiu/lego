@@ -1641,6 +1641,41 @@ input, select { font-family: var(--font); }
   min-width: 260px;
 }
 
+/* ===== COMPANY RANKING — NIVO CHART ===== */
+.insight-block--ranking {
+  max-width: 460px;
+}
+
+.crt-nivo-tooltip {
+  background: #1f2937;
+  color: #fff;
+  padding: 7px 11px;
+  border-radius: 6px;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.crt-nivo-tooltip-rank {
+  font-size: 10px;
+  color: #9ca3af;
+}
+.crt-nivo-tooltip-symbol {
+  font-weight: 700;
+  font-size: 13px;
+}
+.crt-nivo-tooltip-name {
+  color: #d1d5db;
+  font-size: 11px;
+}
+.crt-nivo-tooltip-count {
+  color: #4fc3f7;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
 /* ===== GEO MAP ===== */
 .insight-block--map {
   min-height: 320px;
