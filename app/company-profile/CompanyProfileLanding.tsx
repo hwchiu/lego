@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
@@ -144,6 +144,12 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
   const inputWrapRef = useRef<HTMLDivElement>(null);
   const toolsBtnRef = useRef<HTMLButtonElement>(null);
   const toolsMenuRef = useRef<HTMLDivElement>(null);
+
+  // Latest 6 news items sorted by time descending
+  const latestNews = useMemo(
+    () => [...newsItems].sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime()).slice(0, 6),
+    [],
+  );
 
   // Filter SP500 companies by query
   const filteredCompanies =
@@ -353,10 +359,9 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
             <div className="cp-news-section">
               <div className="cp-news-section-header">
                 <span className="section-eyebrow">Latest News</span>
-                <span className="cp-news-personalized-badge">Personalized</span>
               </div>
               <div className="cp-news-grid">
-                {newsItems.slice(0, 6).map((item) => (
+                {latestNews.map((item) => (
                   <NewsCard key={item.id} item={item} />
                 ))}
               </div>
