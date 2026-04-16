@@ -72,14 +72,19 @@ export default function NewsCard({ item }: NewsCardProps) {
   return (
     <div className="news-card">
       <div className="news-card-corner-actions">
-        <button
-          className={`news-card-icon-btn${copied ? ' news-card-icon-btn--active' : ''}`}
-          onClick={handleCopyLink}
-          title={copied ? 'Copied!' : 'Copy Link'}
-          aria-label={copied ? 'URL copied to clipboard' : 'Copy Link'}
-        >
-          <ShareIcon />
-        </button>
+        <div className="news-card-share-wrap">
+          <button
+            className={`news-card-icon-btn${copied ? ' news-card-icon-btn--active' : ''}`}
+            onClick={handleCopyLink}
+            title={copied ? 'Copied!' : 'Copy Link'}
+            aria-label={copied ? 'URL copied to clipboard' : 'Copy Link'}
+          >
+            <ShareIcon />
+          </button>
+          {copied && (
+            <span className="news-card-copied" aria-live="polite">Copied!</span>
+          )}
+        </div>
         <a
           className="news-card-icon-btn"
           href={item.url}

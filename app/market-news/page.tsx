@@ -121,19 +121,25 @@ export default function MarketNewsPage() {
                 <label className="cp-news-filter-label">Period</label>
                 <div className="cp-news-period-wrap">
                   <input
-                    type="date"
+                    type={filterPeriodStart ? 'date' : 'text'}
                     className="cp-news-date-input"
                     lang="en"
+                    placeholder="Start date"
                     value={filterPeriodStart}
+                    onFocus={(e) => { e.currentTarget.type = 'date'; }}
+                    onBlur={(e) => { if (!e.currentTarget.value) e.currentTarget.type = 'text'; }}
                     onChange={(e) => setFilterPeriodStart(e.target.value)}
                     aria-label="Start date"
                   />
                   <span className="cp-news-period-sep">–</span>
                   <input
-                    type="date"
+                    type={filterPeriodEnd ? 'date' : 'text'}
                     className="cp-news-date-input"
                     lang="en"
+                    placeholder="End date"
                     value={filterPeriodEnd}
+                    onFocus={(e) => { e.currentTarget.type = 'date'; }}
+                    onBlur={(e) => { if (!e.currentTarget.value) e.currentTarget.type = 'text'; }}
                     onChange={(e) => setFilterPeriodEnd(e.target.value)}
                     aria-label="End date"
                   />
