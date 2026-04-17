@@ -18847,6 +18847,36 @@ html.dark .cp-fin-index-tab:hover {
   line-height: 1.6;
   margin-bottom: 4px;
 }
+.cp-pec-ai-subsections {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 4px;
+}
+.cp-pec-ai-subsection {
+  padding: 12px 14px;
+  background: var(--c-bg);
+  border-radius: var(--radius);
+  border-left: 3px solid #818cf840;
+}
+.cp-pec-ai-subsection-heading {
+  font-size: 12px;
+  font-weight: 700;
+  color: #6366f1;
+  margin-bottom: 6px;
+  letter-spacing: 0.03em;
+}
+.cp-pec-ai-bullet-list {
+  margin: 6px 0 0 0;
+  padding-left: 18px;
+  list-style: disc;
+}
+.cp-pec-ai-bullet-item {
+  font-size: 13px;
+  color: var(--c-text-2);
+  line-height: 1.65;
+  margin-bottom: 5px;
+}
 
 /* ── PEC row responsive ── */
 @media (max-width: 1100px) {
