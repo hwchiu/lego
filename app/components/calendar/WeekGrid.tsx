@@ -1,7 +1,7 @@
 'use client';
 
 import type { WeekDay } from '@/app/data/earnings';
-import { truncateCompanies } from '@/app/lib/calendarUtils';
+import { isoDateToDisplayLabel, truncateCompanies } from '@/app/lib/calendarUtils';
 
 interface WeekGridProps {
   days: WeekDay[];
@@ -38,7 +38,7 @@ function WeekCell({ day, isToday, isSelected, onSelect, countLabel, emptyLabel }
     >
       <div className="week-cell-head">{day.dayLabel}</div>
       <div className="week-cell-body">
-        <div className="cell-date">{day.dateLabel}</div>
+        <div className="cell-date">{isoDateToDisplayLabel(day.dateLabel)}</div>
         {hasReports ? (
           <>
             <div className="cell-count-row">

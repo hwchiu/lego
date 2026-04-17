@@ -10,10 +10,7 @@ interface HeatRankingRecord {
   comp_tag_short_name: string;
   mentions: number;
   daily_count: number[];
-  weekly_count: number[];
 }
-
-type TrendMode = 'daily' | 'weekly';
 
 interface SparklineProps {
   data: number[];
@@ -58,7 +55,6 @@ interface CompanyRankingTableProps {
 
 export default function CompanyRankingTable({ selectedSymbol, onCompanyClick }: CompanyRankingTableProps) {
   const [companies, setCompanies] = useState<HeatRankingRecord[]>([]);
-  const [trendMode, setTrendMode] = useState<TrendMode>('daily');
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -82,21 +78,7 @@ export default function CompanyRankingTable({ selectedSymbol, onCompanyClick }: 
   return (
     <div className="chr-root">
       <div className="chr-header">
-        <span className="insight-block-title">Company Heat Ranking</span>
-        <div className="toggle-group">
-          <button
-            className={`toggle-btn${trendMode === 'daily' ? ' active' : ''}`}
-            onClick={() => setTrendMode('daily')}
-          >
-            Daily trend
-          </button>
-          <button
-            className={`toggle-btn${trendMode === 'weekly' ? ' active' : ''}`}
-            onClick={() => setTrendMode('weekly')}
-          >
-            Weekly trend
-          </button>
-        </div>
+        <span className="insight-block-title">Company Heat Ranking (Weekly Trend)</span>
       </div>
       <div className="chr-carousel-wrap">
         <button
@@ -134,7 +116,7 @@ export default function CompanyRankingTable({ selectedSymbol, onCompanyClick }: 
                 <span className="chr-count-label">mentions</span>
               </div>
               <div className="chr-card-sparkline">
-                <Sparkline data={trendMode === 'daily' ? co.daily_count : co.weekly_count} />
+                <Sparkline data={co.daily_count} />
               </div>
             </div>
           ))}
