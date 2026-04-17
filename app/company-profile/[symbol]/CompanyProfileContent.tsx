@@ -22,7 +22,7 @@ import IRMaterialTab from './IRMaterialTab';
 import PreEarningCallTab from './PreEarningCallTab';
 import IRTranscriptTab from './IRTranscriptTab';
 import AITranscriptTab from './AITranscriptTab';
-import { getStockUrlByCoCd } from '@/app/data/stockUrls';
+import tvConfigMd from '@/content/tradingview.md';
 
 const FinancialIndicesNivoChart = dynamic(
   () => import('./InvestmentNivoCharts').then((m) => m.FinancialIndicesNivoChart),
@@ -135,6 +135,15 @@ function getLocalStorageTags(): string[] {
     return [];
   }
 }
+
+// ── TradingView config parsed from JSON ──────────────────────────────────────
+
+interface TvWidgetConfig {
+  stockChartSrc: string;
+  marketOverviewSrc: string;
+  marketOverviewConfig: Record<string, unknown>;
+}
+const TV_CONFIG: TvWidgetConfig = extractJson<TvWidgetConfig>(tvConfigMd as string);
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -382,7 +391,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const addTagInputRef = useRef<HTMLInputElement>(null);
   const tagRowRef = useRef<HTMLDivElement>(null);
   const [newsPage, setNewsPage] = useState(1);
-  const [stockUrl, setStockUrl] = useState<string | null>(null);
+  const stockContainerRef = useRef<HTMLDivElement>(null);
   const tabsScrollRef = useRef<HTMLDivElement>(null);
 
   const scrollTabs = useCallback((dir: 'left' | 'right') => {
@@ -633,12 +642,42 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     setNewsPage(1);
   }
 
-  // Load stock chart URL via getStockUrlByCoCd when Stock tab becomes active
+  // TradingView widget — inject when Stock tab becomes active
   useEffect(() => {
-    if (activeTab !== 'Stock') return;
-    const result = getStockUrlByCoCd(symbol);
-    setStockUrl(result?.url ?? null);
-  }, [activeTab, symbol]);
+    if (activeTab !== 'Stock' || !stockContainerRef.current) return;
+    const container = stockContainerRef.current;
+    container.innerHTML = '';
+    const exchangeMap: Record<string, string> = {
+      NASDAQ: 'NASDAQ',
+      NYSE: 'NYSE',
+      TWSE: 'TWSE',
+    };
+    const exchange = exchangeMap[stockExchange] ?? 'NASDAQ';
+    const tvSymbol = `${exchange}:${symbol}`;
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = TV_CONFIG.stockChartSrc;
+    script.async = true;
+    script.innerHTML = JSON.stringify({
+      autosize: true,
+      symbol: tvSymbol,
+      interval: 'D',
+      timezone: 'America/New_York',
+      theme: 'light',
+      style: '1',
+      locale: 'en',
+      withdateranges: true,
+      hide_side_toolbar: false,
+      allow_symbol_change: false,
+      details: true,
+      calendar: false,
+      support_host: 'https://www.tradingview.com',
+    });
+    container.appendChild(script);
+    return () => {
+      container.innerHTML = '';
+    };
+  }, [activeTab, symbol, stockExchange]);
 
   return (
     <>
@@ -1152,19 +1191,10 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
             {/* ── Stock tab ── */}
             {activeTab === 'Stock' && (
               <div className="cp-tab-content-box cp-stock-tab">
-                {stockUrl ? (
-                  <iframe
-                    src={stockUrl}
-                    className="cp-stock-widget"
-                    title={`${symbol} Stock Chart`}
-                    frameBorder="0"
-                    allowFullScreen
-                  />
-                ) : (
-                  <div className="cp-stock-widget cp-stock-no-url">
-                    No stock chart URL available for {symbol}.
-                  </div>
-                )}
+                <div
+                  ref={stockContainerRef}
+                  className="tradingview-widget-container cp-stock-widget"
+                />
               </div>
             )}
 
