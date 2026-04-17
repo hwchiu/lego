@@ -20073,6 +20073,102 @@ html.dark .cp-pec-ai-sentiment--bearish {
   font-weight: 600;
 }
 
+/* Participants block */
+.cp-irt-participants {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: #f8fafc;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.cp-irt-participants-group {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--c-border);
+}
+.cp-irt-participants-group:last-child {
+  border-bottom: none;
+}
+.cp-irt-participants-group-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--c-text-3);
+  margin-bottom: 6px;
+}
+.cp-irt-participants-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cp-irt-participant-item {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 12.5px;
+  flex-wrap: wrap;
+}
+.cp-irt-participant-name {
+  font-weight: 600;
+  color: var(--c-text);
+  white-space: nowrap;
+}
+.cp-irt-participant-sep {
+  color: var(--c-text-4);
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.cp-irt-participant-role {
+  color: var(--c-text-3);
+  font-size: 12px;
+}
+
+/* Section divider (MANAGEMENT DISCUSSION / Q&A) */
+.cp-irt-section-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0 12px;
+}
+.cp-irt-section-divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--c-border);
+}
+.cp-irt-section-divider-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6d28d9;
+  background: #ede9fe;
+  border: 1px solid #c4b5fd;
+  border-radius: 20px;
+  padding: 3px 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.cp-irt-section-divider--qa .cp-irt-section-divider-label {
+  color: #0369a1;
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+}
+
+/* Dark mode for participants and dividers */
+html.dark .cp-irt-participants {
+  background: #1e2d40;
+  border-color: #334155;
+}
+html.dark .cp-irt-participants-group {
+  border-color: #334155;
+}
+html.dark .cp-irt-section-divider-line {
+  background: #334155;
+}
+
 /* =======================================================================
    DARK MODE — Comprehensive site-wide background / interactive-state fixes
    Root cause: background: var(--c-dark) resolves to #e2e8f0 (light) in

@@ -74,7 +74,7 @@ function ChevronDownIcon({ className }: { className?: string }) {
   );
 }
 
-// ── Speaker section parser ─────────────────────────────────────────────────────
+// ── Parser types ──────────────────────────────────────────────────────────────
 
 interface SpeakerSection {
   id: string;
@@ -83,7 +83,22 @@ interface SpeakerSection {
   contentHtml: string;
 }
 
-function parseSpeakerSections(html: string): SpeakerSection[] {
+interface Participant {
+  name: string;
+  role: string;
+  type: 'management' | 'analyst';
+}
+
+interface ParsedTranscript {
+  participants: Participant[];
+  managementSections: SpeakerSection[];
+  qaSections: SpeakerSection[];
+  hasStructuredData: boolean;
+}
+
+// ── Speaker section parser ─────────────────────────────────────────────────────
+
+function parseSpeakerSections(html: string, idPrefix = 'sp'): SpeakerSection[] {
   const sections: SpeakerSection[] = [];
   const speakerMarkerRe = /<p[^>]*>\s*<strong>([^<]{1,80})<\/strong>\s*<\/p>/g;
 
@@ -94,7 +109,7 @@ function parseSpeakerSections(html: string): SpeakerSection[] {
     const matchIndex = match.index ?? 0;
     if (lastSpeaker !== null) {
       const contentHtml = html.slice(lastMatchEnd, matchIndex).trim();
-      const id = `sp-${sections.length}`;
+      const id = `${idPrefix}-${sections.length}`;
       const displayName = lastSpeaker.split('\u2014')[0].split('\u2013')[0].split(' \u2014')[0].trim();
       sections.push({ id, speaker: lastSpeaker, displayName, contentHtml });
     }
@@ -104,12 +119,82 @@ function parseSpeakerSections(html: string): SpeakerSection[] {
 
   if (lastSpeaker !== null) {
     const contentHtml = html.slice(lastMatchEnd).trim();
-    const id = `sp-${sections.length}`;
+    const id = `${idPrefix}-${sections.length}`;
     const displayName = lastSpeaker.split('\u2014')[0].split('\u2013')[0].trim();
     sections.push({ id, speaker: lastSpeaker, displayName, contentHtml });
   }
 
   return sections;
+}
+
+// ── Full transcript parser (handles structured HTML with participants + sections) ──
+
+function decodeHtmlEntities(text: string): string {
+  return text
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
+function parseTranscriptFull(html: string): ParsedTranscript {
+  const participants: Participant[] = [];
+  let remaining = html;
+
+  // 1. Extract participants block
+  const participantsBlockRe = /<div class="irt-participants-block">([\s\S]*?)<\/div>/;
+  const participantsMatch = remaining.match(participantsBlockRe);
+  if (participantsMatch) {
+    remaining = remaining.replace(participantsMatch[0], '');
+    const pContent = participantsMatch[1];
+
+    for (const m of pContent.matchAll(/<p class="irt-p-mgmt"><strong>([^<]+)<\/strong>\s*[—–]+\s*([^<]*)<\/p>/g)) {
+      participants.push({ name: m[1].trim(), role: decodeHtmlEntities(m[2].trim()), type: 'management' });
+    }
+    for (const m of pContent.matchAll(/<p class="irt-p-analyst"><strong>([^<]+)<\/strong>\s*[—–]+\s*([^<]*)<\/p>/g)) {
+      participants.push({ name: m[1].trim(), role: decodeHtmlEntities(m[2].trim()), type: 'analyst' });
+    }
+  }
+
+  // 2. Check for section label dividers
+  const hasLabels = /<div class="irt-section-label">/.test(remaining);
+
+  if (!hasLabels) {
+    // Backward-compatible: no structured sections
+    return {
+      participants,
+      managementSections: parseSpeakerSections(remaining, 'mgmt'),
+      qaSections: [],
+      hasStructuredData: false,
+    };
+  }
+
+  // 3. Split by section labels — the regex captures the label text between delimiter divs
+  const parts = remaining.split(/(<div class="irt-section-label">[^<]*<\/div>)/);
+  // parts = [preamble, <div label1>, content1, <div label2>, content2, ...]
+
+  let managementSections: SpeakerSection[] = [];
+  let qaSections: SpeakerSection[] = [];
+
+  for (let i = 1; i < parts.length; i += 2) {
+    const labelTagMatch = parts[i].match(/<div class="irt-section-label">([^<]*)<\/div>/);
+    const label = labelTagMatch ? labelTagMatch[1].replace(/&amp;/g, '&').trim() : '';
+    const content = (parts[i + 1] || '').trim();
+
+    if (/MANAGEMENT/i.test(label)) {
+      managementSections = parseSpeakerSections(content, 'mgmt');
+    } else if (/Q&A/i.test(label) || /Q\s*&amp;\s*A/i.test(label)) {
+      qaSections = parseSpeakerSections(content, 'qa');
+    }
+  }
+
+  return {
+    participants,
+    managementSections,
+    qaSections,
+    hasStructuredData: true,
+  };
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -152,7 +237,9 @@ interface IrtDetailProps {
 }
 
 function IrtDetail({ entry }: IrtDetailProps) {
-  const sections = useMemo(() => parseSpeakerSections(entry.content), [entry.content]);
+  const parsed = useMemo(() => parseTranscriptFull(entry.content), [entry.content]);
+  const { participants, managementSections, qaSections, hasStructuredData } = parsed;
+
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -195,6 +282,38 @@ function IrtDetail({ entry }: IrtDetailProps) {
 
   const title = `${entry.companyName} (${entry.symbol}-US), ${entry.quarter} ${entry.year} Earnings Call Transcript`;
 
+  // Chips show management speakers only (or all if no structured data)
+  const execChips = managementSections;
+
+  function renderSpeakerSection(section: SpeakerSection) {
+    const isExpanded = expandedIds.has(section.id);
+    return (
+      <div
+        key={section.id}
+        className="cp-irt-speaker-section"
+        ref={(el) => { sectionRefs.current[section.id] = el; }}
+      >
+        <button
+          className={`cp-irt-speaker-header${isExpanded ? ' cp-irt-speaker-header--expanded' : ''}`}
+          onClick={() => handleToggle(section.id)}
+          aria-expanded={isExpanded}
+        >
+          <span className="cp-irt-speaker-name">{section.speaker}</span>
+          <ChevronDownIcon className={`cp-irt-chevron${isExpanded ? ' cp-irt-chevron--open' : ''}`} />
+        </button>
+        {isExpanded && (
+          <div
+            className="cp-irt-speaker-body"
+            dangerouslySetInnerHTML={{ __html: section.contentHtml }}
+          />
+        )}
+      </div>
+    );
+  }
+
+  const managementParticipants = participants.filter((p) => p.type === 'management');
+  const analystParticipants = participants.filter((p) => p.type === 'analyst');
+
   return (
     <article className="cp-pec-card cp-irt-card">
       {/* Header */}
@@ -228,12 +347,12 @@ function IrtDetail({ entry }: IrtDetailProps) {
         </div>
       </div>
 
-      {/* Executives navigation */}
-      {sections.length > 0 && (
+      {/* Executives nav chips — quick jump to management speaker sections */}
+      {execChips.length > 0 && (
         <div className="cp-irt-exec-nav">
           <span className="cp-irt-exec-nav-label">Executives</span>
           <div className="cp-irt-exec-chips">
-            {sections.map((s) => (
+            {execChips.map((s) => (
               <button
                 key={s.id}
                 className={`cp-irt-exec-chip${expandedIds.has(s.id) ? ' cp-irt-exec-chip--active' : ''}`}
@@ -247,36 +366,69 @@ function IrtDetail({ entry }: IrtDetailProps) {
         </div>
       )}
 
-      {/* Collapsible speaker sections */}
-      <div className="cp-irt-speaker-sections">
-        {sections.map((section) => {
-          const isExpanded = expandedIds.has(section.id);
-          return (
-            <div
-              key={section.id}
-              className="cp-irt-speaker-section"
-              ref={(el) => { sectionRefs.current[section.id] = el; }}
-            >
-              <button
-                className={`cp-irt-speaker-header${isExpanded ? ' cp-irt-speaker-header--expanded' : ''}`}
-                onClick={() => handleToggle(section.id)}
-                aria-expanded={isExpanded}
-              >
-                <span className="cp-irt-speaker-name">{section.speaker}</span>
-                <ChevronDownIcon
-                  className={`cp-irt-chevron${isExpanded ? ' cp-irt-chevron--open' : ''}`}
-                />
-              </button>
-              {isExpanded && (
-                <div
-                  className="cp-irt-speaker-body"
-                  dangerouslySetInnerHTML={{ __html: section.contentHtml }}
-                />
-              )}
+      {/* Participants block */}
+      {hasStructuredData && participants.length > 0 && (
+        <div className="cp-irt-participants">
+          {managementParticipants.length > 0 && (
+            <div className="cp-irt-participants-group">
+              <div className="cp-irt-participants-group-label">Management</div>
+              <div className="cp-irt-participants-list">
+                {managementParticipants.map((p) => (
+                  <div key={p.name} className="cp-irt-participant-item">
+                    <span className="cp-irt-participant-name">{p.name}</span>
+                    <span className="cp-irt-participant-sep">—</span>
+                    <span className="cp-irt-participant-role">{p.role}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          );
-        })}
-      </div>
+          )}
+          {analystParticipants.length > 0 && (
+            <div className="cp-irt-participants-group">
+              <div className="cp-irt-participants-group-label">Analysts</div>
+              <div className="cp-irt-participants-list">
+                {analystParticipants.map((p) => (
+                  <div key={p.name} className="cp-irt-participant-item">
+                    <span className="cp-irt-participant-name">{p.name}</span>
+                    <span className="cp-irt-participant-sep">—</span>
+                    <span className="cp-irt-participant-role">{p.role}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Management Discussion Section */}
+      {managementSections.length > 0 && (
+        <>
+          {hasStructuredData && (
+            <div className="cp-irt-section-divider">
+              <span className="cp-irt-section-divider-line" />
+              <span className="cp-irt-section-divider-label">MANAGEMENT DISCUSSION SECTION</span>
+              <span className="cp-irt-section-divider-line" />
+            </div>
+          )}
+          <div className="cp-irt-speaker-sections">
+            {managementSections.map(renderSpeakerSection)}
+          </div>
+        </>
+      )}
+
+      {/* Q&A Section */}
+      {qaSections.length > 0 && (
+        <>
+          <div className="cp-irt-section-divider cp-irt-section-divider--qa">
+            <span className="cp-irt-section-divider-line" />
+            <span className="cp-irt-section-divider-label">Q&amp;A</span>
+            <span className="cp-irt-section-divider-line" />
+          </div>
+          <div className="cp-irt-speaker-sections">
+            {qaSections.map(renderSpeakerSection)}
+          </div>
+        </>
+      )}
 
       {/* Footer */}
       <div className="cp-pec-card-footer">
