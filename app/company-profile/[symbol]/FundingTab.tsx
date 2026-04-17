@@ -39,7 +39,7 @@ interface FundingRecord {
   org_name: string;
   money_raised: number | null;
   invest_name: string;
-  invest_num: string | null;
+  invest_num: number | null;
 }
 
 // ── Parse funding data from JSON, filtered by co_cd ─────────────────────────

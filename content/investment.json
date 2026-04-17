@@ -18,7 +18,7 @@
     "org_name": "Corning Inc.",
     "money_raised": 250000000,
     "invest_name": "Apple Inc.",
-    "invest_num": "1"
+    "invest_num": 1
   },
   {
     "org_url": "https://techcrunch.com/2016/05/12/apple-1b-didi-chuxing",
@@ -39,7 +39,7 @@
     "org_name": "Didi Chuxing",
     "money_raised": 1000000000,
     "invest_name": "Apple Inc.",
-    "invest_num": "5"
+    "invest_num": 5
   },
   {
     "org_url": "https://www.reuters.com/article/apple-softbank-vision-fund",
@@ -60,7 +60,7 @@
     "org_name": "SoftBank Vision Fund",
     "money_raised": 1000000000,
     "invest_name": "Apple Inc.",
-    "invest_num": "20"
+    "invest_num": 20
   },
   {
     "org_url": "https://www.apple.com/newsroom/2017/advanced-manufacturing-fund",
@@ -81,7 +81,7 @@
     "org_name": "Corning Inc. (AMF Round 2)",
     "money_raised": 200000000,
     "invest_name": "Apple Inc.",
-    "invest_num": "1"
+    "invest_num": 1
   },
   {
     "org_url": "https://www.apple.com/newsroom/2018/finisar",
@@ -102,7 +102,7 @@
     "org_name": "Finisar Corp.",
     "money_raised": 390000000,
     "invest_name": "Apple Inc.",
-    "invest_num": "1"
+    "invest_num": 1
   },
   {
     "org_url": "https://techcrunch.com/2019/apple-ii-vi-investment",
@@ -123,7 +123,7 @@
     "org_name": "II-VI Incorporated",
     "money_raised": 410000000,
     "invest_name": "Apple Inc.",
-    "invest_num": "1"
+    "invest_num": 1
   },
   {
     "org_url": "https://www.bloomberg.com/news/apple-imagination-technologies",
@@ -144,7 +144,7 @@
     "org_name": "Imagination Technologies",
     "money_raised": null,
     "invest_name": "Apple Inc.",
-    "invest_num": "2"
+    "invest_num": 2
   },
   {
     "org_url": "https://techcrunch.com/2020/satellogic-series-c",
@@ -165,7 +165,7 @@
     "org_name": "Satellogic",
     "money_raised": null,
     "invest_name": "Apple Inc.",
-    "invest_num": "4"
+    "invest_num": 4
   },
   {
     "org_url": "https://www.nikkei.com/article/kioxia-apple-stake",
@@ -186,7 +186,7 @@
     "org_name": "Kioxia Holdings",
     "money_raised": null,
     "invest_name": "Apple Inc.",
-    "invest_num": "3"
+    "invest_num": 3
   },
   {
     "org_url": "https://www.bloomberg.com/news/apple-globalstar",
@@ -207,7 +207,7 @@
     "org_name": "Globalstar Inc.",
     "money_raised": 450000000,
     "invest_name": "Apple Inc.",
-    "invest_num": "1"
+    "invest_num": 1
   },
   {
     "org_url": "https://techcrunch.com/2021/ai21-labs-series-b",
@@ -228,7 +228,7 @@
     "org_name": "AI21 Labs",
     "money_raised": null,
     "invest_name": "Apple Inc.",
-    "invest_num": "8"
+    "invest_num": 8
   },
   {
     "org_url": "https://www.apple.com/newsroom/2022/globalstar-additional",
@@ -249,7 +249,7 @@
     "org_name": "Globalstar Inc. (Additional)",
     "money_raised": 232000000,
     "invest_name": "Apple Inc.",
-    "invest_num": "1"
+    "invest_num": 1
   },
   {
     "org_url": "https://techcrunch.com/2022/apple-coherent-investment",
@@ -270,7 +270,7 @@
     "org_name": "Coherent Corp.",
     "money_raised": null,
     "invest_name": "Apple Inc.",
-    "invest_num": "2"
+    "invest_num": 2
   },
   {
     "org_url": "https://www.apple.com/newsroom/2023/corning-next-gen-glass",
@@ -291,7 +291,7 @@
     "org_name": "Corning (Next-Gen Glass)",
     "money_raised": 100000000,
     "invest_name": "Apple Inc.",
-    "invest_num": "1"
+    "invest_num": 1
   },
   {
     "org_url": "https://venturebeat.com/2023/imagineoptix-series-c",
@@ -312,7 +312,7 @@
     "org_name": "ImagineOptix",
     "money_raised": null,
     "invest_name": "Apple Inc.",
-    "invest_num": "4"
+    "invest_num": 4
   },
   {
     "org_url": "https://www.bloomberg.com/news/apple-openai-partnership",
@@ -333,7 +333,7 @@
     "org_name": "OpenAI",
     "money_raised": null,
     "invest_name": "Apple Inc.",
-    "invest_num": "6"
+    "invest_num": 6
   },
   {
     "org_url": "https://www.reuters.com/technology/apple-tsmc-arizona-capacity",
@@ -354,7 +354,7 @@
     "org_name": "TSMC Arizona Fab",
     "money_raised": 3500000000,
     "invest_name": "Apple Inc.",
-    "invest_num": "1"
+    "invest_num": 1
   },
   {
     "org_url": "https://www.apple.com/newsroom/2024/globalstar-expansion",
@@ -375,7 +375,7 @@
     "org_name": "Globalstar (Satellite Network Expansion)",
     "money_raised": 1100000000,
     "invest_name": "Apple Inc.",
-    "invest_num": "1"
+    "invest_num": 1
   },
   {
     "org_url": "https://www.apple.com/newsroom/2025/corning-optical-fund",
@@ -396,7 +396,7 @@
     "org_name": "Corning (Advanced Optical Fund)",
     "money_raised": 150000000,
     "invest_name": "Apple Inc.",
-    "invest_num": "1"
+    "invest_num": 1
   },
   {
     "org_url": "https://www.bloomberg.com/news/apple-arm-licensing-extension",
@@ -417,7 +417,7 @@
     "org_name": "Arm Holdings (IP Licensing Extension)",
     "money_raised": null,
     "invest_name": "Apple Inc.",
-    "invest_num": "1"
+    "invest_num": 1
   },
   {
     "org_url": "https://techcrunch.com/2016/baidu-nvidia-ai-partnership",
@@ -438,7 +438,7 @@
     "org_name": "Baidu AI Lab",
     "money_raised": null,
     "invest_name": "NVIDIA Corporation",
-    "invest_num": "2"
+    "invest_num": 2
   },
   {
     "org_url": "https://www.reuters.com/nvidia-deepmap-autonomous",
@@ -459,7 +459,7 @@
     "org_name": "DeepMap Inc.",
     "money_raised": 60000000,
     "invest_name": "NVIDIA Corporation",
-    "invest_num": "5"
+    "invest_num": 5
   },
   {
     "org_url": "https://techcrunch.com/2020/nvidia-element-ai",
@@ -480,7 +480,7 @@
     "org_name": "Element AI",
     "money_raised": 151000000,
     "invest_name": "NVIDIA Corporation",
-    "invest_num": "8"
+    "invest_num": 8
   },
   {
     "org_url": "https://www.bloomberg.com/nvidia-recursion-pharma",
@@ -501,7 +501,7 @@
     "org_name": "Recursion Pharmaceuticals",
     "money_raised": 239000000,
     "invest_name": "NVIDIA Corporation",
-    "invest_num": "6"
+    "invest_num": 6
   },
   {
     "org_url": "https://techcrunch.com/2022/nvidia-core-weave",
@@ -522,7 +522,7 @@
     "org_name": "CoreWeave",
     "money_raised": 221000000,
     "invest_name": "NVIDIA Corporation",
-    "invest_num": "3"
+    "invest_num": 3
   },
   {
     "org_url": "https://www.bloomberg.com/nvidia-inflection-ai",
@@ -543,7 +543,7 @@
     "org_name": "Inflection AI",
     "money_raised": 225000000,
     "invest_name": "NVIDIA Corporation",
-    "invest_num": "4"
+    "invest_num": 4
   },
   {
     "org_url": "https://www.reuters.com/nvidia-cohere-investment",
@@ -564,7 +564,7 @@
     "org_name": "Cohere",
     "money_raised": 270000000,
     "invest_name": "NVIDIA Corporation",
-    "invest_num": "5"
+    "invest_num": 5
   },
   {
     "org_url": "https://techcrunch.com/2023/nvidia-coreweave-series-c",
@@ -585,7 +585,7 @@
     "org_name": "CoreWeave (Follow-on)",
     "money_raised": 2300000000,
     "invest_name": "NVIDIA Corporation",
-    "invest_num": "7"
+    "invest_num": 7
   },
   {
     "org_url": "https://www.bloomberg.com/nvidia-hugging-face",
@@ -606,7 +606,7 @@
     "org_name": "Hugging Face",
     "money_raised": null,
     "invest_name": "NVIDIA Corporation",
-    "invest_num": "10"
+    "invest_num": 10
   },
   {
     "org_url": "https://techcrunch.com/2024/nvidia-mistral-ai",
@@ -627,7 +627,7 @@
     "org_name": "Mistral AI",
     "money_raised": 415000000,
     "invest_name": "NVIDIA Corporation",
-    "invest_num": "3"
+    "invest_num": 3
   },
   {
     "org_url": "https://www.reuters.com/nvidia-soundhound-ai",
@@ -648,7 +648,7 @@
     "org_name": "SoundHound AI",
     "money_raised": 370000000,
     "invest_name": "NVIDIA Corporation",
-    "invest_num": "1"
+    "invest_num": 1
   },
   {
     "org_url": "https://www.bloomberg.com/nvidia-applied-digital",
@@ -669,7 +669,7 @@
     "org_name": "Applied Digital",
     "money_raised": null,
     "invest_name": "NVIDIA Corporation",
-    "invest_num": "2"
+    "invest_num": 2
   },
   {
     "org_url": "https://www.reuters.com/microsoft-openai-initial",
@@ -690,7 +690,7 @@
     "org_name": "OpenAI",
     "money_raised": 1000000000,
     "invest_name": "Microsoft Corporation",
-    "invest_num": "1"
+    "invest_num": 1
   },
   {
     "org_url": "https://techcrunch.com/2020/microsoft-cruise",
@@ -711,7 +711,7 @@
     "org_name": "Cruise (GM Subsidiary)",
     "money_raised": 2000000000,
     "invest_name": "Microsoft Corporation",
-    "invest_num": "4"
+    "invest_num": 4
   },
   {
     "org_url": "https://www.bloomberg.com/microsoft-openai-2023",
@@ -732,7 +732,7 @@
     "org_name": "OpenAI (Follow-on)",
     "money_raised": 10000000000,
     "invest_name": "Microsoft Corporation",
-    "invest_num": "1"
+    "invest_num": 1
   },
   {
     "org_url": "https://techcrunch.com/2023/microsoft-london-ai-hub",
@@ -753,7 +753,7 @@
     "org_name": "Mistral AI",
     "money_raised": null,
     "invest_name": "Microsoft Corporation",
-    "invest_num": "3"
+    "invest_num": 3
   },
   {
     "org_url": "https://www.reuters.com/microsoft-g42-investment",
@@ -774,7 +774,7 @@
     "org_name": "G42 (Abu Dhabi AI)",
     "money_raised": 1500000000,
     "invest_name": "Microsoft Corporation",
-    "invest_num": "1"
+    "invest_num": 1
   },
   {
     "org_url": "https://techcrunch.com/2018/google-jd-investment",
@@ -795,7 +795,7 @@
     "org_name": "JD.com",
     "money_raised": 550000000,
     "invest_name": "Alphabet Inc.",
-    "invest_num": "1"
+    "invest_num": 1
   },
   {
     "org_url": "https://www.bloomberg.com/google-lyft-investment",
@@ -816,7 +816,7 @@
     "org_name": "Lyft",
     "money_raised": 1000000000,
     "invest_name": "Alphabet Inc.",
-    "invest_num": "6"
+    "invest_num": 6
   },
   {
     "org_url": "https://techcrunch.com/2020/google-alooma",
@@ -837,7 +837,7 @@
     "org_name": "SpaceX (Starlink Fund)",
     "money_raised": null,
     "invest_name": "Alphabet Inc.",
-    "invest_num": "3"
+    "invest_num": 3
   },
   {
     "org_url": "https://www.reuters.com/google-anthropic-2023",
@@ -858,7 +858,7 @@
     "org_name": "Anthropic",
     "money_raised": 300000000,
     "invest_name": "Alphabet Inc.",
-    "invest_num": "1"
+    "invest_num": 1
   },
   {
     "org_url": "https://www.bloomberg.com/google-anthropic-2024",
@@ -879,7 +879,7 @@
     "org_name": "Anthropic (Follow-on)",
     "money_raised": 2000000000,
     "invest_name": "Alphabet Inc.",
-    "invest_num": "1"
+    "invest_num": 1
   },
   {
     "org_url": "https://techcrunch.com/2024/google-character-ai",
@@ -900,6 +900,6 @@
     "org_name": "Character.AI",
     "money_raised": null,
     "invest_name": "Alphabet Inc.",
-    "invest_num": "2"
+    "invest_num": 2
   }
 ]
