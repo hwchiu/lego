@@ -1,54 +1,19 @@
 'use client';
 
-import { useRef } from 'react';
-import { newsItems, type NewsCategory } from '@/app/data/news';
+import { useRef, useState, useEffect } from 'react';
 
-const SPARKLINE_DAYS = 7;
-const TOP_N = 10;
-// Use end-of-day April 2 so all same-day articles are included
-const NOW_REF = new Date('2026-04-03T00:00:00+08:00').getTime();
-const DAY_MS = 86_400_000;
+const RANKING_URL = '/lego/data/company-heat-ranking.json';
 
-interface CompanyData {
-  rank: number;
-  symbol: string;
-  name: string;
-  totalMentions: number;
-  dailyCounts: number[]; // length SPARKLINE_DAYS, index 0 = oldest, last = most recent
+interface HeatRankingRecord {
+  seq: number;
+  co_cd: string;
+  comp_tag_short_name: string;
+  mentions: number;
+  daily_count: number[];
+  weekly_count: number[];
 }
 
-function computeTopCompanies(category: NewsCategory = 'all'): CompanyData[] {
-  const filtered =
-    category === 'all' ? newsItems : newsItems.filter((n) => n.category === category);
-
-  const map: Record<string, { name: string; total: number; daily: number[] }> = {};
-
-  for (const item of filtered) {
-    const daysAgo = Math.floor((NOW_REF - item.publishedAt.getTime()) / DAY_MS);
-    const dayIndex = SPARKLINE_DAYS - 1 - Math.min(Math.max(0, daysAgo), SPARKLINE_DAYS - 1);
-
-    for (const tag of item.tags) {
-      if (!map[tag.symbol]) {
-        map[tag.symbol] = { name: tag.name, total: 0, daily: new Array(SPARKLINE_DAYS).fill(0) };
-      }
-      map[tag.symbol].total += 1;
-      if (daysAgo >= 0 && daysAgo < SPARKLINE_DAYS) {
-        map[tag.symbol].daily[dayIndex] += 1;
-      }
-    }
-  }
-
-  return Object.entries(map)
-    .map(([symbol, { name, total, daily }]) => ({
-      symbol,
-      name,
-      totalMentions: total,
-      dailyCounts: daily,
-    }))
-    .sort((a, b) => b.totalMentions - a.totalMentions)
-    .slice(0, TOP_N)
-    .map((co, i) => ({ ...co, rank: i + 1 }));
-}
+type TrendMode = 'daily' | 'weekly';
 
 interface SparklineProps {
   data: number[];
@@ -87,14 +52,21 @@ function Sparkline({ data, width = 84, height = 38 }: SparklineProps) {
 }
 
 interface CompanyRankingTableProps {
-  activeCategory?: NewsCategory;
   selectedSymbol?: string;
   onCompanyClick?: (symbol: string | null) => void;
 }
 
-export default function CompanyRankingTable({ activeCategory = 'all', selectedSymbol, onCompanyClick }: CompanyRankingTableProps) {
-  const companies = computeTopCompanies(activeCategory);
+export default function CompanyRankingTable({ selectedSymbol, onCompanyClick }: CompanyRankingTableProps) {
+  const [companies, setCompanies] = useState<HeatRankingRecord[]>([]);
+  const [trendMode, setTrendMode] = useState<TrendMode>('daily');
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    fetch(RANKING_URL)
+      .then((res) => res.json())
+      .then((data: HeatRankingRecord[]) => setCompanies(data))
+      .catch(() => setCompanies([]));
+  }, []);
 
   function scroll(dir: 'left' | 'right') {
     if (!scrollRef.current) return;
@@ -111,6 +83,20 @@ export default function CompanyRankingTable({ activeCategory = 'all', selectedSy
     <div className="chr-root">
       <div className="chr-header">
         <span className="insight-block-title">Company Heat Ranking</span>
+        <div className="toggle-group">
+          <button
+            className={`toggle-btn${trendMode === 'daily' ? ' active' : ''}`}
+            onClick={() => setTrendMode('daily')}
+          >
+            Daily trend
+          </button>
+          <button
+            className={`toggle-btn${trendMode === 'weekly' ? ' active' : ''}`}
+            onClick={() => setTrendMode('weekly')}
+          >
+            Weekly trend
+          </button>
+        </div>
       </div>
       <div className="chr-carousel-wrap">
         <button
@@ -131,24 +117,24 @@ export default function CompanyRankingTable({ activeCategory = 'all', selectedSy
         <div className="chr-track" ref={scrollRef}>
           {companies.map((co) => (
             <div
-              key={co.symbol}
-              className={`chr-card${selectedSymbol === co.symbol ? ' chr-card--active' : ''}`}
-              onClick={() => handleCardClick(co.symbol)}
+              key={co.co_cd}
+              className={`chr-card${selectedSymbol === co.co_cd ? ' chr-card--active' : ''}`}
+              onClick={() => handleCardClick(co.co_cd)}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCardClick(co.symbol); } }}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCardClick(co.co_cd); } }}
             >
               <div className="chr-card-top">
-                <span className="chr-card-rank">#{co.rank}</span>
-                <span className="chr-card-symbol">{co.symbol}</span>
+                <span className="chr-card-rank">#{co.seq}</span>
+                <span className="chr-card-symbol">{co.co_cd}</span>
               </div>
-              <div className="chr-card-name">{co.name}</div>
+              <div className="chr-card-name">{co.comp_tag_short_name}</div>
               <div className="chr-card-count">
-                <span className="chr-count-num">{co.totalMentions}</span>
+                <span className="chr-count-num">{co.mentions}</span>
                 <span className="chr-count-label">mentions</span>
               </div>
               <div className="chr-card-sparkline">
-                <Sparkline data={co.dailyCounts} />
+                <Sparkline data={trendMode === 'daily' ? co.daily_count : co.weekly_count} />
               </div>
             </div>
           ))}
