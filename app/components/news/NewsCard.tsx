@@ -106,10 +106,7 @@ export default function NewsCard({ item }: NewsCardProps) {
               <a href="#" className="news-tag">
                 {tag.symbol}
               </a>
-              <span className={tag.change >= 0 ? 'news-price pos' : 'news-price neg'}>
-                {tag.change >= 0 ? '+' : ''}
-                {tag.change.toFixed(1)}%
-              </span>
+
             </span>
           ))}
         </div>
