@@ -20084,6 +20084,20 @@ html.dark .cp-pec-ai-sentiment--bearish {
   margin-bottom: 16px;
   overflow: hidden;
 }
+.cp-irt-participants-header {
+  padding: 10px 16px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--c-text);
+  border-bottom: 1px solid var(--c-border);
+  background: #f1f5f9;
+}
+.cp-irt-event-date {
+  color: var(--c-text-4);
+  font-size: 11px;
+}
 .cp-irt-participants-group {
   padding: 10px 16px;
   border-bottom: 1px solid var(--c-border);
@@ -20161,6 +20175,11 @@ html.dark .cp-pec-ai-sentiment--bearish {
 html.dark .cp-irt-participants {
   background: #1e2d40;
   border-color: #334155;
+}
+html.dark .cp-irt-participants-header {
+  background: #1a2535;
+  border-color: #334155;
+  color: #e2e8f0;
 }
 html.dark .cp-irt-participants-group {
   border-color: #334155;

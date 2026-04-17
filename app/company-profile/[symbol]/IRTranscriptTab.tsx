@@ -96,6 +96,17 @@ interface ParsedTranscript {
   hasStructuredData: boolean;
 }
 
+// ── Helpers ────────────────────────────────────────────────────────────────────
+
+function decodeHtmlEntities(text: string): string {
+  return text
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
 // ── Speaker section parser ─────────────────────────────────────────────────────
 
 function parseSpeakerSections(html: string, idPrefix = 'sp'): SpeakerSection[] {
@@ -110,8 +121,9 @@ function parseSpeakerSections(html: string, idPrefix = 'sp'): SpeakerSection[] {
     if (lastSpeaker !== null) {
       const contentHtml = html.slice(lastMatchEnd, matchIndex).trim();
       const id = `${idPrefix}-${sections.length}`;
-      const displayName = lastSpeaker.split('\u2014')[0].split('\u2013')[0].split(' \u2014')[0].trim();
-      sections.push({ id, speaker: lastSpeaker, displayName, contentHtml });
+      const decoded = decodeHtmlEntities(lastSpeaker);
+      const displayName = decoded.split('\u2014')[0].split('\u2013')[0].split(' \u2014')[0].trim();
+      sections.push({ id, speaker: decoded, displayName, contentHtml });
     }
     lastSpeaker = match[1].trim();
     lastMatchEnd = matchIndex + match[0].length;
@@ -120,23 +132,15 @@ function parseSpeakerSections(html: string, idPrefix = 'sp'): SpeakerSection[] {
   if (lastSpeaker !== null) {
     const contentHtml = html.slice(lastMatchEnd).trim();
     const id = `${idPrefix}-${sections.length}`;
-    const displayName = lastSpeaker.split('\u2014')[0].split('\u2013')[0].trim();
-    sections.push({ id, speaker: lastSpeaker, displayName, contentHtml });
+    const decoded = decodeHtmlEntities(lastSpeaker);
+    const displayName = decoded.split('\u2014')[0].split('\u2013')[0].trim();
+    sections.push({ id, speaker: decoded, displayName, contentHtml });
   }
 
   return sections;
 }
 
 // ── Full transcript parser (handles structured HTML with participants + sections) ──
-
-function decodeHtmlEntities(text: string): string {
-  return text
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'");
-}
 
 function parseTranscriptFull(html: string): ParsedTranscript {
   const participants: Participant[] = [];
@@ -322,7 +326,10 @@ function IrtDetail({ entry }: IrtDetailProps) {
           <span className="cp-pec-card-company cp-irt-badge">IR</span>
           <div>
             <div className="cp-pec-card-title">{title}</div>
-            <div className="cp-pec-card-date">{entry.symbol} · {entry.quarter} {entry.year}</div>
+            <div className="cp-pec-card-date">
+              {entry.symbol} · {entry.quarter} {entry.year}
+              {entry.eventDate && <span className="cp-irt-event-date"> · {entry.eventDate}</span>}
+            </div>
           </div>
         </div>
         <div className="cp-pec-card-actions">
@@ -369,6 +376,7 @@ function IrtDetail({ entry }: IrtDetailProps) {
       {/* Participants block */}
       {hasStructuredData && participants.length > 0 && (
         <div className="cp-irt-participants">
+          <div className="cp-irt-participants-header">PARTICIPANTS</div>
           {managementParticipants.length > 0 && (
             <div className="cp-irt-participants-group">
               <div className="cp-irt-participants-group-label">Management</div>

@@ -17,6 +17,8 @@ export interface IrTranscriptHtmlEntry {
   year: number;
   /** Quarter string, e.g. "Q1" */
   quarter: string;
+  /** Event date string, e.g. "29-January-2026 5:00 PM ET" */
+  eventDate?: string;
   /** Original source URL */
   fileUrl: string;
   /** Raw HTML content of the transcript file */
@@ -36,6 +38,7 @@ export const IR_TRANSCRIPT_HTML_ENTRIES: IrTranscriptHtmlEntry[] = [
     companyName: 'Apple, Inc.',
     year: 2026,
     quarter: 'Q1',
+    eventDate: '29-January-2026 5:00 PM ET',
     fileUrl: 'https://s2.q4cdn.com/470004039/files/doc_earnings/2026/q1/aapl-20260128.htm',
     content: AAPL_2026_Q1,
   },
