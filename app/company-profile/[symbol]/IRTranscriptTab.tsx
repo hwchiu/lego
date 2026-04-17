@@ -2,7 +2,8 @@
 
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import NoDataIcon from './NoDataIcon';
-import { IR_TRANSCRIPT_HTML_ENTRIES, IrTranscriptHtmlEntry } from '@/app/data/irTranscripts';
+import { IrTranscriptHtmlEntry } from '@/app/data/irTranscripts';
+import { getIRTranscriptByCoCd } from '@/app/lib/getIRTranscriptByCoCd';
 
 interface IRTranscriptTabProps {
   symbol: string;
@@ -451,18 +452,21 @@ function IrtDetail({ entry }: IrtDetailProps) {
 // ── Main Component ─────────────────────────────────────────────────────────────
 
 export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
-  const allEntries = useMemo(
-    () => IR_TRANSCRIPT_HTML_ENTRIES.filter((e) => e.symbol === symbol),
-    [symbol]
-  );
+  // Fetch entries via simulated API (will be replaced with real API call)
+  const [sortedEntries, setSortedEntries] = useState<IrTranscriptHtmlEntry[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const sortedEntries = useMemo(
-    () =>
-      [...allEntries].sort(
-        (a, b) => b.year - a.year || parseQuarterNumber(b.quarter) - parseQuarterNumber(a.quarter)
-      ),
-    [allEntries]
-  );
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    getIRTranscriptByCoCd(symbol).then((entries) => {
+      if (!cancelled) {
+        setSortedEntries(entries);
+        setLoading(false);
+      }
+    });
+    return () => { cancelled = true; };
+  }, [symbol]);
 
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [keyword, setKeyword] = useState('');
@@ -539,7 +543,17 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
     }
   }, [filteredEntries, selectedKey]);
 
-  if (allEntries.length === 0) {
+  if (loading) {
+    return (
+      <div className="cp-pec-wrap">
+        <div className="cp-pec-empty">
+          <p className="cp-pec-empty-text">Loading IR Transcript data…</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (sortedEntries.length === 0) {
     return (
       <div className="cp-pec-wrap">
         <div className="cp-pec-empty">
