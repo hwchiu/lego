@@ -18883,6 +18883,124 @@ html.dark .cp-fin-index-tab:hover {
   .cp-pec-row { grid-template-columns: 1fr; }
 }
 
+/* ===== AI TRANSCRIPT HTML CONTENT STYLES (cp-pec-ai-html-content) ===== */
+/* Styles for rendered HTML inside the AI Transcript body */
+.cp-pec-ai-html-content h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--c-text);
+  margin: 0 0 16px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--c-accent);
+}
+.cp-pec-ai-html-content h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4f46e5;
+  margin: 16px 0 8px 0;
+  letter-spacing: 0.02em;
+}
+.cp-pec-ai-html-content p {
+  font-size: 13px;
+  color: var(--c-text-2);
+  line-height: 1.65;
+  margin: 0 0 8px 0;
+}
+.cp-pec-ai-html-content ul {
+  margin: 0 0 10px 0;
+  padding-left: 20px;
+  list-style: disc;
+}
+.cp-pec-ai-html-content ol {
+  margin: 0 0 10px 0;
+  padding-left: 20px;
+}
+.cp-pec-ai-html-content li {
+  font-size: 13px;
+  color: var(--c-text-2);
+  line-height: 1.65;
+  margin-bottom: 6px;
+}
+.cp-pec-ai-html-content li > ul {
+  margin-top: 6px;
+  list-style: circle;
+}
+.cp-pec-ai-html-content li > ol {
+  margin-top: 6px;
+}
+.cp-pec-ai-html-content strong {
+  color: var(--c-text);
+  font-weight: 600;
+}
+.cp-pec-ai-html-content hr {
+  border: none;
+  border-top: 1px solid var(--c-border);
+  margin: 16px 0;
+}
+/* Q&A section special styling */
+.cp-pec-ai-html-content h4:last-of-type,
+.cp-pec-ai-html-content h4[id*="qa"],
+.cp-pec-ai-html-content h4[id*="session"] {
+  color: #0369a1;
+}
+/* Theme blocks inside Q&A — each top-level <li> with <p> inside becomes a card */
+.cp-pec-ai-html-content > ul > li {
+  background: var(--c-bg);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  border-left: 3px solid #818cf8;
+  list-style: none;
+  margin-left: -20px;
+}
+/* Analyst Q & Company Response within theme blocks */
+.cp-pec-ai-html-content > ul > li > ul {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 8px;
+}
+.cp-pec-ai-html-content > ul > li > ul > li {
+  background: none;
+  border-left: none;
+  padding: 6px 0;
+  margin-left: 0;
+  border-bottom: 1px solid var(--c-border);
+}
+.cp-pec-ai-html-content > ul > li > ul > li:last-child {
+  border-bottom: none;
+}
+/* Analyst question text */
+.cp-pec-ai-html-content > ul > li > ul > li:nth-child(odd) strong {
+  color: #0369a1;
+}
+/* Company response text */
+.cp-pec-ai-html-content > ul > li > ul > li:nth-child(even) strong {
+  color: #16a34a;
+}
+/* Summary of key themes inline list */
+.cp-pec-ai-html-content > ul > li > p + ol,
+.cp-pec-ai-html-content > ul > li > ol {
+  background: none;
+  padding-left: 18px;
+}
+.cp-pec-ai-html-content > ul > li > ol > li {
+  background: none;
+  border-left: none;
+  padding: 4px 0;
+  margin-left: 0;
+}
+
+html.dark .cp-pec-ai-html-content h3 { color: #f1f5f9; border-bottom-color: var(--c-accent); }
+html.dark .cp-pec-ai-html-content h4 { color: #a5b4fc; }
+html.dark .cp-pec-ai-html-content p,
+html.dark .cp-pec-ai-html-content li { color: #cbd5e1; }
+html.dark .cp-pec-ai-html-content strong { color: #f1f5f9; }
+html.dark .cp-pec-ai-html-content > ul > li { background: rgba(255,255,255,0.04); border-left-color: #818cf8; }
+html.dark .cp-pec-ai-html-content > ul > li > ul > li { border-bottom-color: rgba(255,255,255,0.08); }
+html.dark .cp-pec-ai-html-content > ul > li > ul > li:nth-child(odd) strong { color: #38bdf8; }
+html.dark .cp-pec-ai-html-content > ul > li > ul > li:nth-child(even) strong { color: #4ade80; }
+
+
 /* ===== TODAY'S MARKET SECTION (cp-market-*) ===== */
 .cp-market-section {
   margin-top: 32px;

@@ -213,7 +213,7 @@ function PecDetail({ entry, companyName, keyword }: PecDetailProps) {
         <span className="cp-pec-tag cp-pec-ai-tag">AI-Generated</span>
         <span className="cp-pec-tag">{entry.quarter} {entry.year}</span>
         <span className="cp-pec-tag">{companyName || entry.symbol}</span>
-        <span className="cp-pec-tag">Earnings Call</span>
+        <span className="cp-pec-tag">Pre-Earning Call</span>
       </div>
     </article>
   );

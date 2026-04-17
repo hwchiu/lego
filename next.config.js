@@ -10,6 +10,10 @@ const nextConfig = {
       test: /\.md$/,
       type: 'asset/source',
     });
+    config.module.rules.push({
+      test: /\.html$/,
+      type: 'asset/source',
+    });
     return config;
   },
 };
