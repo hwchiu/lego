@@ -44,7 +44,7 @@ interface InvestmentRaw {
   org_name: string;
   money_raised: number | null;
   invest_name: string;
-  invest_num: string | null;
+  invest_num: number | null;
 }
 
 interface InvestmentDeal {
@@ -70,7 +70,7 @@ function mapRawToDeal(raw: InvestmentRaw): InvestmentDeal {
     categories: raw.org_catg ?? '',
     round: raw.fund_type,
     valueM: raw.money_raised_usd != null ? raw.money_raised_usd / USD_TO_MILLIONS : null,
-    investorsNum: raw.invest_num != null ? parseInt(raw.invest_num, 10) : null,
+    investorsNum: raw.invest_num,
     url: raw.trans_name_url,
   };
 }

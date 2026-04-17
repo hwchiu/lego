@@ -18,7 +18,7 @@
         "org_name": "Apple",
         "money_raised": 250000,
         "invest_name": "Mike Markkula",
-        "invest_num": "1"
+        "invest_num": 1
     },
     {
         "org_url": "https://en.wikipedia.org/wiki/Apple_Inc.",
@@ -39,7 +39,7 @@
         "org_name": "Apple",
         "money_raised": 520000,
         "invest_name": "Venrock Associates, Arthur Rock & Associates",
-        "invest_num": "2"
+        "invest_num": 2
     },
     {
         "org_url": "https://en.wikipedia.org/wiki/Apple_Inc.",
@@ -60,7 +60,7 @@
         "org_name": "Apple",
         "money_raised": 1800000,
         "invest_name": "Hambrecht & Quist, Various VCs",
-        "invest_num": "4"
+        "invest_num": 4
     },
     {
         "org_url": "https://en.wikipedia.org/wiki/Apple_Inc.",
