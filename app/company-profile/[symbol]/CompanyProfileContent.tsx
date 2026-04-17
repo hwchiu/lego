@@ -1212,10 +1212,10 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
             {activeTab === 'IR Transcript' && <IRTranscriptTab symbol={symbol} />}
 
             {/* ── AI Transcript tab ── */}
-            {activeTab === 'AI Transcript' && <AITranscriptTab symbol={symbol} companyName={companyName} />}
+            {activeTab === 'AI Transcript' && <AITranscriptTab symbol={symbol} />}
 
             {/* ── Pre-Earning Call tab ── */}
-            {activeTab === 'Pre-Earning Call' && <PreEarningCallTab symbol={symbol} />}
+            {activeTab === 'Pre-Earning Call' && <PreEarningCallTab symbol={symbol} companyName={companyName} />}
 
           </div>
         </main>
