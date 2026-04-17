@@ -1226,69 +1226,7 @@ input, select { font-family: var(--font); }
 }
 
 /* ===== NEWS PAGINATION ===== */
-.news-pager-layout {
-  display: flex;
-  align-items: stretch;
-  gap: 4px;
-}
-.news-pager-content {
-  flex: 1;
-  min-width: 0;
-}
-.news-pager-arrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  min-width: 32px;
-  flex-shrink: 0;
-  border: none;
-  background: transparent;
-  color: var(--c-text-3);
-  cursor: pointer;
-  border-radius: var(--radius-sm);
-  transition: background 0.15s, color 0.15s;
-}
-.news-pager-arrow:hover:not(:disabled) {
-  background: var(--c-border);
-  color: var(--c-text);
-}
-.news-pager-arrow:disabled {
-  opacity: 0.25;
-  cursor: default;
-}
-.news-pagination-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  margin-top: 20px;
-}
-.news-pagination-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border: 1px solid var(--c-border-2);
-  border-radius: var(--radius-sm);
-  background: transparent;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--c-text-3);
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
-}
-.news-pagination-btn:hover {
-  background: var(--c-border);
-  color: var(--c-text);
-}
-.news-pagination-btn.active {
-  background: var(--c-accent);
-  border-color: var(--c-accent);
-  color: #fff;
-  font-weight: 600;
-}
+/* (Market News pagination now reuses .cp-news-tab-pagination styles) */
 
 /* ===== NEWS CARD ===== */
 .news-card {
@@ -4527,6 +4465,13 @@ input, select { font-family: var(--font); }
   justify-content: center;
   gap: 6px;
   margin-top: 20px;
+  flex-wrap: wrap;
+}
+.cp-news-tab-page-ellipsis {
+  padding: 5px 6px;
+  font-size: 13px;
+  color: var(--c-text-2);
+  user-select: none;
 }
 
 .cp-news-tab-page-btn {
@@ -19434,7 +19379,7 @@ html.dark .aapl-inv-chart-wrap {
   padding: 7px 32px 7px 30px;
   border: 1px solid var(--c-border-2);
   border-radius: var(--radius-sm);
-  background: var(--c-bg);
+  background: var(--c-white);
   font-size: 12.5px;
   color: var(--c-text);
   font-family: var(--font);
