@@ -4,79 +4,69 @@
     "co_cd": "NVDA",
     "comp_tag_short_name": "NVIDIA",
     "mentions": 42,
-    "daily_count": [30, 45, 38, 55, 62, 70, 85],
-    "weekly_count": [120, 180, 210, 260, 310]
+    "daily_count": [30, 45, 38, 55, 62, 70, 85]
   },
   {
     "seq": 2,
     "co_cd": "TSMC",
     "comp_tag_short_name": "TSMC",
     "mentions": 35,
-    "daily_count": [20, 28, 35, 30, 40, 38, 45],
-    "weekly_count": [80, 110, 140, 160, 190]
+    "daily_count": [20, 28, 35, 30, 40, 38, 45]
   },
   {
     "seq": 3,
     "co_cd": "INTC",
     "comp_tag_short_name": "Intel",
     "mentions": 28,
-    "daily_count": [15, 18, 22, 25, 20, 30, 28],
-    "weekly_count": [60, 75, 90, 100, 115]
+    "daily_count": [15, 18, 22, 25, 20, 30, 28]
   },
   {
     "seq": 4,
     "co_cd": "AAPL",
     "comp_tag_short_name": "Apple",
     "mentions": 25,
-    "daily_count": [12, 15, 20, 18, 22, 25, 30],
-    "weekly_count": [55, 70, 85, 95, 110]
+    "daily_count": [12, 15, 20, 18, 22, 25, 30]
   },
   {
     "seq": 5,
     "co_cd": "QCOM",
     "comp_tag_short_name": "Qualcomm",
     "mentions": 18,
-    "daily_count": [8, 10, 14, 16, 12, 18, 20],
-    "weekly_count": [40, 52, 65, 75, 88]
+    "daily_count": [8, 10, 14, 16, 12, 18, 20]
   },
   {
     "seq": 6,
     "co_cd": "AMD",
     "comp_tag_short_name": "AMD",
     "mentions": 15,
-    "daily_count": [5, 8, 10, 12, 14, 13, 18],
-    "weekly_count": [30, 42, 55, 60, 72]
+    "daily_count": [5, 8, 10, 12, 14, 13, 18]
   },
   {
     "seq": 7,
     "co_cd": "ASML",
     "comp_tag_short_name": "ASML Holding",
     "mentions": 12,
-    "daily_count": [4, 6, 8, 10, 9, 12, 14],
-    "weekly_count": [25, 35, 45, 50, 62]
+    "daily_count": [4, 6, 8, 10, 9, 12, 14]
   },
   {
     "seq": 8,
     "co_cd": "MU",
     "comp_tag_short_name": "Micron Technology",
     "mentions": 10,
-    "daily_count": [3, 5, 7, 8, 10, 9, 11],
-    "weekly_count": [20, 28, 38, 42, 55]
+    "daily_count": [3, 5, 7, 8, 10, 9, 11]
   },
   {
     "seq": 9,
     "co_cd": "AMAT",
     "comp_tag_short_name": "Applied Materials",
     "mentions": 9,
-    "daily_count": [10, 20, 30, 35, 40, 50, 60],
-    "weekly_count": [10, 20, 30, 200, 245]
+    "daily_count": [10, 20, 30, 35, 40, 50, 60]
   },
   {
     "seq": 10,
     "co_cd": "LRCX",
     "comp_tag_short_name": "Lam Research",
     "mentions": 8,
-    "daily_count": [2, 4, 5, 6, 7, 8, 9],
-    "weekly_count": [15, 22, 30, 35, 45]
+    "daily_count": [2, 4, 5, 6, 7, 8, 9]
   }
 ]

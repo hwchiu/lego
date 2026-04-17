@@ -10,7 +10,7 @@ import {
   buildCalendarSummaryMap,
   type CalendarSummaryMap,
 } from '@/app/lib/eventCalendarApi';
-import { DAY_LABELS, MONTH_SHORT, MONTH_FULL, getDateLabel, getWeekStart } from '@/app/lib/calendarUtils';
+import { DAY_LABELS, MONTH_SHORT, MONTH_FULL, getDateLabel, getIsoDateLabel, getWeekStart } from '@/app/lib/calendarUtils';
 
 function buildMonthDays(
   year: number,
@@ -27,7 +27,7 @@ function buildMonthDays(
   const daysInPrevMonth = new Date(prevYear, prevMonthIdx + 1, 0).getDate();
   for (let i = 0; i < firstDay; i++) {
     const prevMonthDay = daysInPrevMonth - firstDay + 1 + i;
-    const dateLabel = `${MONTH_SHORT[prevMonthIdx]} ${prevMonthDay}`;
+    const dateLabel = getIsoDateLabel(new Date(prevYear, prevMonthIdx, prevMonthDay));
     const cell = summaryMap[dateLabel];
     days.push({
       dayLabel: DAY_LABELS[i],
@@ -40,7 +40,7 @@ function buildMonthDays(
   }
 
   for (let d = 1; d <= daysInMonth; d++) {
-    const dateLabel = `${MONTH_SHORT[month]} ${d}`;
+    const dateLabel = getIsoDateLabel(new Date(year, month, d));
     const dayOfWeek = (firstDay + d - 1) % 7;
     const cell = summaryMap[dateLabel];
     days.push({
@@ -55,8 +55,9 @@ function buildMonthDays(
   const lastDayOfWeek = (firstDay + daysInMonth - 1) % 7;
   const trailingCount = lastDayOfWeek === 6 ? 0 : 6 - lastDayOfWeek;
   const nextMonthIdx = month === 11 ? 0 : month + 1;
+  const nextYear = month === 11 ? year + 1 : year;
   for (let i = 1; i <= trailingCount; i++) {
-    const dateLabel = `${MONTH_SHORT[nextMonthIdx]} ${i}`;
+    const dateLabel = getIsoDateLabel(new Date(nextYear, nextMonthIdx, i));
     const dayOfWeek = (lastDayOfWeek + i) % 7;
     const cell = summaryMap[dateLabel];
     days.push({
@@ -81,7 +82,7 @@ function buildWeekDays(
   for (let i = 0; i < 7; i++) {
     const d = new Date(weekStart);
     d.setDate(weekStart.getDate() + i);
-    const dateLabel = getDateLabel(d);
+    const dateLabel = getIsoDateLabel(d);
     const cell = summaryMap[dateLabel];
     days.push({
       dayLabel: DAY_LABELS[i],
@@ -120,13 +121,13 @@ export default function CorpEventCategorySection({
   onDateSelect,
 }: CorpEventCategorySectionProps) {
   const today = useMemo(() => new Date(), []);
-  const todayLabel = useMemo(() => getDateLabel(today), [today]);
+  const todayLabel = useMemo(() => getIsoDateLabel(today), [today]);
 
   const [year, setYear] = useState(() => today.getFullYear());
   const [month, setMonth] = useState(() => today.getMonth());
   const [weekStart, setWeekStart] = useState(() => getWeekStart(today));
   const [isMonthlyView, setIsMonthlyView] = useState(false);
-  const [selectedDateLabel, setSelectedDateLabel] = useState<string>(todayLabel);
+  const [selectedDateLabel, setSelectedDateLabel] = useState<string>(() => getIsoDateLabel(new Date()));
 
   // Summary data fetched from API
   const [summaryMap, setSummaryMap] = useState<CalendarSummaryMap>({});
@@ -168,9 +169,10 @@ export default function CorpEventCategorySection({
       try {
         // Fetch for each month in parallel; monthKeys use 0-based month index
         const fetches = monthKeys.map((k) => {
-          const monthIdx = parseInt(k.split('-')[1], 10);
+          const [yr, moStr] = k.split('-');
+          const monthIdx = parseInt(moStr, 10);
           // API expects 1-based month string
-          return getEventCalendarSummary(String(monthIdx + 1), eventType);
+          return getEventCalendarSummary(yr, String(monthIdx + 1), eventType);
         });
         const results = await Promise.all(fetches);
         if (!ctrl.signal.aborted) {

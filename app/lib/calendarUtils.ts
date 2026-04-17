@@ -15,6 +15,14 @@ export function getDateLabel(date: Date): string {
   return `${MONTH_SHORT[date.getMonth()]} ${date.getDate()}`;
 }
 
+/** Format a Date as "YYYY-MM-DD" — e.g., "2026-04-05" */
+export function getIsoDateLabel(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 /** Return a new Date set to the Sunday of the week containing `date`. */
 export function getWeekStart(date: Date): Date {
   const d = new Date(date);
