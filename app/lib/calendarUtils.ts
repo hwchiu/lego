@@ -31,6 +31,15 @@ export function getWeekStart(date: Date): Date {
   return d;
 }
 
+/** Convert a "YYYY-MM-DD" date string to "Mon D" display format — e.g., "2026-04-05" → "Apr 5" */
+export function isoDateToDisplayLabel(isoDate: string): string {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) {
+    const parts = isoDate.split('-');
+    return `${MONTH_SHORT[parseInt(parts[1], 10) - 1]} ${parseInt(parts[2], 10)}`;
+  }
+  return isoDate;
+}
+
 /** Map a 3-letter short month name to its full name (e.g., "Apr" → "April"). */
 export function monthShortToFull(short: string): string {
   const idx = MONTH_SHORT.indexOf(short);
