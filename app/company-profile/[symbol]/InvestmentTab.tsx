@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import investmentData from '@/content/investment.json';
+import { getInvestmentByCoCd, InvestmentDeal, InvestmentResult } from '@/app/lib/getInvestmentByCoCd';
 
 const InvestmentBarLineChartNivo = dynamic(
   () => import('./InvestmentNivoCharts').then((m) => m.InvestmentBarLineChartNivo),
@@ -25,72 +25,6 @@ type Region =
   | 'Middle East & Africa'
   | 'South America';
 
-interface InvestmentRaw {
-  org_url: string;
-  fund_type: string;
-  fund_amount: number | null;
-  fund_amount_curr: string;
-  money_raised_curr: string;
-  trans_name: string;
-  fund_amount_usd: number | null;
-  co_cd: string;
-  update_dt: string;
-  data_type: string;
-  publ_dt: string;
-  org_catg: string | null;
-  create_dt: string;
-  money_raised_usd: number | null;
-  trans_name_url: string;
-  org_name: string;
-  money_raised: number | null;
-  invest_name: string;
-  invest_num: number | null;
-}
-
-interface InvestmentDeal {
-  date: string;
-  investedCompany: string;
-  categories: string;
-  round: string;
-  valueM: number | null;
-  investorsNum: number | null;
-  url: string;
-}
-
-// ── Parse investment data from JSON, filtered by co_cd ───────────────────────
-
-const USD_TO_MILLIONS = 1_000_000;
-
-function mapRawToDeal(raw: InvestmentRaw): InvestmentDeal {
-  // publ_dt format: "YYYY-MM-DD HH:MM:SS.s" → extract "YYYY-MM-DD"
-  const datePart = raw.publ_dt.slice(0, 10);
-  return {
-    date: datePart,
-    investedCompany: raw.org_name,
-    categories: raw.org_catg ?? '',
-    round: raw.fund_type,
-    valueM: raw.money_raised_usd != null ? raw.money_raised_usd / USD_TO_MILLIONS : null,
-    investorsNum: raw.invest_num,
-    url: raw.trans_name_url,
-  };
-}
-
-const _investmentCache = new Map<string, InvestmentDeal[]>();
-function getInvestments(coCd: string): InvestmentDeal[] {
-  if (!_investmentCache.has(coCd)) {
-    const rawData = investmentData as InvestmentRaw[];
-    _investmentCache.set(coCd, rawData.filter((r) => r.co_cd === coCd).map(mapRawToDeal));
-  }
-  return _investmentCache.get(coCd)!;
-}
-
-/** Get the invest_name for a given co_cd from the first matching record. */
-function getInvestName(coCd: string): string {
-  const rawData = investmentData as InvestmentRaw[];
-  const match = rawData.find((r) => r.co_cd === coCd);
-  return match?.invest_name ?? coCd;
-}
-
 // ── Company Investment Panel ───────────────────────────────────────────────────
 
 const CHART_START_YEAR = 2012;
@@ -105,9 +39,7 @@ function ExternalLinkIcon() {
   );
 }
 
-function CompanyInvestmentPanel({ symbol }: { symbol: string }) {
-  const deals = getInvestments(symbol);
-  const companyName = getInvestName(symbol);
+function CompanyInvestmentPanel({ deals, companyName }: { deals: InvestmentDeal[]; companyName: string }) {
   const allCategories = [...new Set(deals.map((d) => d.categories))].sort();
 
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
@@ -582,11 +514,36 @@ export default function InvestmentTab({ symbol }: InvestmentTabProps) {
   const [activeSection, setActiveSection] = useState<MASection>('number-value');
   const [activeRegion, setActiveRegion] = useState<Region>('Worldwide');
 
+  // Fetch investment data via simulated API (will be replaced with real API call)
+  const [investmentResult, setInvestmentResult] = useState<InvestmentResult | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    getInvestmentByCoCd(symbol).then((result) => {
+      if (!cancelled) {
+        setInvestmentResult(result);
+        setLoading(false);
+      }
+    });
+    return () => { cancelled = true; };
+  }, [symbol]);
+
+  if (loading) {
+    return (
+      <div className="cp-pec-wrap">
+        <div className="cp-pec-empty">
+          <p className="cp-pec-empty-text">Loading Investment data…</p>
+        </div>
+      </div>
+    );
+  }
+
   // Show the company investment panel filtered by co_cd for companies with data;
   // fall back to generic M&A overview otherwise.
-  const companyDeals = getInvestments(symbol);
-  if (companyDeals.length > 0) {
-    return <CompanyInvestmentPanel symbol={symbol} />;
+  if (investmentResult && investmentResult.deals.length > 0) {
+    return <CompanyInvestmentPanel deals={investmentResult.deals} companyName={investmentResult.investName} />;
   }
 
   return (
