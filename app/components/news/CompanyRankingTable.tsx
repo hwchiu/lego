@@ -64,7 +64,7 @@ export default function CompanyRankingTable({ selectedSymbol, onCompanyClick }: 
   useEffect(() => {
     fetch(RANKING_URL)
       .then((res) => res.json())
-      .then((data: HeatRankingRecord[]) => setCompanies(data))
+      .then((data: HeatRankingRecord[]) => setCompanies([...data].sort((a, b) => a.seq - b.seq)))
       .catch(() => setCompanies([]));
   }, []);
 
