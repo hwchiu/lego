@@ -2,7 +2,8 @@
 
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import NoDataIcon from './NoDataIcon';
-import { PRE_EARNING_CALL_MD_ENTRIES, PecMdEntry } from '@/app/data/preEarningCalls';
+import { PecMdEntry } from '@/app/data/preEarningCalls';
+import { getPreEarningCallByCoCd } from '@/app/lib/getPreEarningCallByCoCd';
 
 interface PreEarningCallTabProps {
   symbol: string;
@@ -227,18 +228,21 @@ function parseQuarterNumber(q: string): number {
 }
 
 export default function PreEarningCallTab({ symbol, companyName }: PreEarningCallTabProps) {
-  const allEntries = useMemo(
-    () => PRE_EARNING_CALL_MD_ENTRIES.filter((e) => e.symbol === symbol),
-    [symbol]
-  );
+  // Fetch entries via simulated API (will be replaced with real API call)
+  const [sortedEntries, setSortedEntries] = useState<PecMdEntry[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const sortedEntries = useMemo(
-    () =>
-      [...allEntries].sort(
-        (a, b) => b.year - a.year || parseQuarterNumber(b.quarter) - parseQuarterNumber(a.quarter)
-      ),
-    [allEntries]
-  );
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    getPreEarningCallByCoCd(symbol).then((entries) => {
+      if (!cancelled) {
+        setSortedEntries(entries);
+        setLoading(false);
+      }
+    });
+    return () => { cancelled = true; };
+  }, [symbol]);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [keyword, setKeyword] = useState('');
@@ -324,7 +328,17 @@ export default function PreEarningCallTab({ symbol, companyName }: PreEarningCal
     }
   }, [filteredEntries, selectedId]);
 
-  if (allEntries.length === 0) {
+  if (loading) {
+    return (
+      <div className="cp-pec-wrap">
+        <div className="cp-pec-empty">
+          <p className="cp-pec-empty-text">Loading Pre-Earning Call data…</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (sortedEntries.length === 0) {
     return (
       <div className="cp-pec-wrap">
         <div className="cp-pec-empty">

@@ -2,7 +2,8 @@
 
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import NoDataIcon from './NoDataIcon';
-import { AI_TRANSCRIPT_HTML_ENTRIES, AiTranscriptHtmlEntry } from '@/app/data/aiTranscripts';
+import { AiTranscriptHtmlEntry } from '@/app/data/aiTranscripts';
+import { getAITranscriptByCoCd } from '@/app/lib/getAITranscriptByCoCd';
 
 interface AITranscriptTabProps {
   symbol: string;
@@ -157,18 +158,21 @@ function AiTranscriptDetail({ entry, companyName }: AiTranscriptDetailProps) {
 // ── Main Component ─────────────────────────────────────────────────────────────
 
 export default function AITranscriptTab({ symbol, companyName }: AITranscriptTabProps) {
-  const allEntries = useMemo(
-    () => AI_TRANSCRIPT_HTML_ENTRIES.filter((e) => e.symbol === symbol),
-    [symbol]
-  );
+  // Fetch entries via simulated API (will be replaced with real API call)
+  const [sortedEntries, setSortedEntries] = useState<AiTranscriptHtmlEntry[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const sortedEntries = useMemo(
-    () =>
-      [...allEntries].sort(
-        (a, b) => b.year - a.year || parseQuarterNumber(b.quarter) - parseQuarterNumber(a.quarter)
-      ),
-    [allEntries]
-  );
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    getAITranscriptByCoCd(symbol).then((entries) => {
+      if (!cancelled) {
+        setSortedEntries(entries);
+        setLoading(false);
+      }
+    });
+    return () => { cancelled = true; };
+  }, [symbol]);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [keyword, setKeyword] = useState('');
@@ -246,7 +250,17 @@ export default function AITranscriptTab({ symbol, companyName }: AITranscriptTab
     }
   }, [filteredEntries, selectedId]);
 
-  if (allEntries.length === 0) {
+  if (loading) {
+    return (
+      <div className="cp-pec-wrap">
+        <div className="cp-pec-empty">
+          <p className="cp-pec-empty-text">Loading AI Transcript data…</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (sortedEntries.length === 0) {
     return (
       <div className="cp-pec-wrap">
         <div className="cp-pec-empty">
