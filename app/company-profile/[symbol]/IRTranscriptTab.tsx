@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import NoDataIcon from './NoDataIcon';
+import { IR_TRANSCRIPT_HTML_ENTRIES, IrTranscriptHtmlEntry } from '@/app/data/irTranscripts';
 
 interface IRTranscriptTabProps {
   symbol: string;
@@ -58,298 +59,58 @@ function FilterIcon() {
   );
 }
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
-interface IrTranscriptSection {
-  heading: string;
-  bullets: string[];
+function ChevronDownIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 14 14"
+      fill="none"
+      width="12"
+      height="12"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
 }
 
-interface IrTranscriptCard {
-  symbol: string;
-  companyName: string;
-  title: string;
-  date: string;
-  year: number;
-  quarter: string; // e.g. "Q1", "Q2", "Q3", "Q4"
-  fileUrl: string;
-  sections: IrTranscriptSection[];
-  tags: string[];
+// ── Speaker section parser ─────────────────────────────────────────────────────
+
+interface SpeakerSection {
+  id: string;
+  speaker: string;
+  displayName: string;
+  contentHtml: string;
 }
 
-// ── Data ──────────────────────────────────────────────────────────────────────
+function parseSpeakerSections(html: string): SpeakerSection[] {
+  const sections: SpeakerSection[] = [];
+  const speakerMarkerRe = /<p[^>]*>\s*<strong>([^<]{1,80})<\/strong>\s*<\/p>/g;
 
-const IR_TRANSCRIPT_DATA: IrTranscriptCard[] = [
-  {
-    symbol: 'AAPL',
-    companyName: 'Apple, Inc.',
-    title: 'Apple, Inc. (AAPL-US), Q1 2026 Earnings Call Transcript',
-    date: 'January 29, 2026, 5:00 PM ET',
-    year: 2026,
-    quarter: 'Q1',
-    fileUrl: 'https://s2.q4cdn.com/470004039/files/doc_earnings/2026/q1/aapl-20260128.htm',
-    sections: [
-      {
-        heading: 'Revenue & EPS',
-        bullets: [
-          'Q1 2026 revenue: $124.3B, up 4% YoY — beat consensus estimate',
-          'EPS: $2.40 (non-GAAP), above analyst forecast of $2.35',
-          'Gross margin 46.9% — new all-time record for Apple',
-        ],
-      },
-      {
-        heading: 'Segment Performance',
-        bullets: [
-          'Services revenue: $26.3B, up 14% YoY — all-time record',
-          'iPhone revenue: $69.1B, in line with expectations',
-          'Mac: $9.0B; iPad: $8.1B; Wearables & Home: $11.7B',
-          'Greater China revenue: $18.5B, down 11% YoY amid competitive pressures',
-        ],
-      },
-      {
-        heading: 'Management Commentary',
-        bullets: [
-          'Tim Cook highlighted strong Apple Intelligence feature adoption across all markets',
-          'Vision Pro expanding availability; mixed-reality developer ecosystem growing',
-          'CFO Kevan Parekh guided Q2 2026 revenue at $88.5B–$91.5B',
-        ],
-      },
-      {
-        heading: 'Capital Allocation',
-        bullets: [
-          '$30B share buyback program announced',
-          'Quarterly dividend raised to $0.25/share',
-          'Total capital returned to shareholders YTD: $28.3B',
-        ],
-      },
-    ],
-    tags: ['Q1 2026', 'AAPL', 'Earnings Call', 'Apple Intelligence', 'Services'],
-  },
-  {
-    symbol: 'AAPL',
-    companyName: 'Apple, Inc.',
-    title: 'Apple, Inc. (AAPL-US), Q4 2025 Earnings Call Transcript',
-    date: 'October 30, 2025, 5:00 PM ET',
-    year: 2025,
-    quarter: 'Q4',
-    fileUrl: 'https://s2.q4cdn.com/470004039/files/doc_earnings/2025/q4/aapl-20251003.htm',
-    sections: [
-      {
-        heading: 'Revenue & EPS',
-        bullets: [
-          'Q4 FY2025 revenue: $94.9B, up 6% YoY — above analyst consensus of $94.5B',
-          'EPS: $1.64 (diluted), up 12% YoY',
-          'Gross margin: 46.2%, highest ever for a September quarter',
-        ],
-      },
-      {
-        heading: 'Segment Performance',
-        bullets: [
-          'iPhone revenue: $46.2B, up 5.5% YoY driven by iPhone 17 launch demand',
-          'Services revenue: $25.0B, up 13% YoY — new record for Q4',
-          'Mac: $7.7B, up 2%; iPad: $7.0B, up 8%; Wearables: $8.5B, down 1%',
-          'Greater China: $15.0B, up 2% — showing early recovery signs',
-        ],
-      },
-      {
-        heading: 'Management Commentary',
-        bullets: [
-          'Tim Cook cited Apple Intelligence as a key driver of upgrade cycle acceleration',
-          'iPhone 17 Pro demand outpacing supply in multiple regions',
-          'Services growth remains strong with 1B+ paid subscriptions milestone',
-        ],
-      },
-      {
-        heading: 'Guidance',
-        bullets: [
-          'Q1 FY2026 revenue guidance: $119B–$123B (low single-digit YoY growth)',
-          'Gross margin guided at 46.5%–47.0%',
-          'Operating expenses guided at $15.3B–$15.5B',
-        ],
-      },
-    ],
-    tags: ['Q4 2025', 'AAPL', 'iPhone 17', 'Services', 'Apple Intelligence'],
-  },
-  {
-    symbol: 'AAPL',
-    companyName: 'Apple, Inc.',
-    title: 'Apple, Inc. (AAPL-US), Q3 2025 Earnings Call Transcript',
-    date: 'July 31, 2025, 5:00 PM ET',
-    year: 2025,
-    quarter: 'Q3',
-    fileUrl: 'https://s2.q4cdn.com/470004039/files/doc_earnings/2025/q3/aapl-20250628.htm',
-    sections: [
-      {
-        heading: 'Revenue & EPS',
-        bullets: [
-          'Q3 FY2025 revenue: $85.8B, up 5% YoY — in line with expectations',
-          'EPS: $1.45 (diluted), up 11% YoY',
-          'Gross margin: 46.3%, up 100 bps YoY',
-        ],
-      },
-      {
-        heading: 'Segment Performance',
-        bullets: [
-          'iPhone revenue: $39.0B, flat YoY — typical mid-cycle performance',
-          'Services revenue: $24.2B, up 14% YoY — approaching $100B annual run-rate',
-          'Mac: $7.0B, up 3%; iPad: $7.2B, up 24% driven by new M4 iPad Pro',
-        ],
-      },
-      {
-        heading: 'Management Commentary',
-        bullets: [
-          'Apple Intelligence rollout progressing; new language support added in 12 languages',
-          'App Store ecosystem generated $1.1T in developer billings and sales in 2024',
-          'Vision Pro software ecosystem growing with 2,500+ spatial computing apps',
-        ],
-      },
-      {
-        heading: 'Guidance',
-        bullets: [
-          'Q4 FY2025 revenue guidance: $89B–$93B',
-          'Gross margin guided at 45.5%–46.5%',
-          'iPhone 17 launch expected in September to support Q4 performance',
-        ],
-      },
-    ],
-    tags: ['Q3 2025', 'AAPL', 'Services', 'iPad Pro', 'Apple Intelligence'],
-  },
-  {
-    symbol: 'AAPL',
-    companyName: 'Apple, Inc.',
-    title: 'Apple, Inc. (AAPL-US), Q2 2025 Earnings Call Transcript',
-    date: 'May 1, 2025, 5:00 PM ET',
-    year: 2025,
-    quarter: 'Q2',
-    fileUrl: 'https://s2.q4cdn.com/470004039/files/doc_earnings/2025/q2/aapl-20250329.htm',
-    sections: [
-      {
-        heading: 'Revenue & EPS',
-        bullets: [
-          'Q2 FY2025 revenue: $95.4B, up 5% YoY — beat Street estimate of $94.1B',
-          'EPS: $1.65 (diluted), up 8% YoY',
-          'Gross margin: 47.1% — record for a March quarter',
-        ],
-      },
-      {
-        heading: 'Segment Performance',
-        bullets: [
-          'iPhone revenue: $46.8B, up 2% YoY — despite macro headwinds in China',
-          'Services revenue: $26.6B, up 12% YoY — all-time record',
-          'Mac: $7.9B, up 7%; iPad: $6.4B, up 15% with M4 launch',
-          'Greater China: $16.0B, down 2% YoY',
-        ],
-      },
-      {
-        heading: 'Management Commentary',
-        bullets: [
-          'Cook emphasized growing paid subscription base surpassing 1.1B globally',
-          'Tariff impact discussed — Apple actively diversifying supply chain to India and Vietnam',
-          'AI features being integrated across all major product lines in upcoming updates',
-        ],
-      },
-      {
-        heading: 'Guidance',
-        bullets: [
-          'Q3 FY2025 revenue guidance: $84B–$88B (low-to-mid single-digit growth)',
-          'Gross margin guided at 45.5%–46.5%',
-          'Supply chain diversification expected to reduce tariff exposure by 2026',
-        ],
-      },
-    ],
-    tags: ['Q2 2025', 'AAPL', 'Services', 'Supply Chain', 'Tariff', 'India'],
-  },
-  {
-    symbol: 'AAPL',
-    companyName: 'Apple, Inc.',
-    title: 'Apple, Inc. (AAPL-US), Q1 2025 Earnings Call Transcript',
-    date: 'January 30, 2025, 5:00 PM ET',
-    year: 2025,
-    quarter: 'Q1',
-    fileUrl: 'https://s2.q4cdn.com/470004039/files/doc_earnings/2025/q1/aapl-20241228.htm',
-    sections: [
-      {
-        heading: 'Revenue & EPS',
-        bullets: [
-          'Q1 FY2025 revenue: $124.3B, up 4% YoY — in-line with consensus',
-          'EPS: $2.40 (diluted), up 10% YoY',
-          'Gross margin: 46.9% — record gross margin for any Apple quarter',
-        ],
-      },
-      {
-        heading: 'Segment Performance',
-        bullets: [
-          'iPhone revenue: $69.1B, up 1% YoY — driven by iPhone 16 Pro demand',
-          'Services revenue: $26.3B, up 14% YoY — all-time record',
-          'Mac: $9.0B; iPad: $8.1B; Wearables: $11.7B',
-          'Greater China revenue declined 11% due to intensified local competition',
-        ],
-      },
-      {
-        heading: 'Management Commentary',
-        bullets: [
-          'Apple Intelligence launched in US English; 11 additional languages planned for April 2025',
-          'Tim Cook: customer reception of iPhone 16 AI features "extremely positive"',
-          'Installed base across all devices reaching all-time highs',
-        ],
-      },
-      {
-        heading: 'Capital Allocation',
-        bullets: [
-          'Total capital returned to shareholders in Q1: $30.0B',
-          'Share repurchases: $26.0B; dividends: $4.0B',
-          'Net cash position declined to $58B as buyback pace increased',
-        ],
-      },
-    ],
-    tags: ['Q1 2025', 'AAPL', 'iPhone 16', 'Apple Intelligence', 'Services', 'China'],
-  },
-  {
-    symbol: 'NVDA',
-    companyName: 'NVIDIA Corp.',
-    title: 'NVIDIA Corp. (NVDA-US), Q4 2026 Earnings Call Transcript',
-    date: 'February 25, 2026, 5:00 PM ET',
-    year: 2026,
-    quarter: 'Q4',
-    fileUrl: 'https://eipbe-central.digwork.tw.ent.tsmc.com/mtl-trx/pdf/1772229761407183',
-    sections: [
-      {
-        heading: 'Revenue & EPS',
-        bullets: [
-          'Q4 FY2026 revenue: $39.3B, up 78% YoY — beat consensus of $38.1B',
-          'EPS: $0.89 non-GAAP, above estimate of $0.85',
-          'Gross margin: 73.5% (non-GAAP), reflecting Blackwell scale-up',
-        ],
-      },
-      {
-        heading: 'Segment Performance',
-        bullets: [
-          'Data Center: $35.6B, up 93% YoY — driven by H100 and Blackwell ramp',
-          'Blackwell architecture: $11B revenue in Q4 alone',
-          'Gaming: $2.5B, up 14% YoY; Automotive: $449M, up 103% YoY',
-        ],
-      },
-      {
-        heading: 'Management Commentary',
-        bullets: [
-          'Jensen Huang: demand for Blackwell significantly exceeds supply; ramping as fast as possible',
-          'New GB300 (Blackwell Ultra) announced for H2 2026 with improved memory bandwidth',
-          'Sovereign AI and enterprise adoption expanding globally',
-          'US-China export restrictions impacted H20 sales; company diversifying customer base',
-        ],
-      },
-      {
-        heading: 'Guidance',
-        bullets: [
-          'Q1 FY2027 guidance: revenue ~$43B ± 2%',
-          'Gross margin expected ~73% non-GAAP in Q1 FY2027',
-          'R&D spend increasing to support next-gen Rubin architecture',
-        ],
-      },
-    ],
-    tags: ['Q4 FY2026', 'NVDA', 'Blackwell', 'Data Center', 'AI'],
-  },
-];
+  let lastSpeaker: string | null = null;
+  let lastMatchEnd = 0;
+
+  for (const match of html.matchAll(speakerMarkerRe)) {
+    const matchIndex = match.index ?? 0;
+    if (lastSpeaker !== null) {
+      const contentHtml = html.slice(lastMatchEnd, matchIndex).trim();
+      const id = `sp-${sections.length}`;
+      const displayName = lastSpeaker.split('\u2014')[0].split('\u2013')[0].split(' \u2014')[0].trim();
+      sections.push({ id, speaker: lastSpeaker, displayName, contentHtml });
+    }
+    lastSpeaker = match[1].trim();
+    lastMatchEnd = matchIndex + match[0].length;
+  }
+
+  if (lastSpeaker !== null) {
+    const contentHtml = html.slice(lastMatchEnd).trim();
+    const id = `sp-${sections.length}`;
+    const displayName = lastSpeaker.split('\u2014')[0].split('\u2013')[0].trim();
+    sections.push({ id, speaker: lastSpeaker, displayName, contentHtml });
+  }
+
+  return sections;
+}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -358,92 +119,81 @@ function parseQuarterNumber(q: string): number {
   return isNaN(n) ? 0 : n;
 }
 
-function highlightText(text: string, keyword: string): React.ReactNode {
-  if (!keyword.trim()) return text;
-  const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const parts = text.split(new RegExp(`(${escaped})`, 'gi'));
-  return parts.map((part, i) =>
-    part.toLowerCase() === keyword.toLowerCase() ? (
-      <mark key={i} className="cp-irt-highlight">{part}</mark>
-    ) : (
-      part
-    )
-  );
-}
+// ── List Item ─────────────────────────────────────────────────────────────────
 
-// ── Sub-components ────────────────────────────────────────────────────────────
-
-interface TranscriptListItemProps {
-  card: IrTranscriptCard;
+interface IrtListItemProps {
+  entry: IrTranscriptHtmlEntry;
   isActive: boolean;
-  keyword: string;
   onClick: () => void;
 }
 
-function TranscriptListItem({ card, isActive, keyword, onClick }: TranscriptListItemProps) {
+function IrtListItem({ entry, isActive, onClick }: IrtListItemProps) {
+  const title = `${entry.companyName} (${entry.symbol}-US), ${entry.quarter} ${entry.year} Earnings Call Transcript`;
   return (
     <button
       className={`cp-irt-list-item${isActive ? ' cp-irt-list-item--active' : ''}`}
       onClick={onClick}
     >
-      <div className="cp-irt-list-item-title">{highlightText(card.title, keyword)}</div>
+      <div className="cp-irt-list-item-title">{title}</div>
       <div className="cp-irt-list-item-meta">
-        <span className="cp-irt-list-item-date">{card.date.split(',')[0]}</span>
         <div className="cp-irt-list-item-tags">
-          <span className="cp-irt-period-tag cp-irt-period-tag--year">{card.year}</span>
-          <span className="cp-irt-period-tag cp-irt-period-tag--qtr">{card.quarter}</span>
+          <span className="cp-irt-period-tag cp-irt-period-tag--year">{entry.year}</span>
+          <span className="cp-irt-period-tag cp-irt-period-tag--qtr">{entry.quarter}</span>
         </div>
       </div>
     </button>
   );
 }
 
-interface TranscriptDetailProps {
-  card: IrTranscriptCard;
-  keyword: string;
-  expandedSections: Record<string, boolean>;
-  onToggleSection: (key: string) => void;
+// ── Detail Panel ──────────────────────────────────────────────────────────────
+
+interface IrtDetailProps {
+  entry: IrTranscriptHtmlEntry;
 }
 
-function buildIrtMarkdown(card: IrTranscriptCard): string {
-  const lines: string[] = [
-    `# ${card.title}`,
-    '',
-    `**Date:** ${card.date}`,
-    `**Company:** ${card.companyName}`,
-    '',
-    '---',
-    '',
-  ];
-  for (const section of card.sections) {
-    lines.push(`## ${section.heading}`);
-    lines.push('');
-    for (const bullet of section.bullets) {
-      lines.push(`- ${bullet}`);
-    }
-    lines.push('');
-  }
-  if (card.tags.length > 0) {
-    lines.push('---', '', `**Tags:** ${card.tags.join(', ')}`);
-  }
-  return lines.join('\n');
-}
+function IrtDetail({ entry }: IrtDetailProps) {
+  const sections = useMemo(() => parseSpeakerSections(entry.content), [entry.content]);
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-function downloadMarkdown(filename: string, content: string) {
-  const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
-}
+  useEffect(() => {
+    setExpandedIds(new Set());
+  }, [entry.filename]);
 
-function TranscriptDetail({ card, keyword, expandedSections, onToggleSection }: TranscriptDetailProps) {
+  const handleChipClick = useCallback((id: string) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+    setTimeout(() => {
+      sectionRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 60);
+  }, []);
+
+  const handleToggle = useCallback((id: string) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }, []);
+
   function handleDownload() {
-    const filename = `${card.symbol}-${card.year}-${card.quarter}-ir-transcript.md`;
-    downloadMarkdown(filename, buildIrtMarkdown(card));
+    const blob = new Blob([entry.content], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${entry.filename}-ir-transcript.html`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
+
+  const title = `${entry.companyName} (${entry.symbol}-US), ${entry.quarter} ${entry.year} Earnings Call Transcript`;
 
   return (
     <article className="cp-pec-card cp-irt-card">
@@ -452,21 +202,21 @@ function TranscriptDetail({ card, keyword, expandedSections, onToggleSection }: 
         <div className="cp-pec-card-header-left">
           <span className="cp-pec-card-company cp-irt-badge">IR</span>
           <div>
-            <div className="cp-pec-card-title">{highlightText(card.title, keyword)}</div>
-            <div className="cp-pec-card-date">{card.date}</div>
+            <div className="cp-pec-card-title">{title}</div>
+            <div className="cp-pec-card-date">{entry.symbol} · {entry.quarter} {entry.year}</div>
           </div>
         </div>
         <div className="cp-pec-card-actions">
           <button
             className="cp-pec-card-action-btn"
-            title="Download Markdown"
-            aria-label="Download Markdown"
+            title="Download HTML"
+            aria-label="Download HTML"
             onClick={handleDownload}
           >
             <DownloadIcon />
           </button>
           <a
-            href={card.fileUrl}
+            href={entry.fileUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="cp-pec-card-action-btn"
@@ -478,47 +228,61 @@ function TranscriptDetail({ card, keyword, expandedSections, onToggleSection }: 
         </div>
       </div>
 
-      {/* Transcript sections */}
-      <div className="cp-irt-sections">
-        {card.sections.map((section) => {
-          const sectionKey = `${card.symbol}-${card.year}-${card.quarter}-${section.heading}`;
-          const isExpanded = expandedSections[sectionKey] !== false;
-          return (
-            <div key={section.heading} className="cp-irt-section">
+      {/* Executives navigation */}
+      {sections.length > 0 && (
+        <div className="cp-irt-exec-nav">
+          <span className="cp-irt-exec-nav-label">Executives</span>
+          <div className="cp-irt-exec-chips">
+            {sections.map((s) => (
               <button
-                className="cp-irt-section-toggle"
-                onClick={() => onToggleSection(sectionKey)}
+                key={s.id}
+                className={`cp-irt-exec-chip${expandedIds.has(s.id) ? ' cp-irt-exec-chip--active' : ''}`}
+                onClick={() => handleChipClick(s.id)}
+                title={s.speaker}
+              >
+                {s.displayName}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Collapsible speaker sections */}
+      <div className="cp-irt-speaker-sections">
+        {sections.map((section) => {
+          const isExpanded = expandedIds.has(section.id);
+          return (
+            <div
+              key={section.id}
+              className="cp-irt-speaker-section"
+              ref={(el) => { sectionRefs.current[section.id] = el; }}
+            >
+              <button
+                className={`cp-irt-speaker-header${isExpanded ? ' cp-irt-speaker-header--expanded' : ''}`}
+                onClick={() => handleToggle(section.id)}
                 aria-expanded={isExpanded}
               >
-                <span className="cp-pec-section-heading cp-irt-section-heading">{section.heading}</span>
-                <svg
-                  viewBox="0 0 14 14"
-                  fill="none"
-                  width="12"
-                  height="12"
+                <span className="cp-irt-speaker-name">{section.speaker}</span>
+                <ChevronDownIcon
                   className={`cp-irt-chevron${isExpanded ? ' cp-irt-chevron--open' : ''}`}
-                  aria-hidden="true"
-                >
-                  <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                />
               </button>
               {isExpanded && (
-                <ul className="cp-irt-bullet-list">
-                  {section.bullets.map((bullet, i) => (
-                    <li key={i} className="cp-irt-bullet-item">{highlightText(bullet, keyword)}</li>
-                  ))}
-                </ul>
+                <div
+                  className="cp-irt-speaker-body"
+                  dangerouslySetInnerHTML={{ __html: section.contentHtml }}
+                />
               )}
             </div>
           );
         })}
       </div>
 
-      {/* Footer tags */}
+      {/* Footer */}
       <div className="cp-pec-card-footer">
-        {card.tags.map((tag) => (
-          <span key={tag} className="cp-pec-tag">{highlightText(tag, keyword)}</span>
-        ))}
+        <span className="cp-pec-tag cp-irt-tag">IR Transcript</span>
+        <span className="cp-pec-tag">{entry.quarter} {entry.year}</span>
+        <span className="cp-pec-tag">{entry.symbol}</span>
       </div>
     </article>
   );
@@ -527,27 +291,27 @@ function TranscriptDetail({ card, keyword, expandedSections, onToggleSection }: 
 // ── Main Component ─────────────────────────────────────────────────────────────
 
 export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
-  const allCards = useMemo(
-    () => IR_TRANSCRIPT_DATA.filter((c) => c.symbol === symbol),
+  const allEntries = useMemo(
+    () => IR_TRANSCRIPT_HTML_ENTRIES.filter((e) => e.symbol === symbol),
     [symbol]
   );
 
-  // Sort cards newest-first (by year desc, then quarter desc)
-  const sortedCards = useMemo(
-    () => [...allCards].sort((a, b) => b.year - a.year || parseQuarterNumber(b.quarter) - parseQuarterNumber(a.quarter)),
-    [allCards]
+  const sortedEntries = useMemo(
+    () =>
+      [...allEntries].sort(
+        (a, b) => b.year - a.year || parseQuarterNumber(b.quarter) - parseQuarterNumber(a.quarter)
+      ),
+    [allEntries]
   );
 
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [keyword, setKeyword] = useState('');
-  const [debouncedKeyword, setDebouncedKeyword] = useState('');
   const [yearFilter, setYearFilter] = useState('all');
   const [qtrFilter, setQtrFilter] = useState('all');
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
   const searchRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [debouncedKeyword, setDebouncedKeyword] = useState('');
 
-  // Debounce keyword for filtering (200ms)
   const handleKeywordChange = useCallback((value: string) => {
     setKeyword(value);
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -555,59 +319,51 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
   }, []);
 
   useEffect(() => {
-    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
   }, []);
 
-  // Build year options: unique years sorted descending
   const yearOptions = useMemo(() => {
-    const years = [...new Set(sortedCards.map((c) => String(c.year)))];
+    const years = [...new Set(sortedEntries.map((e) => String(e.year)))];
     return [{ value: 'all', label: 'All Years' }, ...years.map((y) => ({ value: y, label: y }))];
-  }, [sortedCards]);
+  }, [sortedEntries]);
 
-  // Build quarter options: unique quarters sorted
   const qtrOptions = useMemo(() => {
-    const qtrs = [...new Set(sortedCards.map((c) => c.quarter))].sort(
+    const qtrs = [...new Set(sortedEntries.map((e) => e.quarter))].sort(
       (a, b) => parseQuarterNumber(a) - parseQuarterNumber(b)
     );
     return [{ value: 'all', label: 'All Qtrs' }, ...qtrs.map((q) => ({ value: q, label: q }))];
-  }, [sortedCards]);
+  }, [sortedEntries]);
 
-  // Filtered list — uses debouncedKeyword so heavy nested search runs less often
-  const filteredCards = useMemo(() => {
-    let list = sortedCards;
-    if (yearFilter !== 'all') {
-      list = list.filter((c) => String(c.year) === yearFilter);
-    }
-    if (qtrFilter !== 'all') {
-      list = list.filter((c) => c.quarter === qtrFilter);
-    }
+  const filteredEntries = useMemo(() => {
+    let list = sortedEntries;
+    if (yearFilter !== 'all') list = list.filter((e) => String(e.year) === yearFilter);
+    if (qtrFilter !== 'all') list = list.filter((e) => e.quarter === qtrFilter);
     if (debouncedKeyword.trim()) {
       const kw = debouncedKeyword.toLowerCase();
       list = list.filter(
-        (c) =>
-          c.title.toLowerCase().includes(kw) ||
-          c.tags.some((t) => t.toLowerCase().includes(kw)) ||
-          c.sections.some(
-            (s) =>
-              s.heading.toLowerCase().includes(kw) ||
-              s.bullets.some((b) => b.toLowerCase().includes(kw))
-          )
+        (e) =>
+          e.companyName.toLowerCase().includes(kw) ||
+          e.symbol.toLowerCase().includes(kw) ||
+          String(e.year).includes(kw) ||
+          e.quarter.toLowerCase().includes(kw) ||
+          e.content.toLowerCase().includes(kw)
       );
     }
     return list;
-  }, [sortedCards, yearFilter, qtrFilter, debouncedKeyword]);
+  }, [sortedEntries, yearFilter, qtrFilter, debouncedKeyword]);
 
-  // Resolve selected card — default to first in filtered list (latest)
-  const activeCard = useMemo(() => {
-    if (selectedId) {
-      const found = filteredCards.find((c) => `${c.year}-${c.quarter}` === selectedId);
+  const activeEntry = useMemo(() => {
+    if (selectedKey) {
+      const found = filteredEntries.find((e) => `${e.year}-${e.quarter}` === selectedKey);
       if (found) return found;
     }
-    return filteredCards[0] ?? null;
-  }, [filteredCards, selectedId]);
+    return filteredEntries[0] ?? null;
+  }, [filteredEntries, selectedKey]);
 
-  const handleSelectCard = useCallback((card: IrTranscriptCard) => {
-    setSelectedId(`${card.year}-${card.quarter}`);
+  const handleSelectEntry = useCallback((entry: IrTranscriptHtmlEntry) => {
+    setSelectedKey(`${entry.year}-${entry.quarter}`);
   }, []);
 
   const handleClearSearch = useCallback(() => {
@@ -617,18 +373,13 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
     searchRef.current?.focus();
   }, []);
 
-  const handleToggleSection = useCallback((key: string) => {
-    setExpandedSections((prev) => ({ ...prev, [key]: !prev[key] }));
-  }, []);
-
-  // Reset selection when filter narrows list
   useEffect(() => {
-    if (selectedId && !filteredCards.find((c) => `${c.year}-${c.quarter}` === selectedId)) {
-      setSelectedId(null);
+    if (selectedKey && !filteredEntries.find((e) => `${e.year}-${e.quarter}` === selectedKey)) {
+      setSelectedKey(null);
     }
-  }, [filteredCards, selectedId]);
+  }, [filteredEntries, selectedKey]);
 
-  if (allCards.length === 0) {
+  if (allEntries.length === 0) {
     return (
       <div className="cp-pec-wrap">
         <div className="cp-pec-empty">
@@ -643,9 +394,8 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
 
   return (
     <div className="cp-irt-layout">
-      {/* ── Left Panel: Search + List ── */}
+      {/* Left Panel */}
       <aside className="cp-irt-panel-left">
-        {/* Keyword Search */}
         <div className="cp-irt-search-box">
           <span className="cp-irt-search-icon"><SearchIcon /></span>
           <input
@@ -664,7 +414,6 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
           )}
         </div>
 
-        {/* Period Filter */}
         <div className="cp-irt-filter-row">
           <span className="cp-irt-filter-label"><FilterIcon />Period</span>
           <select
@@ -689,33 +438,26 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
           </select>
         </div>
 
-        {/* List */}
         <div className="cp-irt-list">
-          {filteredCards.length === 0 ? (
+          {filteredEntries.length === 0 ? (
             <div className="cp-irt-list-empty">No transcripts match your filter.</div>
           ) : (
-            filteredCards.map((card) => (
-              <TranscriptListItem
-                key={`${card.year}-${card.quarter}`}
-                card={card}
-                isActive={activeCard?.year === card.year && activeCard?.quarter === card.quarter}
-                keyword={keyword}
-                onClick={() => handleSelectCard(card)}
+            filteredEntries.map((entry) => (
+              <IrtListItem
+                key={`${entry.year}-${entry.quarter}`}
+                entry={entry}
+                isActive={activeEntry?.year === entry.year && activeEntry?.quarter === entry.quarter}
+                onClick={() => handleSelectEntry(entry)}
               />
             ))
           )}
         </div>
       </aside>
 
-      {/* ── Right Panel: Detail ── */}
+      {/* Right Panel */}
       <div className="cp-irt-panel-right">
-        {activeCard ? (
-          <TranscriptDetail
-            card={activeCard}
-            keyword={keyword}
-            expandedSections={expandedSections}
-            onToggleSection={handleToggleSection}
-          />
+        {activeEntry ? (
+          <IrtDetail entry={activeEntry} />
         ) : (
           <div className="cp-pec-empty">
             <span className="cp-pec-empty-icon"><NoDataIcon /></span>

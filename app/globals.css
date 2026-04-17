@@ -19958,6 +19958,121 @@ html.dark .cp-pec-ai-sentiment--bearish {
   transform: rotate(180deg);
 }
 
+/* ===== IR TRANSCRIPT — EXECUTIVES NAV & SPEAKER SECTIONS ===== */
+
+/* Tag used in footer */
+.cp-irt-tag {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+/* Executives navigation bar */
+.cp-irt-exec-nav {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 0 14px 0;
+  border-bottom: 1px solid var(--c-border);
+  margin-bottom: 14px;
+}
+.cp-irt-exec-nav-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--c-text-3);
+  white-space: nowrap;
+  margin-top: 5px;
+  min-width: 64px;
+}
+.cp-irt-exec-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.cp-irt-exec-chip {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--c-border-2);
+  background: var(--c-bg);
+  color: var(--c-text-2);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  line-height: 1.4;
+}
+.cp-irt-exec-chip:hover {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #93c5fd;
+}
+.cp-irt-exec-chip--active {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #93c5fd;
+  font-weight: 600;
+}
+
+/* Speaker section container */
+.cp-irt-speaker-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cp-irt-speaker-section {
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+/* Speaker section header (collapse toggle) */
+.cp-irt-speaker-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--c-bg);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  gap: 8px;
+  transition: background 0.12s;
+}
+.cp-irt-speaker-header:hover {
+  background: #f0f9ff;
+}
+.cp-irt-speaker-header--expanded {
+  background: #eff6ff;
+  border-bottom: 1px solid var(--c-border);
+}
+.cp-irt-speaker-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-text);
+}
+
+/* Speaker body — rendered HTML */
+.cp-irt-speaker-body {
+  padding: 12px 16px;
+  background: white;
+}
+.cp-irt-speaker-body p.p {
+  font-size: 13px;
+  color: var(--c-text-2);
+  line-height: 1.7;
+  margin: 0 0 10px 0;
+}
+.cp-irt-speaker-body p.p:last-child {
+  margin-bottom: 0;
+}
+.cp-irt-speaker-body strong {
+  color: var(--c-text);
+  font-weight: 600;
+}
+
 /* =======================================================================
    DARK MODE — Comprehensive site-wide background / interactive-state fixes
    Root cause: background: var(--c-dark) resolves to #e2e8f0 (light) in
