@@ -8,6 +8,7 @@ import NewsCategoryTabs from '@/app/components/news/NewsCategoryTabs';
 import NewsCard from '@/app/components/news/NewsCard';
 import CompanyRankingTable from '@/app/components/news/CompanyRankingTable';
 import { newsItems, NewsCategory } from '@/app/data/news';
+import { getPaginationRange } from '@/app/lib/paginationUtils';
 
 const PAGE_SIZE = 8;
 
@@ -176,17 +177,21 @@ export default function MarketNewsPage() {
                 </div>
                 {totalPages > 1 && (
                   <div className="news-pagination-bar">
-                    {Array.from({ length: totalPages }, (_, i) => (
-                      <button
-                        key={i}
-                        className={`news-pagination-btn${page === i ? ' active' : ''}`}
-                        onClick={() => goTo(i)}
-                        aria-label={`Page ${i + 1}`}
-                        aria-current={page === i ? 'page' : undefined}
-                      >
-                        {i + 1}
-                      </button>
-                    ))}
+                    {getPaginationRange(page, totalPages).map((item, idx) =>
+                      typeof item === 'string' ? (
+                        <span key={item} className="news-pagination-ellipsis">…</span>
+                      ) : (
+                        <button
+                          key={item}
+                          className={`news-pagination-btn${page === item ? ' active' : ''}`}
+                          onClick={() => goTo(item)}
+                          aria-label={`Page ${item + 1}`}
+                          aria-current={page === item ? 'page' : undefined}
+                        >
+                          {item + 1}
+                        </button>
+                      )
+                    )}
                   </div>
                 )}
               </div>

@@ -10,6 +10,7 @@ import { COMPANY_MASTER_LIST, getCompanyByCode } from '@/app/data/companyMaster'
 import { newsItems, newsCategories as newsCategoryOptions } from '@/app/data/news';
 import { extractJson } from '@/app/lib/parseContent';
 import { getFavoritesByUserAcct } from '@/app/lib/getFavoritesByUserAcct';
+import { getPaginationRange } from '@/app/lib/paginationUtils';
 import companyProfileMd from '@/content/company-profile.md';
 import myTagsMd from '@/content/my-tags.md';
 import FinancialStatementTab from './FinancialStatementTab';
@@ -1158,15 +1159,19 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                             >
                               ‹ Prev
                             </button>
-                            {Array.from({ length: newsTotalPages }, (_, i) => i + 1).map((p) => (
-                              <button
-                                key={p}
-                                className={`cp-news-tab-page-btn${newsPage === p ? ' active' : ''}`}
-                                onClick={() => setNewsPage(p)}
-                              >
-                                {p}
-                              </button>
-                            ))}
+                            {getPaginationRange(newsPage - 1, newsTotalPages).map((item) =>
+                              typeof item === 'string' ? (
+                                <span key={item} className="cp-news-tab-page-ellipsis">…</span>
+                              ) : (
+                                <button
+                                  key={item}
+                                  className={`cp-news-tab-page-btn${newsPage === item + 1 ? ' active' : ''}`}
+                                  onClick={() => setNewsPage(item + 1)}
+                                >
+                                  {item + 1}
+                                </button>
+                              )
+                            )}
                             <button
                               className="cp-news-tab-page-btn"
                               disabled={newsPage === newsTotalPages}
