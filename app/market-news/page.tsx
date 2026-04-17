@@ -152,66 +152,44 @@ export default function MarketNewsPage() {
             <div className="company-ranking-below-tabs">
               <CompanyRankingTable selectedSymbol={filterCompanySymbol ?? undefined} onCompanyClick={handleCompanyClick} />
             </div>
-            <div className="news-pager-layout">
-              <button
-                className="news-pager-arrow"
-                onClick={() => goTo(page - 1)}
-                disabled={page === 0}
-                aria-label="Previous page"
-              >
-                <svg viewBox="0 0 24 24" fill="none" width="20" height="20" aria-hidden="true">
-                  <path
-                    d="M15 5L8 12L15 19"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-              <div className="news-pager-content">
-                <div className="news-grid">
-                  {paged.map((item) => (
-                    <NewsCard key={item.id} item={item} />
-                  ))}
-                </div>
-                {totalPages > 1 && (
-                  <div className="news-pagination-bar">
-                    {getPaginationRange(page, totalPages).map((item, idx) =>
-                      typeof item === 'string' ? (
-                        <span key={item} className="news-pagination-ellipsis">…</span>
-                      ) : (
-                        <button
-                          key={item}
-                          className={`news-pagination-btn${page === item ? ' active' : ''}`}
-                          onClick={() => goTo(item)}
-                          aria-label={`Page ${item + 1}`}
-                          aria-current={page === item ? 'page' : undefined}
-                        >
-                          {item + 1}
-                        </button>
-                      )
-                    )}
-                  </div>
-                )}
-              </div>
-              <button
-                className="news-pager-arrow"
-                onClick={() => goTo(page + 1)}
-                disabled={page >= totalPages - 1}
-                aria-label="Next page"
-              >
-                <svg viewBox="0 0 24 24" fill="none" width="20" height="20" aria-hidden="true">
-                  <path
-                    d="M9 5L16 12L9 19"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
+            <div className="news-grid">
+              {paged.map((item) => (
+                <NewsCard key={item.id} item={item} />
+              ))}
             </div>
+            {totalPages > 1 && (
+              <div className="cp-news-tab-pagination">
+                <button
+                  className="cp-news-tab-page-btn"
+                  disabled={page === 0}
+                  onClick={() => goTo(page - 1)}
+                >
+                  ‹ Prev
+                </button>
+                {getPaginationRange(page, totalPages).map((item) =>
+                  typeof item === 'string' ? (
+                    <span key={item} className="cp-news-tab-page-ellipsis">…</span>
+                  ) : (
+                    <button
+                      key={item}
+                      className={`cp-news-tab-page-btn${page === item ? ' active' : ''}`}
+                      onClick={() => goTo(item)}
+                      aria-label={`Page ${item + 1}`}
+                      aria-current={page === item ? 'page' : undefined}
+                    >
+                      {item + 1}
+                    </button>
+                  )
+                )}
+                <button
+                  className="cp-news-tab-page-btn"
+                  disabled={page >= totalPages - 1}
+                  onClick={() => goTo(page + 1)}
+                >
+                  Next ›
+                </button>
+              </div>
+            )}
           </div>
         </main>
       </div>
