@@ -149,7 +149,7 @@ export default function MarketNewsPage() {
 
             <NewsCategoryTabs active={activeCategory} onChange={(cat) => { setActiveCategory(cat); setFilterCompanySymbol(null); }} />
             <div className="company-ranking-below-tabs">
-              <CompanyRankingTable activeCategory={activeCategory} selectedSymbol={filterCompanySymbol ?? undefined} onCompanyClick={handleCompanyClick} />
+              <CompanyRankingTable selectedSymbol={filterCompanySymbol ?? undefined} onCompanyClick={handleCompanyClick} />
             </div>
             <div className="news-pager-layout">
               <button

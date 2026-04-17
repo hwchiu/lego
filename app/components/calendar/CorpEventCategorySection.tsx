@@ -287,8 +287,17 @@ export default function CorpEventCategorySection({
         </div>
         <div className="cal-controls">
           <div className="toggle-group">
-            <button className="toggle-btn active cal-view-btn" onClick={() => setIsMonthlyView((v) => !v)}>
-              {isMonthlyView ? 'Weekly View' : 'Monthly View'}
+            <button
+              className={`toggle-btn${!isMonthlyView ? ' active' : ''} cal-view-btn`}
+              onClick={() => setIsMonthlyView(false)}
+            >
+              Weekly View
+            </button>
+            <button
+              className={`toggle-btn${isMonthlyView ? ' active' : ''} cal-view-btn`}
+              onClick={() => setIsMonthlyView(true)}
+            >
+              Monthly View
             </button>
           </div>
         </div>
