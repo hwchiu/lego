@@ -571,6 +571,7 @@ function ManageViewModal({
             /* Edit Views tab */
             <div className="wl-mv-edit-list">
               {viewOrder.map((id, i) => {
+                const isSummary = id === 'Summary';
                 const isBuiltin = BUILTIN_VIEWS.includes(id as typeof BUILTIN_VIEWS[number]);
                 const label = isBuiltin
                   ? id
@@ -591,36 +592,41 @@ function ManageViewModal({
                     </svg>
                     <span className={`wl-mv-edit-label${isHidden ? ' wl-mv-edit-label--hidden' : ''}`}>{label}</span>
                     <div className="wl-mv-edit-actions">
-                      <button
-                        className={`wl-mv-hide-btn${isHidden ? ' active' : ''}`}
-                        title={isHidden ? 'Show View' : 'Hide View'}
-                        onClick={() => onToggleHide(id)}
-                      >
-                        {isHidden ? (
+                      {/* Summary View cannot be hidden or deleted */}
+                      {!isSummary && (
+                        <button
+                          className={`wl-mv-hide-btn${isHidden ? ' active' : ''}`}
+                          title={isHidden ? 'Show View' : 'Hide View'}
+                          onClick={() => onToggleHide(id)}
+                        >
+                          {isHidden ? (
+                            <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                              <path d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z" stroke="currentColor" strokeWidth="1.3" />
+                              <circle cx="7" cy="7" r="1.8" fill="currentColor" />
+                              <path d="M2 2L12 12" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                            </svg>
+                          ) : (
+                            <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                              <path d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z" stroke="currentColor" strokeWidth="1.3" />
+                              <circle cx="7" cy="7" r="1.8" fill="currentColor" />
+                            </svg>
+                          )}
+                          <span>{isHidden ? 'Show' : 'Hide'}</span>
+                        </button>
+                      )}
+                      {!isSummary && (
+                        <button
+                          className="wl-mv-delete-btn"
+                          title="Delete View"
+                          onClick={() => onDelete(id)}
+                        >
                           <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                            <path d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z" stroke="currentColor" strokeWidth="1.3" />
-                            <circle cx="7" cy="7" r="1.8" fill="currentColor" />
-                            <path d="M2 2L12 12" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                            <path d="M2.5 4h9M5.5 4V2.5h3V4M5.5 6.5v4M8.5 6.5v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                            <rect x="3" y="4" width="8" height="8" rx="1" stroke="currentColor" strokeWidth="1.3" />
                           </svg>
-                        ) : (
-                          <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                            <path d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z" stroke="currentColor" strokeWidth="1.3" />
-                            <circle cx="7" cy="7" r="1.8" fill="currentColor" />
-                          </svg>
-                        )}
-                        <span>{isHidden ? 'Show' : 'Hide'}</span>
-                      </button>
-                      <button
-                        className="wl-mv-delete-btn"
-                        title="Delete View"
-                        onClick={() => onDelete(id)}
-                      >
-                        <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                          <path d="M2.5 4h9M5.5 4V2.5h3V4M5.5 6.5v4M8.5 6.5v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-                          <rect x="3" y="4" width="8" height="8" rx="1" stroke="currentColor" strokeWidth="1.3" />
-                        </svg>
-                        <span>Delete</span>
-                      </button>
+                          <span>Delete</span>
+                        </button>
+                      )}
                     </div>
                   </div>
                 );
@@ -1983,7 +1989,13 @@ export default function WatchlistArchiveContent() {
                   className="wl-modal-done-btn"
                   onClick={handleEditWatchlistDone}
                 >
-                  Done
+                  Save
+                </button>
+                <button
+                  className="wl-modal-cancel-btn"
+                  onClick={() => setShowEditWatchlist(false)}
+                >
+                  Cancel
                 </button>
               </div>
             </div>
@@ -1997,40 +2009,42 @@ export default function WatchlistArchiveContent() {
                   onChange={(e) => setEditWatchlistName(e.target.value)}
                 />
               </div>
-              <div>
-                <div className="wl-modal-section-title">Symbol Order</div>
-                <div className="wl-drag-list">
-                  {editSymbolOrder.map((sym, idx) => (
-                    <div
-                      key={sym}
-                      className="wl-drag-item"
-                      draggable
-                      onDragStart={() => handleDragStart(idx)}
-                      onDragEnter={() => handleDragEnter(idx)}
-                      onDragEnd={handleDragEnd}
-                      onDragOver={(e) => e.preventDefault()}
-                    >
-                      <svg className="wl-drag-handle" viewBox="0 0 14 14" fill="none" width="14" height="14">
-                        <path d="M3 4h8M3 7h8M3 10h8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                      </svg>
-                      <span className="wl-drag-symbol">{sym}</span>
-                      <span className="wl-drag-rank">#{idx + 1}</span>
-                      <button
-                        className="wl-drag-delete"
-                        aria-label={`Delete ${sym}`}
-                        onClick={() => handleDeleteSymbol(sym)}
-                        title={`Remove ${sym}`}
+              {/* Company Order section — only shown when at least one company exists */}
+              {editSymbolOrder.length > 0 && (
+                <div>
+                  <div className="wl-modal-section-title">Company Order</div>
+                  <div className="wl-drag-list">
+                    {editSymbolOrder.map((sym, idx) => (
+                      <div
+                        key={sym}
+                        className="wl-drag-item"
+                        draggable
+                        onDragStart={() => handleDragStart(idx)}
+                        onDragEnter={() => handleDragEnter(idx)}
+                        onDragEnd={handleDragEnd}
+                        onDragOver={(e) => e.preventDefault()}
                       >
-                        {/* Trash / delete icon */}
-                        <svg viewBox="0 0 14 14" fill="none" width="14" height="14" aria-hidden="true">
-                          <path d="M2.5 4h9M5.5 4V2.5h3V4M5.5 6.5v4M8.5 6.5v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-                          <rect x="3" y="4" width="8" height="8" rx="1" stroke="currentColor" strokeWidth="1.3" />
+                        <svg className="wl-drag-handle" viewBox="0 0 14 14" fill="none" width="14" height="14">
+                          <path d="M3 4h8M3 7h8M3 10h8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
                         </svg>
-                      </button>
-                    </div>
-                  ))}
+                        <span className="wl-drag-symbol">{sym}</span>
+                        <span className="wl-drag-rank">#{idx + 1}</span>
+                        <button
+                          className="wl-drag-delete"
+                          aria-label={`Delete ${sym}`}
+                          onClick={() => handleDeleteSymbol(sym)}
+                          title={`Remove ${sym}`}
+                        >
+                          <svg viewBox="0 0 14 14" fill="none" width="14" height="14" aria-hidden="true">
+                            <path d="M2.5 4h9M5.5 4V2.5h3V4M5.5 6.5v4M8.5 6.5v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                            <rect x="3" y="4" width="8" height="8" rx="1" stroke="currentColor" strokeWidth="1.3" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Delete Watchlist button */}
               <button className="wl-modal-delete-wl-btn" onClick={handleDeleteWatchlist}>
