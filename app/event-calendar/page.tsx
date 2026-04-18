@@ -9,14 +9,14 @@ import MarketTabs from '@/app/components/calendar/MarketTabs';
 import CorpEventCategorySection from '@/app/components/calendar/CorpEventCategorySection';
 import CorpEventCategoryDetail from '@/app/components/calendar/CorpEventCategoryDetail';
 import { getEventCalendarDetail, type EventCalendarDetailItem } from '@/app/lib/eventCalendarApi';
-import { getDateLabel } from '@/app/lib/calendarUtils';
+import { getIsoDateLabel } from '@/app/lib/calendarUtils';
 
 const ALL_TAB = 'All';
 
 export default function EventCalendarPage() {
   const [activeTab, setActiveTab] = useState(ALL_TAB);
   const [selectedDateLabel, setSelectedDateLabel] = useState<string>(() =>
-    getDateLabel(new Date()),
+    getIsoDateLabel(new Date()),
   );
   const [detailEvents, setDetailEvents] = useState<EventCalendarDetailItem[]>([]);
   const abortRef = useRef<AbortController | null>(null);

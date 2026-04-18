@@ -27,8 +27,10 @@ function MonthCell({ day, isToday, isSelected, onSelect, countLabel, emptyLabel 
   }
 
   const hasReports = day.companies && day.companies.length > 0;
-  // Extract the day number from dateLabel (e.g., "Apr 1" -> "1", "Mar 30" -> "30")
-  const dayNum = day.dateLabel.split(' ')[1];
+  // Extract the day number from dateLabel — supports both "YYYY-MM-DD" and "Mon D" formats
+  const dayNum = /^\d{4}-\d{2}-\d{2}$/.test(day.dateLabel)
+    ? String(parseInt(day.dateLabel.split('-')[2], 10))
+    : day.dateLabel.split(' ')[1];
   const fullText = hasReports ? day.companies!.join(', ') : '';
   const truncated = hasReports ? truncateCompanies(day.companies!) : '';
   const isTruncated = fullText.length > truncated.length;

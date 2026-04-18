@@ -1,8 +1,7 @@
-import { MONTH_SHORT } from '@/app/lib/calendarUtils';
-
 // ─── Types matching the JSON API format ────────────────────────────────────
 
 export interface EventCalendarSummaryItem {
+  EVENT_YEAR: string;
   EVENT_MONTH: string;
   EVENT_DATE: string;
   EVENT_COUNT: string;
@@ -48,11 +47,13 @@ const SUMMARY_URL = '/lego/data/event-calendar-summary.json';
 const DETAIL_URL = '/lego/data/event-calendar-detail.json';
 
 /**
- * Fetch summary items for a given month and event category.
+ * Fetch summary items for a given year, month and event category.
+ * @param year           Calendar year as a string, e.g. "2026"
  * @param month          Calendar month number as a string, e.g. "4" for April
  * @param eventType  Event category label, or "All" for the full unfiltered summary
  */
 export async function getEventCalendarSummary(
+  year: string,
   month: string,
   eventType: string,
 ): Promise<EventCalendarSummaryItem[]> {
@@ -60,13 +61,13 @@ export async function getEventCalendarSummary(
   if (!res.ok) throw new Error(`Failed to fetch event calendar summary: ${res.status}`);
   const allItems = (await res.json()) as EventCalendarSummaryItem[];
   return allItems.filter(
-    (item) => item.EVENT_MONTH === month && item.EVENT_TYPE === eventType,
+    (item) => item.EVENT_YEAR === year && item.EVENT_MONTH === month && item.EVENT_TYPE === eventType,
   );
 }
 
 /**
  * Fetch event detail records filtered by date and event category.
- * @param dateLabel  Date in "Mon D" format, e.g. "Apr 7"
+ * @param dateLabel  Date in "YYYY-MM-DD" format, e.g. "2026-04-07"
  * @param category   Event category label, or "All" for no category filter
  */
 export async function getEventCalendarDetail(
@@ -77,12 +78,14 @@ export async function getEventCalendarDetail(
   if (!res.ok) throw new Error(`Failed to fetch event calendar detail: ${res.status}`);
   const allItems = (await res.json()) as EventCalendarDetailItem[];
 
-  // Filter by date
+  // Filter by date (YYYY-MM-DD)
   const filtered = allItems.filter((item) => {
     const d = new Date(item.EVENT_DATETIME);
     if (isNaN(d.getTime())) return false;
-    const itemLabel = `${MONTH_SHORT[d.getMonth()]} ${d.getDate()}`;
-    return itemLabel === dateLabel;
+    const y = d.getFullYear();
+    const mo = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${mo}-${day}` === dateLabel;
   });
 
   if (category === 'All') return filtered;
@@ -92,7 +95,7 @@ export async function getEventCalendarDetail(
 // ─── Utility: convert summary items to CalendarSummaryMap ──────────────────
 
 /**
- * Convert raw summary items from the JSON API to the "Mon D" → CalendarCellData
+ * Convert raw summary items from the JSON API to the "YYYY-MM-DD" → CalendarCellData
  * map consumed by the calendar grid builders.
  */
 export function buildCalendarSummaryMap(
@@ -100,10 +103,12 @@ export function buildCalendarSummaryMap(
 ): CalendarSummaryMap {
   const map: CalendarSummaryMap = {};
   for (const item of items) {
-    const monthIdx = parseInt(item.EVENT_MONTH, 10) - 1;
+    const monthNum = parseInt(item.EVENT_MONTH, 10);
     const day = parseInt(item.EVENT_DATE, 10);
-    if (monthIdx < 0 || monthIdx > 11 || isNaN(day)) continue;
-    const key = `${MONTH_SHORT[monthIdx]} ${day}`;
+    if (isNaN(monthNum) || monthNum < 1 || monthNum > 12 || isNaN(day)) continue;
+    const month = String(monthNum).padStart(2, '0');
+    const dayStr = String(day).padStart(2, '0');
+    const key = `${item.EVENT_YEAR}-${month}-${dayStr}`;
     const companies = item.EVENT_COMPANY_LIST
       ? item.EVENT_COMPANY_LIST.split(',').map((s) => s.trim()).filter(Boolean)
       : [];
