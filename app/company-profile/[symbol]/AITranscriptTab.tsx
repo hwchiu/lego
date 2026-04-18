@@ -60,6 +60,11 @@ function extractH3Title(html: string): string {
   return m[1].replace(/<[^>]+>/g, '').trim();
 }
 
+/** Remove the first <h3>…</h3> from HTML to avoid duplicate title rendering. */
+function stripFirstH3(html: string): string {
+  return html.replace(/<h3[^>]*>[\s\S]*?<\/h3>/i, '');
+}
+
 function downloadHtml(filename: string, content: string) {
   const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -138,10 +143,10 @@ function AiTranscriptDetail({ entry, companyName }: AiTranscriptDetailProps) {
         </button>
       </div>
 
-      {/* HTML content rendered with accessible layout */}
+      {/* HTML content rendered with accessible layout (first h3 stripped to avoid duplicate title) */}
       <div
         className="cp-pec-ai-body cp-pec-ai-html-content"
-        dangerouslySetInnerHTML={{ __html: entry.content }}
+        dangerouslySetInnerHTML={{ __html: stripFirstH3(entry.content) }}
       />
 
       {/* Footer — 4 fixed items */}
