@@ -1290,10 +1290,10 @@ export function WatchlistContent({
               </div>
             </div>
 
-            {/* ── Holdings Table + Feed (layout-aware wrapper) ──────── */}
+            {/* ── Holdings Table (view-dependent) ──────── */}
             {activeTab === 'Summary' ? (
               <div className={`wl-content-area${splitLayout ? ' wl-content-area--split' : ''}`}>
-                {/* ── Holdings Table ─────────────────────────────────────── */}
+                {/* ── Summary Holdings Table ─────────────────────────────────────── */}
                 <div className="wl-table-wrap">
                 <table className="wl-table">
                   <thead className="wl-thead--white">
@@ -1339,118 +1339,6 @@ export function WatchlistContent({
                   </tbody>
                 </table>
               </div>
-
-              {/* ── Content feed section ───────────────────────────────── */}
-              <section className="wl-feed-section">
-                {/* Updates title */}
-                <div className="wl-feed-header">
-                  <span className="wl-feed-header-title">Updates</span>
-                </div>
-
-                {/* Feed tabs */}
-                <div className="wl-feed-tabs">
-                  {(['Latest', 'News', 'Event'] as const).map((t) => (
-                    <button
-                      key={t}
-                      className={`wl-feed-tab${feedTab === t ? ' active' : ''}`}
-                      onClick={() => setFeedTab(t)}
-                    >
-                      {t}
-                    </button>
-                  ))}
-                  <button
-                    className={`wl-feed-tab${feedTab === 'Press Release' ? ' active' : ''}`}
-                    onClick={() => setFeedTab('Press Release')}
-                  >
-                    Press Release
-                    <span className="wl-feed-tab-coming-soon">Coming Soon</span>
-                  </button>
-                </div>
-
-                {/* Feed list */}
-                <div className="wl-feed-list">
-                  {feedTab === 'Press Release' ? (
-                    <div className="wl-feed-coming-soon">
-                      <svg viewBox="0 0 24 24" fill="none" width="32" height="32" aria-hidden="true">
-                        <circle cx="12" cy="12" r="10" stroke="#9ca3af" strokeWidth="1.5" fill="none" />
-                        <path d="M12 7v5l3 3" stroke="#9ca3af" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                      <span className="wl-feed-coming-soon-title">Coming Soon</span>
-                      <span className="wl-feed-coming-soon-desc">Press Release content is under development and will be available soon.</span>
-                    </div>
-                  ) : feedTab === 'News' ? (
-                    filteredNewsItems.length === 0 ? (
-                      <div className="wl-feed-empty">No news found for your watchlist companies.</div>
-                    ) : (
-                      <div className="wl-feed-news-grid">
-                        {filteredNewsItems.map((item) => (
-                          <NewsCard key={item.id} item={item} />
-                        ))}
-                      </div>
-                    )
-                  ) : currentUpdateItems.length === 0 ? (
-                    <div className="wl-feed-empty">No updates found for your watchlist companies.</div>
-                  ) : (
-                    currentUpdateItems.map((item, idx) => (
-                      <div key={item.id} className={`wl-feed-item${idx < currentUpdateItems.length - 1 ? ' wl-feed-item--bordered' : ''}`}>
-                        {item.kind === 'news' ? <AlphaAvatar /> : item.kind === 'press-release' ? (
-                          <div className="wl-feed-avatar wl-feed-avatar--pr">
-                            <svg viewBox="0 0 28 28" fill="none" width="28" height="28" aria-hidden="true">
-                              <circle cx="14" cy="14" r="14" fill="#dbeafe" />
-                              <rect x="8" y="8" width="12" height="12" rx="2" stroke="#2563eb" strokeWidth="1.4" fill="none" />
-                              <path d="M10 12h8M10 15h6" stroke="#2563eb" strokeWidth="1.3" strokeLinecap="round" />
-                            </svg>
-                          </div>
-                        ) : (
-                          <div className="wl-feed-avatar wl-feed-avatar--event">
-                            <svg viewBox="0 0 28 28" fill="none" width="28" height="28" aria-hidden="true">
-                              <circle cx="14" cy="14" r="14" fill="#fef3c7" />
-                              <rect x="8" y="9" width="12" height="11" rx="1.5" stroke="#d97706" strokeWidth="1.4" fill="none" />
-                              <path d="M11 9V7M17 9V7" stroke="#d97706" strokeWidth="1.3" strokeLinecap="round" />
-                              <path d="M8 12h12" stroke="#d97706" strokeWidth="1.2" />
-                            </svg>
-                          </div>
-                        )}
-                        <div className="wl-feed-body">
-                          <div className="wl-feed-title">{item.title}</div>
-                          {item.description && (
-                            <div className="wl-feed-description">{item.description}</div>
-                          )}
-                          <div className="wl-feed-meta">
-                            <span className="wl-feed-tickers">
-                              {item.displaySymbols.map((sym, i) => (
-                                <span key={sym}>
-                                  {i > 0 && ', '}
-                                  <a
-                                    href={`/lego/company-profile/${sym}/`}
-                                    className="wl-feed-ticker"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    {sym}
-                                  </a>
-                                </span>
-                              ))}
-                            </span>
-                            <span className="wl-feed-dot">•</span>
-                            <span className="wl-feed-source">{item.source}</span>
-                            <span className="wl-feed-dot">•</span>
-                            <span className="wl-feed-time">{item.dateLabel}</span>
-                            {item.kind !== 'event' && (
-                              <>
-                                <span className="wl-feed-dot">•</span>
-                                <span className={`wl-feed-kind-badge wl-feed-kind-badge--${item.kind}`}>
-                                  {item.kind === 'news' ? 'News' : 'Press Release'}
-                                </span>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </section>
               </div>
             ) : customViews.some((v) => v.id === activeTab) ? (
               /* ── Custom View Table ─────────────────────────────────── */
@@ -1497,6 +1385,118 @@ export function WatchlistContent({
                 );
               })()
             ) : null}
+
+            {/* ── Updates feed section (always visible regardless of active view) ── */}
+            <section className="wl-feed-section">
+              {/* Updates title */}
+              <div className="wl-feed-header">
+                <span className="wl-feed-header-title">Updates</span>
+              </div>
+
+              {/* Feed tabs */}
+              <div className="wl-feed-tabs">
+                {(['Latest', 'News', 'Event'] as const).map((t) => (
+                  <button
+                    key={t}
+                    className={`wl-feed-tab${feedTab === t ? ' active' : ''}`}
+                    onClick={() => setFeedTab(t)}
+                  >
+                    {t}
+                  </button>
+                ))}
+                <button
+                  className={`wl-feed-tab${feedTab === 'Press Release' ? ' active' : ''}`}
+                  onClick={() => setFeedTab('Press Release')}
+                >
+                  Press Release
+                  <span className="wl-feed-tab-coming-soon">Coming Soon</span>
+                </button>
+              </div>
+
+              {/* Feed list */}
+              <div className="wl-feed-list">
+                {feedTab === 'Press Release' ? (
+                  <div className="wl-feed-coming-soon">
+                    <svg viewBox="0 0 24 24" fill="none" width="32" height="32" aria-hidden="true">
+                      <circle cx="12" cy="12" r="10" stroke="#9ca3af" strokeWidth="1.5" fill="none" />
+                      <path d="M12 7v5l3 3" stroke="#9ca3af" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <span className="wl-feed-coming-soon-title">Coming Soon</span>
+                    <span className="wl-feed-coming-soon-desc">Press Release content is under development and will be available soon.</span>
+                  </div>
+                ) : feedTab === 'News' ? (
+                  filteredNewsItems.length === 0 ? (
+                    <div className="wl-feed-empty">No news found for your watchlist companies.</div>
+                  ) : (
+                    <div className="wl-feed-news-grid">
+                      {filteredNewsItems.map((item) => (
+                        <NewsCard key={item.id} item={item} />
+                      ))}
+                    </div>
+                  )
+                ) : currentUpdateItems.length === 0 ? (
+                  <div className="wl-feed-empty">No updates found for your watchlist companies.</div>
+                ) : (
+                  currentUpdateItems.map((item, idx) => (
+                    <div key={item.id} className={`wl-feed-item${idx < currentUpdateItems.length - 1 ? ' wl-feed-item--bordered' : ''}`}>
+                      {item.kind === 'news' ? <AlphaAvatar /> : item.kind === 'press-release' ? (
+                        <div className="wl-feed-avatar wl-feed-avatar--pr">
+                          <svg viewBox="0 0 28 28" fill="none" width="28" height="28" aria-hidden="true">
+                            <circle cx="14" cy="14" r="14" fill="#dbeafe" />
+                            <rect x="8" y="8" width="12" height="12" rx="2" stroke="#2563eb" strokeWidth="1.4" fill="none" />
+                            <path d="M10 12h8M10 15h6" stroke="#2563eb" strokeWidth="1.3" strokeLinecap="round" />
+                          </svg>
+                        </div>
+                      ) : (
+                        <div className="wl-feed-avatar wl-feed-avatar--event">
+                          <svg viewBox="0 0 28 28" fill="none" width="28" height="28" aria-hidden="true">
+                            <circle cx="14" cy="14" r="14" fill="#fef3c7" />
+                            <rect x="8" y="9" width="12" height="11" rx="1.5" stroke="#d97706" strokeWidth="1.4" fill="none" />
+                            <path d="M11 9V7M17 9V7" stroke="#d97706" strokeWidth="1.3" strokeLinecap="round" />
+                            <path d="M8 12h12" stroke="#d97706" strokeWidth="1.2" />
+                          </svg>
+                        </div>
+                      )}
+                      <div className="wl-feed-body">
+                        <div className="wl-feed-title">{item.title}</div>
+                        {item.description && (
+                          <div className="wl-feed-description">{item.description}</div>
+                        )}
+                        <div className="wl-feed-meta">
+                          <span className="wl-feed-tickers">
+                            {item.displaySymbols.map((sym, i) => (
+                              <span key={sym}>
+                                {i > 0 && ', '}
+                                <a
+                                  href={`/lego/company-profile/${sym}/`}
+                                  className="wl-feed-ticker"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  {sym}
+                                </a>
+                              </span>
+                            ))}
+                          </span>
+                          <span className="wl-feed-dot">•</span>
+                          <span className="wl-feed-source">{item.source}</span>
+                          <span className="wl-feed-dot">•</span>
+                          <span className="wl-feed-time">{item.dateLabel}</span>
+                          {item.kind !== 'event' && (
+                            <>
+                              <span className="wl-feed-dot">•</span>
+                              <span className={`wl-feed-kind-badge wl-feed-kind-badge--${item.kind}`}>
+                                {item.kind === 'news' ? 'News' : 'Press Release'}
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </section>
 
           </div>
         </main>
