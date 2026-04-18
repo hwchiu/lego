@@ -590,7 +590,7 @@ export default function CreateWatchlistArchiveContent() {
             {/* ── Header greeting ── */}
             <div className="cwl-greeting">
               <p className="cwl-greeting-sub">Good day, <strong>PiKa</strong></p>
-              <h1 className="cwl-greeting-title">What would you like to follow? <span style={{ fontSize: '0.5em', color: '#9ca3af', fontWeight: 400, verticalAlign: 'middle', border: '1px solid #e5e7eb', borderRadius: '6px', padding: '2px 10px', marginLeft: '8px' }}>Archive</span></h1>
+              <h1 className="cwl-greeting-title">What would you like to follow? <span className="cwl-archive-label">Archive</span></h1>
             </div>
 
             {/* ── AI Suggestion search bar ── */}
