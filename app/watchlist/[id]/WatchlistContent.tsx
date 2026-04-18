@@ -18,6 +18,14 @@ import NewsCard from '@/app/components/news/NewsCard';
 import { pressReleases } from '@/app/data/pressReleases';
 import { CORP_EVENT_CATEGORY_MAP } from '@/app/data/corpEvents';
 import type { CorpEvent } from '@/app/data/corpEvents';
+import {
+  buildRecentQuarters,
+  getViewCatgNColInfo,
+  addCompanyToWatchlist,
+  saveView as apiSaveView,
+  deleteView as apiDeleteView,
+  updateWatchlistInfo,
+} from '@/app/lib/watchlistApi';
 
 // ── Custom View types ─────────────────────────────────────────────────────────
 interface CustomView {
@@ -350,16 +358,35 @@ function ManageViewModal({
 }: ManageViewModalProps) {
   const [modalTab, setModalTab] = useState<'create' | 'edit'>('create');
 
-  // Create New View state
+  // Create New View state — category/column data from getViewCatgNColInfo()
+  const viewCatgColInfo = useMemo(() => getViewCatgNColInfo(), []);
+  const categoryLabels = useMemo(() => viewCatgColInfo.categories.map((c) => c.label), [viewCatgColInfo]);
+  const categoryColumnMap = useMemo(() => {
+    const map: Record<string, string[]> = {};
+    for (const cat of viewCatgColInfo.categories) {
+      map[cat.label] = cat.columns.map((col) => col.id);
+    }
+    return map;
+  }, [viewCatgColInfo]);
+  const columnLabelMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const cat of viewCatgColInfo.categories) {
+      for (const col of cat.columns) {
+        map[col.id] = col.label;
+      }
+    }
+    return map;
+  }, [viewCatgColInfo]);
+
   const [viewName, setViewName] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>(Object.keys(CATALOG_VIEW_CATEGORIES)[0]);
+  const [selectedCategory, setSelectedCategory] = useState<string>(categoryLabels[0] ?? '');
   const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
 
   // Edit Views drag state
   const editDragItem = useRef<number | null>(null);
   const editDragOver = useRef<number | null>(null);
 
-  const availableColumns = CATALOG_VIEW_CATEGORIES[selectedCategory] ?? [];
+  const availableColumns = categoryColumnMap[selectedCategory] ?? [];
 
   const handleToggleColumn = useCallback((colId: string) => {
     setSelectedColumns((prev) =>
@@ -456,7 +483,7 @@ function ManageViewModal({
                 <div className="wl-mv-panel">
                   <div className="wl-mv-panel-title">Category</div>
                   <div className="wl-mv-panel-body">
-                    {Object.keys(CATALOG_VIEW_CATEGORIES).map((cat) => (
+                    {categoryLabels.map((cat) => (
                       <button
                         key={cat}
                         className={`wl-mv-cat-item${selectedCategory === cat ? ' active' : ''}`}
@@ -473,7 +500,7 @@ function ManageViewModal({
                   <div className="wl-mv-panel-title">Available Columns</div>
                   <div className="wl-mv-panel-body">
                     {availableColumns.map((colId) => {
-                      const label = ALL_COLUMNS[colId]?.label ?? CATALOG_COLUMN_LABELS[colId];
+                      const label = columnLabelMap[colId] ?? ALL_COLUMNS[colId]?.label ?? CATALOG_COLUMN_LABELS[colId];
                       if (!label) return null;
                       const checked = selectedColumns.includes(colId);
                       return (
@@ -503,7 +530,7 @@ function ManageViewModal({
                       <div className="wl-mv-empty">No columns selected yet.<br />Check columns on the left.</div>
                     ) : (
                       selectedColumns.map((colId, i) => {
-                        const label = ALL_COLUMNS[colId]?.label ?? CATALOG_COLUMN_LABELS[colId];
+                        const label = columnLabelMap[colId] ?? ALL_COLUMNS[colId]?.label ?? CATALOG_COLUMN_LABELS[colId];
                         if (!label) return null;
                         return (
                           <div
@@ -550,6 +577,7 @@ function ManageViewModal({
             /* Edit Views tab */
             <div className="wl-mv-edit-list">
               {viewOrder.map((id, i) => {
+                const isSummary = id === 'Summary';
                 const isBuiltin = BUILTIN_VIEWS.includes(id as typeof BUILTIN_VIEWS[number]);
                 const label = isBuiltin
                   ? id
@@ -570,36 +598,41 @@ function ManageViewModal({
                     </svg>
                     <span className={`wl-mv-edit-label${isHidden ? ' wl-mv-edit-label--hidden' : ''}`}>{label}</span>
                     <div className="wl-mv-edit-actions">
-                      <button
-                        className={`wl-mv-hide-btn${isHidden ? ' active' : ''}`}
-                        title={isHidden ? 'Show View' : 'Hide View'}
-                        onClick={() => onToggleHide(id)}
-                      >
-                        {isHidden ? (
+                      {/* Summary View cannot be hidden or deleted */}
+                      {!isSummary && (
+                        <button
+                          className={`wl-mv-hide-btn${isHidden ? ' active' : ''}`}
+                          title={isHidden ? 'Show View' : 'Hide View'}
+                          onClick={() => onToggleHide(id)}
+                        >
+                          {isHidden ? (
+                            <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                              <path d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z" stroke="currentColor" strokeWidth="1.3" />
+                              <circle cx="7" cy="7" r="1.8" fill="currentColor" />
+                              <path d="M2 2L12 12" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                            </svg>
+                          ) : (
+                            <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                              <path d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z" stroke="currentColor" strokeWidth="1.3" />
+                              <circle cx="7" cy="7" r="1.8" fill="currentColor" />
+                            </svg>
+                          )}
+                          <span>{isHidden ? 'Show' : 'Hide'}</span>
+                        </button>
+                      )}
+                      {!isSummary && (
+                        <button
+                          className="wl-mv-delete-btn"
+                          title="Delete View"
+                          onClick={() => onDelete(id)}
+                        >
                           <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                            <path d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z" stroke="currentColor" strokeWidth="1.3" />
-                            <circle cx="7" cy="7" r="1.8" fill="currentColor" />
-                            <path d="M2 2L12 12" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                            <path d="M2.5 4h9M5.5 4V2.5h3V4M5.5 6.5v4M8.5 6.5v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                            <rect x="3" y="4" width="8" height="8" rx="1" stroke="currentColor" strokeWidth="1.3" />
                           </svg>
-                        ) : (
-                          <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                            <path d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z" stroke="currentColor" strokeWidth="1.3" />
-                            <circle cx="7" cy="7" r="1.8" fill="currentColor" />
-                          </svg>
-                        )}
-                        <span>{isHidden ? 'Show' : 'Hide'}</span>
-                      </button>
-                      <button
-                        className="wl-mv-delete-btn"
-                        title="Delete View"
-                        onClick={() => onDelete(id)}
-                      >
-                        <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                          <path d="M2.5 4h9M5.5 4V2.5h3V4M5.5 6.5v4M8.5 6.5v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-                          <rect x="3" y="4" width="8" height="8" rx="1" stroke="currentColor" strokeWidth="1.3" />
-                        </svg>
-                        <span>Delete</span>
-                      </button>
+                          <span>Delete</span>
+                        </button>
+                      )}
                     </div>
                   </div>
                 );
@@ -643,6 +676,8 @@ interface WatchlistContentProps {
   forceFavoriteStar?: boolean;
   disableDeleteWatchlist?: boolean;
   disableNameEdit?: boolean;
+  /** When true, the trash icon in Edit Watchlist is hidden (used for Favorites) */
+  disableCompanyDelete?: boolean;
 }
 
 export function WatchlistContent({
@@ -653,6 +688,7 @@ export function WatchlistContent({
   forceFavoriteStar = false,
   disableDeleteWatchlist = false,
   disableNameEdit = false,
+  disableCompanyDelete = false,
 }: WatchlistContentProps) {
   const watchlistId = params.id;
   const { watchlistNames, setWatchlistName, symbolOrders, setSymbolOrder, favorites, toggleFavorite, dynamicWatchlists, deletedWatchlists, deleteWatchlist } = useWatchlist();
@@ -666,7 +702,10 @@ export function WatchlistContent({
 
   const [activeTab, setActiveTab] = useState<string>('Summary');
   const [feedTab, setFeedTab] = useState<FeedTab>('Latest');
-  const [quarter, setQuarter] = useState({ year: 2026, q: 1 });
+
+  // Build dynamic quarter options (current quarter back 8 quarters)
+  const recentQuarters = useMemo(() => buildRecentQuarters(), []);
+  const [quarter, setQuarter] = useState(recentQuarters[0] ?? { year: 2026, q: 1 });
   const [splitLayout, setSplitLayout] = useState(false);
 
   // Custom views state
@@ -790,8 +829,14 @@ export function WatchlistContent({
     } catch { /* ignore */ }
   }, [hiddenViews, customViewsHydrated]);
 
-  const prevQ = quarterOffset(quarter, -1);
-  const nextQ = quarterOffset(quarter, 1);
+  // Quarter navigation: find current index in the dynamic list
+  const currentQIdx = recentQuarters.findIndex(
+    (rq) => rq.year === quarter.year && rq.q === quarter.q,
+  );
+  const hasPrevQ = currentQIdx < recentQuarters.length - 1;
+  const hasNextQ = currentQIdx > 0;
+  const prevQ = hasPrevQ ? recentQuarters[currentQIdx + 1] : quarter;
+  const nextQ = hasNextQ ? recentQuarters[currentQIdx - 1] : quarter;
 
   // Watchlist sub-items from navigation data (shared with sidebar) — exclude "Create Watchlist" divider item, filter deleted
   const watchlistSubItems = (mainNav.find((item) => item.icon === 'watchlist')?.subItems ?? []).filter(
@@ -867,6 +912,12 @@ export function WatchlistContent({
     setWatchlistName(watchlistId, trimmed);
     setSymbolOrder(watchlistId, [...editSymbolOrder]);
     setShowEditWatchlist(false);
+    // API stub call for backend integration
+    updateWatchlistInfo('demoUser', watchlistId, trimmed, [...editSymbolOrder]);
+  }
+
+  function handleEditWatchlistCancel() {
+    setShowEditWatchlist(false);
   }
 
   function handleDeleteWatchlist() {
@@ -915,6 +966,8 @@ export function WatchlistContent({
       }
       setExtraHoldings(newExtraHoldings);
       setSymbolOrder(watchlistId, newOrder);
+      // API stub call for backend integration
+      addCompanyToWatchlist('demoUser', watchlistId, symbols);
     }
 
     handleAddSymbolClose();
@@ -931,12 +984,16 @@ export function WatchlistContent({
     setViewOrder((prev) => [...prev, id]);
     setShowManageView(false);
     setActiveTab(id);
+    // API stub call for backend integration
+    apiSaveView('demoUser', watchlistId, name, columns);
   }
 
   function handleDeleteCustomView(id: string) {
     setCustomViews((prev) => prev.filter((v) => v.id !== id));
     setViewOrder((prev) => prev.filter((v) => v !== id));
     if (activeTab === id) setActiveTab('Summary');
+    // API stub call for backend integration
+    apiDeleteView('demoUser', watchlistId, id);
   }
 
   function handleToggleHideView(id: string) {
@@ -1178,19 +1235,22 @@ export function WatchlistContent({
                     </button>
                   );
                 })}
-              <button className="wl-subtab wl-subtab--add" onClick={() => setShowManageView(true)}>
-                <svg viewBox="0 0 14 14" fill="none" width="12" height="12">
-                  <path d="M7 2V12M2 7H12" stroke="#2563eb" strokeWidth="1.8" strokeLinecap="round" />
-                </svg>
-                Add/Edit View
-              </button>
+              {/* Only show Add/Edit View when at least one company exists */}
+              {sortedHoldings.length > 0 && (
+                <button className="wl-subtab wl-subtab--add" onClick={() => setShowManageView(true)}>
+                  <svg viewBox="0 0 14 14" fill="none" width="12" height="12">
+                    <path d="M7 2V12M2 7H12" stroke="#2563eb" strokeWidth="1.8" strokeLinecap="round" />
+                  </svg>
+                  Add/Edit View
+                </button>
+              )}
 
               {/* Quarter nav — right-aligned inside tab bar */}
               <div className="wl-quarter-nav">
                 <button
                   className="wl-quarter-btn"
                   aria-label="Previous quarter"
-                  disabled={quarter.year === 2025 && quarter.q === 4}
+                  disabled={!hasPrevQ}
                   onClick={() => setQuarter(prevQ)}
                 >
                   <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
@@ -1209,7 +1269,7 @@ export function WatchlistContent({
                 <button
                   className="wl-quarter-btn"
                   aria-label="Next quarter"
-                  disabled={quarter.year === 2026 && quarter.q === 1}
+                  disabled={!hasNextQ}
                   onClick={() => setQuarter(nextQ)}
                 >
                   <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
@@ -1493,7 +1553,13 @@ export function WatchlistContent({
                   className="wl-modal-done-btn"
                   onClick={handleEditWatchlistDone}
                 >
-                  Done
+                  Save
+                </button>
+                <button
+                  className="wl-modal-cancel-btn"
+                  onClick={handleEditWatchlistCancel}
+                >
+                  Cancel
                 </button>
               </div>
             </div>
@@ -1509,40 +1575,45 @@ export function WatchlistContent({
                   style={disableNameEdit ? { opacity: 0.6, cursor: 'not-allowed' } : undefined}
                 />
               </div>
-              <div>
-                <div className="wl-modal-section-title">Symbol Order</div>
-                <div className="wl-drag-list">
-                  {editSymbolOrder.map((sym, idx) => (
-                    <div
-                      key={sym}
-                      className="wl-drag-item"
-                      draggable
-                      onDragStart={() => handleDragStart(idx)}
-                      onDragEnter={() => handleDragEnter(idx)}
-                      onDragEnd={handleDragEnd}
-                      onDragOver={(e) => e.preventDefault()}
-                    >
-                      <svg className="wl-drag-handle" viewBox="0 0 14 14" fill="none" width="14" height="14">
-                        <path d="M3 4h8M3 7h8M3 10h8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                      </svg>
-                      <span className="wl-drag-symbol">{sym}</span>
-                      <span className="wl-drag-rank">#{idx + 1}</span>
-                      <button
-                        className="wl-drag-delete"
-                        aria-label={`Delete ${sym}`}
-                        onClick={() => handleDeleteSymbol(sym)}
-                        title={`Remove ${sym}`}
+              {/* Company Order section — only shown when at least one company exists */}
+              {editSymbolOrder.length > 0 && (
+                <div>
+                  <div className="wl-modal-section-title">Company Order</div>
+                  <div className="wl-drag-list">
+                    {editSymbolOrder.map((sym, idx) => (
+                      <div
+                        key={sym}
+                        className="wl-drag-item"
+                        draggable
+                        onDragStart={() => handleDragStart(idx)}
+                        onDragEnter={() => handleDragEnter(idx)}
+                        onDragEnd={handleDragEnd}
+                        onDragOver={(e) => e.preventDefault()}
                       >
-                        {/* Trash / delete icon */}
-                        <svg viewBox="0 0 14 14" fill="none" width="14" height="14" aria-hidden="true">
-                          <path d="M2.5 4h9M5.5 4V2.5h3V4M5.5 6.5v4M8.5 6.5v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-                          <rect x="3" y="4" width="8" height="8" rx="1" stroke="currentColor" strokeWidth="1.3" />
+                        <svg className="wl-drag-handle" viewBox="0 0 14 14" fill="none" width="14" height="14">
+                          <path d="M3 4h8M3 7h8M3 10h8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
                         </svg>
-                      </button>
-                    </div>
-                  ))}
+                        <span className="wl-drag-symbol">{sym}</span>
+                        <span className="wl-drag-rank">#{idx + 1}</span>
+                        {/* Trash icon hidden when disableCompanyDelete (Favorites) */}
+                        {!disableCompanyDelete && (
+                          <button
+                            className="wl-drag-delete"
+                            aria-label={`Delete ${sym}`}
+                            onClick={() => handleDeleteSymbol(sym)}
+                            title={`Remove ${sym}`}
+                          >
+                            <svg viewBox="0 0 14 14" fill="none" width="14" height="14" aria-hidden="true">
+                              <path d="M2.5 4h9M5.5 4V2.5h3V4M5.5 6.5v4M8.5 6.5v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                              <rect x="3" y="4" width="8" height="8" rx="1" stroke="currentColor" strokeWidth="1.3" />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {!disableDeleteWatchlist && (
                 <button className="wl-modal-delete-wl-btn" onClick={handleDeleteWatchlist}>
