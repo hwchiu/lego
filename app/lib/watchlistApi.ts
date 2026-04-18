@@ -57,7 +57,8 @@ export interface EventInfoItem {
 // ─── Calendar year / quarter generation ─────────────────────────────────────
 
 /**
- * Build year and quarter lists.
+ * Build year and quarter lists (requirement #7).
+ * Exported for pages that need year/quarter selection data (e.g. financial data filters).
  * calendar_year: current year backwards for 8 years.
  * calendar_quarter: Q1–Q4 + NA.
  */
@@ -267,18 +268,34 @@ export async function getEventInfoByCompanyList(
  */
 export function getViewCatgNColInfo(): ViewCatgNColInfoResponse {
   const catalog: WatchlistColumnCatalog = watchlistColumnCatalog;
+
+  // Infer column type from label keywords
+  function inferColumnType(label: string): { type: string; format?: string } {
+    const lowerLabel = label.toLowerCase();
+    if (lowerLabel.includes('%') || lowerLabel.includes('margin') || lowerLabel.includes('roe') || lowerLabel.includes('roa') || lowerLabel.includes('roc') || lowerLabel.includes('roic') || lowerLabel.includes('growth') || lowerLabel.includes('intensity')) {
+      return { type: 'percentage', format: '0.0%' };
+    }
+    if (lowerLabel.includes('eps') || lowerLabel.includes('doi')) {
+      return { type: 'number' };
+    }
+    return { type: 'currency', format: '$0.00B' };
+  }
+
   return {
     categories: catalog.categories.map((cat) => ({
       id: cat.id,
       label: cat.label,
-      columns: cat.columns.map((col) => ({
-        id: col.id,
-        label: col.label,
-        type: 'currency',
-        format: '$0.00B',
-        align: 'right' as const,
-        sortable: true,
-      })),
+      columns: cat.columns.map((col) => {
+        const { type, format } = inferColumnType(col.label);
+        return {
+          id: col.id,
+          label: col.label,
+          type,
+          format,
+          align: 'right' as const,
+          sortable: true,
+        };
+      }),
     })),
   };
 }

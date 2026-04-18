@@ -829,14 +829,19 @@ export function WatchlistContent({
     } catch { /* ignore */ }
   }, [hiddenViews, customViewsHydrated]);
 
-  // Quarter navigation: find current index in the dynamic list
-  const currentQIdx = recentQuarters.findIndex(
-    (rq) => rq.year === quarter.year && rq.q === quarter.q,
-  );
-  const hasPrevQ = currentQIdx < recentQuarters.length - 1;
-  const hasNextQ = currentQIdx > 0;
-  const prevQ = hasPrevQ ? recentQuarters[currentQIdx + 1] : quarter;
-  const nextQ = hasNextQ ? recentQuarters[currentQIdx - 1] : quarter;
+  // Quarter navigation: find current index in the dynamic list (memoized)
+  const quarterNav = useMemo(() => {
+    const idx = recentQuarters.findIndex(
+      (rq) => rq.year === quarter.year && rq.q === quarter.q,
+    );
+    return {
+      currentQIdx: idx,
+      hasPrevQ: idx < recentQuarters.length - 1,
+      hasNextQ: idx > 0,
+      prevQ: idx < recentQuarters.length - 1 ? recentQuarters[idx + 1] : quarter,
+      nextQ: idx > 0 ? recentQuarters[idx - 1] : quarter,
+    };
+  }, [quarter, recentQuarters]);
 
   // Watchlist sub-items from navigation data (shared with sidebar) — exclude "Create Watchlist" divider item, filter deleted
   const watchlistSubItems = (mainNav.find((item) => item.icon === 'watchlist')?.subItems ?? []).filter(
@@ -1250,8 +1255,8 @@ export function WatchlistContent({
                 <button
                   className="wl-quarter-btn"
                   aria-label="Previous quarter"
-                  disabled={!hasPrevQ}
-                  onClick={() => setQuarter(prevQ)}
+                  disabled={!quarterNav.hasPrevQ}
+                  onClick={() => setQuarter(quarterNav.prevQ)}
                 >
                   <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
                     <path
@@ -1269,8 +1274,8 @@ export function WatchlistContent({
                 <button
                   className="wl-quarter-btn"
                   aria-label="Next quarter"
-                  disabled={!hasNextQ}
-                  onClick={() => setQuarter(nextQ)}
+                  disabled={!quarterNav.hasNextQ}
+                  onClick={() => setQuarter(quarterNav.nextQ)}
                 >
                   <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
                     <path
