@@ -270,12 +270,15 @@ export function getViewCatgNColInfo(): ViewCatgNColInfoResponse {
   const catalog: WatchlistColumnCatalog = watchlistColumnCatalog;
 
   // Infer column type from label keywords
+  const PCT_KEYWORDS = ['%', 'margin', 'roe', 'roa', 'roc', 'roic', 'growth', 'intensity'];
+  const NUM_KEYWORDS = ['eps', 'doi'];
+
   function inferColumnType(label: string): { type: string; format?: string } {
     const lowerLabel = label.toLowerCase();
-    if (lowerLabel.includes('%') || lowerLabel.includes('margin') || lowerLabel.includes('roe') || lowerLabel.includes('roa') || lowerLabel.includes('roc') || lowerLabel.includes('roic') || lowerLabel.includes('growth') || lowerLabel.includes('intensity')) {
+    if (PCT_KEYWORDS.some((kw) => lowerLabel.includes(kw))) {
       return { type: 'percentage', format: '0.0%' };
     }
-    if (lowerLabel.includes('eps') || lowerLabel.includes('doi')) {
+    if (NUM_KEYWORDS.some((kw) => lowerLabel.includes(kw))) {
       return { type: 'number' };
     }
     return { type: 'currency', format: '$0.00B' };
