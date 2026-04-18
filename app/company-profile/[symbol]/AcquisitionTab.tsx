@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import acquisitionData from '@/content/apple-acquisition.json';
-import { getCompanyByCode } from '@/app/data/companyMaster';
+import { getAcquisitionByCoCd, AcquisitionDeal, AcquisitionResult } from '@/app/lib/getAcquisitionByCoCd';
 
 const AcquisitionBarLineChartNivo = dynamic(
   () => import('./InvestmentNivoCharts').then((m) => m.AcquisitionBarLineChartNivo),
@@ -20,68 +19,6 @@ type Region =
   | 'Asia-Pacific'
   | 'Middle East & Africa'
   | 'South America';
-
-/** Raw record shape from the JSON data file */
-interface AcquisitionRaw {
-  price_usd: number | null;
-  target_name: string;
-  target_url: string | null;
-  acq_name: string;
-  publ_dt_prcsn: string | null;
-  trans_name: string | null;
-  price_curr: string | null;
-  acq_url: string;
-  co_cd: string | null;
-  price: number | null;
-  acq_catg: string;
-  update_dt: string | null;
-  publ_dt: string;
-  create_dt: string | null;
-  trans_name_url: string | null;
-}
-
-/** Display-friendly deal record used by chart and table */
-interface AcquisitionDeal {
-  date: string;
-  acquiredCompany: string;
-  categories: string;
-  valueM: number | null;
-  url: string;
-}
-
-// ── Parse acquisition data from JSON, filtered by co_cd ──────────────────────
-
-const USD_TO_MILLIONS = 1_000_000;
-
-function mapRawToDeal(raw: AcquisitionRaw): AcquisitionDeal {
-  // publ_dt format: "YYYY-MM-DD HH:MM:SS.s" → extract "YYYY-MM-DD"
-  const datePart = raw.publ_dt ? raw.publ_dt.slice(0, 10) : '';
-  return {
-    date: datePart,
-    acquiredCompany: raw.target_name,
-    categories: raw.acq_catg,
-    valueM: raw.price_usd != null ? raw.price_usd / USD_TO_MILLIONS : null,
-    url: raw.acq_url,
-  };
-}
-
-const _acquisitionCache = new Map<string, AcquisitionDeal[]>();
-function getAcquisitions(coCd: string): AcquisitionDeal[] {
-  if (!_acquisitionCache.has(coCd)) {
-    const rawData = acquisitionData as AcquisitionRaw[];
-    _acquisitionCache.set(
-      coCd,
-      rawData.filter((r) => r.co_cd === coCd).map(mapRawToDeal),
-    );
-  }
-  return _acquisitionCache.get(coCd)!;
-}
-
-/** Get the display name for a given co_cd. */
-function getAcqDisplayName(coCd: string): string {
-  const companyMaster = getCompanyByCode(coCd);
-  return companyMaster?.CO_NAME ?? coCd;
-}
 
 // ── Stacked Bar + Line Chart ──────────────────────────────────────────────────
 
@@ -297,9 +234,7 @@ function ExternalLinkIcon() {
   );
 }
 
-function CompanyAcquisitionPanel({ symbol }: { symbol: string }) {
-  const deals = getAcquisitions(symbol);
-  const companyName = getAcqDisplayName(symbol);
+function CompanyAcquisitionPanel({ deals, companyName }: { deals: AcquisitionDeal[]; companyName: string }) {
   const allCategories = [...new Set(deals.map((d) => d.categories))].sort();
 
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
@@ -820,10 +755,35 @@ export default function AcquisitionTab({ symbol }: AcquisitionTabProps) {
   const [activeSection, setActiveSection] = useState<MASection>('number-value');
   const [activeRegion, setActiveRegion] = useState<Region>('Worldwide');
 
+  // Fetch acquisition data via simulated API (will be replaced with real API call)
+  const [acquisitionResult, setAcquisitionResult] = useState<AcquisitionResult | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    getAcquisitionByCoCd(symbol).then((result) => {
+      if (!cancelled) {
+        setAcquisitionResult(result);
+        setLoading(false);
+      }
+    });
+    return () => { cancelled = true; };
+  }, [symbol]);
+
+  if (loading) {
+    return (
+      <div className="cp-pec-wrap">
+        <div className="cp-pec-empty">
+          <p className="cp-pec-empty-text">Loading Acquisition data…</p>
+        </div>
+      </div>
+    );
+  }
+
   // Companies with acquisition data get the dedicated panel with industry filter, bar chart, and table
-  const deals = getAcquisitions(symbol);
-  if (deals.length > 0) {
-    return <CompanyAcquisitionPanel symbol={symbol} />;
+  if (acquisitionResult && acquisitionResult.deals.length > 0) {
+    return <CompanyAcquisitionPanel deals={acquisitionResult.deals} companyName={acquisitionResult.companyName} />;
   }
 
   return (

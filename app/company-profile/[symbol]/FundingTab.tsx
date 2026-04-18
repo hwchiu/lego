@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import fundingData from '@/content/funding.json';
+import { getFundingByCoCd, FundingRecord } from '@/app/lib/getFundingByCoCd';
 
 const FundingLineChartNivo = dynamic(
   () => import('./InvestmentNivoCharts').then((m) => m.FundingLineChartNivo),
@@ -19,36 +19,6 @@ type Region =
   | 'Asia-Pacific'
   | 'Middle East & Africa'
   | 'South America';
-
-interface FundingRecord {
-  org_url: string;
-  fund_type: string;
-  fund_amount: number | null;
-  fund_amount_curr: string;
-  money_raised_curr: string;
-  trans_name: string;
-  fund_amount_usd: number | null;
-  co_cd: string;
-  update_dt: string;
-  data_type: string;
-  publ_dt: string;
-  org_catg: string;
-  create_dt: string;
-  money_raised_usd: number | null;
-  trans_name_url: string;
-  org_name: string;
-  money_raised: number | null;
-  invest_name: string;
-  invest_num: number | null;
-}
-
-// ── Parse funding data from JSON, filtered by co_cd ─────────────────────────
-
-const allFundingRecords = fundingData as FundingRecord[];
-
-function getFundingsByCompany(coCd: string): FundingRecord[] {
-  return allFundingRecords.filter((r) => r.co_cd === coCd);
-}
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -75,8 +45,7 @@ function formatUsdValueM(valueM: number): string {
     : `$${valueM.toLocaleString()}M`;
 }
 
-function FundingPanel({ symbol }: { symbol: string }) {
-  const records = getFundingsByCompany(symbol);
+function FundingPanel({ symbol, records }: { symbol: string; records: FundingRecord[] }) {
 
   // Summary card uses fund_amount_usd (converted to millions for display)
   const totalFundingUsd = records.reduce((sum, r) => sum + (r.fund_amount_usd ?? 0), 0);
@@ -575,10 +544,35 @@ export default function FundingTab({ symbol }: FundingTabProps) {
   const [activeSection, setActiveSection] = useState<MASection>('number-value');
   const [activeRegion, setActiveRegion] = useState<Region>('Worldwide');
 
+  // Fetch funding data via simulated API (will be replaced with real API call)
+  const [fundingRecords, setFundingRecords] = useState<FundingRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    getFundingByCoCd(symbol).then((records) => {
+      if (!cancelled) {
+        setFundingRecords(records);
+        setLoading(false);
+      }
+    });
+    return () => { cancelled = true; };
+  }, [symbol]);
+
+  if (loading) {
+    return (
+      <div className="cp-pec-wrap">
+        <div className="cp-pec-empty">
+          <p className="cp-pec-empty-text">Loading Funding data…</p>
+        </div>
+      </div>
+    );
+  }
+
   // Show dedicated funding panel for companies with funding data (filtered by co_cd)
-  const companyFundings = getFundingsByCompany(symbol);
-  if (companyFundings.length > 0) {
-    return <FundingPanel symbol={symbol} />;
+  if (fundingRecords.length > 0) {
+    return <FundingPanel symbol={symbol} records={fundingRecords} />;
   }
 
   return (
