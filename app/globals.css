@@ -11576,6 +11576,17 @@ input, select { font-family: var(--font); }
   letter-spacing: -0.3px;
 }
 
+.cwl-archive-label {
+  font-size: 0.5em;
+  color: #9ca3af;
+  font-weight: 400;
+  vertical-align: middle;
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  padding: 2px 10px;
+  margin-left: 8px;
+}
+
 /* Search bar — Gemini / ChatGPT style dialog input */
 .cwl-search-wrap { position: relative; }
 .cwl-search-bar {
