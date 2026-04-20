@@ -305,6 +305,93 @@ function deriveFinChartData(statements: CompanyStatements | null): {
   return { financialIndices, doiRevenue };
 }
 
+// ── Derive Current Quarter data from CompanyStatements ───────────────────────
+
+interface DerivedCurrentQtrData {
+  currentCalendarQuarter: string;   // e.g. "26Q1"
+  revenue: number;
+  revenueUnit: string;
+  lastQuarterRevenue: number;
+  revenueQoQ: number;
+  grossMargin: number;
+  lastQuarterGrossMargin: number;
+  doi: number;
+}
+
+/**
+ * Finds the latest calendar_year/calendar_quarter from the income statement data
+ * and derives Current Qtr Financial metrics using the API data.
+ */
+function deriveCurrentQtrData(statements: CompanyStatements | null): DerivedCurrentQtrData | null {
+  if (!statements) return null;
+
+  const incomeEntry = statements.income;
+  const balanceEntry = statements.balance;
+  if (incomeEntry?.kind !== 'findata') return null;
+
+  const incomeStmt: StatementData = incomeEntry.data;
+  const balanceStmt: StatementData | null =
+    balanceEntry?.kind === 'findata' ? balanceEntry.data : null;
+
+  // Collect quarterly periods only (skip annual like "FY2025")
+  const quarterlyPeriods: { period: string; label: string }[] = [];
+  for (const period of incomeStmt.periods) {
+    const label = periodToQuarterLabel(period);
+    if (label) quarterlyPeriods.push({ period, label });
+  }
+  if (quarterlyPeriods.length === 0) return null;
+
+  // The latest quarterly period is the current calendar quarter
+  const currentQuarterIndex = quarterlyPeriods.length - 1;
+  const previousQuarterIndex = quarterlyPeriods.length - 2;
+  if (previousQuarterIndex < 0) return null; // Need at least 2 quarters for QoQ
+
+  const currentPeriod = quarterlyPeriods[currentQuarterIndex];
+  const prevPeriod = quarterlyPeriods[previousQuarterIndex];
+
+  const incomeItems = incomeStmt.items;
+  const balanceItems = balanceStmt?.items ?? {};
+  const balancePeriods = balanceStmt?.periods ?? [];
+
+  // Look up item keys from config
+  const fiCfg  = finSummaryConfig.financialIndices;
+  const doiCfg = finSummaryConfig.doiRevenue;
+
+  const revKey = findConfigItem(incomeItems, fiCfg, 'Revenue', 'income');
+  const gmKey  = findConfigItem(incomeItems, fiCfg, 'Gross Margin', 'income');
+  const doiKey = findConfigItem(balanceItems, doiCfg, 'DOI', 'balance');
+
+  /** Extract a numeric value for a given item key at a given period. */
+  function getValue(stmtItems: Record<string, string[]>, stmtPeriods: string[], itemKey: string | undefined, period: string): number {
+    if (!itemKey) return 0;
+    const idx = stmtPeriods.indexOf(period);
+    if (idx < 0) return 0;
+    return parseItemVal(stmtItems[itemKey]?.[idx] ?? '');
+  }
+
+  const currentRevenue = getValue(incomeItems, incomeStmt.periods, revKey, currentPeriod.period);
+  const prevRevenue    = getValue(incomeItems, incomeStmt.periods, revKey, prevPeriod.period);
+  const currentGM      = getValue(incomeItems, incomeStmt.periods, gmKey, currentPeriod.period);
+  const prevGM         = getValue(incomeItems, incomeStmt.periods, gmKey, prevPeriod.period);
+  const currentDOI     = getValue(balanceItems, balancePeriods, doiKey, currentPeriod.period);
+
+  // Revenue QoQ calculation
+  const revenueQoQ = prevRevenue !== 0
+    ? Math.round(((currentRevenue - prevRevenue) / prevRevenue) * 1000) / 10
+    : 0;
+
+  return {
+    currentCalendarQuarter: currentPeriod.label,
+    revenue: currentRevenue,
+    revenueUnit: 'US$M',
+    lastQuarterRevenue: prevRevenue,
+    revenueQoQ,
+    grossMargin: currentGM,
+    lastQuarterGrossMargin: prevGM,
+    doi: currentDOI,
+  };
+}
+
 // ── Icons ────────────────────────────────────────────────────────────────────
 
 function ShareIcon() {
@@ -388,6 +475,9 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
 
   // Derive chart data from shared statement data
   const derivedChartData = useMemo(() => deriveFinChartData(companyStatements), [companyStatements]);
+
+  // Derive current quarter financial data from statement data
+  const derivedCurrentQtr = useMemo(() => deriveCurrentQtrData(companyStatements), [companyStatements]);
 
   // Parse markdown data
   const profileData = getProfileData();
@@ -802,11 +892,11 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
             </div>
 
             {/* ── Current Calendar Quarter card ── */}
-            {finData && (
+            {derivedCurrentQtr && (
               <div className="cp-quarter-card-row">
                 <div className="cp-quarter-card">
                   <div className="cp-quarter-card-title">Current Calendar Quarter</div>
-                  <div className="cp-quarter-card-value">{finData.currentCalendarQuarter}</div>
+                  <div className="cp-quarter-card-value">{derivedCurrentQtr.currentCalendarQuarter}</div>
                 </div>
               </div>
             )}
@@ -846,7 +936,28 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
 
             {/* ── Data cards (FIN. Summary tab) ── */}
             {activeTab === 'FIN. Summary' && (
-              finData ? (
+              finData ? (() => {
+                // Merge derived API data over static finData for Current Qtr Financial card
+                const cq = derivedCurrentQtr
+                  ? {
+                      revenueUnit: derivedCurrentQtr.revenueUnit,
+                      revenue: derivedCurrentQtr.revenue,
+                      lastQuarterRevenue: derivedCurrentQtr.lastQuarterRevenue,
+                      revenueQoQ: derivedCurrentQtr.revenueQoQ,
+                      grossMargin: derivedCurrentQtr.grossMargin,
+                      lastQuarterGrossMarginNote: `${derivedCurrentQtr.lastQuarterGrossMargin}%`,
+                      doi: derivedCurrentQtr.doi,
+                    }
+                  : {
+                      revenueUnit: finData.currentQtr.revenueUnit,
+                      revenue: finData.currentQtr.revenue,
+                      lastQuarterRevenue: finData.currentQtr.lastQuarterRevenue,
+                      revenueQoQ: finData.currentQtr.revenueQoQ,
+                      grossMargin: finData.currentQtr.grossMargin,
+                      lastQuarterGrossMarginNote: `${finData.currentQtr.grossMargin}%`,
+                      doi: finData.currentQtr.doi,
+                    };
+                return (
               <div className="cp-cards-area">
                 <div className="cp-cards-main-grid">
 
@@ -856,29 +967,29 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                     <div className="cp-card-divider" />
                     <div className="cp-fin-metrics">
                       <div className="cp-fin-metric">
-                        <div className="cp-fin-metric-label">Revenue ({finData.currentQtr.revenueUnit})</div>
-                        <div className="cp-fin-metric-value">{finData.currentQtr.revenue.toLocaleString()}</div>
-                        <div className="cp-fin-metric-note">Last Quarter: {finData.currentQtr.lastQuarterRevenue.toLocaleString()}</div>
+                        <div className="cp-fin-metric-label">Revenue ({cq.revenueUnit})</div>
+                        <div className="cp-fin-metric-value">{cq.revenue.toLocaleString()}</div>
+                        <div className="cp-fin-metric-note">Last Quarter: {cq.lastQuarterRevenue.toLocaleString()}</div>
                       </div>
                       <div className="cp-fin-metric-sep" />
                       <div className="cp-fin-metric">
                         <div className="cp-fin-metric-label">Revenue QoQ</div>
-                        <div className={`cp-fin-metric-value ${finData.currentQtr.revenueQoQ >= 0 ? 'pos' : 'neg'}`}>
-                          {finData.currentQtr.revenueQoQ >= 0 ? '+' : ''}{finData.currentQtr.revenueQoQ}%
+                        <div className={`cp-fin-metric-value ${cq.revenueQoQ >= 0 ? 'pos' : 'neg'}`}>
+                          {cq.revenueQoQ >= 0 ? '+' : ''}{cq.revenueQoQ}%
                         </div>
                       </div>
                       <div className="cp-fin-metric-sep" />
                       <div className="cp-fin-metric">
                         <div className="cp-fin-metric-label">Gross Margin</div>
                         <div className="cp-fin-metric-value">
-                          {finData.currentQtr.grossMargin}%
+                          {cq.grossMargin}%
                         </div>
-                        <div className="cp-fin-metric-note">{finData.currentQtr.grossMarginNote}: {finData.currentQtr.lastQuarterRevenue.toLocaleString()}</div>
+                        <div className="cp-fin-metric-note">Last Quarter: {cq.lastQuarterGrossMarginNote}</div>
                       </div>
                       <div className="cp-fin-metric-sep" />
                       <div className="cp-fin-metric">
                         <div className="cp-fin-metric-label">DOI (Days)</div>
-                        <div className="cp-fin-metric-value">{finData.currentQtr.doi}</div>
+                        <div className="cp-fin-metric-value">{cq.doi}</div>
                       </div>
                     </div>
                   </div>
@@ -956,7 +1067,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
 
                 </div>
               </div>
-              ) : (
+              ); })() : (
               <div className="cp-tab-placeholder">
                 <span className="cp-tab-placeholder-text">
                   Financial data for {symbol} is not yet available.
