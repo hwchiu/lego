@@ -342,12 +342,12 @@ function deriveCurrentQtrData(statements: CompanyStatements | null): DerivedCurr
   if (quarterlyPeriods.length === 0) return null;
 
   // The latest quarterly period is the current calendar quarter
-  const currentIdx = quarterlyPeriods.length - 1;
-  const prevIdx = quarterlyPeriods.length - 2;
-  if (prevIdx < 0) return null; // Need at least 2 quarters for QoQ
+  const currentQuarterIndex = quarterlyPeriods.length - 1;
+  const previousQuarterIndex = quarterlyPeriods.length - 2;
+  if (previousQuarterIndex < 0) return null; // Need at least 2 quarters for QoQ
 
-  const currentPeriod = quarterlyPeriods[currentIdx];
-  const prevPeriod = quarterlyPeriods[prevIdx];
+  const currentPeriod = quarterlyPeriods[currentQuarterIndex];
+  const prevPeriod = quarterlyPeriods[previousQuarterIndex];
 
   const incomeItems = incomeStmt.items;
   const balanceItems = balanceStmt?.items ?? {};
@@ -936,7 +936,28 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
 
             {/* ── Data cards (FIN. Summary tab) ── */}
             {activeTab === 'FIN. Summary' && (
-              finData ? (
+              finData ? (() => {
+                // Merge derived API data over static finData for Current Qtr Financial card
+                const cq = derivedCurrentQtr
+                  ? {
+                      revenueUnit: derivedCurrentQtr.revenueUnit,
+                      revenue: derivedCurrentQtr.revenue,
+                      lastQuarterRevenue: derivedCurrentQtr.lastQuarterRevenue,
+                      revenueQoQ: derivedCurrentQtr.revenueQoQ,
+                      grossMargin: derivedCurrentQtr.grossMargin,
+                      lastQuarterGrossMarginNote: `${derivedCurrentQtr.lastQuarterGrossMargin}%`,
+                      doi: derivedCurrentQtr.doi,
+                    }
+                  : {
+                      revenueUnit: finData.currentQtr.revenueUnit,
+                      revenue: finData.currentQtr.revenue,
+                      lastQuarterRevenue: finData.currentQtr.lastQuarterRevenue,
+                      revenueQoQ: finData.currentQtr.revenueQoQ,
+                      grossMargin: finData.currentQtr.grossMargin,
+                      lastQuarterGrossMarginNote: `${finData.currentQtr.grossMargin}%`,
+                      doi: finData.currentQtr.doi,
+                    };
+                return (
               <div className="cp-cards-area">
                 <div className="cp-cards-main-grid">
 
@@ -946,29 +967,29 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                     <div className="cp-card-divider" />
                     <div className="cp-fin-metrics">
                       <div className="cp-fin-metric">
-                        <div className="cp-fin-metric-label">Revenue ({derivedCurrentQtr ? derivedCurrentQtr.revenueUnit : finData.currentQtr.revenueUnit})</div>
-                        <div className="cp-fin-metric-value">{derivedCurrentQtr ? derivedCurrentQtr.revenue.toLocaleString() : finData.currentQtr.revenue.toLocaleString()}</div>
-                        <div className="cp-fin-metric-note">Last Quarter: {derivedCurrentQtr ? derivedCurrentQtr.lastQuarterRevenue.toLocaleString() : finData.currentQtr.lastQuarterRevenue.toLocaleString()}</div>
+                        <div className="cp-fin-metric-label">Revenue ({cq.revenueUnit})</div>
+                        <div className="cp-fin-metric-value">{cq.revenue.toLocaleString()}</div>
+                        <div className="cp-fin-metric-note">Last Quarter: {cq.lastQuarterRevenue.toLocaleString()}</div>
                       </div>
                       <div className="cp-fin-metric-sep" />
                       <div className="cp-fin-metric">
                         <div className="cp-fin-metric-label">Revenue QoQ</div>
-                        <div className={`cp-fin-metric-value ${(derivedCurrentQtr ? derivedCurrentQtr.revenueQoQ : finData.currentQtr.revenueQoQ) >= 0 ? 'pos' : 'neg'}`}>
-                          {(derivedCurrentQtr ? derivedCurrentQtr.revenueQoQ : finData.currentQtr.revenueQoQ) >= 0 ? '+' : ''}{derivedCurrentQtr ? derivedCurrentQtr.revenueQoQ : finData.currentQtr.revenueQoQ}%
+                        <div className={`cp-fin-metric-value ${cq.revenueQoQ >= 0 ? 'pos' : 'neg'}`}>
+                          {cq.revenueQoQ >= 0 ? '+' : ''}{cq.revenueQoQ}%
                         </div>
                       </div>
                       <div className="cp-fin-metric-sep" />
                       <div className="cp-fin-metric">
                         <div className="cp-fin-metric-label">Gross Margin</div>
                         <div className="cp-fin-metric-value">
-                          {derivedCurrentQtr ? derivedCurrentQtr.grossMargin : finData.currentQtr.grossMargin}%
+                          {cq.grossMargin}%
                         </div>
-                        <div className="cp-fin-metric-note">Last Quarter: {derivedCurrentQtr ? `${derivedCurrentQtr.lastQuarterGrossMargin}%` : finData.currentQtr.lastQuarterRevenue.toLocaleString()}</div>
+                        <div className="cp-fin-metric-note">Last Quarter: {cq.lastQuarterGrossMarginNote}</div>
                       </div>
                       <div className="cp-fin-metric-sep" />
                       <div className="cp-fin-metric">
                         <div className="cp-fin-metric-label">DOI (Days)</div>
-                        <div className="cp-fin-metric-value">{derivedCurrentQtr ? derivedCurrentQtr.doi : finData.currentQtr.doi}</div>
+                        <div className="cp-fin-metric-value">{cq.doi}</div>
                       </div>
                     </div>
                   </div>
@@ -1046,7 +1067,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
 
                 </div>
               </div>
-              ) : (
+              ); })() : (
               <div className="cp-tab-placeholder">
                 <span className="cp-tab-placeholder-text">
                   Financial data for {symbol} is not yet available.
