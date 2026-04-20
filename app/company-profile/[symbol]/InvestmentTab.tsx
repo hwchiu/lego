@@ -40,7 +40,8 @@ function ExternalLinkIcon() {
 }
 
 function CompanyInvestmentPanel({ deals, companyName }: { deals: InvestmentDeal[]; companyName: string }) {
-  const allCategories = [...new Set(deals.map((d) => d.categories))].sort();
+  const allCategories = [...new Set(deals.map((d) => d.categories).filter((c): c is string => !!c))].sort();
+  const hasCategories = allCategories.length > 0;
 
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const [selectedYear, setSelectedYear] = useState<string | null>(null);
@@ -77,6 +78,7 @@ function CompanyInvestmentPanel({ deals, companyName }: { deals: InvestmentDeal[
   return (
     <div className="aapl-ma-panel">
       {/* ── Category filter bar ── */}
+      {hasCategories && (
       <div className="aapl-ma-filter-bar">
         <span className="aapl-ma-filter-label">CATEGORY</span>
         <button className="aapl-ma-scroll-btn" onClick={() => scrollCategories('left')} aria-label="Scroll left">‹</button>
@@ -104,6 +106,7 @@ function CompanyInvestmentPanel({ deals, companyName }: { deals: InvestmentDeal[
           </button>
         )}
       </div>
+      )}
 
       {/* ── Bar + Line chart ── */}
       <div className="aapl-ma-chart-section">
@@ -138,7 +141,7 @@ function CompanyInvestmentPanel({ deals, companyName }: { deals: InvestmentDeal[
               <tr>
                 <th>Date</th>
                 <th>Invested Company</th>
-                <th>Company Categories</th>
+                {hasCategories && <th>Company Categories</th>}
                 <th>Round</th>
                 <th className="text-right">Value (USD $M)</th>
                 <th className="text-right">Investors#</th>
@@ -150,7 +153,7 @@ function CompanyInvestmentPanel({ deals, companyName }: { deals: InvestmentDeal[
                 <tr key={i} className="aapl-ma-table-row">
                   <td className="aapl-ma-td-date">{deal.date}</td>
                   <td className="aapl-ma-td-company">{deal.investedCompany}</td>
-                  <td><span className="aapl-ma-industry-pill">{deal.categories}</span></td>
+                  {hasCategories && <td>{deal.categories ? <span className="aapl-ma-industry-pill">{deal.categories}</span> : null}</td>}
                   <td><span className="aapl-ma-type-badge aapl-ma-type-acq">{deal.round}</span></td>
                   <td className="text-right aapl-ma-td-value">
                     {deal.valueM != null ? (
