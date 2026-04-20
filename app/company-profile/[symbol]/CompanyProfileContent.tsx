@@ -23,6 +23,8 @@ import IRMaterialTab from './IRMaterialTab';
 import PreEarningCallTab from './PreEarningCallTab';
 import IRTranscriptTab from './IRTranscriptTab';
 import AITranscriptTab from './AITranscriptTab';
+import { getFinancialStatementByCoCd, type CompanyStatements } from '@/app/lib/getFinancialStatementByCoCd';
+import type { StatementData } from '@/app/data/financialData';
 import tvConfigMd from '@/content/tradingview.md';
 
 const FinancialIndicesNivoChart = dynamic(
@@ -182,6 +184,107 @@ const FAVORITES_KEY = 'cp-favorites';
 // Items per page in the News tab
 const NEWS_PAGE_SIZE = 8;
 
+// ── Chart data derivation helpers ─────────────────────────────────────────────
+
+/** Convert a StatementData period label like "Q1 2025" → "25Q1" (YYQQ).
+ *  Returns null for annual periods ("FY2025"). */
+function periodToQtrLabel(period: string): string | null {
+  const m = period.match(/^(Q\d)\s+(\d{4})$/);
+  if (!m) return null;
+  const q = m[1];          // "Q1"
+  const yy = m[2].slice(2); // "25"
+  return `${yy}${q}`;      // "25Q1"
+}
+
+/** Parse a formatted string value like "124,300" or "47.93%" to a number. */
+function parseItemVal(s: string): number {
+  if (!s || s === '—' || s === '-') return 0;
+  const clean = s.replace(/[$,\s]/g, '').replace(/%$/, '');
+  const n = parseFloat(clean);
+  return isNaN(n) ? 0 : n;
+}
+
+/** Find the first key in `items` that equals `name` or starts with `name ` or `name(`. */
+function findItemKeyFlex(items: Record<string, string[]>, name: string): string | undefined {
+  if (name in items) return name;
+  return Object.keys(items).find(
+    (k) => k.startsWith(`${name} `) || k.startsWith(`${name}(`),
+  );
+}
+
+/** Derive FinancialDataPoint[] and DoiRevenuePoint[] from CompanyStatements.
+ *  Uses quarterly periods only; X-axis is "YYQQ" format. */
+function deriveFinChartData(statements: CompanyStatements | null): {
+  financialIndices: FinancialDataPoint[];
+  doiRevenue: DoiRevenuePoint[];
+} {
+  if (!statements) return { financialIndices: [], doiRevenue: [] };
+
+  const incomeEntry = statements.income;
+  const balanceEntry = statements.balance;
+  if (incomeEntry?.kind !== 'findata') return { financialIndices: [], doiRevenue: [] };
+
+  const incomeStmt: StatementData = incomeEntry.data;
+  const balanceStmt: StatementData | null =
+    balanceEntry?.kind === 'findata' ? balanceEntry.data : null;
+
+  // Collect quarterly periods from income statement
+  const qtrPeriods: { period: string; label: string }[] = [];
+  for (const period of incomeStmt.periods) {
+    const label = periodToQtrLabel(period);
+    if (label) qtrPeriods.push({ period, label });
+  }
+  if (qtrPeriods.length === 0) return { financialIndices: [], doiRevenue: [] };
+
+  const incomeItems = incomeStmt.items;
+  const balanceItems = balanceStmt?.items ?? {};
+
+  // Find item keys — flexible lookup handles ($M) vs ($B) unit variants
+  const revKey      = findItemKeyFlex(incomeItems, 'Revenue') ??
+                      findItemKeyFlex(incomeItems, 'Net Revenue') ??
+                      findItemKeyFlex(incomeItems, 'Net Revenues') ??
+                      findItemKeyFlex(incomeItems, 'Total Sales');
+  const gpKey       = findItemKeyFlex(incomeItems, 'Gross Profit');
+  const gmKey       = findItemKeyFlex(incomeItems, 'Gross Margin');
+  const omKey       = findItemKeyFlex(incomeItems, 'Operating Margin');
+  const niKey       = findItemKeyFlex(incomeItems, 'Net Income');
+  const nmKey       = findItemKeyFlex(incomeItems, 'Net Margin');
+  const cashKey     = findItemKeyFlex(balanceItems, 'Cash & Cash Equivalents') ??
+                      findItemKeyFlex(balanceItems, 'Cash & Equivalents');
+  const doiKey      = findItemKeyFlex(balanceItems, 'DOI');
+
+  /** Lookup the numeric value for a given item key at a given period. */
+  function getVal(stmtItems: Record<string, string[]>, stmtPeriods: string[], itemKey: string | undefined, period: string): number {
+    if (!itemKey) return 0;
+    const idx = stmtPeriods.indexOf(period);
+    if (idx < 0) return 0;
+    return parseItemVal(stmtItems[itemKey]?.[idx] ?? '');
+  }
+
+  const balancePeriods = balanceStmt?.periods ?? [];
+
+  const financialIndices: FinancialDataPoint[] = qtrPeriods.map(({ period, label }) => ({
+    quarter:            label,
+    totalRevenue:       getVal(incomeItems, incomeStmt.periods, revKey, period),
+    grossProfit:        getVal(incomeItems, incomeStmt.periods, gpKey, period),
+    grossMarginPct:     getVal(incomeItems, incomeStmt.periods, gmKey, period),
+    operatingMarginPct: getVal(incomeItems, incomeStmt.periods, omKey, period),
+    netIncome:          getVal(incomeItems, incomeStmt.periods, niKey, period),
+    netMarginPct:       getVal(incomeItems, incomeStmt.periods, nmKey, period),
+    cashEquivalents:    balanceStmt ? getVal(balanceItems, balancePeriods, cashKey, period) : 0,
+    guidance:           null,
+  }));
+
+  const doiRevenue: DoiRevenuePoint[] = qtrPeriods.map(({ period, label }) => ({
+    quarter:  label,
+    doi:      balanceStmt ? getVal(balanceItems, balancePeriods, doiKey, period) : 0,
+    revenue:  getVal(incomeItems, incomeStmt.periods, revKey, period),
+    guidance: null,
+  }));
+
+  return { financialIndices, doiRevenue };
+}
+
 // ── Icons ────────────────────────────────────────────────────────────────────
 
 function ShareIcon() {
@@ -249,6 +352,22 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const [newsSources, setNewsSources] = useState<Set<string>>(new Set());
   const [newsPeriodStart, setNewsPeriodStart] = useState('');
   const [newsPeriodEnd, setNewsPeriodEnd] = useState('');
+
+  // Shared financial statement data — loaded once and shared with both
+  // FIN. Statement tab and the Financial Indices / DOI & Revenue charts.
+  const [companyStatements, setCompanyStatements] = useState<CompanyStatements | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setCompanyStatements(null);
+    getFinancialStatementByCoCd(symbol).then((result) => {
+      if (!cancelled) setCompanyStatements(result);
+    });
+    return () => { cancelled = true; };
+  }, [symbol]);
+
+  // Derive chart data from shared statement data
+  const derivedChartData = useMemo(() => deriveFinChartData(companyStatements), [companyStatements]);
 
   // Parse markdown data
   const profileData = getProfileData();
@@ -802,13 +921,16 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                           </button>
                         ))}
                       </div>
-                      <FinancialIndicesNivoChart data={finData.financialIndices} activeMetric={activeFinIndex} />
+                      <FinancialIndicesNivoChart
+                        data={derivedChartData.financialIndices.length > 0 ? derivedChartData.financialIndices : finData.financialIndices}
+                        activeMetric={activeFinIndex}
+                      />
                     </div>
 
                     <div className="cp-data-card cp-data-card--wide2">
                       <div className="cp-card-title">DOI &amp; Revenue</div>
                       <div className="cp-card-divider" />
-                      <DoiRevenueNivoChart data={finData.doiRevenue} />
+                      <DoiRevenueNivoChart data={derivedChartData.doiRevenue.length > 0 ? derivedChartData.doiRevenue : finData.doiRevenue} />
                     </div>
                   </div>
 
@@ -1043,7 +1165,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
             )}
 
             {/* ── FIN. Statement tab ── */}
-            {activeTab === 'FIN. Statement' && <FinancialStatementTab symbol={symbol} />}
+            {activeTab === 'FIN. Statement' && <FinancialStatementTab symbol={symbol} companyStatements={companyStatements} />}
 
             {/* ── IR Material tab ── */}
             {activeTab === 'IR Material' && <IRMaterialTab symbol={symbol} />}

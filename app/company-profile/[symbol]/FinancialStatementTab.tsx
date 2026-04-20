@@ -290,9 +290,12 @@ function SimpleStatementTable({ data, viewMode, yearWindowStart, allYears }: Sim
 // ── Component ──────────────────────────────────────────────────────────────────
 interface FinancialStatementTabProps {
   symbol: string;
+  /** When provided by a parent component, skip internal fetch and use this data directly.
+   *  null = parent is still loading; object = data ready (may be empty {}). */
+  companyStatements?: CompanyStatements | null;
 }
 
-export default function FinancialStatementTab({ symbol }: FinancialStatementTabProps) {
+export default function FinancialStatementTab({ symbol, companyStatements: propStatements }: FinancialStatementTabProps) {
   const [statementType, setStatementType] = useState<StatementType>('income');
   const [viewMode, setViewMode] = useState<ViewMode>('quarterly');
   const [currency, setCurrency] = useState<Currency>('original');
@@ -300,7 +303,15 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
   const [loading, setLoading] = useState<boolean>(true);
 
   // Load all available statement sections for this company (模式 A pattern).
+  // If `propStatements` is provided by a parent, use it directly to avoid a duplicate fetch.
   useEffect(() => {
+    if (propStatements !== undefined) {
+      // Parent manages the data — use it when ready
+      setAvailableStatements(propStatements ?? {});
+      setLoading(propStatements === null);
+      return;
+    }
+    // Self-managed fetch (used when this component is rendered standalone)
     let cancelled = false;
     setLoading(true);
     getFinancialStatementByCoCd(symbol).then((result) => {
@@ -310,7 +321,7 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
       }
     });
     return () => { cancelled = true; };
-  }, [symbol]);
+  }, [symbol, propStatements]);
 
   // Tabs are shown only for sections that actually have data
   const visibleTabs = STATEMENT_ITEMS.filter((item) => availableStatements[item.key] != null);
