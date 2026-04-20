@@ -71,7 +71,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Gross Profit ($M)",
+    "rpt_fin_item": "Gross Income ($M)",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2023,
@@ -221,7 +221,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2023,
@@ -341,7 +341,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Gross Profit ($M)",
+    "rpt_fin_item": "Gross Income ($M)",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2023,
@@ -491,7 +491,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2023,
@@ -611,7 +611,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Gross Profit ($M)",
+    "rpt_fin_item": "Gross Income ($M)",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2023,
@@ -761,7 +761,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2023,
@@ -881,7 +881,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Gross Profit ($M)",
+    "rpt_fin_item": "Gross Income ($M)",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2023,
@@ -1031,7 +1031,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2023,
@@ -1151,7 +1151,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Gross Profit ($M)",
+    "rpt_fin_item": "Gross Income ($M)",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2024,
@@ -1301,7 +1301,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2024,
@@ -1421,7 +1421,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Gross Profit ($M)",
+    "rpt_fin_item": "Gross Income ($M)",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2024,
@@ -1571,7 +1571,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2024,
@@ -1691,7 +1691,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Gross Profit ($M)",
+    "rpt_fin_item": "Gross Income ($M)",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2024,
@@ -1841,7 +1841,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2024,
@@ -1961,7 +1961,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Gross Profit ($M)",
+    "rpt_fin_item": "Gross Income ($M)",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2024,
@@ -2111,7 +2111,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2024,
@@ -2231,7 +2231,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Gross Profit ($M)",
+    "rpt_fin_item": "Gross Income ($M)",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2025,
@@ -2381,7 +2381,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2025,
@@ -2501,7 +2501,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Gross Profit ($M)",
+    "rpt_fin_item": "Gross Income ($M)",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2025,
@@ -2651,7 +2651,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2025,
@@ -2771,7 +2771,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Gross Profit ($M)",
+    "rpt_fin_item": "Gross Income ($M)",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2025,
@@ -2921,7 +2921,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2025,
@@ -3041,7 +3041,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Gross Profit ($M)",
+    "rpt_fin_item": "Gross Income ($M)",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2025,
@@ -3191,7 +3191,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2025,
@@ -3311,7 +3311,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Gross Profit ($M)",
+    "rpt_fin_item": "Gross Income ($M)",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2026,
@@ -3461,7 +3461,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2026,
@@ -3566,7 +3566,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Gross Profit ($M)",
+    "rpt_fin_item": "Gross Income ($M)",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2021,
@@ -3716,7 +3716,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2021,
@@ -3821,7 +3821,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Gross Profit ($M)",
+    "rpt_fin_item": "Gross Income ($M)",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2022,
@@ -3971,7 +3971,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2022,
@@ -4076,7 +4076,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Gross Profit ($M)",
+    "rpt_fin_item": "Gross Income ($M)",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2023,
@@ -4226,7 +4226,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2023,
@@ -4331,7 +4331,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Gross Profit ($M)",
+    "rpt_fin_item": "Gross Income ($M)",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2024,
@@ -4481,7 +4481,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2024,
@@ -4586,7 +4586,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Gross Profit ($M)",
+    "rpt_fin_item": "Gross Income ($M)",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2025,
@@ -4736,7 +4736,7 @@
   },
   {
     "rpt_fin_type": "income",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2025,
@@ -4849,7 +4849,7 @@
   },
   {
     "rpt_fin_type": "balance",
-    "rpt_fin_item": "Cash & Cash Equivalents ($M)",
+    "rpt_fin_item": "  Cash & Cash Equivalents",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2022,
@@ -4864,7 +4864,7 @@
   },
   {
     "rpt_fin_type": "balance",
-    "rpt_fin_item": "Cash & Cash Equivalents ($M)",
+    "rpt_fin_item": "  Cash & Cash Equivalents",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2023,
@@ -4879,7 +4879,7 @@
   },
   {
     "rpt_fin_type": "balance",
-    "rpt_fin_item": "Cash & Cash Equivalents ($M)",
+    "rpt_fin_item": "  Cash & Cash Equivalents",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2024,
@@ -6094,7 +6094,7 @@
   },
   {
     "rpt_fin_type": "balance",
-    "rpt_fin_item": "Cash & Cash Equivalents ($M)",
+    "rpt_fin_item": "  Cash & Cash Equivalents",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2024,
@@ -6109,7 +6109,7 @@
   },
   {
     "rpt_fin_type": "balance",
-    "rpt_fin_item": "Cash & Cash Equivalents ($M)",
+    "rpt_fin_item": "  Cash & Cash Equivalents",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2024,
@@ -6124,7 +6124,7 @@
   },
   {
     "rpt_fin_type": "balance",
-    "rpt_fin_item": "Cash & Cash Equivalents ($M)",
+    "rpt_fin_item": "  Cash & Cash Equivalents",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2024,
@@ -6139,7 +6139,7 @@
   },
   {
     "rpt_fin_type": "balance",
-    "rpt_fin_item": "Cash & Cash Equivalents ($M)",
+    "rpt_fin_item": "  Cash & Cash Equivalents",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2024,
@@ -6154,7 +6154,7 @@
   },
   {
     "rpt_fin_type": "balance",
-    "rpt_fin_item": "Cash & Cash Equivalents ($M)",
+    "rpt_fin_item": "  Cash & Cash Equivalents",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2025,
@@ -8096,7 +8096,7 @@
   },
   {
     "rpt_fin_type": "cashflow",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2022,
@@ -8111,7 +8111,7 @@
   },
   {
     "rpt_fin_type": "cashflow",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2023,
@@ -8126,7 +8126,7 @@
   },
   {
     "rpt_fin_type": "cashflow",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2024,
@@ -9296,7 +9296,7 @@
   },
   {
     "rpt_fin_type": "cashflow",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2024,
@@ -9311,7 +9311,7 @@
   },
   {
     "rpt_fin_type": "cashflow",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2024,
@@ -9326,7 +9326,7 @@
   },
   {
     "rpt_fin_type": "cashflow",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2024,
@@ -9341,7 +9341,7 @@
   },
   {
     "rpt_fin_type": "cashflow",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2024,
@@ -9356,7 +9356,7 @@
   },
   {
     "rpt_fin_type": "cashflow",
-    "rpt_fin_item": "Net Income ($M)",
+    "rpt_fin_item": "Net Income",
     "co_cd": "AAPL",
     "curr_cd": "USD",
     "fiscal_year": 2025,
