@@ -23,7 +23,7 @@ import IRMaterialTab from './IRMaterialTab';
 import PreEarningCallTab from './PreEarningCallTab';
 import IRTranscriptTab from './IRTranscriptTab';
 import AITranscriptTab from './AITranscriptTab';
-import { getFinancialStatementByCoCd, type CompanyStatements } from '@/app/lib/getFinancialStatementByCoCd';
+import { getFinancialStatementByCoCd, getSegmentByCoCd, type CompanyStatements, type SegmentRecord } from '@/app/lib/getFinancialStatementByCoCd';
 import type { StatementData } from '@/app/data/financialData';
 import tvConfigMd from '@/content/tradingview.md';
 import finSummaryConfig from '@/app/data/fin-summary-config.json';
@@ -184,6 +184,12 @@ const FAVORITES_KEY = 'cp-favorites';
 
 // Items per page in the News tab
 const NEWS_PAGE_SIZE = 8;
+
+// Segment report constants for Revenue Breakdown derivation
+const REVENUE_SALE_TYPE = 'Revenue ($M)';
+const ANNUAL_QUARTER_VALUE = 'NA';
+/** Matches the "($M)" suffix in segment item names, e.g. "iPhone ($M)" → "iPhone" */
+const MILLION_DOLLAR_SUFFIX_RE = /\s*\(\$M\)\s*$/;
 
 // ── Chart data derivation helpers ─────────────────────────────────────────────
 
@@ -478,6 +484,54 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
 
   // Derive current quarter financial data from statement data
   const derivedCurrentQtr = useMemo(() => deriveCurrentQtrData(companyStatements), [companyStatements]);
+
+  // Segment records for Revenue Breakdown card
+  const [segmentRecords, setSegmentRecords] = useState<SegmentRecord[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    getSegmentByCoCd(symbol).then((records) => {
+      if (!cancelled) setSegmentRecords(records);
+    });
+    return () => { cancelled = true; };
+  }, [symbol]);
+
+  // Derive revenue breakdown from segment data (latest quarter, "Revenue ($M)" items)
+  const derivedRevenueBreakdown = useMemo<RevenueBreakdownItem[]>(() => {
+    if (!segmentRecords.length) return [];
+
+    // Filter to revenue sale_type and quarterly records only
+    const revenueRecords = segmentRecords.filter(
+      (r) => r.sale_type === REVENUE_SALE_TYPE && r.calendar_quarter !== ANNUAL_QUARTER_VALUE,
+    );
+    if (!revenueRecords.length) return [];
+
+    // Find the latest calendar_year/calendar_quarter
+    revenueRecords.sort((a, b) => {
+      if (a.calendar_year !== b.calendar_year) return b.calendar_year - a.calendar_year;
+      return b.calendar_quarter.localeCompare(a.calendar_quarter);
+    });
+    const latestYear = revenueRecords[0].calendar_year;
+    const latestQuarter = revenueRecords[0].calendar_quarter;
+
+    // Get all items for the latest period, excluding totals (e.g. "Total Net Sales ($M)")
+    const latestRecords = revenueRecords.filter(
+      (r) =>
+        r.calendar_year === latestYear &&
+        r.calendar_quarter === latestQuarter &&
+        !r.anal_seg_level1.toLowerCase().includes('total'),
+    );
+
+    // Calculate total revenue from these items
+    const total = latestRecords.reduce((sum, r) => sum + (r.fld_val ?? 0), 0);
+    if (total === 0) return [];
+
+    // Compute percentage for each item
+    return latestRecords.map((r) => ({
+      name: r.anal_seg_level1.replace(MILLION_DOLLAR_SUFFIX_RE, ''),
+      pct: Math.round(((r.fld_val ?? 0) / total) * 1000) / 10,
+    }));
+  }, [segmentRecords]);
 
   // Parse markdown data
   const profileData = getProfileData();
@@ -1017,11 +1071,10 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                     <div className="cp-data-card">
                       <div className="cp-card-title">
                         Revenue Breakdown
-                        <span className="cp-card-subtitle">{finData.revenueBreakdown.quarter}</span>
                       </div>
                       <div className="cp-card-divider" />
                       <div className="cp-breakdown-list">
-                        {finData.revenueBreakdown.items.map((item) => (
+                        {(derivedRevenueBreakdown.length > 0 ? derivedRevenueBreakdown : finData.revenueBreakdown.items).map((item) => (
                           <div key={item.name} className="cp-breakdown-item">
                             <div className="cp-breakdown-row">
                               <span className="cp-breakdown-name">{item.name}</span>
