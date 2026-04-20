@@ -7,6 +7,7 @@ import Sidebar from '@/app/components/layout/Sidebar';
 import NewsCategoryTabs from '@/app/components/news/NewsCategoryTabs';
 import NewsCard from '@/app/components/news/NewsCard';
 import CompanyRankingTable from '@/app/components/news/CompanyRankingTable';
+import DatePickerInput from '@/app/components/shared/DatePickerInput';
 import { newsItems, NewsCategory } from '@/app/data/news';
 import { getPaginationRange } from '@/app/lib/paginationUtils';
 
@@ -121,28 +122,16 @@ export default function MarketNewsPage() {
               <div className="mn-filter-field mn-filter-field--period">
                 <label className="cp-news-filter-label">Period</label>
                 <div className="cp-news-period-wrap">
-                  <input
-                    type={filterPeriodStart ? 'date' : 'text'}
-                    className="cp-news-date-input"
-                    lang="en"
-                    placeholder="Start date"
+                  <DatePickerInput
                     value={filterPeriodStart}
-                    onFocus={(e) => { e.currentTarget.type = 'date'; }}
-                    onBlur={(e) => { if (!e.currentTarget.value) e.currentTarget.type = 'text'; }}
-                    onChange={(e) => setFilterPeriodStart(e.target.value)}
-                    aria-label="Start date"
+                    onChange={setFilterPeriodStart}
+                    placeholder="Start date"
                   />
                   <span className="cp-news-period-sep">–</span>
-                  <input
-                    type={filterPeriodEnd ? 'date' : 'text'}
-                    className="cp-news-date-input"
-                    lang="en"
-                    placeholder="End date"
+                  <DatePickerInput
                     value={filterPeriodEnd}
-                    onFocus={(e) => { e.currentTarget.type = 'date'; }}
-                    onBlur={(e) => { if (!e.currentTarget.value) e.currentTarget.type = 'text'; }}
-                    onChange={(e) => setFilterPeriodEnd(e.target.value)}
-                    aria-label="End date"
+                    onChange={setFilterPeriodEnd}
+                    placeholder="End date"
                   />
                 </div>
               </div>
