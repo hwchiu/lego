@@ -185,6 +185,12 @@ const FAVORITES_KEY = 'cp-favorites';
 // Items per page in the News tab
 const NEWS_PAGE_SIZE = 8;
 
+// Segment report constants for Revenue Breakdown derivation
+const REVENUE_SALE_TYPE = 'Revenue ($M)';
+const ANNUAL_QUARTER_VALUE = 'NA';
+/** Matches the "($M)" suffix in segment item names, e.g. "iPhone ($M)" → "iPhone" */
+const MILLION_DOLLAR_SUFFIX_RE = /\s*\(\$M\)\s*$/;
+
 // ── Chart data derivation helpers ─────────────────────────────────────────────
 
 /** Convert a StatementData period label like "Q1 2025" → "25Q1" (YYQQ).
@@ -494,9 +500,9 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const derivedRevenueBreakdown = useMemo<RevenueBreakdownItem[]>(() => {
     if (!segmentRecords.length) return [];
 
-    // Filter to "Revenue ($M)" sale_type and quarterly records only
+    // Filter to revenue sale_type and quarterly records only
     const revenueRecords = segmentRecords.filter(
-      (r) => r.sale_type === 'Revenue ($M)' && r.calendar_quarter !== 'NA',
+      (r) => r.sale_type === REVENUE_SALE_TYPE && r.calendar_quarter !== ANNUAL_QUARTER_VALUE,
     );
     if (!revenueRecords.length) return [];
 
@@ -508,7 +514,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     const latestYear = revenueRecords[0].calendar_year;
     const latestQuarter = revenueRecords[0].calendar_quarter;
 
-    // Get all items for the latest period, excluding "Total Net Sales ($M)"
+    // Get all items for the latest period, excluding totals (e.g. "Total Net Sales ($M)")
     const latestRecords = revenueRecords.filter(
       (r) =>
         r.calendar_year === latestYear &&
@@ -522,7 +528,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
 
     // Compute percentage for each item
     return latestRecords.map((r) => ({
-      name: r.anal_seg_level1.replace(/\s*\(\$M\)\s*$/, ''),
+      name: r.anal_seg_level1.replace(MILLION_DOLLAR_SUFFIX_RE, ''),
       pct: Math.round(((r.fld_val ?? 0) / total) * 1000) / 10,
     }));
   }, [segmentRecords]);
