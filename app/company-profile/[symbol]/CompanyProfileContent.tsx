@@ -26,6 +26,7 @@ import AITranscriptTab from './AITranscriptTab';
 import { getFinancialStatementByCoCd, type CompanyStatements } from '@/app/lib/getFinancialStatementByCoCd';
 import type { StatementData } from '@/app/data/financialData';
 import tvConfigMd from '@/content/tradingview.md';
+import finSummaryConfig from '@/app/data/fin-summary-config.json';
 
 const FinancialIndicesNivoChart = dynamic(
   () => import('./InvestmentNivoCharts').then((m) => m.FinancialIndicesNivoChart),
@@ -204,12 +205,29 @@ function parseItemVal(s: string): number {
   return isNaN(n) ? 0 : n;
 }
 
-/** Find the first key in `items` that equals `name` or starts with `name ` or `name(`. */
-function findItemKeyFlex(items: Record<string, string[]>, name: string): string | undefined {
-  if (name in items) return name;
-  return Object.keys(items).find(
-    (k) => k.startsWith(`${name} `) || k.startsWith(`${name}(`),
+/** Config entry shape from fin-summary-config.json. */
+interface FinSummaryConfigEntry {
+  index: string;
+  rpt_fin_type: string;
+  rpt_fin_item: string;
+}
+
+/**
+ * Look up a configured rpt_fin_item in the given statement items map.
+ * Only matches when the entry's rpt_fin_type equals the expected type
+ * (income or balance) AND the rpt_fin_item key exists in `items`.
+ */
+function findConfigItem(
+  items: Record<string, string[]>,
+  configEntries: FinSummaryConfigEntry[],
+  indexName: string,
+  expectedType: 'income' | 'balance',
+): string | undefined {
+  const entry = configEntries.find(
+    (e) => e.index === indexName && e.rpt_fin_type === expectedType,
   );
+  if (!entry) return undefined;
+  return entry.rpt_fin_item in items ? entry.rpt_fin_item : undefined;
 }
 
 /** Derive FinancialDataPoint[] and DoiRevenuePoint[] from CompanyStatements.
@@ -240,19 +258,18 @@ function deriveFinChartData(statements: CompanyStatements | null): {
   const incomeItems = incomeStmt.items;
   const balanceItems = balanceStmt?.items ?? {};
 
-  // Find item keys — flexible lookup handles ($M) vs ($B) unit variants
-  const revKey      = findItemKeyFlex(incomeItems, 'Revenue') ??
-                      findItemKeyFlex(incomeItems, 'Net Revenue') ??
-                      findItemKeyFlex(incomeItems, 'Net Revenues') ??
-                      findItemKeyFlex(incomeItems, 'Total Sales');
-  const gpKey       = findItemKeyFlex(incomeItems, 'Gross Profit');
-  const gmKey       = findItemKeyFlex(incomeItems, 'Gross Margin');
-  const omKey       = findItemKeyFlex(incomeItems, 'Operating Margin');
-  const niKey       = findItemKeyFlex(incomeItems, 'Net Income');
-  const nmKey       = findItemKeyFlex(incomeItems, 'Net Margin');
-  const cashKey     = findItemKeyFlex(balanceItems, 'Cash & Cash Equivalents') ??
-                      findItemKeyFlex(balanceItems, 'Cash & Equivalents');
-  const doiKey      = findItemKeyFlex(balanceItems, 'DOI');
+  // Look up item keys from fin-summary-config.json
+  const fiCfg  = finSummaryConfig.financialIndices;
+  const doiCfg = finSummaryConfig.doiRevenue;
+
+  const revKey      = findConfigItem(incomeItems, fiCfg, 'Revenue', 'income');
+  const gpKey       = findConfigItem(incomeItems, fiCfg, 'Gross Profit', 'income');
+  const gmKey       = findConfigItem(incomeItems, fiCfg, 'Gross Margin', 'income');
+  const omKey       = findConfigItem(incomeItems, fiCfg, 'Operating Margin', 'income');
+  const niKey       = findConfigItem(incomeItems, fiCfg, 'Net Income', 'income');
+  const nmKey       = findConfigItem(incomeItems, fiCfg, 'Net Margin', 'income');
+  const cashKey     = findConfigItem(balanceItems, fiCfg, 'Cash & Cash Equivalents', 'balance');
+  const doiKey      = findConfigItem(balanceItems, doiCfg, 'DOI', 'balance');
 
   /** Extract a numeric value for a given item key at a given period label. */
   function getStatementValue(stmtItems: Record<string, string[]>, stmtPeriods: string[], itemKey: string | undefined, period: string): number {
@@ -276,10 +293,12 @@ function deriveFinChartData(statements: CompanyStatements | null): {
     guidance:           null, // guidance is not present in statement data
   }));
 
+  const doiChartRevKey = findConfigItem(incomeItems, doiCfg, 'Revenue', 'income');
+
   const doiRevenue: DoiRevenuePoint[] = quarterlyPeriods.map(({ period, label }) => ({
     quarter:  label,
     doi:      balanceStmt ? getStatementValue(balanceItems, balancePeriods, doiKey, period) : 0,
-    revenue:  getStatementValue(incomeItems, incomeStmt.periods, revKey, period),
+    revenue:  getStatementValue(incomeItems, incomeStmt.periods, doiChartRevKey, period),
     guidance: null, // guidance is not present in statement data
   }));
 
