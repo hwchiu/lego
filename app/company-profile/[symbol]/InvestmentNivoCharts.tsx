@@ -952,7 +952,10 @@ export function DoiRevenueNivoChart({ data }: DoiRevNivoChartProps) {
   if (quarterly.length === 0) return null;
 
   const maxDoi = Math.max(...quarterly.map((d) => d.doi), 1);
-  const doiMax = Math.ceil(maxDoi / 50) * 50 || 50;
+  // Dynamically choose a Y-axis ceiling that keeps DOI bars at a good visual
+  // proportion (≈70-80% of chart height) so they overlap well with the Revenue line.
+  const doiStep = maxDoi <= 10 ? 2 : maxDoi <= 25 ? 5 : maxDoi <= 100 ? 10 : maxDoi <= 500 ? 50 : 100;
+  const doiMax = Math.ceil(maxDoi * 1.2 / doiStep) * doiStep || doiStep;
   const maxRevenue = Math.max(...quarterly.map((d) => d.revenue), 1);
   const revMax = Math.ceil(maxRevenue / 5000) * 5000 || 5000;
 
