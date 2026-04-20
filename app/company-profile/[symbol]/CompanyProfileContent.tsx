@@ -205,13 +205,27 @@ function parseItemVal(s: string): number {
   return isNaN(n) ? 0 : n;
 }
 
-/** Look up a configured rpt_fin_item in the given items map by exact match. */
+/** Config entry shape from fin-summary-config.json. */
+interface FinSummaryConfigEntry {
+  index: string;
+  rpt_fin_type: string;
+  rpt_fin_item: string;
+}
+
+/**
+ * Look up a configured rpt_fin_item in the given statement items map.
+ * Only matches when the entry's rpt_fin_type equals the expected type
+ * (income or balance) AND the rpt_fin_item key exists in `items`.
+ */
 function findConfigItem(
   items: Record<string, string[]>,
-  configEntries: typeof finSummaryConfig.financialIndices,
+  configEntries: FinSummaryConfigEntry[],
   indexName: string,
+  expectedType: 'income' | 'balance',
 ): string | undefined {
-  const entry = configEntries.find((e) => e.index === indexName);
+  const entry = configEntries.find(
+    (e) => e.index === indexName && e.rpt_fin_type === expectedType,
+  );
   if (!entry) return undefined;
   return entry.rpt_fin_item in items ? entry.rpt_fin_item : undefined;
 }
@@ -248,14 +262,14 @@ function deriveFinChartData(statements: CompanyStatements | null): {
   const fiCfg  = finSummaryConfig.financialIndices;
   const doiCfg = finSummaryConfig.doiRevenue;
 
-  const revKey      = findConfigItem(incomeItems, fiCfg, 'Revenue');
-  const gpKey       = findConfigItem(incomeItems, fiCfg, 'Gross Profit');
-  const gmKey       = findConfigItem(incomeItems, fiCfg, 'Gross Margin');
-  const omKey       = findConfigItem(incomeItems, fiCfg, 'Operating Margin');
-  const niKey       = findConfigItem(incomeItems, fiCfg, 'Net Income');
-  const nmKey       = findConfigItem(incomeItems, fiCfg, 'Net Margin');
-  const cashKey     = findConfigItem(balanceItems, fiCfg, 'Cash & Cash Equivalents');
-  const doiKey      = findConfigItem(balanceItems, doiCfg, 'DOI');
+  const revKey      = findConfigItem(incomeItems, fiCfg, 'Revenue', 'income');
+  const gpKey       = findConfigItem(incomeItems, fiCfg, 'Gross Profit', 'income');
+  const gmKey       = findConfigItem(incomeItems, fiCfg, 'Gross Margin', 'income');
+  const omKey       = findConfigItem(incomeItems, fiCfg, 'Operating Margin', 'income');
+  const niKey       = findConfigItem(incomeItems, fiCfg, 'Net Income', 'income');
+  const nmKey       = findConfigItem(incomeItems, fiCfg, 'Net Margin', 'income');
+  const cashKey     = findConfigItem(balanceItems, fiCfg, 'Cash & Cash Equivalents', 'balance');
+  const doiKey      = findConfigItem(balanceItems, doiCfg, 'DOI', 'balance');
 
   /** Extract a numeric value for a given item key at a given period label. */
   function getStatementValue(stmtItems: Record<string, string[]>, stmtPeriods: string[], itemKey: string | undefined, period: string): number {
@@ -279,12 +293,12 @@ function deriveFinChartData(statements: CompanyStatements | null): {
     guidance:           null, // guidance is not present in statement data
   }));
 
-  const doiRevKey   = findConfigItem(incomeItems, doiCfg, 'Revenue');
+  const doiChartRevKey = findConfigItem(incomeItems, doiCfg, 'Revenue', 'income');
 
   const doiRevenue: DoiRevenuePoint[] = quarterlyPeriods.map(({ period, label }) => ({
     quarter:  label,
     doi:      balanceStmt ? getStatementValue(balanceItems, balancePeriods, doiKey, period) : 0,
-    revenue:  getStatementValue(incomeItems, incomeStmt.periods, doiRevKey, period),
+    revenue:  getStatementValue(incomeItems, incomeStmt.periods, doiChartRevKey, period),
     guidance: null, // guidance is not present in statement data
   }));
 
