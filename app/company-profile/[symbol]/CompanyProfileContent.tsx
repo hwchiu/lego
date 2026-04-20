@@ -188,7 +188,7 @@ const NEWS_PAGE_SIZE = 8;
 
 /** Convert a StatementData period label like "Q1 2025" → "25Q1" (YYQQ).
  *  Returns null for annual periods ("FY2025"). */
-function periodToQtrLabel(period: string): string | null {
+function periodToQuarterLabel(period: string): string | null {
   const m = period.match(/^(Q\d)\s+(\d{4})$/);
   if (!m) return null;
   const q = m[1];          // "Q1"
@@ -213,7 +213,8 @@ function findItemKeyFlex(items: Record<string, string[]>, name: string): string 
 }
 
 /** Derive FinancialDataPoint[] and DoiRevenuePoint[] from CompanyStatements.
- *  Uses quarterly periods only; X-axis is "YYQQ" format. */
+ *  Uses quarterly periods only; X-axis is "YYQQ" format.
+ *  Guidance is always null as it is not available in statement data. */
 function deriveFinChartData(statements: CompanyStatements | null): {
   financialIndices: FinancialDataPoint[];
   doiRevenue: DoiRevenuePoint[];
@@ -229,12 +230,12 @@ function deriveFinChartData(statements: CompanyStatements | null): {
     balanceEntry?.kind === 'findata' ? balanceEntry.data : null;
 
   // Collect quarterly periods from income statement
-  const qtrPeriods: { period: string; label: string }[] = [];
+  const quarterlyPeriods: { period: string; label: string }[] = [];
   for (const period of incomeStmt.periods) {
-    const label = periodToQtrLabel(period);
-    if (label) qtrPeriods.push({ period, label });
+    const label = periodToQuarterLabel(period);
+    if (label) quarterlyPeriods.push({ period, label });
   }
-  if (qtrPeriods.length === 0) return { financialIndices: [], doiRevenue: [] };
+  if (quarterlyPeriods.length === 0) return { financialIndices: [], doiRevenue: [] };
 
   const incomeItems = incomeStmt.items;
   const balanceItems = balanceStmt?.items ?? {};
@@ -253,8 +254,8 @@ function deriveFinChartData(statements: CompanyStatements | null): {
                       findItemKeyFlex(balanceItems, 'Cash & Equivalents');
   const doiKey      = findItemKeyFlex(balanceItems, 'DOI');
 
-  /** Lookup the numeric value for a given item key at a given period. */
-  function getVal(stmtItems: Record<string, string[]>, stmtPeriods: string[], itemKey: string | undefined, period: string): number {
+  /** Extract a numeric value for a given item key at a given period label. */
+  function getStatementValue(stmtItems: Record<string, string[]>, stmtPeriods: string[], itemKey: string | undefined, period: string): number {
     if (!itemKey) return 0;
     const idx = stmtPeriods.indexOf(period);
     if (idx < 0) return 0;
@@ -263,23 +264,23 @@ function deriveFinChartData(statements: CompanyStatements | null): {
 
   const balancePeriods = balanceStmt?.periods ?? [];
 
-  const financialIndices: FinancialDataPoint[] = qtrPeriods.map(({ period, label }) => ({
+  const financialIndices: FinancialDataPoint[] = quarterlyPeriods.map(({ period, label }) => ({
     quarter:            label,
-    totalRevenue:       getVal(incomeItems, incomeStmt.periods, revKey, period),
-    grossProfit:        getVal(incomeItems, incomeStmt.periods, gpKey, period),
-    grossMarginPct:     getVal(incomeItems, incomeStmt.periods, gmKey, period),
-    operatingMarginPct: getVal(incomeItems, incomeStmt.periods, omKey, period),
-    netIncome:          getVal(incomeItems, incomeStmt.periods, niKey, period),
-    netMarginPct:       getVal(incomeItems, incomeStmt.periods, nmKey, period),
-    cashEquivalents:    balanceStmt ? getVal(balanceItems, balancePeriods, cashKey, period) : 0,
-    guidance:           null,
+    totalRevenue:       getStatementValue(incomeItems, incomeStmt.periods, revKey, period),
+    grossProfit:        getStatementValue(incomeItems, incomeStmt.periods, gpKey, period),
+    grossMarginPct:     getStatementValue(incomeItems, incomeStmt.periods, gmKey, period),
+    operatingMarginPct: getStatementValue(incomeItems, incomeStmt.periods, omKey, period),
+    netIncome:          getStatementValue(incomeItems, incomeStmt.periods, niKey, period),
+    netMarginPct:       getStatementValue(incomeItems, incomeStmt.periods, nmKey, period),
+    cashEquivalents:    balanceStmt ? getStatementValue(balanceItems, balancePeriods, cashKey, period) : 0,
+    guidance:           null, // guidance is not present in statement data
   }));
 
-  const doiRevenue: DoiRevenuePoint[] = qtrPeriods.map(({ period, label }) => ({
+  const doiRevenue: DoiRevenuePoint[] = quarterlyPeriods.map(({ period, label }) => ({
     quarter:  label,
-    doi:      balanceStmt ? getVal(balanceItems, balancePeriods, doiKey, period) : 0,
-    revenue:  getVal(incomeItems, incomeStmt.periods, revKey, period),
-    guidance: null,
+    doi:      balanceStmt ? getStatementValue(balanceItems, balancePeriods, doiKey, period) : 0,
+    revenue:  getStatementValue(incomeItems, incomeStmt.periods, revKey, period),
+    guidance: null, // guidance is not present in statement data
   }));
 
   return { financialIndices, doiRevenue };
