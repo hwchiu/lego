@@ -1,14 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import type { StatementData } from '@/app/data/financialData';
 import {
   getFinancialStatementByCoCd,
   type StatementType,
   type CompanyStatements,
-  type TabDataEntry,
   type SimpleStatementData,
-  type SimpleStatementPeriodData,
 } from '@/app/lib/getFinancialStatementByCoCd';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -326,19 +324,23 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
   const currentTabData = availableStatements[effectiveType];
 
   // ── Simple statement data — drives balance / cashflow / segment year nav ──────
-  const simpleData: SimpleStatementData | null =
-    currentTabData?.kind === 'simple' ? currentTabData.data : null;
+  const simpleData: SimpleStatementData | null = useMemo(
+    () => (currentTabData?.kind === 'simple' ? currentTabData.data : null),
+    [currentTabData],
+  );
 
-  const simpleAllYears = simpleData
-    ? [...new Set(simpleData.quarterlyData.columns.map(parseColYear))].filter(Boolean).sort((a, b) => a - b)
-    : [];
+  const simpleAllYears = useMemo(() => {
+    if (!simpleData) return [];
+    return [...new Set(simpleData.quarterlyData.columns.map(parseColYear))].filter(Boolean).sort((a, b) => a - b);
+  }, [simpleData]);
 
   // ── FinData (Income Statement) year nav ───────────────────────────────────────
-  const finDataAllYears = currentTabData?.kind === 'findata'
-    ? [...new Set(
-        currentTabData.data.periods.filter(isQuarterlyPeriod).map(parseColYear),
-      )].filter(Boolean).sort((a, b) => a - b)
-    : [];
+  const finDataAllYears = useMemo(() => {
+    if (currentTabData?.kind !== 'findata') return [];
+    return [...new Set(
+      currentTabData.data.periods.filter(isQuarterlyPeriod).map(parseColYear),
+    )].filter(Boolean).sort((a, b) => a - b);
+  }, [currentTabData]);
 
   // Unified year list: works for both 'simple' and 'findata' tabs
   const activeAllYears = simpleData ? simpleAllYears : finDataAllYears;
