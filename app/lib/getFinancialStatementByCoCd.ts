@@ -28,7 +28,7 @@ export type CompanyStatements = Partial<Record<StatementType, TabDataEntry>>;
 
 // ── Segment Report flat record type ───────────────────────────────────────────
 
-interface SegmentRecord {
+export interface SegmentRecord {
   calendar_year: number;
   calendar_quarter: string;
   fiscal_year: number;
@@ -233,4 +233,38 @@ export async function getFinancialStatementByCoCd(
   // await new Promise((r) => setTimeout(r, 200));
 
   return buildCompanyStatements(coCd);
+}
+
+// ── Segment data accessor ──────────────────────────────────────────────────────
+
+/** Cache for segment records by symbol */
+const _segmentRecordsCache: Record<string, SegmentRecord[] | null> = {};
+
+/**
+ * Simulated API: getSegmentByCoCd
+ *
+ * Fetches raw segment report records for a given company code.
+ * Returns the SegmentRecord[] filtered by co_cd.
+ *
+ * In production this will call a real backend API:
+ *   GET /api/segments?co_cd={coCd}
+ *
+ * @param coCd  Company code / ticker symbol, e.g. "AAPL"
+ * @returns Promise resolving to SegmentRecord[]
+ */
+export async function getSegmentByCoCd(coCd: string): Promise<SegmentRecord[]> {
+  if (_segmentRecordsCache[coCd] !== undefined) {
+    return _segmentRecordsCache[coCd] ?? [];
+  }
+
+  // Currently only AAPL has segment data in a dedicated markdown
+  if (coCd === 'AAPL') {
+    const records = extractJsonBySection<SegmentRecord[]>(aaplFinStmtMd as string, 'Segment Report');
+    const filtered = records.filter((r) => r.co_cd === coCd);
+    _segmentRecordsCache[coCd] = filtered;
+    return filtered;
+  }
+
+  _segmentRecordsCache[coCd] = null;
+  return [];
 }
