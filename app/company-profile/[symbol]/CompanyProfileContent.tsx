@@ -1074,7 +1074,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                       </div>
                       <div className="cp-card-divider" />
                       <div className="cp-breakdown-list">
-                        {(derivedRevenueBreakdown.length > 0 ? derivedRevenueBreakdown : finData.revenueBreakdown.items).map((item) => (
+                        {[...(derivedRevenueBreakdown.length > 0 ? derivedRevenueBreakdown : finData.revenueBreakdown.items)].sort((a, b) => b.pct - a.pct).map((item) => (
                           <div key={item.name} className="cp-breakdown-item">
                             <div className="cp-breakdown-row">
                               <span className="cp-breakdown-name">{item.name}</span>
