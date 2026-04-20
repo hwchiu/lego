@@ -1,131 +1,17 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { extractJsonBySection } from '@/app/lib/parseContent';
-import tcFinStmtMd from '@/content/tc-financial-statement.md';
-import aaplFinStmtMd from '@/content/apple-financial-statement.md';
-import { getStatement, getCompanies, flatToStatementData } from '@/app/data/financialData';
-import type { StatementKey, StatementData, FlatFinRecord } from '@/app/data/financialData';
+import { useState, useEffect, useMemo } from 'react';
+import type { StatementData } from '@/app/data/financialData';
+import {
+  getFinancialStatementByCoCd,
+  type StatementType,
+  type CompanyStatements,
+  type SimpleStatementData,
+} from '@/app/lib/getFinancialStatementByCoCd';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
-type StatementType = 'income' | 'balance' | 'cashflow' | 'segment';
 type ViewMode = 'quarterly' | 'annual';
 type Currency = 'original' | 'usd';
-
-// ── Simple table type (legacy — kept for type completeness) ───────────────────
-interface SimpleStatementPeriodData {
-  columns: string[];
-  rows: string[][];
-}
-
-interface SimpleStatementData {
-  source: string;
-  annualData: SimpleStatementPeriodData;
-  quarterlyData: SimpleStatementPeriodData;
-}
-
-// ── Segment Report flat record type ───────────────────────────────────────────
-interface SegmentRecord {
-  calendar_year: number;
-  calendar_quarter: string;
-  fiscal_year: number;
-  fiscal_quarter: string;
-  anal_seg_level1: string;
-  anal_seg_level2?: string;
-  anal_seg_level3?: string;
-  co_cd: string;
-  co_name?: string;
-  curr_cd: string;
-  sale_type: string;
-  fld_val: number | null;
-  curr_num?: number | null;
-  fld_val_yoy?: number | null;
-  fld_val_qoq?: number | null;
-  curr_num_yoy?: number | null;
-  curr_num_qoq?: number | null;
-  category?: string;
-  update_dt?: string;
-}
-
-/** Format a numeric segment value for display based on sale_type. */
-function formatSegmentValue(val: number | null, saleType: string): string {
-  if (val === null || val === undefined) return '—';
-  const isPct = saleType.includes('(%)');
-  const isGrowth = /growth|yoy/i.test(saleType);
-  if (isPct && isGrowth) {
-    const sign = val > 0 ? '+' : '';
-    return `${sign}${val}%`;
-  }
-  if (isPct) return `${val}%`;
-  // Numeric: add thousands separator
-  return Math.round(val) === val
-    ? val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-    : val.toFixed(1);
-}
-
-/** Convert SegmentRecord[] to StatementData (same period-label logic as flatToStatementData). */
-function segmentToStatementData(records: SegmentRecord[], co_cd: string): StatementData | null {
-  const filtered = records.filter((r) => r.co_cd === co_cd);
-  if (!filtered.length) return null;
-
-  const ANNUAL_QUARTER = 'NA';
-
-  function pLabel(calYear: number, calQ: string): string {
-    return calQ === ANNUAL_QUARTER ? `FY${calYear}` : `${calQ} ${calYear}`;
-  }
-  function pSortKey(calYear: number, calQ: string): number {
-    if (calQ === ANNUAL_QUARTER) return calYear * 10;
-    const m = calQ.match(/^Q([1-4])$/);
-    return calYear * 10 + (m ? parseInt(m[1], 10) : 5);
-  }
-
-  // Collect all periods
-  const periodSet = new Set<string>();
-  const sortKeyMap = new Map<string, number>();
-  for (const rec of filtered) {
-    const lbl = pLabel(rec.calendar_year, rec.calendar_quarter);
-    periodSet.add(lbl);
-    sortKeyMap.set(lbl, pSortKey(rec.calendar_year, rec.calendar_quarter));
-  }
-  const periods = [...periodSet].sort((a, b) => (sortKeyMap.get(a) ?? 0) - (sortKeyMap.get(b) ?? 0));
-
-  // Collect sale_type (section) and anal_seg_level1 (row) ordering
-  const saleTypeOrder: string[] = [];
-  const saleTypeSeen = new Set<string>();
-  const itemOrders: Record<string, string[]> = {};
-  const itemSeen: Record<string, Set<string>> = {};
-  const valueMap: Record<string, Record<string, string>> = {};
-
-  for (const rec of filtered) {
-    const { sale_type, anal_seg_level1, calendar_year, calendar_quarter, fld_val } = rec;
-    if (!saleTypeSeen.has(sale_type)) {
-      saleTypeOrder.push(sale_type);
-      saleTypeSeen.add(sale_type);
-      itemOrders[sale_type] = [];
-      itemSeen[sale_type] = new Set();
-    }
-    if (!itemSeen[sale_type].has(anal_seg_level1)) {
-      itemOrders[sale_type].push(anal_seg_level1);
-      itemSeen[sale_type].add(anal_seg_level1);
-    }
-    const lbl = pLabel(calendar_year, calendar_quarter);
-    const key = `${sale_type}__${anal_seg_level1}`;
-    if (!valueMap[key]) valueMap[key] = {};
-    valueMap[key][lbl] = formatSegmentValue(fld_val, sale_type);
-  }
-
-  // Build items map: section header row (all-empty) + data rows
-  const items: Record<string, string[]> = {};
-  for (const saleType of saleTypeOrder) {
-    items[saleType] = periods.map(() => '');              // section header
-    for (const segName of itemOrders[saleType]) {
-      const key = `${saleType}__${segName}`;
-      items[segName] = periods.map((p) => valueMap[key]?.[p] ?? '');
-    }
-  }
-
-  return { periods, items };
-}
 
 const STATEMENT_ITEMS: { key: StatementType; label: string }[] = [
   { key: 'income',   label: 'Income Statement' },
@@ -133,13 +19,6 @@ const STATEMENT_ITEMS: { key: StatementType; label: string }[] = [
   { key: 'cashflow', label: 'Cash Flow Statement' },
   { key: 'segment',  label: 'Segment Report' },
 ];
-
-// ── Unified statement data types ───────────────────────────────────────────────
-type TabDataEntry =
-  | { kind: 'simple'; data: SimpleStatementData }
-  | { kind: 'findata'; data: StatementData };
-
-type CompanyStatements = Partial<Record<StatementType, TabDataEntry>>;
 
 // ── FinDataTable — renders StatementData from financial-data.md ────────────────
 
@@ -268,115 +147,6 @@ function FinDataTable({
 /** Returns true for section-header rows (all data cells are empty). */
 function isSectionRow(row: string[]): boolean {
   return row.slice(1).every((c) => c === '' || c === '—');
-}
-
-// ── Data loaders ───────────────────────────────────────────────────────────────
-
-/**
- * Config map for companies whose statement data lives in a dedicated markdown file.
- * Each key is a company symbol; the value holds the markdown content and the
- * section heading for each statement type (income / balance / cashflow).
- */
-const MD_FIN_CONFIG: Record<
-  string,
-  { mdContent: string; sections: Partial<Record<'income' | 'balance' | 'cashflow', string>> }
-> = {
-  TC: {
-    mdContent: tcFinStmtMd as string,
-    sections: {
-      income:   'Income Statement',
-      balance:  'Balance Sheet',
-      cashflow: 'Cash Flow Statement',
-    },
-  },
-  AAPL: {
-    mdContent: aaplFinStmtMd as string,
-    sections: {
-      income:   'Income Statement',
-      balance:  'Balance Sheet',
-      cashflow: 'Cash Flow Statement',
-    },
-  },
-};
-
-/** Per-symbol, per-type cache for markdown-sourced StatementData. */
-const _mdFinCache: Record<string, Partial<Record<'income' | 'balance' | 'cashflow', StatementData | null>>> = {};
-
-/**
- * Shared loader: given a company symbol and a statement type, reads the matching
- * section from the company's dedicated markdown file, converts the FlatFinRecord[]
- * array to StatementData, and returns it (or null when no data is found).
- *
- * This function is the single entry-point for all markdown-sourced financial data
- * so that Income Statement, Balance Sheet, and Cash Flow Statement all share the
- * same backend logic and data format.
- */
-function getMarkdownFinData(symbol: string, type: 'income' | 'balance' | 'cashflow'): StatementData | null {
-  if (!_mdFinCache[symbol]) _mdFinCache[symbol] = {};
-  const cache = _mdFinCache[symbol];
-  if (type in cache) return cache[type] ?? null;
-
-  const config = MD_FIN_CONFIG[symbol];
-  if (!config) {
-    cache[type] = null;
-    return null;
-  }
-
-  const section = config.sections[type];
-  if (!section) {
-    cache[type] = null;
-    return null;
-  }
-
-  const records = extractJsonBySection<FlatFinRecord[]>(config.mdContent, section);
-  const stmtMap = flatToStatementData(records, type);
-  cache[type] = stmtMap[symbol] ?? null;
-  return cache[type] ?? null;
-}
-
-let _aaplSegmentCache: StatementData | null | undefined = undefined;
-function getAaplSegmentData(): StatementData | null {
-  if (_aaplSegmentCache !== undefined) return _aaplSegmentCache;
-  const records = extractJsonBySection<SegmentRecord[]>(aaplFinStmtMd as string, 'Segment Report');
-  _aaplSegmentCache = segmentToStatementData(records, 'AAPL');
-  return _aaplSegmentCache;
-}
-
-/**
- * Returns the available financial statement sections for a given company symbol.
- * All company-specific data-source logic is encapsulated here so the rendering
- * component remains fully generic.  When a backend API is available, replace
- * the body of this function with a single API call.
- */
-function getCompanyStatements(symbol: string): CompanyStatements {
-  const result: CompanyStatements = {};
-
-  // Companies with dedicated markdown files (AAPL, TC, …).
-  // Checked before financial-data.md because AAPL also appears in that Company
-  // List but has richer dedicated data in its own markdown file.
-  if (MD_FIN_CONFIG[symbol]) {
-    for (const type of ['income', 'balance', 'cashflow'] as const) {
-      const data = getMarkdownFinData(symbol, type);
-      if (data) result[type] = { kind: 'findata', data };
-    }
-    // AAPL Segment Report — uses SegmentRecord[] flat format, same calendar_year/calendar_quarter approach
-    if (symbol === 'AAPL') {
-      const segData = getAaplSegmentData();
-      if (segData) result.segment = { kind: 'findata', data: segData };
-    }
-    return result;
-  }
-
-  // Financial-data.md companies (income / balance / cashflow; no segment)
-  if (getCompanies().some((c) => c.symbol === symbol)) {
-    for (const key of ['income', 'balance', 'cashflow'] as const) {
-      const data = getStatement(key as StatementKey)[symbol] ?? null;
-      if (data) result[key] = { kind: 'findata', data };
-    }
-    return result;
-  }
-
-  return result; // empty → "coming soon" placeholder
 }
 
 // ── Simple statement table sub-component ──────────────────────────────────────
@@ -520,19 +290,38 @@ function SimpleStatementTable({ data, viewMode, yearWindowStart, allYears }: Sim
 // ── Component ──────────────────────────────────────────────────────────────────
 interface FinancialStatementTabProps {
   symbol: string;
+  /** When provided by a parent component, skip internal fetch and use this data directly.
+   *  null = parent is still loading; object = data ready (may be empty {}). */
+  companyStatements?: CompanyStatements | null;
 }
 
-export default function FinancialStatementTab({ symbol }: FinancialStatementTabProps) {
+export default function FinancialStatementTab({ symbol, companyStatements: propStatements }: FinancialStatementTabProps) {
   const [statementType, setStatementType] = useState<StatementType>('income');
   const [viewMode, setViewMode] = useState<ViewMode>('quarterly');
   const [currency, setCurrency] = useState<Currency>('original');
+  const [availableStatements, setAvailableStatements] = useState<CompanyStatements>({});
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // Load all available statement sections for this company.
-  // Company-specific logic is fully encapsulated in getCompanyStatements().
-  const availableStatements = useMemo(
-    () => getCompanyStatements(symbol),
-    [symbol],
-  );
+  // Load all available statement sections for this company (模式 A pattern).
+  // If `propStatements` is provided by a parent, use it directly to avoid a duplicate fetch.
+  useEffect(() => {
+    if (propStatements !== undefined) {
+      // Parent manages the data — use it when ready
+      setAvailableStatements(propStatements ?? {});
+      setLoading(propStatements === null);
+      return;
+    }
+    // Self-managed fetch (used when this component is rendered standalone)
+    let cancelled = false;
+    setLoading(true);
+    getFinancialStatementByCoCd(symbol).then((result) => {
+      if (!cancelled) {
+        setAvailableStatements(result);
+        setLoading(false);
+      }
+    });
+    return () => { cancelled = true; };
+  }, [symbol, propStatements]);
 
   // Tabs are shown only for sections that actually have data
   const visibleTabs = STATEMENT_ITEMS.filter((item) => availableStatements[item.key] != null);
@@ -587,6 +376,15 @@ export default function FinancialStatementTab({ symbol }: FinancialStatementTabP
 
   const simpleCanGoPrev = viewMode === 'quarterly' && activeAllYears.length > 0 && simpleYearWindowStart > activeAllYears[0];
   const simpleCanGoNext = viewMode === 'quarterly' && simpleYearWindowStart < activeMaxYearWindowStart;
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="cp-tab-placeholder">
+        <span className="cp-tab-placeholder-text">Loading…</span>
+      </div>
+    );
+  }
 
   // No data at all — show placeholder
   if (visibleTabs.length === 0) {
