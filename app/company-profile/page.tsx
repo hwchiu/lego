@@ -2,34 +2,20 @@
 
 import { useState, useEffect } from 'react';
 import CompanyProfileLanding from './CompanyProfileLanding';
-import { getFavoritesByUserAcct } from '@/app/lib/getFavoritesByUserAcct';
-
-const FAVORITES_KEY = 'cp-favorites';
+import { setFavoritesInPersonality } from '@/app/lib/getFavoritesByUserAcct';
+import { getFavoritesListByUserAcct } from '@/app/lib/watchlistApi';
 
 export default function CompanyProfilePage() {
   const [favorites, setFavorites] = useState<string[]>([]);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(FAVORITES_KEY);
-      if (stored) {
-        setFavorites(JSON.parse(stored) as string[]);
-      } else {
-        setFavorites(getFavoritesByUserAcct('demoUser'));
-      }
-    } catch {
-      // ignore
-    }
+    setFavorites(getFavoritesListByUserAcct('demoUser'));
   }, []);
 
   function handleToggleFavorite(symbol: string) {
     setFavorites((prev) => {
       const next = prev.includes(symbol) ? prev.filter((s) => s !== symbol) : [...prev, symbol];
-      try {
-        localStorage.setItem(FAVORITES_KEY, JSON.stringify(next));
-      } catch {
-        // ignore
-      }
+      setFavoritesInPersonality(next);
       return next;
     });
   }

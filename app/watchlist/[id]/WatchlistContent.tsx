@@ -25,7 +25,9 @@ import {
   saveView as apiSaveView,
   deleteView as apiDeleteView,
   updateWatchlistInfo,
+  getFavoritesListByUserAcct,
 } from '@/app/lib/watchlistApi';
+import { setFavoritesInPersonality } from '@/app/lib/getFavoritesByUserAcct';
 
 // ── Custom View types ─────────────────────────────────────────────────────────
 interface CustomView {
@@ -678,6 +680,8 @@ interface WatchlistContentProps {
   disableNameEdit?: boolean;
   /** When true, the trash icon in Edit Watchlist is hidden (used for Favorites) */
   disableCompanyDelete?: boolean;
+  /** Called when the favorites symbol list is updated (used by FavoritesContent to refresh). */
+  onFavoritesSymbolsUpdate?: (symbols: string[]) => void;
 }
 
 export function WatchlistContent({
@@ -689,6 +693,7 @@ export function WatchlistContent({
   disableDeleteWatchlist = false,
   disableNameEdit = false,
   disableCompanyDelete = false,
+  onFavoritesSymbolsUpdate,
 }: WatchlistContentProps) {
   const watchlistId = params.id;
   const { watchlistNames, setWatchlistName, symbolOrders, setSymbolOrder, favorites, toggleFavorite, dynamicWatchlists, deletedWatchlists, deleteWatchlist } = useWatchlist();
@@ -919,6 +924,12 @@ export function WatchlistContent({
     setShowEditWatchlist(false);
     // API stub call for backend integration
     updateWatchlistInfo('demoUser', watchlistId, trimmed, [...editSymbolOrder]);
+    // When editing the Favorites watchlist, persist changes to user-personality
+    if (watchlistId === 'favorites') {
+      setFavoritesInPersonality([...editSymbolOrder]);
+      const refreshed = getFavoritesListByUserAcct('demoUser');
+      onFavoritesSymbolsUpdate?.(refreshed);
+    }
   }
 
   function handleEditWatchlistCancel() {
@@ -973,6 +984,12 @@ export function WatchlistContent({
       setSymbolOrder(watchlistId, newOrder);
       // API stub call for backend integration
       addCompanyToWatchlist('demoUser', watchlistId, symbols);
+      // When adding symbols to the Favorites watchlist, persist to user-personality
+      if (watchlistId === 'favorites') {
+        setFavoritesInPersonality(newOrder);
+        const refreshed = getFavoritesListByUserAcct('demoUser');
+        onFavoritesSymbolsUpdate?.(refreshed);
+      }
     }
 
     handleAddSymbolClose();
