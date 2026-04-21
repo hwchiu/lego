@@ -538,9 +538,10 @@ const SECTIONS: { key: MASection; label: string }[] = [
 
 interface FundingTabProps {
   symbol: string;
+  onDataLoaded?: (hasData: boolean) => void;
 }
 
-export default function FundingTab({ symbol }: FundingTabProps) {
+export default function FundingTab({ symbol, onDataLoaded }: FundingTabProps) {
   const [activeSection, setActiveSection] = useState<MASection>('number-value');
   const [activeRegion, setActiveRegion] = useState<Region>('Worldwide');
 
@@ -555,10 +556,11 @@ export default function FundingTab({ symbol }: FundingTabProps) {
       if (!cancelled) {
         setFundingRecords(records);
         setLoading(false);
+        onDataLoaded?.(records.length > 0);
       }
     });
     return () => { cancelled = true; };
-  }, [symbol]);
+  }, [symbol, onDataLoaded]);
 
   if (loading) {
     return (

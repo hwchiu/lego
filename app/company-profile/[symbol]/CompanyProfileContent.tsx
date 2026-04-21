@@ -454,6 +454,14 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const stockContainerRef = useRef<HTMLDivElement>(null);
   const tabsScrollRef = useRef<HTMLDivElement>(null);
 
+  // null = unknown (pending load), true = has data, false = no data
+  const [fundingHasData, setFundingHasData] = useState<boolean | null>(null);
+
+  // Reset fundingHasData when navigating to a different company
+  useEffect(() => {
+    setFundingHasData(null);
+  }, [symbol]);
+
   const scrollTabs = useCallback((dir: 'left' | 'right') => {
     tabsScrollRef.current?.scrollBy({ left: dir === 'left' ? -150 : 150, behavior: 'smooth' });
   }, []);
@@ -562,12 +570,19 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
         case 'Pre-Earning Call': return master.IS_PRE_EARNING_CALL === 'Y';
         case 'Investment':       return master.IS_INVEST_ALIVE === 'Y';
         case 'Acquisition':      return master.IS_ACQ_ALIVE === 'Y';
-        case 'Funding':          return master.IS_FUND_ALIVE === 'Y';
+        case 'Funding':          return master.IS_FUND_ALIVE === 'Y' && fundingHasData !== false;
         case 'Stock':            return master.IS_STOCK_CHART_ALIVE === 'Y';
         default:                 return true;
       }
     });
-  }, [symbol]);
+  }, [symbol, fundingHasData]);
+
+  // If the active tab is removed from visibleTabs (e.g. Funding with no data), fall back to the first visible tab
+  useEffect(() => {
+    if (visibleTabs.length > 0 && !visibleTabs.includes(activeTab)) {
+      setActiveTab(visibleTabs[0]!);
+    }
+  }, [visibleTabs, activeTab]);
 
   // Load favorites & tags from localStorage
   useEffect(() => {
@@ -1364,7 +1379,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
             {activeTab === 'Acquisition' && <AcquisitionTab symbol={symbol} />}
 
             {/* ── Funding tab ── */}
-            {activeTab === 'Funding' && <FundingTab symbol={symbol} />}
+            {activeTab === 'Funding' && <FundingTab symbol={symbol} onDataLoaded={setFundingHasData} />}
 
             {/* ── IR Transcript tab ── */}
             {activeTab === 'IR Transcript' && <IRTranscriptTab symbol={symbol} />}
