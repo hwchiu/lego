@@ -453,11 +453,16 @@ function deriveNextQtrData(
 
   const { year, quarter } = parsed;
 
+  // GUDNC_REV[year, quarter] = revenue midpoint guidance for the current quarter.
   const gudncRec = findFcstRecord(fcstRecords, year, quarter, 'GUDNC_REV');
+
+  // NEXT_REV[year, quarter] = revenue estimate for the *next* quarter, stored under
+  // the current quarter's label. e.g. NEXT_REV at 2026-Q1 holds the Q2 2026 estimate.
   const nextRevRec = findFcstRecord(fcstRecords, year, quarter, 'NEXT_REV');
 
   const revenueMidpointGuidance = gudncRec?.fld_val ?? null;
 
+  // QoQ = (next quarter estimate - current quarter actual revenue) / current quarter actual revenue
   let revenueQoQ: number | null = null;
   if (nextRevRec?.fld_val != null && currentRevenue > 0) {
     revenueQoQ = Math.round(((nextRevRec.fld_val - currentRevenue) / currentRevenue) * 1000) / 10;
