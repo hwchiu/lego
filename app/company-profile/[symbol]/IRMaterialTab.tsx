@@ -1,202 +1,20 @@
 'use client';
 
-import { useState } from 'react';
-import { extractJson } from '@/app/lib/parseContent';
-import tcIrMd from '@/content/tc-ir-material.md';
+import { useState, useEffect } from 'react';
+import { getIrMaterialByCoCd, downloadIrMaterialByDocId, type IrMaterialEntry } from '@/app/lib/getIrMaterialByCoCd';
 
-// ── IR Material Tab — AAPL / TC ─────────────────────────────────────────────
-// AAPL content sourced from https://investor.apple.com/investor-relations/default.aspx
-// TC content sourced from https://investor.tsmc.com
-// Sections: Annual Reports (10-K) | Quarterly Reports (10-Q) | Earnings Press Releases
+// ── IR Material Tab ──────────────────────────────────────────────────────────
+// Data fetched via getIrMaterialByCoCd() following Pattern A (async API +
+// static data). Sub-tabs are derived from distinct DOC_TYPE values.
 
 interface IRMaterialTabProps {
   symbol: string;
 }
 
-type IRSubTab = 'annual-reports' | 'quarterly-reports' | 'earnings-press-releases';
+// ── PDF type badge ────────────────────────────────────────────────────────────
 
-const IR_TABS: { key: IRSubTab; label: string }[] = [
-  { key: 'annual-reports', label: 'Annual Reports (10-K)' },
-  { key: 'quarterly-reports', label: 'Quarterly Reports (10-Q)' },
-  { key: 'earnings-press-releases', label: 'Earnings Press Releases' },
-];
-
-// ── Financial Data — downloadable documents ──────────────────────────────────
-
-interface FinancialDoc {
-  label: string;
-  period: string;
-  filed: string;
-  url: string;
-  type: 'PDF' | 'XLSX' | 'HTML';
-}
-
-interface FinancialDocGroup {
-  category: string;
-  docs: FinancialDoc[];
-}
-
-const AAPL_FINANCIAL_DATA: FinancialDocGroup[] = [
-  {
-    category: 'Annual Reports (10-K)',
-    docs: [
-      {
-        label: 'FY2024 Annual Report',
-        period: 'Sep 28, 2024',
-        filed: 'Nov 1, 2024',
-        url: 'https://s2.q4cdn.com/470004039/files/doc_earnings/2024/q4/filing/10-Q4-2024-As-Filed.pdf',
-        type: 'PDF',
-      },
-      {
-        label: 'FY2023 Annual Report',
-        period: 'Sep 30, 2023',
-        filed: 'Nov 3, 2023',
-        url: 'https://s2.q4cdn.com/470004039/files/doc_financials/2023/ar/_10-K-2023-As-Filed.pdf',
-        type: 'PDF',
-      },
-      {
-        label: 'FY2022 Annual Report',
-        period: 'Sep 24, 2022',
-        filed: 'Oct 28, 2022',
-        url: 'https://s2.q4cdn.com/470004039/files/doc_financials/2022/ar/10-K-FY2022-As-Filed.pdf',
-        type: 'PDF',
-      },
-      {
-        label: 'FY2021 Annual Report',
-        period: 'Sep 25, 2021',
-        filed: 'Oct 29, 2021',
-        url: 'https://s2.q4cdn.com/470004039/files/doc_financials/2021/ar/_10-K-2021-As-Filed.pdf',
-        type: 'PDF',
-      },
-    ],
-  },
-  {
-    category: 'Quarterly Reports (10-Q)',
-    docs: [
-      {
-        label: 'Q3 FY2024 (Jun 29, 2024)',
-        period: 'Jun 29, 2024',
-        filed: 'Aug 2, 2024',
-        url: 'https://s2.q4cdn.com/470004039/files/doc_earnings/2024/q3/filing/10-Q3-2024-As-Filed.pdf',
-        type: 'PDF',
-      },
-      {
-        label: 'Q2 FY2024 (Mar 30, 2024)',
-        period: 'Mar 30, 2024',
-        filed: 'May 3, 2024',
-        url: 'https://s2.q4cdn.com/470004039/files/doc_earnings/2024/q2/filing/10-Q2-2024-As-Filed.pdf',
-        type: 'PDF',
-      },
-      {
-        label: 'Q1 FY2024 (Dec 30, 2023)',
-        period: 'Dec 30, 2023',
-        filed: 'Feb 2, 2024',
-        url: 'https://s2.q4cdn.com/470004039/files/doc_earnings/2024/q1/filing/10-Q1-2024-As-Filed.pdf',
-        type: 'PDF',
-      },
-      {
-        label: 'Q3 FY2023 (Jul 1, 2023)',
-        period: 'Jul 1, 2023',
-        filed: 'Aug 4, 2023',
-        url: 'https://s2.q4cdn.com/470004039/files/doc_earnings/2023/q3/filing/10-Q3-2023-As-Filed.pdf',
-        type: 'PDF',
-      },
-      {
-        label: 'Q2 FY2023 (Apr 1, 2023)',
-        period: 'Apr 1, 2023',
-        filed: 'May 5, 2023',
-        url: 'https://s2.q4cdn.com/470004039/files/doc_earnings/2023/q2/filing/10-Q2-2023-As-Filed.pdf',
-        type: 'PDF',
-      },
-      {
-        label: 'Q1 FY2023 (Dec 31, 2022)',
-        period: 'Dec 31, 2022',
-        filed: 'Feb 3, 2023',
-        url: 'https://s2.q4cdn.com/470004039/files/doc_earnings/2023/q1/filing/10-Q1-2023-As-Filed.pdf',
-        type: 'PDF',
-      },
-      {
-        label: 'Q3 FY2022 (Jun 25, 2022)',
-        period: 'Jun 25, 2022',
-        filed: 'Jul 29, 2022',
-        url: 'https://s2.q4cdn.com/470004039/files/doc_earnings/2022/q3/filing/10-Q3-2022-As-Filed.pdf',
-        type: 'PDF',
-      },
-      {
-        label: 'Q2 FY2022 (Mar 26, 2022)',
-        period: 'Mar 26, 2022',
-        filed: 'Apr 29, 2022',
-        url: 'https://s2.q4cdn.com/470004039/files/doc_earnings/2022/q2/filing/10-Q2-2022-As-Filed.pdf',
-        type: 'PDF',
-      },
-      {
-        label: 'Q1 FY2022 (Dec 25, 2021)',
-        period: 'Dec 25, 2021',
-        filed: 'Jan 28, 2022',
-        url: 'https://s2.q4cdn.com/470004039/files/doc_earnings/2022/q1/filing/10-Q1-2022-As-Filed.pdf',
-        type: 'PDF',
-      },
-    ],
-  },
-  {
-    category: 'Earnings Press Releases',
-    docs: [
-      {
-        label: 'Q4 FY2024 Earnings Release',
-        period: 'Oct 31, 2024',
-        filed: 'Oct 31, 2024',
-        url: 'https://www.apple.com/newsroom/pdfs/fy2024-q4/FY24_Q4_Consolidated_Financial_Statements.pdf',
-        type: 'PDF',
-      },
-      {
-        label: 'Q3 FY2024 Earnings Release',
-        period: 'Aug 1, 2024',
-        filed: 'Aug 1, 2024',
-        url: 'https://www.apple.com/newsroom/pdfs/fy2024-q3/FY24_Q3_Consolidated_Financial_Statements.pdf',
-        type: 'PDF',
-      },
-      {
-        label: 'Q2 FY2024 Earnings Release',
-        period: 'May 2, 2024',
-        filed: 'May 2, 2024',
-        url: 'https://www.apple.com/newsroom/pdfs/fy2024-q2/FY24_Q2_Consolidated_Financial_Statements.pdf',
-        type: 'PDF',
-      },
-      {
-        label: 'Q1 FY2024 Earnings Release',
-        period: 'Feb 1, 2024',
-        filed: 'Feb 1, 2024',
-        url: 'https://www.apple.com/newsroom/pdfs/fy2024-q1/FY24_Q1_Consolidated_Financial_Statements.pdf',
-        type: 'PDF',
-      },
-      {
-        label: 'Q4 FY2023 Earnings Release',
-        period: 'Nov 2, 2023',
-        filed: 'Nov 2, 2023',
-        url: 'https://www.apple.com/newsroom/pdfs/fy2023-q4/FY23_Q4_Consolidated_Financial_Statements.pdf',
-        type: 'PDF',
-      },
-      {
-        label: 'Q3 FY2023 Earnings Release',
-        period: 'Aug 3, 2023',
-        filed: 'Aug 3, 2023',
-        url: 'https://www.apple.com/newsroom/pdfs/fy2023-q3/FY23_Q3_Consolidated_Financial_Statements.pdf',
-        type: 'PDF',
-      },
-    ],
-  },
-];
-
-// ── Type badge ────────────────────────────────────────────────────────────────
-
-const DOC_TYPE_CLASSES: Record<'PDF' | 'XLSX' | 'HTML', string> = {
-  PDF: 'cp-ir-doc-badge cp-ir-doc-badge--pdf',
-  XLSX: 'cp-ir-doc-badge cp-ir-doc-badge--xlsx',
-  HTML: 'cp-ir-doc-badge cp-ir-doc-badge--html',
-};
-
-function DocTypeBadge({ type }: { type: 'PDF' | 'XLSX' | 'HTML' }) {
-  return <span className={DOC_TYPE_CLASSES[type]}>{type}</span>;
+function PdfBadge() {
+  return <span className="cp-ir-doc-badge cp-ir-doc-badge--pdf">PDF</span>;
 }
 
 // ── Download icon ─────────────────────────────────────────────────────────────
@@ -220,59 +38,18 @@ function DownloadIcon() {
   );
 }
 
-// ── TC data loader ───────────────────────────────────────────────────────────
-
-interface TcIrData {
-  financialData: FinancialDocGroup[];
-}
-
-let _tcIrData: TcIrData | null = null;
-function getTcIrData(): TcIrData {
-  if (!_tcIrData) {
-    _tcIrData = extractJson<TcIrData>(tcIrMd as string);
-  }
-  return _tcIrData;
-}
-
-// ── IR data registry ──────────────────────────────────────────────────────────
-// Maps resolved symbol → loader function. Add new companies here to enable
-// their IR Material tab automatically — no further changes required.
-
-const IR_DATA_REGISTRY: Record<string, () => FinancialDocGroup[]> = {
-  AAPL: () => AAPL_FINANCIAL_DATA,
-  TC: () => getTcIrData().financialData,
-};
-
-/**
- * Returns the IR Material financial data for the given symbol, or null if none exists.
- */
-export function getIRMaterialData(symbol: string): FinancialDocGroup[] | null {
-  const loader = IR_DATA_REGISTRY[symbol];
-  if (!loader) return null;
-  const data = loader();
-  return data && data.length > 0 ? data : null;
-}
-
-// ── Tab index map ─────────────────────────────────────────────────────────────
-
-const TAB_INDEX: Record<IRSubTab, number> = {
-  'annual-reports': 0,
-  'quarterly-reports': 1,
-  'earnings-press-releases': 2,
-};
-
 // ── IRContent ─────────────────────────────────────────────────────────────────
 
 interface IRContentProps {
-  financialData: FinancialDocGroup[];
-  activeTab: IRSubTab;
+  symbol: string;
+  entries: IrMaterialEntry[];
+  activeDocType: string;
 }
 
-function IRContent({ financialData, activeTab }: IRContentProps) {
-  const filtered = financialData.filter((g) => g.category !== 'Supplemental Revenue Data');
-  const group = filtered[TAB_INDEX[activeTab]];
+function IRContent({ symbol, entries, activeDocType }: IRContentProps) {
+  const filtered = entries.filter((e) => e.DOC_TYPE === activeDocType);
 
-  if (!group) {
+  if (filtered.length === 0) {
     return (
       <div className="cp-ir-tab-content">
         <div className="cp-tab-placeholder">
@@ -285,39 +62,36 @@ function IRContent({ financialData, activeTab }: IRContentProps) {
   return (
     <div className="cp-ir-tab-content">
       <div className="cp-ir-fin-group">
-        <div className="cp-ir-doc-group-title">{group.category}</div>
+        <div className="cp-ir-doc-group-title">{activeDocType.toUpperCase()}</div>
         <div className="cp-ir-fin-table-wrap">
           <table className="cp-ir-fin-table">
             <thead>
               <tr>
                 <th className="cp-ir-fin-th">Document</th>
-                <th className="cp-ir-fin-th cp-ir-fin-th--date">Period</th>
-                <th className="cp-ir-fin-th cp-ir-fin-th--date">Filed</th>
+                <th className="cp-ir-fin-th cp-ir-fin-th--date">Create Date</th>
                 <th className="cp-ir-fin-th cp-ir-fin-th--type">Type</th>
                 <th className="cp-ir-fin-th cp-ir-fin-th--action">Download</th>
               </tr>
             </thead>
             <tbody>
-              {group.docs.map((doc, idx) => (
-                <tr key={idx} className="cp-ir-fin-tr">
-                  <td className="cp-ir-fin-td cp-ir-fin-td--label">{doc.label}</td>
-                  <td className="cp-ir-fin-td cp-ir-fin-td--date">{doc.period}</td>
-                  <td className="cp-ir-fin-td cp-ir-fin-td--date">{doc.filed}</td>
+              {filtered.map((doc) => (
+                <tr key={doc.DOC_ID} className="cp-ir-fin-tr">
+                  <td className="cp-ir-fin-td cp-ir-fin-td--label">
+                    {symbol} {doc.DOC_TYPE}
+                  </td>
+                  <td className="cp-ir-fin-td cp-ir-fin-td--date">{doc.CREATE_DATE}</td>
                   <td className="cp-ir-fin-td cp-ir-fin-td--type">
-                    <DocTypeBadge type={doc.type} />
+                    <PdfBadge />
                   </td>
                   <td className="cp-ir-fin-td cp-ir-fin-td--action">
-                    <a
-                      href={doc.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      download={doc.type !== 'HTML'}
+                    <button
                       className="cp-ir-fin-download-btn"
-                      title={doc.type === 'HTML' ? 'Open' : 'Download'}
+                      onClick={() => downloadIrMaterialByDocId(doc.DOC_ID)}
+                      title="Download"
                     >
                       <DownloadIcon />
-                      <span>{doc.type === 'HTML' ? 'Open' : 'Download'}</span>
-                    </a>
+                      <span>Download</span>
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -332,11 +106,36 @@ function IRContent({ financialData, activeTab }: IRContentProps) {
 // ── IRMaterialTab ─────────────────────────────────────────────────────────────
 
 export default function IRMaterialTab({ symbol }: IRMaterialTabProps) {
-  const [activeTab, setActiveTab] = useState<IRSubTab>('annual-reports');
+  const [entries, setEntries] = useState<IrMaterialEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeDocType, setActiveDocType] = useState<string>('');
 
-  const financialData = getIRMaterialData(symbol);
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    getIrMaterialByCoCd(symbol).then((result) => {
+      if (!cancelled) {
+        setEntries(result);
+        if (result.length > 0) {
+          // Default to the first distinct DOC_TYPE (data is sorted newest-first)
+          const firstType = result[0].DOC_TYPE;
+          setActiveDocType(firstType);
+        }
+        setLoading(false);
+      }
+    });
+    return () => { cancelled = true; };
+  }, [symbol]);
 
-  if (!financialData) {
+  if (loading) {
+    return (
+      <div className="cp-tab-placeholder">
+        <span className="cp-tab-placeholder-text">Loading…</span>
+      </div>
+    );
+  }
+
+  if (entries.length === 0) {
     return (
       <div className="cp-tab-placeholder">
         <span className="cp-tab-placeholder-text">
@@ -346,24 +145,28 @@ export default function IRMaterialTab({ symbol }: IRMaterialTabProps) {
     );
   }
 
+  // Build ordered list of distinct DOC_TYPE values preserving insertion order
+  const docTypes = [...new Set(entries.map((e) => e.DOC_TYPE))];
+
   return (
     <div className="cp-tab-content-box cp-ir-material cp-ir-layout">
       {/* ── Left vertical sub-tab menu ── */}
       <div className="cp-ir-left-menu">
-        {IR_TABS.map((tab) => (
+        {docTypes.map((docType) => (
           <button
-            key={tab.key}
-            className={`cp-ir-left-tab${activeTab === tab.key ? ' active' : ''}`}
-            onClick={() => setActiveTab(tab.key)}
+            key={docType}
+            className={`cp-ir-left-tab${activeDocType === docType ? ' active' : ''}`}
+            onClick={() => setActiveDocType(docType)}
           >
-            {tab.label}
+            {docType.toUpperCase()}
           </button>
         ))}
       </div>
 
       <IRContent
-        financialData={financialData}
-        activeTab={activeTab}
+        symbol={symbol}
+        entries={entries}
+        activeDocType={activeDocType}
       />
     </div>
   );
