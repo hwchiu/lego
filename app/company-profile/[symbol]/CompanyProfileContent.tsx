@@ -25,6 +25,7 @@ import PreEarningCallTab from './PreEarningCallTab';
 import IRTranscriptTab from './IRTranscriptTab';
 import AITranscriptTab from './AITranscriptTab';
 import { getFinancialStatementByCoCd, getSegmentByCoCd, type CompanyStatements, type SegmentRecord } from '@/app/lib/getFinancialStatementByCoCd';
+import { getFinFcstSumByCoCd, type FinFcstSumRecord } from '@/app/lib/getFinFcstSumByCoCd';
 import type { StatementData } from '@/app/data/financialData';
 import tvConfigMd from '@/content/tradingview.md';
 import finSummaryConfig from '@/app/data/fin-summary-config.json';
@@ -397,6 +398,79 @@ function deriveCurrentQtrData(statements: CompanyStatements | null): DerivedCurr
   };
 }
 
+// ── Derive Next Qtr data from FinFcstSumRecord[] ──────────────────────────────
+
+interface DerivedNextQtrData {
+  revenueMidpointGuidance: number | null;
+  revenueQoQ: number | null;
+}
+
+/**
+ * Parse a "YYQQ" quarter label (e.g. "26Q1") into year and quarter.
+ * Returns null if the format doesn't match.
+ */
+function parseQuarterLabel(label: string): { year: number; quarter: string } | null {
+  const m = label.match(/^(\d{2})(Q[1-4])$/);
+  if (!m) return null;
+  return { year: parseInt(`20${m[1]}`, 10), quarter: m[2] };
+}
+
+/**
+ * Look up a FinFcstSumRecord matching the given year, quarter, and rpt_fin_item.
+ */
+function findFcstRecord(
+  records: FinFcstSumRecord[],
+  year: number,
+  quarter: string,
+  item: string,
+): FinFcstSumRecord | undefined {
+  return records.find(
+    (r) =>
+      r.cal_year_no === String(year) &&
+      r.period === quarter &&
+      r.rpt_fin_item === item,
+  );
+}
+
+/**
+ * Derive Next Qtr Key Indices from forecast records and the current quarter's revenue.
+ *
+ * @param fcstRecords  Records returned by getFinFcstSumByCoCd
+ * @param currentQuarterLabel  e.g. "26Q1" from derivedCurrentQtr.currentCalendarQuarter
+ * @param currentRevenue  Revenue (US$M) from the Current Qtr Financial card
+ */
+function deriveNextQtrData(
+  fcstRecords: FinFcstSumRecord[],
+  currentQuarterLabel: string | null,
+  currentRevenue: number,
+): DerivedNextQtrData {
+  if (!currentQuarterLabel || fcstRecords.length === 0) {
+    return { revenueMidpointGuidance: null, revenueQoQ: null };
+  }
+
+  const parsed = parseQuarterLabel(currentQuarterLabel);
+  if (!parsed) return { revenueMidpointGuidance: null, revenueQoQ: null };
+
+  const { year, quarter } = parsed;
+
+  // GUDNC_REV[year, quarter] = revenue midpoint guidance for the current quarter.
+  const gudncRec = findFcstRecord(fcstRecords, year, quarter, 'GUDNC_REV');
+
+  // NEXT_REV[year, quarter] = revenue estimate for the *next* quarter, stored under
+  // the current quarter's label. e.g. NEXT_REV at 2026-Q1 holds the Q2 2026 estimate.
+  const nextRevRec = findFcstRecord(fcstRecords, year, quarter, 'NEXT_REV');
+
+  const revenueMidpointGuidance = gudncRec?.fld_val ?? null;
+
+  // QoQ = (next quarter estimate - current quarter actual revenue) / current quarter actual revenue
+  let revenueQoQ: number | null = null;
+  if (nextRevRec?.fld_val != null && currentRevenue > 0) {
+    revenueQoQ = Math.round(((nextRevRec.fld_val - currentRevenue) / currentRevenue) * 1000) / 10;
+  }
+
+  return { revenueMidpointGuidance, revenueQoQ };
+}
+
 // ── Icons ────────────────────────────────────────────────────────────────────
 
 function ShareIcon() {
@@ -502,6 +576,29 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     });
     return () => { cancelled = true; };
   }, [symbol]);
+
+  // Forecast summary records for Next Qtr Key Indices card
+  const [finFcstRecords, setFinFcstRecords] = useState<FinFcstSumRecord[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setFinFcstRecords([]);
+    getFinFcstSumByCoCd(symbol).then((records) => {
+      if (!cancelled) setFinFcstRecords(records);
+    });
+    return () => { cancelled = true; };
+  }, [symbol]);
+
+  // Derive Next Qtr Key Indices from forecast data
+  const derivedNextQtr = useMemo(
+    () =>
+      deriveNextQtrData(
+        finFcstRecords,
+        derivedCurrentQtr?.currentCalendarQuarter ?? null,
+        derivedCurrentQtr?.revenue ?? 0,
+      ),
+    [finFcstRecords, derivedCurrentQtr],
+  );
 
   // Derive revenue breakdown from segment data (latest quarter, "Revenue ($M)" items)
   const derivedRevenueBreakdown = useMemo<RevenueBreakdownItem[]>(() => {
@@ -1066,14 +1163,25 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                       <div className="cp-fin-metrics">
                         <div className="cp-fin-metric">
                           <div className="cp-fin-metric-label">Revenue Midpoint Guidance</div>
-                          <div className="cp-fin-metric-value">{finData.nextQtr.revenueMidpointGuidance.toLocaleString()}</div>
+                          <div className="cp-fin-metric-value">
+                            {derivedNextQtr.revenueMidpointGuidance != null
+                              ? derivedNextQtr.revenueMidpointGuidance.toLocaleString()
+                              : finData.nextQtr.revenueMidpointGuidance.toLocaleString()}
+                          </div>
                         </div>
                         <div className="cp-fin-metric-sep" />
                         <div className="cp-fin-metric">
                           <div className="cp-fin-metric-label">Revenue QoQ</div>
-                          <div className={`cp-fin-metric-value ${finData.nextQtr.revenueQoQ >= 0 ? 'pos' : 'neg'}`}>
-                            {finData.nextQtr.revenueQoQ >= 0 ? '+' : ''}{finData.nextQtr.revenueQoQ}%
-                          </div>
+                          {(() => {
+                            const qoq = derivedNextQtr.revenueQoQ != null
+                              ? derivedNextQtr.revenueQoQ
+                              : finData.nextQtr.revenueQoQ;
+                            return (
+                              <div className={`cp-fin-metric-value ${qoq >= 0 ? 'pos' : 'neg'}`}>
+                                {qoq >= 0 ? '+' : ''}{qoq}%
+                              </div>
+                            );
+                          })()}
                         </div>
                       </div>
                     </div>

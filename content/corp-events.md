@@ -5,7 +5,7 @@ semiconductor and technology firms: AAPL, NVDA, AMD, QCOM, AVGO, ASML, AMAT, LRC
 MSFT, INTC, MU, KLAC, and others. All events are representative April 2025 data for
 display purposes.
 
-## Share Holders Meeting
+## Shareholders Meeting
 
 ```json
 {
@@ -15,7 +15,7 @@ display purposes.
       "company": "Apple Inc.",
       "description": "Apple Inc. Annual Shareholders Meeting. Agenda includes board elections, executive compensation advisory vote, and shareholder proposals on privacy and supply chain transparency.",
       "eventDate": "Apr 7, 2025",
-      "eventType": "Share Holders Meeting",
+      "eventType": "Shareholders Meeting",
       "webcastLink": "https://investor.apple.com/shareholder-meeting",
       "irLink": "https://investor.apple.com"
     }
@@ -26,7 +26,7 @@ display purposes.
       "company": "Microsoft Corp.",
       "description": "Microsoft Annual Shareholders Meeting. Proposals include director elections, Say-on-Pay, and an advisory vote on AI ethics governance.",
       "eventDate": "Apr 9, 2025",
-      "eventType": "Share Holders Meeting",
+      "eventType": "Shareholders Meeting",
       "webcastLink": "https://www.microsoft.com/en-us/investor/shareholder-meeting",
       "irLink": "https://www.microsoft.com/en-us/investor"
     }
@@ -37,7 +37,7 @@ display purposes.
       "company": "NVIDIA Corporation",
       "description": "NVIDIA Annual Meeting of Stockholders. Key votes include board member elections, ratification of PwC as auditor, and shareholder resolutions on AI safety disclosure.",
       "eventDate": "Apr 14, 2025",
-      "eventType": "Share Holders Meeting",
+      "eventType": "Shareholders Meeting",
       "webcastLink": "https://investor.nvidia.com/shareholder-meeting",
       "irLink": "https://investor.nvidia.com"
     },
@@ -46,7 +46,7 @@ display purposes.
       "company": "Broadcom Inc.",
       "description": "Broadcom Inc. Annual General Meeting. Items include director elections, auditor ratification, and advisory vote on executive compensation following VMware integration.",
       "eventDate": "Apr 14, 2025",
-      "eventType": "Share Holders Meeting",
+      "eventType": "Shareholders Meeting",
       "webcastLink": "https://investors.broadcom.com/events",
       "irLink": "https://investors.broadcom.com"
     }
@@ -57,7 +57,7 @@ display purposes.
       "company": "Advanced Micro Devices",
       "description": "AMD Annual Meeting of Stockholders. Shareholders will vote on board elections, compensation policies, and a proposal to expand equity incentive plan for AI chip R&D talent retention.",
       "eventDate": "Apr 21, 2025",
-      "eventType": "Share Holders Meeting",
+      "eventType": "Shareholders Meeting",
       "webcastLink": "https://ir.amd.com/shareholder-meeting",
       "irLink": "https://ir.amd.com"
     }
@@ -68,7 +68,7 @@ display purposes.
       "company": "ASML Holding N.V.",
       "description": "ASML Annual General Meeting of Shareholders. Agenda covers financial results approval, dividend proposal of €6.80/share, Supervisory Board elections, and EUV roadmap discussion.",
       "eventDate": "Apr 28, 2025",
-      "eventType": "Share Holders Meeting",
+      "eventType": "Shareholders Meeting",
       "webcastLink": "https://www.asml.com/en/investors/agm",
       "irLink": "https://www.asml.com/en/investors"
     },
@@ -77,7 +77,7 @@ display purposes.
       "company": "Texas Instruments",
       "description": "Texas Instruments Annual Meeting of Stockholders. Shareholders vote on board elections, executive pay, and capital allocation strategy including analog chip fab expansion.",
       "eventDate": "Apr 28, 2025",
-      "eventType": "Share Holders Meeting",
+      "eventType": "Shareholders Meeting",
       "webcastLink": "https://investor.ti.com/shareholder-meeting",
       "irLink": "https://investor.ti.com"
     }

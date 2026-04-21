@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useCallback } from 'react';
 import type { EventCalendarDetailItem } from '@/app/lib/eventCalendarApi';
 import { monthShortToFull, MONTH_SHORT } from '@/app/lib/calendarUtils';
 
@@ -20,35 +19,12 @@ function ExternalLinkIcon() {
   );
 }
 
-function SubscribeIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-      <path d="M6 1v10M1 6h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function SubscribedIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-      <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.3" />
-      <path d="M3.5 6l1.8 1.8 3.2-3.6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 function formatEventDatetime(eventDatetime: string): string {
   if (!eventDatetime) return '—';
   const d = new Date(eventDatetime);
   if (isNaN(d.getTime())) return eventDatetime;
   const month = MONTH_SHORT[d.getMonth()];
   return `${month} ${d.getDate()}, ${d.getFullYear()}`;
-}
-
-async function subscribeToEvent(event: EventCalendarDetailItem): Promise<void> {
-  // TODO: implement subscription API call
-  await Promise.resolve();
-  void event;
 }
 
 interface CorpEventCategoryDetailProps {
@@ -64,19 +40,6 @@ export default function CorpEventCategoryDetail({
 }: CorpEventCategoryDetailProps) {
   const displayDate = formatDateLabel(selectedDateLabel);
   const count = events.length;
-  const [subscribedIndices, setSubscribedIndices] = useState<Set<number>>(new Set());
-  const [pendingIndices, setPendingIndices] = useState<Set<number>>(new Set());
-
-  const handleSubscribe = useCallback(async (event: EventCalendarDetailItem, index: number) => {
-    if (subscribedIndices.has(index) || pendingIndices.has(index)) return;
-    setPendingIndices(prev => new Set(prev).add(index));
-    try {
-      await subscribeToEvent(event);
-      setSubscribedIndices(prev => new Set(prev).add(index));
-    } finally {
-      setPendingIndices(prev => { const s = new Set(prev); s.delete(index); return s; });
-    }
-  }, [subscribedIndices, pendingIndices]);
 
   return (
     <div className="detail-card">
@@ -104,14 +67,10 @@ export default function CorpEventCategoryDetail({
                 <th>Event Type</th>
                 <th className="td-center-h">Webcast Link</th>
                 <th className="td-center-h">IR Link</th>
-                <th className="td-center-h">Subscription</th>
               </tr>
             </thead>
             <tbody>
-              {events.map((e, i) => {
-                const isSubscribed = subscribedIndices.has(i);
-                const isPending = pendingIndices.has(i);
-                return (
+              {events.map((e, i) => (
                   <tr key={e.EVENT_ID || i}>
                     <td className="td-symbol corp-event-company">{e.COMPANY_NAME}</td>
                     <td className="corp-event-desc">{e.DESCRIPTION}</td>
@@ -151,20 +110,8 @@ export default function CorpEventCategoryDetail({
                         <span className="td-na">—</span>
                       )}
                     </td>
-                    <td className="td-center">
-                      <button
-                        className={`corp-event-subscribe-btn${isSubscribed ? ' subscribed' : ''}`}
-                        title={isSubscribed ? 'Subscribed' : 'Subscribe to this event'}
-                        onClick={() => handleSubscribe(e, i)}
-                        disabled={isPending || isSubscribed}
-                        aria-pressed={isSubscribed}
-                      >
-                        {isSubscribed ? <SubscribedIcon /> : <SubscribeIcon />}
-                      </button>
-                    </td>
                   </tr>
-                );
-              })}
+                ))}
             </tbody>
           </table>
         </div>
