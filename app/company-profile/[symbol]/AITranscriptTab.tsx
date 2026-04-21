@@ -53,13 +53,6 @@ function parseQuarterNumber(q: string): number {
   return isNaN(n) ? 0 : n;
 }
 
-/** Extract a plain-text title from the first <h3> tag in the HTML string. */
-function extractH3Title(html: string): string {
-  const m = html.match(/<h3[^>]*>([\s\S]*?)<\/h3>/i);
-  if (!m) return '';
-  return m[1].replace(/<[^>]+>/g, '').trim();
-}
-
 /** Remove the first <h3>…</h3> from HTML to avoid duplicate title rendering. */
 function stripFirstH3(html: string): string {
   return html.replace(/<h3[^>]*>[\s\S]*?<\/h3>/i, '');
@@ -84,17 +77,16 @@ interface AiListItemProps {
 }
 
 function AiListItem({ entry, isActive, onClick }: AiListItemProps) {
-  const title = useMemo(() => extractH3Title(entry.content), [entry.content]);
   return (
     <button
       className={`cp-irt-list-item${isActive ? ' cp-irt-list-item--active' : ''}`}
       onClick={onClick}
     >
-      <div className="cp-irt-list-item-title">{title || `${entry.symbol} ${entry.quarter} ${entry.year}`}</div>
+      <div className="cp-irt-list-item-title">{entry.doc_title}</div>
       <div className="cp-irt-list-item-meta">
         <div className="cp-irt-list-item-tags">
-          <span className="cp-irt-period-tag cp-irt-period-tag--year">{entry.year}</span>
-          <span className="cp-irt-period-tag cp-irt-period-tag--qtr">{entry.quarter}</span>
+          <span className="cp-irt-period-tag cp-irt-period-tag--year">{entry.fiscal_year_no}</span>
+          <span className="cp-irt-period-tag cp-irt-period-tag--qtr">{entry.fiscal_qtr_no}</span>
         </div>
       </div>
     </button>
@@ -110,7 +102,7 @@ interface AiTranscriptDetailProps {
 
 function AiTranscriptDetail({ entry, companyName }: AiTranscriptDetailProps) {
   function handleDownload() {
-    downloadHtml(`${entry.filename}.html`, entry.content);
+    downloadHtml(`${entry.co_cd}_${entry.fiscal_year_no}_${entry.fiscal_qtr_no}-ai-transcript.html`, entry.doc_html);
   }
 
   return (
@@ -120,8 +112,8 @@ function AiTranscriptDetail({ entry, companyName }: AiTranscriptDetailProps) {
         <div className="cp-pec-card-header-left">
           <span className="cp-pec-card-company cp-pec-ai-badge">AI</span>
           <div>
-            <div className="cp-pec-card-title">{extractH3Title(entry.content)}</div>
-            <div className="cp-pec-card-date">{entry.symbol} · {entry.quarter} {entry.year}</div>
+            <div className="cp-pec-card-title">{entry.doc_title}</div>
+            <div className="cp-pec-card-date">{entry.co_cd} · {entry.fiscal_qtr_no} {entry.fiscal_year_no}</div>
           </div>
         </div>
       </div>
@@ -143,17 +135,17 @@ function AiTranscriptDetail({ entry, companyName }: AiTranscriptDetailProps) {
         </button>
       </div>
 
-      {/* HTML content rendered with accessible layout (first h3 stripped to avoid duplicate title) */}
+      {/* HTML content rendered dynamically from doc_html — strips leading h3 title to avoid duplication */}
       <div
         className="cp-pec-ai-body cp-pec-ai-html-content"
-        dangerouslySetInnerHTML={{ __html: stripFirstH3(entry.content) }}
+        dangerouslySetInnerHTML={{ __html: stripFirstH3(entry.doc_html) }}
       />
 
-      {/* Footer — 4 fixed items */}
+      {/* Footer */}
       <div className="cp-pec-card-footer">
         <span className="cp-pec-tag cp-pec-ai-tag">AI-Generated</span>
-        <span className="cp-pec-tag">{entry.quarter} {entry.year}</span>
-        <span className="cp-pec-tag">{companyName || entry.symbol}</span>
+        <span className="cp-pec-tag">{entry.fiscal_qtr_no} {entry.fiscal_year_no}</span>
+        <span className="cp-pec-tag">{companyName || entry.co_cd}</span>
         <span className="cp-pec-tag">AI Transcript</span>
       </div>
     </article>
@@ -198,12 +190,12 @@ export default function AITranscriptTab({ symbol, companyName }: AITranscriptTab
   }, []);
 
   const yearOptions = useMemo(() => {
-    const years = [...new Set(sortedEntries.map((e) => String(e.year)))];
+    const years = [...new Set(sortedEntries.map((e) => e.fiscal_year_no))];
     return [{ value: 'all', label: 'All Years' }, ...years.map((y) => ({ value: y, label: y }))];
   }, [sortedEntries]);
 
   const qtrOptions = useMemo(() => {
-    const qtrs = [...new Set(sortedEntries.map((e) => e.quarter))].sort(
+    const qtrs = [...new Set(sortedEntries.map((e) => e.fiscal_qtr_no))].sort(
       (a, b) => parseQuarterNumber(a) - parseQuarterNumber(b)
     );
     return [{ value: 'all', label: 'All Qtrs' }, ...qtrs.map((q) => ({ value: q, label: q }))];
@@ -212,19 +204,19 @@ export default function AITranscriptTab({ symbol, companyName }: AITranscriptTab
   const filteredEntries = useMemo(() => {
     let list = sortedEntries;
     if (yearFilter !== 'all') {
-      list = list.filter((e) => String(e.year) === yearFilter);
+      list = list.filter((e) => e.fiscal_year_no === yearFilter);
     }
     if (qtrFilter !== 'all') {
-      list = list.filter((e) => e.quarter === qtrFilter);
+      list = list.filter((e) => e.fiscal_qtr_no === qtrFilter);
     }
     if (debouncedKeyword.trim()) {
       const kw = debouncedKeyword.toLowerCase();
       list = list.filter(
         (e) =>
-          e.symbol.toLowerCase().includes(kw) ||
-          String(e.year).includes(kw) ||
-          e.quarter.toLowerCase().includes(kw) ||
-          e.content.toLowerCase().includes(kw)
+          e.co_cd.toLowerCase().includes(kw) ||
+          e.fiscal_year_no.includes(kw) ||
+          e.fiscal_qtr_no.toLowerCase().includes(kw) ||
+          e.doc_html.toLowerCase().includes(kw)
       );
     }
     return list;
@@ -232,14 +224,14 @@ export default function AITranscriptTab({ symbol, companyName }: AITranscriptTab
 
   const activeEntry = useMemo(() => {
     if (selectedId) {
-      const found = filteredEntries.find((e) => `${e.year}-${e.quarter}` === selectedId);
+      const found = filteredEntries.find((e) => `${e.fiscal_year_no}-${e.fiscal_qtr_no}` === selectedId);
       if (found) return found;
     }
     return filteredEntries[0] ?? null;
   }, [filteredEntries, selectedId]);
 
   const handleSelectEntry = useCallback((entry: AiTranscriptHtmlEntry) => {
-    setSelectedId(`${entry.year}-${entry.quarter}`);
+    setSelectedId(`${entry.fiscal_year_no}-${entry.fiscal_qtr_no}`);
   }, []);
 
   const handleClearSearch = useCallback(() => {
@@ -250,7 +242,7 @@ export default function AITranscriptTab({ symbol, companyName }: AITranscriptTab
   }, []);
 
   useEffect(() => {
-    if (selectedId && !filteredEntries.find((e) => `${e.year}-${e.quarter}` === selectedId)) {
+    if (selectedId && !filteredEntries.find((e) => `${e.fiscal_year_no}-${e.fiscal_qtr_no}` === selectedId)) {
       setSelectedId(null);
     }
   }, [filteredEntries, selectedId]);
@@ -330,9 +322,9 @@ export default function AITranscriptTab({ symbol, companyName }: AITranscriptTab
           ) : (
             filteredEntries.map((entry) => (
               <AiListItem
-                key={`${entry.year}-${entry.quarter}`}
+                key={`${entry.fiscal_year_no}-${entry.fiscal_qtr_no}`}
                 entry={entry}
-                isActive={activeEntry?.year === entry.year && activeEntry?.quarter === entry.quarter}
+                isActive={activeEntry?.fiscal_year_no === entry.fiscal_year_no && activeEntry?.fiscal_qtr_no === entry.fiscal_qtr_no}
                 onClick={() => handleSelectEntry(entry)}
               />
             ))
