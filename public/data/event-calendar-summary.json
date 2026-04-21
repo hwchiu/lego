@@ -149,7 +149,7 @@
     "EVENT_DATE": "7",
     "EVENT_COUNT": "1",
     "EVENT_COMPANY_LIST": "AAPL",
-    "EVENT_TYPE": "Share Holders Meeting"
+    "EVENT_TYPE": "Shareholders Meeting"
   },
   {
     "EVENT_YEAR": "2026",
@@ -213,7 +213,7 @@
     "EVENT_DATE": "9",
     "EVENT_COUNT": "1",
     "EVENT_COMPANY_LIST": "MSFT",
-    "EVENT_TYPE": "Share Holders Meeting"
+    "EVENT_TYPE": "Shareholders Meeting"
   },
   {
     "EVENT_YEAR": "2026",
@@ -261,7 +261,7 @@
     "EVENT_DATE": "14",
     "EVENT_COUNT": "2",
     "EVENT_COMPANY_LIST": "AVGO, NVDA",
-    "EVENT_TYPE": "Share Holders Meeting"
+    "EVENT_TYPE": "Shareholders Meeting"
   },
   {
     "EVENT_YEAR": "2026",
@@ -333,7 +333,7 @@
     "EVENT_DATE": "21",
     "EVENT_COUNT": "1",
     "EVENT_COMPANY_LIST": "AMD",
-    "EVENT_TYPE": "Share Holders Meeting"
+    "EVENT_TYPE": "Shareholders Meeting"
   },
   {
     "EVENT_YEAR": "2026",
@@ -453,7 +453,7 @@
     "EVENT_DATE": "28",
     "EVENT_COUNT": "2",
     "EVENT_COMPANY_LIST": "ASML, TXN",
-    "EVENT_TYPE": "Share Holders Meeting"
+    "EVENT_TYPE": "Shareholders Meeting"
   },
   {
     "EVENT_YEAR": "2026",

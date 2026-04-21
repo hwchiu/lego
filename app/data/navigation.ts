@@ -140,7 +140,7 @@ export const bottomLinks: NavItem[] = [
 ];
 
 export const marketTabs = [
-  'Share Holders Meeting',
+  'Shareholders Meeting',
   'Sales Revenue Release',
   'Dividend',
   'Confirmed Earnings Release',

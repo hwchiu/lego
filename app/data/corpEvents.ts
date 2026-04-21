@@ -15,7 +15,7 @@ export interface CorpEvent {
 // ─── Section parsers ─────────────────────────────────────────────────────────
 export const shareHoldersMeetingEvents = extractJsonBySection<Record<string, CorpEvent[]>>(
   rawContent,
-  'Share Holders Meeting',
+  'Shareholders Meeting',
 );
 
 export const salesRevenueReleaseEvents = extractJsonBySection<Record<string, CorpEvent[]>>(
@@ -75,7 +75,7 @@ export const projectedEarningsReleaseEvents = extractJsonBySection<Record<string
 
 // ─── Category registry ───────────────────────────────────────────────────────
 export const CORP_EVENT_CATEGORY_MAP: Record<string, Record<string, CorpEvent[]>> = {
-  'Share Holders Meeting': shareHoldersMeetingEvents,
+  'Shareholders Meeting': shareHoldersMeetingEvents,
   'Sales Revenue Release': salesRevenueReleaseEvents,
   Dividend: dividendEvents,
   'Confirmed Earnings Release': confirmedEarningsReleaseEvents,
