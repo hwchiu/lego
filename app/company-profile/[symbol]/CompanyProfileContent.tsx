@@ -10,7 +10,8 @@ import Sidebar from '@/app/components/layout/Sidebar';
 import { COMPANY_MASTER_LIST, getCompanyByCode } from '@/app/data/companyMaster';
 import { newsItems, newsCategories as newsCategoryOptions } from '@/app/data/news';
 import { extractJson } from '@/app/lib/parseContent';
-import { getFavoritesByUserAcct } from '@/app/lib/getFavoritesByUserAcct';
+import { setFavoritesInPersonality } from '@/app/lib/getFavoritesByUserAcct';
+import { getFavoritesListByUserAcct } from '@/app/lib/watchlistApi';
 import { getPaginationRange } from '@/app/lib/paginationUtils';
 import companyProfileMd from '@/content/company-profile.md';
 import myTagsMd from '@/content/my-tags.md';
@@ -179,8 +180,6 @@ const FIN_INDICES = [
   'Net Margin',
   'Cash & Cash Equivalents',
 ] as const;
-
-const FAVORITES_KEY = 'cp-favorites';
 
 // Items per page in the News tab
 const NEWS_PAGE_SIZE = 8;
@@ -587,11 +586,8 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   // Load favorites & tags from localStorage
   useEffect(() => {
     try {
-      const favs = localStorage.getItem('cp-favorites');
-      if (favs) {
-        const arr = JSON.parse(favs) as string[];
-        setIsFavorite(arr.includes(symbol));
-      }
+      const favs = getFavoritesListByUserAcct('demoUser');
+      setIsFavorite(favs.includes(symbol));
       const tags = localStorage.getItem(`cp-tags-${symbol}`);
       if (tags) {
         setMyTags(JSON.parse(tags) as string[]);
@@ -633,10 +629,9 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     setIsFavorite((prev) => {
       const next = !prev;
       try {
-        const stored = localStorage.getItem('cp-favorites');
-        const arr: string[] = stored ? JSON.parse(stored) : getFavoritesByUserAcct('demoUser');
+        const arr = getFavoritesListByUserAcct('demoUser');
         const updated = next ? [...arr.filter((s) => s !== symbol), symbol] : arr.filter((s) => s !== symbol);
-        localStorage.setItem('cp-favorites', JSON.stringify(updated));
+        setFavoritesInPersonality(updated);
       } catch {
         // ignore
       }

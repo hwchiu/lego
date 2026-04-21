@@ -1,13 +1,17 @@
 'use client';
 
-import { useMemo } from 'react';
-import { getFavoritesByUserAcct } from '@/app/lib/getFavoritesByUserAcct';
+import { useState, useEffect } from 'react';
+import { getFavoritesListByUserAcct } from '@/app/lib/watchlistApi';
 import { WatchlistContent } from '@/app/watchlist/[id]/WatchlistContent';
 
 const userAcct = 'demoUser';
 
 export default function FavoritesContent() {
-  const favoriteSymbols = useMemo(() => getFavoritesByUserAcct(userAcct), []);
+  const [favoriteSymbols, setFavoriteSymbols] = useState<string[]>([]);
+
+  useEffect(() => {
+    setFavoriteSymbols(getFavoritesListByUserAcct(userAcct));
+  }, []);
 
   return (
     <WatchlistContent
@@ -19,6 +23,9 @@ export default function FavoritesContent() {
       disableDeleteWatchlist
       disableNameEdit
       disableCompanyDelete
+      onFavoritesSymbolsUpdate={(_symbols) => {
+        setFavoriteSymbols(getFavoritesListByUserAcct(userAcct));
+      }}
     />
   );
 }
