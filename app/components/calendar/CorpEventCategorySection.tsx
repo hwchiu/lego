@@ -129,6 +129,33 @@ export default function CorpEventCategorySection({
   const [isMonthlyView, setIsMonthlyView] = useState(false);
   const [selectedDateLabel, setSelectedDateLabel] = useState<string>(() => getIsoDateLabel(new Date()));
 
+  // Refs to always hold the latest values so the sync effect avoids stale closures
+  // Refs updated synchronously in the render body so the sync effect always
+  // reads the latest year/month/weekStart without stale closure issues.
+  const yearRef = useRef(year);
+  const monthRef = useRef(month);
+  const weekStartRef = useRef(weekStart);
+  yearRef.current = year;
+  monthRef.current = month;
+  weekStartRef.current = weekStart;
+
+  // Track previous view to detect direction of toggle
+  const prevIsMonthlyViewRef = useRef(isMonthlyView);
+
+  // Sync the inactive view's state when switching views so cal-month-label stays consistent
+  useEffect(() => {
+    const wasMonthly = prevIsMonthlyViewRef.current;
+    prevIsMonthlyViewRef.current = isMonthlyView;
+    if (!wasMonthly && isMonthlyView) {
+      // Switched Weekly → Monthly: align month/year with the week currently displayed
+      setYear(weekStartRef.current.getFullYear());
+      setMonth(weekStartRef.current.getMonth());
+    } else if (wasMonthly && !isMonthlyView) {
+      // Switched Monthly → Weekly: align weekStart with the 1st of the displayed month
+      setWeekStart(getWeekStart(new Date(yearRef.current, monthRef.current, 1)));
+    }
+  }, [isMonthlyView]);
+
   // Summary data fetched from API
   const [summaryMap, setSummaryMap] = useState<CalendarSummaryMap>({});
   // Cache keys include category so switching category always triggers a re-fetch
