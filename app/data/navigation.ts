@@ -99,28 +99,30 @@ export const mainNav: NavItem[] = [
     ],
   },
   { label: 'Market News', href: '/market-news', icon: 'news' },
-  { label: 'Press Release', href: '/press-release', icon: 'pressRelease' },
-  { label: 'Earnings', href: '/earnings', icon: 'earnings' },
+  { label: 'Press Release', href: '/press-release', icon: 'pressRelease', badge: 'Upcoming', badgeStyle: 'coming-soon' },
+  { label: 'Earnings', href: '/earnings', icon: 'earnings', badge: 'Upcoming', badgeStyle: 'coming-soon' },
   { label: 'Event Calendar', href: '/event-calendar', icon: 'calendar' },
   {
     label: 'Market Data',
     href: '/market-data',
     icon: 'marketData',
+    badge: 'Upcoming',
+    badgeStyle: 'coming-soon',
     subItems: [
       { label: 'M&A', href: '/market-data/ma', icon: 'mAndA' },
       { label: 'Financial Data', href: '/market-data/financial-data', icon: 'financialData' },
     ],
   },
-  { label: 'Data Explore', href: '/data-explore', icon: 'dataExplore' },
+  { label: 'Data Explore', href: '/data-explore', icon: 'dataExplore', badge: 'Upcoming', badgeStyle: 'coming-soon' },
 ];
 
 export const supplyChainNav: NavItem[] = [
   {
-    label: 'RMAP',
+    label: 'Relationship',
     href: '/supply-chain-maps',
     icon: 'supplyMap',
-    badge: 'NEW',
-    badgeColor: '#BF3030',
+    badge: 'Upcoming',
+    badgeStyle: 'coming-soon',
   },
   {
     label: 'My RMAP',
@@ -135,7 +137,7 @@ export const supplyChainNav: NavItem[] = [
 ];
 
 export const bottomLinks: NavItem[] = [
-  { label: 'AI Search', href: '/ai-search', icon: 'intelligenceSearch', badge: 'COMING SOON', badgeStyle: 'coming-soon' },
+  { label: 'AI Search', href: '/ai-search', icon: 'intelligenceSearch', badge: 'Upcoming', badgeStyle: 'coming-soon' },
   { label: 'User Manual', href: '/user-manual', icon: 'userManual' },
 ];
 
