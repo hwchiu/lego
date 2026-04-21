@@ -713,11 +713,32 @@ export function WatchlistContent({
   const [quarter, setQuarter] = useState(recentQuarters[0] ?? { year: 2026, q: 1 });
   const [splitLayout, setSplitLayout] = useState(false);
 
-  // Summary view column order (drag-to-reorder)
+  // Summary view column order (drag-to-reorder, persisted in localStorage)
   const SUMMARY_DEFAULT_COLS = ['revenue', 'revenueQoQ', 'revenueYoY', 'grossMargin', 'doi', 'nextEarning', 'lastQtrRevenue', 'lastQtrGrossMargin', 'lastQtrDOI'];
   const [summaryColOrder, setSummaryColOrder] = useState<string[]>(SUMMARY_DEFAULT_COLS);
+  const [summaryColsHydrated, setSummaryColsHydrated] = useState(false);
   const colDragSrc = useRef<number | null>(null);
   const colDragOver = useRef<number | null>(null);
+
+  // Reusable drag-drop handler for column reordering
+  const makeColDragHandlers = useCallback((
+    cols: string[],
+    onReorder: (next: string[]) => void,
+  ) => ({
+    onDragStart: (idx: number) => { colDragSrc.current = idx; },
+    onDragOver: (e: React.DragEvent, idx: number) => { e.preventDefault(); colDragOver.current = idx; },
+    onDrop: () => {
+      if (colDragSrc.current === null || colDragOver.current === null) return;
+      if (colDragSrc.current === colDragOver.current) return;
+      const next = [...cols];
+      const [moved] = next.splice(colDragSrc.current, 1);
+      next.splice(colDragOver.current, 0, moved);
+      onReorder(next);
+      colDragSrc.current = null;
+      colDragOver.current = null;
+    },
+    onDragEnd: () => { colDragSrc.current = null; colDragOver.current = null; },
+  }), []);
 
   // Custom views state
   const [customViews, setCustomViews] = useState<CustomView[]>([]);
@@ -817,6 +838,26 @@ export function WatchlistContent({
     }
     setCustomViewsHydrated(true);
   }, []);
+
+  // Load summary column order from localStorage on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('wl-summary-col-order');
+      if (stored) {
+        const parsed: string[] = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) setSummaryColOrder(parsed);
+      }
+    } catch { /* ignore */ }
+    setSummaryColsHydrated(true);
+  }, []);
+
+  // Persist summary column order
+  useEffect(() => {
+    if (!summaryColsHydrated) return;
+    try {
+      localStorage.setItem('wl-summary-col-order', JSON.stringify(summaryColOrder));
+    } catch { /* ignore */ }
+  }, [summaryColOrder, summaryColsHydrated]);
 
   // Persist custom views
   useEffect(() => {
@@ -1327,27 +1368,22 @@ export function WatchlistContent({
                           <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                       </th>
-                      {summaryColOrder.map((c, idx) => (
-                        <th
-                          key={c}
-                          className="wl-th wl-th--draggable"
-                          draggable
-                          onDragStart={() => { colDragSrc.current = idx; }}
-                          onDragOver={(e) => { e.preventDefault(); colDragOver.current = idx; }}
-                          onDrop={() => {
-                            if (colDragSrc.current === null || colDragOver.current === null) return;
-                            const next = [...summaryColOrder];
-                            const [moved] = next.splice(colDragSrc.current, 1);
-                            next.splice(colDragOver.current, 0, moved);
-                            setSummaryColOrder(next);
-                            colDragSrc.current = null;
-                            colDragOver.current = null;
-                          }}
-                          onDragEnd={() => { colDragSrc.current = null; colDragOver.current = null; }}
-                        >
-                          {ALL_COLUMNS[c]?.label ?? c}
-                        </th>
-                      ))}
+                      {(() => {
+                        const dnd = makeColDragHandlers(summaryColOrder, setSummaryColOrder);
+                        return summaryColOrder.map((c, idx) => (
+                          <th
+                            key={c}
+                            className="wl-th wl-th--draggable"
+                            draggable
+                            onDragStart={() => dnd.onDragStart(idx)}
+                            onDragOver={(e) => dnd.onDragOver(e, idx)}
+                            onDrop={dnd.onDrop}
+                            onDragEnd={dnd.onDragEnd}
+                          >
+                            {ALL_COLUMNS[c]?.label ?? c}
+                          </th>
+                        ));
+                      })()}
                     </tr>
                   </thead>
                   <tbody>
@@ -1378,6 +1414,8 @@ export function WatchlistContent({
                 const cv = customViews.find((v) => v.id === activeTab);
                 if (!cv) return null;
                 const cols = cv.columns.filter((c) => ALL_COLUMNS[c]);
+                const reorderCvCols = (next: string[]) =>
+                  setCustomViews((prev) => prev.map((v) => v.id === cv.id ? { ...v, columns: next } : v));
                 return (
                   <div className="wl-table-wrap">
                     <table className="wl-table">
@@ -1389,29 +1427,22 @@ export function WatchlistContent({
                               <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                           </th>
-                          {cols.map((c, idx) => (
-                            <th
-                              key={c}
-                              className="wl-th wl-th--draggable"
-                              draggable
-                              onDragStart={() => { colDragSrc.current = idx; }}
-                              onDragOver={(e) => { e.preventDefault(); colDragOver.current = idx; }}
-                              onDrop={() => {
-                                if (colDragSrc.current === null || colDragOver.current === null) return;
-                                const nextCols = [...cols];
-                                const [moved] = nextCols.splice(colDragSrc.current, 1);
-                                nextCols.splice(colDragOver.current, 0, moved);
-                                setCustomViews((prev) =>
-                                  prev.map((v) => v.id === cv.id ? { ...v, columns: nextCols } : v)
-                                );
-                                colDragSrc.current = null;
-                                colDragOver.current = null;
-                              }}
-                              onDragEnd={() => { colDragSrc.current = null; colDragOver.current = null; }}
-                            >
-                              {ALL_COLUMNS[c].label}
-                            </th>
-                          ))}
+                          {(() => {
+                            const dnd = makeColDragHandlers(cols, reorderCvCols);
+                            return cols.map((c, idx) => (
+                              <th
+                                key={c}
+                                className="wl-th wl-th--draggable"
+                                draggable
+                                onDragStart={() => dnd.onDragStart(idx)}
+                                onDragOver={(e) => dnd.onDragOver(e, idx)}
+                                onDrop={dnd.onDrop}
+                                onDragEnd={dnd.onDragEnd}
+                              >
+                                {ALL_COLUMNS[c].label}
+                              </th>
+                            ));
+                          })()}
                         </tr>
                       </thead>
                       <tbody>

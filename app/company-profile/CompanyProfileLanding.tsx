@@ -10,6 +10,10 @@ import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 import { newsItems } from '@/app/data/news';
 import NewsCard from '@/app/components/news/NewsCard';
 
+// ── Feature flags — set to true to re-enable features in the next phase ──────
+const FEATURE_ADD_FILE = false;
+const FEATURE_SCENARIOS = false;
+
 // Scenario suggestion buttons (hidden until next phase)
 const SCENARIOS = ['Create Report', 'Boost my day', 'Help me learn', "Let's stay current", 'Write anything'] as const;
 
@@ -257,8 +261,8 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
                   {/* Bottom toolbar */}
                   <div className="cp-search-toolbar">
                     <div className="cp-search-toolbar-left">
-                      {/* Add file button — hidden until next phase */}
-                      {false && (
+                      {/* Add file button — hidden until next phase (FEATURE_ADD_FILE) */}
+                      {FEATURE_ADD_FILE && (
                         <button className="cp-toolbar-btn" title="Add file" aria-label="Add file">
                           <AddFileIcon />
                         </button>
@@ -336,8 +340,8 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
                 )}
               </div>
 
-              {/* Scenario buttons — hidden until next phase */}
-              {false && (
+              {/* Scenario buttons — hidden until next phase (FEATURE_SCENARIOS) */}
+              {FEATURE_SCENARIOS && (
                 <div className="cp-scenarios">
                   {SCENARIOS.map((s) => (
                     <button key={s} className="cp-scenario-btn">
