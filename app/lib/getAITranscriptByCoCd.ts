@@ -20,14 +20,16 @@ export async function getAITranscriptByCoCd(
   // await new Promise((r) => setTimeout(r, 200));
 
   const filtered = AI_TRANSCRIPT_HTML_ENTRIES.filter(
-    (e) => e.symbol.toUpperCase() === coCd.toUpperCase(),
+    (e) => e.co_cd.toUpperCase() === coCd.toUpperCase(),
   );
 
   // Sort newest first (year desc, then quarter desc)
   return [...filtered].sort((a, b) => {
-    if (b.year !== a.year) return b.year - a.year;
-    const qA = parseInt(a.quarter.replace('Q', ''), 10) || 0;
-    const qB = parseInt(b.quarter.replace('Q', ''), 10) || 0;
+    const yearA = parseInt(a.fiscal_year_no, 10);
+    const yearB = parseInt(b.fiscal_year_no, 10);
+    if (yearB !== yearA) return yearB - yearA;
+    const qA = parseInt(a.fiscal_qtr_no.replace('Q', ''), 10) || 0;
+    const qB = parseInt(b.fiscal_qtr_no.replace('Q', ''), 10) || 0;
     return qB - qA;
   });
 }

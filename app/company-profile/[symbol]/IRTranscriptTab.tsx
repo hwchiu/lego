@@ -218,17 +218,16 @@ interface IrtListItemProps {
 }
 
 function IrtListItem({ entry, isActive, onClick }: IrtListItemProps) {
-  const title = `${entry.companyName} (${entry.symbol}-US), ${entry.quarter} ${entry.year} Earnings Call Transcript`;
   return (
     <button
       className={`cp-irt-list-item${isActive ? ' cp-irt-list-item--active' : ''}`}
       onClick={onClick}
     >
-      <div className="cp-irt-list-item-title">{title}</div>
+      <div className="cp-irt-list-item-title">{entry.doc_title}</div>
       <div className="cp-irt-list-item-meta">
         <div className="cp-irt-list-item-tags">
-          <span className="cp-irt-period-tag cp-irt-period-tag--year">{entry.year}</span>
-          <span className="cp-irt-period-tag cp-irt-period-tag--qtr">{entry.quarter}</span>
+          <span className="cp-irt-period-tag cp-irt-period-tag--year">{entry.fiscal_year_no}</span>
+          <span className="cp-irt-period-tag cp-irt-period-tag--qtr">{entry.fiscal_qtr_no}</span>
         </div>
       </div>
     </button>
@@ -242,7 +241,7 @@ interface IrtDetailProps {
 }
 
 function IrtDetail({ entry }: IrtDetailProps) {
-  const parsed = useMemo(() => parseTranscriptFull(entry.content), [entry.content]);
+  const parsed = useMemo(() => parseTranscriptFull(entry.doc_html), [entry.doc_html]);
   const { participants, managementSections, qaSections, hasStructuredData } = parsed;
 
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
@@ -250,7 +249,7 @@ function IrtDetail({ entry }: IrtDetailProps) {
 
   useEffect(() => {
     setExpandedIds(new Set());
-  }, [entry.filename]);
+  }, [entry.co_cd, entry.fiscal_year_no, entry.fiscal_qtr_no]);
 
   const handleChipClick = useCallback((id: string) => {
     setExpandedIds((prev) => {
@@ -276,16 +275,14 @@ function IrtDetail({ entry }: IrtDetailProps) {
   }, []);
 
   function handleDownload() {
-    const blob = new Blob([entry.content], { type: 'text/html;charset=utf-8' });
+    const blob = new Blob([entry.doc_html], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${entry.filename}-ir-transcript.html`;
+    a.download = `${entry.co_cd}_${entry.fiscal_year_no}_${entry.fiscal_qtr_no}-ir-transcript.html`;
     a.click();
     URL.revokeObjectURL(url);
   }
-
-  const title = `${entry.companyName} (${entry.symbol}-US), ${entry.quarter} ${entry.year} Earnings Call Transcript`;
 
   // Chips show management speakers only (or all if no structured data)
   const execChips = managementSections;
@@ -326,10 +323,10 @@ function IrtDetail({ entry }: IrtDetailProps) {
         <div className="cp-pec-card-header-left">
           <span className="cp-pec-card-company cp-irt-badge">IR</span>
           <div>
-            <div className="cp-pec-card-title">{title}</div>
+            <div className="cp-pec-card-title">{entry.doc_title}</div>
             <div className="cp-pec-card-date">
-              {entry.symbol} · {entry.quarter} {entry.year}
-              {entry.eventDate && <span className="cp-irt-event-date"> · {entry.eventDate}</span>}
+              {entry.co_cd} · {entry.fiscal_qtr_no} {entry.fiscal_year_no}
+              {entry.event_date && <span className="cp-irt-event-date"> · {entry.event_date}</span>}
             </div>
           </div>
         </div>
@@ -343,7 +340,7 @@ function IrtDetail({ entry }: IrtDetailProps) {
             <DownloadIcon />
           </button>
           <a
-            href={entry.fileUrl}
+            href={entry.file_url}
             target="_blank"
             rel="noopener noreferrer"
             className="cp-pec-card-action-btn"
@@ -442,8 +439,8 @@ function IrtDetail({ entry }: IrtDetailProps) {
       {/* Footer */}
       <div className="cp-pec-card-footer">
         <span className="cp-pec-tag cp-irt-tag">IR Transcript</span>
-        <span className="cp-pec-tag">{entry.quarter} {entry.year}</span>
-        <span className="cp-pec-tag">{entry.symbol}</span>
+        <span className="cp-pec-tag">{entry.fiscal_qtr_no} {entry.fiscal_year_no}</span>
+        <span className="cp-pec-tag">{entry.co_cd}</span>
       </div>
     </article>
   );
@@ -489,12 +486,12 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
   }, []);
 
   const yearOptions = useMemo(() => {
-    const years = [...new Set(sortedEntries.map((e) => String(e.year)))];
+    const years = [...new Set(sortedEntries.map((e) => e.fiscal_year_no))];
     return [{ value: 'all', label: 'All Years' }, ...years.map((y) => ({ value: y, label: y }))];
   }, [sortedEntries]);
 
   const qtrOptions = useMemo(() => {
-    const qtrs = [...new Set(sortedEntries.map((e) => e.quarter))].sort(
+    const qtrs = [...new Set(sortedEntries.map((e) => e.fiscal_qtr_no))].sort(
       (a, b) => parseQuarterNumber(a) - parseQuarterNumber(b)
     );
     return [{ value: 'all', label: 'All Qtrs' }, ...qtrs.map((q) => ({ value: q, label: q }))];
@@ -502,17 +499,17 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
 
   const filteredEntries = useMemo(() => {
     let list = sortedEntries;
-    if (yearFilter !== 'all') list = list.filter((e) => String(e.year) === yearFilter);
-    if (qtrFilter !== 'all') list = list.filter((e) => e.quarter === qtrFilter);
+    if (yearFilter !== 'all') list = list.filter((e) => e.fiscal_year_no === yearFilter);
+    if (qtrFilter !== 'all') list = list.filter((e) => e.fiscal_qtr_no === qtrFilter);
     if (debouncedKeyword.trim()) {
       const kw = debouncedKeyword.toLowerCase();
       list = list.filter(
         (e) =>
-          e.companyName.toLowerCase().includes(kw) ||
-          e.symbol.toLowerCase().includes(kw) ||
-          String(e.year).includes(kw) ||
-          e.quarter.toLowerCase().includes(kw) ||
-          e.content.toLowerCase().includes(kw)
+          e.company_name.toLowerCase().includes(kw) ||
+          e.co_cd.toLowerCase().includes(kw) ||
+          e.fiscal_year_no.includes(kw) ||
+          e.fiscal_qtr_no.toLowerCase().includes(kw) ||
+          e.doc_html.toLowerCase().includes(kw)
       );
     }
     return list;
@@ -520,14 +517,14 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
 
   const activeEntry = useMemo(() => {
     if (selectedKey) {
-      const found = filteredEntries.find((e) => `${e.year}-${e.quarter}` === selectedKey);
+      const found = filteredEntries.find((e) => `${e.fiscal_year_no}-${e.fiscal_qtr_no}` === selectedKey);
       if (found) return found;
     }
     return filteredEntries[0] ?? null;
   }, [filteredEntries, selectedKey]);
 
   const handleSelectEntry = useCallback((entry: IrTranscriptHtmlEntry) => {
-    setSelectedKey(`${entry.year}-${entry.quarter}`);
+    setSelectedKey(`${entry.fiscal_year_no}-${entry.fiscal_qtr_no}`);
   }, []);
 
   const handleClearSearch = useCallback(() => {
@@ -538,7 +535,7 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
   }, []);
 
   useEffect(() => {
-    if (selectedKey && !filteredEntries.find((e) => `${e.year}-${e.quarter}` === selectedKey)) {
+    if (selectedKey && !filteredEntries.find((e) => `${e.fiscal_year_no}-${e.fiscal_qtr_no}` === selectedKey)) {
       setSelectedKey(null);
     }
   }, [filteredEntries, selectedKey]);
@@ -618,9 +615,9 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
           ) : (
             filteredEntries.map((entry) => (
               <IrtListItem
-                key={`${entry.year}-${entry.quarter}`}
+                key={`${entry.fiscal_year_no}-${entry.fiscal_qtr_no}`}
                 entry={entry}
-                isActive={activeEntry?.year === entry.year && activeEntry?.quarter === entry.quarter}
+                isActive={activeEntry?.fiscal_year_no === entry.fiscal_year_no && activeEntry?.fiscal_qtr_no === entry.fiscal_qtr_no}
                 onClick={() => handleSelectEntry(entry)}
               />
             ))
