@@ -713,6 +713,12 @@ export function WatchlistContent({
   const [quarter, setQuarter] = useState(recentQuarters[0] ?? { year: 2026, q: 1 });
   const [splitLayout, setSplitLayout] = useState(false);
 
+  // Summary view column order (drag-to-reorder)
+  const SUMMARY_DEFAULT_COLS = ['revenue', 'revenueQoQ', 'revenueYoY', 'grossMargin', 'doi', 'nextEarning', 'lastQtrRevenue', 'lastQtrGrossMargin', 'lastQtrDOI'];
+  const [summaryColOrder, setSummaryColOrder] = useState<string[]>(SUMMARY_DEFAULT_COLS);
+  const colDragSrc = useRef<number | null>(null);
+  const colDragOver = useRef<number | null>(null);
+
   // Custom views state
   const [customViews, setCustomViews] = useState<CustomView[]>([]);
   const [viewOrder, setViewOrder] = useState<string[]>([...BUILTIN_VIEWS]);
@@ -1321,15 +1327,27 @@ export function WatchlistContent({
                           <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                       </th>
-                      <th className="wl-th">Revenue</th>
-                      <th className="wl-th">Revenue QoQ</th>
-                      <th className="wl-th">Revenue YoY</th>
-                      <th className="wl-th">Gross Margin</th>
-                      <th className="wl-th">DOI</th>
-                      <th className="wl-th">Next Earning Release</th>
-                      <th className="wl-th">Last Qtr Revenue</th>
-                      <th className="wl-th">Last Qtr Gross Margin</th>
-                      <th className="wl-th">Last Qtr DOI</th>
+                      {summaryColOrder.map((c, idx) => (
+                        <th
+                          key={c}
+                          className="wl-th wl-th--draggable"
+                          draggable
+                          onDragStart={() => { colDragSrc.current = idx; }}
+                          onDragOver={(e) => { e.preventDefault(); colDragOver.current = idx; }}
+                          onDrop={() => {
+                            if (colDragSrc.current === null || colDragOver.current === null) return;
+                            const next = [...summaryColOrder];
+                            const [moved] = next.splice(colDragSrc.current, 1);
+                            next.splice(colDragOver.current, 0, moved);
+                            setSummaryColOrder(next);
+                            colDragSrc.current = null;
+                            colDragOver.current = null;
+                          }}
+                          onDragEnd={() => { colDragSrc.current = null; colDragOver.current = null; }}
+                        >
+                          {ALL_COLUMNS[c]?.label ?? c}
+                        </th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody>
@@ -1338,19 +1356,16 @@ export function WatchlistContent({
                         <td className="wl-td wl-td--sticky wl-symbol">
                           <Link href={`/company-profile/${h.symbol}/`} className="wl-symbol-link" target="_blank" rel="noopener noreferrer">{h.symbol}</Link>
                         </td>
-                        <td className="wl-td">{h.revenue}</td>
-                        <td className={`wl-td ${h.revenueQoQ.startsWith('+') ? 'pos' : 'neg'}`}>
-                          {h.revenueQoQ}
-                        </td>
-                        <td className={`wl-td ${h.revenueYoY.startsWith('+') ? 'pos' : 'neg'}`}>
-                          {h.revenueYoY}
-                        </td>
-                        <td className="wl-td">{h.grossMargin}</td>
-                        <td className="wl-td">{h.doi}</td>
-                        <td className="wl-td">{h.nextEarning}</td>
-                        <td className="wl-td">{h.lastQtrRevenue}</td>
-                        <td className="wl-td">{h.lastQtrGrossMargin}</td>
-                        <td className="wl-td">{h.lastQtrDOI}</td>
+                        {summaryColOrder.map((c) => {
+                          const def = ALL_COLUMNS[c];
+                          if (!def) return <td key={c} className="wl-td">-</td>;
+                          const cls = def.getClass ? def.getClass(h) : '';
+                          return (
+                            <td key={c} className={`wl-td${cls ? ` ${cls}` : ''}`}>
+                              {def.getValue(h)}
+                            </td>
+                          );
+                        })}
                       </tr>
                     ))}
                   </tbody>
@@ -1374,8 +1389,28 @@ export function WatchlistContent({
                               <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                           </th>
-                          {cols.map((c) => (
-                            <th key={c} className="wl-th">{ALL_COLUMNS[c].label}</th>
+                          {cols.map((c, idx) => (
+                            <th
+                              key={c}
+                              className="wl-th wl-th--draggable"
+                              draggable
+                              onDragStart={() => { colDragSrc.current = idx; }}
+                              onDragOver={(e) => { e.preventDefault(); colDragOver.current = idx; }}
+                              onDrop={() => {
+                                if (colDragSrc.current === null || colDragOver.current === null) return;
+                                const nextCols = [...cols];
+                                const [moved] = nextCols.splice(colDragSrc.current, 1);
+                                nextCols.splice(colDragOver.current, 0, moved);
+                                setCustomViews((prev) =>
+                                  prev.map((v) => v.id === cv.id ? { ...v, columns: nextCols } : v)
+                                );
+                                colDragSrc.current = null;
+                                colDragOver.current = null;
+                              }}
+                              onDragEnd={() => { colDragSrc.current = null; colDragOver.current = null; }}
+                            >
+                              {ALL_COLUMNS[c].label}
+                            </th>
                           ))}
                         </tr>
                       </thead>

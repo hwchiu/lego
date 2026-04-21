@@ -10,14 +10,12 @@ import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 import { newsItems } from '@/app/data/news';
 import NewsCard from '@/app/components/news/NewsCard';
 
-// Scenario suggestion buttons
+// Scenario suggestion buttons (hidden until next phase)
 const SCENARIOS = ['Create Report', 'Boost my day', 'Help me learn', "Let's stay current", 'Write anything'] as const;
 
-// Tools dropdown items
+// Tools dropdown items — only AI Summary visible; others kept for future phases
 const TOOLS = [
-  { key: 'ai-summary', label: 'AI Summary', comingSoon: false },
-  { key: 'deep-research', label: 'Deep Research', comingSoon: true },
-  { key: 'guided-learning', label: 'Guided Learning', comingSoon: false },
+  { key: 'ai-summary', label: 'AI Summary', comingSoon: true },
 ];
 
 // User display name (matches TopNav)
@@ -136,6 +134,14 @@ function ChevronDownIcon() {
   );
 }
 
+function PaperAirplaneIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+      <path d="M15.5 2.5L1.5 8L7.5 10M15.5 2.5L9.5 16.5L7.5 10M15.5 2.5L7.5 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export default function CompanyProfileLanding({ favorites, onToggleFavorite }: CompanyProfileLandingProps) {
   const router = useRouter();
   const [query, setQuery] = useState('');
@@ -193,6 +199,23 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
     router.push(`/company-profile/${symbol}`);
   }
 
+  function handleSubmit() {
+    const trimmed = query.trim();
+    if (!trimmed) return;
+    // If query matches a known symbol, navigate directly
+    const exactMatch = COMPANY_MASTER_LIST.find(
+      (c) => c.symbol.toLowerCase() === trimmed.toLowerCase(),
+    );
+    if (exactMatch) {
+      handleSelectCompany(exactMatch.symbol);
+      return;
+    }
+    // Otherwise navigate to first filtered result if any
+    if (filteredCompanies.length > 0) {
+      handleSelectCompany(filteredCompanies[0].symbol);
+    }
+  }
+
   return (
     <>
       <TopNav />
@@ -223,15 +246,23 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
                     onFocus={() => {
                       if (query.trim().length > 0) setShowDropdown(true);
                     }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSubmit();
+                      }
+                    }}
                   />
 
                   {/* Bottom toolbar */}
                   <div className="cp-search-toolbar">
                     <div className="cp-search-toolbar-left">
-                      {/* Add file button */}
-                      <button className="cp-toolbar-btn" title="Add file" aria-label="Add file">
-                        <AddFileIcon />
-                      </button>
+                      {/* Add file button — hidden until next phase */}
+                      {false && (
+                        <button className="cp-toolbar-btn" title="Add file" aria-label="Add file">
+                          <AddFileIcon />
+                        </button>
+                      )}
 
                       {/* Tools dropdown */}
                       <div className="cp-tools-wrap">
@@ -256,13 +287,11 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
                                 className="cp-tool-item"
                                 onMouseDown={(e) => {
                                   e.preventDefault();
-                                  setShowTools(false);
+                                  // no action — coming soon
                                 }}
                               >
                                 <span className="cp-tool-icon">
                                   {tool.key === 'ai-summary' && <AiSummaryIcon />}
-                                  {tool.key === 'deep-research' && <DeepResearchIcon />}
-                                  {tool.key === 'guided-learning' && <GuidedLearningIcon />}
                                 </span>
                                 <span className="cp-tool-label">{tool.label}</span>
                                 {tool.comingSoon && (
@@ -275,9 +304,14 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
                       </div>
                     </div>
 
-                    {/* Mic button */}
-                    <button className="cp-toolbar-btn cp-mic-btn" title="Voice input" aria-label="Voice input">
-                      <MicIcon />
+                    {/* Submit button (paper airplane) — replaces voice input */}
+                    <button
+                      className="cp-toolbar-btn cp-submit-btn"
+                      title="Submit"
+                      aria-label="Submit"
+                      onClick={handleSubmit}
+                    >
+                      <PaperAirplaneIcon />
                     </button>
                   </div>
                 </div>
@@ -302,15 +336,17 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
                 )}
               </div>
 
-              {/* Scenario buttons */}
-              <div className="cp-scenarios">
-                {SCENARIOS.map((s) => (
-                  <button key={s} className="cp-scenario-btn">
-                    <span className="cp-scenario-icon">{SCENARIO_ICONS[s]}</span>
-                    {s}
-                  </button>
-                ))}
-              </div>
+              {/* Scenario buttons — hidden until next phase */}
+              {false && (
+                <div className="cp-scenarios">
+                  {SCENARIOS.map((s) => (
+                    <button key={s} className="cp-scenario-btn">
+                      <span className="cp-scenario-icon">{SCENARIO_ICONS[s]}</span>
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* ── Favorites section ── */}
