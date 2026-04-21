@@ -130,6 +130,8 @@ export default function CorpEventCategorySection({
   const [selectedDateLabel, setSelectedDateLabel] = useState<string>(() => getIsoDateLabel(new Date()));
 
   // Refs to always hold the latest values so the sync effect avoids stale closures
+  // Refs updated synchronously in the render body so the sync effect always
+  // reads the latest year/month/weekStart without stale closure issues.
   const yearRef = useRef(year);
   const monthRef = useRef(month);
   const weekStartRef = useRef(weekStart);

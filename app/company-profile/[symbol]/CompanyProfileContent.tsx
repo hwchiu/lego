@@ -580,7 +580,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   // If the active tab is removed from visibleTabs (e.g. Funding with no data), fall back to the first visible tab
   useEffect(() => {
     if (visibleTabs.length > 0 && !visibleTabs.includes(activeTab)) {
-      setActiveTab(visibleTabs[0]!);
+      setActiveTab(visibleTabs[0] as Tab);
     }
   }, [visibleTabs, activeTab]);
 
