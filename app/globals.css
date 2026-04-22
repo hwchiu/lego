@@ -1229,6 +1229,7 @@ input, select { font-family: var(--font); }
 }
 .sidebar-star-btn:hover { color: #f59e0b; background: rgba(255,255,255,0.1); }
 .sidebar-star-btn.starred { color: #f59e0b; }
+.sidebar-star-btn--readonly { cursor: default; pointer-events: none; }
 .sidebar-submenu-arrow {
   margin-left: auto;
   flex-shrink: 0;
