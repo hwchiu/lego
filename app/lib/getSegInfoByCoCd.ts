@@ -33,7 +33,7 @@ const SEG_INFO_MAP: Record<string, SegInfoRecord> = {
  * {
  *   "CO_CD": "AAPL",
  *   "SEG_LEVEL": "1",
- *   "SEG_TYPE": "PG_REVENUE"
+ *   "SEG_TYPE": "Revenue ($M)"
  * }
  *
  * @param coCd  Company code / ticker symbol, e.g. "AAPL"

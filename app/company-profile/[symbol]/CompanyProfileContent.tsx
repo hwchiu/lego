@@ -192,6 +192,13 @@ const ANNUAL_QUARTER_VALUE = 'NA';
 /** Matches the "($M)" suffix in segment item names, e.g. "iPhone ($M)" → "iPhone" */
 const MILLION_DOLLAR_SUFFIX_RE = /\s*\(\$M\)\s*$/;
 
+/** Maps a numeric SEG_LEVEL (1–3) to the corresponding SegmentRecord key. */
+function segLevelToKey(level: number): 'anal_seg_level1' | 'anal_seg_level2' | 'anal_seg_level3' {
+  if (level === 3) return 'anal_seg_level3';
+  if (level === 2) return 'anal_seg_level2';
+  return 'anal_seg_level1';
+}
+
 // ── Chart data derivation helpers ─────────────────────────────────────────────
 
 /** Convert a StatementData period label like "Q1 2025" → "25Q1" (YYQQ).
@@ -618,12 +625,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
 
     // Use SEG_TYPE from segInfo, falling back to legacy REVENUE_SALE_TYPE constant
     const segType = segInfo?.SEG_TYPE ?? REVENUE_SALE_TYPE;
-    const segLevel = parseInt(segInfo?.SEG_LEVEL ?? '1', 10);
-    const levelKey = (
-      segLevel === 3 ? 'anal_seg_level3' :
-      segLevel === 2 ? 'anal_seg_level2' :
-                       'anal_seg_level1'
-    ) as 'anal_seg_level1' | 'anal_seg_level2' | 'anal_seg_level3';
+    const levelKey = segLevelToKey(parseInt(segInfo?.SEG_LEVEL ?? '1', 10));
 
     // Filter to the configured sale_type and quarterly records only
     const revenueRecords = segmentRecords.filter(
@@ -644,7 +646,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     const latestRecords = revenueRecords.filter(
       (r) => {
         if (r.calendar_year !== latestYear || r.calendar_quarter !== latestQuarter) return false;
-        const levelVal = r[levelKey] ?? '';
+        const levelVal = r[levelKey];
         if (!levelVal || levelVal.trim() === '') return false;
         if (levelVal.toLowerCase().includes('total')) return false;
         return true;
