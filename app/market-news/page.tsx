@@ -82,11 +82,10 @@ export default function MarketNewsPage() {
       <div className="app-body">
         <Sidebar />
         <main className="main-content">
-          <div className="page-pad">
+          <div className="mn-sticky-header">
             <div className="section-eyebrow">Market News</div>
-            <h1 className="news-page-title">Top Market News</h1>
 
-            {/* Filter bar — between title and tabs, right-aligned */}
+            {/* Filter bar — right-aligned */}
             <div className="mn-filter-bar">
               <div className="mn-filter-field mn-filter-field--keyword">
                 <label className="cp-news-filter-label">Keywords</label>
@@ -138,6 +137,8 @@ export default function MarketNewsPage() {
             </div>
 
             <NewsCategoryTabs active={activeCategory} onChange={(cat) => { setActiveCategory(cat); setFilterCompanySymbol(null); }} />
+          </div>
+          <div className="mn-content-area">
             <div className="company-ranking-below-tabs">
               <CompanyRankingTable selectedSymbol={filterCompanySymbol ?? undefined} onCompanyClick={handleCompanyClick} />
             </div>

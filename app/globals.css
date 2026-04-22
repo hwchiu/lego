@@ -1631,6 +1631,30 @@ input, select { font-family: var(--font); }
   fill: var(--c-accent);
 }
 
+/* ===== MARKET NEWS STICKY HEADER ===== */
+.mn-sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--c-bg);
+  padding: 24px 28px 0;
+}
+.mn-content-area {
+  padding: 0 28px 40px;
+}
+
+/* ===== EVENT CALENDAR STICKY HEADER ===== */
+.ec-sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--c-bg);
+  padding: 24px 28px 0;
+}
+.ec-content-area {
+  padding: 0 28px 40px;
+}
+
 /* ===== MARKET NEWS FILTER BAR ===== */
 .mn-filter-bar {
   display: flex;
@@ -18319,6 +18343,12 @@ html.dark .main-content {
   background: var(--c-bg);
 }
 html.dark .page-pad {
+  background: var(--c-bg);
+}
+html.dark .mn-sticky-header {
+  background: var(--c-bg);
+}
+html.dark .ec-sticky-header {
   background: var(--c-bg);
 }
 html.dark .topnav-search {
