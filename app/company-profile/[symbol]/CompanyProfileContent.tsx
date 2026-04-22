@@ -10,7 +10,8 @@ import Sidebar from '@/app/components/layout/Sidebar';
 import { COMPANY_MASTER_LIST, getCompanyByCode } from '@/app/data/companyMaster';
 import { newsItems, newsCategories as newsCategoryOptions } from '@/app/data/news';
 import { extractJson } from '@/app/lib/parseContent';
-import { getAllCoFavoriteList, addCompanyToMyFavorite, removeCompanyFromFavorite } from '@/app/lib/watchlistApi';
+import { getAllCoFavoriteList, addCompanyToMyFavorite, removeCompanyFromFavorite, getCompanyTagList } from '@/app/lib/watchlistApi';
+import type { TagInfoDTO } from '@/app/lib/watchlistApi';
 import { getPaginationRange } from '@/app/lib/paginationUtils';
 import companyProfileMd from '@/content/company-profile.md';
 import FinancialStatementTab from './FinancialStatementTab';
@@ -509,6 +510,20 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     setFundingHasData(null);
   }, [symbol]);
 
+  // Public tags fetched from API
+  const [companyTags, setCompanyTags] = useState<TagInfoDTO[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setCompanyTags([]);
+    getCompanyTagList(symbol).then((res) => {
+      if (!cancelled) setCompanyTags(res.tagInfoDTOList);
+    }).catch(() => {
+      // ignore
+    });
+    return () => { cancelled = true; };
+  }, [symbol]);
+
   const scrollTabs = useCallback((dir: 'left' | 'right') => {
     tabsScrollRef.current?.scrollBy({ left: dir === 'left' ? -150 : 150, behavior: 'smooth' });
   }, []);
@@ -886,18 +901,17 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
 
                 {/* Bottom row: Tags — right-aligned with icons above */}
                 <div className="cp-inline-tags">
-                  {publicTags.length > 0 && (
+                  {companyTags.length > 0 && (
                     <div className="cp-tags-group">
                       <span className="cp-tags-group-label">Public Tag</span>
                       <div className="cp-tags-list">
-                        {publicTags.map((tag) => (
-                          <Link
-                            key={tag}
-                            href={`/company-profile?tag=${encodeURIComponent(tag)}`}
-                            className="cp-tag cp-tag--public cp-tag--link"
+                        {companyTags.map((tag) => (
+                          <span
+                            key={tag.tag_id}
+                            className="cp-tag cp-tag--public"
                           >
-                            {tag}
-                          </Link>
+                            {tag.tag_name}
+                          </span>
                         ))}
                       </div>
                     </div>
