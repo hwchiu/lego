@@ -1,15 +1,10 @@
-'use client';
+import { Suspense } from 'react';
+import WatchlistTemplateContent from './WatchlistTemplateContent';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-
-export default function WatchlistRedirect() {
-  const router = useRouter();
-
-  useEffect(() => {
-    // Requirement #1: Always redirect to Watchlist Favorites
-    router.replace('/watchlist/favorites/');
-  }, [router]);
-
-  return null;
+export default function WatchlistPage() {
+  return (
+    <Suspense fallback={<div />}>
+      <WatchlistTemplateContent />
+    </Suspense>
+  );
 }
