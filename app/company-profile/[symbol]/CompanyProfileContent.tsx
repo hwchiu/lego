@@ -14,7 +14,6 @@ import { setFavoritesInPersonality } from '@/app/lib/getFavoritesByUserAcct';
 import { getFavoritesListByUserAcct } from '@/app/lib/watchlistApi';
 import { getPaginationRange } from '@/app/lib/paginationUtils';
 import companyProfileMd from '@/content/company-profile.md';
-import myTagsMd from '@/content/my-tags.md';
 import FinancialStatementTab from './FinancialStatementTab';
 import CompanyMATab from './CompanyMATab';
 import InvestmentTab from './InvestmentTab';
@@ -50,7 +49,6 @@ interface CompanyInfo {
   bbgId: string;
   stockExchange: string;
   publicTags: string[];
-  myTags: string[];
 }
 
 interface FinancialDataPoint {
@@ -112,35 +110,6 @@ function getProfileData(): ProfileData {
     _parsed = extractJson<ProfileData>(companyProfileMd);
   }
   return _parsed;
-}
-
-// Seed tag suggestions from markdown (loaded once at module level)
-let _seedTags: string[] | null = null;
-function getSeedTags(): string[] {
-  if (!_seedTags) {
-    _seedTags = extractJson<string[]>(myTagsMd as string);
-  }
-  return _seedTags;
-}
-
-// Collect all tags the user has previously added across all company profiles
-function getLocalStorageTags(): string[] {
-  try {
-    const all: string[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key?.startsWith('cp-tags-')) {
-        const val = localStorage.getItem(key);
-        if (val) {
-          const tags = JSON.parse(val) as string[];
-          all.push(...tags);
-        }
-      }
-    }
-    return [...new Set(all)];
-  } catch {
-    return [];
-  }
 }
 
 // ── TradingView config parsed from JSON ──────────────────────────────────────
@@ -524,13 +493,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const [activeTab, setActiveTab] = useState<Tab>('FIN. Summary');
   const [activeFinIndex, setActiveFinIndex] = useState<string>('Revenue');
   const [isFavorite, setIsFavorite] = useState(false);
-  const [myTags, setMyTags] = useState<string[]>([]);
-  const [tagInput, setTagInput] = useState('');
-  const [showTagInput, setShowTagInput] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
-  const addTagInputRef = useRef<HTMLInputElement>(null);
-  const tagRowRef = useRef<HTMLDivElement>(null);
   const [newsPage, setNewsPage] = useState(1);
   const stockContainerRef = useRef<HTMLDivElement>(null);
   const tabsScrollRef = useRef<HTMLDivElement>(null);
@@ -707,47 +670,15 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     }
   }, [visibleTabs, activeTab]);
 
-  // Load favorites & tags from localStorage
+  // Load favorites from localStorage
   useEffect(() => {
     try {
       const favs = getFavoritesListByUserAcct('demoUser');
       setIsFavorite(favs.includes(symbol));
-      const tags = localStorage.getItem(`cp-tags-${symbol}`);
-      if (tags) {
-        setMyTags(JSON.parse(tags) as string[]);
-      } else {
-        setMyTags(companyInfo?.myTags ?? []);
-      }
     } catch {
-      setMyTags(companyInfo?.myTags ?? []);
+      // ignore
     }
-  }, [symbol, companyInfo]);
-
-  // Close suggestion dropdown on outside click
-  useEffect(() => {
-    if (!showTagInput) return;
-    function handleClickOutside(e: MouseEvent) {
-      if (tagRowRef.current && !tagRowRef.current.contains(e.target as Node)) {
-        setShowSuggestions(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showTagInput]);
-
-  // Build suggestion list: seed tags + previously added tags, filtered by current input
-  const allSuggestions = useMemo(() => {
-    const seed = getSeedTags();
-    const local = typeof window !== 'undefined' ? getLocalStorageTags() : [];
-    return [...new Set([...seed, ...local])];
-  }, []);
-
-  const filteredSuggestions = useMemo(() => {
-    const lower = tagInput.toLowerCase();
-    return allSuggestions.filter(
-      (s) => s.toLowerCase().includes(lower) && !myTags.includes(s),
-    );
-  }, [tagInput, allSuggestions, myTags]);
+  }, [symbol]);
 
   function toggleFavorite() {
     setIsFavorite((prev) => {
@@ -761,57 +692,6 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
       }
       return next;
     });
-  }
-
-  function removeTag(tag: string) {
-    setMyTags((prev) => {
-      const next = prev.filter((t) => t !== tag);
-      try {
-        localStorage.setItem(`cp-tags-${symbol}`, JSON.stringify(next));
-      } catch {}
-      return next;
-    });
-  }
-
-  function addTagValue(value: string) {
-    const trimmed = value.trim();
-    if (!trimmed) return;
-    setMyTags((prev) => {
-      const next = prev.includes(trimmed) ? prev : [...prev, trimmed];
-      try {
-        localStorage.setItem(`cp-tags-${symbol}`, JSON.stringify(next));
-      } catch {}
-      return next;
-    });
-    setTagInput('');
-    setShowTagInput(false);
-    setShowSuggestions(false);
-  }
-
-  function cancelTagInput() {
-    setTagInput('');
-    setShowTagInput(false);
-    setShowSuggestions(false);
-  }
-
-  function addTag(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Enter') {
-      addTagValue(tagInput);
-    }
-    if (e.key === 'Escape') {
-      cancelTagInput();
-    }
-  }
-
-  function handleShowTagInput() {
-    setShowTagInput(true);
-    setShowSuggestions(true);
-    setTimeout(() => addTagInputRef.current?.focus(), 0);
-  }
-
-  function handleTagInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setTagInput(e.target.value);
-    setShowSuggestions(true);
   }
 
   function handleShare() {
@@ -1020,61 +900,6 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                       </div>
                     </div>
                   )}
-                  <div className="cp-tags-group">
-                    <span className="cp-tags-group-label">My Tag</span>
-                    <div className="cp-tags-list">
-                      {myTags.map((tag) => (
-                        <span key={tag} className="cp-tag cp-tag--my">
-                          <Link
-                            href={`/company-profile?tag=${encodeURIComponent(tag)}`}
-                            className="cp-tag-text-link"
-                          >
-                            {tag}
-                          </Link>
-                          <button className="cp-tag-remove" onClick={() => removeTag(tag)} aria-label={`Remove tag ${tag}`}>×</button>
-                        </span>
-                      ))}
-                      {!showTagInput && (
-                        <button className="cp-add-tag-btn" onClick={handleShowTagInput}>
-                          + Add Tag
-                        </button>
-                      )}
-                      {showTagInput && (
-                        <div className="cp-add-tag-row" ref={tagRowRef}>
-                          <div className="cp-add-tag-input-wrap">
-                            <input
-                              ref={addTagInputRef}
-                              className="cp-add-tag-input"
-                              placeholder="Enter tag name"
-                              value={tagInput}
-                              onChange={handleTagInputChange}
-                              onFocus={() => setShowSuggestions(true)}
-                              onKeyDown={addTag}
-                              autoComplete="off"
-                            />
-                            {showSuggestions && filteredSuggestions.length > 0 && (
-                              <div className="cp-tag-suggestions">
-                                {filteredSuggestions.slice(0, 8).map((s) => (
-                                  <button
-                                    key={s}
-                                    className="cp-tag-suggestion-item"
-                                    onMouseDown={(e) => {
-                                      e.preventDefault();
-                                      addTagValue(s);
-                                    }}
-                                  >
-                                    {s}
-                                  </button>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                          <button className="cp-add-tag-submit" onClick={() => addTagValue(tagInput)}>Add</button>
-                          <button className="cp-add-tag-cancel" onClick={cancelTagInput}>Cancel</button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
