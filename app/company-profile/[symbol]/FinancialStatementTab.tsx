@@ -307,98 +307,142 @@ function segPSortKey(calYear: number, calQ: string): number {
 
 // ── Hierarchical segment data structures ──────────────────────────────────────
 
-interface SegSaleTypeRow {
-  saleType: string;
-  values: Record<string, string>; // period label → formatted value
-}
-
-interface SegLevel3Group {
+interface SegLevel3Node {
   level3: string;
-  saleTypeRows: SegSaleTypeRow[];
+  values: Record<string, string>;
 }
 
-interface SegLevel2Group {
+interface SegLevel2Node {
   level2: string;
-  directRows: SegSaleTypeRow[];   // items with no level3
-  level3Groups: SegLevel3Group[];
+  values: Record<string, string>;
+  level3Groups: SegLevel3Node[];
 }
 
-interface SegLevel1Group {
+interface SegLevel1Node {
   level1: string;
-  directRows: SegSaleTypeRow[];   // items with no level2 and no level3
-  level2Groups: SegLevel2Group[];
+  values: Record<string, string>;
+  level2Groups: SegLevel2Node[];
 }
 
-/** Build a nested hierarchy from flat SegmentRecord[]. Preserves insertion order. */
-function buildSegmentHierarchy(records: SegmentRecord[]): SegLevel1Group[] {
-  const l1Order: string[] = [];
-  const l1Map = new Map<string, {
-    directSaleOrder: string[];
-    directSaleMap: Map<string, Record<string, string>>;
-    l2Order: string[];
-    l2Map: Map<string, {
-      directSaleOrder: string[];
-      directSaleMap: Map<string, Record<string, string>>;
-      l3Order: string[];
-      l3Map: Map<string, { saleOrder: string[]; saleMap: Map<string, Record<string, string>> }>;
-    }>;
-  }>();
+interface SegSaleTypeGroup {
+  saleType: string;
+  level1Groups: SegLevel1Node[];
+}
 
-  for (const r of records) {
-    const l1 = r.anal_seg_level1 ?? '';
-    const l2 = r.anal_seg_level2?.trim() ?? '';
-    const l3 = r.anal_seg_level3?.trim() ?? '';
-    const st = r.sale_type;
-    const pLabel = segPLabel(r.calendar_year, r.calendar_quarter);
-    const val = formatSegmentValue(r.fld_val, st);
+function normalizeSegmentLevels(record: SegmentRecord) {
+  let level1 = record.anal_seg_level1.trim();
+  let level2 = record.anal_seg_level2?.trim() ?? '';
+  let level3 = record.anal_seg_level3?.trim() ?? '';
 
-    if (!l1Map.has(l1)) {
-      l1Map.set(l1, { directSaleOrder: [], directSaleMap: new Map(), l2Order: [], l2Map: new Map() });
-      l1Order.push(l1);
-    }
-    const g1 = l1Map.get(l1)!;
-
-    if (!l2) {
-      // Direct item under level1
-      if (!g1.directSaleMap.has(st)) { g1.directSaleOrder.push(st); g1.directSaleMap.set(st, {}); }
-      g1.directSaleMap.get(st)![pLabel] = val;
-    } else {
-      if (!g1.l2Map.has(l2)) {
-        g1.l2Map.set(l2, { directSaleOrder: [], directSaleMap: new Map(), l3Order: [], l3Map: new Map() });
-        g1.l2Order.push(l2);
-      }
-      const g2 = g1.l2Map.get(l2)!;
-
-      if (!l3) {
-        if (!g2.directSaleMap.has(st)) { g2.directSaleOrder.push(st); g2.directSaleMap.set(st, {}); }
-        g2.directSaleMap.get(st)![pLabel] = val;
-      } else {
-        if (!g2.l3Map.has(l3)) {
-          g2.l3Map.set(l3, { saleOrder: [], saleMap: new Map() });
-          g2.l3Order.push(l3);
-        }
-        const g3 = g2.l3Map.get(l3)!;
-        if (!g3.saleMap.has(st)) { g3.saleOrder.push(st); g3.saleMap.set(st, {}); }
-        g3.saleMap.get(st)![pLabel] = val;
-      }
+  if (!level1) {
+    if (level2) {
+      level1 = level2;
+      level2 = '';
+    } else if (level3) {
+      level1 = level3;
+      level3 = '';
     }
   }
 
-  return l1Order.map((l1) => {
-    const g1 = l1Map.get(l1)!;
+  if (!level2 && level3) {
+    level2 = level3;
+    level3 = '';
+  }
+
+  return { level1, level2, level3 };
+}
+
+function hasSegmentValues(values: Record<string, string>): boolean {
+  return Object.keys(values).length > 0;
+}
+
+/** Produces a collision-safe React key by serializing path parts. */
+function buildSegmentKey(parts: string[]): string {
+  return JSON.stringify(parts);
+}
+
+/** Build a nested hierarchy from flat SegmentRecord[]. Preserves insertion order. */
+function buildSegmentHierarchy(records: SegmentRecord[]): SegSaleTypeGroup[] {
+  const saleTypeOrder: string[] = [];
+  const saleTypeMap = new Map<string, {
+    level1Order: string[];
+    level1Map: Map<string, {
+      values: Record<string, string>;
+      level2Order: string[];
+      level2Map: Map<string, {
+        values: Record<string, string>;
+        level3Order: string[];
+        level3Map: Map<string, Record<string, string>>;
+      }>;
+    }>;
+  }>();
+
+  for (const record of records) {
+    const saleType = record.sale_type.trim();
+    if (!saleType) continue;
+    const { level1, level2, level3 } = normalizeSegmentLevels(record);
+    if (!level1) continue;
+    const periodLabel = segPLabel(record.calendar_year, record.calendar_quarter);
+    const value = formatSegmentValue(record.fld_val, saleType);
+
+    if (!saleTypeMap.has(saleType)) {
+      saleTypeMap.set(saleType, { level1Order: [], level1Map: new Map() });
+      saleTypeOrder.push(saleType);
+    }
+
+    const saleTypeGroup = saleTypeMap.get(saleType)!;
+
+    if (!saleTypeGroup.level1Map.has(level1)) {
+      saleTypeGroup.level1Map.set(level1, { values: {}, level2Order: [], level2Map: new Map() });
+      saleTypeGroup.level1Order.push(level1);
+    }
+
+    const level1Group = saleTypeGroup.level1Map.get(level1)!;
+
+    // A level1 node may have both direct values and nested level2 children.
+    if (!level2) {
+      level1Group.values[periodLabel] = value;
+      continue;
+    }
+
+    if (!level1Group.level2Map.has(level2)) {
+      level1Group.level2Map.set(level2, { values: {}, level3Order: [], level3Map: new Map() });
+      level1Group.level2Order.push(level2);
+    }
+
+    const level2Group = level1Group.level2Map.get(level2)!;
+
+    if (!level3) {
+      level2Group.values[periodLabel] = value;
+      continue;
+    }
+
+    if (!level2Group.level3Map.has(level3)) {
+      level2Group.level3Map.set(level3, {});
+      level2Group.level3Order.push(level3);
+    }
+
+    level2Group.level3Map.get(level3)![periodLabel] = value;
+  }
+
+  return saleTypeOrder.map((saleType) => {
+    const saleTypeGroup = saleTypeMap.get(saleType)!;
     return {
-      level1: l1,
-      directRows: g1.directSaleOrder.map((st) => ({ saleType: st, values: g1.directSaleMap.get(st)! })),
-      level2Groups: g1.l2Order.map((l2) => {
-        const g2 = g1.l2Map.get(l2)!;
+      saleType,
+      level1Groups: saleTypeGroup.level1Order.map((level1) => {
+        const level1Group = saleTypeGroup.level1Map.get(level1)!;
         return {
-          level2: l2,
-          directRows: g2.directSaleOrder.map((st) => ({ saleType: st, values: g2.directSaleMap.get(st)! })),
-          level3Groups: g2.l3Order.map((l3) => {
-            const g3 = g2.l3Map.get(l3)!;
+          level1,
+          values: level1Group.values,
+          level2Groups: level1Group.level2Order.map((level2) => {
+            const level2Group = level1Group.level2Map.get(level2)!;
             return {
-              level3: l3,
-              saleTypeRows: g3.saleOrder.map((st) => ({ saleType: st, values: g3.saleMap.get(st)! })),
+              level2,
+              values: level2Group.values,
+              level3Groups: level2Group.level3Order.map((level3) => ({
+                level3,
+                values: level2Group.level3Map.get(level3)!,
+              })),
             };
           }),
         };
@@ -409,19 +453,19 @@ function buildSegmentHierarchy(records: SegmentRecord[]): SegLevel1Group[] {
 
 /** Render a single data row for the segment table. */
 function SegDataRow({
-  saleType,
+  label,
   values,
   periods,
-  indent,
+  depth,
 }: {
-  saleType: string;
+  label: string;
   values: Record<string, string>;
   periods: string[];
-  indent: 'l2' | 'l3' | 'l4';
+  depth: 'l1' | 'l2' | 'l3';
 }) {
   return (
-    <tr>
-      <td className={`fin-stmt-td-item seg-item-${indent}`}>{saleType}</td>
+    <tr className="seg-item-row">
+      <td className={`fin-stmt-td-item seg-item-${depth}`}>{label}</td>
       {periods.map((p) => {
         const val = values[p] ?? '—';
         const isNeg = val.startsWith('-') && val !== '-';
@@ -432,6 +476,24 @@ function SegDataRow({
           </td>
         );
       })}
+    </tr>
+  );
+}
+
+function SegGroupRow({
+  label,
+  depth,
+  colSpan,
+}: {
+  label: string;
+  depth: 'l1' | 'l2';
+  colSpan: number;
+}) {
+  return (
+    <tr className="seg-group-row">
+      <td colSpan={colSpan} className={`seg-group-label seg-group-label-${depth}`}>
+        {label}
+      </td>
     </tr>
   );
 }
@@ -532,46 +594,56 @@ function SegmentReportTable({ records, viewMode, yearWindowStart }: SegmentRepor
           )}
         </thead>
         <tbody>
-          {hierarchy.map((g1) => (
-            <React.Fragment key={g1.level1}>
-              {/* Level-1 group header */}
-              <tr className="fin-stmt-section-row seg-level1-row">
-                <td colSpan={colSpanAll} className="fin-stmt-td-section seg-l1-header">
-                  {g1.level1}
+          {hierarchy.map((saleTypeGroup) => (
+            <React.Fragment key={saleTypeGroup.saleType}>
+              <tr className="fin-stmt-section-row seg-sale-type-row">
+                <td colSpan={colSpanAll} className="fin-stmt-td-section seg-sale-type-header">
+                  {saleTypeGroup.saleType}
                 </td>
               </tr>
 
-              {/* Direct items under level-1 (no level-2) */}
-              {g1.directRows.map((row) => (
-                <SegDataRow key={`${g1.level1}||${row.saleType}`} saleType={row.saleType} values={row.values} periods={periods} indent="l2" />
-              ))}
+              {saleTypeGroup.level1Groups.map((level1Group) => (
+                <React.Fragment key={buildSegmentKey([saleTypeGroup.saleType, level1Group.level1])}>
+                  {hasSegmentValues(level1Group.values) ? (
+                    <SegDataRow
+                      label={level1Group.level1}
+                      values={level1Group.values}
+                      periods={periods}
+                      depth="l1"
+                    />
+                  ) : (
+                    <SegGroupRow
+                      label={level1Group.level1}
+                      depth="l1"
+                      colSpan={colSpanAll}
+                    />
+                  )}
 
-              {/* Level-2 sub-groups */}
-              {g1.level2Groups.map((g2) => (
-                <React.Fragment key={`${g1.level1}|${g2.level2}`}>
-                  {/* Level-2 sub-group header */}
-                  <tr className="seg-level2-row">
-                    <td colSpan={colSpanAll} className="seg-l2-header">
-                      {g2.level2}
-                    </td>
-                  </tr>
+                  {level1Group.level2Groups.map((level2Group) => (
+                    <React.Fragment key={buildSegmentKey([saleTypeGroup.saleType, level1Group.level1, level2Group.level2])}>
+                      {hasSegmentValues(level2Group.values) ? (
+                        <SegDataRow
+                          label={level2Group.level2}
+                          values={level2Group.values}
+                          periods={periods}
+                          depth="l2"
+                        />
+                      ) : (
+                        <SegGroupRow
+                          label={level2Group.level2}
+                          depth="l2"
+                          colSpan={colSpanAll}
+                        />
+                      )}
 
-                  {/* Direct items under level-2 (no level-3) */}
-                  {g2.directRows.map((row) => (
-                    <SegDataRow key={`${g1.level1}|${g2.level2}||${row.saleType}`} saleType={row.saleType} values={row.values} periods={periods} indent="l3" />
-                  ))}
-
-                  {/* Level-3 sub-groups */}
-                  {g2.level3Groups.map((g3) => (
-                    <React.Fragment key={`${g1.level1}|${g2.level2}|${g3.level3}`}>
-                      {/* Level-3 label row */}
-                      <tr className="seg-level3-row">
-                        <td colSpan={colSpanAll} className="seg-l3-header">
-                          {g3.level3}
-                        </td>
-                      </tr>
-                      {g3.saleTypeRows.map((row) => (
-                        <SegDataRow key={`${g1.level1}|${g2.level2}|${g3.level3}|${row.saleType}`} saleType={row.saleType} values={row.values} periods={periods} indent="l4" />
+                      {level2Group.level3Groups.map((level3Group) => (
+                        <SegDataRow
+                          key={buildSegmentKey([saleTypeGroup.saleType, level1Group.level1, level2Group.level2, level3Group.level3])}
+                          label={level3Group.level3}
+                          values={level3Group.values}
+                          periods={periods}
+                          depth="l3"
+                        />
                       ))}
                     </React.Fragment>
                   ))}

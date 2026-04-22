@@ -7035,58 +7035,92 @@ input, select { font-family: var(--font); }
 }
 
 /* ── Segment Report hierarchical rows ── */
-.seg-l1-header {
+.seg-sale-type-header {
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--c-white);
   background: var(--c-dark);
   padding: 6px 10px;
 }
 
-.fin-stmt-simple-table .seg-level1-row td {
+.fin-stmt-simple-table .seg-sale-type-row td,
+.fin-stmt-simple-table .seg-sale-type-row:hover td {
   background: var(--c-dark);
   border-bottom: 1px solid var(--c-border);
 }
 
-.seg-level2-row td {
-  background: #e9ecf0;
+.seg-item-row td {
   border-bottom: 1px solid var(--c-border);
 }
 
-.seg-l2-header {
+.seg-group-row td {
+  border-bottom: 1px solid var(--c-border);
+}
+
+.seg-group-label {
   font-size: 11px;
+  padding: 5px 10px;
+}
+
+.seg-group-label-l1 {
+  padding-left: 14px;
   font-weight: 600;
   color: var(--c-text);
-  padding: 5px 10px 5px 22px;
 }
 
-.seg-level3-row td {
-  background: #f5f6f8;
-  border-bottom: 1px solid var(--c-border);
-}
-
-.seg-l3-header {
-  font-size: 11px;
-  font-weight: 500;
+.seg-group-label-l2 {
+  padding-left: 30px;
   color: var(--c-text-2);
-  font-style: italic;
-  padding: 4px 10px 4px 36px;
 }
 
-/* Indented item cells at each hierarchy depth */
-.seg-item-l2.fin-stmt-td-item { padding-left: 18px; }
-.seg-item-l3.fin-stmt-td-item { padding-left: 32px; }
-.seg-item-l4.fin-stmt-td-item { padding-left: 48px; }
+.seg-item-l1.fin-stmt-td-item {
+  padding-left: 14px;
+  font-weight: 600;
+  color: var(--c-text);
+}
+
+.seg-item-l2.fin-stmt-td-item {
+  padding-left: 30px;
+  color: var(--c-text-2);
+}
+
+.seg-item-l3.fin-stmt-td-item {
+  padding-left: 46px;
+  color: var(--c-text-3);
+  font-style: italic;
+}
 
 /* Dark mode */
-html.dark .fin-stmt-simple-table .seg-level1-row td { background: #0f172a; }
-html.dark .seg-l1-header { color: var(--c-accent); }
-html.dark .seg-level2-row td { background: #1e293b; }
-html.dark .seg-l2-header { color: var(--c-text); }
-html.dark .seg-level3-row td { background: #263347; }
-html.dark .seg-l3-header { color: var(--c-text-2); }
+html.dark .fin-stmt-simple-table .seg-sale-type-row td,
+html.dark .fin-stmt-simple-table .seg-sale-type-row:hover td {
+  background: #0f172a;
+}
+
+html.dark .seg-sale-type-header {
+  color: #e2e8f0;
+}
+
+html.dark .seg-item-l1.fin-stmt-td-item {
+  color: #e5e7eb;
+}
+
+html.dark .seg-group-label-l1 {
+  color: #e5e7eb;
+}
+
+html.dark .seg-item-l2.fin-stmt-td-item {
+  color: #cbd5e1;
+}
+
+html.dark .seg-group-label-l2 {
+  color: #cbd5e1;
+}
+
+html.dark .seg-item-l3.fin-stmt-td-item {
+  color: #94a3b8;
+}
 
 /* ============================================================
    DATA EXPLORE — flat minimalist design
