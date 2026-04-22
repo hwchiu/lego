@@ -31,7 +31,7 @@ export default function Banner() {
     const newsSlides = latestNews.map((item) => ({
       label: 'Breaking News',
       labelVariant: 'breaking' as const,
-      prefix: undefined as string | undefined,
+      prefix: undefined,
       linkText: item.title,
       linkHref: item.url,
     }));

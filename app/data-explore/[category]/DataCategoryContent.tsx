@@ -1186,7 +1186,7 @@ function NewsByCompanyTab({ items, lang }: { items: DataItem[]; lang: 'zh' | 'en
     const co = NEWS_COMPANIES.find((c) => c.id === selectedCompany);
     if (!co) return [];
     return items
-      .filter((item) => co.tags.some((tag) => item.tags.includes(tag) || item.title.includes(tag) || item.summary.includes(tag)))
+      .filter((item) => co.tags.some((tag) => item.tags.includes(tag) || item.title.toLowerCase().includes(tag.toLowerCase()) || item.summary.toLowerCase().includes(tag.toLowerCase())))
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [items, selectedCompany]);
 
@@ -1236,7 +1236,7 @@ function NewsByTopicTab({ items, lang }: { items: DataItem[]; lang: 'zh' | 'en' 
     const topic = NEWS_TOPICS.find((t) => t.id === selectedTopic);
     if (!topic) return [];
     return items
-      .filter((item) => topic.tags.some((tag) => item.tags.includes(tag) || item.title.includes(tag) || item.summary.includes(tag)))
+      .filter((item) => topic.tags.some((tag) => item.tags.includes(tag) || item.title.toLowerCase().includes(tag.toLowerCase()) || item.summary.toLowerCase().includes(tag.toLowerCase())))
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [items, selectedTopic]);
 
