@@ -6,7 +6,7 @@ import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
-import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
+import { COMPANY_MASTER_LIST, getCompanyByCode } from '@/app/data/companyMaster';
 import { newsItems } from '@/app/data/news';
 import NewsCard from '@/app/components/news/NewsCard';
 
@@ -371,12 +371,12 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
                 </div>
                 <div className="cp-favorites-tags">
                   {favorites.map((sym) => {
-                    const co = COMPANY_MASTER_LIST.find((c) => c.symbol === sym);
+                    const co = getCompanyByCode(sym);
                     return (
                       <div key={sym} className="cp-favorites-tag-wrap">
                         <Link href={`/company-profile/${sym}`} className="cp-favorites-tag">
                           <span className="cp-favorites-tag-symbol">{sym}</span>
-                          {co && <span className="cp-favorites-tag-name">{co.name}</span>}
+                          {co && <span className="cp-favorites-tag-name">{co.CO_SHORT_NAME}</span>}
                         </Link>
                         <button
                           className="cp-favorites-tag-remove"

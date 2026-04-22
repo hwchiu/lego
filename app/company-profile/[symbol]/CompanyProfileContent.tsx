@@ -10,8 +10,7 @@ import Sidebar from '@/app/components/layout/Sidebar';
 import { COMPANY_MASTER_LIST, getCompanyByCode } from '@/app/data/companyMaster';
 import { newsItems, newsCategories as newsCategoryOptions } from '@/app/data/news';
 import { extractJson } from '@/app/lib/parseContent';
-import { setFavoritesInPersonality } from '@/app/lib/getFavoritesByUserAcct';
-import { getFavoritesListByUserAcct } from '@/app/lib/watchlistApi';
+import { getAllCoFavoriteList, addCompanyToMyFavorite, removeCompanyFromFavorite } from '@/app/lib/watchlistApi';
 import { getPaginationRange } from '@/app/lib/paginationUtils';
 import companyProfileMd from '@/content/company-profile.md';
 import FinancialStatementTab from './FinancialStatementTab';
@@ -670,28 +669,27 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     }
   }, [visibleTabs, activeTab]);
 
-  // Load favorites from localStorage
+  // Load favorites using API on mount / symbol change
   useEffect(() => {
+    getAllCoFavoriteList('demoUser').then((res) => {
+      setIsFavorite(res.co_cd.includes(symbol));
+    }).catch(() => {
+      // ignore
+    });
+  }, [symbol]);
+
+  async function toggleFavorite() {
     try {
-      const favs = getFavoritesListByUserAcct('demoUser');
-      setIsFavorite(favs.includes(symbol));
+      if (isFavorite) {
+        await removeCompanyFromFavorite(symbol);
+      } else {
+        await addCompanyToMyFavorite(symbol);
+      }
+      const res = await getAllCoFavoriteList('demoUser');
+      setIsFavorite(res.co_cd.includes(symbol));
     } catch {
       // ignore
     }
-  }, [symbol]);
-
-  function toggleFavorite() {
-    setIsFavorite((prev) => {
-      const next = !prev;
-      try {
-        const arr = getFavoritesListByUserAcct('demoUser');
-        const updated = next ? [...arr.filter((s) => s !== symbol), symbol] : arr.filter((s) => s !== symbol);
-        setFavoritesInPersonality(updated);
-      } catch {
-        // ignore
-      }
-      return next;
-    });
   }
 
   function handleShare() {
