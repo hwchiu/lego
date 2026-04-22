@@ -7035,59 +7035,47 @@ input, select { font-family: var(--font); }
 }
 
 /* ── Segment Report hierarchical rows ── */
+
+/* sale_type header: darker gray bg + bold black text (replaces dark/white) */
 .seg-sale-type-header {
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--c-white);
-  background: var(--c-dark);
-  padding: 6px 10px;
+  color: var(--c-text);
+  padding: 6px 12px;
 }
 
 .fin-stmt-simple-table .seg-sale-type-row td,
 .fin-stmt-simple-table .seg-sale-type-row:hover td {
-  background: var(--c-dark);
-  border-bottom: 1px solid var(--c-border);
+  background: #d1d5db;
+  border-bottom: 1px solid #b0b7c0;
 }
 
 .seg-item-row td {
   border-bottom: 1px solid var(--c-border);
 }
 
-.seg-group-row td {
-  border-bottom: 1px solid var(--c-border);
-}
-
-.seg-group-label {
-  font-size: 11px;
-  padding: 5px 10px;
-}
-
-.seg-group-label-l1 {
-  padding-left: 14px;
-  font-weight: 600;
-  color: var(--c-text);
-}
-
-.seg-group-label-l2 {
-  padding-left: 30px;
-  color: var(--c-text-2);
-}
-
+/* Uniform indent steps: 16px per level, base at 12px
+   sale_type: 12px  →  l1: 28px  →  l2: 44px  →  l3: 60px */
 .seg-item-l1.fin-stmt-td-item {
-  padding-left: 14px;
+  padding-left: 28px;
   font-weight: 600;
+  font-size: 12.5px;
   color: var(--c-text);
 }
 
 .seg-item-l2.fin-stmt-td-item {
-  padding-left: 30px;
+  padding-left: 44px;
+  font-weight: 500;
+  font-size: 12.5px;
   color: var(--c-text-2);
 }
 
 .seg-item-l3.fin-stmt-td-item {
-  padding-left: 46px;
+  padding-left: 60px;
+  font-weight: 400;
+  font-size: 12px;
   color: var(--c-text-3);
   font-style: italic;
 }
@@ -7095,26 +7083,19 @@ input, select { font-family: var(--font); }
 /* Dark mode */
 html.dark .fin-stmt-simple-table .seg-sale-type-row td,
 html.dark .fin-stmt-simple-table .seg-sale-type-row:hover td {
-  background: #0f172a;
+  background: #334155;
+  border-bottom-color: #475569;
 }
 
 html.dark .seg-sale-type-header {
-  color: #e2e8f0;
+  color: #f1f5f9;
 }
 
 html.dark .seg-item-l1.fin-stmt-td-item {
   color: #e5e7eb;
 }
 
-html.dark .seg-group-label-l1 {
-  color: #e5e7eb;
-}
-
 html.dark .seg-item-l2.fin-stmt-td-item {
-  color: #cbd5e1;
-}
-
-html.dark .seg-group-label-l2 {
   color: #cbd5e1;
 }
 
