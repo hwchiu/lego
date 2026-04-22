@@ -7,6 +7,7 @@ export interface NavItem {
   badgeColor?: string; // optional custom badge background color
   badgeStyle?: 'new' | 'coming-soon'; // badge visual style
   hidden?: boolean; // when true, item is not rendered in the sidebar
+  external?: boolean; // when true, opens href in a new tab
   subItems?: SubNavItem[];
 }
 
@@ -80,6 +81,9 @@ export const sidebarIcons: Record<string, string> = {
   // User Manual — open book icon
   userManual:
     '<rect x="2" y="1.5" width="4.5" height="11" rx="0.8" stroke="currentColor" stroke-width="1.3"/><rect x="7.5" y="1.5" width="4.5" height="11" rx="0.8" stroke="currentColor" stroke-width="1.3"/><path d="M2 3.5C3 3 4 3 4.5 3.5M9.5 3.5C10.5 3 11.5 3 12 3.5M2 6C3 5.5 4 5.5 4.5 6M9.5 6C10.5 5.5 11.5 5.5 12 6M2 8.5C3 8 4 8 4.5 8.5M9.5 8.5C10.5 8 11.5 8 12 8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>',
+  // Feedback — speech bubble with lines icon
+  feedback:
+    '<path d="M2 2.5h10a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H8l-3 2.5V10.5H2a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M4 5.5h6M4 7.5h4" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>',
 };
 
 export const quickLinks: NavItem[] = [
@@ -140,7 +144,8 @@ export const supplyChainNav: NavItem[] = [
 
 export const bottomLinks: NavItem[] = [
   { label: 'AI Search', href: '/ai-search', icon: 'intelligenceSearch', badge: 'Upcoming', badgeStyle: 'coming-soon' },
-  { label: 'User Manual', href: '/user-manual', icon: 'userManual' },
+  { label: 'User Manual', href: 'https://tkms.digwork.tw.ent.tsmc.com/pages/Uw5xaVFEXr', icon: 'userManual', external: true },
+  { label: 'Feedback', href: 'https://forms.office.com/Pages/ResponsePage.aspx?id=S_ZVkhgY5UKtePYZqaex55erID1a9UNKlr3EddIx_aZURENQWFpVNjNOSElLVlY0UVdHSklOSFdOUi4u', icon: 'feedback', external: true },
 ];
 
 export const marketTabs = [

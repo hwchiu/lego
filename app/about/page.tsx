@@ -56,10 +56,9 @@ const FEATURES = [
 ];
 
 const STATS = [
-  { value: '500+', label: { zh: '上市公司數據', en: 'Listed Companies' } },
-  { value: '3', label: { zh: '供應鏈層級覆蓋', en: 'Supply Chain Tiers' } },
+  { value: '250+', label: { zh: '上市公司數據', en: 'Listed Companies' } },
   { value: 'Live', label: { zh: '市場新聞整合', en: 'Market News' } },
-  { value: 'AI', label: { zh: '智慧分析摘要', en: 'AI-Powered Insights' } },
+  { value: 'AI', label: { zh: '智慧分析摘要', en: 'AI-Powered Summary' } },
 ];
 
 const PILLARS = [
@@ -126,9 +125,6 @@ export default function AboutPage() {
                 <div className="about-site-hero-cta-row">
                   <Link href="/company-profile" className="about-site-btn about-site-btn--primary">
                     {lang === 'zh' ? '開始探索' : 'Start Exploring'}
-                  </Link>
-                  <Link href="/supply-chain-maps" className="about-site-btn about-site-btn--ghost">
-                    {lang === 'zh' ? '查看供應鏈圖譜' : 'View Supply Chain Maps'}
                   </Link>
                 </div>
               </div>
