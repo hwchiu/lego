@@ -10,7 +10,7 @@ import { ESG_REPORTS } from '@/app/data/esgReports';
 import { TAIWAN_TAX_NEWS, type TaxNewsItem } from '@/app/data/taxNews';
 import WorldMapTab from '@/app/components/GovernmentRegulationsMap';
 import { useLanguage } from '@/app/contexts/LanguageContext';
-import { queryCatgDetail } from '@/app/lib/queryCatgDetail';
+import { queryCatgDetail, type CatgDetailType } from '@/app/lib/queryCatgDetail';
 import { queryDataItemContent } from '@/app/lib/queryDataItemContent';
 import { type NewsSummaryItem } from '@/app/data/newsSummaryData';
 
@@ -1386,6 +1386,197 @@ function EsgTopicSectionCard({ section, defaultOpen = true }: EsgTopicSectionPro
   );
 }
 
+// ── Download markdown as PDF (via browser print) ─────────────────────────────
+
+function downloadMarkdownAsPdf(title: string, markdownContent: string): void {
+  const TOPIC_SEP_RE = /={50,}[\s\S]*?NEXT\s+Topic[\s\S]*?={50,}/g;
+
+  // Convert markdown table rows to simple text lines
+  function processTable(block: string): string {
+    const lines = block.split('\n');
+    const dataLines: string[] = [];
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed.startsWith('|')) continue;
+      if (/^\|[|\- ]+\|$/.test(trimmed)) continue; // separator row
+      const cells = trimmed.split('|').map((c) => c.trim()).filter((_, i, a) => i > 0 && i < a.length - 1);
+      if (cells.length === 0) continue;
+      dataLines.push(`<div class="article">` +
+        `<div class="article-title">${cells[0] ?? ''}</div>` +
+        `<div class="article-meta">${[cells[2], cells[3]].filter(Boolean).join(' · ')}</div>` +
+        `<div class="article-summary">${cells[4] ?? ''}</div>` +
+        `</div>`);
+    }
+    return dataLines.join('\n');
+  }
+
+  const chunks = markdownContent.split(TOPIC_SEP_RE);
+  let bodyHtml = '';
+  for (const chunk of chunks) {
+    const lines = chunk.split('\n').map((l) => l.trim()).filter(Boolean);
+    if (lines.length === 0) continue;
+    const headingLine = lines.find((l) => l.startsWith('##') && !l.includes('NEXT Topic'));
+    if (!headingLine) continue;
+    const topic = headingLine.replace(/^#+\s*/, '').trim();
+    bodyHtml += `<h2>${topic}</h2>\n${processTable(chunk)}\n`;
+  }
+
+  const html = `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8">
+<title>${title}</title>
+<style>
+  body { font-family: 'Noto Sans TC', 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #111827; margin: 32px 40px; }
+  h1 { font-size: 18px; color: #0ea5e9; margin-bottom: 4px; }
+  h2 { font-size: 14px; color: #1a2332; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; margin-top: 20px; }
+  .article { margin: 10px 0; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 6px; page-break-inside: avoid; }
+  .article-title { font-weight: 600; margin-bottom: 4px; }
+  .article-meta { font-size: 11px; color: #6b7280; margin-bottom: 6px; }
+  .article-summary { color: #374151; line-height: 1.6; }
+  @media print { body { margin: 16px 24px; } }
+</style></head><body>
+<h1>${title}</h1>
+${bodyHtml}
+</body></html>`;
+
+  const win = window.open('', '_blank', 'width=900,height=700');
+  if (!win) return;
+  win.document.write(html);
+  win.document.close();
+  win.onload = () => {
+    win.focus();
+    win.print();
+  };
+}
+
+// ── Shared news digest tab (queryCatgDetail pattern) ─────────────────────────
+
+interface NewsDigestSummaryTabProps {
+  catgType: CatgDetailType;
+  tabTitle: string;
+  tabSubtitle: string;
+  itemNamePrefix: string;
+  accentColor: string;
+  lang: 'zh' | 'en';
+}
+
+function NewsDigestSummaryTab({
+  catgType,
+  tabTitle,
+  tabSubtitle,
+  itemNamePrefix,
+  accentColor,
+  lang,
+}: NewsDigestSummaryTabProps) {
+  const zh = lang === 'zh';
+
+  const [periods, setPeriods] = useState<NewsSummaryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activePeriodId, setActivePeriodId] = useState<string>('');
+  const [activeItemName, setActiveItemName] = useState<string>('');
+  const [contentLoading, setContentLoading] = useState(false);
+  const [sections, setSections] = useState<EsgTopicSection[]>([]);
+  const [rawMarkdown, setRawMarkdown] = useState<string>('');
+
+  useEffect(() => {
+    queryCatgDetail(catgType).then((data) => {
+      const items = data.result.items;
+      setPeriods(items);
+      if (items.length > 0) {
+        setActivePeriodId(items[0].data_item_id);
+        setActiveItemName(items[0].item_name);
+      }
+      setLoading(false);
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [catgType]);
+
+  useEffect(() => {
+    if (!activePeriodId) return;
+    setContentLoading(true);
+    setSections([]);
+    setRawMarkdown('');
+    queryDataItemContent(activePeriodId).then((markdown) => {
+      if (markdown) {
+        setSections(parseEsgMarkdown(markdown));
+        setRawMarkdown(markdown);
+      }
+      setContentLoading(false);
+    });
+  }, [activePeriodId]);
+
+  function stripItemPrefix(itemName: string): string {
+    if (itemName.startsWith(itemNamePrefix)) {
+      return itemName.slice(itemNamePrefix.length);
+    }
+    return itemName;
+  }
+
+  function handleDownload() {
+    const periodLabel = stripItemPrefix(activeItemName) || activeItemName;
+    downloadMarkdownAsPdf(`${tabTitle} ${periodLabel}`, rawMarkdown);
+  }
+
+  return (
+    <div className="de-tax-news-wrap">
+      <div className="de-tax-news-header">
+        <div className="de-tax-news-title" style={{ color: accentColor }}>{tabTitle}</div>
+        <div className="de-tax-news-sub">{tabSubtitle}</div>
+      </div>
+
+      {loading ? (
+        <div className="de-esg-loading">Loading periods…</div>
+      ) : (
+        <div className="de-intl-tax-layout">
+          <nav className="de-intl-tax-sidebar" aria-label="Period list">
+            <div className="de-intl-tax-sidebar-title">{zh ? '期間' : 'Period'}</div>
+            {periods.length === 0 && (
+              <div className="de-intl-tax-sidebar-item" style={{ opacity: 0.5 }}>—</div>
+            )}
+            {periods.map((item) => (
+              <button
+                key={item.data_item_id}
+                className={`de-intl-tax-sidebar-item${activePeriodId === item.data_item_id ? ' active' : ''}`}
+                style={activePeriodId === item.data_item_id ? { borderLeftColor: accentColor, color: accentColor } : {}}
+                onClick={() => {
+                  setActivePeriodId(item.data_item_id);
+                  setActiveItemName(item.item_name);
+                }}
+              >
+                <span className="de-intl-tax-sidebar-item-name">{stripItemPrefix(item.item_name)}</span>
+              </button>
+            ))}
+          </nav>
+
+          <div className="de-intl-tax-content">
+            {contentLoading ? (
+              <div className="de-esg-loading">Loading content…</div>
+            ) : sections.length === 0 ? (
+              <div className="de-esg-empty">{zh ? '暫無相關新聞' : 'No articles found.'}</div>
+            ) : (
+              <>
+                <div className="de-news-download-bar">
+                  <button
+                    className="de-news-download-btn"
+                    onClick={handleDownload}
+                    title={zh ? '下載 PDF' : 'Download PDF'}
+                  >
+                    <DownloadIcon />
+                    <span>{zh ? '下載 PDF' : 'Download PDF'}</span>
+                  </button>
+                </div>
+                <div className="de-esg-topics-wrap">
+                  {sections.map((section, i) => (
+                    <EsgTopicSectionCard key={section.topic} section={section} defaultOpen={i === 0} />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── BiweeklyEsgTab — uses queryCatgDetail + queryDataItemContent ──────────────
 
 const BIWEEKLY_ESG_PREFIX = 'Bi-weekly ESG News Summary ';
@@ -1403,16 +1594,19 @@ function BiweeklyEsgTab({ lang }: { lang: 'zh' | 'en' }) {
   const [periods, setPeriods] = useState<NewsSummaryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activePeriodId, setActivePeriodId] = useState<string>('');
+  const [activeItemName, setActiveItemName] = useState<string>('');
   const [contentLoading, setContentLoading] = useState(false);
   const [sections, setSections] = useState<EsgTopicSection[]>([]);
+  const [rawMarkdown, setRawMarkdown] = useState<string>('');
 
   // Load period list on mount
   useEffect(() => {
-    queryCatgDetail().then((data) => {
+    queryCatgDetail('esg').then((data) => {
       const items = data.result.items;
       setPeriods(items);
       if (items.length > 0) {
         setActivePeriodId(items[0].data_item_id);
+        setActiveItemName(items[0].item_name);
       }
       setLoading(false);
     });
@@ -1423,13 +1617,20 @@ function BiweeklyEsgTab({ lang }: { lang: 'zh' | 'en' }) {
     if (!activePeriodId) return;
     setContentLoading(true);
     setSections([]);
+    setRawMarkdown('');
     queryDataItemContent(activePeriodId).then((markdown) => {
       if (markdown) {
         setSections(parseEsgMarkdown(markdown));
+        setRawMarkdown(markdown);
       }
       setContentLoading(false);
     });
   }, [activePeriodId]);
+
+  function handleDownload() {
+    const periodLabel = stripPrefix(activeItemName) || activeItemName;
+    downloadMarkdownAsPdf(`Bi-weekly ESG News Summary ${periodLabel}`, rawMarkdown);
+  }
 
   return (
     <div className="de-tax-news-wrap">
@@ -1455,7 +1656,10 @@ function BiweeklyEsgTab({ lang }: { lang: 'zh' | 'en' }) {
                 key={item.data_item_id}
                 className={`de-intl-tax-sidebar-item${activePeriodId === item.data_item_id ? ' active' : ''}`}
                 style={activePeriodId === item.data_item_id ? { borderLeftColor: NEWS_ACCENT, color: NEWS_ACCENT } : {}}
-                onClick={() => setActivePeriodId(item.data_item_id)}
+                onClick={() => {
+                  setActivePeriodId(item.data_item_id);
+                  setActiveItemName(item.item_name);
+                }}
               >
                 <span className="de-intl-tax-sidebar-item-name">{stripPrefix(item.item_name)}</span>
               </button>
@@ -1469,11 +1673,23 @@ function BiweeklyEsgTab({ lang }: { lang: 'zh' | 'en' }) {
             ) : sections.length === 0 ? (
               <div className="de-esg-empty">{zh ? '暫無相關新聞' : 'No articles found.'}</div>
             ) : (
-              <div className="de-esg-topics-wrap">
-                {sections.map((section, i) => (
-                  <EsgTopicSectionCard key={section.topic} section={section} defaultOpen={i === 0} />
-                ))}
-              </div>
+              <>
+                <div className="de-news-download-bar">
+                  <button
+                    className="de-news-download-btn"
+                    onClick={handleDownload}
+                    title={zh ? '下載 PDF' : 'Download PDF'}
+                  >
+                    <DownloadIcon />
+                    <span>{zh ? '下載 PDF' : 'Download PDF'}</span>
+                  </button>
+                </div>
+                <div className="de-esg-topics-wrap">
+                  {sections.map((section, i) => (
+                    <EsgTopicSectionCard key={section.topic} section={section} defaultOpen={i === 0} />
+                  ))}
+                </div>
+              </>
             )}
           </div>
         </div>
@@ -1662,23 +1878,23 @@ export default function DataCategoryContent({ params }: { params: { category: st
                 <BiweeklyEsgTab lang={lang} />
               )}
               {activeSubTab === 'taiwan-news' && isNewsSummary && (
-                <NewsDigestTab
-                  items={cat.items}
-                  tagSet={TAIWAN_TAGS}
-                  heading="Weekly Taiwan Tax News Summary"
-                  subheading="Taiwan-focused semiconductor industry highlights — TSMC operations, domestic policy, and fab updates."
+                <NewsDigestSummaryTab
+                  catgType="taiwan-tax"
+                  tabTitle="Weekly Taiwan Tax News Summary"
+                  tabSubtitle="Every Friday at noon, this digest leverages AI to rapidly filter, summarize, and present the latest news on Taiwan's domestic tax policy changes, tax regulation updates, and tax disputes."
+                  itemNamePrefix="Weekly Taiwan Tax News Summary "
+                  accentColor={NEWS_ACCENT}
                   lang={lang}
-                  periodLabel="Week"
                 />
               )}
               {activeSubTab === 'intl-news' && isNewsSummary && (
-                <NewsDigestTab
-                  items={cat.items}
-                  tagSet={INTL_TAGS}
-                  heading="Weekly International Tax News Summary"
-                  subheading="International semiconductor market intelligence — NVIDIA, Apple, Intel, ASML, SK Hynix and beyond."
+                <NewsDigestSummaryTab
+                  catgType="intl-tax"
+                  tabTitle="Weekly International Tax News Summary"
+                  tabSubtitle="Every Friday at noon, this digest employs AI to rapidly filter, summarize, and present the latest news on global tax policy changes, international tax regulation updates, and tax disputes."
+                  itemNamePrefix="Weekly International Tax News Summary "
+                  accentColor={NEWS_ACCENT}
                   lang={lang}
-                  periodLabel="Week"
                 />
               )}
             </div>
