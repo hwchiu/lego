@@ -306,26 +306,32 @@ function segPSortKey(calYear: number, calQ: string): number {
 }
 
 // ── Hierarchical segment data structures ──────────────────────────────────────
+// rawValues stores numeric values per period label (before formatting).
+// Parent nodes hold bottom-up aggregated values (sum of children) when children exist.
 
 interface SegLevel3Node {
   level3: string;
-  values: Record<string, string>;
+  rawValues: Record<string, number>;
 }
 
 interface SegLevel2Node {
   level2: string;
-  values: Record<string, string>;
+  /** Effective value: sum of level3 children (if any), else own direct value. */
+  rawValues: Record<string, number>;
   level3Groups: SegLevel3Node[];
 }
 
 interface SegLevel1Node {
   level1: string;
-  values: Record<string, string>;
+  /** Effective value: sum of level2 children (if any), else own direct value. */
+  rawValues: Record<string, number>;
   level2Groups: SegLevel2Node[];
 }
 
 interface SegSaleTypeGroup {
   saleType: string;
+  /** Effective value: sum of all level1 children. */
+  rawValues: Record<string, number>;
   level1Groups: SegLevel1Node[];
 }
 
@@ -352,27 +358,38 @@ function normalizeSegmentLevels(record: SegmentRecord) {
   return { level1, level2, level3 };
 }
 
-function hasSegmentValues(values: Record<string, string>): boolean {
-  return Object.keys(values).length > 0;
-}
-
 /** Produces a collision-safe React key by serializing path parts. */
 function buildSegmentKey(parts: string[]): string {
   return JSON.stringify(parts);
 }
 
-/** Build a nested hierarchy from flat SegmentRecord[]. Preserves insertion order. */
-function buildSegmentHierarchy(records: SegmentRecord[]): SegSaleTypeGroup[] {
+/**
+ * Build a nested hierarchy from flat SegmentRecord[].
+ *
+ * Currency:
+ *   - 'original' → uses `curr_num` (original currency), falls back to `fld_val`
+ *   - 'usd'      → uses `fld_val` (USD)
+ *
+ * Aggregation (bottom-up, no double-counting):
+ *   - Level3 nodes hold raw leaf values.
+ *   - Level2 rawValues = sum of its level3 children (if any), otherwise own direct value.
+ *   - Level1 rawValues = sum of its level2 children (if any), otherwise own direct value.
+ *   - SaleType rawValues = sum of all level1 children.
+ */
+function buildSegmentHierarchy(
+  records: SegmentRecord[],
+  currency: 'original' | 'usd' = 'usd',
+): SegSaleTypeGroup[] {
   const saleTypeOrder: string[] = [];
   const saleTypeMap = new Map<string, {
     level1Order: string[];
     level1Map: Map<string, {
-      values: Record<string, string>;
+      directValues: Record<string, number>;
       level2Order: string[];
       level2Map: Map<string, {
-        values: Record<string, string>;
+        directValues: Record<string, number>;
         level3Order: string[];
-        level3Map: Map<string, Record<string, string>>;
+        level3Map: Map<string, Record<string, number>>;
       }>;
     }>;
   }>();
@@ -383,91 +400,126 @@ function buildSegmentHierarchy(records: SegmentRecord[]): SegSaleTypeGroup[] {
     const { level1, level2, level3 } = normalizeSegmentLevels(record);
     if (!level1) continue;
     const periodLabel = segPLabel(record.calendar_year, record.calendar_quarter);
-    const value = formatSegmentValue(record.fld_val, saleType);
+    const rawVal = currency === 'original'
+      ? (record.curr_num ?? record.fld_val)
+      : record.fld_val;
+    if (rawVal === null || rawVal === undefined) continue;
 
     if (!saleTypeMap.has(saleType)) {
       saleTypeMap.set(saleType, { level1Order: [], level1Map: new Map() });
       saleTypeOrder.push(saleType);
     }
+    const stg = saleTypeMap.get(saleType)!;
 
-    const saleTypeGroup = saleTypeMap.get(saleType)!;
-
-    if (!saleTypeGroup.level1Map.has(level1)) {
-      saleTypeGroup.level1Map.set(level1, { values: {}, level2Order: [], level2Map: new Map() });
-      saleTypeGroup.level1Order.push(level1);
+    if (!stg.level1Map.has(level1)) {
+      stg.level1Map.set(level1, { directValues: {}, level2Order: [], level2Map: new Map() });
+      stg.level1Order.push(level1);
     }
+    const l1g = stg.level1Map.get(level1)!;
 
-    const level1Group = saleTypeGroup.level1Map.get(level1)!;
-
-    // A level1 node may have both direct values and nested level2 children.
     if (!level2) {
-      level1Group.values[periodLabel] = value;
+      l1g.directValues[periodLabel] = rawVal;
       continue;
     }
 
-    if (!level1Group.level2Map.has(level2)) {
-      level1Group.level2Map.set(level2, { values: {}, level3Order: [], level3Map: new Map() });
-      level1Group.level2Order.push(level2);
+    if (!l1g.level2Map.has(level2)) {
+      l1g.level2Map.set(level2, { directValues: {}, level3Order: [], level3Map: new Map() });
+      l1g.level2Order.push(level2);
     }
-
-    const level2Group = level1Group.level2Map.get(level2)!;
+    const l2g = l1g.level2Map.get(level2)!;
 
     if (!level3) {
-      level2Group.values[periodLabel] = value;
+      l2g.directValues[periodLabel] = rawVal;
       continue;
     }
 
-    if (!level2Group.level3Map.has(level3)) {
-      level2Group.level3Map.set(level3, {});
-      level2Group.level3Order.push(level3);
+    if (!l2g.level3Map.has(level3)) {
+      l2g.level3Map.set(level3, {});
+      l2g.level3Order.push(level3);
     }
-
-    level2Group.level3Map.get(level3)![periodLabel] = value;
+    l2g.level3Map.get(level3)![periodLabel] = rawVal;
   }
 
+  // ── Build output with bottom-up aggregation ──
   return saleTypeOrder.map((saleType) => {
-    const saleTypeGroup = saleTypeMap.get(saleType)!;
-    return {
-      saleType,
-      level1Groups: saleTypeGroup.level1Order.map((level1) => {
-        const level1Group = saleTypeGroup.level1Map.get(level1)!;
-        return {
-          level1,
-          values: level1Group.values,
-          level2Groups: level1Group.level2Order.map((level2) => {
-            const level2Group = level1Group.level2Map.get(level2)!;
-            return {
-              level2,
-              values: level2Group.values,
-              level3Groups: level2Group.level3Order.map((level3) => ({
-                level3,
-                values: level2Group.level3Map.get(level3)!,
-              })),
-            };
-          }),
-        };
-      }),
-    };
+    const stg = saleTypeMap.get(saleType)!;
+    const stRaw: Record<string, number> = {};
+
+    const level1Groups: SegLevel1Node[] = stg.level1Order.map((level1) => {
+      const l1g = stg.level1Map.get(level1)!;
+      const l1Raw: Record<string, number> = {};
+
+      const level2Groups: SegLevel2Node[] = l1g.level2Order.map((level2) => {
+        const l2g = l1g.level2Map.get(level2)!;
+        const l2Raw: Record<string, number> = {};
+
+        const level3Groups: SegLevel3Node[] = l2g.level3Order.map((level3) => ({
+          level3,
+          rawValues: l2g.level3Map.get(level3)!,
+        }));
+
+        if (level3Groups.length > 0) {
+          // l2 effective = sum of l3 leaf values
+          for (const l3g of level3Groups) {
+            for (const [p, v] of Object.entries(l3g.rawValues)) {
+              l2Raw[p] = (l2Raw[p] ?? 0) + v;
+            }
+          }
+        } else {
+          Object.assign(l2Raw, l2g.directValues);
+        }
+
+        return { level2, rawValues: l2Raw, level3Groups };
+      });
+
+      if (level2Groups.length > 0) {
+        // l1 effective = sum of l2 effective values
+        for (const l2g of level2Groups) {
+          for (const [p, v] of Object.entries(l2g.rawValues)) {
+            l1Raw[p] = (l1Raw[p] ?? 0) + v;
+          }
+        }
+      } else {
+        Object.assign(l1Raw, l1g.directValues);
+      }
+
+      return { level1, rawValues: l1Raw, level2Groups };
+    });
+
+    // saleType effective = sum of all l1 effective values
+    for (const l1g of level1Groups) {
+      for (const [p, v] of Object.entries(l1g.rawValues)) {
+        stRaw[p] = (stRaw[p] ?? 0) + v;
+      }
+    }
+
+    return { saleType, rawValues: stRaw, level1Groups };
   });
 }
 
 /** Render a single data row for the segment table. */
 function SegDataRow({
   label,
-  values,
+  rawValues,
   periods,
   depth,
+  saleType,
 }: {
   label: string;
-  values: Record<string, string>;
+  rawValues: Record<string, number>;
   periods: string[];
-  depth: 'l1' | 'l2' | 'l3';
+  depth: 'sale-type' | 'l1' | 'l2' | 'l3';
+  saleType: string;
 }) {
+  const isSaleType = depth === 'sale-type';
   return (
-    <tr className="seg-item-row">
-      <td className={`fin-stmt-td-item seg-item-${depth}`}>{label}</td>
+    <tr className={isSaleType ? 'fin-stmt-section-row seg-sale-type-row' : 'seg-item-row'}>
+      <td className={isSaleType ? 'fin-stmt-td-item seg-sale-type-header' : `fin-stmt-td-item seg-item-${depth}`}>
+        {label}
+      </td>
       {periods.map((p) => {
-        const val = values[p] ?? '—';
+        const rawVal = rawValues[p];
+        const val = rawVal != null ? formatSegmentValue(rawVal, saleType) : '—';
         const isNeg = val.startsWith('-') && val !== '-';
         const isPos = val.startsWith('+');
         return (
@@ -480,31 +532,14 @@ function SegDataRow({
   );
 }
 
-function SegGroupRow({
-  label,
-  depth,
-  colSpan,
-}: {
-  label: string;
-  depth: 'l1' | 'l2';
-  colSpan: number;
-}) {
-  return (
-    <tr className="seg-group-row">
-      <td colSpan={colSpan} className={`seg-group-label seg-group-label-${depth}`}>
-        {label}
-      </td>
-    </tr>
-  );
-}
-
 interface SegmentReportTableProps {
   records: SegmentRecord[];
   viewMode: ViewMode;
   yearWindowStart: number;
+  currency: Currency;
 }
 
-function SegmentReportTable({ records, viewMode, yearWindowStart }: SegmentReportTableProps) {
+function SegmentReportTable({ records, viewMode, yearWindowStart, currency }: SegmentReportTableProps) {
   // Filter records to the current view mode / year window
   const filteredRecords = records.filter((r) => {
     if (viewMode === 'annual') return r.calendar_quarter === SEGMENT_ANNUAL_Q;
@@ -532,8 +567,8 @@ function SegmentReportTable({ records, viewMode, yearWindowStart }: SegmentRepor
   }
   const periods = [...periodSet].sort((a, b) => (sortKeyMap.get(a) ?? 0) - (sortKeyMap.get(b) ?? 0));
 
-  // Build hierarchical data structure
-  const hierarchy = buildSegmentHierarchy(filteredRecords);
+  // Build hierarchical data structure (currency-aware, bottom-up aggregated)
+  const hierarchy = buildSegmentHierarchy(filteredRecords, currency);
 
   // Build two-row quarterly header groups
   type Row1Cell =
@@ -596,53 +631,45 @@ function SegmentReportTable({ records, viewMode, yearWindowStart }: SegmentRepor
         <tbody>
           {hierarchy.map((saleTypeGroup) => (
             <React.Fragment key={saleTypeGroup.saleType}>
-              <tr className="fin-stmt-section-row seg-sale-type-row">
-                <td colSpan={colSpanAll} className="fin-stmt-td-section seg-sale-type-header">
-                  {saleTypeGroup.saleType}
-                </td>
-              </tr>
+              {/* sale_type header row — shows aggregated total for all l1 children */}
+              <SegDataRow
+                label={saleTypeGroup.saleType}
+                rawValues={saleTypeGroup.rawValues}
+                periods={periods}
+                depth="sale-type"
+                saleType={saleTypeGroup.saleType}
+              />
 
               {saleTypeGroup.level1Groups.map((level1Group) => (
                 <React.Fragment key={buildSegmentKey([saleTypeGroup.saleType, level1Group.level1])}>
-                  {hasSegmentValues(level1Group.values) ? (
-                    <SegDataRow
-                      label={level1Group.level1}
-                      values={level1Group.values}
-                      periods={periods}
-                      depth="l1"
-                    />
-                  ) : (
-                    <SegGroupRow
-                      label={level1Group.level1}
-                      depth="l1"
-                      colSpan={colSpanAll}
-                    />
-                  )}
+                  {/* l1: aggregated from l2 children (if any), else own direct value */}
+                  <SegDataRow
+                    label={level1Group.level1}
+                    rawValues={level1Group.rawValues}
+                    periods={periods}
+                    depth="l1"
+                    saleType={saleTypeGroup.saleType}
+                  />
 
                   {level1Group.level2Groups.map((level2Group) => (
                     <React.Fragment key={buildSegmentKey([saleTypeGroup.saleType, level1Group.level1, level2Group.level2])}>
-                      {hasSegmentValues(level2Group.values) ? (
-                        <SegDataRow
-                          label={level2Group.level2}
-                          values={level2Group.values}
-                          periods={periods}
-                          depth="l2"
-                        />
-                      ) : (
-                        <SegGroupRow
-                          label={level2Group.level2}
-                          depth="l2"
-                          colSpan={colSpanAll}
-                        />
-                      )}
+                      {/* l2: aggregated from l3 children (if any), else own direct value */}
+                      <SegDataRow
+                        label={level2Group.level2}
+                        rawValues={level2Group.rawValues}
+                        periods={periods}
+                        depth="l2"
+                        saleType={saleTypeGroup.saleType}
+                      />
 
                       {level2Group.level3Groups.map((level3Group) => (
                         <SegDataRow
                           key={buildSegmentKey([saleTypeGroup.saleType, level1Group.level1, level2Group.level2, level3Group.level3])}
                           label={level3Group.level3}
-                          values={level3Group.values}
+                          rawValues={level3Group.rawValues}
                           periods={periods}
                           depth="l3"
+                          saleType={saleTypeGroup.saleType}
                         />
                       ))}
                     </React.Fragment>
@@ -889,6 +916,7 @@ export default function FinancialStatementTab({ symbol, companyStatements: propS
             records={propSegmentRecords!}
             viewMode={viewMode}
             yearWindowStart={simpleYearWindowStart}
+            currency={currency}
           />
         ) : currentTabData?.kind === 'findata' ? (
           <FinDataTable
