@@ -55,10 +55,11 @@ export default function EventCalendarPage() {
       <div className="app-body">
         <Sidebar />
         <main className="main-content">
-          <div className="page-pad">
+          <div className="ec-sticky-header">
             <div className="section-eyebrow">Event Category</div>
             <MarketTabs activeTab={activeTab} onTabChange={handleTabChange} />
-
+          </div>
+          <div className="ec-content-area">
             <CorpEventCategorySection
               eventType={activeTab}
               onDateSelect={handleDateSelect}
