@@ -2,8 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { DYNAMIC_WATCHLIST_IDS } from '@/app/data/watchlistData';
-import { getUserAllWatchlists } from '@/app/lib/watchlistApi';
-import type { ApiWatchlist } from '@/app/lib/watchlistApi';
+import { getUserAllWatchlists, createWatchlistWithCompany } from '@/app/lib/watchlistApi';
+import type { ApiWatchlist, WatchlistCompany } from '@/app/lib/watchlistApi';
 
 // Default watchlist IDs and names (matches navigation.ts sub-items)
 export const WATCHLIST_IDS = [] as const;
@@ -36,6 +36,8 @@ interface WatchlistContextType {
   toggleFavorite: (id: string) => void;
   // API-sourced watchlists (from getUserAllWatchlists)
   apiWatchlists: ApiWatchlist[];
+  // Create a new watchlist via createWatchlistWithCompany API stub
+  createApiWatchlist: (name: string, coCdList: WatchlistCompany[]) => number;
 }
 
 const WatchlistContext = createContext<WatchlistContextType>({
@@ -51,6 +53,7 @@ const WatchlistContext = createContext<WatchlistContextType>({
   favorites: new Set(),
   toggleFavorite: () => {},
   apiWatchlists: [],
+  createApiWatchlist: () => -1,
 });
 
 export function WatchlistProvider({ children }: { children: React.ReactNode }) {
@@ -218,6 +221,18 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
     });
   }
 
+  function createApiWatchlist(name: string, coCdList: WatchlistCompany[]): number {
+    const { watchlistId } = createWatchlistWithCompany({ watchlistName: name, coCdList });
+    if (watchlistId > 0) {
+      // Add to apiWatchlists state so the sidebar updates immediately
+      setApiWatchlists((prev) => [
+        ...prev,
+        { watchlistId, watchlistName: name, isDefault: 'N', defaultViewId: null },
+      ]);
+    }
+    return watchlistId;
+  }
+
   return (
     <WatchlistContext.Provider
       value={{
@@ -233,6 +248,7 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
         favorites,
         toggleFavorite,
         apiWatchlists,
+        createApiWatchlist,
       }}
     >
       {children}
