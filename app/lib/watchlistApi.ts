@@ -18,6 +18,146 @@ import type { HoldingEntity } from '@/app/data/watchlistData';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
+// ── New API Types (getUserAllWatchlists / getWatchlistDetail / getWatchlistData) ──
+
+export interface ApiWatchlist {
+  watchlistId: number;
+  watchlistName: string;
+  isDefault: string;
+  defaultViewId: number | null;
+}
+
+export interface WatchlistCompany {
+  coCd: string;
+  orderIndex: number;
+  isPinned: string;
+}
+
+export interface WatchlistView {
+  viewId: number;
+  viewName: string;
+  isDefaultForWatchlist: string;
+  selectedCategories: number[];
+}
+
+export interface WatchlistDetailResult {
+  watchlistId: number;
+  watchlistName: string;
+  isDefault: string;
+  defaultViewId: number | null;
+  companylist: WatchlistCompany[];
+  viewlist: WatchlistView[];
+}
+
+export interface WatchlistDetailResponse {
+  returnCd: string;
+  returnMsg: string | null;
+  result: WatchlistDetailResult;
+}
+
+export interface WatchlistDataItem {
+  calendar_quarter: string;
+  co_cd: string;
+  fld_val: string | number | null;
+  curr_cd: string;
+  fiscal_year: number | null;
+  op_seg: string;
+  val_unit: string;
+  update_dt: string;
+  doc_amt: string | number | null;
+  calendar_year: number;
+  fiscal_quarter: string;
+  rpt_fin_item: string;
+  selectedCategories: number;
+}
+
+export interface GetWatchlistDataParams {
+  watchlistId: number;
+  viewId: number;
+  year: string[];
+  quarter: string[];
+  selectedCategories: number[];
+  co_cd: string[];
+}
+
+export interface CategoryIdEntry {
+  rpt_fin_item: string;
+  label: string;
+  type: 'currency' | 'percentage' | 'string' | 'number';
+}
+
+/** Maps integer selectedCategories ID → display metadata */
+export const WATCHLIST_CATEGORY_ID_MAP: Record<number, CategoryIdEntry> = {
+  1:  { rpt_fin_item: 'Revenue',                   label: 'Revenue',             type: 'currency'   },
+  2:  { rpt_fin_item: 'Revenue QoQ (%)',            label: 'Revenue QoQ',         type: 'percentage' },
+  3:  { rpt_fin_item: 'Revenue YoY (%)',            label: 'Revenue YoY',         type: 'percentage' },
+  4:  { rpt_fin_item: 'Gross Margin (%)',           label: 'Gross Margin',        type: 'percentage' },
+  5:  { rpt_fin_item: 'DOI',                        label: 'DOI',                 type: 'string'     },
+  6:  { rpt_fin_item: 'Next Earning Release',       label: 'Next Earning',        type: 'string'     },
+  7:  { rpt_fin_item: 'Last Qtr Revenue',           label: 'Last Qtr Revenue',    type: 'currency'   },
+  8:  { rpt_fin_item: 'Last Qtr Gross Margin (%)',  label: 'Last Qtr GM',         type: 'percentage' },
+  9:  { rpt_fin_item: 'Last Qtr DOI',               label: 'Last Qtr DOI',        type: 'string'     },
+  10: { rpt_fin_item: 'Operating Margin (%)',       label: 'Operating Margin',    type: 'percentage' },
+  11: { rpt_fin_item: 'Gross Profit',               label: 'Gross Profit',        type: 'currency'   },
+  20: { rpt_fin_item: 'Net Income',                 label: 'Net Income',          type: 'currency'   },
+};
+
+// ── Mock data for new API stubs ──────────────────────────────────────────────
+
+const MOCK_WATCHLISTS: ApiWatchlist[] = [
+  { watchlistId: 0, watchlistName: 'Third Test',          isDefault: 'N', defaultViewId: null },
+  { watchlistId: 1, watchlistName: 'Chocy Test Function', isDefault: 'N', defaultViewId: null },
+];
+
+const MOCK_WATCHLIST_DETAILS: Record<number, WatchlistDetailResult> = {
+  0: {
+    watchlistId: 0,
+    watchlistName: 'Third Test',
+    isDefault: 'N',
+    defaultViewId: null,
+    companylist: [
+      { coCd: 'AAPL',  orderIndex: 0, isPinned: 'N' },
+      { coCd: 'NVDA',  orderIndex: 1, isPinned: 'N' },
+      { coCd: 'TSLA',  orderIndex: 2, isPinned: 'N' },
+      { coCd: 'GOOGL', orderIndex: 3, isPinned: 'N' },
+    ],
+    viewlist: [
+      { viewId: 0, viewName: 'Summary', isDefaultForWatchlist: 'Y', selectedCategories: [1, 2, 3, 4, 5, 6, 20, 8, 11] },
+    ],
+  },
+  1: {
+    watchlistId: 1,
+    watchlistName: 'Chocy Test Function',
+    isDefault: 'N',
+    defaultViewId: null,
+    companylist: [
+      { coCd: 'TSLA',  orderIndex: 0, isPinned: 'N' },
+      { coCd: 'NVDA',  orderIndex: 1, isPinned: 'N' },
+      { coCd: 'MSFT',  orderIndex: 2, isPinned: 'N' },
+      { coCd: 'AMZN',  orderIndex: 3, isPinned: 'N' },
+    ],
+    viewlist: [
+      { viewId: 0, viewName: 'Summary', isDefaultForWatchlist: 'Y', selectedCategories: [1, 2, 3, 4, 5, 6, 20, 8, 11] },
+    ],
+  },
+};
+
+// Maps category ID to a getter function on HoldingEntity
+const CATEGORY_TO_HOLDING_FIELD: Record<number, (h: HoldingEntity) => string | number | null> = {
+  1:  (h) => h.revenue,
+  2:  (h) => h.revenueQoQ,
+  3:  (h) => h.revenueYoY,
+  4:  (h) => h.grossMargin,
+  5:  (h) => h.doi,
+  6:  (h) => h.nextEarning,
+  7:  (h) => h.lastQtrRevenue,
+  8:  (h) => h.lastQtrGrossMargin,
+  9:  (h) => h.lastQtrDOI,
+  10: () => null,
+  11: () => null,
+  20: () => null,
+};
+
 export interface ColumnMeta {
   id: string;
   label: string;
@@ -426,4 +566,79 @@ export async function updateWatchlistInfo(
 ): Promise<{ success: boolean }> {
   console.log('[API stub] updateWatchlistInfo', { _userAcct, _watchlistId, _name, _symbolOrder });
   return { success: true };
+}
+
+// ─── New Watchlist API Stubs ─────────────────────────────────────────────────
+
+/**
+ * Get all watchlists for a user account.
+ * Stub — returns mock data; replace with real API call when backend is ready.
+ */
+export function getUserAllWatchlists(_userAcct: string): { result: ApiWatchlist[] } {
+  console.log('[API stub] getUserAllWatchlists', { _userAcct });
+  return { result: MOCK_WATCHLISTS };
+}
+
+/**
+ * Get detail for a specific watchlist, including companylist and viewlist.
+ * Stub — returns mock data keyed by watchlistId.
+ */
+export function getWatchlistDetail(watchlistId: number): WatchlistDetailResponse {
+  console.log('[API stub] getWatchlistDetail', { watchlistId });
+  const result: WatchlistDetailResult = MOCK_WATCHLIST_DETAILS[watchlistId] ?? {
+    watchlistId,
+    watchlistName: `Watchlist ${watchlistId}`,
+    isDefault: 'N',
+    defaultViewId: null,
+    companylist: [],
+    viewlist: [
+      { viewId: 0, viewName: 'Summary', isDefaultForWatchlist: 'Y', selectedCategories: [1, 2, 3, 4, 5, 6, 20, 8, 11] },
+    ],
+  };
+  return { returnCd: '200', returnMsg: null, result };
+}
+
+/**
+ * Get watchlist table data as a flat array.
+ * Returns one record per (company × selectedCategory), ordered by co_cd then category.
+ * Stub — converts existing HoldingEntity data to the new flat format.
+ */
+export function getWatchlistData(params: GetWatchlistDataParams): WatchlistDataItem[] {
+  console.log('[API stub] getWatchlistData', params);
+  const { selectedCategories, co_cd, quarter, year } = params;
+  const isQ4 = year[0] === '2025' && quarter[0] === 'Q4';
+  const source = isQ4 ? holdingsDataQ4_2025 : holdingsDataMap;
+
+  const nowStr = new Date().toISOString().replace('T', ' ').slice(0, 23);
+  const calYear = isQ4 ? 2025 : 2026;
+  const calQ = quarter[0] ?? 'Q1';
+
+  const items: WatchlistDataItem[] = [];
+
+  for (const coCd of co_cd) {
+    const holding = source[coCd];
+    for (const catId of selectedCategories) {
+      const meta = WATCHLIST_CATEGORY_ID_MAP[catId];
+      if (!meta) continue;
+      const fieldFn = CATEGORY_TO_HOLDING_FIELD[catId];
+      const fldVal = (holding && fieldFn) ? fieldFn(holding) : null;
+      items.push({
+        calendar_quarter: calQ,
+        co_cd: coCd,
+        fld_val: fldVal,
+        curr_cd: 'USD',
+        fiscal_year: calYear,
+        op_seg: 'NA',
+        val_unit: meta.type === 'currency' ? 'Billion' : meta.type === 'percentage' ? '%' : '',
+        update_dt: nowStr,
+        doc_amt: fldVal,
+        calendar_year: calYear,
+        fiscal_quarter: calQ,
+        rpt_fin_item: meta.rpt_fin_item,
+        selectedCategories: catId,
+      });
+    }
+  }
+
+  return items;
 }

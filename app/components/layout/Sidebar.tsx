@@ -96,7 +96,7 @@ function SubMenu({
   onMouseLeave: () => void;
 }) {
   const [top, setTop] = useState(0);
-  const { watchlistNames, dynamicWatchlists, deletedWatchlists, favorites, toggleFavorite } = useWatchlist();
+  const { watchlistNames, dynamicWatchlists, deletedWatchlists, favorites, toggleFavorite, apiWatchlists } = useWatchlist();
   const { lang } = useLanguage();
 
   useEffect(() => {
@@ -117,86 +117,121 @@ function SubMenu({
 
   return (
     <div className="sidebar-submenu" style={{ top }} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-      {visibleItems.map((item) => {
-        const defaultLabel = item.watchlistId ? (watchlistNames[item.watchlistId] ?? item.label) : item.label;
-        const displayLabel = lang === 'zh' ? t(defaultLabel, 'zh') : defaultLabel;
-        const isFav = item.watchlistId ? favorites.has(item.watchlistId) : false;
-        return (
-          <React.Fragment key={item.label}>
-            {item.dividerBefore && isWatchlistMenu && visibleDynamic.length > 0 && (
-              // Dynamic watchlists are injected before the divider/create item
-              <>
-                {visibleDynamic.map((wl) => (
-                  <div key={wl.id} className="sidebar-submenu-item sidebar-submenu-item--with-star">
-                    <StarIcon
-                      filled={favorites.has(wl.id)}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        toggleFavorite(wl.id);
-                      }}
-                    />
-                    <Link href={`/watchlist/${wl.id}`} className="sidebar-submenu-item-link">
-                      <span className="sidebar-submenu-label">
-                        {watchlistNames[wl.id] ?? wl.name}
-                      </span>
-                    </Link>
-                  </div>
-                ))}
-                <div className="sidebar-submenu-divider" />
-              </>
-            )}
-            {item.dividerBefore && !isWatchlistMenu && <div className="sidebar-submenu-divider" />}
-            {item.dividerBefore && isWatchlistMenu && visibleDynamic.length === 0 && (
-              <div className="sidebar-submenu-divider" />
-            )}
-            <div
-              className={`sidebar-submenu-item${item.watchlistId ? ' sidebar-submenu-item--with-star' : ''}`}
+      {isWatchlistMenu ? (
+        <>
+          {/* Fixed: Favorites with a filled star icon */}
+          <div className="sidebar-submenu-item sidebar-submenu-item--watchlist-fixed">
+            <svg
+              viewBox="0 0 14 14"
+              width="12"
+              height="12"
+              fill="none"
+              aria-hidden="true"
+              className="sidebar-watchlist-star"
             >
-              {item.watchlistId && (
-                <StarIcon
-                  filled={isFav}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    toggleFavorite(item.watchlistId!);
-                  }}
-                />
-              )}
-              <Link
-                href={item.href}
-                className={item.watchlistId ? 'sidebar-submenu-item-link' : 'sidebar-submenu-item-link sidebar-submenu-item-link--full'}
+              <path
+                d="M7 1.5l1.5 3.3L12.5 5l-2.5 2.6.6 3.7L7 9.6l-3.6 1.7.6-3.7L1.5 5l3.8-.7z"
+                fill="#f59e0b"
+                stroke="#f59e0b"
+                strokeWidth="1.1"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <Link href="/watchlist/favorites/" className="sidebar-submenu-item-link sidebar-submenu-item-link--full">
+              <span className="sidebar-submenu-label">{lang === 'zh' ? '我的最愛' : 'Favorites'}</span>
+            </Link>
+          </div>
+
+          {/* API-sourced user watchlists, sorted by watchlistId ascending */}
+          {[...apiWatchlists]
+            .sort((a, b) => a.watchlistId - b.watchlistId)
+            .map((wl) => (
+              <div key={wl.watchlistId} className="sidebar-submenu-item">
+                <Link
+                  href={`/watchlist/?id=${wl.watchlistId}`}
+                  className="sidebar-submenu-item-link sidebar-submenu-item-link--full"
+                >
+                  <span className="sidebar-submenu-label">{wl.watchlistName}</span>
+                </Link>
+              </div>
+            ))}
+
+          {/* Divider before Create Watchlist */}
+          <div className="sidebar-submenu-divider" />
+
+          {/* Fixed: Create Watchlist with plain add icon on the left */}
+          <div className="sidebar-submenu-item sidebar-submenu-item--create-wl">
+            <Link href="/watchlist/create" className="sidebar-submenu-item-link sidebar-submenu-item-link--full">
+              <svg
+                className="sidebar-submenu-icon-left"
+                viewBox="0 0 14 14"
+                fill="none"
+                width="13"
+                height="13"
+                aria-hidden="true"
               >
-                {item.icon && !item.watchlistId && (
-                  <svg
-                    className="sidebar-submenu-item-icon"
-                    viewBox="0 0 14 14"
-                    fill="none"
-                    width="13"
-                    height="13"
-                    aria-hidden="true"
-                    dangerouslySetInnerHTML={{ __html: sidebarIcons[item.icon] ?? '' }}
+                <path d="M7 2V12M2 7H12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              </svg>
+              <span className="sidebar-submenu-label">{lang === 'zh' ? '建立觀察清單' : 'Create Watchlist'}</span>
+            </Link>
+          </div>
+        </>
+      ) : (
+        visibleItems.map((item) => {
+          const defaultLabel = item.watchlistId ? (watchlistNames[item.watchlistId] ?? item.label) : item.label;
+          const displayLabel = lang === 'zh' ? t(defaultLabel, 'zh') : defaultLabel;
+          const isFav = item.watchlistId ? favorites.has(item.watchlistId) : false;
+          return (
+            <React.Fragment key={item.label}>
+              {item.dividerBefore && !isWatchlistMenu && <div className="sidebar-submenu-divider" />}
+              <div
+                className={`sidebar-submenu-item${item.watchlistId ? ' sidebar-submenu-item--with-star' : ''}`}
+              >
+                {item.watchlistId && (
+                  <StarIcon
+                    filled={isFav}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      toggleFavorite(item.watchlistId!);
+                    }}
                   />
                 )}
-                <span className="sidebar-submenu-label">{displayLabel}</span>
-                {item.iconRight === 'add' && (
-                  <svg
-                    className="sidebar-submenu-icon-right"
-                    viewBox="0 0 14 14"
-                    fill="none"
-                    width="13"
-                    height="13"
-                    aria-hidden="true"
-                  >
-                    <rect x="1" y="1" width="12" height="12" rx="2" fill="currentColor" fillOpacity="0.18" />
-                    <path d="M7 4V10M4 7H10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-                  </svg>
-                )}
-              </Link>
-            </div>
-          </React.Fragment>
-        );
-      })}
+                <Link
+                  href={item.href}
+                  className={item.watchlistId ? 'sidebar-submenu-item-link' : 'sidebar-submenu-item-link sidebar-submenu-item-link--full'}
+                >
+                  {item.icon && !item.watchlistId && (
+                    <svg
+                      className="sidebar-submenu-item-icon"
+                      viewBox="0 0 14 14"
+                      fill="none"
+                      width="13"
+                      height="13"
+                      aria-hidden="true"
+                      dangerouslySetInnerHTML={{ __html: sidebarIcons[item.icon] ?? '' }}
+                    />
+                  )}
+                  <span className="sidebar-submenu-label">{displayLabel}</span>
+                  {item.iconRight === 'add' && (
+                    <svg
+                      className="sidebar-submenu-icon-right"
+                      viewBox="0 0 14 14"
+                      fill="none"
+                      width="13"
+                      height="13"
+                      aria-hidden="true"
+                    >
+                      <rect x="1" y="1" width="12" height="12" rx="2" fill="currentColor" fillOpacity="0.18" />
+                      <path d="M7 4V10M4 7H10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                    </svg>
+                  )}
+                </Link>
+              </div>
+            </React.Fragment>
+          );
+        })
+      )}
     </div>
   );
 }

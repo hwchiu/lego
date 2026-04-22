@@ -1180,6 +1180,25 @@ input, select { font-family: var(--font); }
   padding: 5px 10px 5px 8px;
   gap: 4px;
 }
+/* Watchlist fixed items (Favorites, Create Watchlist) */
+.sidebar-submenu-item--watchlist-fixed {
+  padding: 5px 10px 5px 8px;
+  gap: 6px;
+}
+.sidebar-submenu-item--create-wl {
+  padding: 5px 10px 5px 8px;
+  gap: 0;
+}
+/* Filled star icon for Favorites entry */
+.sidebar-watchlist-star {
+  flex-shrink: 0;
+}
+/* Add icon on left for Create Watchlist */
+.sidebar-submenu-icon-left {
+  flex-shrink: 0;
+  margin-right: 4px;
+  color: rgba(255,255,255,0.7);
+}
 .sidebar-submenu-item-link {
   display: flex;
   align-items: center;

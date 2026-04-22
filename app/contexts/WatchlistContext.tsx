@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { DYNAMIC_WATCHLIST_IDS } from '@/app/data/watchlistData';
+import { getUserAllWatchlists } from '@/app/lib/watchlistApi';
+import type { ApiWatchlist } from '@/app/lib/watchlistApi';
 
 // Default watchlist IDs and names (matches navigation.ts sub-items)
 export const WATCHLIST_IDS = [] as const;
@@ -22,7 +24,7 @@ interface WatchlistContextType {
   setWatchlistName: (id: string, name: string) => void;
   symbolOrders: Record<string, string[]>;
   setSymbolOrder: (id: string, order: string[]) => void;
-  // Dynamic watchlists (user-created)
+  // Dynamic watchlists (user-created, localStorage-based)
   dynamicWatchlists: DynamicWatchlist[];
   addWatchlist: (name: string, symbols: string[]) => string;
   removeWatchlist: (id: string) => void;
@@ -32,6 +34,8 @@ interface WatchlistContextType {
   // Favorites
   favorites: Set<string>;
   toggleFavorite: (id: string) => void;
+  // API-sourced watchlists (from getUserAllWatchlists)
+  apiWatchlists: ApiWatchlist[];
 }
 
 const WatchlistContext = createContext<WatchlistContextType>({
@@ -46,6 +50,7 @@ const WatchlistContext = createContext<WatchlistContextType>({
   deleteWatchlist: () => {},
   favorites: new Set(),
   toggleFavorite: () => {},
+  apiWatchlists: [],
 });
 
 export function WatchlistProvider({ children }: { children: React.ReactNode }) {
@@ -54,6 +59,7 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
   const [dynamicWatchlists, setDynamicWatchlists] = useState<DynamicWatchlist[]>([]);
   const [deletedWatchlists, setDeletedWatchlists] = useState<Set<string>>(new Set());
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [apiWatchlists, setApiWatchlists] = useState<ApiWatchlist[]>([]);
   const [hydrated, setHydrated] = useState(false);
 
   // Load from localStorage on mount
@@ -83,6 +89,12 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
       // ignore parse errors
     }
     setHydrated(true);
+  }, []);
+
+  // Load API watchlists on mount
+  useEffect(() => {
+    const { result } = getUserAllWatchlists('demoUser');
+    setApiWatchlists(result);
   }, []);
 
   // Persist names to localStorage when they change (after hydration)
@@ -220,6 +232,7 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
         deleteWatchlist,
         favorites,
         toggleFavorite,
+        apiWatchlists,
       }}
     >
       {children}
