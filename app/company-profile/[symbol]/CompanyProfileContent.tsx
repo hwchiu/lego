@@ -484,6 +484,10 @@ function StarIcon({ filled }: { filled: boolean }) {
 
 // ── Main Component ───────────────────────────────────────────────────────────
 
+// ── Constants ─────────────────────────────────────────────────────────────────
+
+const USER_ACCT = 'demoUser';
+
 interface CompanyProfileContentProps {
   symbol: string;
 }
@@ -671,7 +675,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
 
   // Load favorites using API on mount / symbol change
   useEffect(() => {
-    getAllCoFavoriteList('demoUser').then((res) => {
+    getAllCoFavoriteList(USER_ACCT).then((res) => {
       setIsFavorite(res.co_cd.includes(symbol));
     }).catch(() => {
       // ignore
@@ -685,7 +689,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
       } else {
         await addCompanyToMyFavorite(symbol);
       }
-      const res = await getAllCoFavoriteList('demoUser');
+      const res = await getAllCoFavoriteList(USER_ACCT);
       setIsFavorite(res.co_cd.includes(symbol));
     } catch {
       // ignore

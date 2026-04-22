@@ -104,6 +104,9 @@ export function buildRecentQuarters(): { year: number; q: number }[] {
 
 // ─── API Functions ──────────────────────────────────────────────────────────
 
+/** Stub user account used by add/remove favorites stubs (no userAcct parameter per API spec). */
+const STUB_USER_ACCT = 'demoUser';
+
 /**
  * Get the list of favourite company codes for a user account.
  * Delegates to the existing getFavoritesByUserAcct implementation.
@@ -131,7 +134,7 @@ export async function getAllCoFavoriteList(userAcct: string): Promise<{ co_cd: s
 export async function addCompanyToMyFavorite(company: string): Promise<{ success: boolean }> {
   console.log('[API stub] addCompanyToMyFavorite', { company });
   if (typeof window === 'undefined') return { success: true };
-  const current = getFavoritesByUserAcct('demoUser');
+  const current = getFavoritesByUserAcct(STUB_USER_ACCT);
   if (!current.includes(company)) {
     setFavoritesInPersonality([...current, company]);
   }
@@ -146,7 +149,7 @@ export async function addCompanyToMyFavorite(company: string): Promise<{ success
 export async function removeCompanyFromFavorite(company: string): Promise<{ success: boolean }> {
   console.log('[API stub] removeCompanyFromFavorite', { company });
   if (typeof window === 'undefined') return { success: true };
-  const current = getFavoritesByUserAcct('demoUser');
+  const current = getFavoritesByUserAcct(STUB_USER_ACCT);
   setFavoritesInPersonality(current.filter((s) => s !== company));
   return { success: true };
 }
