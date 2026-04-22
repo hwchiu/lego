@@ -20,7 +20,7 @@ const CAT_IMAGES: Record<string, string> = {
   'industry-information': 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=900&q=80',
   'company-operations': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=900&q=80',
   'capital-markets': 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80',
-  'news-summary': 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=900&q=80',
+  'news-summary': 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=900&q=80',
 };
 
 function formatDate(iso: string): string {
@@ -1162,119 +1162,89 @@ function GovLaborTab({ lang }: { lang: 'zh' | 'en' }) {
 
 const NEWS_ACCENT = '#0ea5e9';
 
-const NEWS_COMPANIES = [
-  { id: 'TSMC',    label: 'TSMC',     tags: ['TSMC', 'TC'] },
-  { id: 'NVIDIA',  label: 'NVIDIA',   tags: ['NVIDIA', 'NVDA'] },
-  { id: 'Apple',   label: 'Apple',    tags: ['Apple', 'AAPL'] },
-  { id: 'Intel',   label: 'Intel',    tags: ['Intel', 'INTC'] },
-];
+// Tag sets for each digest category
+const ESG_TAGS = new Set(['Regulation', 'Export Control', 'BIS', 'Defense', 'US Policy', 'Battery', 'SEMI', 'Market', 'Forecast', 'Equipment', 'Lithography', 'EUV']);
+const TAIWAN_TAGS = new Set(['TSMC', 'Taiwan', 'Japan', 'JASM', 'Arizona', 'Fab 21', '12nm', '2nm', 'TC', 'CoWoS', 'Production', 'Supply Chain']);
+const INTL_TAGS = new Set(['NVIDIA', 'Apple', 'AAPL', 'Intel', 'INTC', 'ASML', 'SK Hynix', 'HBM4', 'Blackwell', 'GPU', 'Qualcomm', 'Broadcom', 'Samsung SDI', 'Memory', 'Recovery', 'Orders', 'AI', 'Data Center', 'Earnings']);
 
-const NEWS_TOPICS = [
-  { id: 'earnings',    label: 'Earnings & Revenue',  tags: ['Earnings', 'Revenue'] },
-  { id: 'ai',          label: 'AI & Computing',       tags: ['AI', 'GPU', 'HBM4', 'Blackwell'] },
-  { id: 'supply',      label: 'Supply Chain',         tags: ['Supply Chain', 'ASML', 'SK Hynix', 'Samsung SDI', 'CoWoS'] },
-  { id: 'policy',      label: 'Policy & Regulation',  tags: ['US Policy', 'Export Control', 'Regulation', 'Defense', 'BIS'] },
-  { id: 'fab',         label: 'Fab & Manufacturing',  tags: ['Production', 'Arizona', 'Fab 21', 'Japan', 'JASM', '2nm', '12nm'] },
-  { id: 'market',      label: 'Market & Investment',  tags: ['Market', 'Forecast', 'Orders', 'Equipment', 'Recovery', 'Memory'] },
-];
-
-function NewsByCompanyTab({ items, lang }: { items: DataItem[]; lang: 'zh' | 'en' }) {
-  const [selectedCompany, setSelectedCompany] = useState<string>('TSMC');
-  const zh = lang === 'zh';
-
-  const filteredItems = useMemo(() => {
-    const co = NEWS_COMPANIES.find((c) => c.id === selectedCompany);
-    if (!co) return [];
-    return items
-      .filter((item) => co.tags.some((tag) => item.tags.includes(tag) || item.title.toLowerCase().includes(tag.toLowerCase()) || item.summary.toLowerCase().includes(tag.toLowerCase())))
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [items, selectedCompany]);
-
-  return (
-    <div className="de-esg-layout">
-      <nav className="de-esg-sidebar" aria-label={zh ? '公司列表' : 'Company list'}>
-        <div className="de-esg-sidebar-title">{zh ? '公司' : 'Company'}</div>
-        {NEWS_COMPANIES.map((co) => (
-          <button
-            key={co.id}
-            className={`de-esg-sidebar-item${selectedCompany === co.id ? ' active' : ''}`}
-            style={selectedCompany === co.id ? { borderLeftColor: NEWS_ACCENT, color: NEWS_ACCENT } : {}}
-            onClick={() => setSelectedCompany(co.id)}
-          >
-            <span className="de-esg-sidebar-item-name">{co.label}</span>
-          </button>
-        ))}
-      </nav>
-      <div className="de-esg-content">
-        <div className="de-esg-reports-section-header">
-          <span className="de-esg-reports-company-badge" style={{ background: `${NEWS_ACCENT}18`, color: NEWS_ACCENT }}>
-            {selectedCompany}
-          </span>
-          <div className="de-esg-reports-section-titles">
-            <span className="de-esg-reports-section-title">{filteredItems.length} {zh ? '篇新聞' : 'articles'}</span>
-          </div>
-        </div>
-        {filteredItems.length === 0 ? (
-          <div className="de-empty">{zh ? '此公司暫無相關新聞' : 'No articles found for this company.'}</div>
-        ) : (
-          <div className="de-items-list">
-            {filteredItems.map((item) => (
-              <DataItemCard key={item.id} item={item} accentColor={NEWS_ACCENT} />
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
+function newsMatchesSet(item: DataItem, tagSet: Set<string>): boolean {
+  return item.tags.some((t) => tagSet.has(t));
 }
 
-function NewsByTopicTab({ items, lang }: { items: DataItem[]; lang: 'zh' | 'en' }) {
-  const [selectedTopic, setSelectedTopic] = useState<string>('earnings');
+interface NewsDigestTabProps {
+  items: DataItem[];
+  tagSet: Set<string>;
+  heading: string;
+  subheading: string;
+  lang: 'zh' | 'en';
+  periodLabel: string;
+}
+
+function NewsDigestTab({ items, tagSet, heading, subheading, lang, periodLabel }: NewsDigestTabProps) {
   const zh = lang === 'zh';
 
-  const filteredItems = useMemo(() => {
-    const topic = NEWS_TOPICS.find((t) => t.id === selectedTopic);
-    if (!topic) return [];
+  // Group articles into biweekly / weekly periods based on date
+  const filtered = useMemo(() => {
     return items
-      .filter((item) => topic.tags.some((tag) => item.tags.includes(tag) || item.title.toLowerCase().includes(tag.toLowerCase()) || item.summary.toLowerCase().includes(tag.toLowerCase())))
+      .filter((item) => newsMatchesSet(item, tagSet))
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [items, selectedTopic]);
+  }, [items, tagSet]);
 
-  const topicLabel = NEWS_TOPICS.find((t) => t.id === selectedTopic)?.label ?? '';
+  // Group by 2-week periods (using ISO year-week, rounded to biweekly)
+  const groups = useMemo(() => {
+    const map = new Map<string, DataItem[]>();
+    filtered.forEach((item) => {
+      const d = new Date(item.date);
+      const weekOfYear = Math.ceil(((d.getTime() - new Date(d.getFullYear(), 0, 1).getTime()) / 86400000 + new Date(d.getFullYear(), 0, 1).getDay() + 1) / 7);
+      const periodNum = Math.ceil(weekOfYear / 2);
+      const key = `${d.getFullYear()} — ${periodLabel} ${periodNum}`;
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(item);
+    });
+    return Array.from(map.entries()).sort((a, b) => b[0].localeCompare(a[0]));
+  }, [filtered, periodLabel]);
+
+  const [activePeriod, setActivePeriod] = useState<string>(() => groups[0]?.[0] ?? '');
+  // sync if groups change
+  const activePeriodFinal = activePeriod || groups[0]?.[0] || '';
+
+  const activeItems = groups.find(([key]) => key === activePeriodFinal)?.[1] ?? filtered;
 
   return (
-    <div className="de-esg-layout">
-      <nav className="de-esg-sidebar" aria-label={zh ? '主題列表' : 'Topic list'}>
-        <div className="de-esg-sidebar-title">{zh ? '主題' : 'Topic'}</div>
-        {NEWS_TOPICS.map((topic) => (
-          <button
-            key={topic.id}
-            className={`de-esg-sidebar-item${selectedTopic === topic.id ? ' active' : ''}`}
-            style={selectedTopic === topic.id ? { borderLeftColor: NEWS_ACCENT, color: NEWS_ACCENT } : {}}
-            onClick={() => setSelectedTopic(topic.id)}
-          >
-            <span className="de-esg-sidebar-item-name">{topic.label}</span>
-          </button>
-        ))}
-      </nav>
-      <div className="de-esg-content">
-        <div className="de-esg-reports-section-header">
-          <span className="de-esg-reports-company-badge" style={{ background: `${NEWS_ACCENT}18`, color: NEWS_ACCENT }}>
-            {topicLabel}
-          </span>
-          <div className="de-esg-reports-section-titles">
-            <span className="de-esg-reports-section-title">{filteredItems.length} {zh ? '篇新聞' : 'articles'}</span>
-          </div>
+    <div className="de-tax-news-wrap">
+      <div className="de-tax-news-header">
+        <div className="de-tax-news-title" style={{ color: NEWS_ACCENT }}>{heading}</div>
+        <div className="de-tax-news-sub">{subheading}</div>
+      </div>
+      <div className="de-intl-tax-layout">
+        <nav className="de-intl-tax-sidebar" aria-label="Period list">
+          <div className="de-intl-tax-sidebar-title">{zh ? '期間' : 'Period'}</div>
+          {groups.length === 0 && (
+            <div className="de-intl-tax-sidebar-item" style={{ opacity: 0.5 }}>—</div>
+          )}
+          {groups.map(([key, grpItems]) => (
+            <button
+              key={key}
+              className={`de-intl-tax-sidebar-item${activePeriodFinal === key ? ' active' : ''}`}
+              style={activePeriodFinal === key ? { borderLeftColor: NEWS_ACCENT, color: NEWS_ACCENT } : {}}
+              onClick={() => setActivePeriod(key)}
+            >
+              <span className="de-intl-tax-sidebar-item-name">{key}</span>
+              <span className="de-intl-tax-sidebar-item-count">{grpItems.length}</span>
+            </button>
+          ))}
+        </nav>
+        <div className="de-intl-tax-content">
+          {(groups.length === 0 ? filtered : activeItems).length === 0 ? (
+            <div className="de-intl-tax-empty">{zh ? '暫無相關新聞' : 'No articles found.'}</div>
+          ) : (
+            <div className="de-items-list">
+              {(groups.length === 0 ? filtered : activeItems).map((item) => (
+                <DataItemCard key={item.id} item={item} accentColor={NEWS_ACCENT} />
+              ))}
+            </div>
+          )}
         </div>
-        {filteredItems.length === 0 ? (
-          <div className="de-empty">{zh ? '此主題暫無相關新聞' : 'No articles found for this topic.'}</div>
-        ) : (
-          <div className="de-items-list">
-            {filteredItems.map((item) => (
-              <DataItemCard key={item.id} item={item} accentColor={NEWS_ACCENT} />
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );
@@ -1311,12 +1281,12 @@ export default function DataCategoryContent({ params }: { params: { category: st
   ];
 
   const NEWS_SUMMARY_TABS = [
-    { id: 'articles',      label: lang === 'zh' ? '新聞摘要' : 'News Articles' },
-    { id: 'by-company',    label: lang === 'zh' ? '依公司分類' : 'By Company' },
-    { id: 'by-category',   label: lang === 'zh' ? '依主題分類' : 'By Topic' },
+    { id: 'biweekly-esg',  label: lang === 'zh' ? '雙週ESG新聞摘要' : 'Bi-weekly ESG News Summary' },
+    { id: 'taiwan-news',   label: lang === 'zh' ? '每週台灣稅務快訊' : 'Weekly Taiwan Tax News Summary' },
+    { id: 'intl-news',     label: lang === 'zh' ? '每週國際稅務快訊' : 'Weekly International Tax News Summary' },
   ];
 
-  const defaultTab = isCapital ? 'daily-quotes' : 'articles';
+  const defaultTab = isCapital ? 'daily-quotes' : isNewsSummary ? 'biweekly-esg' : 'articles';
   const [activeSubTab, setActiveSubTab] = useState(defaultTab);
 
   const hasSubTabs = isEsg || isGov || isCapital || isNewsSummary;
@@ -1455,8 +1425,36 @@ export default function DataCategoryContent({ params }: { params: { category: st
               {activeSubTab === 'labor-violations'      && isGov  && <GovLaborTab lang={lang} />}
 
               {/* News Summary tabs */}
-              {activeSubTab === 'by-company'  && isNewsSummary && <NewsByCompanyTab items={cat.items} lang={lang} />}
-              {activeSubTab === 'by-category' && isNewsSummary && <NewsByTopicTab items={cat.items} lang={lang} />}
+              {activeSubTab === 'biweekly-esg' && isNewsSummary && (
+                <NewsDigestTab
+                  items={cat.items}
+                  tagSet={ESG_TAGS}
+                  heading="Bi-weekly ESG News Summary"
+                  subheading="Curated ESG, regulatory, and policy-related semiconductor industry news — updated every two weeks."
+                  lang={lang}
+                  periodLabel="Biweek"
+                />
+              )}
+              {activeSubTab === 'taiwan-news' && isNewsSummary && (
+                <NewsDigestTab
+                  items={cat.items}
+                  tagSet={TAIWAN_TAGS}
+                  heading="Weekly Taiwan Tax News Summary"
+                  subheading="Taiwan-focused semiconductor industry highlights — TSMC operations, domestic policy, and fab updates."
+                  lang={lang}
+                  periodLabel="Week"
+                />
+              )}
+              {activeSubTab === 'intl-news' && isNewsSummary && (
+                <NewsDigestTab
+                  items={cat.items}
+                  tagSet={INTL_TAGS}
+                  heading="Weekly International Tax News Summary"
+                  subheading="International semiconductor market intelligence — NVIDIA, Apple, Intel, ASML, SK Hynix and beyond."
+                  lang={lang}
+                  periodLabel="Week"
+                />
+              )}
             </div>
           </div>
         </main>

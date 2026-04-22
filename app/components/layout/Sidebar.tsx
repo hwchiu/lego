@@ -207,8 +207,12 @@ function QuickLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
   const isUpcoming = item.badgeStyle === 'coming-soon';
   if (isUpcoming) {
     return (
-      <span
+      <a
+        href={item.href}
         className="sidebar-quick-link sidebar-nav-upcoming"
+        onClick={(e) => e.preventDefault()}
+        tabIndex={-1}
+        aria-disabled="true"
         title={collapsed ? displayLabel : undefined}
       >
         <NavIcon iconKey={item.icon} />
@@ -216,7 +220,7 @@ function QuickLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
         {!collapsed && item.badge && (
           <span className="badge-coming-soon">{item.badge}</span>
         )}
-      </span>
+      </a>
     );
   }
   return (
@@ -313,8 +317,14 @@ function NavItemRow({
       onMouseLeave={!isUpcoming ? scheduleClose : undefined}
     >
       {isUpcoming ? (
-        <span
+        // Render as <a> to inherit .sidebar-nav a styles (color, font, flex layout).
+        // Pointer-events are disabled via CSS .sidebar-nav-upcoming.
+        <a
           className={isActive ? 'active sidebar-nav-upcoming' : 'sidebar-nav-upcoming'}
+          href={item.href}
+          onClick={(e) => e.preventDefault()}
+          tabIndex={-1}
+          aria-disabled="true"
           title={collapsed ? displayLabel : undefined}
         >
           <NavIcon iconKey={item.icon} />
@@ -322,7 +332,7 @@ function NavItemRow({
           {!collapsed && item.badge && (
             <span className="badge-coming-soon">{item.badge}</span>
           )}
-        </span>
+        </a>
       ) : (
         <Link
           href={item.href}
