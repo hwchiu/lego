@@ -713,7 +713,7 @@ export default function FinancialStatementTab({ symbol, companyStatements: propS
           />
         ) : currentTabData?.kind === 'findata' ? (
           <FinDataTable
-            data={currentTabData.data}
+            data={(currency === 'original' && currentTabData.docAmtData) ? currentTabData.docAmtData : currentTabData.data}
             viewMode={viewMode}
             yearWindowStart={simpleYearWindowStart}
           />

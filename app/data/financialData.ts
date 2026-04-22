@@ -119,9 +119,37 @@ function parsePeriodSortKey(p: string): number {
  * filtering to records whose rpt_fin_type matches `type`.
  * Period ordering: annual first (chronological), then quarterly (chronological).
  */
+/**
+ * Format a FlatFinRecord's doc_amt as a display string,
+ * preserving the sign and % format hints from fld_val.
+ */
+export function formatDocAmtStr(doc_amt: number | null | undefined, fld_val: string): string {
+  if (doc_amt === null || doc_amt === undefined || !isFinite(doc_amt)) {
+    return fld_val || '';
+  }
+  const val = doc_amt;
+  const hasPct = fld_val.trimEnd().endsWith('%');
+  const hasPlusPrefix = fld_val.startsWith('+');
+
+  if (hasPct) {
+    const sign = hasPlusPrefix && val > 0 ? '+' : val < 0 ? '-' : '';
+    const abs = Math.abs(val);
+    const formatted = Number.isInteger(abs) ? abs.toString() : parseFloat(abs.toFixed(2)).toString();
+    return `${sign}${formatted}%`;
+  }
+
+  const abs = Math.abs(val);
+  const sign = val < 0 ? '-' : '';
+  const formatted = Number.isInteger(abs)
+    ? abs.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    : parseFloat(abs.toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return `${sign}${formatted}`;
+}
+
 export function flatToStatementData(
   records: FlatFinRecord[],
   type: string,
+  valueSelector: (rec: FlatFinRecord) => string = (rec) => rec.fld_val,
 ): Record<string, StatementData> {
   // First pass: collect per-company cell data into a nested map
   // structure: company → item → periodLabel → value
@@ -132,7 +160,7 @@ export function flatToStatementData(
   for (const rec of records) {
     if (rec.rpt_fin_type !== type) continue;
 
-    const { co_cd, rpt_fin_item, calendar_year, calendar_quarter, fld_val } = rec;
+    const { co_cd, rpt_fin_item, calendar_year, calendar_quarter } = rec;
     const label = periodLabel(calendar_year, calendar_quarter);
 
     if (!cellMap[co_cd]) {
@@ -148,7 +176,7 @@ export function flatToStatementData(
       itemOrder[co_cd].push(rpt_fin_item);
     }
 
-    cellMap[co_cd][rpt_fin_item][label] = fld_val;
+    cellMap[co_cd][rpt_fin_item][label] = valueSelector(rec);
   }
 
   // Second pass: assemble StatementData with sorted periods
@@ -198,4 +226,23 @@ export function getStatement(key: StatementKey): Record<string, StatementData> {
   }
 
   return _stmtCache[key]!;
+}
+
+const _stmtDocAmtCache: Partial<Record<StatementKey, Record<string, StatementData>>> = {};
+
+export function getStatementDocAmt(key: StatementKey): Record<string, StatementData> {
+  if (_stmtDocAmtCache[key]) return _stmtDocAmtCache[key]!;
+
+  if (key === 'income' || key === 'balance' || key === 'cashflow') {
+    const records = extractJsonBySection<FlatFinRecord[]>(rawContent, SECTION_MAP[key]);
+    _stmtDocAmtCache[key] = flatToStatementData(
+      records,
+      key,
+      (rec) => formatDocAmtStr(rec.doc_amt, rec.fld_val),
+    );
+  } else {
+    _stmtDocAmtCache[key] = {};
+  }
+
+  return _stmtDocAmtCache[key]!;
 }
