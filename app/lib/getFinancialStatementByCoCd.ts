@@ -1,6 +1,6 @@
 import tcFinStmtMd from '@/content/tc-financial-statement.md';
 import aaplFinStmtMd from '@/content/apple-financial-statement.md';
-import { getStatement, getCompanies, flatToStatementData } from '@/app/data/financialData';
+import { getStatement, getCompanies, flatToStatementData, formatDocAmtStr, getStatementDocAmt } from '@/app/data/financialData';
 import type { StatementData, FlatFinRecord } from '@/app/data/financialData';
 import { extractJsonBySection } from '@/app/lib/parseContent';
 
@@ -22,7 +22,7 @@ export interface SimpleStatementData {
 
 export type TabDataEntry =
   | { kind: 'simple'; data: SimpleStatementData }
-  | { kind: 'findata'; data: StatementData };
+  | { kind: 'findata'; data: StatementData; docAmtData?: StatementData };
 
 export type CompanyStatements = Partial<Record<StatementType, TabDataEntry>>;
 
@@ -179,6 +179,32 @@ function getMarkdownFinData(symbol: string, type: 'income' | 'balance' | 'cashfl
   return cache[type] ?? null;
 }
 
+/** Per-symbol, per-type cache for doc_amt-based StatementData. */
+const _mdDocAmtCache: Record<string, Partial<Record<'income' | 'balance' | 'cashflow', StatementData | null>>> = {};
+
+function getMarkdownDocAmtData(symbol: string, type: 'income' | 'balance' | 'cashflow'): StatementData | null {
+  if (!_mdDocAmtCache[symbol]) _mdDocAmtCache[symbol] = {};
+  const cache = _mdDocAmtCache[symbol];
+  if (type in cache) return cache[type] ?? null;
+
+  const config = MD_FIN_CONFIG[symbol];
+  if (!config) {
+    cache[type] = null;
+    return null;
+  }
+
+  const section = config.sections[type];
+  if (!section) {
+    cache[type] = null;
+    return null;
+  }
+
+  const records = extractJsonBySection<FlatFinRecord[]>(config.mdContent, section);
+  const stmtMap = flatToStatementData(records, type, (rec) => formatDocAmtStr(rec.doc_amt, rec.fld_val));
+  cache[type] = stmtMap[symbol] ?? null;
+  return cache[type] ?? null;
+}
+
 let _aaplSegmentCache: StatementData | null | undefined = undefined;
 function getAaplSegmentData(): StatementData | null {
   if (_aaplSegmentCache !== undefined) return _aaplSegmentCache;
@@ -193,7 +219,10 @@ function buildCompanyStatements(symbol: string): CompanyStatements {
   if (MD_FIN_CONFIG[symbol]) {
     for (const type of ['income', 'balance', 'cashflow'] as const) {
       const data = getMarkdownFinData(symbol, type);
-      if (data) result[type] = { kind: 'findata', data };
+      if (data) {
+        const docAmtData = getMarkdownDocAmtData(symbol, type) ?? undefined;
+        result[type] = { kind: 'findata', data, docAmtData };
+      }
     }
     if (symbol === 'AAPL') {
       const segData = getAaplSegmentData();
@@ -205,7 +234,10 @@ function buildCompanyStatements(symbol: string): CompanyStatements {
   if (getCompanies().some((c) => c.symbol === symbol)) {
     for (const key of ['income', 'balance', 'cashflow'] as const) {
       const data = getStatement(key)[symbol] ?? null;
-      if (data) result[key] = { kind: 'findata', data };
+      if (data) {
+        const docAmtData = getStatementDocAmt(key)[symbol] ?? undefined;
+        result[key] = { kind: 'findata', data, docAmtData };
+      }
     }
     return result;
   }
