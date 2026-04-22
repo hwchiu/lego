@@ -468,9 +468,13 @@ export default function Sidebar() {
           const isUpcoming = item.badgeStyle === 'coming-soon';
           if (isUpcoming) {
             return (
-              <span
+              <a
                 key={item.label}
                 className="sidebar-nav-upcoming"
+                href={item.href}
+                onClick={(e) => e.preventDefault()}
+                tabIndex={-1}
+                aria-disabled="true"
                 title={collapsed ? label : undefined}
               >
                 <NavIcon iconKey={item.icon} />
@@ -478,7 +482,7 @@ export default function Sidebar() {
                 {!collapsed && item.badge && (
                   <span className="badge-coming-soon">{item.badge}</span>
                 )}
-              </span>
+              </a>
             );
           }
           return (

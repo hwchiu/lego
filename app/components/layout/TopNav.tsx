@@ -4,215 +4,12 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
-import { newsItems } from '@/app/data/news';
-import {
-  newsNotifications,
-  collaborationNotifications,
-  allNotifications,
-  type NotificationItem,
-  type NotificationType,
-} from '@/app/data/notifications';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { useMobileSidebar, MOBILE_BREAKPOINT } from '@/app/contexts/MobileSidebarContext';
 import { BASE_PATH } from '@/app/lib/basePath';
 import ThemeToggleButton from '@/app/components/ThemeToggleButton';
 
 const POPULAR_SEARCHES = ['TC', 'AAPL', 'NVDA'];
-
-// ─────────────────────────────────────────────
-// Notification type icon
-// ─────────────────────────────────────────────
-function NotifTypeIcon({ type }: { type: NotificationType }) {
-  const cls = `topnav-notif-item-icon topnav-notif-item-icon--${type}`;
-  switch (type) {
-    case 'alert':
-    case 'warning':
-      return (
-        <span className={cls}>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <path
-              d="M7 1.5L13 12.5H1L7 1.5Z"
-              stroke="currentColor"
-              strokeWidth="1.3"
-              strokeLinejoin="round"
-            />
-            <path d="M7 5.5v3M7 10h.01" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-          </svg>
-        </span>
-      );
-    case 'analysis':
-      return (
-        <span className={cls}>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <rect x="1.5" y="1.5" width="11" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
-            <path d="M4 9.5l2-3 2 2 2-4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </span>
-      );
-    case 'transcript':
-      return (
-        <span className={cls}>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <rect x="2" y="1.5" width="8" height="10" rx="1" stroke="currentColor" strokeWidth="1.3" />
-            <path d="M4 4.5h4M4 6.5h4M4 8.5h2.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-            <path d="M10 8l2.5 1.5L10 11V8Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
-          </svg>
-        </span>
-      );
-    case 'tag-match':
-      return (
-        <span className={cls}>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <path
-              d="M7.5 1.5H12.5V6.5L7.5 11.5L2.5 6.5L7.5 1.5Z"
-              stroke="currentColor"
-              strokeWidth="1.3"
-              strokeLinejoin="round"
-            />
-            <circle cx="10" cy="4" r="1" stroke="currentColor" strokeWidth="1.2" />
-          </svg>
-        </span>
-      );
-    default: // 'news'
-      return (
-        <span className={cls}>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <rect x="1" y="2" width="12" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
-            <path d="M3.5 5.5h7M3.5 7.5h7M3.5 9.5h4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-          </svg>
-        </span>
-      );
-  }
-}
-
-// ─────────────────────────────────────────────
-// Single notification row
-// ─────────────────────────────────────────────
-interface NotifItemRowProps {
-  notif: NotificationItem;
-  isRead: boolean;
-  lang: 'zh' | 'en';
-  onClick: () => void;
-}
-
-function NotifItemRow({ notif, isRead, lang, onClick }: NotifItemRowProps) {
-  const classes = [
-    'topnav-notif-item',
-    !isRead ? 'topnav-notif-item--unread' : 'topnav-notif-item--read',
-  ].join(' ');
-
-  const displayTitle = lang === 'en' && notif.titleEn ? notif.titleEn : notif.title;
-  const displayTime = lang === 'en' && notif.timeEn ? notif.timeEn : notif.time;
-  const ariaLabel =
-    lang === 'zh'
-      ? `${isRead ? '已讀' : '未讀'}通知：${displayTitle}`
-      : `${isRead ? 'Read' : 'Unread'} notification: ${displayTitle}`;
-
-  return (
-    <div
-      className={classes}
-      onClick={onClick}
-      role="button"
-      tabIndex={0}
-      aria-label={ariaLabel}
-      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick()}
-    >
-      <NotifTypeIcon type={notif.type} />
-      <div className="topnav-notif-item-body">
-        <div className="topnav-notif-item-title">{displayTitle}</div>
-        <div className="topnav-notif-item-meta">
-          <span>{notif.source}</span>
-          <span>·</span>
-          <span>{displayTime}</span>
-        </div>
-        {notif.tags && notif.tags.length > 0 && (
-          <div className="topnav-notif-item-tags">
-            {notif.tags.map((tag) => (
-              <span key={tag} className="topnav-notif-tag">
-                #{tag}
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-const DATA_CATEGORIES = ['All', 'Company', 'News & Event', 'People', 'Data'];
-
-// Inline SVG icons for each category tab
-function CategoryIcon({ category }: { category: string }) {
-  switch (category) {
-    case 'All':
-      return (
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-          <rect x="1" y="1" width="4" height="4" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
-          <rect x="7" y="1" width="4" height="4" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
-          <rect x="1" y="7" width="4" height="4" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
-          <rect x="7" y="7" width="4" height="4" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
-        </svg>
-      );
-    case 'Company':
-      return (
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-          <rect x="1.5" y="3" width="9" height="8" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
-          <path d="M4 3V2a2 2 0 0 1 4 0v1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-          <path d="M4 6h1M7 6h1M4 8.5h1M7 8.5h1" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
-        </svg>
-      );
-    case 'News & Event':
-      return (
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-          <rect x="1" y="2" width="10" height="8" rx="1" stroke="currentColor" strokeWidth="1.2" />
-          <path d="M3.5 5h5M3.5 7h3.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
-          <path d="M3.5 3.5h2" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
-        </svg>
-      );
-    case 'People':
-      return (
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-          <circle cx="6" cy="4" r="2.3" stroke="currentColor" strokeWidth="1.2" />
-          <path d="M1.5 11c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-        </svg>
-      );
-    case 'Data':
-      return (
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-          <rect x="1.5" y="6.5" width="2" height="4" rx="0.4" stroke="currentColor" strokeWidth="1.1" />
-          <rect x="5" y="4" width="2" height="6.5" rx="0.4" stroke="currentColor" strokeWidth="1.1" />
-          <rect x="8.5" y="1.5" width="2" height="9" rx="0.4" stroke="currentColor" strokeWidth="1.1" />
-        </svg>
-      );
-    default:
-      return null;
-  }
-}
-
-const RECENT_HISTORY = [
-  {
-    id: 'h-1',
-    title: 'NVIDIA and Intel Announce $5 Billion Partnership to Co-Develop AI Data Center Chips',
-    description: 'Bloomberg · Apr 2 — NVIDIA and Intel join forces in a landmark $5B deal aimed at co-developing next-generation AI data center chips.',
-  },
-  {
-    id: 'h-2',
-    title: 'Apple Unveils M5 Chip with 4× AI GPU Performance, Powers New MacBook Pro and iPad Pro',
-    description: 'Reuters · Apr 2 — Apple\'s latest M5 chip delivers a 4× leap in AI GPU performance, powering the new MacBook Pro and iPad Pro lineup.',
-  },
-  {
-    id: 'h-3',
-    title: 'Global Semiconductor Revenue Surpasses $790 Billion in 2025, NVIDIA First to Hit $100B in Annual Sales',
-    description: 'CNBC · Apr 2 — Global chip revenue crossed the $790B mark in 2025, with NVIDIA becoming the first semiconductor firm to reach $100B in annual sales.',
-  },
-];
-
-// Pre-computed lowercase news fields for faster filtering
-const NEWS_ITEMS_LC = newsItems.map((n) => ({
-  ...n,
-  titleLc: n.title.toLowerCase(),
-  sourceLc: n.source.toLowerCase(),
-}));
 
 // Pre-computed lowercase SP500 companies for faster filtering
 const COMPANY_MASTER_LC = COMPANY_MASTER_LIST.map((c) => ({
@@ -251,46 +48,23 @@ export default function TopNav() {
   };
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string>('All');
   const wrapRef = useRef<HTMLDivElement>(null);
 
   // Notification panel state
   const [notifOpen, setNotifOpen] = useState(false);
-  const [notifTab, setNotifTab] = useState<'news' | 'collaboration'>('news');
-  const [readIds, setReadIds] = useState<Set<string>>(new Set());
   const notifRef = useRef<HTMLDivElement>(null);
-
-  const badgeCount = allNotifications.filter((n) => !readIds.has(n.id)).length;
 
   const handleNotifToggle = useCallback(() => {
     setNotifOpen((prev) => !prev);
   }, []);
 
-  const handleMarkAllRead = useCallback(() => {
-    setReadIds(new Set(allNotifications.map((n) => n.id)));
-  }, []);
-
-  const handleMarkRead = useCallback((id: string) => {
-    setReadIds((prev) => new Set([...prev, id]));
-  }, []);
-
   const showDropdown = focused;
-  const showCategories = focused && query.trim().length > 0;
   const q = query.trim().toLowerCase();
 
-  // Filter companies (used for 'All' and 'Company' categories)
+  // Filter companies by query (company search only)
   const filteredCompanies =
-    (activeCategory === 'Company' || activeCategory === 'All') && q.length > 0
-      ? COMPANY_MASTER_LC.filter((c) => c.symbolLc.includes(q) || c.nameLc.includes(q)).slice(
-          0,
-          activeCategory === 'All' ? 4 : 8,
-        )
-      : [];
-
-  // Filter news items (used for 'All' and 'News & Event' categories)
-  const filteredNews =
-    (activeCategory === 'News & Event' || activeCategory === 'All') && q.length > 0
-      ? NEWS_ITEMS_LC.filter((n) => n.titleLc.includes(q) || n.sourceLc.includes(q)).slice(0, 5)
+    q.length > 0
+      ? COMPANY_MASTER_LC.filter((c) => c.symbolLc.includes(q) || c.nameLc.includes(q)).slice(0, 8)
       : [];
 
   // Navigate to company profile page
@@ -355,194 +129,78 @@ export default function TopNav() {
         <input
           className={`topnav-search${focused ? ' focused' : ''}`}
           type="text"
-          placeholder="Company, Symbols, Analysts, Keywords"
+          placeholder="Search a company or ticker…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => {
-            setFocused(true);
-            setActiveCategory('All');
-          }}
+          onFocus={() => setFocused(true)}
           autoComplete="off"
         />
 
         {showDropdown && (
           <div className="search-dropdown">
-            {/* Section 1: Data Categories — only visible when user has typed */}
-            {showCategories && (
-              <div className="search-dropdown-section search-dropdown-section--cats">
-                <div className="search-dropdown-section-label">Data Category</div>
-                <div className="search-category-tabs">
-                  {DATA_CATEGORIES.map((cat) => (
-                    <button
-                      key={cat}
-                      className={`search-category-tab${activeCategory === cat ? ' active' : ''}`}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        setActiveCategory(cat);
-                      }}
-                    >
-                      <CategoryIcon category={cat} />
-                      {cat}
-                    </button>
+            {/* Company search results — shown when user has typed */}
+            {q.length > 0 && filteredCompanies.length > 0 && (
+              <div className="search-dropdown-section">
+                <div className="search-dropdown-section-label">Companies</div>
+                <ul className="search-popular-list">
+                  {filteredCompanies.map((company) => (
+                    <li key={company.symbol}>
+                      <button
+                        className="search-popular-item"
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          navigateToCompany(company.symbol);
+                        }}
+                      >
+                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                          <rect x="1.5" y="2" width="10" height="9" rx="1" stroke="currentColor" strokeWidth="1.2" />
+                          <path d="M4 5h5M4 7.5h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+                        </svg>
+                        <strong>{company.symbol}</strong>&nbsp;{company.name}
+                      </button>
+                    </li>
                   ))}
+                </ul>
+              </div>
+            )}
+
+            {/* No results */}
+            {q.length > 0 && filteredCompanies.length === 0 && (
+              <div className="search-dropdown-section">
+                <div
+                  className="search-dropdown-section-label"
+                  style={{ color: 'var(--c-text-3)', fontStyle: 'italic', padding: '8px 0' }}
+                >
+                  No results found
                 </div>
               </div>
             )}
 
-            {/* Section 2: Search results — vary by active category */}
-            {showCategories && (
-              <>
-                {/* Companies — shown for 'All' and 'Company' */}
-                {filteredCompanies.length > 0 && (
-                  <div className="search-dropdown-section">
-                    <div className="search-dropdown-section-label">Companies</div>
-                    <ul className="search-popular-list">
-                      {filteredCompanies.map((company) => (
-                        <li key={company.symbol}>
-                          <button
-                            className="search-popular-item"
-                            onMouseDown={(e) => {
-                              e.preventDefault();
-                              navigateToCompany(company.symbol);
-                            }}
-                          >
-                            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
-                              <rect x="1.5" y="2" width="10" height="9" rx="1" stroke="currentColor" strokeWidth="1.2" />
-                              <path d="M4 5h5M4 7.5h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
-                            </svg>
-                            <strong>{company.symbol}</strong>&nbsp;{company.name}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* News — shown for 'All' and 'News & Event' */}
-                {filteredNews.length > 0 && (
-                  <div className="search-dropdown-section">
-                    <div className="search-dropdown-section-label">News &amp; Events</div>
-                    <ul className="search-history-list">
-                      {filteredNews.map((item) => (
-                        <li key={item.id}>
-                          <button
-                            className="search-history-item"
-                            onMouseDown={(e) => {
-                              e.preventDefault();
-                              setFocused(false);
-                              setQuery('');
-                              router.push('/market-news/');
-                            }}
-                          >
-                            <svg className="search-history-icon" width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
-                              <rect x="1" y="2" width="11" height="9" rx="1" stroke="currentColor" strokeWidth="1.2" />
-                              <path d="M3.5 5.5h6M3.5 7.5h4" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
-                            </svg>
-                            <div className="search-history-text">
-                              <div className="search-history-title">{item.title}</div>
-                              <div className="search-history-desc">{item.source}</div>
-                            </div>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Placeholder for 'People' */}
-                {activeCategory === 'People' && (
-                  <div className="search-dropdown-section">
-                    <div
-                      className="search-dropdown-section-label"
-                      style={{ color: 'var(--c-text-3)', fontStyle: 'italic', padding: '8px 0' }}
-                    >
-                      No people data available
-                    </div>
-                  </div>
-                )}
-
-                {/* Placeholder for 'Data' */}
-                {activeCategory === 'Data' && (
-                  <div className="search-dropdown-section">
-                    <div
-                      className="search-dropdown-section-label"
-                      style={{ color: 'var(--c-text-3)', fontStyle: 'italic', padding: '8px 0' }}
-                    >
-                      No data available
-                    </div>
-                  </div>
-                )}
-
-                {/* No results message for All / Company / News & Event */}
-                {['All', 'Company', 'News & Event'].includes(activeCategory) &&
-                  filteredCompanies.length === 0 &&
-                  filteredNews.length === 0 && (
-                    <div className="search-dropdown-section">
-                      <div
-                        className="search-dropdown-section-label"
-                        style={{ color: 'var(--c-text-3)', fontStyle: 'italic', padding: '8px 0' }}
+            {/* Popular searches — shown when focused with no query */}
+            {q.length === 0 && (
+              <div className="search-dropdown-section">
+                <div className="search-dropdown-section-label">Popular Searches</div>
+                <ul className="search-popular-list">
+                  {POPULAR_SEARCHES.map((term) => (
+                    <li key={term}>
+                      <button
+                        className="search-popular-item"
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          navigateToCompany(term);
+                        }}
                       >
-                        No results found
-                      </div>
-                    </div>
-                  )}
-              </>
+                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                          <path d="M6 1.5L7.4 4.5L10.5 5L8.3 7.2L8.8 10.5L6 9L3.2 10.5L3.7 7.2L1.5 5L4.6 4.5L6 1.5Z"
+                            stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+                        </svg>
+                        {term}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
-
-            {/* Section 3: Popular searches */}
-            <div className="search-dropdown-section">
-              <div className="search-dropdown-section-label">Popular Searches</div>
-              <ul className="search-popular-list">
-                {POPULAR_SEARCHES.map((term) => (
-                  <li key={term}>
-                    <button
-                      className="search-popular-item"
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        navigateToCompany(term);
-                      }}
-                    >
-                      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
-                        <path d="M6 1.5L7.4 4.5L10.5 5L8.3 7.2L8.8 10.5L6 9L3.2 10.5L3.7 7.2L1.5 5L4.6 4.5L6 1.5Z"
-                          stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
-                      </svg>
-                      {term}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Divider */}
-            <div className="search-dropdown-divider" />
-
-            {/* Section 3: Recent history */}
-            <div className="search-dropdown-section">
-              <div className="search-dropdown-section-label">Recent Searches</div>
-              <ul className="search-history-list">
-                {RECENT_HISTORY.map((item) => (
-                  <li key={item.id}>
-                    <button
-                      className="search-history-item"
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        setQuery(item.title);
-                        setFocused(false);
-                      }}
-                    >
-                      <svg className="search-history-icon" width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
-                        <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1.3" />
-                        <path d="M6.5 3.5V6.5L8.5 8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-                      </svg>
-                      <div className="search-history-text">
-                        <div className="search-history-title">{item.title}</div>
-                        <div className="search-history-desc">{item.description}</div>
-                      </div>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
           </div>
         )}
       </div>
@@ -608,9 +266,6 @@ export default function TopNav() {
                   strokeLinecap="round"
                 />
               </svg>
-              {badgeCount > 0 && (
-                <span className="topnav-notif-badge">{badgeCount}</span>
-              )}
             </span>
           </button>
 
@@ -619,54 +274,24 @@ export default function TopNav() {
               {/* Panel header */}
               <div className="topnav-notif-panel-header">
                 <span className="topnav-notif-panel-title">{lang === 'zh' ? '通知' : 'Notifications'}</span>
-                <button className="topnav-notif-mark-read" onClick={handleMarkAllRead}>
-                  {lang === 'zh' ? '全部標為已讀' : 'Mark All as Read'}
-                </button>
               </div>
 
-              {/* Category tabs */}
-              <div className="topnav-notif-tabs" role="tablist">
-                <button
-                  role="tab"
-                  aria-selected={notifTab === 'news'}
-                  aria-controls="notif-panel-news"
-                  className={`topnav-notif-tab${notifTab === 'news' ? ' active' : ''}`}
-                  onClick={() => setNotifTab('news')}
-                >
-                  {lang === 'zh' ? '新聞' : 'News'}
-                  <span className="topnav-notif-tab-count">{newsNotifications.length}</span>
-                </button>
-                <button
-                  role="tab"
-                  aria-selected={notifTab === 'collaboration'}
-                  aria-controls="notif-panel-collaboration"
-                  className={`topnav-notif-tab${notifTab === 'collaboration' ? ' active' : ''}`}
-                  onClick={() => setNotifTab('collaboration')}
-                >
-                  {lang === 'zh' ? '協作動態' : 'Collaboration'}
-                  <span className="topnav-notif-tab-count">{collaborationNotifications.length}</span>
-                </button>
-              </div>
-
-              {/* Notification list */}
-              <div
-                id={notifTab === 'news' ? 'notif-panel-news' : 'notif-panel-collaboration'}
-                role="tabpanel"
-                className="topnav-notif-list"
-              >
-                {(notifTab === 'news' ? newsNotifications : collaborationNotifications).length === 0 ? (
-                  <div className="topnav-notif-empty">{lang === 'zh' ? '暫無通知' : 'No notifications'}</div>
-                ) : (
-                  (notifTab === 'news' ? newsNotifications : collaborationNotifications).map((notif) => (
-                    <NotifItemRow
-                      key={notif.id}
-                      notif={notif}
-                      isRead={readIds.has(notif.id)}
-                      lang={lang}
-                      onClick={() => handleMarkRead(notif.id)}
-                    />
-                  ))
-                )}
+              {/* Coming soon placeholder */}
+              <div className="topnav-notif-list">
+                <div className="topnav-notif-empty" style={{ padding: '24px 16px', textAlign: 'center' }}>
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true" style={{ margin: '0 auto 10px', display: 'block', opacity: 0.35 }}>
+                    <path d="M16 4a9 9 0 0 1 9 9v5.6l2.2 3.4H4.8L7 18.6V13A9 9 0 0 1 16 4Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+                    <path d="M12.4 26a3.6 3.6 0 0 0 7.2 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                  </svg>
+                  <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: 4 }}>
+                    {lang === 'zh' ? '即將上線' : 'Coming Soon'}
+                  </div>
+                  <div style={{ fontSize: '11.5px', color: 'var(--c-text-3)' }}>
+                    {lang === 'zh'
+                      ? '通知功能尚未上線，敬請期待。'
+                      : 'The notifications feature is not yet available. Stay tuned!'}
+                  </div>
+                </div>
               </div>
             </div>
           )}
