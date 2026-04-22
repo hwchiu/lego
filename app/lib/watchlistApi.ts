@@ -573,6 +573,9 @@ export async function updateWatchlistInfo(
 
 // ─── New Watchlist API Stubs ─────────────────────────────────────────────────
 
+// Default categories for a new watchlist's Summary view
+const DEFAULT_VIEW_CATEGORIES = [1, 2, 3, 4, 5, 6, 20, 8, 11] as const;
+
 // ─── User-created watchlist localStorage helpers ─────────────────────────────
 
 const API_CREATED_KEY = 'wl-api-created';
@@ -620,9 +623,12 @@ export function createWatchlistWithCompany(
   if (typeof window === 'undefined') return { watchlistId: -1 };
 
   const store = getApiCreatedStore();
-  const maxId = store.watchlists.length > 0
-    ? Math.max(...store.watchlists.map((w) => w.watchlistId))
-    : 999;
+  // Derive next ID from the union of mock IDs and user-created IDs to avoid collisions
+  const maxId = Math.max(
+    ...MOCK_WATCHLISTS.map((w) => w.watchlistId),
+    ...store.watchlists.map((w) => w.watchlistId),
+    0,
+  );
   const newId = maxId + 1;
 
   const newWatchlist: ApiWatchlist = {
@@ -639,7 +645,7 @@ export function createWatchlistWithCompany(
     defaultViewId: null,
     companylist: payload.coCdList,
     viewlist: [
-      { viewId: 0, viewName: 'Summary', isDefaultForWatchlist: 'Y', selectedCategories: [1, 2, 3, 4, 5, 6, 20, 8, 11] },
+      { viewId: 0, viewName: 'Summary', isDefaultForWatchlist: 'Y', selectedCategories: [...DEFAULT_VIEW_CATEGORIES] },
     ],
   };
 

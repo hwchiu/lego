@@ -224,11 +224,10 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
   function createApiWatchlist(name: string, coCdList: WatchlistCompany[]): number {
     const { watchlistId } = createWatchlistWithCompany({ watchlistName: name, coCdList });
     if (watchlistId > 0) {
-      // Add to apiWatchlists state so the sidebar updates immediately
-      setApiWatchlists((prev) => [
-        ...prev,
-        { watchlistId, watchlistName: name, isDefault: 'N', defaultViewId: null },
-      ]);
+      // Refresh apiWatchlists from the single source of truth (localStorage)
+      // to avoid duplicate entries if this context instance is ever reused.
+      const { result } = getUserAllWatchlists('demoUser');
+      setApiWatchlists(result);
     }
     return watchlistId;
   }
