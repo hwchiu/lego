@@ -184,3 +184,235 @@ export const NEWS_SUMMARY_CONTENT: Record<string, string> = {
   '15202': CONTENT_15202,
   '15184': CONTENT_15184,
 };
+
+// ── Taiwan Tax News catg detail ───────────────────────────────────────────────
+
+export const TAIWAN_TAX_CATG_DETAIL: NewsSummaryCatgDetail = {
+  result: {
+    id: '3',
+    name: 'Weekly Taiwan Tax News Summary',
+    description:
+      'Every Friday at noon, this digest leverages AI to rapidly filter, summarize, and present the latest news on Taiwan\'s domestic tax policy changes, tax regulation updates, and tax disputes. It assists in tax compliance and policy trend analysis.',
+    tags: [{ id: '3', name: 'Tax' }],
+    items: [
+      {
+        data_item_id: 'tw-tax-20260417',
+        item_name: 'Weekly Taiwan Tax News Summary 2026/04/10-2026/04/17',
+        dwnld_file_type_list: [{ id: '1', type: 'PDF' }],
+        view_file_type: { id: '1', type: 'MARKDOWN' },
+        generation_dt: '2026-04-17T12:00:00.000+00:00',
+        update_dt: '2026-04-17T12:00:00.000+00:00',
+      },
+      {
+        data_item_id: 'tw-tax-20260410',
+        item_name: 'Weekly Taiwan Tax News Summary 2026/04/03-2026/04/10',
+        dwnld_file_type_list: [{ id: '1', type: 'PDF' }],
+        view_file_type: { id: '1', type: 'MARKDOWN' },
+        generation_dt: '2026-04-10T12:00:00.000+00:00',
+        update_dt: '2026-04-10T12:00:00.000+00:00',
+      },
+      {
+        data_item_id: 'tw-tax-20260403',
+        item_name: 'Weekly Taiwan Tax News Summary 2026/03/27-2026/04/03',
+        dwnld_file_type_list: [{ id: '1', type: 'PDF' }],
+        view_file_type: { id: '1', type: 'MARKDOWN' },
+        generation_dt: '2026-04-03T12:00:00.000+00:00',
+        update_dt: '2026-04-03T12:00:00.000+00:00',
+      },
+    ],
+    frequency_type: 'Weekly',
+    data_source: 'Perplexity',
+    update_dt: '2026-04-17T12:00:00.000+00:00',
+    generation_dt: '2025-12-26T04:23:45.000+00:00',
+  },
+  meta: {
+    totalItems: 3,
+    pageSize: 20,
+    currentPage: 1,
+    totalPages: 1,
+  },
+};
+
+// ── International Tax News catg detail ───────────────────────────────────────
+
+export const INTL_TAX_CATG_DETAIL: NewsSummaryCatgDetail = {
+  result: {
+    id: '1',
+    name: 'Weekly International Tax News Summary',
+    description:
+      'Every Friday at noon, this digest employs AI to rapidly filter, summarize, and present the latest news on global tax policy changes, international tax regulation updates, and tax disputes. It supports cross-border tax compliance and policy trend analysis.',
+    tags: [{ id: '3', name: 'Tax' }],
+    items: [
+      {
+        data_item_id: 'intl-tax-20260417',
+        item_name: 'Weekly International Tax News Summary 2026/04/10-2026/04/17',
+        dwnld_file_type_list: [{ id: '1', type: 'PDF' }],
+        view_file_type: { id: '1', type: 'MARKDOWN' },
+        generation_dt: '2026-04-17T12:00:00.000+00:00',
+        update_dt: '2026-04-17T12:00:00.000+00:00',
+      },
+      {
+        data_item_id: 'intl-tax-20260410',
+        item_name: 'Weekly International Tax News Summary 2026/04/03-2026/04/10',
+        dwnld_file_type_list: [{ id: '1', type: 'PDF' }],
+        view_file_type: { id: '1', type: 'MARKDOWN' },
+        generation_dt: '2026-04-10T12:00:00.000+00:00',
+        update_dt: '2026-04-10T12:00:00.000+00:00',
+      },
+      {
+        data_item_id: 'intl-tax-20260403',
+        item_name: 'Weekly International Tax News Summary 2026/03/27-2026/04/03',
+        dwnld_file_type_list: [{ id: '1', type: 'PDF' }],
+        view_file_type: { id: '1', type: 'MARKDOWN' },
+        generation_dt: '2026-04-03T12:00:00.000+00:00',
+        update_dt: '2026-04-03T12:00:00.000+00:00',
+      },
+    ],
+    frequency_type: 'Weekly',
+    data_source: 'Perplexity',
+    update_dt: '2026-04-17T12:00:00.000+00:00',
+    generation_dt: '2025-12-26T04:23:45.000+00:00',
+  },
+  meta: {
+    totalItems: 3,
+    pageSize: 20,
+    currentPage: 1,
+    totalPages: 1,
+  },
+};
+
+// ── Taiwan Tax News markdown content ─────────────────────────────────────────
+
+const TW_TAX_SEPARATOR = `
+======================================================================
+##                              NEXT Topic                          ##
+======================================================================
+
+`;
+
+const CONTENT_TW_TAX_20260417 = `## 企業稅務
+
+| 文章標題 | 文章網址 | 來源 | 日期 | 新聞重點摘要 |
+|---------|---------|------|------|------------|
+| 全球最低稅負制 AMT 稅率調高至 15% | https://www.mof.gov.tw/ | 財政部 | 2026年4月14日 | 財政部公告，符合全球最低稅負制（GMT）門檻之大型跨國企業，基本稅額（AMT）稅率由 12% 調高為 15%，與 OECD BEPS Pillar Two 規範接軌。其他中小型企業維持 12% AMT 稅率不變。 |
+| 跨境電商納入所得稅扣繳義務人範疇 | https://www.dot.gov.tw/ | 財政部賦稅署 | 2026年4月12日 | 境外跨境電商平台自 2026 年起依所得稅法規定辦理稅籍登記，並須負擔扣繳義務人責任。此措施旨在打擊數位服務漏稅，確保外國企業於台灣從事營業活動時依法繳稅。 |
+${TW_TAX_SEPARATOR}## 投資抵減
+
+| 文章標題 | 文章網址 | 來源 | 日期 | 新聞重點摘要 |
+|---------|---------|------|------|------------|
+| 產業創新條例投資抵減延長至 2029 年底 | https://www.moeaidb.gov.tw/ | 經濟部工業局 | 2026年4月15日 | 依產業創新條例第 10 條之 1，針對 AI、智慧機械、淨零科技等關鍵領域之研發與設備投資，適用抵減優惠延長至 118 年（2029 年）底，單一企業投資抵減上限提高至新台幣 20 億元。 |
+| 投資高風險新創抵減門檻降至 50 萬元 | https://www.sme.gov.tw/ | 經濟部中小企業處 | 2026年4月11日 | 為活絡新創生態系，投資高風險新創企業之抵減資格門檻由 100 萬元降至 50 萬元，且被投資新創設立年限放寬至 5 年內均符合資格，鼓勵天使投資人及企業積極投入台灣新創市場。 |
+${TW_TAX_SEPARATOR}## 移轉訂價
+
+| 文章標題 | 文章網址 | 來源 | 日期 | 新聞重點摘要 |
+|---------|---------|------|------|------------|
+| 移轉訂價查核力度提升，台商應主動管理 | https://www.ntbna.gov.tw/ | 財政部北區國稅局 | 2026年4月10日 | 國稅局宣布加強跨境關係人交易移轉訂價查核，配合全球反避稅趨勢及 OECD BEPS 行動計畫，台商集團若未建立完整移轉訂價文件，補稅風險顯著上升。建議企業提前準備功能分析及可比較分析文件。 |
+`;
+
+const CONTENT_TW_TAX_20260410 = `## 房屋稅
+
+| 文章標題 | 文章網址 | 來源 | 日期 | 新聞重點摘要 |
+|---------|---------|------|------|------------|
+| 房屋稅差別稅率 2.0 全面上路 | https://www.dot.gov.tw/ | 財政部賦稅署 | 2026年4月8日 | 財政部確認「房屋稅差別稅率 2.0」政策正式施行，投資型與自住型房屋稅率區間進一步區分。名下擁有多戶非自住住宅者，適用較高的差別稅率，以抑制房屋投機炒作，減輕自住購屋族稅負。 |
+${TW_TAX_SEPARATOR}## 薪資稅務
+
+| 文章標題 | 文章網址 | 來源 | 日期 | 新聞重點摘要 |
+|---------|---------|------|------|------------|
+| 人事擴編薪資支出最高享 2 倍加成扣除 | https://www.mof.gov.tw/ | 財政部 | 2026年4月7日 | 為鼓勵中小企業增聘員工並提高薪資，資本額 1 億元以下或員工 200 人以下企業，因擴編增加之人事薪資支出，最高可享 2 倍加成扣除優惠，降低企業人力成本，提升就業意願。 |
+| 2026 年勞健保費率調升對企業薪酬成本影響分析 | https://www.mol.gov.tw/ | 勞動部 | 2026年4月4日 | 2026 年元旦起基本工資調升，勞保及健保費率同步調整，企業主應重新評估薪酬架構之整體成本。財政部提醒企業，相關勞工保險費用仍可依法全額列為費用扣除，降低整體稅負。 |
+${TW_TAX_SEPARATOR}## 納稅人權利
+
+| 文章標題 | 文章網址 | 來源 | 日期 | 新聞重點摘要 |
+|---------|---------|------|------|------------|
+| 稅務違章罰則修正：申報期限後 10 日內補報可免罰 | https://www.aej.moj.gov.tw/ | 法務部行政執行署 | 2026年4月5日 | 納稅者權利保護法修正草案提出，若納稅人於申報截止後 10 日內主動補報且補繳金額低於一定門檻，可適用較寬鬆之免罰或輕罰規定，以提升納稅人主動配合申報之誘因與權利保護。 |
+`;
+
+const CONTENT_TW_TAX_20260403 = `## 貨物稅
+
+| 文章標題 | 文章網址 | 來源 | 日期 | 新聞重點摘要 |
+|---------|---------|------|------|------------|
+| 無添加糖飲料免徵貨物稅，家電部分品項除稅 | https://www.customs.mof.gov.tw/ | 財政部關務署 | 2026年3月31日 | 財政部宣布，不含添加糖之飲料（如無糖礦泉水、無糖茶飲）免徵貨物稅；同時，家庭影音電器（如電子錄音機、音響播放器等舊式品項）自課稅清單剔除，減輕民生消費負擔。 |
+${TW_TAX_SEPARATOR}## 未分配盈餘
+
+| 文章標題 | 文章網址 | 來源 | 日期 | 新聞重點摘要 |
+|---------|---------|------|------|------------|
+| 未分配盈餘投資設備 3 年內出售須補稅 | https://www.dot.gov.tw/ | 財政部賦稅署 | 2026年3月30日 | 修法規定，企業以未分配盈餘投資實質生產設備者，若於 3 年內出售或變更用途，須補回原享有之未分配盈餘稅負及利息，以防止企業藉設備投資名義規避盈餘稅，確保稅制公平性。 |
+${TW_TAX_SEPARATOR}## 半導體稅務
+
+| 文章標題 | 文章網址 | 來源 | 日期 | 新聞重點摘要 |
+|---------|---------|------|------|------------|
+| 半導體業 CHIPS 補貼收入稅務處理指引發布 | https://www.dot.gov.tw/ | 財政部賦稅署 | 2026年3月28日 | 財政部發布函釋，針對企業獲得政府補助（如晶片法案相關補貼）之稅務處理原則作出說明，補助收入原則上列為其他收入計入所得，但配合特定政策目標之補助可申請免稅或遞延認列，需依個案審核。 |
+`;
+
+export const TAIWAN_TAX_CONTENT: Record<string, string> = {
+  'tw-tax-20260417': CONTENT_TW_TAX_20260417,
+  'tw-tax-20260410': CONTENT_TW_TAX_20260410,
+  'tw-tax-20260403': CONTENT_TW_TAX_20260403,
+};
+
+// ── International Tax News markdown content ───────────────────────────────────
+
+const INTL_TAX_SEPARATOR = TW_TAX_SEPARATOR;
+
+const CONTENT_INTL_TAX_20260417 = `## 台灣
+
+| 文章標題 | 文章網址 | 來源 | 日期 | 新聞重點摘要 |
+|---------|---------|------|------|------------|
+| 台灣全球最低稅負制正式與 OECD Pillar Two 接軌 | https://www.mof.gov.tw/ | 財政部 | 2026年4月14日 | 台灣財政部確認大型跨國企業 AMT 稅率調升至 15%，與 OECD BEPS Pillar Two 全球最低稅率接軌，確保在台營運之跨國集團繳足最低有效稅率，防止利潤移轉避稅。 |
+| 台灣移轉訂價規定強化，跨境交易審查趨嚴 | https://www.dot.gov.tw/ | 財政部賦稅署 | 2026年4月12日 | 台灣國稅局發布最新移轉訂價指引，要求跨國集團提交國別報告（CbCR）及主檔案（Master File），並加強對科技業及半導體業關係人交易之查核力度，企業須備妥完整文件因應。 |
+${INTL_TAX_SEPARATOR}## 美國
+
+| 文章標題 | 文章網址 | 來源 | 日期 | 新聞重點摘要 |
+|---------|---------|------|------|------------|
+| 美國宣布對進口半導體課徵最高 100% 關稅 | https://kpmg.com/tw/zh/media/press-releases/2025/08/us-tariffs-on-semiconductor.html | KPMG US | 2026年4月14日 | 川普政府援引《貿易擴展法》第 232 條，宣布對非在美生產或未承諾在美設廠之進口半導體課徵高達 100% 關稅，旨在強制推動半導體供應鏈回流美國。已在美投資設廠之企業（如TSMC、三星）可望豁免。 |
+| CHIPS 法案補貼稅務處理：IRS 發布最終指引 | https://www.pwc.tw/zh/news/press-release/press-20250807.html | IRS / PwC US | 2026年4月11日 | 美國國稅局（IRS）發布最終規則，明確 CHIPS 法案 527 億美元補貼之稅務處理方式。直接補助須列入課稅收入，但 25% 先進製造稅收抵減（AMTC）可依規定抵減應納稅額，TSMC亞利桑那廠可適用。 |
+${INTL_TAX_SEPARATOR}## 日本
+
+| 文章標題 | 文章網址 | 來源 | 日期 | 新聞重點摘要 |
+|---------|---------|------|------|------------|
+| 日本承諾對美投資 5,500 億美元換取關稅減免 | https://kpmg.com/jp/ | KPMG Japan | 2026年4月13日 | 日美關稅協議披露，日本承諾至 2029 年前對美投資 5,500 億美元，涵蓋半導體、能源及 AI 領域。協議讓日本半導體出口企業可規避美國高額關稅，但投資收益約 90% 歸美方，日本企業需重新評估稅務與財務規劃。 |
+| 日本 Pillar Two 全球最低稅制正式施行 | https://kpmg.com/jp/ | KPMG Japan | 2026年4月10日 | 日本已完成 OECD BEPS Pillar Two 之國內立法，合格國內最低補充稅（QDMTT）及所得納入規則（IIR）正式適行於 2024 年 4 月以後開始之會計年度。在日外資企業須確認集團整體有效稅率是否達 15% 門檻。 |
+`;
+
+const CONTENT_INTL_TAX_20260410 = `## 德國
+
+| 文章標題 | 文章網址 | 來源 | 日期 | 新聞重點摘要 |
+|---------|---------|------|------|------------|
+| 歐盟對等關稅約 15%，德國半導體業加速赴美設廠 | https://www.pwc.de/ | PwC Germany | 2026年4月8日 | 美國宣布對歐盟進口商品課徵約 15% 對等關稅，較台灣 20% 稍低，但仍促使德國英飛凌、博世等半導體企業加速評估赴美投資計畫。歐盟同步研議反制措施，企業需關注雙邊稅務與關稅協定談判進展。 |
+| 德國《歐洲晶片法》補貼：TSMC德勒斯登廠稅務結構確認 | https://www2.deloitte.com/de/ | Deloitte Germany | 2026年4月6日 | TSMC德勒斯登廠（ESMC）獲歐盟《晶片法》50 億歐元補貼，德國稅務機關確認補貼款項在符合特定條件下享有部分稅務優惠，並釐清補貼收入的認列時點與遞延處理方式，有助企業稅務規劃。 |
+${INTL_TAX_SEPARATOR}## 中國大陸
+
+| 文章標題 | 文章網址 | 來源 | 日期 | 新聞重點摘要 |
+|---------|---------|------|------|------------|
+| 中國大陸對美反制關稅 84%，半導體供應鏈稅務衝擊 | https://www.ey.com/zh_cn/ | EY Greater China | 2026年4月7日 | 中國大陸宣布對美國進口商品課徵 84% 反制關稅，導致在中國大陸設有供應商的半導體企業須重新評估採購成本與稅務結構。TSMC南京廠面臨出口管制與關稅雙重壓力，企業需評估轉移訂單之稅務影響。 |
+| 中國大陸高新技術企業所得稅優惠 15% 稅率延續 | https://www.pwccn.com/ | PwC China | 2026年4月5日 | 中國大陸延續高新技術企業（HNTE）15% 優惠稅率政策，符合資格的半導體及 IC 設計企業可繼續享受，同時「兩免三減半」政策對新設積體電路企業仍有效，在中投資企業可規劃利用此優惠。 |
+${INTL_TAX_SEPARATOR}## 美國
+
+| 文章標題 | 文章網址 | 來源 | 日期 | 新聞重點摘要 |
+|---------|---------|------|------|------------|
+| 美國《減少通膨法》能源稅收抵減規定更新 | https://home.treasury.gov/ | US Treasury | 2026年4月4日 | 美國財政部更新《減少通膨法》（IRA）相關能源稅收抵減適用細則，包括先進製造生產抵減（AMPTE）及清潔電力生產抵減（PTC），鼓勵半導體廠使用再生能源，符合條件可大幅降低有效稅率。 |
+| 全球最低稅 Pillar Two：美國仍未立法，衝擊 UTPR 適用 | https://www.ey.com/ | EY Global | 2026年4月3日 | 美國國會至今未通過 OECD BEPS Pillar Two 立法，導致其他國家對美國跨國企業開徵補充稅（UTPR）的法律基礎持續引發爭議。此立場影響在美設廠之外資企業母國的稅務申報義務，企業需密切關注各國立法進程。 |
+`;
+
+const CONTENT_INTL_TAX_20260403 = `## 日本
+
+| 文章標題 | 文章網址 | 來源 | 日期 | 新聞重點摘要 |
+|---------|---------|------|------|------------|
+| 日本半導體設備投資補貼稅務優惠擴大 | https://www.meti.go.jp/ | METI Japan | 2026年3月31日 | 日本經濟產業省（METI）擴大半導體製造設備投資補貼，並提供加速折舊優惠，TSMC熊本廠（JASM）等在日投資企業可申請最高補助比例達建廠成本 50%，且補助款依規可遞延計入課稅收入。 |
+${INTL_TAX_SEPARATOR}## 德國
+
+| 文章標題 | 文章網址 | 來源 | 日期 | 新聞重點摘要 |
+|---------|---------|------|------|------------|
+| 德國 Pillar Two 補充稅立法完成，企業合規期限臨近 | https://kpmg.com/de/ | KPMG Germany | 2026年3月28日 | 德國已完成 OECD BEPS Pillar Two 國內立法，適用 2024 年 1 月起之會計年度。在德外資企業（包括 ESMC 合資公司）需評估集團有效稅率，低於 15% 者將被徵收補充稅，需提前進行稅務結構調整。 |
+${INTL_TAX_SEPARATOR}## 台灣
+
+| 文章標題 | 文章網址 | 來源 | 日期 | 新聞重點摘要 |
+|---------|---------|------|------|------------|
+| 台灣研發投資抵減吸引外資設立研發中心 | https://www.investtaiwan.nat.gov.tw/ | 經濟部投資促進司 | 2026年3月29日 | 台灣產業創新條例研發抵減優惠持續吸引跨國企業在台設立研發中心，AI 及半導體研發投資可享高達 25% 抵減率，成為外資選擇台灣作為亞太研發基地的重要誘因。 |
+`;
+
+export const INTL_TAX_CONTENT: Record<string, string> = {
+  'intl-tax-20260417': CONTENT_INTL_TAX_20260417,
+  'intl-tax-20260410': CONTENT_INTL_TAX_20260410,
+  'intl-tax-20260403': CONTENT_INTL_TAX_20260403,
+};
