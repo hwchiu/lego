@@ -24,8 +24,9 @@ import IRMaterialTab from './IRMaterialTab';
 import PreEarningCallTab from './PreEarningCallTab';
 import IRTranscriptTab from './IRTranscriptTab';
 import AITranscriptTab from './AITranscriptTab';
-import { getFinancialStatementByCoCd, getSegmentByCoCd, type CompanyStatements, type SegmentRecord } from '@/app/lib/getFinancialStatementByCoCd';
+import { getFinancialStatementByCoCd, getBBGSegment, type CompanyStatements, type SegmentRecord } from '@/app/lib/getFinancialStatementByCoCd';
 import { getFinFcstSumByCoCd, type FinFcstSumRecord } from '@/app/lib/getFinFcstSumByCoCd';
+import { getSegInfoByCoCd, type SegInfoRecord } from '@/app/lib/getSegInfoByCoCd';
 import type { StatementData } from '@/app/data/financialData';
 import tvConfigMd from '@/content/tradingview.md';
 import finSummaryConfig from '@/app/data/fin-summary-config.json';
@@ -566,13 +567,24 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   // Derive current quarter financial data from statement data
   const derivedCurrentQtr = useMemo(() => deriveCurrentQtrData(companyStatements), [companyStatements]);
 
-  // Segment records for Revenue Breakdown card
+  // Segment records for Revenue Breakdown card and FIN. Statement Segment Report tab
   const [segmentRecords, setSegmentRecords] = useState<SegmentRecord[]>([]);
 
   useEffect(() => {
     let cancelled = false;
-    getSegmentByCoCd(symbol).then((records) => {
+    getBBGSegment(symbol).then((records) => {
       if (!cancelled) setSegmentRecords(records);
+    });
+    return () => { cancelled = true; };
+  }, [symbol]);
+
+  // Segment info config — determines SEG_TYPE and SEG_LEVEL for Revenue Breakdown
+  const [segInfo, setSegInfo] = useState<SegInfoRecord | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    getSegInfoByCoCd(symbol).then((info) => {
+      if (!cancelled) setSegInfo(info);
     });
     return () => { cancelled = true; };
   }, [symbol]);
@@ -600,17 +612,26 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     [finFcstRecords, derivedCurrentQtr],
   );
 
-  // Derive revenue breakdown from segment data (latest quarter, "Revenue ($M)" items)
+  // Derive revenue breakdown using segInfo (SEG_TYPE + SEG_LEVEL) from getSegInfoByCoCd
   const derivedRevenueBreakdown = useMemo<RevenueBreakdownItem[]>(() => {
     if (!segmentRecords.length) return [];
 
-    // Filter to revenue sale_type and quarterly records only
+    // Use SEG_TYPE from segInfo, falling back to legacy REVENUE_SALE_TYPE constant
+    const segType = segInfo?.SEG_TYPE ?? REVENUE_SALE_TYPE;
+    const segLevel = parseInt(segInfo?.SEG_LEVEL ?? '1', 10);
+    const levelKey = (
+      segLevel === 3 ? 'anal_seg_level3' :
+      segLevel === 2 ? 'anal_seg_level2' :
+                       'anal_seg_level1'
+    ) as 'anal_seg_level1' | 'anal_seg_level2' | 'anal_seg_level3';
+
+    // Filter to the configured sale_type and quarterly records only
     const revenueRecords = segmentRecords.filter(
-      (r) => r.sale_type === REVENUE_SALE_TYPE && r.calendar_quarter !== ANNUAL_QUARTER_VALUE,
+      (r) => r.sale_type === segType && r.calendar_quarter !== ANNUAL_QUARTER_VALUE,
     );
     if (!revenueRecords.length) return [];
 
-    // Find the latest calendar_year/calendar_quarter
+    // Find the latest calendar_year/calendar_quarter (current year/qtr)
     revenueRecords.sort((a, b) => {
       if (a.calendar_year !== b.calendar_year) return b.calendar_year - a.calendar_year;
       return b.calendar_quarter.localeCompare(a.calendar_quarter);
@@ -618,12 +639,16 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     const latestYear = revenueRecords[0].calendar_year;
     const latestQuarter = revenueRecords[0].calendar_quarter;
 
-    // Get all items for the latest period, excluding totals (e.g. "Total Net Sales ($M)")
+    // Get all items for the current period using the configured seg level,
+    // excluding totals (e.g. "Total Net Sales ($M)") and records where the level field is empty
     const latestRecords = revenueRecords.filter(
-      (r) =>
-        r.calendar_year === latestYear &&
-        r.calendar_quarter === latestQuarter &&
-        !r.anal_seg_level1.toLowerCase().includes('total'),
+      (r) => {
+        if (r.calendar_year !== latestYear || r.calendar_quarter !== latestQuarter) return false;
+        const levelVal = r[levelKey] ?? '';
+        if (!levelVal || levelVal.trim() === '') return false;
+        if (levelVal.toLowerCase().includes('total')) return false;
+        return true;
+      },
     );
 
     // Calculate total revenue from these items
@@ -632,10 +657,10 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
 
     // Compute percentage for each item, sorted by pct descending
     return latestRecords.map((r) => ({
-      name: r.anal_seg_level1.replace(MILLION_DOLLAR_SUFFIX_RE, ''),
+      name: (r[levelKey] ?? '').replace(MILLION_DOLLAR_SUFFIX_RE, ''),
       pct: Math.round(((r.fld_val ?? 0) / total) * 1000) / 10,
     })).sort((a, b) => b.pct - a.pct);
-  }, [segmentRecords]);
+  }, [segmentRecords, segInfo]);
 
   // Parse markdown data
   const profileData = getProfileData();
@@ -1470,7 +1495,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
             )}
 
             {/* ── FIN. Statement tab ── */}
-            {activeTab === 'FIN. Statement' && <FinancialStatementTab symbol={symbol} companyStatements={companyStatements} />}
+            {activeTab === 'FIN. Statement' && <FinancialStatementTab symbol={symbol} companyStatements={companyStatements} segmentRecords={segmentRecords} />}
 
             {/* ── IR Material tab ── */}
             {activeTab === 'IR Material' && <IRMaterialTab symbol={symbol} />}

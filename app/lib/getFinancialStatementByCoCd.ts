@@ -51,7 +51,7 @@ export interface SegmentRecord {
 }
 
 /** Format a numeric segment value for display based on sale_type. */
-function formatSegmentValue(val: number | null, saleType: string): string {
+export function formatSegmentValue(val: number | null, saleType: string): string {
   if (val === null || val === undefined) return '—';
   const isPct = saleType.includes('(%)');
   const isGrowth = /growth|yoy/i.test(saleType);
@@ -267,4 +267,21 @@ export async function getSegmentByCoCd(coCd: string): Promise<SegmentRecord[]> {
 
   _segmentRecordsCache[coCd] = null;
   return [];
+}
+
+/**
+ * Simulated API: getBBGSegment
+ *
+ * Fetches raw BBG segment report records for a given company code.
+ * This is the canonical function used in Pattern A data-fetching.
+ * Internally delegates to getSegmentByCoCd.
+ *
+ * In production this will call a real backend API:
+ *   GET /api/bbg-segments?co_cd={coCd}
+ *
+ * @param coCd  Company code / ticker symbol, e.g. "AAPL"
+ * @returns Promise resolving to SegmentRecord[]
+ */
+export async function getBBGSegment(coCd: string): Promise<SegmentRecord[]> {
+  return getSegmentByCoCd(coCd);
 }

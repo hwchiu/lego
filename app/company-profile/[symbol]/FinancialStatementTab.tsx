@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import type { StatementData } from '@/app/data/financialData';
 import {
   getFinancialStatementByCoCd,
   type StatementType,
   type CompanyStatements,
   type SimpleStatementData,
+  type SegmentRecord,
+  formatSegmentValue,
 } from '@/app/lib/getFinancialStatementByCoCd';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -287,15 +289,206 @@ function SimpleStatementTable({ data, viewMode, yearWindowStart, allYears }: Sim
   );
 }
 
+// ── Segment Report Table ───────────────────────────────────────────────────────
+
+const SEGMENT_ANNUAL_Q = 'NA';
+
+/** Build a period label for a SegmentRecord. */
+function segPLabel(calYear: number, calQ: string): string {
+  return calQ === SEGMENT_ANNUAL_Q ? `FY${calYear}` : `${calQ} ${calYear}`;
+}
+
+/** Build a sort key for a segment period. */
+function segPSortKey(calYear: number, calQ: string): number {
+  if (calQ === SEGMENT_ANNUAL_Q) return calYear * 10;
+  const m = calQ.match(/^Q([1-4])$/);
+  return calYear * 10 + (m ? parseInt(m[1], 10) : 5);
+}
+
+/** Build the display label for a segment item from the non-empty level fields. */
+function segItemLabel(r: SegmentRecord): string {
+  const parts = [r.anal_seg_level1, r.anal_seg_level2, r.anal_seg_level3]
+    .filter((v) => v && v.trim() !== '');
+  return parts.join(' / ') || '—';
+}
+
+/** Unique key for a segment item within a sale_type group. */
+function segItemKey(r: SegmentRecord): string {
+  return `${r.anal_seg_level1 ?? ''}|${r.anal_seg_level2 ?? ''}|${r.anal_seg_level3 ?? ''}`;
+}
+
+interface SegmentReportTableProps {
+  records: SegmentRecord[];
+  viewMode: ViewMode;
+  yearWindowStart: number;
+}
+
+function SegmentReportTable({ records, viewMode, yearWindowStart }: SegmentReportTableProps) {
+  // Filter records to the current view mode / year window
+  const filteredRecords = records.filter((r) => {
+    if (viewMode === 'annual') return r.calendar_quarter === SEGMENT_ANNUAL_Q;
+    return (
+      r.calendar_quarter !== SEGMENT_ANNUAL_Q &&
+      (r.calendar_year === yearWindowStart || r.calendar_year === yearWindowStart + 1)
+    );
+  });
+
+  if (filteredRecords.length === 0) {
+    return (
+      <div className="cp-tab-placeholder">
+        <span className="cp-tab-placeholder-text">No segment data for selected period.</span>
+      </div>
+    );
+  }
+
+  // Build ordered, deduplicated period labels
+  const periodSet = new Set<string>();
+  const sortKeyMap = new Map<string, number>();
+  for (const r of filteredRecords) {
+    const lbl = segPLabel(r.calendar_year, r.calendar_quarter);
+    periodSet.add(lbl);
+    if (!sortKeyMap.has(lbl)) sortKeyMap.set(lbl, segPSortKey(r.calendar_year, r.calendar_quarter));
+  }
+  const periods = [...periodSet].sort((a, b) => (sortKeyMap.get(a) ?? 0) - (sortKeyMap.get(b) ?? 0));
+
+  // Build sale_type order and item order per sale_type
+  const saleTypeOrder: string[] = [];
+  const saleTypeSeen = new Set<string>();
+  const itemOrders: Record<string, { key: string; label: string }[]> = {};
+  const itemSeen: Record<string, Set<string>> = {};
+  // dataMap: `${saleType}###${itemKey}` → { [period]: formatted value }
+  const dataMap: Record<string, Record<string, string>> = {};
+
+  for (const r of filteredRecords) {
+    const { sale_type, fld_val } = r;
+    const iKey = segItemKey(r);
+    const iLabel = segItemLabel(r);
+    const pLabel = segPLabel(r.calendar_year, r.calendar_quarter);
+
+    if (!saleTypeSeen.has(sale_type)) {
+      saleTypeOrder.push(sale_type);
+      saleTypeSeen.add(sale_type);
+      itemOrders[sale_type] = [];
+      itemSeen[sale_type] = new Set();
+    }
+    if (!itemSeen[sale_type].has(iKey)) {
+      itemOrders[sale_type].push({ key: iKey, label: iLabel });
+      itemSeen[sale_type].add(iKey);
+    }
+
+    const mapKey = `${sale_type}###${iKey}`;
+    if (!dataMap[mapKey]) dataMap[mapKey] = {};
+    dataMap[mapKey][pLabel] = formatSegmentValue(fld_val, sale_type);
+  }
+
+  // Build two-row quarterly header groups
+  type Row1Cell =
+    | { type: 'annual'; label: string }
+    | { type: 'qgroup'; yearLabel: string; count: number };
+  const row1Cells: Row1Cell[] = [];
+  const row2Quarters: string[] = [];
+
+  for (const p of periods) {
+    if (/^Q\d/.test(p)) {
+      const yr = p.match(/\d{4}$/)?.[0] ?? '';
+      const yearLabel = `FY${yr}`;
+      const qLabel = p.match(/^Q\d/)?.[0] ?? p;
+      row2Quarters.push(qLabel);
+      const last = row1Cells[row1Cells.length - 1];
+      if (last && last.type === 'qgroup' && last.yearLabel === yearLabel) {
+        last.count++;
+      } else {
+        row1Cells.push({ type: 'qgroup', yearLabel, count: 1 });
+      }
+    } else {
+      row1Cells.push({ type: 'annual', label: p });
+    }
+  }
+  const hasQuarterly = row2Quarters.length > 0;
+
+  return (
+    <div className="fin-stmt-table-wrap">
+      <table className="data-table fin-stmt-table fin-stmt-simple-table">
+        <thead>
+          <tr>
+            <th rowSpan={hasQuarterly ? 2 : 1} className="fin-stmt-th-item">
+              <div className="fin-stmt-th-item-inner">
+                <span className="fin-stmt-th-year">Year</span>
+                <span className="fin-stmt-th-divider" />
+                <span className="fin-stmt-th-item-label">Item</span>
+              </div>
+            </th>
+            {row1Cells.map((cell, i) =>
+              cell.type === 'annual' ? (
+                <th key={i} rowSpan={hasQuarterly ? 2 : 1} className="fin-stmt-simple-col-hdr">
+                  {cell.label}
+                </th>
+              ) : (
+                <th key={i} colSpan={cell.count} className="th-group">
+                  {cell.yearLabel}
+                </th>
+              )
+            )}
+          </tr>
+          {hasQuarterly && (
+            <tr className="sub-head">
+              {row2Quarters.map((q, i) => (
+                <th key={i} className="sub-group-inner">{q}</th>
+              ))}
+            </tr>
+          )}
+        </thead>
+        <tbody>
+          {saleTypeOrder.map((saleType) => (
+            <React.Fragment key={saleType}>
+              {/* Section header row — shows sale_type */}
+              <tr className="fin-stmt-section-row">
+                <td colSpan={periods.length + 1} className="fin-stmt-td-section">
+                  {saleType}
+                </td>
+              </tr>
+              {/* Item rows — shows anal_seg_level1/2/3 (non-empty parts) */}
+              {itemOrders[saleType].map(({ key, label }) => {
+                const mapKey = `${saleType}###${key}`;
+                const rowVals = dataMap[mapKey] ?? {};
+                return (
+                  <tr key={`item-${saleType}-${key}`}>
+                    <td className="fin-stmt-td-item">{label}</td>
+                    {periods.map((p) => {
+                      const val = rowVals[p] ?? '—';
+                      const isNeg = val.startsWith('-') && val !== '-';
+                      const isPos = val.startsWith('+');
+                      return (
+                        <td
+                          key={p}
+                          className={`td-num${isNeg ? ' fin-stmt-neg' : isPos ? ' fin-stmt-pos' : ''}`}
+                        >
+                          {val}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </React.Fragment>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 // ── Component ──────────────────────────────────────────────────────────────────
 interface FinancialStatementTabProps {
   symbol: string;
   /** When provided by a parent component, skip internal fetch and use this data directly.
    *  null = parent is still loading; object = data ready (may be empty {}). */
   companyStatements?: CompanyStatements | null;
+  /** Raw segment records from getBBGSegment, used for the Segment Report tab. */
+  segmentRecords?: SegmentRecord[];
 }
 
-export default function FinancialStatementTab({ symbol, companyStatements: propStatements }: FinancialStatementTabProps) {
+export default function FinancialStatementTab({ symbol, companyStatements: propStatements, segmentRecords: propSegmentRecords }: FinancialStatementTabProps) {
   const [statementType, setStatementType] = useState<StatementType>('income');
   const [viewMode, setViewMode] = useState<ViewMode>('quarterly');
   const [currency, setCurrency] = useState<Currency>('original');
@@ -323,16 +516,27 @@ export default function FinancialStatementTab({ symbol, companyStatements: propS
     return () => { cancelled = true; };
   }, [symbol, propStatements]);
 
-  // Tabs are shown only for sections that actually have data
-  const visibleTabs = STATEMENT_ITEMS.filter((item) => availableStatements[item.key] != null);
+  // Tabs are shown only for sections that actually have data.
+  // The 'segment' tab is also shown when segment records are provided via props.
+  const visibleTabs = STATEMENT_ITEMS.filter((item) => {
+    if (item.key === 'segment') {
+      return availableStatements[item.key] != null || (propSegmentRecords && propSegmentRecords.length > 0);
+    }
+    return availableStatements[item.key] != null;
+  });
 
   // If the active tab has no data for the current company, fall back to the first available tab
   const effectiveType: StatementType =
-    availableStatements[statementType] != null
+    visibleTabs.some((t) => t.key === statementType)
       ? statementType
       : (visibleTabs[0]?.key ?? 'income');
 
   const currentTabData = availableStatements[effectiveType];
+
+  // ── Segment records for the new SegmentReportTable ───────────────────────────
+  // Use prop segment records when rendering the segment tab
+  const useSegmentRecordsForTable =
+    effectiveType === 'segment' && propSegmentRecords && propSegmentRecords.length > 0;
 
   // ── Simple statement data — drives balance / cashflow / segment year nav ──────
   const simpleData: SimpleStatementData | null = useMemo(
@@ -353,8 +557,22 @@ export default function FinancialStatementTab({ symbol, companyStatements: propS
     )].filter(Boolean).sort((a, b) => a - b);
   }, [currentTabData]);
 
-  // Unified year list: works for both 'simple' and 'findata' tabs
-  const activeAllYears = simpleData ? simpleAllYears : finDataAllYears;
+  // ── Segment records year nav ──────────────────────────────────────────────────
+  const segmentAllYears = useMemo(() => {
+    if (!propSegmentRecords?.length) return [];
+    return [...new Set(
+      propSegmentRecords
+        .filter((r) => r.calendar_quarter !== SEGMENT_ANNUAL_Q)
+        .map((r) => r.calendar_year),
+    )].filter(Boolean).sort((a, b) => a - b);
+  }, [propSegmentRecords]);
+
+  // Unified year list: works for 'simple', 'findata', and segment tabs
+  const activeAllYears = useSegmentRecordsForTable
+    ? segmentAllYears
+    : simpleData
+    ? simpleAllYears
+    : finDataAllYears;
 
   const activeMaxYearWindowStart = activeAllYears.length > 1
     ? activeAllYears[activeAllYears.length - 1] - 1
@@ -418,8 +636,8 @@ export default function FinancialStatementTab({ symbol, companyStatements: propS
 
       {/* ── Right content area ── */}
       <div className="fin-stmt-content">
-        {/* Toolbar — shown for all tabs that have data */}
-        {currentTabData != null && (
+        {/* Toolbar — shown when there is data (either statements or segment records) */}
+        {(currentTabData != null || useSegmentRecordsForTable) && (
           <div className="fin-stmt-toolbar">
             <div className="fin-stmt-year-nav">
               {viewMode === 'quarterly' && activeAllYears.length > 0 && (
@@ -486,14 +704,20 @@ export default function FinancialStatementTab({ symbol, companyStatements: propS
         )}
 
         {/* ── Table ── */}
-        {currentTabData?.kind === 'findata' && (
+        {/* Segment Report: use SegmentReportTable from getBBGSegment records when available */}
+        {useSegmentRecordsForTable ? (
+          <SegmentReportTable
+            records={propSegmentRecords!}
+            viewMode={viewMode}
+            yearWindowStart={simpleYearWindowStart}
+          />
+        ) : currentTabData?.kind === 'findata' ? (
           <FinDataTable
             data={currentTabData.data}
             viewMode={viewMode}
             yearWindowStart={simpleYearWindowStart}
           />
-        )}
-        {isSimpleStatement && (
+        ) : isSimpleStatement ? (
           simpleData ? (
             <SimpleStatementTable
               data={simpleData}
@@ -508,7 +732,7 @@ export default function FinancialStatementTab({ symbol, companyStatements: propS
               </span>
             </div>
           )
-        )}
+        ) : null}
       </div>
     </div>
   );
