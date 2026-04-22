@@ -54,13 +54,14 @@ function ChevronIcon({ direction }: { direction: 'left' | 'right' }) {
 }
 
 // Star icon for watchlist favorites
-function StarIcon({ filled, onClick }: { filled: boolean; onClick: (e: React.MouseEvent) => void }) {
+function StarIcon({ filled, onClick }: { filled: boolean; onClick?: (e: React.MouseEvent) => void }) {
   return (
     <button
-      className={`sidebar-star-btn${filled ? ' starred' : ''}`}
+      className={`sidebar-star-btn${filled ? ' starred' : ''}${!onClick ? ' sidebar-star-btn--readonly' : ''}`}
       onClick={onClick}
-      aria-label={filled ? 'Remove from favorites' : 'Add to favorites'}
-      title={filled ? 'Remove from favorites' : 'Add to favorites'}
+      disabled={!onClick}
+      aria-label={onClick ? (filled ? 'Remove from favorites' : 'Add to favorites') : undefined}
+      title={onClick ? (filled ? 'Remove from favorites' : 'Add to favorites') : undefined}
     >
       <svg viewBox="0 0 14 14" width="12" height="12" fill="none" aria-hidden="true">
         {filled ? (
@@ -119,25 +120,10 @@ function SubMenu({
     <div className="sidebar-submenu" style={{ top }} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       {isWatchlistMenu ? (
         <>
-          {/* Fixed: Favorites with a filled star icon */}
-          <div className="sidebar-submenu-item sidebar-submenu-item--watchlist-fixed">
-            <svg
-              viewBox="0 0 14 14"
-              width="12"
-              height="12"
-              fill="none"
-              aria-hidden="true"
-              className="sidebar-watchlist-star"
-            >
-              <path
-                d="M7 1.5l1.5 3.3L12.5 5l-2.5 2.6.6 3.7L7 9.6l-3.6 1.7.6-3.7L1.5 5l3.8-.7z"
-                fill="#f59e0b"
-                stroke="#f59e0b"
-                strokeWidth="1.1"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <Link href="/watchlist/favorites/" className="sidebar-submenu-item-link sidebar-submenu-item-link--full">
+          {/* Fixed: Favorites with a filled star icon (non-toggleable) */}
+          <div className="sidebar-submenu-item sidebar-submenu-item--with-star">
+            <StarIcon filled={true} />
+            <Link href="/watchlist/favorites/" className="sidebar-submenu-item-link">
               <span className="sidebar-submenu-label">{lang === 'zh' ? '我的最愛' : 'Favorites'}</span>
             </Link>
           </div>
@@ -145,16 +131,28 @@ function SubMenu({
           {/* API-sourced user watchlists, sorted by watchlistId ascending */}
           {[...apiWatchlists]
             .sort((a, b) => a.watchlistId - b.watchlistId)
-            .map((wl) => (
-              <div key={wl.watchlistId} className="sidebar-submenu-item">
-                <Link
-                  href={`/watchlist/?id=${wl.watchlistId}`}
-                  className="sidebar-submenu-item-link sidebar-submenu-item-link--full"
-                >
-                  <span className="sidebar-submenu-label">{wl.watchlistName}</span>
-                </Link>
-              </div>
-            ))}
+            .map((wl) => {
+              const wlKey = String(wl.watchlistId);
+              const isFav = favorites.has(wlKey);
+              return (
+                <div key={wl.watchlistId} className="sidebar-submenu-item sidebar-submenu-item--with-star">
+                  <StarIcon
+                    filled={isFav}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      toggleFavorite(wlKey);
+                    }}
+                  />
+                  <Link
+                    href={`/watchlist/?id=${wl.watchlistId}`}
+                    className="sidebar-submenu-item-link"
+                  >
+                    <span className="sidebar-submenu-label">{wl.watchlistName}</span>
+                  </Link>
+                </div>
+              );
+            })}
 
           {/* Divider before Create Watchlist */}
           <div className="sidebar-submenu-divider" />

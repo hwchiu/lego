@@ -6,6 +6,7 @@
  * parameters the real backend API will expect so that integration is seamless.
  */
 
+import companyTagsData from '@/app/data/company-tags.json';
 import { newsItems } from '@/app/data/news';
 import type { NewsItem } from '@/app/data/news';
 import { getEventCalendarSummary } from '@/app/lib/eventCalendarApi';
@@ -543,13 +544,15 @@ export interface CompanyTagListResponse {
 
 /**
  * Get the public tag list for a company.
- * Stub — returns an empty list until the backend is ready.
+ * Returns mock data from company-tags.json until the backend is ready.
  * When integrated, this function will call the backend with co_cd and return
  * the tag list in the format: { co_cd, tagInfoDTOList: [{ tag_id, tag_name }] }.
  */
 export async function getCompanyTagList(co_cd: string): Promise<CompanyTagListResponse> {
   console.log('[API stub] getCompanyTagList', { co_cd });
-  return { co_cd, tagInfoDTOList: [] };
+  const tagsMap = companyTagsData as Record<string, TagInfoDTO[]>;
+  const tagInfoDTOList: TagInfoDTO[] = tagsMap[co_cd] ?? [];
+  return { co_cd, tagInfoDTOList };
 }
 
 // ─── CRUD API stubs ─────────────────────────────────────────────────────────
