@@ -497,6 +497,38 @@ input, select { font-family: var(--font); }
 .sidebar-quick-link:hover .ni { opacity: 1; }
 .sidebar-quick-link .ni { opacity: 0.6; }
 
+/* Upcoming (not-yet-released) nav items — no pointer, no hover effect */
+.sidebar-nav-upcoming {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.38);
+  cursor: default;
+  user-select: none;
+  white-space: nowrap;
+  flex-wrap: nowrap;
+}
+.sidebar-nav-upcoming .ni { opacity: 0.35; }
+.sidebar-quick-link.sidebar-nav-upcoming {
+  font-size: 11.5px;
+  padding: 6px 10px;
+  color: rgba(255,255,255,0.38);
+}
+.sidebar-bottom span.sidebar-nav-upcoming {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: rgba(255,255,255,0.3);
+  cursor: default;
+  user-select: none;
+}
+
 /* Bottom Links */
 .sidebar-bottom {
   margin-top: auto;
@@ -535,6 +567,11 @@ input, select { font-family: var(--font); }
 .sidebar.collapsed .sidebar-nav a.active::before {
   display: none;
 }
+.sidebar.collapsed .sidebar-nav .sidebar-nav-upcoming {
+  justify-content: center;
+  padding: 7px 0;
+  gap: 0;
+}
 .sidebar.collapsed .sidebar-divider {
   margin: 4px 8px;
 }
@@ -542,6 +579,11 @@ input, select { font-family: var(--font); }
   padding: 8px 4px 14px;
 }
 .sidebar.collapsed .sidebar-bottom a {
+  justify-content: center;
+  padding: 7px 0;
+  gap: 0;
+}
+.sidebar.collapsed .sidebar-bottom span.sidebar-nav-upcoming {
   justify-content: center;
   padding: 7px 0;
   gap: 0;
@@ -7212,6 +7254,16 @@ input, select { font-family: var(--font); }
 .de-category-card:hover .de-category-card-arrow {
   transform: translateX(3px);
   color: var(--c-text-3);
+}
+
+.de-category-card--unreleased {
+  cursor: default !important;
+  pointer-events: none;
+}
+.de-category-card--unreleased:hover {
+  border-color: var(--c-border);
+  box-shadow: none;
+  transform: none;
 }
 
 /* ── Recent items grid ── */

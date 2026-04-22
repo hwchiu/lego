@@ -20,6 +20,7 @@ const CAT_IMAGES: Record<string, string> = {
   'industry-information': 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=900&q=80',
   'company-operations': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=900&q=80',
   'capital-markets': 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80',
+  'news-summary': 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=900&q=80',
 };
 
 function formatDate(iso: string): string {
@@ -1157,6 +1158,128 @@ function GovLaborTab({ lang }: { lang: 'zh' | 'en' }) {
   );
 }
 
+// ── News Summary tab components ───────────────────────────────────────────────
+
+const NEWS_ACCENT = '#0ea5e9';
+
+const NEWS_COMPANIES = [
+  { id: 'TSMC',    label: 'TSMC',     tags: ['TSMC', 'TC'] },
+  { id: 'NVIDIA',  label: 'NVIDIA',   tags: ['NVIDIA', 'NVDA'] },
+  { id: 'Apple',   label: 'Apple',    tags: ['Apple', 'AAPL'] },
+  { id: 'Intel',   label: 'Intel',    tags: ['Intel', 'INTC'] },
+];
+
+const NEWS_TOPICS = [
+  { id: 'earnings',    label: 'Earnings & Revenue',  tags: ['Earnings', 'Revenue'] },
+  { id: 'ai',          label: 'AI & Computing',       tags: ['AI', 'GPU', 'HBM4', 'Blackwell'] },
+  { id: 'supply',      label: 'Supply Chain',         tags: ['Supply Chain', 'ASML', 'SK Hynix', 'Samsung SDI', 'CoWoS'] },
+  { id: 'policy',      label: 'Policy & Regulation',  tags: ['US Policy', 'Export Control', 'Regulation', 'Defense', 'BIS'] },
+  { id: 'fab',         label: 'Fab & Manufacturing',  tags: ['Production', 'Arizona', 'Fab 21', 'Japan', 'JASM', '2nm', '12nm'] },
+  { id: 'market',      label: 'Market & Investment',  tags: ['Market', 'Forecast', 'Orders', 'Equipment', 'Recovery', 'Memory'] },
+];
+
+function NewsByCompanyTab({ items, lang }: { items: DataItem[]; lang: 'zh' | 'en' }) {
+  const [selectedCompany, setSelectedCompany] = useState<string>('TSMC');
+  const zh = lang === 'zh';
+
+  const filteredItems = useMemo(() => {
+    const co = NEWS_COMPANIES.find((c) => c.id === selectedCompany);
+    if (!co) return [];
+    return items
+      .filter((item) => co.tags.some((tag) => item.tags.includes(tag) || item.title.includes(tag) || item.summary.includes(tag)))
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [items, selectedCompany]);
+
+  return (
+    <div className="de-esg-layout">
+      <nav className="de-esg-sidebar" aria-label={zh ? '公司列表' : 'Company list'}>
+        <div className="de-esg-sidebar-title">{zh ? '公司' : 'Company'}</div>
+        {NEWS_COMPANIES.map((co) => (
+          <button
+            key={co.id}
+            className={`de-esg-sidebar-item${selectedCompany === co.id ? ' active' : ''}`}
+            style={selectedCompany === co.id ? { borderLeftColor: NEWS_ACCENT, color: NEWS_ACCENT } : {}}
+            onClick={() => setSelectedCompany(co.id)}
+          >
+            <span className="de-esg-sidebar-item-name">{co.label}</span>
+          </button>
+        ))}
+      </nav>
+      <div className="de-esg-content">
+        <div className="de-esg-reports-section-header">
+          <span className="de-esg-reports-company-badge" style={{ background: `${NEWS_ACCENT}18`, color: NEWS_ACCENT }}>
+            {selectedCompany}
+          </span>
+          <div className="de-esg-reports-section-titles">
+            <span className="de-esg-reports-section-title">{filteredItems.length} {zh ? '篇新聞' : 'articles'}</span>
+          </div>
+        </div>
+        {filteredItems.length === 0 ? (
+          <div className="de-empty">{zh ? '此公司暫無相關新聞' : 'No articles found for this company.'}</div>
+        ) : (
+          <div className="de-items-list">
+            {filteredItems.map((item) => (
+              <DataItemCard key={item.id} item={item} accentColor={NEWS_ACCENT} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function NewsByTopicTab({ items, lang }: { items: DataItem[]; lang: 'zh' | 'en' }) {
+  const [selectedTopic, setSelectedTopic] = useState<string>('earnings');
+  const zh = lang === 'zh';
+
+  const filteredItems = useMemo(() => {
+    const topic = NEWS_TOPICS.find((t) => t.id === selectedTopic);
+    if (!topic) return [];
+    return items
+      .filter((item) => topic.tags.some((tag) => item.tags.includes(tag) || item.title.includes(tag) || item.summary.includes(tag)))
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [items, selectedTopic]);
+
+  const topicLabel = NEWS_TOPICS.find((t) => t.id === selectedTopic)?.label ?? '';
+
+  return (
+    <div className="de-esg-layout">
+      <nav className="de-esg-sidebar" aria-label={zh ? '主題列表' : 'Topic list'}>
+        <div className="de-esg-sidebar-title">{zh ? '主題' : 'Topic'}</div>
+        {NEWS_TOPICS.map((topic) => (
+          <button
+            key={topic.id}
+            className={`de-esg-sidebar-item${selectedTopic === topic.id ? ' active' : ''}`}
+            style={selectedTopic === topic.id ? { borderLeftColor: NEWS_ACCENT, color: NEWS_ACCENT } : {}}
+            onClick={() => setSelectedTopic(topic.id)}
+          >
+            <span className="de-esg-sidebar-item-name">{topic.label}</span>
+          </button>
+        ))}
+      </nav>
+      <div className="de-esg-content">
+        <div className="de-esg-reports-section-header">
+          <span className="de-esg-reports-company-badge" style={{ background: `${NEWS_ACCENT}18`, color: NEWS_ACCENT }}>
+            {topicLabel}
+          </span>
+          <div className="de-esg-reports-section-titles">
+            <span className="de-esg-reports-section-title">{filteredItems.length} {zh ? '篇新聞' : 'articles'}</span>
+          </div>
+        </div>
+        {filteredItems.length === 0 ? (
+          <div className="de-empty">{zh ? '此主題暫無相關新聞' : 'No articles found for this topic.'}</div>
+        ) : (
+          <div className="de-items-list">
+            {filteredItems.map((item) => (
+              <DataItemCard key={item.id} item={item} accentColor={NEWS_ACCENT} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function DataCategoryContent({ params }: { params: { category: string } }) {
   const { lang } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
@@ -1165,6 +1288,7 @@ export default function DataCategoryContent({ params }: { params: { category: st
   const isCapital = params.category === 'capital-markets';
   const isEsg = params.category === 'esg';
   const isGov = params.category === 'government-regulations';
+  const isNewsSummary = params.category === 'news-summary';
 
   const CAPITAL_TABS = [
     { id: 'daily-quotes',      label: lang === 'zh' ? '每日收盤行情' : 'Daily Quotes' },
@@ -1186,11 +1310,17 @@ export default function DataCategoryContent({ params }: { params: { category: st
     { id: 'labor-violations',     label: lang === 'zh' ? '違反勞動法令事業單位' : 'Violations of Labor Laws' },
   ];
 
+  const NEWS_SUMMARY_TABS = [
+    { id: 'articles',      label: lang === 'zh' ? '新聞摘要' : 'News Articles' },
+    { id: 'by-company',    label: lang === 'zh' ? '依公司分類' : 'By Company' },
+    { id: 'by-category',   label: lang === 'zh' ? '依主題分類' : 'By Topic' },
+  ];
+
   const defaultTab = isCapital ? 'daily-quotes' : 'articles';
   const [activeSubTab, setActiveSubTab] = useState(defaultTab);
 
-  const hasSubTabs = isEsg || isGov || isCapital;
-  const subTabs = isCapital ? CAPITAL_TABS : isEsg ? ESG_TABS : isGov ? GOV_TABS : [];
+  const hasSubTabs = isEsg || isGov || isCapital || isNewsSummary;
+  const subTabs = isCapital ? CAPITAL_TABS : isEsg ? ESG_TABS : isGov ? GOV_TABS : isNewsSummary ? NEWS_SUMMARY_TABS : [];
 
   const cat = CATEGORIES_MAP[params.category];
 
@@ -1323,6 +1453,10 @@ export default function DataCategoryContent({ params }: { params: { category: st
               {activeSubTab === 'disqualified-vendors'  && isGov  && <GovDisqualifiedTab lang={lang} />}
               {activeSubTab === 'pollution-sources'     && isGov  && <GovPollutionTab lang={lang} />}
               {activeSubTab === 'labor-violations'      && isGov  && <GovLaborTab lang={lang} />}
+
+              {/* News Summary tabs */}
+              {activeSubTab === 'by-company'  && isNewsSummary && <NewsByCompanyTab items={cat.items} lang={lang} />}
+              {activeSubTab === 'by-category' && isNewsSummary && <NewsByTopicTab items={cat.items} lang={lang} />}
             </div>
           </div>
         </main>

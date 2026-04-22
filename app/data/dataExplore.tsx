@@ -5,6 +5,7 @@ import intlStdRaw from '@/content/data-explore/international-standards.md';
 import industryRaw from '@/content/data-explore/industry-information.md';
 import companyOpsRaw from '@/content/data-explore/company-operations.md';
 import capitalRaw from '@/content/data-explore/capital-markets.md';
+import newsSummaryRaw from '@/content/data-explore/news-summary.md';
 import { extractJson } from '@/app/lib/parseContent';
 
 // ── Category icon components ────────────────────────────────────────────────
@@ -146,6 +147,25 @@ function CapitalMarketsIcon() {
   );
 }
 
+function NewsSummaryIcon() {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      {/* Page outline */}
+      <rect x="8" y="6" width="32" height="36" rx="3" stroke="currentColor" strokeWidth="2" />
+      {/* Title bar */}
+      <rect x="14" y="13" width="20" height="3" rx="1" stroke="currentColor" strokeWidth="2" />
+      {/* Horizontal lines representing news text */}
+      <path d="M14 21h20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M14 26h20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M14 31h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      {/* Small accent circle (breaking news dot) */}
+      <circle cx="34" cy="35" r="4" stroke="currentColor" strokeWidth="2" />
+      <path d="M34 33v2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="34" cy="37" r="0.8" fill="currentColor" />
+    </svg>
+  );
+}
+
 // ── Types ───────────────────────────────────────────────────────────────────
 
 export interface DataItem {
@@ -223,6 +243,15 @@ export const CATEGORIES: Category[] = [
     description:
       'Investment analysis, analyst ratings, price targets, institutional ownership, and capital market events for TSMC (TC ADR) and associated semiconductor sector equities.',
     items: extractJson<DataItem[]>(capitalRaw),
+  },
+  {
+    slug: 'news-summary',
+    label: 'News Summary',
+    icon: <NewsSummaryIcon />,
+    color: '#0ea5e9',
+    description:
+      'Curated news summaries covering TSMC, its supply chain ecosystem, and the broader semiconductor industry — aggregated from major financial and technology media outlets.',
+    items: extractJson<DataItem[]>(newsSummaryRaw),
   },
 ];
 

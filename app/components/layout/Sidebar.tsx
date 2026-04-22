@@ -204,6 +204,21 @@ function SubMenu({
 function QuickLink({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
   const { lang } = useLanguage();
   const displayLabel = lang === 'zh' ? t(item.label, 'zh') : item.label;
+  const isUpcoming = item.badgeStyle === 'coming-soon';
+  if (isUpcoming) {
+    return (
+      <span
+        className="sidebar-quick-link sidebar-nav-upcoming"
+        title={collapsed ? displayLabel : undefined}
+      >
+        <NavIcon iconKey={item.icon} />
+        {!collapsed && displayLabel}
+        {!collapsed && item.badge && (
+          <span className="badge-coming-soon">{item.badge}</span>
+        )}
+      </span>
+    );
+  }
   return (
     <Link
       href={item.href}
@@ -288,55 +303,70 @@ function NavItemRow({
     };
   }, []);
 
+  const isUpcoming = item.badgeStyle === 'coming-soon';
+
   return (
     <li
       ref={liRef}
-      className="sidebar-nav-item"
-      onMouseEnter={openSubmenu}
-      onMouseLeave={scheduleClose}
+      className={`sidebar-nav-item${isUpcoming ? ' sidebar-nav-item--upcoming' : ''}`}
+      onMouseEnter={!isUpcoming ? openSubmenu : undefined}
+      onMouseLeave={!isUpcoming ? scheduleClose : undefined}
     >
-      <Link
-        href={item.href}
-        className={isActive ? 'active' : ''}
-        title={collapsed ? displayLabel : undefined}
-      >
-        <NavIcon iconKey={item.icon} />
-        {!collapsed && displayLabel}
-        {!collapsed && item.badge && (
-          <span
-            className={item.badgeStyle === 'coming-soon' ? 'badge-coming-soon' : 'badge-new'}
-            style={item.badgeStyle !== 'coming-soon' && item.badgeColor ? { background: item.badgeColor } : undefined}
-          >
-            {item.badge}
-          </span>
-        )}
-        {!collapsed && hasSubMenu && (
-          <button
-            className="sidebar-submenu-toggle"
-            onClick={toggleSubmenu}
-            aria-label={open ? 'Collapse submenu' : 'Expand submenu'}
-            aria-expanded={open}
-          >
-            <svg
-              className={`sidebar-submenu-arrow${open ? ' open' : ''}`}
-              viewBox="0 0 14 14"
-              fill="none"
-              width="10"
-              height="10"
-              aria-hidden="true"
+      {isUpcoming ? (
+        <span
+          className={isActive ? 'active sidebar-nav-upcoming' : 'sidebar-nav-upcoming'}
+          title={collapsed ? displayLabel : undefined}
+        >
+          <NavIcon iconKey={item.icon} />
+          {!collapsed && displayLabel}
+          {!collapsed && item.badge && (
+            <span className="badge-coming-soon">{item.badge}</span>
+          )}
+        </span>
+      ) : (
+        <Link
+          href={item.href}
+          className={isActive ? 'active' : ''}
+          title={collapsed ? displayLabel : undefined}
+        >
+          <NavIcon iconKey={item.icon} />
+          {!collapsed && displayLabel}
+          {!collapsed && item.badge && (
+            <span
+              className={item.badgeStyle === 'coming-soon' ? 'badge-coming-soon' : 'badge-new'}
+              style={item.badgeStyle !== 'coming-soon' && item.badgeColor ? { background: item.badgeColor } : undefined}
             >
-              <path
-                d="M5 2.5L9.5 7L5 11.5"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-        )}
-      </Link>
-      {open && hasSubMenu && (
+              {item.badge}
+            </span>
+          )}
+          {!collapsed && hasSubMenu && (
+            <button
+              className="sidebar-submenu-toggle"
+              onClick={toggleSubmenu}
+              aria-label={open ? 'Collapse submenu' : 'Expand submenu'}
+              aria-expanded={open}
+            >
+              <svg
+                className={`sidebar-submenu-arrow${open ? ' open' : ''}`}
+                viewBox="0 0 14 14"
+                fill="none"
+                width="10"
+                height="10"
+                aria-hidden="true"
+              >
+                <path
+                  d="M5 2.5L9.5 7L5 11.5"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          )}
+        </Link>
+      )}
+      {open && hasSubMenu && !isUpcoming && (
         <SubMenu
           items={item.subItems!}
           anchorRef={liRef}
@@ -376,10 +406,15 @@ export default function Sidebar() {
   const { lang } = useLanguage();
   const { isMobileOpen, closeSidebar, isDesktopCollapsed: collapsed, toggleDesktopCollapsed } = useMobileSidebar();
   const toggleLabel = collapsed ? 'Expand menu' : 'Collapse menu';
-  // When expanded, quickLinks[0] renders inside the collapse header row,
+
+  // Filter out unreleased quick links ("Explore MIC Picks" and "Collaboration Playground")
+  const HIDDEN_QUICK_LINKS = ['Explore MIC Picks', 'Collaboration Playground'];
+  const filteredQuickLinks = quickLinks.filter((item) => !HIDDEN_QUICK_LINKS.includes(item.label));
+
+  // When expanded, filteredQuickLinks[0] renders inside the collapse header row,
   // so only the remaining items are listed below.
   // When collapsed, the header shows only the toggle button, so all quickLinks render here.
-  const visibleQuickLinks = collapsed ? quickLinks : quickLinks.slice(1);
+  const visibleQuickLinks = collapsed ? filteredQuickLinks : filteredQuickLinks.slice(1);
 
   const mainNavLabel = lang === 'zh' ? '主要導覽' : 'Main Navigation';
   const supplyChainLabel = lang === 'zh' ? '供應鏈分析' : 'Supply Chain Analysis';
@@ -398,7 +433,7 @@ export default function Sidebar() {
       <nav className={`sidebar${collapsed ? ' collapsed' : ''}${isMobileOpen ? ' mobile-open' : ''}`}>
       <div className="sidebar-quick">
         <div className="sidebar-collapse-header">
-          {!collapsed && <QuickLink item={quickLinks[0]} collapsed={false} />}
+          {!collapsed && filteredQuickLinks.length > 0 && <QuickLink item={filteredQuickLinks[0]} collapsed={false} />}
           <button
             className="sidebar-toggle-btn"
             onClick={toggleDesktopCollapsed}
@@ -420,6 +455,22 @@ export default function Sidebar() {
       <div className="sidebar-bottom">
         {bottomLinks.map((item) => {
           const label = lang === 'zh' ? t(item.label, 'zh') : item.label;
+          const isUpcoming = item.badgeStyle === 'coming-soon';
+          if (isUpcoming) {
+            return (
+              <span
+                key={item.label}
+                className="sidebar-nav-upcoming"
+                title={collapsed ? label : undefined}
+              >
+                <NavIcon iconKey={item.icon} />
+                {!collapsed && label}
+                {!collapsed && item.badge && (
+                  <span className="badge-coming-soon">{item.badge}</span>
+                )}
+              </span>
+            );
+          }
           return (
             <Link
               key={item.label}

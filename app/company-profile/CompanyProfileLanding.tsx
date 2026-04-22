@@ -240,7 +240,7 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
                 <div className="cp-search-box">
                   <textarea
                     className="cp-search-input"
-                    placeholder="Search a company, ticker, or ask a question…"
+                    placeholder="Search a company, ticker (or ask a question... Coming soon)"
                     value={query}
                     rows={1}
                     onChange={(e) => {
