@@ -196,7 +196,7 @@ export const CATEGORIES: Category[] = [
     icon: <NewsSummaryIcon />,
     color: '#0ea5e9',
     description:
-      'Curated news summaries covering TSMC, its supply chain ecosystem, and the broader semiconductor industry — aggregated from major financial and technology media outlets.',
+      'Every other Friday at noon, this digest utilizes AI to quickly filter, summarize, and present Taiwan and global ESG-related news, enabling you to stay abreast of market developments.',
     items: extractJson<DataItem[]>(newsSummaryRaw),
   },
   {

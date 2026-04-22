@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, type ReactNode } from 'react';
+import { useState, useMemo, useEffect, type ReactNode } from 'react';
 import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
@@ -10,6 +10,9 @@ import { ESG_REPORTS } from '@/app/data/esgReports';
 import { TAIWAN_TAX_NEWS, type TaxNewsItem } from '@/app/data/taxNews';
 import WorldMapTab from '@/app/components/GovernmentRegulationsMap';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { queryCatgDetail } from '@/app/lib/queryCatgDetail';
+import { queryDataItemContent } from '@/app/lib/queryDataItemContent';
+import { type NewsSummaryItem } from '@/app/data/newsSummaryData';
 
 const TAGS_VISIBLE_COUNT = 6;
 
@@ -1162,8 +1165,7 @@ function GovLaborTab({ lang }: { lang: 'zh' | 'en' }) {
 
 const NEWS_ACCENT = '#0ea5e9';
 
-// Tag sets for each digest category
-const ESG_TAGS = new Set(['Regulation', 'Export Control', 'BIS', 'Defense', 'US Policy', 'Battery', 'SEMI', 'Market', 'Forecast', 'Equipment', 'Lithography', 'EUV']);
+// Tag sets for each digest category (used by legacy tabs)
 const TAIWAN_TAGS = new Set(['TSMC', 'Taiwan', 'Japan', 'JASM', 'Arizona', 'Fab 21', '12nm', '2nm', 'TC', 'CoWoS', 'Production', 'Supply Chain']);
 const INTL_TAGS = new Set(['NVIDIA', 'Apple', 'AAPL', 'Intel', 'INTC', 'ASML', 'SK Hynix', 'HBM4', 'Blackwell', 'GPU', 'Qualcomm', 'Broadcom', 'Samsung SDI', 'Memory', 'Recovery', 'Orders', 'AI', 'Data Center', 'Earnings']);
 
@@ -1249,6 +1251,237 @@ function NewsDigestTab({ items, tagSet, heading, subheading, lang, periodLabel }
     </div>
   );
 }
+
+// ── Markdown parser for ESG news content ─────────────────────────────────────
+
+interface EsgNewsArticle {
+  title: string;
+  url: string;
+  site: string;
+  date: string;
+  summary: string;
+}
+
+interface EsgTopicSection {
+  topic: string;
+  articles: EsgNewsArticle[];
+}
+
+const TOPIC_SEPARATOR = /={60,}\s*\n\s*##\s+NEXT\s+Topic\s*##\s*\n\s*={60,}/;
+
+function parseMarkdownTableRow(row: string): string[] {
+  return row
+    .split('|')
+    .map((cell) => cell.trim())
+    .filter((_, i, arr) => i > 0 && i < arr.length - 1);
+}
+
+function parseEsgMarkdown(markdown: string): EsgTopicSection[] {
+  const chunks = markdown.split(TOPIC_SEPARATOR);
+  const sections: EsgTopicSection[] = [];
+
+  for (const chunk of chunks) {
+    const lines = chunk.split('\n').map((l) => l.trim()).filter(Boolean);
+    if (lines.length === 0) continue;
+
+    // Find topic heading
+    const headingIdx = lines.findIndex((l) => l.startsWith('##') && !l.includes('NEXT Topic'));
+    if (headingIdx === -1) continue;
+    const topic = lines[headingIdx].replace(/^#+\s*/, '').trim();
+
+    // Find table rows (skip heading row and separator row)
+    const tableRows = lines.filter((l) => l.startsWith('|') && !l.startsWith('|---') && !l.startsWith('| ---') && !l.match(/^\|[-| ]+\|$/));
+    // Skip the header row (first table row contains column names)
+    const dataRows = tableRows.slice(1);
+
+    const articles: EsgNewsArticle[] = dataRows.map((row) => {
+      const cells = parseMarkdownTableRow(row);
+      return {
+        title: cells[0] ?? '',
+        url: cells[1] ?? '',
+        site: cells[2] ?? '',
+        date: cells[3] ?? '',
+        summary: cells[4] ?? '',
+      };
+    }).filter((a) => a.title);
+
+    if (topic) {
+      sections.push({ topic, articles });
+    }
+  }
+
+  return sections;
+}
+
+// ── ESG topic collapsible section component ───────────────────────────────────
+
+function ChevronIcon({ open }: { open: boolean }) {
+  return (
+    <svg viewBox="0 0 14 14" fill="none" width="14" height="14" aria-hidden="true">
+      <path
+        d={open ? 'M3 5l4 4 4-4' : 'M5 3l4 4-4 4'}
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+interface EsgTopicSectionProps {
+  section: EsgTopicSection;
+  defaultOpen?: boolean;
+}
+
+function EsgTopicSectionCard({ section, defaultOpen = true }: EsgTopicSectionProps) {
+  const [open, setOpen] = useState(defaultOpen);
+
+  return (
+    <div className="de-esg-topic-section">
+      <button
+        className="de-esg-topic-header"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+      >
+        <span className={`de-esg-topic-chevron${open ? ' de-esg-topic-chevron--open' : ''}`}>
+          <ChevronIcon open={open} />
+        </span>
+        <span className="de-esg-topic-title">{section.topic}</span>
+        <span className="de-esg-topic-count">{section.articles.length} 則</span>
+      </button>
+
+      {open && (
+        <div className="de-esg-topic-body">
+          {section.articles.map((article, i) => (
+            <article key={i} className="de-esg-news-card">
+              <div className="de-esg-news-card-header">
+                {article.site && (
+                  <span className="de-esg-news-card-site">{article.site}</span>
+                )}
+                {article.date && (
+                  <span className="de-esg-news-card-date">{article.date}</span>
+                )}
+              </div>
+              <div className="de-esg-news-card-title">
+                {article.url && article.url !== '#' ? (
+                  <a href={article.url} target="_blank" rel="noopener noreferrer">
+                    {article.title}
+                    <span style={{ display: 'inline-flex', alignItems: 'center', marginLeft: 3 }}>
+                      <ExternalLinkIcon />
+                    </span>
+                  </a>
+                ) : (
+                  article.title
+                )}
+              </div>
+              {article.summary && (
+                <p className="de-esg-news-card-summary">{article.summary}</p>
+              )}
+            </article>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── BiweeklyEsgTab — uses queryCatgDetail + queryDataItemContent ──────────────
+
+const BIWEEKLY_ESG_PREFIX = 'Bi-weekly ESG News Summary ';
+
+function stripPrefix(itemName: string): string {
+  if (itemName.startsWith(BIWEEKLY_ESG_PREFIX)) {
+    return itemName.slice(BIWEEKLY_ESG_PREFIX.length);
+  }
+  return itemName;
+}
+
+function BiweeklyEsgTab({ lang }: { lang: 'zh' | 'en' }) {
+  const zh = lang === 'zh';
+
+  const [periods, setPeriods] = useState<NewsSummaryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activePeriodId, setActivePeriodId] = useState<string>('');
+  const [contentLoading, setContentLoading] = useState(false);
+  const [sections, setSections] = useState<EsgTopicSection[]>([]);
+
+  // Load period list on mount
+  useEffect(() => {
+    queryCatgDetail().then((data) => {
+      const items = data.result.items;
+      setPeriods(items);
+      if (items.length > 0) {
+        setActivePeriodId(items[0].data_item_id);
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  // Load content when active period changes
+  useEffect(() => {
+    if (!activePeriodId) return;
+    setContentLoading(true);
+    setSections([]);
+    queryDataItemContent(activePeriodId).then((markdown) => {
+      if (markdown) {
+        setSections(parseEsgMarkdown(markdown));
+      }
+      setContentLoading(false);
+    });
+  }, [activePeriodId]);
+
+  return (
+    <div className="de-tax-news-wrap">
+      <div className="de-tax-news-header">
+        <div className="de-tax-news-title" style={{ color: NEWS_ACCENT }}>Bi-weekly ESG News Summary</div>
+        <div className="de-tax-news-sub">
+          Every other Friday at noon, this digest utilizes AI to quickly filter, summarize, and present Taiwan and global ESG-related news, enabling you to stay abreast of market developments.
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="de-esg-loading">Loading periods…</div>
+      ) : (
+        <div className="de-intl-tax-layout">
+          {/* Left: period sidebar */}
+          <nav className="de-intl-tax-sidebar" aria-label="Period list">
+            <div className="de-intl-tax-sidebar-title">{zh ? '期間' : 'Period'}</div>
+            {periods.length === 0 && (
+              <div className="de-intl-tax-sidebar-item" style={{ opacity: 0.5 }}>—</div>
+            )}
+            {periods.map((item) => (
+              <button
+                key={item.data_item_id}
+                className={`de-intl-tax-sidebar-item${activePeriodId === item.data_item_id ? ' active' : ''}`}
+                style={activePeriodId === item.data_item_id ? { borderLeftColor: NEWS_ACCENT, color: NEWS_ACCENT } : {}}
+                onClick={() => setActivePeriodId(item.data_item_id)}
+              >
+                <span className="de-intl-tax-sidebar-item-name">{stripPrefix(item.item_name)}</span>
+              </button>
+            ))}
+          </nav>
+
+          {/* Right: collapsible topic sections */}
+          <div className="de-intl-tax-content">
+            {contentLoading ? (
+              <div className="de-esg-loading">Loading content…</div>
+            ) : sections.length === 0 ? (
+              <div className="de-esg-empty">{zh ? '暫無相關新聞' : 'No articles found.'}</div>
+            ) : (
+              <div className="de-esg-topics-wrap">
+                {sections.map((section, i) => (
+                  <EsgTopicSectionCard key={section.topic} section={section} defaultOpen={i === 0} />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 
 export default function DataCategoryContent({ params }: { params: { category: string } }) {
   const { lang } = useLanguage();
@@ -1426,14 +1659,7 @@ export default function DataCategoryContent({ params }: { params: { category: st
 
               {/* News Summary tabs */}
               {activeSubTab === 'biweekly-esg' && isNewsSummary && (
-                <NewsDigestTab
-                  items={cat.items}
-                  tagSet={ESG_TAGS}
-                  heading="Bi-weekly ESG News Summary"
-                  subheading="Curated ESG, regulatory, and policy-related semiconductor industry news — updated every two weeks."
-                  lang={lang}
-                  periodLabel="Biweek"
-                />
+                <BiweeklyEsgTab lang={lang} />
               )}
               {activeSubTab === 'taiwan-news' && isNewsSummary && (
                 <NewsDigestTab
