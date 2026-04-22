@@ -113,7 +113,7 @@ export const mainNav: NavItem[] = [
       { label: 'Financial Data', href: '/market-data/financial-data', icon: 'financialData' },
     ],
   },
-  { label: 'Data Explore', href: '/data-explore', icon: 'dataExplore', badge: 'Upcoming', badgeStyle: 'coming-soon' },
+  { label: 'Data Explore', href: '/data-explore', icon: 'dataExplore' },
 ];
 
 export const supplyChainNav: NavItem[] = [

@@ -56,11 +56,29 @@ interface CategoryCardProps {
   color: string;
   description: string;
   count: number;
+  released: boolean;
 }
 
-function CategoryCard({ slug, label, icon, color, description, count }: CategoryCardProps) {
+function CategoryCard({ slug, label, icon, color, description, count, released }: CategoryCardProps) {
+  if (released) {
+    return (
+      <Link href={`/data-explore/${slug}`} className="de-category-card">
+        <div className="de-category-card-icon" style={{ color }}>
+          {icon}
+        </div>
+        <div className="de-category-card-body">
+          <div className="de-category-card-label">{label}</div>
+          <div className="de-category-card-desc">{description}</div>
+          <div className="de-category-card-footer">
+            <span className="de-category-card-count" style={{ color: 'var(--c-text-2)' }}>{count} records</span>
+            <span className="de-category-card-arrow"><ArrowIcon /></span>
+          </div>
+        </div>
+      </Link>
+    );
+  }
   return (
-    <Link href={`/data-explore/${slug}`} className="de-category-card">
+    <div className="de-category-card de-category-card--unreleased" style={{ opacity: 0.6, cursor: 'default' }}>
       <div className="de-category-card-icon" style={{ color }}>
         {icon}
       </div>
@@ -68,11 +86,10 @@ function CategoryCard({ slug, label, icon, color, description, count }: Category
         <div className="de-category-card-label">{label}</div>
         <div className="de-category-card-desc">{description}</div>
         <div className="de-category-card-footer">
-          <span className="de-category-card-count" style={{ color: 'var(--c-text-2)' }}>{count} records</span>
-          <span className="de-category-card-arrow"><ArrowIcon /></span>
+          <span className="de-category-card-arrow" style={{ opacity: 0 }}><ArrowIcon /></span>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
 
@@ -202,6 +219,7 @@ export default function DataExplorePage() {
                         color={cat.color}
                         description={cat.description}
                         count={cat.items.length}
+                        released={cat.slug === 'news-summary'}
                       />
                     ))}
                   </div>

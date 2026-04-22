@@ -20,6 +20,7 @@ const CAT_IMAGES: Record<string, string> = {
   'industry-information': 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=900&q=80',
   'company-operations': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=900&q=80',
   'capital-markets': 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80',
+  'news-summary': 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=900&q=80',
 };
 
 function formatDate(iso: string): string {
@@ -1157,6 +1158,98 @@ function GovLaborTab({ lang }: { lang: 'zh' | 'en' }) {
   );
 }
 
+// ── News Summary tab components ───────────────────────────────────────────────
+
+const NEWS_ACCENT = '#0ea5e9';
+
+// Tag sets for each digest category
+const ESG_TAGS = new Set(['Regulation', 'Export Control', 'BIS', 'Defense', 'US Policy', 'Battery', 'SEMI', 'Market', 'Forecast', 'Equipment', 'Lithography', 'EUV']);
+const TAIWAN_TAGS = new Set(['TSMC', 'Taiwan', 'Japan', 'JASM', 'Arizona', 'Fab 21', '12nm', '2nm', 'TC', 'CoWoS', 'Production', 'Supply Chain']);
+const INTL_TAGS = new Set(['NVIDIA', 'Apple', 'AAPL', 'Intel', 'INTC', 'ASML', 'SK Hynix', 'HBM4', 'Blackwell', 'GPU', 'Qualcomm', 'Broadcom', 'Samsung SDI', 'Memory', 'Recovery', 'Orders', 'AI', 'Data Center', 'Earnings']);
+
+function newsMatchesSet(item: DataItem, tagSet: Set<string>): boolean {
+  return item.tags.some((t) => tagSet.has(t));
+}
+
+interface NewsDigestTabProps {
+  items: DataItem[];
+  tagSet: Set<string>;
+  heading: string;
+  subheading: string;
+  lang: 'zh' | 'en';
+  periodLabel: string;
+}
+
+function NewsDigestTab({ items, tagSet, heading, subheading, lang, periodLabel }: NewsDigestTabProps) {
+  const zh = lang === 'zh';
+
+  // Group articles into biweekly / weekly periods based on date
+  const filtered = useMemo(() => {
+    return items
+      .filter((item) => newsMatchesSet(item, tagSet))
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [items, tagSet]);
+
+  // Group by 2-week periods (using ISO year-week, rounded to biweekly)
+  const groups = useMemo(() => {
+    const map = new Map<string, DataItem[]>();
+    filtered.forEach((item) => {
+      const d = new Date(item.date);
+      const weekOfYear = Math.ceil(((d.getTime() - new Date(d.getFullYear(), 0, 1).getTime()) / 86400000 + new Date(d.getFullYear(), 0, 1).getDay() + 1) / 7);
+      const periodNum = Math.ceil(weekOfYear / 2);
+      const key = `${d.getFullYear()} — ${periodLabel} ${periodNum}`;
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(item);
+    });
+    return Array.from(map.entries()).sort((a, b) => b[0].localeCompare(a[0]));
+  }, [filtered, periodLabel]);
+
+  const [activePeriod, setActivePeriod] = useState<string>(() => groups[0]?.[0] ?? '');
+  // sync if groups change
+  const activePeriodFinal = activePeriod || groups[0]?.[0] || '';
+
+  const activeItems = groups.find(([key]) => key === activePeriodFinal)?.[1] ?? filtered;
+
+  return (
+    <div className="de-tax-news-wrap">
+      <div className="de-tax-news-header">
+        <div className="de-tax-news-title" style={{ color: NEWS_ACCENT }}>{heading}</div>
+        <div className="de-tax-news-sub">{subheading}</div>
+      </div>
+      <div className="de-intl-tax-layout">
+        <nav className="de-intl-tax-sidebar" aria-label="Period list">
+          <div className="de-intl-tax-sidebar-title">{zh ? '期間' : 'Period'}</div>
+          {groups.length === 0 && (
+            <div className="de-intl-tax-sidebar-item" style={{ opacity: 0.5 }}>—</div>
+          )}
+          {groups.map(([key, grpItems]) => (
+            <button
+              key={key}
+              className={`de-intl-tax-sidebar-item${activePeriodFinal === key ? ' active' : ''}`}
+              style={activePeriodFinal === key ? { borderLeftColor: NEWS_ACCENT, color: NEWS_ACCENT } : {}}
+              onClick={() => setActivePeriod(key)}
+            >
+              <span className="de-intl-tax-sidebar-item-name">{key}</span>
+              <span className="de-intl-tax-sidebar-item-count">{grpItems.length}</span>
+            </button>
+          ))}
+        </nav>
+        <div className="de-intl-tax-content">
+          {(groups.length === 0 ? filtered : activeItems).length === 0 ? (
+            <div className="de-intl-tax-empty">{zh ? '暫無相關新聞' : 'No articles found.'}</div>
+          ) : (
+            <div className="de-items-list">
+              {(groups.length === 0 ? filtered : activeItems).map((item) => (
+                <DataItemCard key={item.id} item={item} accentColor={NEWS_ACCENT} />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function DataCategoryContent({ params }: { params: { category: string } }) {
   const { lang } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
@@ -1165,6 +1258,7 @@ export default function DataCategoryContent({ params }: { params: { category: st
   const isCapital = params.category === 'capital-markets';
   const isEsg = params.category === 'esg';
   const isGov = params.category === 'government-regulations';
+  const isNewsSummary = params.category === 'news-summary';
 
   const CAPITAL_TABS = [
     { id: 'daily-quotes',      label: lang === 'zh' ? '每日收盤行情' : 'Daily Quotes' },
@@ -1186,11 +1280,17 @@ export default function DataCategoryContent({ params }: { params: { category: st
     { id: 'labor-violations',     label: lang === 'zh' ? '違反勞動法令事業單位' : 'Violations of Labor Laws' },
   ];
 
-  const defaultTab = isCapital ? 'daily-quotes' : 'articles';
+  const NEWS_SUMMARY_TABS = [
+    { id: 'biweekly-esg',  label: lang === 'zh' ? '雙週ESG新聞摘要' : 'Bi-weekly ESG News Summary' },
+    { id: 'taiwan-news',   label: lang === 'zh' ? '每週台灣稅務快訊' : 'Weekly Taiwan Tax News Summary' },
+    { id: 'intl-news',     label: lang === 'zh' ? '每週國際稅務快訊' : 'Weekly International Tax News Summary' },
+  ];
+
+  const defaultTab = isCapital ? 'daily-quotes' : isNewsSummary ? 'biweekly-esg' : 'articles';
   const [activeSubTab, setActiveSubTab] = useState(defaultTab);
 
-  const hasSubTabs = isEsg || isGov || isCapital;
-  const subTabs = isCapital ? CAPITAL_TABS : isEsg ? ESG_TABS : isGov ? GOV_TABS : [];
+  const hasSubTabs = isEsg || isGov || isCapital || isNewsSummary;
+  const subTabs = isCapital ? CAPITAL_TABS : isEsg ? ESG_TABS : isGov ? GOV_TABS : isNewsSummary ? NEWS_SUMMARY_TABS : [];
 
   const cat = CATEGORIES_MAP[params.category];
 
@@ -1323,6 +1423,38 @@ export default function DataCategoryContent({ params }: { params: { category: st
               {activeSubTab === 'disqualified-vendors'  && isGov  && <GovDisqualifiedTab lang={lang} />}
               {activeSubTab === 'pollution-sources'     && isGov  && <GovPollutionTab lang={lang} />}
               {activeSubTab === 'labor-violations'      && isGov  && <GovLaborTab lang={lang} />}
+
+              {/* News Summary tabs */}
+              {activeSubTab === 'biweekly-esg' && isNewsSummary && (
+                <NewsDigestTab
+                  items={cat.items}
+                  tagSet={ESG_TAGS}
+                  heading="Bi-weekly ESG News Summary"
+                  subheading="Curated ESG, regulatory, and policy-related semiconductor industry news — updated every two weeks."
+                  lang={lang}
+                  periodLabel="Biweek"
+                />
+              )}
+              {activeSubTab === 'taiwan-news' && isNewsSummary && (
+                <NewsDigestTab
+                  items={cat.items}
+                  tagSet={TAIWAN_TAGS}
+                  heading="Weekly Taiwan Tax News Summary"
+                  subheading="Taiwan-focused semiconductor industry highlights — TSMC operations, domestic policy, and fab updates."
+                  lang={lang}
+                  periodLabel="Week"
+                />
+              )}
+              {activeSubTab === 'intl-news' && isNewsSummary && (
+                <NewsDigestTab
+                  items={cat.items}
+                  tagSet={INTL_TAGS}
+                  heading="Weekly International Tax News Summary"
+                  subheading="International semiconductor market intelligence — NVIDIA, Apple, Intel, ASML, SK Hynix and beyond."
+                  lang={lang}
+                  periodLabel="Week"
+                />
+              )}
             </div>
           </div>
         </main>

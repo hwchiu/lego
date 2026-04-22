@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { bannerSlides } from '@/app/data/banner';
+import { newsItems } from '@/app/data/news';
 import { useBanner } from '@/app/contexts/BannerContext';
 
 function CloseIcon() {
@@ -21,19 +22,35 @@ export default function Banner() {
   const [current, setCurrent] = useState(0);
   const { dismissed, dismissBanner } = useBanner();
 
+  // Build slides: Tip slides from static data + 6 latest news as Breaking News slides
+  const slides = useMemo(() => {
+    const tipSlides = bannerSlides.filter((s) => s.labelVariant === 'tip');
+    const latestNews = [...newsItems]
+      .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
+      .slice(0, 6);
+    const newsSlides = latestNews.map((item) => ({
+      label: 'Breaking News',
+      labelVariant: 'breaking' as const,
+      prefix: undefined,
+      linkText: item.title,
+      linkHref: item.url,
+    }));
+    return [...newsSlides, ...tipSlides];
+  }, []);
+
   useEffect(() => {
     if (dismissed) return;
     const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % bannerSlides.length);
+      setCurrent((prev) => (prev + 1) % slides.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, [dismissed]);
+  }, [dismissed, slides.length]);
 
   if (dismissed) return null;
 
   return (
     <div className="banner-wrap">
-      {bannerSlides.map((slide, idx) => (
+      {slides.map((slide, idx) => (
         <div
           key={idx}
           className={`banner-slide ${idx === current ? 'active' : ''}`}
