@@ -212,7 +212,7 @@ export default function TopNav() {
           className="topnav-action-btn"
           title="User Manual"
           aria-label="User Manual"
-          onClick={() => router.push('/user-manual/')}
+          onClick={() => window.open('https://tkms.digwork.tw.ent.tsmc.com/pages/Uw5xaVFEXr', '_blank', 'noopener,noreferrer')}
         >
           {/* Book / manual icon */}
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">

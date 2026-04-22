@@ -485,6 +485,20 @@ export default function Sidebar() {
               </a>
             );
           }
+          if (item.external) {
+            return (
+              <a
+                key={item.label}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={collapsed ? label : undefined}
+              >
+                <NavIcon iconKey={item.icon} />
+                {!collapsed && label}
+              </a>
+            );
+          }
           return (
             <Link
               key={item.label}
