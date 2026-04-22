@@ -305,16 +305,135 @@ function segPSortKey(calYear: number, calQ: string): number {
   return calYear * 10 + (m ? parseInt(m[1], 10) : 5);
 }
 
-/** Build the display label for a segment item from the non-empty level fields. */
-function segItemLabel(r: SegmentRecord): string {
-  const parts = [r.anal_seg_level1, r.anal_seg_level2, r.anal_seg_level3]
-    .filter((v) => v && v.trim() !== '');
-  return parts.join(' / ') || '—';
+// ── Hierarchical segment data structures ──────────────────────────────────────
+
+interface SegSaleTypeRow {
+  saleType: string;
+  values: Record<string, string>; // period label → formatted value
 }
 
-/** Unique key for a segment item within a sale_type group. */
-function segItemKey(r: SegmentRecord): string {
-  return `${r.anal_seg_level1 ?? ''}|${r.anal_seg_level2 ?? ''}|${r.anal_seg_level3 ?? ''}`;
+interface SegLevel3Group {
+  level3: string;
+  saleTypeRows: SegSaleTypeRow[];
+}
+
+interface SegLevel2Group {
+  level2: string;
+  directRows: SegSaleTypeRow[];   // items with no level3
+  level3Groups: SegLevel3Group[];
+}
+
+interface SegLevel1Group {
+  level1: string;
+  directRows: SegSaleTypeRow[];   // items with no level2 and no level3
+  level2Groups: SegLevel2Group[];
+}
+
+/** Build a nested hierarchy from flat SegmentRecord[]. Preserves insertion order. */
+function buildSegmentHierarchy(records: SegmentRecord[]): SegLevel1Group[] {
+  const l1Order: string[] = [];
+  const l1Map = new Map<string, {
+    directSaleOrder: string[];
+    directSaleMap: Map<string, Record<string, string>>;
+    l2Order: string[];
+    l2Map: Map<string, {
+      directSaleOrder: string[];
+      directSaleMap: Map<string, Record<string, string>>;
+      l3Order: string[];
+      l3Map: Map<string, { saleOrder: string[]; saleMap: Map<string, Record<string, string>> }>;
+    }>;
+  }>();
+
+  for (const r of records) {
+    const l1 = r.anal_seg_level1 ?? '';
+    const l2 = r.anal_seg_level2?.trim() ?? '';
+    const l3 = r.anal_seg_level3?.trim() ?? '';
+    const st = r.sale_type;
+    const pLabel = segPLabel(r.calendar_year, r.calendar_quarter);
+    const val = formatSegmentValue(r.fld_val, st);
+
+    if (!l1Map.has(l1)) {
+      l1Map.set(l1, { directSaleOrder: [], directSaleMap: new Map(), l2Order: [], l2Map: new Map() });
+      l1Order.push(l1);
+    }
+    const g1 = l1Map.get(l1)!;
+
+    if (!l2) {
+      // Direct item under level1
+      if (!g1.directSaleMap.has(st)) { g1.directSaleOrder.push(st); g1.directSaleMap.set(st, {}); }
+      g1.directSaleMap.get(st)![pLabel] = val;
+    } else {
+      if (!g1.l2Map.has(l2)) {
+        g1.l2Map.set(l2, { directSaleOrder: [], directSaleMap: new Map(), l3Order: [], l3Map: new Map() });
+        g1.l2Order.push(l2);
+      }
+      const g2 = g1.l2Map.get(l2)!;
+
+      if (!l3) {
+        if (!g2.directSaleMap.has(st)) { g2.directSaleOrder.push(st); g2.directSaleMap.set(st, {}); }
+        g2.directSaleMap.get(st)![pLabel] = val;
+      } else {
+        if (!g2.l3Map.has(l3)) {
+          g2.l3Map.set(l3, { saleOrder: [], saleMap: new Map() });
+          g2.l3Order.push(l3);
+        }
+        const g3 = g2.l3Map.get(l3)!;
+        if (!g3.saleMap.has(st)) { g3.saleOrder.push(st); g3.saleMap.set(st, {}); }
+        g3.saleMap.get(st)![pLabel] = val;
+      }
+    }
+  }
+
+  return l1Order.map((l1) => {
+    const g1 = l1Map.get(l1)!;
+    return {
+      level1: l1,
+      directRows: g1.directSaleOrder.map((st) => ({ saleType: st, values: g1.directSaleMap.get(st)! })),
+      level2Groups: g1.l2Order.map((l2) => {
+        const g2 = g1.l2Map.get(l2)!;
+        return {
+          level2: l2,
+          directRows: g2.directSaleOrder.map((st) => ({ saleType: st, values: g2.directSaleMap.get(st)! })),
+          level3Groups: g2.l3Order.map((l3) => {
+            const g3 = g2.l3Map.get(l3)!;
+            return {
+              level3: l3,
+              saleTypeRows: g3.saleOrder.map((st) => ({ saleType: st, values: g3.saleMap.get(st)! })),
+            };
+          }),
+        };
+      }),
+    };
+  });
+}
+
+/** Render a single data row for the segment table. */
+function SegDataRow({
+  saleType,
+  values,
+  periods,
+  indent,
+}: {
+  saleType: string;
+  values: Record<string, string>;
+  periods: string[];
+  indent: 'l2' | 'l3' | 'l4';
+}) {
+  return (
+    <tr>
+      <td className={`fin-stmt-td-item seg-item-${indent}`}>{saleType}</td>
+      {periods.map((p) => {
+        const val = values[p] ?? '—';
+        const isNeg = val.startsWith('-') && val !== '-';
+        const isPos = val.startsWith('+');
+        return (
+          <td key={p} className={`td-num${isNeg ? ' fin-stmt-neg' : isPos ? ' fin-stmt-pos' : ''}`}>
+            {val}
+          </td>
+        );
+      })}
+    </tr>
+  );
 }
 
 interface SegmentReportTableProps {
@@ -351,35 +470,8 @@ function SegmentReportTable({ records, viewMode, yearWindowStart }: SegmentRepor
   }
   const periods = [...periodSet].sort((a, b) => (sortKeyMap.get(a) ?? 0) - (sortKeyMap.get(b) ?? 0));
 
-  // Build sale_type order and item order per sale_type
-  const saleTypeOrder: string[] = [];
-  const saleTypeSeen = new Set<string>();
-  const itemOrders: Record<string, { key: string; label: string }[]> = {};
-  const itemSeen: Record<string, Set<string>> = {};
-  // dataMap: `${saleType}###${itemKey}` → { [period]: formatted value }
-  const dataMap: Record<string, Record<string, string>> = {};
-
-  for (const r of filteredRecords) {
-    const { sale_type, fld_val } = r;
-    const iKey = segItemKey(r);
-    const iLabel = segItemLabel(r);
-    const pLabel = segPLabel(r.calendar_year, r.calendar_quarter);
-
-    if (!saleTypeSeen.has(sale_type)) {
-      saleTypeOrder.push(sale_type);
-      saleTypeSeen.add(sale_type);
-      itemOrders[sale_type] = [];
-      itemSeen[sale_type] = new Set();
-    }
-    if (!itemSeen[sale_type].has(iKey)) {
-      itemOrders[sale_type].push({ key: iKey, label: iLabel });
-      itemSeen[sale_type].add(iKey);
-    }
-
-    const mapKey = `${sale_type}###${iKey}`;
-    if (!dataMap[mapKey]) dataMap[mapKey] = {};
-    dataMap[mapKey][pLabel] = formatSegmentValue(fld_val, sale_type);
-  }
+  // Build hierarchical data structure
+  const hierarchy = buildSegmentHierarchy(filteredRecords);
 
   // Build two-row quarterly header groups
   type Row1Cell =
@@ -405,6 +497,7 @@ function SegmentReportTable({ records, viewMode, yearWindowStart }: SegmentRepor
     }
   }
   const hasQuarterly = row2Quarters.length > 0;
+  const colSpanAll = periods.length + 1;
 
   return (
     <div className="fin-stmt-table-wrap">
@@ -439,37 +532,51 @@ function SegmentReportTable({ records, viewMode, yearWindowStart }: SegmentRepor
           )}
         </thead>
         <tbody>
-          {saleTypeOrder.map((saleType) => (
-            <React.Fragment key={saleType}>
-              {/* Section header row — shows sale_type */}
-              <tr className="fin-stmt-section-row">
-                <td colSpan={periods.length + 1} className="fin-stmt-td-section">
-                  {saleType}
+          {hierarchy.map((g1) => (
+            <React.Fragment key={g1.level1}>
+              {/* Level-1 group header */}
+              <tr className="fin-stmt-section-row seg-level1-row">
+                <td colSpan={colSpanAll} className="fin-stmt-td-section seg-l1-header">
+                  {g1.level1}
                 </td>
               </tr>
-              {/* Item rows — shows anal_seg_level1/2/3 (non-empty parts) */}
-              {itemOrders[saleType].map(({ key, label }) => {
-                const mapKey = `${saleType}###${key}`;
-                const rowVals = dataMap[mapKey] ?? {};
-                return (
-                  <tr key={`item-${saleType}-${key}`}>
-                    <td className="fin-stmt-td-item">{label}</td>
-                    {periods.map((p) => {
-                      const val = rowVals[p] ?? '—';
-                      const isNeg = val.startsWith('-') && val !== '-';
-                      const isPos = val.startsWith('+');
-                      return (
-                        <td
-                          key={p}
-                          className={`td-num${isNeg ? ' fin-stmt-neg' : isPos ? ' fin-stmt-pos' : ''}`}
-                        >
-                          {val}
-                        </td>
-                      );
-                    })}
+
+              {/* Direct items under level-1 (no level-2) */}
+              {g1.directRows.map((row) => (
+                <SegDataRow key={`${g1.level1}||${row.saleType}`} saleType={row.saleType} values={row.values} periods={periods} indent="l2" />
+              ))}
+
+              {/* Level-2 sub-groups */}
+              {g1.level2Groups.map((g2) => (
+                <React.Fragment key={`${g1.level1}|${g2.level2}`}>
+                  {/* Level-2 sub-group header */}
+                  <tr className="seg-level2-row">
+                    <td colSpan={colSpanAll} className="seg-l2-header">
+                      {g2.level2}
+                    </td>
                   </tr>
-                );
-              })}
+
+                  {/* Direct items under level-2 (no level-3) */}
+                  {g2.directRows.map((row) => (
+                    <SegDataRow key={`${g1.level1}|${g2.level2}||${row.saleType}`} saleType={row.saleType} values={row.values} periods={periods} indent="l3" />
+                  ))}
+
+                  {/* Level-3 sub-groups */}
+                  {g2.level3Groups.map((g3) => (
+                    <React.Fragment key={`${g1.level1}|${g2.level2}|${g3.level3}`}>
+                      {/* Level-3 label row */}
+                      <tr className="seg-level3-row">
+                        <td colSpan={colSpanAll} className="seg-l3-header">
+                          {g3.level3}
+                        </td>
+                      </tr>
+                      {g3.saleTypeRows.map((row) => (
+                        <SegDataRow key={`${g1.level1}|${g2.level2}|${g3.level3}|${row.saleType}`} saleType={row.saleType} values={row.values} periods={periods} indent="l4" />
+                      ))}
+                    </React.Fragment>
+                  ))}
+                </React.Fragment>
+              ))}
             </React.Fragment>
           ))}
         </tbody>

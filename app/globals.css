@@ -7034,6 +7034,60 @@ input, select { font-family: var(--font); }
   color: var(--c-text);
 }
 
+/* ── Segment Report hierarchical rows ── */
+.seg-l1-header {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-white);
+  background: var(--c-dark);
+  padding: 6px 10px;
+}
+
+.fin-stmt-simple-table .seg-level1-row td {
+  background: var(--c-dark);
+  border-bottom: 1px solid var(--c-border);
+}
+
+.seg-level2-row td {
+  background: #e9ecf0;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.seg-l2-header {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--c-text);
+  padding: 5px 10px 5px 22px;
+}
+
+.seg-level3-row td {
+  background: #f5f6f8;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.seg-l3-header {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--c-text-2);
+  font-style: italic;
+  padding: 4px 10px 4px 36px;
+}
+
+/* Indented item cells at each hierarchy depth */
+.seg-item-l2.fin-stmt-td-item { padding-left: 18px; }
+.seg-item-l3.fin-stmt-td-item { padding-left: 32px; }
+.seg-item-l4.fin-stmt-td-item { padding-left: 48px; }
+
+/* Dark mode */
+html.dark .fin-stmt-simple-table .seg-level1-row td { background: #0f172a; }
+html.dark .seg-l1-header { color: var(--c-accent); }
+html.dark .seg-level2-row td { background: #1e293b; }
+html.dark .seg-l2-header { color: var(--c-text); }
+html.dark .seg-level3-row td { background: #263347; }
+html.dark .seg-l3-header { color: var(--c-text-2); }
+
 /* ============================================================
    DATA EXPLORE — flat minimalist design
    ============================================================ */
