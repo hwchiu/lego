@@ -6652,7 +6652,7 @@ input, select { font-family: var(--font); }
 /* Stats strip */
 .about-site-stats-strip {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   background: var(--c-dark);
 }
 .about-site-stat-item {
