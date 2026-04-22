@@ -1398,7 +1398,7 @@ function downloadMarkdownAsPdf(title: string, markdownContent: string): void {
     for (const line of lines) {
       const trimmed = line.trim();
       if (!trimmed.startsWith('|')) continue;
-      if (/^\|[-| ]+\|$/.test(trimmed)) continue; // separator row
+      if (/^\|[|\- ]+\|$/.test(trimmed)) continue; // separator row
       const cells = trimmed.split('|').map((c) => c.trim()).filter((_, i, a) => i > 0 && i < a.length - 1);
       if (cells.length === 0) continue;
       dataLines.push(`<div class="article">` +
