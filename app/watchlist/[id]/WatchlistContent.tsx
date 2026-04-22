@@ -26,6 +26,8 @@ import {
   deleteView as apiDeleteView,
   updateWatchlistInfo,
   getFavoritesListByUserAcct,
+  getAllCoFavoriteList,
+  addCompanyToMyFavorite,
 } from '@/app/lib/watchlistApi';
 import { setFavoritesInPersonality } from '@/app/lib/getFavoritesByUserAcct';
 
@@ -1010,7 +1012,7 @@ export function WatchlistContent({
     setAddSymbolQuery('');
   }
 
-  function handleAddSymbolSubmit() {
+  async function handleAddSymbolSubmit() {
     const symbols = addSymbolQuery
       .split(',')
       .map((s) => s.trim().toUpperCase())
@@ -1031,11 +1033,15 @@ export function WatchlistContent({
       setSymbolOrder(watchlistId, newOrder);
       // API stub call for backend integration
       addCompanyToWatchlist('demoUser', watchlistId, symbols);
-      // When adding symbols to the Favorites watchlist, persist to user-personality
+      // When adding symbols to the Favorites watchlist, call addCompanyToMyFavorite
+      // for each new symbol then refresh via getAllCoFavoriteList
       if (watchlistId === 'favorites') {
-        setFavoritesInPersonality(newOrder);
-        const refreshed = getFavoritesListByUserAcct('demoUser');
-        onFavoritesSymbolsUpdate?.(refreshed);
+        const newSymbols = symbols.filter((s) => !currentSymbolOrder.includes(s));
+        for (const sym of newSymbols) {
+          await addCompanyToMyFavorite(sym);
+        }
+        const refreshed = await getAllCoFavoriteList('demoUser');
+        onFavoritesSymbolsUpdate?.(refreshed.co_cd);
       }
     }
 

@@ -10,7 +10,7 @@ import { newsItems } from '@/app/data/news';
 import type { NewsItem } from '@/app/data/news';
 import { getEventCalendarSummary } from '@/app/lib/eventCalendarApi';
 import type { EventCalendarSummaryItem } from '@/app/lib/eventCalendarApi';
-import { getFavoritesByUserAcct } from '@/app/lib/getFavoritesByUserAcct';
+import { getFavoritesByUserAcct, setFavoritesInPersonality } from '@/app/lib/getFavoritesByUserAcct';
 import { watchlistColumnCatalog } from '@/app/data/watchlistColumns';
 import type { WatchlistColumnCatalog } from '@/app/data/watchlistColumns';
 import { holdingsData as holdingsDataMap, holdingsDataQ4_2025 } from '@/app/data/watchlistData';
@@ -104,12 +104,54 @@ export function buildRecentQuarters(): { year: number; q: number }[] {
 
 // ─── API Functions ──────────────────────────────────────────────────────────
 
+/** Stub user account used by add/remove favorites stubs (no userAcct parameter per API spec). */
+const STUB_USER_ACCT = 'demoUser';
+
 /**
  * Get the list of favourite company codes for a user account.
  * Delegates to the existing getFavoritesByUserAcct implementation.
  */
 export function getFavoritesListByUserAcct(userAcct: string): string[] {
   return getFavoritesByUserAcct(userAcct);
+}
+
+/**
+ * Get the full favourite company list for a user account in API response format.
+ * Returns { co_cd: string[] }.
+ * Stub — reads from localStorage via getFavoritesByUserAcct.
+ */
+export async function getAllCoFavoriteList(userAcct: string): Promise<{ co_cd: string[] }> {
+  console.log('[API stub] getAllCoFavoriteList', { userAcct });
+  const list = getFavoritesByUserAcct(userAcct);
+  return { co_cd: list };
+}
+
+/**
+ * Add a single company to the user's favourite list.
+ * Stub — updates localStorage via setFavoritesInPersonality.
+ * After calling this, invoke getAllCoFavoriteList to refresh the in-memory list.
+ */
+export async function addCompanyToMyFavorite(company: string): Promise<{ success: boolean }> {
+  console.log('[API stub] addCompanyToMyFavorite', { company });
+  if (typeof window === 'undefined') return { success: true };
+  const current = getFavoritesByUserAcct(STUB_USER_ACCT);
+  if (!current.includes(company)) {
+    setFavoritesInPersonality([...current, company]);
+  }
+  return { success: true };
+}
+
+/**
+ * Remove a single company from the user's favourite list.
+ * Stub — updates localStorage via setFavoritesInPersonality.
+ * After calling this, invoke getAllCoFavoriteList to refresh the in-memory list.
+ */
+export async function removeCompanyFromFavorite(company: string): Promise<{ success: boolean }> {
+  console.log('[API stub] removeCompanyFromFavorite', { company });
+  if (typeof window === 'undefined') return { success: true };
+  const current = getFavoritesByUserAcct(STUB_USER_ACCT);
+  setFavoritesInPersonality(current.filter((s) => s !== company));
+  return { success: true };
 }
 
 /**
