@@ -191,6 +191,15 @@ export interface Category {
 
 export const CATEGORIES: Category[] = [
   {
+    slug: 'news-summary',
+    label: 'News Summary',
+    icon: <NewsSummaryIcon />,
+    color: '#0ea5e9',
+    description:
+      'Curated news summaries covering TSMC, its supply chain ecosystem, and the broader semiconductor industry — aggregated from major financial and technology media outlets.',
+    items: extractJson<DataItem[]>(newsSummaryRaw),
+  },
+  {
     slug: 'esg',
     label: 'ESG',
     icon: <EsgIcon />,
@@ -243,15 +252,6 @@ export const CATEGORIES: Category[] = [
     description:
       'Investment analysis, analyst ratings, price targets, institutional ownership, and capital market events for TSMC (TC ADR) and associated semiconductor sector equities.',
     items: extractJson<DataItem[]>(capitalRaw),
-  },
-  {
-    slug: 'news-summary',
-    label: 'News Summary',
-    icon: <NewsSummaryIcon />,
-    color: '#0ea5e9',
-    description:
-      'Curated news summaries covering TSMC, its supply chain ecosystem, and the broader semiconductor industry — aggregated from major financial and technology media outlets.',
-    items: extractJson<DataItem[]>(newsSummaryRaw),
   },
 ];
 

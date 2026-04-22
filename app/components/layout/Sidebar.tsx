@@ -403,7 +403,7 @@ function NavSection({
     <>
       {!collapsed && label && <div className="sidebar-section-label">{label}</div>}
       <ul className="sidebar-nav">
-        {items.map((item) => (
+        {items.filter((item) => !item.hidden).map((item) => (
           <NavItemRow key={item.label} item={item} collapsed={collapsed} pathname={pathname} />
         ))}
       </ul>

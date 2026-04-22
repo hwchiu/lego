@@ -6,6 +6,7 @@ export interface NavItem {
   badge?: string;
   badgeColor?: string; // optional custom badge background color
   badgeStyle?: 'new' | 'coming-soon'; // badge visual style
+  hidden?: boolean; // when true, item is not rendered in the sidebar
   subItems?: SubNavItem[];
 }
 
@@ -128,6 +129,7 @@ export const supplyChainNav: NavItem[] = [
     label: 'My RMAP',
     href: '/my-rmap',
     icon: 'layers',
+    hidden: true,
     subItems: [
       { label: 'Supplier', href: '/my-rmap/supplier', icon: 'supplier' },
       { label: 'Customer', href: '/my-rmap/customer', icon: 'customer' },
