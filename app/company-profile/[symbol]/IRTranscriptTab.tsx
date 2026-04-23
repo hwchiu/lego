@@ -4,6 +4,7 @@ import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import NoDataIcon from './NoDataIcon';
 import { IrTranscriptHtmlEntry } from '@/app/data/irTranscripts';
 import { getIRTranscriptByCoCd } from '@/app/lib/getIRTranscriptByCoCd';
+import { highlightHtml } from '@/app/lib/htmlHighlight';
 
 interface IRTranscriptTabProps {
   symbol: string;
@@ -234,21 +235,7 @@ function IrtListItem({ entry, isActive, onClick }: IrtListItemProps) {
   );
 }
 
-// ── HTML keyword highlighter ──────────────────────────────────────────────────
-
-/**
- * Wraps all occurrences of `keyword` in `<mark class="cp-irt-highlight">` tags
- * within the text nodes of an HTML string, without modifying tag attributes.
- */
-function highlightHtml(html: string, keyword: string): string {
-  if (!keyword.trim()) return html;
-  const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  // Only replace text outside of HTML tags
-  return html.replace(
-    new RegExp(`(${escaped})(?=[^<]*(?:<|$))`, 'gi'),
-    '<mark class="cp-irt-highlight">$1</mark>',
-  );
-}
+// ── HTML keyword highlighter is imported from @/app/lib/htmlHighlight ─────────
 
 // ── Detail Panel ──────────────────────────────────────────────────────────────
 

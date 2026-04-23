@@ -4,6 +4,7 @@ import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import NoDataIcon from './NoDataIcon';
 import { AiTranscriptHtmlEntry } from '@/app/data/aiTranscripts';
 import { getAITranscriptByCoCd } from '@/app/lib/getAITranscriptByCoCd';
+import { highlightHtml } from '@/app/lib/htmlHighlight';
 
 interface AITranscriptTabProps {
   symbol: string;
@@ -58,19 +59,7 @@ function stripFirstH3(html: string): string {
   return html.replace(/<h3[^>]*>[\s\S]*?<\/h3>/i, '');
 }
 
-/**
- * Wraps all occurrences of `keyword` in `<mark class="cp-irt-highlight">` tags
- * within the text nodes of an HTML string, without modifying tag attributes.
- */
-function highlightHtml(html: string, keyword: string): string {
-  if (!keyword.trim()) return html;
-  const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  // Only replace text outside of HTML tags
-  return html.replace(
-    new RegExp(`(${escaped})(?=[^<]*(?:<|$))`, 'gi'),
-    '<mark class="cp-irt-highlight">$1</mark>',
-  );
-}
+// ── highlightHtml is imported from @/app/lib/htmlHighlight ───────────────────
 
 function downloadHtml(filename: string, content: string) {
   const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
