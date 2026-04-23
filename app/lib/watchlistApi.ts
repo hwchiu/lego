@@ -573,21 +573,112 @@ export async function updateWatchlistInfo(
 
 // ─── New Watchlist API Stubs ─────────────────────────────────────────────────
 
+// Default categories for a new watchlist's Summary view
+const DEFAULT_VIEW_CATEGORIES = [1, 2, 3, 4, 5, 6, 20, 8, 11] as const;
+
+// ─── User-created watchlist localStorage helpers ─────────────────────────────
+
+const API_CREATED_KEY = 'wl-api-created';
+
+interface ApiCreatedStore {
+  watchlists: ApiWatchlist[];
+  details: Record<number, WatchlistDetailResult>;
+}
+
+function getApiCreatedStore(): ApiCreatedStore {
+  if (typeof window === 'undefined') return { watchlists: [], details: {} };
+  try {
+    const raw = localStorage.getItem(API_CREATED_KEY);
+    if (raw) return JSON.parse(raw) as ApiCreatedStore;
+  } catch {
+    // ignore
+  }
+  return { watchlists: [], details: {} };
+}
+
+function saveApiCreatedStore(store: ApiCreatedStore): void {
+  try {
+    localStorage.setItem(API_CREATED_KEY, JSON.stringify(store));
+  } catch {
+    // ignore
+  }
+}
+
+// ─── createWatchlistWithCompany ──────────────────────────────────────────────
+
+export interface CreateWatchlistPayload {
+  watchlistName: string;
+  coCdList: WatchlistCompany[];
+}
+
+/**
+ * Create a new watchlist with companies.
+ * Stub — persists to localStorage and returns the new watchlistId.
+ * Replace with a real POST API call when backend is ready.
+ */
+export function createWatchlistWithCompany(
+  payload: CreateWatchlistPayload,
+): { watchlistId: number } {
+  console.log('[API stub] createWatchlistWithCompany', payload);
+  if (typeof window === 'undefined') return { watchlistId: -1 };
+
+  const store = getApiCreatedStore();
+  // Derive next ID from the union of mock IDs and user-created IDs to avoid collisions
+  const maxId = Math.max(
+    ...MOCK_WATCHLISTS.map((w) => w.watchlistId),
+    ...store.watchlists.map((w) => w.watchlistId),
+    0,
+  );
+  const newId = maxId + 1;
+
+  const newWatchlist: ApiWatchlist = {
+    watchlistId: newId,
+    watchlistName: payload.watchlistName,
+    isDefault: 'N',
+    defaultViewId: null,
+  };
+
+  const newDetail: WatchlistDetailResult = {
+    watchlistId: newId,
+    watchlistName: payload.watchlistName,
+    isDefault: 'N',
+    defaultViewId: null,
+    companylist: payload.coCdList,
+    viewlist: [
+      { viewId: 0, viewName: 'Summary', isDefaultForWatchlist: 'Y', selectedCategories: [...DEFAULT_VIEW_CATEGORIES] },
+    ],
+  };
+
+  store.watchlists.push(newWatchlist);
+  store.details[newId] = newDetail;
+  saveApiCreatedStore(store);
+
+  return { watchlistId: newId };
+}
+
 /**
  * Get all watchlists for a user account.
- * Stub — returns mock data; replace with real API call when backend is ready.
+ * Stub — combines mock data with user-created entries from localStorage.
  */
 export function getUserAllWatchlists(_userAcct: string): { result: ApiWatchlist[] } {
   console.log('[API stub] getUserAllWatchlists', { _userAcct });
-  return { result: MOCK_WATCHLISTS };
+  const { watchlists: userCreated } = getApiCreatedStore();
+  return { result: [...MOCK_WATCHLISTS, ...userCreated] };
 }
 
 /**
  * Get detail for a specific watchlist, including companylist and viewlist.
- * Stub — returns mock data keyed by watchlistId.
+ * Stub — checks user-created localStorage entries first, then falls back to mock data.
  */
 export function getWatchlistDetail(watchlistId: number): WatchlistDetailResponse {
   console.log('[API stub] getWatchlistDetail', { watchlistId });
+
+  // Check user-created watchlists first
+  const { details: userDetails } = getApiCreatedStore();
+  if (userDetails[watchlistId]) {
+    return { returnCd: '200', returnMsg: null, result: userDetails[watchlistId] };
+  }
+
   const result: WatchlistDetailResult = MOCK_WATCHLIST_DETAILS[watchlistId] ?? {
     watchlistId,
     watchlistName: `Watchlist ${watchlistId}`,

@@ -61,7 +61,7 @@ function SymbolItem({ symbol, index, onDelete, onDragStart, onDragEnter, onDragE
 // ── Main component ────────────────────────────────────────────────────────────
 export default function CreateWatchlistContent() {
   const router = useRouter();
-  const { addWatchlist } = useWatchlist();
+  const { createApiWatchlist } = useWatchlist();
 
   // Watchlist config state
   const [watchlistName, setWatchlistName] = useState('');
@@ -78,7 +78,7 @@ export default function CreateWatchlistContent() {
     if (pendingNavId) {
       const id = pendingNavId;
       setPendingNavId(null);
-      router.push(`/watchlist/${id}`);
+      router.push(`/watchlist/?id=${id}`);
     }
   }, [pendingNavId, router]);
 
@@ -127,11 +127,18 @@ export default function CreateWatchlistContent() {
   function handleSubmit() {
     const name = watchlistName.trim() || 'My Watchlist';
     if (symbols.length === 0) return;
-    const newId = addWatchlist(name, symbols);
-    if (newId) {
-      setPendingNavId(newId);
+
+    const coCdList = symbols.map((sym, idx) => ({
+      coCd: sym,
+      orderIndex: idx,
+      isPinned: 'N' as const,
+    }));
+
+    const newId = createApiWatchlist(name, coCdList);
+    if (newId > 0) {
+      setPendingNavId(String(newId));
     } else {
-      alert('Maximum number of watchlists reached (10). Please delete an existing one first.');
+      alert('Failed to create watchlist. Please try again.');
     }
   }
 
