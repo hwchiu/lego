@@ -319,26 +319,26 @@ function segPSortKey(calYear: number, calQ: string): number {
 // rawValues stores numeric values per period label (before formatting).
 // Parent nodes hold bottom-up aggregated values (sum of children) when children exist.
 
-interface SegLevel3Node {
+export interface SegLevel3Node {
   level3: string;
   rawValues: Record<string, number>;
 }
 
-interface SegLevel2Node {
+export interface SegLevel2Node {
   level2: string;
   /** Effective value: sum of level3 children (if any), else own direct value. */
   rawValues: Record<string, number>;
   level3Groups: SegLevel3Node[];
 }
 
-interface SegLevel1Node {
+export interface SegLevel1Node {
   level1: string;
   /** Effective value: sum of level2 children (if any), else own direct value. */
   rawValues: Record<string, number>;
   level2Groups: SegLevel2Node[];
 }
 
-interface SegSaleTypeGroup {
+export interface SegSaleTypeGroup {
   saleType: string;
   /** Effective value: sum of all level1 children. */
   rawValues: Record<string, number>;
@@ -386,7 +386,7 @@ function buildSegmentKey(parts: string[]): string {
  *   - Level1 rawValues = sum of its level2 children (if any), otherwise own direct value.
  *   - SaleType rawValues = sum of all level1 children.
  */
-function buildSegmentHierarchy(
+export function buildSegmentHierarchy(
   records: SegmentRecord[],
   currency: 'original' | 'usd' = 'usd',
 ): SegSaleTypeGroup[] {
