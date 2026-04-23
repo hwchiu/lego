@@ -4,6 +4,7 @@ import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import NoDataIcon from './NoDataIcon';
 import { IrTranscriptHtmlEntry } from '@/app/data/irTranscripts';
 import { getIRTranscriptByCoCd } from '@/app/lib/getIRTranscriptByCoCd';
+import { highlightHtml } from '@/app/lib/htmlHighlight';
 
 interface IRTranscriptTabProps {
   symbol: string;
@@ -234,25 +235,56 @@ function IrtListItem({ entry, isActive, onClick }: IrtListItemProps) {
   );
 }
 
+// ── HTML keyword highlighter is imported from @/app/lib/htmlHighlight ─────────
+
 // ── Detail Panel ──────────────────────────────────────────────────────────────
 
 interface IrtDetailProps {
   entry: IrTranscriptHtmlEntry;
+  keyword: string;
 }
 
-function IrtDetail({ entry }: IrtDetailProps) {
+function IrtDetail({ entry, keyword }: IrtDetailProps) {
   const parsed = useMemo(() => parseTranscriptFull(entry.doc_html), [entry.doc_html]);
   const { participants, managementSections, qaSections, hasStructuredData } = parsed;
 
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const allSections = useMemo(
+    () => [...managementSections, ...qaSections],
+    [managementSections, qaSections],
+  );
+
+  // When keyword changes, auto-expand all sections that contain the keyword
+  const keywordExpandedIds = useMemo(() => {
+    if (!keyword.trim()) return new Set<string>();
+    const kw = keyword.toLowerCase();
+    const ids = new Set<string>();
+    for (const s of allSections) {
+      if (
+        s.speaker.toLowerCase().includes(kw) ||
+        s.contentHtml.toLowerCase().includes(kw)
+      ) {
+        ids.add(s.id);
+      }
+    }
+    return ids;
+  }, [allSections, keyword]);
+
+  const [manualExpandedIds, setManualExpandedIds] = useState<Set<string>>(new Set());
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
+  // Merge manually expanded with keyword-expanded
+  const expandedIds = useMemo(() => {
+    const merged = new Set(manualExpandedIds);
+    keywordExpandedIds.forEach((id) => merged.add(id));
+    return merged;
+  }, [manualExpandedIds, keywordExpandedIds]);
+
   useEffect(() => {
-    setExpandedIds(new Set());
+    setManualExpandedIds(new Set());
   }, [entry.co_cd, entry.fiscal_year_no, entry.fiscal_qtr_no]);
 
   const handleChipClick = useCallback((id: string) => {
-    setExpandedIds((prev) => {
+    setManualExpandedIds((prev) => {
       const next = new Set(prev);
       next.add(id);
       return next;
@@ -263,7 +295,7 @@ function IrtDetail({ entry }: IrtDetailProps) {
   }, []);
 
   const handleToggle = useCallback((id: string) => {
-    setExpandedIds((prev) => {
+    setManualExpandedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
         next.delete(id);
@@ -289,6 +321,7 @@ function IrtDetail({ entry }: IrtDetailProps) {
 
   function renderSpeakerSection(section: SpeakerSection) {
     const isExpanded = expandedIds.has(section.id);
+    const highlightedHtml = keyword.trim() ? highlightHtml(section.contentHtml, keyword) : section.contentHtml;
     return (
       <div
         key={section.id}
@@ -306,7 +339,7 @@ function IrtDetail({ entry }: IrtDetailProps) {
         {isExpanded && (
           <div
             className="cp-irt-speaker-body"
-            dangerouslySetInnerHTML={{ __html: section.contentHtml }}
+            dangerouslySetInnerHTML={{ __html: highlightedHtml }}
           />
         )}
       </div>
@@ -628,7 +661,7 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
       {/* Right Panel */}
       <div className="cp-irt-panel-right">
         {activeEntry ? (
-          <IrtDetail entry={activeEntry} />
+          <IrtDetail entry={activeEntry} keyword={keyword} />
         ) : (
           <div className="cp-pec-empty">
             <span className="cp-pec-empty-icon"><NoDataIcon /></span>

@@ -4,6 +4,7 @@ import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import NoDataIcon from './NoDataIcon';
 import { AiTranscriptHtmlEntry } from '@/app/data/aiTranscripts';
 import { getAITranscriptByCoCd } from '@/app/lib/getAITranscriptByCoCd';
+import { highlightHtml } from '@/app/lib/htmlHighlight';
 
 interface AITranscriptTabProps {
   symbol: string;
@@ -58,6 +59,8 @@ function stripFirstH3(html: string): string {
   return html.replace(/<h3[^>]*>[\s\S]*?<\/h3>/i, '');
 }
 
+// ── highlightHtml is imported from @/app/lib/htmlHighlight ───────────────────
+
 function downloadHtml(filename: string, content: string) {
   const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -98,12 +101,18 @@ function AiListItem({ entry, isActive, onClick }: AiListItemProps) {
 interface AiTranscriptDetailProps {
   entry: AiTranscriptHtmlEntry;
   companyName: string;
+  keyword: string;
 }
 
-function AiTranscriptDetail({ entry, companyName }: AiTranscriptDetailProps) {
+function AiTranscriptDetail({ entry, companyName, keyword }: AiTranscriptDetailProps) {
   function handleDownload() {
     downloadHtml(`${entry.co_cd}_${entry.fiscal_year_no}_${entry.fiscal_qtr_no}-ai-transcript.html`, entry.doc_html);
   }
+
+  const displayHtml = useMemo(() => {
+    const stripped = stripFirstH3(entry.doc_html);
+    return keyword.trim() ? highlightHtml(stripped, keyword) : stripped;
+  }, [entry.doc_html, keyword]);
 
   return (
     <article className="cp-pec-card cp-pec-ai-card">
@@ -138,7 +147,7 @@ function AiTranscriptDetail({ entry, companyName }: AiTranscriptDetailProps) {
       {/* HTML content rendered dynamically from doc_html — strips leading h3 title to avoid duplication */}
       <div
         className="cp-pec-ai-body cp-pec-ai-html-content"
-        dangerouslySetInnerHTML={{ __html: stripFirstH3(entry.doc_html) }}
+        dangerouslySetInnerHTML={{ __html: displayHtml }}
       />
 
       {/* Footer */}
@@ -338,6 +347,7 @@ export default function AITranscriptTab({ symbol, companyName }: AITranscriptTab
           <AiTranscriptDetail
             entry={activeEntry}
             companyName={companyName || symbol}
+            keyword={keyword}
           />
         ) : (
           <div className="cp-pec-empty">
