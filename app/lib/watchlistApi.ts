@@ -758,8 +758,10 @@ export async function updateWatchlistInfo(
 
 // ─── New Watchlist API Stubs ─────────────────────────────────────────────────
 
-// Default categories for a new watchlist's Summary view (API standard IDs)
-const DEFAULT_VIEW_CATEGORIES = [58, 59, 60, 63, 29, 90, 87, 88, 89] as const;
+// Default / Summary-view categories for a new watchlist (API standard IDs)
+export const DEFAULT_VIEW_CATEGORIES = [58, 59, 60, 63, 29, 90, 87, 88, 89] as const;
+/** Fixed selectedCategories IDs for the Summary View */
+export const SUMMARY_VIEW_CATEGORY_IDS: number[] = [58, 59, 60, 63, 29, 90, 87, 88, 89];
 
 export interface EditWatchlistCoCdEntry {
   coCd: string;
@@ -953,9 +955,22 @@ export function getUserAllWatchlists(_userAcct: string): { result: ApiWatchlist[
   return { result: allWatchlists };
 }
 
+/** localStorage key prefix for per-watchlist detail cache */
+const WL_DETAIL_CACHE_PREFIX = 'wl-detail-';
+
+/** Save watchlist detail to per-watchlist localStorage cache */
+function cacheWatchlistDetail(watchlistId: number, result: WatchlistDetailResult): void {
+  try {
+    localStorage.setItem(`${WL_DETAIL_CACHE_PREFIX}${watchlistId}`, JSON.stringify(result));
+  } catch {
+    // ignore storage errors
+  }
+}
+
 /**
  * Get detail for a specific watchlist, including companylist and viewlist.
  * Stub — checks user-created localStorage entries first, then falls back to mock data.
+ * Always caches the returned result to localStorage at key `wl-detail-{watchlistId}`.
  */
 export function getWatchlistDetail(watchlistId: number): WatchlistDetailResponse {
   console.log('[API stub] getWatchlistDetail', { watchlistId });
@@ -963,7 +978,9 @@ export function getWatchlistDetail(watchlistId: number): WatchlistDetailResponse
   // Check user-created watchlists first
   const { details: userDetails } = getApiCreatedStore();
   if (userDetails[watchlistId]) {
-    return { returnCd: '200', returnMsg: null, result: userDetails[watchlistId] };
+    const result = userDetails[watchlistId];
+    if (typeof window !== 'undefined') cacheWatchlistDetail(watchlistId, result);
+    return { returnCd: '200', returnMsg: null, result };
   }
 
   const result: WatchlistDetailResult = MOCK_WATCHLIST_DETAILS[watchlistId] ?? {
@@ -976,6 +993,7 @@ export function getWatchlistDetail(watchlistId: number): WatchlistDetailResponse
       { viewId: 0, viewName: 'Summary', isDefaultForWatchlist: 'Y', selectedCategories: [58, 59, 60, 63, 29, 90, 87, 88, 89] },
     ],
   };
+  if (typeof window !== 'undefined') cacheWatchlistDetail(watchlistId, result);
   return { returnCd: '200', returnMsg: null, result };
 }
 
