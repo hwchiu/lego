@@ -21507,3 +21507,65 @@ html.dark .um-cta-section {
 html:not(.dark) .um-section--scenarios {
   background: var(--c-bg);
 }
+
+/* ===== WATCHLIST — FAVORITES ONBOARDING MODAL ===== */
+.wl-modal--onboard {
+  width: 420px;
+  max-width: calc(100vw - 32px);
+}
+.wl-onboard-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+.wl-onboard-icon {
+  margin-bottom: 4px;
+}
+.wl-onboard-message {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--c-text);
+  margin: 0;
+}
+.wl-onboard-hint {
+  font-size: 13.5px;
+  color: var(--c-text-2, #6b7280);
+  line-height: 1.6;
+  margin: 0;
+}
+.wl-onboard-hint strong { font-weight: 700; color: var(--c-text); }
+.wl-onboard-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  width: 100%;
+}
+.wl-onboard-link-btn {
+  display: inline-block;
+  padding: 8px 24px;
+  background: var(--c-accent);
+  color: var(--c-dark);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: opacity 0.13s;
+}
+.wl-onboard-link-btn:hover { opacity: 0.85; }
+.wl-onboard-dismiss-btn {
+  font-size: 12.5px;
+  color: var(--c-text-3, #9ca3af);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+.wl-onboard-dismiss-btn:hover { text-decoration: underline; }
+
+html.dark .wl-modal--onboard .wl-onboard-hint { color: rgba(255,255,255,0.55); }
+html.dark .wl-onboard-dismiss-btn { color: rgba(255,255,255,0.4); }

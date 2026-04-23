@@ -89,6 +89,7 @@ export interface CategoryIdEntry {
 
 /** Maps integer selectedCategories ID → display metadata */
 export const WATCHLIST_CATEGORY_ID_MAP: Record<number, CategoryIdEntry> = {
+  // Legacy IDs (kept for backward-compat)
   1:  { rpt_fin_item: 'Revenue',                   label: 'Revenue',             type: 'currency'   },
   2:  { rpt_fin_item: 'Revenue QoQ (%)',            label: 'Revenue QoQ',         type: 'percentage' },
   3:  { rpt_fin_item: 'Revenue YoY (%)',            label: 'Revenue YoY',         type: 'percentage' },
@@ -101,6 +102,16 @@ export const WATCHLIST_CATEGORY_ID_MAP: Record<number, CategoryIdEntry> = {
   10: { rpt_fin_item: 'Operating Margin (%)',       label: 'Operating Margin',    type: 'percentage' },
   11: { rpt_fin_item: 'Gross Profit',               label: 'Gross Profit',        type: 'currency'   },
   20: { rpt_fin_item: 'Net Income',                 label: 'Net Income',          type: 'currency'   },
+  // Current Summary view IDs (API standard)
+  29: { rpt_fin_item: 'Ending Point DOI',           label: 'DOI',                 type: 'string'     },
+  58: { rpt_fin_item: 'Revenue ($M)',               label: 'Revenue ($M)',        type: 'currency'   },
+  59: { rpt_fin_item: 'Seasonal QoQ (%)',           label: 'QoQ (%)',             type: 'percentage' },
+  60: { rpt_fin_item: 'YoY Growth (%)',             label: 'YoY (%)',             type: 'percentage' },
+  63: { rpt_fin_item: 'Gross Margin (%)',           label: 'Gross Margin',        type: 'percentage' },
+  87: { rpt_fin_item: 'Last Qtr Revenue',           label: 'Last Qtr Revenue',    type: 'currency'   },
+  88: { rpt_fin_item: 'Last Qtr Gross Margin (%)',  label: 'Last Qtr GM',         type: 'percentage' },
+  89: { rpt_fin_item: 'Last Qtr Ending Point DOI',  label: 'Last Qtr DOI',        type: 'string'     },
+  90: { rpt_fin_item: 'Next Earning Release',       label: 'Next Earning',        type: 'string'     },
 };
 
 // ── Mock data for new API stubs ──────────────────────────────────────────────
@@ -123,7 +134,7 @@ const MOCK_WATCHLIST_DETAILS: Record<number, WatchlistDetailResult> = {
       { coCd: 'GOOGL', orderIndex: 3, isPinned: 'N' },
     ],
     viewlist: [
-      { viewId: 0, viewName: 'Summary', isDefaultForWatchlist: 'Y', selectedCategories: [1, 2, 3, 4, 5, 6, 20, 8, 11] },
+      { viewId: 0, viewName: 'Summary', isDefaultForWatchlist: 'Y', selectedCategories: [58, 59, 60, 63, 29, 90, 87, 88, 89] },
     ],
   },
   1: {
@@ -138,13 +149,14 @@ const MOCK_WATCHLIST_DETAILS: Record<number, WatchlistDetailResult> = {
       { coCd: 'AMZN',  orderIndex: 3, isPinned: 'N' },
     ],
     viewlist: [
-      { viewId: 0, viewName: 'Summary', isDefaultForWatchlist: 'Y', selectedCategories: [1, 2, 3, 4, 5, 6, 20, 8, 11] },
+      { viewId: 0, viewName: 'Summary', isDefaultForWatchlist: 'Y', selectedCategories: [58, 59, 60, 63, 29, 90, 87, 88, 89] },
     ],
   },
 };
 
 // Maps category ID to a getter function on HoldingEntity
 const CATEGORY_TO_HOLDING_FIELD: Record<number, (h: HoldingEntity) => string | number | null> = {
+  // Legacy IDs
   1:  (h) => h.revenue,
   2:  (h) => h.revenueQoQ,
   3:  (h) => h.revenueYoY,
@@ -157,6 +169,16 @@ const CATEGORY_TO_HOLDING_FIELD: Record<number, (h: HoldingEntity) => string | n
   10: () => null,
   11: () => null,
   20: () => null,
+  // Current Summary IDs
+  29: (h) => h.doi,
+  58: (h) => h.revenue,
+  59: (h) => h.revenueQoQ,
+  60: (h) => h.revenueYoY,
+  63: (h) => h.grossMargin,
+  87: (h) => h.lastQtrRevenue,
+  88: (h) => h.lastQtrGrossMargin,
+  89: (h) => h.lastQtrDOI,
+  90: (h) => h.nextEarning,
 };
 
 export interface ColumnMeta {
@@ -736,8 +758,8 @@ export async function updateWatchlistInfo(
 
 // ─── New Watchlist API Stubs ─────────────────────────────────────────────────
 
-// Default categories for a new watchlist's Summary view
-const DEFAULT_VIEW_CATEGORIES = [1, 2, 3, 4, 5, 6, 20, 8, 11] as const;
+// Default categories for a new watchlist's Summary view (API standard IDs)
+const DEFAULT_VIEW_CATEGORIES = [58, 59, 60, 63, 29, 90, 87, 88, 89] as const;
 
 export interface EditWatchlistCoCdEntry {
   coCd: string;
@@ -951,7 +973,7 @@ export function getWatchlistDetail(watchlistId: number): WatchlistDetailResponse
     defaultViewId: null,
     companylist: [],
     viewlist: [
-      { viewId: 0, viewName: 'Summary', isDefaultForWatchlist: 'Y', selectedCategories: [1, 2, 3, 4, 5, 6, 20, 8, 11] },
+      { viewId: 0, viewName: 'Summary', isDefaultForWatchlist: 'Y', selectedCategories: [58, 59, 60, 63, 29, 90, 87, 88, 89] },
     ],
   };
   return { returnCd: '200', returnMsg: null, result };
