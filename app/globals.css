@@ -1199,6 +1199,9 @@ input, select { font-family: var(--font); }
   margin-right: 4px;
   color: rgba(255,255,255,0.7);
 }
+html:not(.dark) .sidebar-submenu-icon-left {
+  color: var(--c-text-3);
+}
 .sidebar-submenu-item-link {
   display: flex;
   align-items: center;

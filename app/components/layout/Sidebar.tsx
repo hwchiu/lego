@@ -157,7 +157,7 @@ function SubMenu({
           {/* Divider before Create Watchlist */}
           <div className="sidebar-submenu-divider" />
 
-          {/* Fixed: Create Watchlist with plain add icon on the left */}
+          {/* Fixed: Create Watchlist with add-square icon on the left */}
           <div className="sidebar-submenu-item sidebar-submenu-item--create-wl">
             <Link href="/watchlist/create" className="sidebar-submenu-item-link sidebar-submenu-item-link--full">
               <svg
@@ -168,7 +168,8 @@ function SubMenu({
                 height="13"
                 aria-hidden="true"
               >
-                <path d="M7 2V12M2 7H12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                <rect x="1" y="1" width="12" height="12" rx="2.5" stroke="currentColor" strokeWidth="1.4" />
+                <path d="M7 4.5V9.5M4.5 7H9.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
               </svg>
               <span className="sidebar-submenu-label">{lang === 'zh' ? '建立觀察清單' : 'Create Watchlist'}</span>
             </Link>
