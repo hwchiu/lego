@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 
 const CAL_MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -85,6 +86,10 @@ function MiniCalendar({ value, onChange, onClose }: MiniCalendarProps) {
   );
 }
 
+const CAL_WIDTH = 220;
+const CAL_HEIGHT = 290;
+const CAL_Z_INDEX = 9999;
+
 export interface DatePickerInputProps {
   value: string;
   onChange: (val: string) => void;
@@ -101,17 +106,55 @@ export function formatDateDisplay(v: string): string {
 
 export default function DatePickerInput({ value, onChange, placeholder = 'Select date', onPageReset }: DatePickerInputProps) {
   const [open, setOpen] = useState(false);
+  const [calStyle, setCalStyle] = useState<React.CSSProperties>({});
   const containerRef = useRef<HTMLDivElement>(null);
+  const calRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
+
+  function calcCalStyle(): React.CSSProperties {
+    if (!containerRef.current) return {};
+    const rect = containerRef.current.getBoundingClientRect();
+
+    let top = rect.bottom + 4;
+    let left = rect.left;
+
+    if (top + CAL_HEIGHT > window.innerHeight) {
+      top = rect.top - CAL_HEIGHT - 4;
+    }
+    if (left + CAL_WIDTH > window.innerWidth) {
+      left = rect.right - CAL_WIDTH;
+    }
+    if (left < 0) left = 0;
+
+    return { position: 'fixed', top, left, zIndex: CAL_Z_INDEX };
+  }
+
+  function handleToggle() {
+    if (!open) setCalStyle(calcCalStyle());
+    setOpen((o) => !o);
+  }
 
   useEffect(() => {
     if (!open) return;
     function handleOutside(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current && !containerRef.current.contains(e.target as Node) &&
+        calRef.current && !calRef.current.contains(e.target as Node)
+      ) {
         setOpen(false);
       }
     }
+    function handleClose() { setOpen(false); }
     document.addEventListener('mousedown', handleOutside);
-    return () => document.removeEventListener('mousedown', handleOutside);
+    window.addEventListener('resize', handleClose);
+    document.addEventListener('scroll', handleClose, true);
+    return () => {
+      document.removeEventListener('mousedown', handleOutside);
+      window.removeEventListener('resize', handleClose);
+      document.removeEventListener('scroll', handleClose, true);
+    };
   }, [open]);
 
   function handleChange(val: string) {
@@ -123,10 +166,10 @@ export default function DatePickerInput({ value, onChange, placeholder = 'Select
     <div className="cp-datepicker-wrap" ref={containerRef}>
       <div
         className={`cp-datepicker-input${open ? ' active' : ''}`}
-        onClick={() => setOpen((o) => !o)}
+        onClick={handleToggle}
         role="button"
         tabIndex={0}
-        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setOpen((o) => !o); }}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleToggle(); }}
       >
         <svg className="cp-datepicker-icon" viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
           <rect x="1" y="2.5" width="12" height="10.5" rx="1.5" stroke="currentColor" strokeWidth="1.2" />
@@ -148,8 +191,11 @@ export default function DatePickerInput({ value, onChange, placeholder = 'Select
           </button>
         )}
       </div>
-      {open && (
-        <MiniCalendar value={value} onChange={handleChange} onClose={() => setOpen(false)} />
+      {open && mounted && createPortal(
+        <div ref={calRef} style={calStyle}>
+          <MiniCalendar value={value} onChange={handleChange} onClose={() => setOpen(false)} />
+        </div>,
+        document.body
       )}
     </div>
   );
