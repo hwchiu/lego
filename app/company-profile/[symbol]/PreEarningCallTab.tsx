@@ -289,13 +289,7 @@ export default function PreEarningCallTab({ symbol, companyName }: PreEarningCal
     }
     if (debouncedKeyword.trim()) {
       const kw = debouncedKeyword.toLowerCase();
-      list = list.filter(
-        (e) =>
-          e.content.toLowerCase().includes(kw) ||
-          e.symbol.toLowerCase().includes(kw) ||
-          e.quarter.toLowerCase().includes(kw) ||
-          String(e.year).includes(kw)
-      );
+      list = list.filter((e) => e.content.toLowerCase().includes(kw));
     }
     return list;
   }, [sortedEntries, yearFilter, qtrFilter, debouncedKeyword]);

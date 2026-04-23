@@ -536,14 +536,7 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
     if (qtrFilter !== 'all') list = list.filter((e) => e.fiscal_qtr_no === qtrFilter);
     if (debouncedKeyword.trim()) {
       const kw = debouncedKeyword.toLowerCase();
-      list = list.filter(
-        (e) =>
-          e.company_name.toLowerCase().includes(kw) ||
-          e.co_cd.toLowerCase().includes(kw) ||
-          e.fiscal_year_no.includes(kw) ||
-          e.fiscal_qtr_no.toLowerCase().includes(kw) ||
-          e.doc_html.toLowerCase().includes(kw)
-      );
+      list = list.filter((e) => e.doc_html.toLowerCase().includes(kw));
     }
     return list;
   }, [sortedEntries, yearFilter, qtrFilter, debouncedKeyword]);

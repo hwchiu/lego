@@ -220,13 +220,7 @@ export default function AITranscriptTab({ symbol, companyName }: AITranscriptTab
     }
     if (debouncedKeyword.trim()) {
       const kw = debouncedKeyword.toLowerCase();
-      list = list.filter(
-        (e) =>
-          e.co_cd.toLowerCase().includes(kw) ||
-          e.fiscal_year_no.includes(kw) ||
-          e.fiscal_qtr_no.toLowerCase().includes(kw) ||
-          e.doc_html.toLowerCase().includes(kw)
-      );
+      list = list.filter((e) => e.doc_html.toLowerCase().includes(kw));
     }
     return list;
   }, [sortedEntries, yearFilter, qtrFilter, debouncedKeyword]);
