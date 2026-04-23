@@ -141,9 +141,14 @@ function ChevronDownIcon() {
 function PaperAirplaneIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-      {/* Side-profile paper airplane: pointed tail left, nose right, symmetric wings, fold crease */}
-      <path d="M1 9L6 3L16 9L9 9L6 15Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" />
-      <path d="M1 9L9 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      {/* Classic send / paper-plane: nose points upper-right, fold crease visible */}
+      <path
+        d="M2 16L16 9L2 2V7.5L12 9L2 10.5V16Z"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
