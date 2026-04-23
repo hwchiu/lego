@@ -1092,9 +1092,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                       </div>
                       <div className="cp-card-divider" />
                       {(() => {
-                        const items = derivedRevenueBreakdown.length > 0
-                          ? derivedRevenueBreakdown
-                          : [...finData.revenueBreakdown.items].sort((a, b) => b.pct - a.pct);
+                        const items = derivedRevenueBreakdown;
                         if (items.length === 0) {
                           return (
                             <div className="cp-breakdown-nodata">
