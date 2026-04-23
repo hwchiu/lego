@@ -365,14 +365,22 @@ function CompanyAcquisitionPanel({ deals, companyName }: { deals: AcquisitionDea
 
 interface AcquisitionTabProps {
   symbol: string;
+  preloadedData?: AcquisitionResult | null;
 }
 
-export default function AcquisitionTab({ symbol }: AcquisitionTabProps) {
-  // Fetch acquisition data via simulated API (will be replaced with real API call)
-  const [acquisitionResult, setAcquisitionResult] = useState<AcquisitionResult | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function AcquisitionTab({ symbol, preloadedData }: AcquisitionTabProps) {
+  // Use preloaded data from parent if available, otherwise fetch internally
+  const [acquisitionResult, setAcquisitionResult] = useState<AcquisitionResult | null>(
+    preloadedData !== undefined ? preloadedData : null,
+  );
+  const [loading, setLoading] = useState(preloadedData === undefined || preloadedData === null);
 
   useEffect(() => {
+    if (preloadedData !== undefined) {
+      setAcquisitionResult(preloadedData);
+      setLoading(preloadedData === null);
+      return;
+    }
     let cancelled = false;
     setLoading(true);
     getAcquisitionByCoCd(symbol).then((result) => {
@@ -382,7 +390,7 @@ export default function AcquisitionTab({ symbol }: AcquisitionTabProps) {
       }
     });
     return () => { cancelled = true; };
-  }, [symbol]);
+  }, [symbol, preloadedData]);
 
   if (loading) {
     return (

@@ -26,6 +26,9 @@ import AITranscriptTab from './AITranscriptTab';
 import { getFinancialStatementByCoCd, getBBGSegment, type CompanyStatements, type SegmentRecord } from '@/app/lib/getFinancialStatementByCoCd';
 import { getFinFcstSumByCoCd, type FinFcstSumRecord } from '@/app/lib/getFinFcstSumByCoCd';
 import { getSegInfoByCoCd, type SegInfoRecord } from '@/app/lib/getSegInfoByCoCd';
+import { getInvestmentByCoCd, type InvestmentResult } from '@/app/lib/getInvestmentByCoCd';
+import { getAcquisitionByCoCd, type AcquisitionResult } from '@/app/lib/getAcquisitionByCoCd';
+import { getFundingByCoCd, type FundingRecord } from '@/app/lib/getFundingByCoCd';
 import type { StatementData } from '@/app/data/financialData';
 import tvConfigMd from '@/content/tradingview.md';
 import finSummaryConfig from '@/app/data/fin-summary-config.json';
@@ -502,12 +505,41 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const stockContainerRef = useRef<HTMLDivElement>(null);
   const tabsScrollRef = useRef<HTMLDivElement>(null);
 
-  // null = unknown (pending load), true = has data, false = no data
+  // null = still loading, true = has data, false = no data
+  const [investmentHasData, setInvestmentHasData] = useState<boolean | null>(null);
+  const [acquisitionHasData, setAcquisitionHasData] = useState<boolean | null>(null);
   const [fundingHasData, setFundingHasData] = useState<boolean | null>(null);
 
-  // Reset fundingHasData when navigating to a different company
+  // Preloaded data passed to tab components to avoid double-fetching
+  const [preloadedInvestment, setPreloadedInvestment] = useState<InvestmentResult | null>(null);
+  const [preloadedAcquisition, setPreloadedAcquisition] = useState<AcquisitionResult | null>(null);
+  const [preloadedFunding, setPreloadedFunding] = useState<FundingRecord[] | null>(null);
+
+  // On symbol change, simultaneously call all three APIs to determine tab availability
   useEffect(() => {
+    let cancelled = false;
+    setInvestmentHasData(null);
+    setAcquisitionHasData(null);
     setFundingHasData(null);
+    setPreloadedInvestment(null);
+    setPreloadedAcquisition(null);
+    setPreloadedFunding(null);
+
+    Promise.all([
+      getInvestmentByCoCd(symbol),
+      getAcquisitionByCoCd(symbol),
+      getFundingByCoCd(symbol),
+    ]).then(([investResult, acqResult, fundRecords]) => {
+      if (!cancelled) {
+        setPreloadedInvestment(investResult);
+        setInvestmentHasData(investResult.deals.length > 0);
+        setPreloadedAcquisition(acqResult);
+        setAcquisitionHasData(acqResult.deals.length > 0);
+        setPreloadedFunding(fundRecords);
+        setFundingHasData(fundRecords.length > 0);
+      }
+    });
+    return () => { cancelled = true; };
   }, [symbol]);
 
   // Public tags fetched from API
@@ -672,14 +704,14 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
         case 'IR Transcript':    return master.IS_TRANSCRIPT_ALIVE === 'Y';
         case 'AI Transcript':    return master.IS_AI_TRANSCRIPT_ALIVE === 'Y';
         case 'Pre-Earning Call': return master.IS_PRE_EARNING_CALL === 'Y';
-        case 'Investment':       return master.IS_INVEST_ALIVE === 'Y';
-        case 'Acquisition':      return master.IS_ACQ_ALIVE === 'Y';
+        case 'Investment':       return master.IS_INVEST_ALIVE === 'Y' && investmentHasData !== false;
+        case 'Acquisition':      return master.IS_ACQ_ALIVE === 'Y' && acquisitionHasData !== false;
         case 'Funding':          return master.IS_FUND_ALIVE === 'Y' && fundingHasData !== false;
         case 'Stock':            return master.IS_STOCK_CHART_ALIVE === 'Y';
         default:                 return true;
       }
     });
-  }, [symbol, fundingHasData]);
+  }, [symbol, investmentHasData, acquisitionHasData, fundingHasData]);
 
   // If the active tab is removed from visibleTabs (e.g. Funding with no data), fall back to the first visible tab
   useEffect(() => {
@@ -1344,13 +1376,13 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
             {activeTab === 'IR Material' && <IRMaterialTab symbol={symbol} />}
 
             {/* ── Investment tab (renamed from M&A) ── */}
-            {activeTab === 'Investment' && <InvestmentTab symbol={symbol} />}
+            {activeTab === 'Investment' && <InvestmentTab symbol={symbol} preloadedData={preloadedInvestment} />}
 
             {/* ── Acquisition tab ── */}
-            {activeTab === 'Acquisition' && <AcquisitionTab symbol={symbol} />}
+            {activeTab === 'Acquisition' && <AcquisitionTab symbol={symbol} preloadedData={preloadedAcquisition} />}
 
             {/* ── Funding tab ── */}
-            {activeTab === 'Funding' && <FundingTab symbol={symbol} onDataLoaded={setFundingHasData} />}
+            {activeTab === 'Funding' && <FundingTab symbol={symbol} preloadedData={preloadedFunding} />}
 
             {/* ── IR Transcript tab ── */}
             {activeTab === 'IR Transcript' && <IRTranscriptTab symbol={symbol} />}
