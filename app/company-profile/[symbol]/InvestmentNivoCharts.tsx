@@ -2,6 +2,7 @@
 
 import { ResponsiveBar } from '@nivo/bar';
 import { ResponsiveLine } from '@nivo/line';
+import { useTheme } from '@/app/contexts/ThemeContext';
 
 // ── Shared types ──────────────────────────────────────────────────────────────
 
@@ -775,6 +776,8 @@ const FIN_METRIC_CFG: Record<string, {
 };
 
 export function FinancialIndicesNivoChart({ data, activeMetric }: FinIndicesChartProps) {
+  const { theme: appTheme } = useTheme();
+  const isDark = appTheme === 'dark';
   // Sort quarters chronologically: "21Q1" < "21Q2" < ... < "23Q4"
   const quarterly = [...data].sort((a, b) => a.quarter.localeCompare(b.quarter));
   const isRevenue = activeMetric === 'Revenue';
@@ -882,10 +885,10 @@ export function FinancialIndicesNivoChart({ data, activeMetric }: FinIndicesChar
           );
         }}
         theme={{
-          grid: { line: { stroke: '#f0f0f0', strokeWidth: 1 } },
+          grid: { line: { stroke: isDark ? '#374151' : '#f0f0f0', strokeWidth: 1 } },
           axis: {
-            ticks: { text: { fontSize: 9, fill: '#9ca3af' } },
-            legend: { text: { fontSize: 9, fill: '#6b7280' } },
+            ticks: { text: { fontSize: 9, fill: isDark ? '#9ca3af' : '#9ca3af' } },
+            legend: { text: { fontSize: 9, fill: isDark ? '#d1d5db' : '#6b7280' } },
           },
         }}
         legends={legendItems ? [
@@ -900,7 +903,7 @@ export function FinancialIndicesNivoChart({ data, activeMetric }: FinIndicesChar
             translateY: -28,
             symbolSize: 8,
             symbolShape: 'square',
-            itemTextColor: '#374151',
+            itemTextColor: isDark ? '#e5e7eb' : '#374151',
             itemsSpacing: 4,
           },
         ] : []}
@@ -948,6 +951,8 @@ function aggregateDoiRevByYear(
 }
 
 export function DoiRevenueNivoChart({ data }: DoiRevNivoChartProps) {
+  const { theme: appTheme } = useTheme();
+  const isDark = appTheme === 'dark';
   const quarterly = [...data].sort((a, b) => a.quarter.localeCompare(b.quarter));
   if (quarterly.length === 0) return null;
 
@@ -1076,10 +1081,10 @@ export function DoiRevenueNivoChart({ data }: DoiRevNivoChartProps) {
           );
         }}
         theme={{
-          grid: { line: { stroke: '#f0f0f0', strokeWidth: 1 } },
+          grid: { line: { stroke: isDark ? '#374151' : '#f0f0f0', strokeWidth: 1 } },
           axis: {
-            ticks: { text: { fontSize: 9, fill: '#9ca3af' } },
-            legend: { text: { fontSize: 9, fill: '#6b7280' } },
+            ticks: { text: { fontSize: 9, fill: isDark ? '#9ca3af' : '#9ca3af' } },
+            legend: { text: { fontSize: 9, fill: isDark ? '#d1d5db' : '#6b7280' } },
           },
         }}
         legends={[
@@ -1097,7 +1102,7 @@ export function DoiRevenueNivoChart({ data }: DoiRevNivoChartProps) {
             translateY: -14,
             symbolSize: 8,
             symbolShape: 'square',
-            itemTextColor: '#374151',
+            itemTextColor: isDark ? '#e5e7eb' : '#374151',
             itemsSpacing: 4,
           },
         ]}
