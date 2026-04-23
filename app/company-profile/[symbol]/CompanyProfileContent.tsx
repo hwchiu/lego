@@ -14,7 +14,7 @@ import { getAllCoFavoriteList, addCompanyToMyFavorite, removeCompanyFromFavorite
 import type { TagInfoDTO } from '@/app/lib/watchlistApi';
 import { getPaginationRange } from '@/app/lib/paginationUtils';
 import companyProfileMd from '@/content/company-profile.md';
-import FinancialStatementTab from './FinancialStatementTab';
+import FinancialStatementTab, { buildSegmentHierarchy } from './FinancialStatementTab';
 import CompanyMATab from './CompanyMATab';
 import InvestmentTab from './InvestmentTab';
 import AcquisitionTab from './AcquisitionTab';
@@ -163,13 +163,6 @@ const REVENUE_SALE_TYPE = 'Revenue ($M)';
 const ANNUAL_QUARTER_VALUE = 'NA';
 /** Matches the "($M)" suffix in segment item names, e.g. "iPhone ($M)" → "iPhone" */
 const MILLION_DOLLAR_SUFFIX_RE = /\s*\(\$M\)\s*$/;
-
-/** Maps a numeric SEG_LEVEL (1–3) to the corresponding SegmentRecord key. */
-function segLevelToKey(level: number): 'anal_seg_level1' | 'anal_seg_level2' | 'anal_seg_level3' {
-  if (level === 3) return 'anal_seg_level3';
-  if (level === 2) return 'anal_seg_level2';
-  return 'anal_seg_level1';
-}
 
 // ── Chart data derivation helpers ─────────────────────────────────────────────
 
@@ -632,49 +625,87 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     [finFcstRecords, derivedCurrentQtr],
   );
 
-  // Derive revenue breakdown using segInfo (SEG_TYPE + SEG_LEVEL) from getSegInfoByCoCd
+  // Derive revenue breakdown using segInfo (SEG_TYPE + SEG_LEVEL) from getSegInfoByCoCd.
+  // Uses buildSegmentHierarchy (same as Segment Report table) to avoid double-counting:
+  // when a level-1 item has level-2 children its rawValues are the bottom-up sum of
+  // children, so each item appears exactly once with the correct aggregated value.
   const derivedRevenueBreakdown = useMemo<RevenueBreakdownItem[]>(() => {
     if (!segmentRecords.length) return [];
 
-    // Use SEG_TYPE from segInfo, falling back to legacy REVENUE_SALE_TYPE constant
     const segType = segInfo?.SEG_TYPE ?? REVENUE_SALE_TYPE;
-    const levelKey = segLevelToKey(parseInt(segInfo?.SEG_LEVEL ?? '1', 10));
+    const segLevel = parseInt(segInfo?.SEG_LEVEL ?? '1', 10);
 
-    // Filter to the configured sale_type and quarterly records only
-    const revenueRecords = segmentRecords.filter(
+    // Build hierarchy from quarterly records only (for the configured sale type)
+    const quarterlyRecords = segmentRecords.filter(
       (r) => r.sale_type === segType && r.calendar_quarter !== ANNUAL_QUARTER_VALUE,
     );
-    if (!revenueRecords.length) return [];
+    if (!quarterlyRecords.length) return [];
 
-    // Find the latest calendar_year/calendar_quarter (current year/qtr)
-    revenueRecords.sort((a, b) => {
-      if (a.calendar_year !== b.calendar_year) return b.calendar_year - a.calendar_year;
-      return b.calendar_quarter.localeCompare(a.calendar_quarter);
-    });
-    const latestYear = revenueRecords[0].calendar_year;
-    const latestQuarter = revenueRecords[0].calendar_quarter;
+    const hierarchy = buildSegmentHierarchy(quarterlyRecords, 'usd');
+    const saleTypeGroup = hierarchy.find((g) => g.saleType === segType);
+    if (!saleTypeGroup) return [];
 
-    // Get all items for the current period using the configured seg level,
-    // excluding totals (e.g. "Total Net Sales ($M)") and records where the level field is empty
-    const latestRecords = revenueRecords.filter(
-      (r) => {
-        if (r.calendar_year !== latestYear || r.calendar_quarter !== latestQuarter) return false;
-        const levelVal = r[levelKey];
-        if (!levelVal || levelVal.trim() === '') return false;
-        if (levelVal.toLowerCase().includes('total')) return false;
-        return true;
-      },
-    );
+    // Determine the latest quarterly period label ("Q1 2025" format)
+    const allPeriods = new Set<string>();
+    for (const l1g of saleTypeGroup.level1Groups) {
+      Object.keys(l1g.rawValues).forEach((p) => allPeriods.add(p));
+    }
+    if (allPeriods.size === 0) return [];
 
-    // Calculate total revenue from these items
-    const total = latestRecords.reduce((sum, r) => sum + (r.fld_val ?? 0), 0);
+    function periodSortKey(p: string): number {
+      const m = p.match(/^Q([1-4])\s+(\d{4})$/);
+      if (!m) return 0;
+      return parseInt(m[2], 10) * 10 + parseInt(m[1], 10);
+    }
+    const latestPeriod = [...allPeriods].sort((a, b) => periodSortKey(b) - periodSortKey(a))[0];
+
+    // Extract nodes at the configured seg level with their aggregated values
+    const nodes: Array<{ name: string; value: number }> = [];
+    const pushNode = (name: string, rawValues: Record<string, number>) => {
+      const value = rawValues[latestPeriod];
+      if (value == null || name.toLowerCase().includes('total')) return;
+      nodes.push({ name: name.replace(MILLION_DOLLAR_SUFFIX_RE, ''), value });
+    };
+
+    if (segLevel === 1) {
+      for (const l1g of saleTypeGroup.level1Groups) {
+        pushNode(l1g.level1, l1g.rawValues);
+      }
+    } else if (segLevel === 2) {
+      for (const l1g of saleTypeGroup.level1Groups) {
+        if (l1g.level2Groups.length > 0) {
+          for (const l2g of l1g.level2Groups) {
+            pushNode(l2g.level2, l2g.rawValues);
+          }
+        } else {
+          // level1 is a leaf — promote it to level2
+          pushNode(l1g.level1, l1g.rawValues);
+        }
+      }
+    } else {
+      for (const l1g of saleTypeGroup.level1Groups) {
+        for (const l2g of l1g.level2Groups) {
+          if (l2g.level3Groups.length > 0) {
+            for (const l3g of l2g.level3Groups) {
+              pushNode(l3g.level3, l3g.rawValues);
+            }
+          } else {
+            pushNode(l2g.level2, l2g.rawValues);
+          }
+        }
+        if (l1g.level2Groups.length === 0) {
+          pushNode(l1g.level1, l1g.rawValues);
+        }
+      }
+    }
+
+    if (nodes.length === 0) return [];
+    const total = nodes.reduce((sum, n) => sum + n.value, 0);
     if (total === 0) return [];
 
-    // Compute percentage for each item, sorted by pct descending
-    return latestRecords.map((r) => ({
-      name: (r[levelKey] ?? '').replace(MILLION_DOLLAR_SUFFIX_RE, ''),
-      pct: Math.round(((r.fld_val ?? 0) / total) * 1000) / 10,
-    })).sort((a, b) => b.pct - a.pct);
+    return nodes
+      .map((n) => ({ name: n.name, pct: Math.round((n.value / total) * 1000) / 10 }))
+      .sort((a, b) => b.pct - a.pct);
   }, [segmentRecords, segInfo]);
 
   // Parse markdown data
@@ -1092,9 +1123,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                       </div>
                       <div className="cp-card-divider" />
                       {(() => {
-                        const items = derivedRevenueBreakdown.length > 0
-                          ? derivedRevenueBreakdown
-                          : [...finData.revenueBreakdown.items].sort((a, b) => b.pct - a.pct);
+                        const items = derivedRevenueBreakdown;
                         if (items.length === 0) {
                           return (
                             <div className="cp-breakdown-nodata">
