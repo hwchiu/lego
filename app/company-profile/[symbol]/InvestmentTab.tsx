@@ -170,14 +170,22 @@ function CompanyInvestmentPanel({ deals, companyName }: { deals: InvestmentDeal[
 
 interface InvestmentTabProps {
   symbol: string;
+  preloadedData?: InvestmentResult | null;
 }
 
-export default function InvestmentTab({ symbol }: InvestmentTabProps) {
-  // Fetch investment data via simulated API (will be replaced with real API call)
-  const [investmentResult, setInvestmentResult] = useState<InvestmentResult | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function InvestmentTab({ symbol, preloadedData }: InvestmentTabProps) {
+  // Use preloaded data from parent if available, otherwise fetch internally
+  const [investmentResult, setInvestmentResult] = useState<InvestmentResult | null>(
+    preloadedData !== undefined ? preloadedData : null,
+  );
+  const [loading, setLoading] = useState(preloadedData === undefined || preloadedData === null);
 
   useEffect(() => {
+    if (preloadedData !== undefined) {
+      setInvestmentResult(preloadedData);
+      setLoading(preloadedData === null);
+      return;
+    }
     let cancelled = false;
     setLoading(true);
     getInvestmentByCoCd(symbol).then((result) => {
@@ -187,7 +195,7 @@ export default function InvestmentTab({ symbol }: InvestmentTabProps) {
       }
     });
     return () => { cancelled = true; };
-  }, [symbol]);
+  }, [symbol, preloadedData]);
 
   if (loading) {
     return (
