@@ -62,6 +62,12 @@ const CATALOG_COL_STUBS: Record<string, ColDef> = Object.fromEntries(
   Object.entries(CATALOG_COLUMN_LABELS).map(([id, label]) => [id, { label, getValue: () => '-' as string | number }]),
 );
 
+// Module-level reverse map: string column id → numeric column_id
+// Used when reordering columns in a custom view to convert back to number[].
+const CATALOG_STRING_ID_TO_NUM: Record<string, number> = Object.fromEntries(
+  Object.entries(CATALOG_COLUMN_ID_TO_STRING_ID).map(([k, v]) => [v, Number(k)]),
+);
+
 const ALL_COLUMNS: Record<string, ColDef> = {
   ...CATALOG_COL_STUBS,
   price:             { label: 'Price',              getValue: h => h.price.toFixed(2) },
@@ -1043,7 +1049,7 @@ export function WatchlistContent({
       : [];
 
   // Helper: build GetWatchlistDataParams from getWatchlistDetail result + current view
-  function buildWatchlistDataParams(numericId: number, coList: string[], selectedCategories: number[], viewId = 0): GetWatchlistDataParams {
+  function buildWatchlistDataParams(numericId: number, coList: string[], selectedCategories: number[], viewId: number): GetWatchlistDataParams {
     return {
       watchlistId: numericId,
       viewId,
@@ -1064,7 +1070,7 @@ export function WatchlistContent({
       .map((c) => c.coCd);
     const summaryView = detail.viewlist.find((v) => v.viewName === 'Summary') ?? detail.viewlist[0];
     const selectedCategories = summaryView?.selectedCategories ?? [1, 2, 3, 4, 5, 6, 20, 8, 11];
-    const params = buildWatchlistDataParams(numericId, coList, selectedCategories);
+    const params = buildWatchlistDataParams(numericId, coList, selectedCategories, 0);
     getWatchlistData(params);
     // Update local symbol order and extra holdings
     setSymbolOrder(watchlistId, coList);
@@ -1230,19 +1236,23 @@ export function WatchlistContent({
 
       // Refresh via getWatchlistDetail + getWatchlistData
       const detailRes = getWatchlistDetail(numericId);
-      const detail = detailRes.result;
-      const coList = detail.companylist
-        .slice()
-        .sort((a, b) => a.orderIndex - b.orderIndex)
-        .map((c) => c.coCd);
+      if (detailRes.result) {
+        const detail = detailRes.result;
+        const coList = detail.companylist
+          .slice()
+          .sort((a, b) => a.orderIndex - b.orderIndex)
+          .map((c) => c.coCd);
 
-      // Use the new view's selectedCategories for getWatchlistData
-      const newViewEntry = detail.viewlist.find((v) => v.viewId === apiViewId);
-      const selectedCategories = newViewEntry?.selectedCategories ?? columnIds;
+        // Use the new view's selectedCategories from the refreshed detail
+        const newViewEntry = detail.viewlist.find((v) => v.viewId === apiViewId);
+        if (!newViewEntry) {
+          console.warn('[createViewWithColumn] new view not found in refreshed detail', apiViewId);
+        }
+        const selectedCategories = newViewEntry?.selectedCategories ?? columnIds;
 
-      const params = buildWatchlistDataParams(numericId, coList, selectedCategories, apiViewId ?? 0);
-      getWatchlistData(params);
-
+        const params = buildWatchlistDataParams(numericId, coList, selectedCategories, apiViewId ?? 0);
+        getWatchlistData(params);
+      }
     }
 
     const newView: CustomView = { id, apiViewId, name, columns: columnIds, hidden: false };
@@ -1619,10 +1629,7 @@ export function WatchlistContent({
                   .filter((strId): strId is string => Boolean(strId) && Boolean(ALL_COLUMNS[strId]));
                 const reorderCvCols = (nextStrIds: string[]) => {
                   // Convert back to numeric IDs before storing
-                  const strToNum = Object.fromEntries(
-                    Object.entries(CATALOG_COLUMN_ID_TO_STRING_ID).map(([k, v]) => [v, Number(k)]),
-                  );
-                  const nextNumIds = nextStrIds.map((s) => strToNum[s]).filter(Boolean) as number[];
+                  const nextNumIds = nextStrIds.map((s) => CATALOG_STRING_ID_TO_NUM[s]).filter(Boolean) as number[];
                   setCustomViews((prev) => prev.map((v) => v.id === cv.id ? { ...v, columns: nextNumIds } : v));
                 };
                 return (

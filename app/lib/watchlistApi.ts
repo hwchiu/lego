@@ -604,7 +604,7 @@ export async function createViewWithColumn(
   payload: CreateViewWithColumnPayload,
 ): Promise<{ viewId: number }> {
   console.log('[API stub] createViewWithColumn', payload);
-  if (typeof window === 'undefined') return { viewId: -1 };
+  if (typeof window === 'undefined') return { viewId: 0 };
 
   const { watchlistId, viewName, selectedCategories } = payload;
   const store = getApiCreatedStore();
