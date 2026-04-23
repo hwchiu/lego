@@ -18601,6 +18601,10 @@ html.dark .cp-pec-ai-card {
   background: linear-gradient(160deg, #1e293b 0%, #1a2435 60%);
   border-color: #6366f130;
 }
+html.dark .cp-pec-briefing-item {
+  background: #1e293b;
+  border-left-color: #7c3aed60;
+}
 html.dark .cp-card-divider,
 html.dark .cp-fin-metric-sep {
   background: var(--c-border);
@@ -19218,8 +19222,137 @@ html.dark .cp-fin-index-tab:hover {
   padding-top: 18px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
+
+/* ── Two-section layout ── */
+.cp-pec-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cp-pec-section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--c-text-3);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--c-border);
+}
+.cp-pec-section--financial .cp-pec-section-label { color: #0369a1; }
+.cp-pec-section--briefing .cp-pec-section-label { color: #7c3aed; }
+
+.cp-pec-intro {
+  font-size: 13px;
+  color: var(--c-text-2);
+  line-height: 1.65;
+  margin: 0;
+  font-style: italic;
+}
+
+/* Financial bullet list */
+.cp-pec-fin-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cp-pec-fin-item {
+  display: grid;
+  grid-template-columns: 14px 1fr;
+  grid-template-rows: auto auto;
+  gap: 0 6px;
+  align-items: baseline;
+}
+.cp-pec-fin-bullet-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #0369a1;
+  display: block;
+  margin-top: 7px;
+}
+.cp-pec-fin-bullet-text {
+  font-size: 13px;
+  color: var(--c-text);
+  line-height: 1.6;
+  font-weight: 500;
+  grid-column: 2;
+}
+.cp-pec-fin-sublist {
+  grid-column: 2;
+  margin: 4px 0 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.cp-pec-fin-subitem {
+  display: flex;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--c-text-2);
+  line-height: 1.55;
+  padding-left: 2px;
+}
+.cp-pec-fin-subitem-num {
+  color: #0369a1;
+  font-weight: 600;
+  min-width: 18px;
+  font-size: 12px;
+}
+
+/* Briefing sections */
+.cp-pec-briefing-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.cp-pec-briefing-item {
+  background: var(--c-bg);
+  border-radius: var(--radius);
+  border-left: 3px solid #7c3aed40;
+  padding: 12px 14px;
+}
+.cp-pec-briefing-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.cp-pec-briefing-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #7c3aed;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.cp-pec-briefing-heading {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-text);
+  line-height: 1.4;
+}
+.cp-pec-briefing-body {
+  font-size: 12.5px;
+  color: var(--c-text-2);
+  line-height: 1.7;
+  margin: 0;
+}
+
 .cp-pec-ai-block {
   /* each analysis paragraph block */
 }

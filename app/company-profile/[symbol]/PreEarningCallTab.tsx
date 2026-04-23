@@ -48,54 +48,128 @@ function DownloadIcon() {
 
 // ── Markdown parser ────────────────────────────────────────────────────────────
 
-interface MdSection {
+interface FinancialBullet {
+  text: string;
+  subitems: string[];
+}
+
+interface BriefingSection {
+  number: number;
   heading: string;
-  bullets: string[];
+  body: string;
 }
 
 interface ParsedPec {
-  title: string;
+  /** Intro sentence from the Financial Statement section */
   intro: string;
-  sections: MdSection[];
+  /** Top-level * bullet items with optional numbered subitems */
+  financialBullets: FinancialBullet[];
+  /** Numbered analysis sections from the Briefing section */
+  briefingSections: BriefingSection[];
+  /**
+   * Derived display title for the list panel.
+   * Falls back to the first financial bullet text when no explicit title is found.
+   */
+  title: string;
 }
 
+/**
+ * Parse the new two-section Pre-Earnings Call markdown format:
+ *
+ * # Pre-Earnings Call Financial Statement
+ * <intro line>
+ * * bullet
+ *    1. subitem
+ * ...
+ *
+ * # Pre-Earnings Call Briefing
+ * **1. Section Title**
+ * <paragraph body>
+ * ...
+ */
 function parsePecMd(md: string): ParsedPec {
   const lines = md.split('\n');
 
-  const titleLine = lines.find((l) => l.startsWith('## '));
-  const title = titleLine ? titleLine.replace(/^##\s+/, '').trim() : '';
-
-  const introLine = lines.find((l) => {
-    const t = l.trim();
-    return t.startsWith('**') && t.endsWith('**') && t.length > 4;
-  });
-  const intro = introLine ? introLine.trim().replace(/^\*\*|\*\*$/g, '') : '';
-
-  const sections: MdSection[] = [];
-  let currentHeading = '';
-  let currentBullets: string[] = [];
-
-  const flushSection = () => {
-    if (!currentHeading) return;
-    sections.push({ heading: currentHeading, bullets: currentBullets });
-  };
+  // ── Split into the two top-level # sections ──────────────────────────────
+  let financialLines: string[] = [];
+  let briefingLines: string[] = [];
+  let currentSection: 'none' | 'financial' | 'briefing' = 'none';
 
   for (const line of lines) {
-    if (line.startsWith('### ')) {
-      flushSection();
-      currentHeading = line.replace(/^###\s+/, '').trim();
-      currentBullets = [];
-    } else if (currentHeading) {
-      if (line.startsWith('---') || line.trim().startsWith('*Note:')) continue;
-      const bullet = line.replace(/^\s*-\s+/, '');
-      if (line.trimStart().startsWith('- ') && bullet) {
-        currentBullets.push(bullet.trim());
-      }
+    if (/^#\s+Pre-Earnings Call Financial Statement/i.test(line)) {
+      currentSection = 'financial';
+      continue;
+    }
+    if (/^#\s+Pre-Earnings Call Briefing/i.test(line)) {
+      currentSection = 'briefing';
+      continue;
+    }
+    if (currentSection === 'financial') financialLines.push(line);
+    else if (currentSection === 'briefing') briefingLines.push(line);
+  }
+
+  // ── Parse Financial Statement section ────────────────────────────────────
+  let intro = '';
+  const financialBullets: FinancialBullet[] = [];
+  let currentBullet: FinancialBullet | null = null;
+
+  for (const line of financialLines) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('---') || trimmed.startsWith('*Note:')) continue;
+
+    if (trimmed.startsWith('* ')) {
+      // top-level bullet: "* text"
+      if (currentBullet) financialBullets.push(currentBullet);
+      currentBullet = { text: trimmed.slice(2).trim(), subitems: [] };
+    } else if (/^\s+\d+\.\s/.test(line) && currentBullet) {
+      // numbered subitem: "   1. text"
+      const subtext = trimmed.replace(/^\d+\.\s+/, '').trim();
+      if (subtext) currentBullet.subitems.push(subtext);
+    } else if (!intro && trimmed && !trimmed.startsWith('#')) {
+      // First non-empty, non-header, non-bullet line = intro
+      intro = trimmed;
     }
   }
-  flushSection();
+  if (currentBullet) financialBullets.push(currentBullet);
 
-  return { title, intro, sections };
+  // ── Parse Briefing section ────────────────────────────────────────────────
+  const briefingSections: BriefingSection[] = [];
+  let currentBriefing: BriefingSection | null = null;
+  const bodyLines: string[] = [];
+
+  const flushBriefing = () => {
+    if (!currentBriefing) return;
+    currentBriefing.body = bodyLines.join(' ').replace(/\s+/g, ' ').trim();
+    briefingSections.push(currentBriefing);
+    bodyLines.length = 0;
+  };
+
+  for (const line of briefingLines) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('---') || trimmed.startsWith('*Note:')) continue;
+
+    // Bold numbered section header: "**1. Title**" or "**1. Title**"
+    const headerMatch = trimmed.match(/^\*\*(\d+)\.\s+(.+?)\*\*$/);
+    if (headerMatch) {
+      flushBriefing();
+      currentBriefing = { number: parseInt(headerMatch[1], 10), heading: headerMatch[2].trim(), body: '' };
+      continue;
+    }
+    if (currentBriefing && trimmed) {
+      bodyLines.push(trimmed);
+    }
+  }
+  flushBriefing();
+
+  // ── Derive a display title ────────────────────────────────────────────────
+  // Use the intro sentence as the list-panel title, cropped at a word boundary.
+  let title = intro || financialBullets[0]?.text || '';
+  if (title.length > 80) {
+    const wordBreak = title.lastIndexOf(' ', 77);
+    title = wordBreak > 20 ? title.slice(0, wordBreak) + '…' : title.slice(0, 77) + '…';
+  }
+
+  return { intro, financialBullets, briefingSections, title };
 }
 
 function highlightText(text: string, keyword: string): React.ReactNode {
@@ -169,8 +243,10 @@ function PecDetail({ entry, companyName, keyword }: PecDetailProps) {
         <div className="cp-pec-card-header-left">
           <span className="cp-pec-card-company">PEC</span>
           <div>
-            <div className="cp-pec-card-title">{highlightText(parsed.title, keyword)}</div>
-            <div className="cp-pec-card-date">{highlightText(parsed.intro, keyword)}</div>
+            <div className="cp-pec-card-title">
+              {companyName || entry.symbol} — {entry.quarter} FY{entry.year} Pre-Earnings Analysis
+            </div>
+            <div className="cp-pec-card-date">AI-Generated Summary for Reference Only</div>
           </div>
         </div>
         <div className="cp-pec-card-actions">
@@ -191,22 +267,73 @@ function PecDetail({ entry, companyName, keyword }: PecDetailProps) {
         for reference purpose only. (Contact Window: Alex Chang 張汶傑)
       </div>
 
-      {/* Body — blocks and sections */}
+      {/* Body — two-section layout */}
       <div className="cp-pec-ai-body">
-        {parsed.sections.map((section) => (
-          <div key={section.heading} className="cp-pec-ai-block">
-            <div className="cp-pec-section-heading">{highlightText(section.heading, keyword)}</div>
-            {section.bullets.length > 0 && (
-              <ul className="cp-pec-ai-bullet-list">
-                {section.bullets.map((bullet, i) => (
-                  <li key={i} className="cp-pec-ai-bullet-item">
-                    {highlightText(bullet, keyword)}
+
+        {/* ── Section 1: Financial Statement ── */}
+        {(parsed.intro || parsed.financialBullets.length > 0) && (
+          <div className="cp-pec-section cp-pec-section--financial">
+            <div className="cp-pec-section-label">
+              <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+                <rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.3" />
+                <path d="M4 7h6M4 4.5h4M4 9.5h3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+              </svg>
+              Financial Statement
+            </div>
+            {parsed.intro && (
+              <p className="cp-pec-intro">{highlightText(parsed.intro, keyword)}</p>
+            )}
+            {parsed.financialBullets.length > 0 && (
+              <ul className="cp-pec-fin-list">
+                {parsed.financialBullets.map((bullet, i) => (
+                  <li key={i} className="cp-pec-fin-item">
+                    <span className="cp-pec-fin-bullet-dot" aria-hidden="true" />
+                    <span className="cp-pec-fin-bullet-text">{highlightText(bullet.text, keyword)}</span>
+                    {bullet.subitems.length > 0 && (
+                      <ol className="cp-pec-fin-sublist">
+                        {bullet.subitems.map((sub, j) => (
+                          <li key={j} className="cp-pec-fin-subitem">
+                            <span className="cp-pec-fin-subitem-num">{j + 1}.</span>
+                            <span>{highlightText(sub, keyword)}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    )}
                   </li>
                 ))}
               </ul>
             )}
           </div>
-        ))}
+        )}
+
+        {/* ── Section 2: Pre-Earnings Briefing ── */}
+        {parsed.briefingSections.length > 0 && (
+          <div className="cp-pec-section cp-pec-section--briefing">
+            <div className="cp-pec-section-label">
+              <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+                <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.3" />
+                <path d="M7 4.5v3l1.5 1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Earnings Briefing
+            </div>
+            <div className="cp-pec-briefing-list">
+              {parsed.briefingSections.map((section) => (
+                <div key={section.number} className="cp-pec-briefing-item">
+                  <div className="cp-pec-briefing-header">
+                    <span className="cp-pec-briefing-num">{section.number}</span>
+                    <span className="cp-pec-briefing-heading">
+                      {highlightText(section.heading, keyword)}
+                    </span>
+                  </div>
+                  <p className="cp-pec-briefing-body">
+                    {highlightText(section.body, keyword)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
       </div>
 
       {/* Footer — exactly 4 items */}
