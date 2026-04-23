@@ -293,6 +293,16 @@ function SimpleStatementTable({ data, viewMode, yearWindowStart, allYears }: Sim
 
 const SEGMENT_ANNUAL_Q = 'NA';
 
+const SALE_TYPE_LABELS: Record<string, string> = {
+  PG_REVENUE: 'Segment Revenue',
+  PG_REVENUE_END_USER: 'Segment Revenue (End User)',
+  PG_NUMBER_OF_UNITS_SOLD: 'Segment Number of Unit Sold',
+};
+
+function formatSaleTypeLabel(saleType: string): string {
+  return SALE_TYPE_LABELS[saleType] ?? saleType;
+}
+
 /** Build a period label for a SegmentRecord. */
 function segPLabel(calYear: number, calQ: string): string {
   return calQ === SEGMENT_ANNUAL_Q ? `FY${calYear}` : `${calQ} ${calYear}`;
@@ -633,7 +643,7 @@ function SegmentReportTable({ records, viewMode, yearWindowStart, currency }: Se
             <React.Fragment key={saleTypeGroup.saleType}>
               {/* sale_type header row — shows aggregated total for all l1 children */}
               <SegDataRow
-                label={saleTypeGroup.saleType}
+                label={formatSaleTypeLabel(saleTypeGroup.saleType)}
                 rawValues={saleTypeGroup.rawValues}
                 periods={periods}
                 depth="sale-type"
