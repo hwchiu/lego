@@ -121,6 +121,12 @@ const ALL_COLUMNS: Record<string, ColDef> = {
 
 const BUILTIN_VIEWS = ['Summary'] as const;
 
+// Fixed selectedCategories IDs for the Summary view (API standard)
+const SUMMARY_FIXED_CATEGORIES = [58, 59, 60, 63, 29, 90, 87, 88, 89] as const;
+
+// localStorage key prefix for cached getWatchlistDetail responses
+const WL_DETAIL_LS_KEY = (id: number) => `wl-detail-${id}`;
+
 // All data (indices, holdings, portfolio config) comes from content/*.md files.
 // The fetch script writes to MD; app/data/*.ts readers parse via extractJson().
 
@@ -971,6 +977,59 @@ export function WatchlistContent({
     } catch { /* ignore */ }
   }, [hiddenViews, customViewsHydrated]);
 
+  // Re-fetch watchlist data when quarter changes or when switching to a custom view tab
+  useEffect(() => {
+    const numericId = parseInt(watchlistId);
+    if (isNaN(numericId)) return;
+
+    // Load cached detail from localStorage to avoid an extra API call
+    let coList: string[] = [...currentSymbolOrder];
+    let selectedCategories: number[];
+
+    const cached = typeof window !== 'undefined' ? localStorage.getItem(WL_DETAIL_LS_KEY(numericId)) : null;
+    if (cached) {
+      try {
+        const detail = JSON.parse(cached);
+        coList = (detail.companylist ?? [])
+          .slice()
+          .sort((a: { orderIndex: number }, b: { orderIndex: number }) => a.orderIndex - b.orderIndex)
+          .map((c: { coCd: string }) => c.coCd);
+      } catch { /* use fallback */ }
+    }
+
+    const isSummary = activeTab === 'Summary';
+    if (isSummary) {
+      selectedCategories = [...SUMMARY_FIXED_CATEGORIES];
+    } else {
+      // Custom view — look up apiViewId
+      const customView = customViews.find((v) => v.id === activeTab);
+      const apiViewId = customView?.apiViewId ?? 0;
+      if (cached) {
+        try {
+          const detail = JSON.parse(cached);
+          const viewEntry = (detail.viewlist ?? []).find((v: { viewId: number }) => v.viewId === apiViewId);
+          selectedCategories = viewEntry?.selectedCategories ?? customView?.columns ?? [...SUMMARY_FIXED_CATEGORIES];
+        } catch {
+          selectedCategories = customView?.columns ?? [...SUMMARY_FIXED_CATEGORIES];
+        }
+      } else {
+        selectedCategories = customView?.columns ?? [...SUMMARY_FIXED_CATEGORIES];
+      }
+    }
+
+    if (coList.length > 0) {
+      getWatchlistData({
+        watchlistId: numericId,
+        viewId: activeTab === 'Summary' ? 0 : (customViews.find((v) => v.id === activeTab)?.apiViewId ?? 0),
+        year: [String(quarter.year)],
+        quarter: [`Q${quarter.q}`],
+        selectedCategories,
+        co_cd: coList,
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quarter, activeTab, watchlistId]);
+
   // Quarter navigation: find current index in the dynamic list (memoized)
   const quarterNav = useMemo(() => {
     const idx = recentQuarters.findIndex(
@@ -1060,17 +1119,34 @@ export function WatchlistContent({
     };
   }
 
-  // Helper: after an API mutation, call getWatchlistDetail + getWatchlistData and update local state
-  function refreshFromDetail(numericId: number) {
+  // Helper: after an API mutation, call getWatchlistDetail + getWatchlistData and update local state.
+  // Pass viewId to fetch data for a specific view; omit (or pass 0) for Summary.
+  function refreshFromDetail(numericId: number, viewId: number = 0) {
     const detailRes = getWatchlistDetail(numericId);
     const detail = detailRes.result;
+
+    // Persist detail to localStorage for future use when building getWatchlistData params
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(WL_DETAIL_LS_KEY(numericId), JSON.stringify(detail));
+    }
+
     const coList = detail.companylist
       .slice()
       .sort((a, b) => a.orderIndex - b.orderIndex)
       .map((c) => c.coCd);
-    const summaryView = detail.viewlist.find((v) => v.viewName === 'Summary') ?? detail.viewlist[0];
-    const selectedCategories = summaryView?.selectedCategories ?? [1, 2, 3, 4, 5, 6, 20, 8, 11];
-    const params = buildWatchlistDataParams(numericId, coList, selectedCategories, 0);
+
+    let selectedCategories: number[];
+    const isSummary = viewId === 0;
+    if (isSummary) {
+      // Summary view always uses the fixed 9 category IDs
+      selectedCategories = [...SUMMARY_FIXED_CATEGORIES];
+    } else {
+      // Custom view: pull selectedCategories from the viewlist entry
+      const viewEntry = detail.viewlist.find((v) => v.viewId === viewId);
+      selectedCategories = viewEntry?.selectedCategories ?? [...SUMMARY_FIXED_CATEGORIES];
+    }
+
+    const params = buildWatchlistDataParams(numericId, coList, selectedCategories, viewId);
     getWatchlistData(params);
     // Update local symbol order and extra holdings
     setSymbolOrder(watchlistId, coList);
@@ -1148,22 +1224,16 @@ export function WatchlistContent({
     // Update local context state
     contextDeleteWatchlist(watchlistId);
 
+    // Remove cached detail from localStorage
+    if (typeof window !== 'undefined' && !isNaN(numericId)) {
+      localStorage.removeItem(WL_DETAIL_LS_KEY(numericId));
+    }
+
     // Refresh the API watchlist list from the single source of truth
     refreshApiWatchlists();
 
-    // Navigate to another available watchlist, excluding the one just deleted
-    const newDeleted = new Set([...deletedWatchlists, watchlistId]);
-    const remaining = [
-      ...(mainNav.find((item) => item.icon === 'watchlist')?.subItems ?? []).filter(
-        (item) => item.watchlistId && !newDeleted.has(item.watchlistId),
-      ),
-      ...dynamicWatchlists.filter((wl) => !newDeleted.has(wl.id)).map((wl) => ({ href: `/watchlist/${wl.id}` })),
-    ];
-    if (remaining.length > 0) {
-      router.push(remaining[0].href);
-    } else {
-      router.push('/watchlist/create');
-    }
+    // Always navigate to Create Watchlist after deletion
+    router.push('/watchlist/create');
   }
 
   function handleAddSymbolClose() {
@@ -1226,7 +1296,7 @@ export function WatchlistContent({
     let apiViewId: number | undefined;
 
     if (!isNaN(numericId)) {
-      // POST: createViewWithColumn
+      // POST: createViewWithColumn — returns the new viewId
       const result = await createViewWithColumn({
         watchlistId: numericId,
         viewName: name,
@@ -1234,25 +1304,8 @@ export function WatchlistContent({
       });
       apiViewId = result.viewId;
 
-      // Refresh via getWatchlistDetail + getWatchlistData
-      const detailRes = getWatchlistDetail(numericId);
-      if (detailRes.result) {
-        const detail = detailRes.result;
-        const coList = detail.companylist
-          .slice()
-          .sort((a, b) => a.orderIndex - b.orderIndex)
-          .map((c) => c.coCd);
-
-        // Use the new view's selectedCategories from the refreshed detail
-        const newViewEntry = detail.viewlist.find((v) => v.viewId === apiViewId);
-        if (!newViewEntry) {
-          console.warn('[createViewWithColumn] new view not found in refreshed detail', apiViewId);
-        }
-        const selectedCategories = newViewEntry?.selectedCategories ?? columnIds;
-
-        const params = buildWatchlistDataParams(numericId, coList, selectedCategories, apiViewId ?? 0);
-        getWatchlistData(params);
-      }
+      // Refresh via getWatchlistDetail (persists to localStorage) + getWatchlistData for the new view
+      refreshFromDetail(numericId, apiViewId ?? 0);
     }
 
     const newView: CustomView = { id, apiViewId, name, columns: columnIds, hidden: false };
