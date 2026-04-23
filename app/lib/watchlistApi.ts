@@ -31,7 +31,7 @@ export interface ApiWatchlist {
 export interface WatchlistCompany {
   coCd: string;
   orderIndex: number;
-  isPinned: string;
+  isPinned: 'Y' | 'N';
 }
 
 export interface WatchlistView {
@@ -625,7 +625,7 @@ const DEFAULT_VIEW_CATEGORIES = [1, 2, 3, 4, 5, 6, 20, 8, 11] as const;
 export interface EditWatchlistCoCdEntry {
   coCd: string;
   orderIndex: number;
-  isPinned: string;
+  isPinned: 'Y' | 'N';
 }
 
 export interface EditWatchlistPayload {

@@ -969,7 +969,7 @@ export function WatchlistContent({
 
   // Helper: build GetWatchlistDataParams from getWatchlistDetail result + current view
   function buildWatchlistDataParams(numericId: number, coList: string[], selectedCategories: number[]): GetWatchlistDataParams {
-    const viewId = activeTab === 'Summary' ? 0 : 0;
+    const viewId = 0; // 0 = Summary; custom view integration will use actual viewId when backend is ready
     return {
       watchlistId: numericId,
       viewId,
@@ -1068,8 +1068,7 @@ export function WatchlistContent({
     // Update local context state
     contextDeleteWatchlist(watchlistId);
 
-    // Refresh the API watchlist list
-    getUserAllWatchlists('demoUser');
+    // Refresh the API watchlist list from the single source of truth
     refreshApiWatchlists();
 
     // Navigate to another available watchlist, excluding the one just deleted
