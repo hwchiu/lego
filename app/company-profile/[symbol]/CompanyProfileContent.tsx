@@ -1091,22 +1091,33 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                         Revenue Breakdown
                       </div>
                       <div className="cp-card-divider" />
-                      <div className="cp-breakdown-list">
-                        {(derivedRevenueBreakdown.length > 0
+                      {(() => {
+                        const items = derivedRevenueBreakdown.length > 0
                           ? derivedRevenueBreakdown
-                          : [...finData.revenueBreakdown.items].sort((a, b) => b.pct - a.pct)
-                        ).map((item) => (
-                          <div key={item.name} className="cp-breakdown-item">
-                            <div className="cp-breakdown-row">
-                              <span className="cp-breakdown-name">{item.name}</span>
-                              <span className="cp-breakdown-pct">{item.pct}%</span>
+                          : [...finData.revenueBreakdown.items].sort((a, b) => b.pct - a.pct);
+                        if (items.length === 0) {
+                          return (
+                            <div className="cp-breakdown-nodata">
+                              No Revenue Breakdown Data
                             </div>
-                            <div className="cp-breakdown-bar-wrap">
-                              <div className="cp-breakdown-bar" style={{ width: `${Math.min(100, item.pct)}%` }} />
-                            </div>
+                          );
+                        }
+                        return (
+                          <div className="cp-breakdown-list">
+                            {items.map((item) => (
+                              <div key={item.name} className="cp-breakdown-item">
+                                <div className="cp-breakdown-row">
+                                  <span className="cp-breakdown-name">{item.name}</span>
+                                  <span className="cp-breakdown-pct">{item.pct}%</span>
+                                </div>
+                                <div className="cp-breakdown-bar-wrap">
+                                  <div className="cp-breakdown-bar" style={{ width: `${Math.min(100, item.pct)}%` }} />
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
+                        );
+                      })()}
                     </div>
                   </div>
 
