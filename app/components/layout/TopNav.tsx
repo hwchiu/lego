@@ -58,8 +58,8 @@ export default function TopNav() {
     setNotifOpen((prev) => !prev);
   }, []);
 
-  const showDropdown = focused;
   const q = query.trim().toLowerCase();
+  const showDropdown = focused && q.length > 0;
 
   // Filter companies by query (company search only)
   const filteredCompanies =
@@ -176,31 +176,7 @@ export default function TopNav() {
               </div>
             )}
 
-            {/* Popular searches — shown when focused with no query */}
-            {q.length === 0 && (
-              <div className="search-dropdown-section">
-                <div className="search-dropdown-section-label">Popular Searches</div>
-                <ul className="search-popular-list">
-                  {POPULAR_SEARCHES.map((term) => (
-                    <li key={term}>
-                      <button
-                        className="search-popular-item"
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          navigateToCompany(term);
-                        }}
-                      >
-                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
-                          <path d="M6 1.5L7.4 4.5L10.5 5L8.3 7.2L8.8 10.5L6 9L3.2 10.5L3.7 7.2L1.5 5L4.6 4.5L6 1.5Z"
-                            stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
-                        </svg>
-                        {term}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+
           </div>
         )}
       </div>

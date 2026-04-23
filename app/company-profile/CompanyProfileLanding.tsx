@@ -141,7 +141,7 @@ function ChevronDownIcon() {
 function PaperAirplaneIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-      <path d="M15.5 2.5L1.5 8L7.5 10M15.5 2.5L9.5 16.5L7.5 10M15.5 2.5L7.5 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2 9h14M10 4l6 5-6 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

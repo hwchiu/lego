@@ -3583,7 +3583,7 @@ html:not(.dark) .sidebar-submenu-icon-left {
 
 .cp-submit-btn {
   padding: 6px 10px;
-  color: var(--c-accent);
+  color: var(--c-text-2);
 }
 
 .cp-submit-btn:hover {
