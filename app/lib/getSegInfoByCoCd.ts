@@ -18,7 +18,7 @@ export interface SegInfoRecord {
  *   GET /api/seg-info?co_cd={coCd}
  */
 const SEG_INFO_MAP: Record<string, SegInfoRecord> = {
-  AAPL: { CO_CD: 'AAPL', SEG_LEVEL: '1', SEG_TYPE: 'Revenue ($M)' },
+  AAPL: { CO_CD: 'AAPL', SEG_LEVEL: '1', SEG_TYPE: 'PG_REVENUE' },
 };
 
 // ── API function ──────────────────────────────────────────────────────────────
@@ -33,7 +33,7 @@ const SEG_INFO_MAP: Record<string, SegInfoRecord> = {
  * {
  *   "CO_CD": "AAPL",
  *   "SEG_LEVEL": "1",
- *   "SEG_TYPE": "Revenue ($M)"
+ *   "SEG_TYPE": "PG_REVENUE"
  * }
  *
  * @param coCd  Company code / ticker symbol, e.g. "AAPL"
