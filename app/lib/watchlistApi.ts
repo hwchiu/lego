@@ -31,7 +31,7 @@ export interface ApiWatchlist {
 export interface WatchlistCompany {
   coCd: string;
   orderIndex: number;
-  isPinned: string;
+  isPinned: 'Y' | 'N';
 }
 
 export interface WatchlistView {
@@ -488,18 +488,64 @@ export function getViewCatgNColInfo(): ViewCatgNColInfoResponse {
 
 // ─── CRUD API stubs ─────────────────────────────────────────────────────────
 
+export interface AddCompanyToWatchlistPayload {
+  watchlistId: number;
+  coCdList: string[];
+}
+
 /**
- * Add companies to a watchlist. Called when the user clicks "Submit" in the
- * Add Company modal.
+ * Add companies to a watchlist (POST).
+ * Payload: { watchlistId, coCdList }
+ * After calling, invoke getWatchlistDetail then getWatchlistData to refresh the view.
  */
 export async function addCompanyToWatchlist(
-  _userAcct: string,
-  _watchlistId: string,
-  _symbols: string[],
+  payload: AddCompanyToWatchlistPayload,
 ): Promise<{ success: boolean }> {
-  // Stub — front-end already updates localStorage via WatchlistContext.
-  // Replace with actual API call when backend is ready.
-  console.log('[API stub] addCompanyToWatchlist', { _userAcct, _watchlistId, _symbols });
+  console.log('[API stub] addCompanyToWatchlist', payload);
+  if (typeof window === 'undefined') return { success: true };
+
+  const { watchlistId, coCdList } = payload;
+  const store = getApiCreatedStore();
+
+  // Get current detail from store or fall back to mock
+  let detail = store.details[watchlistId];
+  if (!detail) {
+    const mockDetail = MOCK_WATCHLIST_DETAILS[watchlistId];
+    if (mockDetail) {
+      detail = { ...mockDetail, companylist: mockDetail.companylist.map((c) => ({ ...c })) };
+    } else {
+      detail = {
+        watchlistId,
+        watchlistName: `Watchlist ${watchlistId}`,
+        isDefault: 'N',
+        defaultViewId: null,
+        companylist: [],
+        viewlist: [{ viewId: 0, viewName: 'Summary', isDefaultForWatchlist: 'Y', selectedCategories: [...DEFAULT_VIEW_CATEGORIES] }],
+      };
+    }
+  } else {
+    detail = { ...detail, companylist: detail.companylist.map((c) => ({ ...c })) };
+  }
+
+  // Append companies not already in the list
+  const existingCoCds = new Set(detail.companylist.map((c) => c.coCd));
+  let nextIdx = detail.companylist.reduce((max, c) => Math.max(max, c.orderIndex), -1) + 1;
+  for (const coCd of coCdList) {
+    if (!existingCoCds.has(coCd)) {
+      detail.companylist.push({ coCd, orderIndex: nextIdx++, isPinned: 'N' });
+      existingCoCds.add(coCd);
+    }
+  }
+
+  store.details[watchlistId] = detail;
+
+  // Ensure the watchlist header entry exists in the store
+  if (!store.watchlists.find((w) => w.watchlistId === watchlistId)) {
+    const mockWl = MOCK_WATCHLISTS.find((w) => w.watchlistId === watchlistId);
+    if (mockWl) store.watchlists.push({ ...mockWl });
+  }
+
+  saveApiCreatedStore(store);
   return { success: true };
 }
 
@@ -576,6 +622,94 @@ export async function updateWatchlistInfo(
 // Default categories for a new watchlist's Summary view
 const DEFAULT_VIEW_CATEGORIES = [1, 2, 3, 4, 5, 6, 20, 8, 11] as const;
 
+export interface EditWatchlistCoCdEntry {
+  coCd: string;
+  orderIndex: number;
+  isPinned: 'Y' | 'N';
+}
+
+export interface EditWatchlistPayload {
+  watchlistId: number;
+  newWatchlistName: string;
+  coCdList: EditWatchlistCoCdEntry[];
+}
+
+/**
+ * Edit a watchlist (name and company list/order). POST.
+ * Payload: { watchlistId, newWatchlistName, coCdList: [{ coCd, orderIndex, isPinned }] }
+ * After calling, invoke getWatchlistDetail then getWatchlistData to refresh the view.
+ */
+export async function editWatchlist(payload: EditWatchlistPayload): Promise<{ success: boolean }> {
+  console.log('[API stub] editWatchlist', payload);
+  if (typeof window === 'undefined') return { success: true };
+
+  const { watchlistId, newWatchlistName, coCdList } = payload;
+  const store = getApiCreatedStore();
+
+  // Get or seed detail from mock
+  let detail = store.details[watchlistId];
+  if (!detail) {
+    const mockDetail = MOCK_WATCHLIST_DETAILS[watchlistId];
+    if (mockDetail) {
+      detail = { ...mockDetail };
+    } else {
+      detail = {
+        watchlistId,
+        watchlistName: newWatchlistName,
+        isDefault: 'N',
+        defaultViewId: null,
+        companylist: [],
+        viewlist: [{ viewId: 0, viewName: 'Summary', isDefaultForWatchlist: 'Y', selectedCategories: [...DEFAULT_VIEW_CATEGORIES] }],
+      };
+    }
+  }
+
+  detail = {
+    ...detail,
+    watchlistName: newWatchlistName,
+    companylist: coCdList.map((e) => ({ coCd: e.coCd, orderIndex: e.orderIndex, isPinned: e.isPinned })),
+  };
+
+  store.details[watchlistId] = detail;
+
+  // Update the watchlist header entry too
+  const wlIdx = store.watchlists.findIndex((w) => w.watchlistId === watchlistId);
+  if (wlIdx >= 0) {
+    store.watchlists[wlIdx] = { ...store.watchlists[wlIdx], watchlistName: newWatchlistName };
+  } else {
+    const mockWl = MOCK_WATCHLISTS.find((w) => w.watchlistId === watchlistId);
+    if (mockWl) store.watchlists.push({ ...mockWl, watchlistName: newWatchlistName });
+  }
+
+  saveApiCreatedStore(store);
+  return { success: true };
+}
+
+/**
+ * Delete a watchlist (POST). Accepts watchlistId as a parameter.
+ * After calling, invoke getUserAllWatchlists to refresh the watchlist list.
+ */
+export async function deleteWatchlistById(watchlistId: number): Promise<{ success: boolean }> {
+  console.log('[API stub] deleteWatchlist', { watchlistId });
+  if (typeof window === 'undefined') return { success: true };
+
+  const store = getApiCreatedStore();
+
+  // Remove from user-created list
+  store.watchlists = store.watchlists.filter((w) => w.watchlistId !== watchlistId);
+
+  // Remove detail
+  delete store.details[watchlistId];
+
+  // Track as deleted so getUserAllWatchlists filters it out
+  if (!store.deletedIds.includes(watchlistId)) {
+    store.deletedIds.push(watchlistId);
+  }
+
+  saveApiCreatedStore(store);
+  return { success: true };
+}
+
 // ─── User-created watchlist localStorage helpers ─────────────────────────────
 
 const API_CREATED_KEY = 'wl-api-created';
@@ -583,17 +717,26 @@ const API_CREATED_KEY = 'wl-api-created';
 interface ApiCreatedStore {
   watchlists: ApiWatchlist[];
   details: Record<number, WatchlistDetailResult>;
+  /** IDs of watchlists that have been deleted (includes both user-created and mock) */
+  deletedIds: number[];
 }
 
 function getApiCreatedStore(): ApiCreatedStore {
-  if (typeof window === 'undefined') return { watchlists: [], details: {} };
+  if (typeof window === 'undefined') return { watchlists: [], details: {}, deletedIds: [] };
   try {
     const raw = localStorage.getItem(API_CREATED_KEY);
-    if (raw) return JSON.parse(raw) as ApiCreatedStore;
+    if (raw) {
+      const parsed = JSON.parse(raw) as Partial<ApiCreatedStore>;
+      return {
+        watchlists: parsed.watchlists ?? [],
+        details: parsed.details ?? {},
+        deletedIds: parsed.deletedIds ?? [],
+      };
+    }
   } catch {
     // ignore
   }
-  return { watchlists: [], details: {} };
+  return { watchlists: [], details: {}, deletedIds: [] };
 }
 
 function saveApiCreatedStore(store: ApiCreatedStore): void {
@@ -658,12 +801,17 @@ export function createWatchlistWithCompany(
 
 /**
  * Get all watchlists for a user account.
- * Stub — combines mock data with user-created entries from localStorage.
+ * Stub — combines mock data with user-created entries, excluding deleted ones.
  */
 export function getUserAllWatchlists(_userAcct: string): { result: ApiWatchlist[] } {
   console.log('[API stub] getUserAllWatchlists', { _userAcct });
-  const { watchlists: userCreated } = getApiCreatedStore();
-  return { result: [...MOCK_WATCHLISTS, ...userCreated] };
+  const { watchlists: userCreated, deletedIds } = getApiCreatedStore();
+  const deletedSet = new Set(deletedIds);
+  const allWatchlists = [
+    ...MOCK_WATCHLISTS.filter((w) => !deletedSet.has(w.watchlistId)),
+    ...userCreated.filter((w) => !deletedSet.has(w.watchlistId)),
+  ];
+  return { result: allWatchlists };
 }
 
 /**

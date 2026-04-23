@@ -28,7 +28,13 @@ import {
   getFavoritesListByUserAcct,
   getAllCoFavoriteList,
   addCompanyToMyFavorite,
+  editWatchlist,
+  deleteWatchlistById,
+  getWatchlistDetail,
+  getWatchlistData,
+  getUserAllWatchlists,
 } from '@/app/lib/watchlistApi';
+import type { GetWatchlistDataParams } from '@/app/lib/watchlistApi';
 import { setFavoritesInPersonality } from '@/app/lib/getFavoritesByUserAcct';
 
 // ── Custom View types ─────────────────────────────────────────────────────────
@@ -698,7 +704,7 @@ export function WatchlistContent({
   onFavoritesSymbolsUpdate,
 }: WatchlistContentProps) {
   const watchlistId = params.id;
-  const { watchlistNames, setWatchlistName, symbolOrders, setSymbolOrder, favorites, toggleFavorite, dynamicWatchlists, deletedWatchlists, deleteWatchlist } = useWatchlist();
+  const { watchlistNames, setWatchlistName, symbolOrders, setSymbolOrder, favorites, toggleFavorite, dynamicWatchlists, deletedWatchlists, deleteWatchlist: contextDeleteWatchlist, refreshApiWatchlists } = useWatchlist();
   const router = useRouter();
 
   const watchlistName =
@@ -753,6 +759,7 @@ export function WatchlistContent({
   const [showEditWatchlist, setShowEditWatchlist] = useState(false);
   const [showAddSymbol, setShowAddSymbol] = useState(false);
   const [showManageView, setShowManageView] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Manage Alerts toggles
   const [newsAlert, setNewsAlert] = useState(true);
@@ -960,19 +967,73 @@ export function WatchlistContent({
         ).slice(0, 12)
       : [];
 
+  // Helper: build GetWatchlistDataParams from getWatchlistDetail result + current view
+  function buildWatchlistDataParams(numericId: number, coList: string[], selectedCategories: number[]): GetWatchlistDataParams {
+    const viewId = 0; // 0 = Summary; custom view integration will use actual viewId when backend is ready
+    return {
+      watchlistId: numericId,
+      viewId,
+      year: [String(quarter.year)],
+      quarter: [`Q${quarter.q}`],
+      selectedCategories,
+      co_cd: coList,
+    };
+  }
+
+  // Helper: after an API mutation, call getWatchlistDetail + getWatchlistData and update local state
+  function refreshFromDetail(numericId: number) {
+    const detailRes = getWatchlistDetail(numericId);
+    const detail = detailRes.result;
+    const coList = detail.companylist
+      .slice()
+      .sort((a, b) => a.orderIndex - b.orderIndex)
+      .map((c) => c.coCd);
+    const summaryView = detail.viewlist.find((v) => v.viewName === 'Summary') ?? detail.viewlist[0];
+    const selectedCategories = summaryView?.selectedCategories ?? [1, 2, 3, 4, 5, 6, 20, 8, 11];
+    const params = buildWatchlistDataParams(numericId, coList, selectedCategories);
+    getWatchlistData(params);
+    // Update local symbol order and extra holdings
+    setSymbolOrder(watchlistId, coList);
+    const newExtras = { ...extraHoldings };
+    for (const sym of coList) {
+      if (!holdingsLookup.has(sym) && !newExtras[sym]) {
+        newExtras[sym] = createPlaceholderHolding(sym);
+      }
+    }
+    setExtraHoldings(newExtras);
+  }
+
   function handleEditWatchlistClick() {
     setEditWatchlistName(watchlistName);
     setEditSymbolOrder([...currentSymbolOrder]);
     setShowEditWatchlist(true);
   }
 
-  function handleEditWatchlistDone() {
+  async function handleEditWatchlistDone() {
     const trimmed = editWatchlistName.trim() || watchlistName;
+
+    // Detect if anything changed
+    const nameChanged = trimmed !== watchlistName;
+    const orderChanged = JSON.stringify(editSymbolOrder) !== JSON.stringify(currentSymbolOrder);
+    const hasChanges = nameChanged || orderChanged;
+
     setWatchlistName(watchlistId, trimmed);
     setSymbolOrder(watchlistId, [...editSymbolOrder]);
     setShowEditWatchlist(false);
-    // API stub call for backend integration
-    updateWatchlistInfo('demoUser', watchlistId, trimmed, [...editSymbolOrder]);
+
+    const numericId = parseInt(watchlistId);
+
+    if (hasChanges && !isNaN(numericId)) {
+      // POST: editWatchlist with new format
+      const coCdList = editSymbolOrder.map((coCd, idx) => ({ coCd, orderIndex: idx, isPinned: 'N' as const }));
+      await editWatchlist({ watchlistId: numericId, newWatchlistName: trimmed, coCdList });
+      // Refresh from detail
+      refreshFromDetail(numericId);
+    } else {
+      // No structural changes — still call legacy stub for audit logging
+      updateWatchlistInfo('demoUser', watchlistId, trimmed, [...editSymbolOrder]);
+    }
+
     // When editing the Favorites watchlist, persist changes to user-personality
     if (watchlistId === 'favorites') {
       setFavoritesInPersonality([...editSymbolOrder]);
@@ -990,8 +1051,26 @@ export function WatchlistContent({
       setShowEditWatchlist(false);
       return;
     }
-    deleteWatchlist(watchlistId);
+    // Close edit modal and show confirmation dialog
     setShowEditWatchlist(false);
+    setShowDeleteConfirm(true);
+  }
+
+  async function handleDeleteWatchlistConfirm() {
+    setShowDeleteConfirm(false);
+
+    const numericId = parseInt(watchlistId);
+    if (!isNaN(numericId)) {
+      // POST: deleteWatchlist
+      await deleteWatchlistById(numericId);
+    }
+
+    // Update local context state
+    contextDeleteWatchlist(watchlistId);
+
+    // Refresh the API watchlist list from the single source of truth
+    refreshApiWatchlists();
+
     // Navigate to another available watchlist, excluding the one just deleted
     const newDeleted = new Set([...deletedWatchlists, watchlistId]);
     const remaining = [
@@ -1019,20 +1098,28 @@ export function WatchlistContent({
       .filter(Boolean);
 
     if (symbols.length > 0) {
-      const newExtraHoldings = { ...extraHoldings };
-      const newOrder = [...currentSymbolOrder];
-      for (const sym of symbols) {
-        if (newOrder.includes(sym)) continue;
-        newOrder.push(sym);
-        // Create placeholder data only if not already covered by holdingsData
-        if (!holdingsLookup.has(sym) && !newExtraHoldings[sym]) {
-          newExtraHoldings[sym] = createPlaceholderHolding(sym);
+      const numericId = parseInt(watchlistId);
+
+      if (!isNaN(numericId)) {
+        // POST: addCompanyToWatchlist with new format { watchlistId, coCdList }
+        await addCompanyToWatchlist({ watchlistId: numericId, coCdList: symbols });
+        // Refresh from getWatchlistDetail + getWatchlistData
+        refreshFromDetail(numericId);
+      } else {
+        // Non-numeric IDs (e.g. 'favorites') — use local-only path
+        const newExtraHoldings = { ...extraHoldings };
+        const newOrder = [...currentSymbolOrder];
+        for (const sym of symbols) {
+          if (newOrder.includes(sym)) continue;
+          newOrder.push(sym);
+          if (!holdingsLookup.has(sym) && !newExtraHoldings[sym]) {
+            newExtraHoldings[sym] = createPlaceholderHolding(sym);
+          }
         }
+        setExtraHoldings(newExtraHoldings);
+        setSymbolOrder(watchlistId, newOrder);
       }
-      setExtraHoldings(newExtraHoldings);
-      setSymbolOrder(watchlistId, newOrder);
-      // API stub call for backend integration
-      addCompanyToWatchlist('demoUser', watchlistId, symbols);
+
       // When adding symbols to the Favorites watchlist, call addCompanyToMyFavorite
       // for each new symbol then refresh via getAllCoFavoriteList
       if (watchlistId === 'favorites') {
@@ -1791,6 +1878,42 @@ export function WatchlistContent({
           onReorderViews={setViewOrder}
           onClose={() => setShowManageView(false)}
         />
+      )}
+
+      {/* ── Delete Watchlist Confirmation Dialog ──────────────────────────── */}
+      {showDeleteConfirm && (
+        <div className="wl-modal-overlay" onClick={() => setShowDeleteConfirm(false)}>
+          <div className="wl-modal wl-modal--confirm" onClick={(e) => e.stopPropagation()}>
+            <div className="wl-modal-header">
+              <div className="wl-confirm-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" width="22" height="22" aria-hidden="true">
+                  <path d="M9 3h6M3 6h18M8 6v13a1 1 0 001 1h6a1 1 0 001-1V6M10 11v5M14 11v5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+              <span className="wl-modal-title">Delete Watchlist</span>
+              <button className="wl-modal-cancel-btn" onClick={() => setShowDeleteConfirm(false)} aria-label="Close">
+                <svg viewBox="0 0 14 14" fill="none" width="12" height="12" aria-hidden="true">
+                  <path d="M2 2L12 12M12 2L2 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
+            <div className="wl-modal-body wl-confirm-body">
+              <p className="wl-confirm-message">
+                Are you sure you want to delete <strong>&ldquo;{watchlistName}&rdquo;</strong>?
+                <br />
+                This action cannot be undone.
+              </p>
+              <div className="wl-confirm-actions">
+                <button className="wl-confirm-delete-btn" onClick={handleDeleteWatchlistConfirm}>
+                  Delete
+                </button>
+                <button className="wl-modal-cancel-btn" onClick={() => setShowDeleteConfirm(false)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );
