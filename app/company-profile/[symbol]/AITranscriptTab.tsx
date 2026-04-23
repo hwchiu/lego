@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import NoDataIcon from './NoDataIcon';
 import { AiTranscriptHtmlEntry } from '@/app/data/aiTranscripts';
 import { getAITranscriptByCoCd } from '@/app/lib/getAITranscriptByCoCd';
-import { highlightHtml } from '@/app/lib/htmlHighlight';
+import { highlightHtml, highlightText } from '@/app/lib/htmlHighlight';
 
 interface AITranscriptTabProps {
   symbol: string;
@@ -76,16 +76,17 @@ function downloadHtml(filename: string, content: string) {
 interface AiListItemProps {
   entry: AiTranscriptHtmlEntry;
   isActive: boolean;
+  keyword: string;
   onClick: () => void;
 }
 
-function AiListItem({ entry, isActive, onClick }: AiListItemProps) {
+function AiListItem({ entry, isActive, keyword, onClick }: AiListItemProps) {
   return (
     <button
       className={`cp-irt-list-item${isActive ? ' cp-irt-list-item--active' : ''}`}
       onClick={onClick}
     >
-      <div className="cp-irt-list-item-title">{entry.doc_title}</div>
+      <div className="cp-irt-list-item-title">{highlightText(entry.doc_title, keyword)}</div>
       <div className="cp-irt-list-item-meta">
         <div className="cp-irt-list-item-tags">
           <span className="cp-irt-period-tag cp-irt-period-tag--year">{entry.fiscal_year_no}</span>
@@ -121,7 +122,7 @@ function AiTranscriptDetail({ entry, companyName, keyword }: AiTranscriptDetailP
         <div className="cp-pec-card-header-left">
           <span className="cp-pec-card-company cp-pec-ai-badge">AI</span>
           <div>
-            <div className="cp-pec-card-title">{entry.doc_title}</div>
+            <div className="cp-pec-card-title">{highlightText(entry.doc_title, keyword)}</div>
             <div className="cp-pec-card-date">{entry.co_cd} · {entry.fiscal_qtr_no} {entry.fiscal_year_no}</div>
           </div>
         </div>
@@ -328,6 +329,7 @@ export default function AITranscriptTab({ symbol, companyName }: AITranscriptTab
                 key={`${entry.fiscal_year_no}-${entry.fiscal_qtr_no}`}
                 entry={entry}
                 isActive={activeEntry?.fiscal_year_no === entry.fiscal_year_no && activeEntry?.fiscal_qtr_no === entry.fiscal_qtr_no}
+                keyword={keyword}
                 onClick={() => handleSelectEntry(entry)}
               />
             ))

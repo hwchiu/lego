@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import NoDataIcon from './NoDataIcon';
 import { IrTranscriptHtmlEntry } from '@/app/data/irTranscripts';
 import { getIRTranscriptByCoCd } from '@/app/lib/getIRTranscriptByCoCd';
-import { highlightHtml } from '@/app/lib/htmlHighlight';
+import { highlightHtml, highlightText } from '@/app/lib/htmlHighlight';
 
 interface IRTranscriptTabProps {
   symbol: string;
@@ -215,16 +215,17 @@ function parseQuarterNumber(q: string): number {
 interface IrtListItemProps {
   entry: IrTranscriptHtmlEntry;
   isActive: boolean;
+  keyword: string;
   onClick: () => void;
 }
 
-function IrtListItem({ entry, isActive, onClick }: IrtListItemProps) {
+function IrtListItem({ entry, isActive, keyword, onClick }: IrtListItemProps) {
   return (
     <button
       className={`cp-irt-list-item${isActive ? ' cp-irt-list-item--active' : ''}`}
       onClick={onClick}
     >
-      <div className="cp-irt-list-item-title">{entry.doc_title}</div>
+      <div className="cp-irt-list-item-title">{highlightText(entry.doc_title, keyword)}</div>
       <div className="cp-irt-list-item-meta">
         <div className="cp-irt-list-item-tags">
           <span className="cp-irt-period-tag cp-irt-period-tag--year">{entry.fiscal_year_no}</span>
@@ -333,7 +334,7 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
           onClick={() => handleToggle(section.id)}
           aria-expanded={isExpanded}
         >
-          <span className="cp-irt-speaker-name">{section.speaker}</span>
+          <span className="cp-irt-speaker-name">{highlightText(section.speaker, keyword)}</span>
           <ChevronDownIcon className={`cp-irt-chevron${isExpanded ? ' cp-irt-chevron--open' : ''}`} />
         </button>
         {isExpanded && (
@@ -356,7 +357,7 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
         <div className="cp-pec-card-header-left">
           <span className="cp-pec-card-company cp-irt-badge">IR</span>
           <div>
-            <div className="cp-pec-card-title">{entry.doc_title}</div>
+            <div className="cp-pec-card-title">{highlightText(entry.doc_title, keyword)}</div>
             <div className="cp-pec-card-date">
               {entry.co_cd} · {entry.fiscal_qtr_no} {entry.fiscal_year_no}
               {entry.event_date && <span className="cp-irt-event-date"> · {entry.event_date}</span>}
@@ -414,9 +415,9 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
               <div className="cp-irt-participants-list">
                 {managementParticipants.map((p) => (
                   <div key={p.name} className="cp-irt-participant-item">
-                    <span className="cp-irt-participant-name">{p.name}</span>
+                    <span className="cp-irt-participant-name">{highlightText(p.name, keyword)}</span>
                     <span className="cp-irt-participant-sep">—</span>
-                    <span className="cp-irt-participant-role">{p.role}</span>
+                    <span className="cp-irt-participant-role">{highlightText(p.role, keyword)}</span>
                   </div>
                 ))}
               </div>
@@ -428,9 +429,9 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
               <div className="cp-irt-participants-list">
                 {analystParticipants.map((p) => (
                   <div key={p.name} className="cp-irt-participant-item">
-                    <span className="cp-irt-participant-name">{p.name}</span>
+                    <span className="cp-irt-participant-name">{highlightText(p.name, keyword)}</span>
                     <span className="cp-irt-participant-sep">—</span>
-                    <span className="cp-irt-participant-role">{p.role}</span>
+                    <span className="cp-irt-participant-role">{highlightText(p.role, keyword)}</span>
                   </div>
                 ))}
               </div>
@@ -644,6 +645,7 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
                 key={`${entry.fiscal_year_no}-${entry.fiscal_qtr_no}`}
                 entry={entry}
                 isActive={activeEntry?.fiscal_year_no === entry.fiscal_year_no && activeEntry?.fiscal_qtr_no === entry.fiscal_qtr_no}
+                keyword={keyword}
                 onClick={() => handleSelectEntry(entry)}
               />
             ))
