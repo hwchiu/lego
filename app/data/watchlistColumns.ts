@@ -2,6 +2,7 @@ import catalogData from './watchlist-column-catalog.json';
 
 export interface ColumnEntry {
   id: string;
+  columnId: number;
   label: string;
 }
 
@@ -35,5 +36,15 @@ export const CATALOG_VIEW_CATEGORIES: Record<string, string[]> = Object.fromEntr
 export const CATALOG_COLUMN_LABELS: Record<string, string> = Object.fromEntries(
   watchlistColumnCatalog.categories.flatMap((cat) =>
     cat.columns.map((col) => [col.id, col.label]),
+  ),
+);
+
+/**
+ * Maps numeric columnId → string id (e.g. 36 → "isRevenue").
+ * Used when rendering custom views that store column selections as numeric columnIds.
+ */
+export const CATALOG_COLUMN_ID_TO_STRING_ID: Record<number, string> = Object.fromEntries(
+  watchlistColumnCatalog.categories.flatMap((cat) =>
+    cat.columns.map((col) => [col.columnId, col.id]),
   ),
 );

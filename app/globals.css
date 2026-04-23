@@ -3503,6 +3503,32 @@ html:not(.dark) .sidebar-submenu-icon-left {
 .wl-mv-delete-btn { color: #dc2626; border-color: #fca5a5; }
 .wl-mv-delete-btn:hover { background: #fef2f2; }
 
+/* Validation error states for ManageViewModal */
+.wl-modal-field--error .wl-modal-field-label { color: #dc2626; }
+.wl-modal-input--error {
+  border-color: #dc2626 !important;
+  background: #fff5f5;
+}
+.wl-modal-input--error:focus { border-color: #b91c1c !important; }
+.wl-modal-field-error-msg {
+  font-size: 11.5px;
+  color: #dc2626;
+  margin-top: -2px;
+}
+.wl-mv-empty--error {
+  color: #dc2626;
+  border: 1px dashed #fca5a5;
+  border-radius: var(--radius-sm);
+  background: #fff5f5;
+}
+
+/* Inner modal overlay — stacks on top of the parent modal */
+.wl-modal-overlay--inner {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+}
+
 /* ===== COMPANY PROFILE — LANDING PAGE ===== */
 
 .cp-landing {

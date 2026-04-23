@@ -486,6 +486,30 @@ export function getViewCatgNColInfo(): ViewCatgNColInfoResponse {
   };
 }
 
+// ── getViewAllColumns ────────────────────────────────────────────────────────
+
+export interface ViewAllColumnEntry {
+  categoryId: string;
+  categoryName: string;
+  columns: { column_id: number; column_name: string }[];
+}
+
+/**
+ * Get all available view columns in the new API format.
+ * Called on page enter; the frontend uses categoryName for Category display
+ * and column_name for Available Columns display.
+ */
+export function getViewAllColumns(): ViewAllColumnEntry[] {
+  return watchlistColumnCatalog.categories.map((cat) => ({
+    categoryId: cat.id,
+    categoryName: cat.label,
+    columns: cat.columns.map((col) => ({
+      column_id: col.columnId,
+      column_name: col.label,
+    })),
+  }));
+}
+
 // ─── CRUD API stubs ─────────────────────────────────────────────────────────
 
 export interface AddCompanyToWatchlistPayload {
@@ -563,16 +587,109 @@ export async function saveView(
   return { success: true, viewId: `view-${Date.now()}` };
 }
 
+// ── createViewWithColumn ─────────────────────────────────────────────────────
+
+export interface CreateViewWithColumnPayload {
+  watchlistId: number;
+  viewName: string;
+  selectedCategories: number[]; // column_id values from getViewAllColumns()
+}
+
 /**
- * Delete a custom view. Called when the user clicks "Delete" in the
- * Edit Views tab.
+ * Create a new view with selected columns (POST).
+ * Payload: { watchlistId, viewName, selectedCategories: number[] }
+ * After calling, invoke getWatchlistDetail then getWatchlistData to refresh.
+ */
+export async function createViewWithColumn(
+  payload: CreateViewWithColumnPayload,
+): Promise<{ viewId: number }> {
+  console.log('[API stub] createViewWithColumn', payload);
+  if (typeof window === 'undefined') return { viewId: 0 };
+
+  const { watchlistId, viewName, selectedCategories } = payload;
+  const store = getApiCreatedStore();
+
+  // Get or initialize detail
+  let detail = store.details[watchlistId];
+  if (!detail) {
+    const mockDetail = MOCK_WATCHLIST_DETAILS[watchlistId];
+    if (mockDetail) {
+      detail = { ...mockDetail, viewlist: mockDetail.viewlist.map((v) => ({ ...v })) };
+    } else {
+      detail = {
+        watchlistId,
+        watchlistName: `Watchlist ${watchlistId}`,
+        isDefault: 'N',
+        defaultViewId: null,
+        companylist: [],
+        viewlist: [{ viewId: 0, viewName: 'Summary', isDefaultForWatchlist: 'Y', selectedCategories: [...DEFAULT_VIEW_CATEGORIES] }],
+      };
+    }
+  } else {
+    detail = { ...detail, viewlist: detail.viewlist.map((v) => ({ ...v })) };
+  }
+
+  // Generate a new unique viewId
+  const maxViewId = detail.viewlist.reduce((max, v) => Math.max(max, v.viewId), 0);
+  const newViewId = maxViewId + 1;
+
+  detail.viewlist.push({
+    viewId: newViewId,
+    viewName,
+    isDefaultForWatchlist: 'N',
+    selectedCategories,
+  });
+
+  store.details[watchlistId] = detail;
+
+  // Ensure the watchlist header entry exists
+  if (!store.watchlists.find((w) => w.watchlistId === watchlistId)) {
+    const mockWl = MOCK_WATCHLISTS.find((w) => w.watchlistId === watchlistId);
+    if (mockWl) store.watchlists.push({ ...mockWl });
+  }
+
+  saveApiCreatedStore(store);
+  return { viewId: newViewId };
+}
+
+// ── deleteView ───────────────────────────────────────────────────────────────
+
+export interface DeleteViewPayload {
+  watchlistId: number;
+  viewId: number;
+}
+
+/**
+ * Delete a custom view (POST).
+ * Payload: { watchlistId, viewId }
+ * After calling, navigate to the watchlist's Summary view.
  */
 export async function deleteView(
-  _userAcct: string,
-  _watchlistId: string,
-  _viewId: string,
+  payload: DeleteViewPayload,
 ): Promise<{ success: boolean }> {
-  console.log('[API stub] deleteView', { _userAcct, _watchlistId, _viewId });
+  console.log('[API stub] deleteView', payload);
+  const { watchlistId, viewId } = payload;
+
+  if (typeof window === 'undefined') return { success: true };
+
+  const store = getApiCreatedStore();
+
+  let detail = store.details[watchlistId];
+  if (!detail) {
+    const mockDetail = MOCK_WATCHLIST_DETAILS[watchlistId];
+    if (mockDetail) {
+      detail = { ...mockDetail, viewlist: mockDetail.viewlist.map((v) => ({ ...v })) };
+    } else {
+      return { success: true };
+    }
+  } else {
+    detail = { ...detail, viewlist: [...detail.viewlist] };
+  }
+
+  detail.viewlist = detail.viewlist.filter((v) => v.viewId !== viewId);
+  store.details[watchlistId] = detail;
+  saveApiCreatedStore(store);
+
   return { success: true };
 }
 
