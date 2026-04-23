@@ -20902,6 +20902,10 @@ html.dark .wl-toggle-track { background: #475569; }
 /* Scenario / search box borders */
 html.dark .cp-scenario-btn  { border-color: #475569; }
 html.dark .cp-search-box    { border-color: #475569; }
+
+/* Submit (paper-plane) button — accent colour in dark mode */
+html.dark .cp-submit-btn         { color: var(--c-accent); }
+html.dark .cp-submit-btn:hover   { color: #38bdf8; }
 html.dark .cwl-search-bar   { border-color: #475569; }
 
 /* ec-card symbol link */
