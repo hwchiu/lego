@@ -38,6 +38,8 @@ interface WatchlistContextType {
   apiWatchlists: ApiWatchlist[];
   // Create a new watchlist via createWatchlistWithCompany API stub
   createApiWatchlist: (name: string, coCdList: WatchlistCompany[]) => number;
+  // Refresh apiWatchlists from the API stub (call after deleteWatchlistById etc.)
+  refreshApiWatchlists: () => void;
 }
 
 const WatchlistContext = createContext<WatchlistContextType>({
@@ -54,6 +56,7 @@ const WatchlistContext = createContext<WatchlistContextType>({
   toggleFavorite: () => {},
   apiWatchlists: [],
   createApiWatchlist: () => -1,
+  refreshApiWatchlists: () => {},
 });
 
 export function WatchlistProvider({ children }: { children: React.ReactNode }) {
@@ -232,6 +235,11 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
     return watchlistId;
   }
 
+  function refreshApiWatchlists() {
+    const { result } = getUserAllWatchlists('demoUser');
+    setApiWatchlists(result);
+  }
+
   return (
     <WatchlistContext.Provider
       value={{
@@ -248,6 +256,7 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
         toggleFavorite,
         apiWatchlists,
         createApiWatchlist,
+        refreshApiWatchlists,
       }}
     >
       {children}

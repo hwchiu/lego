@@ -3195,6 +3195,50 @@ html:not(.dark) .sidebar-submenu-icon-left {
   transition: background 0.13s;
 }
 .wl-modal-delete-wl-btn:hover { background: #fef2f2; }
+
+/* ── Delete Confirmation Dialog ── */
+.wl-modal--confirm {
+  width: 380px;
+}
+.wl-confirm-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #fef2f2;
+  color: var(--c-neg);
+  flex-shrink: 0;
+}
+.wl-confirm-body {
+  padding: 20px;
+}
+.wl-confirm-message {
+  font-size: 13.5px;
+  color: var(--c-text);
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+.wl-confirm-message strong { font-weight: 700; }
+.wl-confirm-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+}
+.wl-confirm-delete-btn {
+  padding: 6px 18px;
+  background: var(--c-neg);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.13s;
+}
+.wl-confirm-delete-btn:hover { background: #b91c1c; }
 .wl-toggle-row {
   display: flex;
   align-items: center;
