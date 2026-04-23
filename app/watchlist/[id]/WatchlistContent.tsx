@@ -1617,10 +1617,10 @@ export function WatchlistContent({
               </div>
             </div>
 
+            {/* ── Holdings Table + Updates feed (wrapped for split-layout) ──────── */}
+            <div className={`wl-content-area${splitLayout ? ' wl-content-area--split' : ''}`}>
             {/* ── Holdings Table (view-dependent) ──────── */}
             {activeTab === 'Summary' ? (
-              <div className={`wl-content-area${splitLayout ? ' wl-content-area--split' : ''}`}>
-                {/* ── Summary Holdings Table ─────────────────────────────────────── */}
                 <div className="wl-table-wrap">
                 <table className="wl-table">
                   <thead className="wl-thead--white">
@@ -1669,7 +1669,6 @@ export function WatchlistContent({
                     ))}
                   </tbody>
                 </table>
-              </div>
               </div>
             ) : customViews.some((v) => v.id === activeTab) ? (
               /* ── Custom View Table ─────────────────────────────────── */
@@ -1849,6 +1848,8 @@ export function WatchlistContent({
                 )}
               </div>
             </section>
+
+            </div>{/* end wl-content-area */}
 
           </div>
         </main>
