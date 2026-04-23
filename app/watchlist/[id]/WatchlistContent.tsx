@@ -12,7 +12,7 @@ import { holdingsData as holdingsDataMap, holdingsDataQ4_2025 } from '@/app/data
 import type { HoldingEntity } from '@/app/data/watchlistData';
 import { mainNav } from '@/app/data/navigation';
 import { useWatchlist } from '@/app/contexts/WatchlistContext';
-import { CATALOG_VIEW_CATEGORIES, CATALOG_COLUMN_LABELS } from '@/app/data/watchlistColumns';
+import { CATALOG_VIEW_CATEGORIES, CATALOG_COLUMN_LABELS, CATALOG_COLUMN_ID_TO_STRING_ID } from '@/app/data/watchlistColumns';
 import { newsItems } from '@/app/data/news';
 import NewsCard from '@/app/components/news/NewsCard';
 import { pressReleases } from '@/app/data/pressReleases';
@@ -21,8 +21,10 @@ import type { CorpEvent } from '@/app/data/corpEvents';
 import {
   buildRecentQuarters,
   getViewCatgNColInfo,
+  getViewAllColumns,
   addCompanyToWatchlist,
   saveView as apiSaveView,
+  createViewWithColumn,
   deleteView as apiDeleteView,
   updateWatchlistInfo,
   getFavoritesListByUserAcct,
@@ -40,8 +42,9 @@ import { setFavoritesInPersonality } from '@/app/lib/getFavoritesByUserAcct';
 // ── Custom View types ─────────────────────────────────────────────────────────
 interface CustomView {
   id: string;
+  apiViewId?: number; // numeric viewId returned by createViewWithColumn()
   name: string;
-  columns: string[]; // ordered column IDs
+  columns: number[]; // column_id values from getViewAllColumns()
   hidden: boolean;
 }
 
@@ -349,7 +352,7 @@ interface ManageViewModalProps {
   customViews: CustomView[];
   viewOrder: string[];
   hiddenViews: Set<string>;
-  onSave: (name: string, columns: string[]) => void;
+  onSave: (name: string, columns: number[]) => void;
   onDelete: (id: string) => void;
   onToggleHide: (id: string) => void;
   onReorderViews: (order: string[]) => void;
@@ -368,29 +371,34 @@ function ManageViewModal({
 }: ManageViewModalProps) {
   const [modalTab, setModalTab] = useState<'create' | 'edit'>('create');
 
-  // Create New View state — category/column data from getViewCatgNColInfo()
-  const viewCatgColInfo = useMemo(() => getViewCatgNColInfo(), []);
-  const categoryLabels = useMemo(() => viewCatgColInfo.categories.map((c) => c.label), [viewCatgColInfo]);
+  // Create New View state — category/column data from getViewAllColumns()
+  const viewAllColumns = useMemo(() => getViewAllColumns(), []);
+  const categoryLabels = useMemo(() => viewAllColumns.map((c) => c.categoryName), [viewAllColumns]);
   const categoryColumnMap = useMemo(() => {
-    const map: Record<string, string[]> = {};
-    for (const cat of viewCatgColInfo.categories) {
-      map[cat.label] = cat.columns.map((col) => col.id);
+    const map: Record<string, { column_id: number; column_name: string }[]> = {};
+    for (const cat of viewAllColumns) {
+      map[cat.categoryName] = cat.columns;
     }
     return map;
-  }, [viewCatgColInfo]);
-  const columnLabelMap = useMemo(() => {
-    const map: Record<string, string> = {};
-    for (const cat of viewCatgColInfo.categories) {
+  }, [viewAllColumns]);
+  const columnIdToName = useMemo(() => {
+    const map: Record<number, string> = {};
+    for (const cat of viewAllColumns) {
       for (const col of cat.columns) {
-        map[col.id] = col.label;
+        map[col.column_id] = col.column_name;
       }
     }
     return map;
-  }, [viewCatgColInfo]);
+  }, [viewAllColumns]);
 
   const [viewName, setViewName] = useState('');
+  const [viewNameError, setViewNameError] = useState(false);
+  const [columnsError, setColumnsError] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>(categoryLabels[0] ?? '');
-  const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
+  const [selectedColumns, setSelectedColumns] = useState<number[]>([]);
+
+  // Delete confirmation state for Edit Views tab
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   // Edit Views drag state
   const editDragItem = useRef<number | null>(null);
@@ -398,13 +406,14 @@ function ManageViewModal({
 
   const availableColumns = categoryColumnMap[selectedCategory] ?? [];
 
-  const handleToggleColumn = useCallback((colId: string) => {
+  const handleToggleColumn = useCallback((colId: number) => {
     setSelectedColumns((prev) =>
       prev.includes(colId) ? prev.filter((c) => c !== colId) : [...prev, colId],
     );
+    setColumnsError(false);
   }, []);
 
-  const handleRemoveSelectedColumn = useCallback((colId: string) => {
+  const handleRemoveSelectedColumn = useCallback((colId: number) => {
     setSelectedColumns((prev) => prev.filter((c) => c !== colId));
   }, []);
 
@@ -439,7 +448,16 @@ function ManageViewModal({
 
   function handleCreateSave() {
     const name = viewName.trim();
-    if (!name || selectedColumns.length === 0) return;
+    let hasError = false;
+    if (!name) {
+      setViewNameError(true);
+      hasError = true;
+    }
+    if (selectedColumns.length === 0) {
+      setColumnsError(true);
+      hasError = true;
+    }
+    if (hasError) return;
     onSave(name, selectedColumns);
   }
 
@@ -475,16 +493,19 @@ function ManageViewModal({
           {modalTab === 'create' ? (
             <>
               {/* View Name */}
-              <div className="wl-modal-field">
+              <div className={`wl-modal-field${viewNameError ? ' wl-modal-field--error' : ''}`}>
                 <label className="wl-modal-field-label">View Name</label>
                 <input
-                  className="wl-modal-input"
+                  className={`wl-modal-input${viewNameError ? ' wl-modal-input--error' : ''}`}
                   type="text"
                   placeholder="e.g. My Earnings View"
                   value={viewName}
-                  onChange={(e) => setViewName(e.target.value)}
+                  onChange={(e) => { setViewName(e.target.value); setViewNameError(false); }}
                   autoFocus
                 />
+                {viewNameError && (
+                  <span className="wl-modal-field-error-msg">View Name is required.</span>
+                )}
               </div>
 
               {/* 3-column picker */}
@@ -509,18 +530,16 @@ function ManageViewModal({
                 <div className="wl-mv-panel">
                   <div className="wl-mv-panel-title">Available Columns</div>
                   <div className="wl-mv-panel-body">
-                    {availableColumns.map((colId) => {
-                      const label = columnLabelMap[colId] ?? ALL_COLUMNS[colId]?.label ?? CATALOG_COLUMN_LABELS[colId];
-                      if (!label) return null;
-                      const checked = selectedColumns.includes(colId);
+                    {availableColumns.map((col) => {
+                      const checked = selectedColumns.includes(col.column_id);
                       return (
-                        <label key={colId} className="wl-mv-col-item">
+                        <label key={col.column_id} className="wl-mv-col-item">
                           <input
                             type="checkbox"
                             checked={checked}
-                            onChange={() => handleToggleColumn(colId)}
+                            onChange={() => handleToggleColumn(col.column_id)}
                           />
-                          <span>{label}</span>
+                          <span>{col.column_name}</span>
                         </label>
                       );
                     })}
@@ -537,10 +556,12 @@ function ManageViewModal({
                   </div>
                   <div className="wl-mv-panel-body">
                     {selectedColumns.length === 0 ? (
-                      <div className="wl-mv-empty">No columns selected yet.<br />Check columns on the left.</div>
+                      <div className={`wl-mv-empty${columnsError ? ' wl-mv-empty--error' : ''}`}>
+                        No columns selected yet.<br />Check columns on the left.
+                      </div>
                     ) : (
                       selectedColumns.map((colId, i) => {
-                        const label = columnLabelMap[colId] ?? ALL_COLUMNS[colId]?.label ?? CATALOG_COLUMN_LABELS[colId];
+                        const label = columnIdToName[colId];
                         if (!label) return null;
                         return (
                           <div
@@ -573,12 +594,18 @@ function ManageViewModal({
                 </div>
               </div>
 
+              {/* Columns error message */}
+              {columnsError && selectedColumns.length === 0 && (
+                <span className="wl-modal-field-error-msg" style={{ alignSelf: 'flex-end' }}>
+                  Please select at least one column to create a view.
+                </span>
+              )}
+
               {/* Save button */}
               <button
                 className="wl-modal-done-btn"
                 style={{ alignSelf: 'flex-end', marginTop: 4 }}
                 onClick={handleCreateSave}
-                disabled={!viewName.trim() || selectedColumns.length === 0}
               >
                 Save View
               </button>
@@ -634,7 +661,7 @@ function ManageViewModal({
                         <button
                           className="wl-mv-delete-btn"
                           title="Delete View"
-                          onClick={() => onDelete(id)}
+                          onClick={() => setConfirmDeleteId(id)}
                         >
                           <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
                             <path d="M2.5 4h9M5.5 4V2.5h3V4M5.5 6.5v4M8.5 6.5v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
@@ -651,6 +678,54 @@ function ManageViewModal({
           )}
         </div>
       </div>
+
+      {/* ── Delete View Confirmation Dialog ────────────────────────────── */}
+      {confirmDeleteId !== null && (() => {
+        const viewLabel = BUILTIN_VIEWS.includes(confirmDeleteId as typeof BUILTIN_VIEWS[number])
+          ? confirmDeleteId
+          : (customViews.find((v) => v.id === confirmDeleteId)?.name ?? confirmDeleteId);
+        return (
+          <div className="wl-modal-overlay wl-modal-overlay--inner" onClick={(e) => e.stopPropagation()}>
+            <div className="wl-modal wl-modal--confirm" onClick={(e) => e.stopPropagation()}>
+              <div className="wl-modal-header">
+                <div className="wl-confirm-icon-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" width="22" height="22" aria-hidden="true">
+                    <path d="M9 3h6M3 6h18M8 6v13a1 1 0 001 1h6a1 1 0 001-1V6M10 11v5M14 11v5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                <span className="wl-modal-title">Delete View</span>
+                <button className="wl-modal-cancel-btn" onClick={() => setConfirmDeleteId(null)} aria-label="Close">
+                  <svg viewBox="0 0 14 14" fill="none" width="12" height="12" aria-hidden="true">
+                    <path d="M2 2L12 12M12 2L2 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                  </svg>
+                </button>
+              </div>
+              <div className="wl-modal-body wl-confirm-body">
+                <p className="wl-confirm-message">
+                  Are you sure you want to delete <strong>&ldquo;{viewLabel}&rdquo;</strong>?
+                  <br />
+                  This action cannot be undone.
+                </p>
+                <div className="wl-confirm-actions">
+                  <button
+                    className="wl-confirm-delete-btn"
+                    onClick={() => {
+                      const id = confirmDeleteId;
+                      setConfirmDeleteId(null);
+                      onDelete(id);
+                    }}
+                  >
+                    Delete
+                  </button>
+                  <button className="wl-modal-cancel-btn" onClick={() => setConfirmDeleteId(null)}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
@@ -968,8 +1043,7 @@ export function WatchlistContent({
       : [];
 
   // Helper: build GetWatchlistDataParams from getWatchlistDetail result + current view
-  function buildWatchlistDataParams(numericId: number, coList: string[], selectedCategories: number[]): GetWatchlistDataParams {
-    const viewId = 0; // 0 = Summary; custom view integration will use actual viewId when backend is ready
+  function buildWatchlistDataParams(numericId: number, coList: string[], selectedCategories: number[], viewId = 0): GetWatchlistDataParams {
     return {
       watchlistId: numericId,
       viewId,
@@ -1136,26 +1210,59 @@ export function WatchlistContent({
   }
 
   // ── Custom View handlers ───────────────────────────────────────────────────
-  function handleSaveCustomView(name: string, columns: string[]) {
+  async function handleSaveCustomView(name: string, columnIds: number[]) {
     const id =
       typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
         ? `view-${crypto.randomUUID()}`
         : `view-${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
-    const newView: CustomView = { id, name, columns, hidden: false };
+
+    const numericId = parseInt(watchlistId);
+    let apiViewId: number | undefined;
+
+    if (!isNaN(numericId)) {
+      // POST: createViewWithColumn
+      const result = await createViewWithColumn({
+        watchlistId: numericId,
+        viewName: name,
+        selectedCategories: columnIds,
+      });
+      apiViewId = result.viewId;
+
+      // Refresh via getWatchlistDetail + getWatchlistData
+      const detailRes = getWatchlistDetail(numericId);
+      const detail = detailRes.result;
+      const coList = detail.companylist
+        .slice()
+        .sort((a, b) => a.orderIndex - b.orderIndex)
+        .map((c) => c.coCd);
+
+      // Use the new view's selectedCategories for getWatchlistData
+      const newViewEntry = detail.viewlist.find((v) => v.viewId === apiViewId);
+      const selectedCategories = newViewEntry?.selectedCategories ?? columnIds;
+
+      const params = buildWatchlistDataParams(numericId, coList, selectedCategories, apiViewId ?? 0);
+      getWatchlistData(params);
+
+    }
+
+    const newView: CustomView = { id, apiViewId, name, columns: columnIds, hidden: false };
     setCustomViews((prev) => [...prev, newView]);
     setViewOrder((prev) => [...prev, id]);
     setShowManageView(false);
     setActiveTab(id);
-    // API stub call for backend integration
-    apiSaveView('demoUser', watchlistId, name, columns);
   }
 
-  function handleDeleteCustomView(id: string) {
+  async function handleDeleteCustomView(id: string) {
+    const view = customViews.find((v) => v.id === id);
     setCustomViews((prev) => prev.filter((v) => v.id !== id));
     setViewOrder((prev) => prev.filter((v) => v !== id));
-    if (activeTab === id) setActiveTab('Summary');
-    // API stub call for backend integration
-    apiDeleteView('demoUser', watchlistId, id);
+    setActiveTab('Summary');
+    setShowManageView(false);
+
+    const numericId = parseInt(watchlistId);
+    if (!isNaN(numericId) && view?.apiViewId !== undefined) {
+      await apiDeleteView({ watchlistId: numericId, viewId: view.apiViewId });
+    }
   }
 
   function handleToggleHideView(id: string) {
@@ -1506,9 +1613,18 @@ export function WatchlistContent({
               (() => {
                 const cv = customViews.find((v) => v.id === activeTab);
                 if (!cv) return null;
-                const cols = cv.columns.filter((c) => ALL_COLUMNS[c]);
-                const reorderCvCols = (next: string[]) =>
-                  setCustomViews((prev) => prev.map((v) => v.id === cv.id ? { ...v, columns: next } : v));
+                // Convert numeric column_ids → string IDs for ALL_COLUMNS lookup
+                const cols = cv.columns
+                  .map((numId) => CATALOG_COLUMN_ID_TO_STRING_ID[numId])
+                  .filter((strId): strId is string => Boolean(strId) && Boolean(ALL_COLUMNS[strId]));
+                const reorderCvCols = (nextStrIds: string[]) => {
+                  // Convert back to numeric IDs before storing
+                  const strToNum = Object.fromEntries(
+                    Object.entries(CATALOG_COLUMN_ID_TO_STRING_ID).map(([k, v]) => [v, Number(k)]),
+                  );
+                  const nextNumIds = nextStrIds.map((s) => strToNum[s]).filter(Boolean) as number[];
+                  setCustomViews((prev) => prev.map((v) => v.id === cv.id ? { ...v, columns: nextNumIds } : v));
+                };
                 return (
                   <div className="wl-table-wrap">
                     <table className="wl-table">
