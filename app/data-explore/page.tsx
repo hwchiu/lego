@@ -55,11 +55,10 @@ interface CategoryCardProps {
   icon: ReactNode;
   color: string;
   description: string;
-  count: number;
   released: boolean;
 }
 
-function CategoryCard({ slug, label, icon, color, description, count, released }: CategoryCardProps) {
+function CategoryCard({ slug, label, icon, color, description, released }: CategoryCardProps) {
   if (released) {
     return (
       <Link href={`/data-explore/${slug}`} className="de-category-card">
@@ -70,7 +69,6 @@ function CategoryCard({ slug, label, icon, color, description, count, released }
           <div className="de-category-card-label">{label}</div>
           <div className="de-category-card-desc">{description}</div>
           <div className="de-category-card-footer">
-            <span className="de-category-card-count" style={{ color: 'var(--c-text-2)' }}>{count} records</span>
             <span className="de-category-card-arrow"><ArrowIcon /></span>
           </div>
         </div>
@@ -218,7 +216,6 @@ export default function DataExplorePage() {
                         icon={cat.icon}
                         color={cat.color}
                         description={cat.description}
-                        count={cat.items.length}
                         released={cat.slug === 'news-summary'}
                       />
                     ))}
