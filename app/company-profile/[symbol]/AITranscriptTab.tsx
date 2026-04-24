@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import NoDataIcon from './NoDataIcon';
 import { AiTranscriptHtmlEntry } from '@/app/data/aiTranscripts';
 import { getAITranscriptByCoCd } from '@/app/lib/getAITranscriptByCoCd';
 import { highlightHtml, highlightText } from '@/app/lib/htmlHighlight';
+import { useTranscriptSearch, TranscriptSearchAccessors } from './useTranscriptSearch';
 
 interface AITranscriptTabProps {
   symbol: string;
@@ -49,11 +50,6 @@ function DownloadIcon() {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function parseQuarterNumber(q: string): number {
-  const n = parseInt(q.replace('Q', ''), 10);
-  return isNaN(n) ? 0 : n;
-}
-
 /** Remove the first <h3>…</h3> from HTML to avoid duplicate title rendering. */
 function stripFirstH3(html: string): string {
   return html.replace(/<h3[^>]*>[\s\S]*?<\/h3>/i, '');
@@ -70,6 +66,17 @@ function downloadHtml(filename: string, content: string) {
   a.click();
   URL.revokeObjectURL(url);
 }
+
+// ── Search accessors (module-level for stable references) ─────────────────────
+
+const aitAccessors: TranscriptSearchAccessors<AiTranscriptHtmlEntry> = {
+  getYear: (e) => e.fiscal_year_no,
+  getQtr: (e) => e.fiscal_qtr_no,
+  // Include both title and HTML body so items are never filtered out just
+  // because a keyword matches the title but not the body content.
+  getSearchableText: (e) => `${e.doc_title} ${e.doc_html}`,
+  getKey: (e) => `${e.fiscal_year_no}-${e.fiscal_qtr_no}`,
+};
 
 // ── List item ─────────────────────────────────────────────────────────────────
 
@@ -181,75 +188,21 @@ export default function AITranscriptTab({ symbol, companyName }: AITranscriptTab
     return () => { cancelled = true; };
   }, [symbol]);
 
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [keyword, setKeyword] = useState('');
-  const [debouncedKeyword, setDebouncedKeyword] = useState('');
-  const [yearFilter, setYearFilter] = useState('all');
-  const [qtrFilter, setQtrFilter] = useState('all');
-  const searchRef = useRef<HTMLInputElement>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const handleKeywordChange = useCallback((value: string) => {
-    setKeyword(value);
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => setDebouncedKeyword(value), 200);
-  }, []);
-
-  useEffect(() => {
-    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, []);
-
-  const yearOptions = useMemo(() => {
-    const years = [...new Set(sortedEntries.map((e) => e.fiscal_year_no))];
-    return [{ value: 'all', label: 'All Years' }, ...years.map((y) => ({ value: y, label: y }))];
-  }, [sortedEntries]);
-
-  const qtrOptions = useMemo(() => {
-    const qtrs = [...new Set(sortedEntries.map((e) => e.fiscal_qtr_no))].sort(
-      (a, b) => parseQuarterNumber(a) - parseQuarterNumber(b)
-    );
-    return [{ value: 'all', label: 'All Qtrs' }, ...qtrs.map((q) => ({ value: q, label: q }))];
-  }, [sortedEntries]);
-
-  const filteredEntries = useMemo(() => {
-    let list = sortedEntries;
-    if (yearFilter !== 'all') {
-      list = list.filter((e) => e.fiscal_year_no === yearFilter);
-    }
-    if (qtrFilter !== 'all') {
-      list = list.filter((e) => e.fiscal_qtr_no === qtrFilter);
-    }
-    if (debouncedKeyword.trim()) {
-      const kw = debouncedKeyword.toLowerCase();
-      list = list.filter((e) => e.doc_html.toLowerCase().includes(kw));
-    }
-    return list;
-  }, [sortedEntries, yearFilter, qtrFilter, debouncedKeyword]);
-
-  const activeEntry = useMemo(() => {
-    if (selectedId) {
-      const found = filteredEntries.find((e) => `${e.fiscal_year_no}-${e.fiscal_qtr_no}` === selectedId);
-      if (found) return found;
-    }
-    return filteredEntries[0] ?? null;
-  }, [filteredEntries, selectedId]);
-
-  const handleSelectEntry = useCallback((entry: AiTranscriptHtmlEntry) => {
-    setSelectedId(`${entry.fiscal_year_no}-${entry.fiscal_qtr_no}`);
-  }, []);
-
-  const handleClearSearch = useCallback(() => {
-    setKeyword('');
-    setDebouncedKeyword('');
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    searchRef.current?.focus();
-  }, []);
-
-  useEffect(() => {
-    if (selectedId && !filteredEntries.find((e) => `${e.fiscal_year_no}-${e.fiscal_qtr_no}` === selectedId)) {
-      setSelectedId(null);
-    }
-  }, [filteredEntries, selectedId]);
+  const {
+    keyword,
+    yearFilter,
+    qtrFilter,
+    searchRef,
+    filteredEntries,
+    activeEntry,
+    yearOptions,
+    qtrOptions,
+    setYearFilter,
+    setQtrFilter,
+    handleKeywordChange,
+    handleSelectEntry,
+    handleClearSearch,
+  } = useTranscriptSearch(sortedEntries, aitAccessors);
 
   if (loading) {
     return (
@@ -286,6 +239,7 @@ export default function AITranscriptTab({ symbol, companyName }: AITranscriptTab
             className="cp-irt-search-input"
             placeholder="Search AI analyses…"
             value={keyword}
+            maxLength={100}
             onChange={(e) => handleKeywordChange(e.target.value)}
             aria-label="Search AI transcript analyses"
           />

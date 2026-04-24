@@ -5,6 +5,7 @@ import NoDataIcon from './NoDataIcon';
 import { IrTranscriptHtmlEntry } from '@/app/data/irTranscripts';
 import { getIRTranscriptByCoCd } from '@/app/lib/getIRTranscriptByCoCd';
 import { highlightHtml, highlightText } from '@/app/lib/htmlHighlight';
+import { useTranscriptSearch, TranscriptSearchAccessors } from './useTranscriptSearch';
 
 interface IRTranscriptTabProps {
   symbol: string;
@@ -203,12 +204,16 @@ function parseTranscriptFull(html: string): ParsedTranscript {
   };
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Search accessors (module-level for stable references) ─────────────────────
 
-function parseQuarterNumber(q: string): number {
-  const n = parseInt(q.replace('Q', ''), 10);
-  return isNaN(n) ? 0 : n;
-}
+const irtAccessors: TranscriptSearchAccessors<IrTranscriptHtmlEntry> = {
+  getYear: (e) => e.fiscal_year_no,
+  getQtr: (e) => e.fiscal_qtr_no,
+  // Include both title and HTML body so items are never filtered out just
+  // because a keyword matches the title but not the body content.
+  getSearchableText: (e) => `${e.doc_title} ${e.doc_html}`,
+  getKey: (e) => `${e.fiscal_year_no}-${e.fiscal_qtr_no}`,
+};
 
 // ── List Item ─────────────────────────────────────────────────────────────────
 
@@ -499,73 +504,21 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
     return () => { cancelled = true; };
   }, [symbol]);
 
-  const [selectedKey, setSelectedKey] = useState<string | null>(null);
-  const [keyword, setKeyword] = useState('');
-  const [yearFilter, setYearFilter] = useState('all');
-  const [qtrFilter, setQtrFilter] = useState('all');
-  const searchRef = useRef<HTMLInputElement>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [debouncedKeyword, setDebouncedKeyword] = useState('');
-
-  const handleKeywordChange = useCallback((value: string) => {
-    setKeyword(value);
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => setDebouncedKeyword(value), 200);
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, []);
-
-  const yearOptions = useMemo(() => {
-    const years = [...new Set(sortedEntries.map((e) => e.fiscal_year_no))];
-    return [{ value: 'all', label: 'All Years' }, ...years.map((y) => ({ value: y, label: y }))];
-  }, [sortedEntries]);
-
-  const qtrOptions = useMemo(() => {
-    const qtrs = [...new Set(sortedEntries.map((e) => e.fiscal_qtr_no))].sort(
-      (a, b) => parseQuarterNumber(a) - parseQuarterNumber(b)
-    );
-    return [{ value: 'all', label: 'All Qtrs' }, ...qtrs.map((q) => ({ value: q, label: q }))];
-  }, [sortedEntries]);
-
-  const filteredEntries = useMemo(() => {
-    let list = sortedEntries;
-    if (yearFilter !== 'all') list = list.filter((e) => e.fiscal_year_no === yearFilter);
-    if (qtrFilter !== 'all') list = list.filter((e) => e.fiscal_qtr_no === qtrFilter);
-    if (debouncedKeyword.trim()) {
-      const kw = debouncedKeyword.toLowerCase();
-      list = list.filter((e) => e.doc_html.toLowerCase().includes(kw));
-    }
-    return list;
-  }, [sortedEntries, yearFilter, qtrFilter, debouncedKeyword]);
-
-  const activeEntry = useMemo(() => {
-    if (selectedKey) {
-      const found = filteredEntries.find((e) => `${e.fiscal_year_no}-${e.fiscal_qtr_no}` === selectedKey);
-      if (found) return found;
-    }
-    return filteredEntries[0] ?? null;
-  }, [filteredEntries, selectedKey]);
-
-  const handleSelectEntry = useCallback((entry: IrTranscriptHtmlEntry) => {
-    setSelectedKey(`${entry.fiscal_year_no}-${entry.fiscal_qtr_no}`);
-  }, []);
-
-  const handleClearSearch = useCallback(() => {
-    setKeyword('');
-    setDebouncedKeyword('');
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    searchRef.current?.focus();
-  }, []);
-
-  useEffect(() => {
-    if (selectedKey && !filteredEntries.find((e) => `${e.fiscal_year_no}-${e.fiscal_qtr_no}` === selectedKey)) {
-      setSelectedKey(null);
-    }
-  }, [filteredEntries, selectedKey]);
+  const {
+    keyword,
+    yearFilter,
+    qtrFilter,
+    searchRef,
+    filteredEntries,
+    activeEntry,
+    yearOptions,
+    qtrOptions,
+    setYearFilter,
+    setQtrFilter,
+    handleKeywordChange,
+    handleSelectEntry,
+    handleClearSearch,
+  } = useTranscriptSearch(sortedEntries, irtAccessors);
 
   if (loading) {
     return (
@@ -602,6 +555,7 @@ export default function IRTranscriptTab({ symbol }: IRTranscriptTabProps) {
             className="cp-irt-search-input"
             placeholder="Search transcripts…"
             value={keyword}
+            maxLength={100}
             onChange={(e) => handleKeywordChange(e.target.value)}
             aria-label="Search IR transcripts"
           />
