@@ -683,9 +683,10 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
         }
       }
     } else {
-      // segLevel === 3: collect only level3 leaf items across all level1/level2 groups.
-      // Level2 items with no level3 children are skipped (not promoted).
-      // Level1 items with no level2 children are also skipped.
+      // segLevel === 3: collect only level3 leaf items.
+      // Level2 items with no level3 children are automatically skipped because
+      // we only iterate l2g.level3Groups. Level1 items without level2 children
+      // are also automatically skipped because we only iterate l1g.level2Groups.
       for (const l1g of saleTypeGroup.level1Groups) {
         for (const l2g of l1g.level2Groups) {
           for (const l3g of l2g.level3Groups) {
