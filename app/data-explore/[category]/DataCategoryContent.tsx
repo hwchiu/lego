@@ -1313,6 +1313,82 @@ function parseEsgMarkdown(markdown: string): EsgTopicSection[] {
   return sections;
 }
 
+// ── Bullet-list news format parser ────────────────────────────────────────────
+
+interface TaxNewsListItem {
+  date: string;
+  title: string;
+  summary: string;
+  url: string;
+}
+
+function isTaxNewsBulletFormat(markdown: string): boolean {
+  return markdown.trimStart().startsWith('#') && /- \*\*新聞日期[：:]/.test(markdown);
+}
+
+function parseTaxNewsBulletList(markdown: string): TaxNewsListItem[] {
+  const items: TaxNewsListItem[] = [];
+  // Remove the h1 header line
+  const content = markdown.replace(/^#[^\n]*\n/, '').trim();
+  // Split on list item markers
+  const blocks = content.split(/\n?- \*\*新聞日期[：:]\*\*/);
+
+  for (const block of blocks) {
+    if (!block.trim()) continue;
+    const item: TaxNewsListItem = { date: '', title: '', summary: '', url: '' };
+
+    // Date is the first part before <br>
+    const dateMatch = block.match(/^\s*([^<\n]+)/);
+    if (dateMatch) item.date = dateMatch[1].trim();
+
+    // Title
+    const titleMatch = block.match(/\*\*新聞標題[：:]\*\*\s*([^<\n]+)/);
+    if (titleMatch) item.title = titleMatch[1].trim();
+
+    // Summary
+    const summaryMatch = block.match(/\*\*新聞重點摘要[：:]\*\*\s*([^<\n]+)/);
+    if (summaryMatch) item.summary = summaryMatch[1].trim();
+
+    // URL
+    const urlMatch = block.match(/\*\*新聞網址:?\*\*\s*(\S+)/);
+    if (urlMatch) item.url = urlMatch[1].trim();
+
+    if (item.title || item.date) {
+      items.push(item);
+    }
+  }
+
+  return items;
+}
+
+// ── Bullet-list news item card ────────────────────────────────────────────────
+
+function TaxNewsItemCard({ item }: { item: TaxNewsListItem; accentColor: string }) {
+  const hasUrl = item.url && item.url !== '#';
+  return (
+    <article className="de-esg-news-card">
+      <div className="de-esg-news-card-header">
+        {item.date && <span className="de-esg-news-card-date">{item.date}</span>}
+      </div>
+      <div className="de-esg-news-card-title">
+        {hasUrl ? (
+          <a href={item.url} target="_blank" rel="noopener noreferrer">
+            {item.title}
+            <span style={{ display: 'inline-flex', alignItems: 'center', marginLeft: 3 }}>
+              <ExternalLinkIcon />
+            </span>
+          </a>
+        ) : (
+          item.title
+        )}
+      </div>
+      {item.summary && (
+        <p className="de-esg-news-card-summary">{item.summary}</p>
+      )}
+    </article>
+  );
+}
+
 // ── ESG topic collapsible section component ───────────────────────────────────
 
 function ChevronIcon({ open }: { open: boolean }) {
@@ -1474,6 +1550,8 @@ function NewsDigestSummaryTab({
   const [activeItemName, setActiveItemName] = useState<string>('');
   const [contentLoading, setContentLoading] = useState(false);
   const [sections, setSections] = useState<EsgTopicSection[]>([]);
+  const [taxNewsItems, setTaxNewsItems] = useState<TaxNewsListItem[]>([]);
+  const [isBulletFormat, setIsBulletFormat] = useState(false);
   const [rawMarkdown, setRawMarkdown] = useState<string>('');
 
   useEffect(() => {
@@ -1493,10 +1571,17 @@ function NewsDigestSummaryTab({
     if (!activePeriodId) return;
     setContentLoading(true);
     setSections([]);
+    setTaxNewsItems([]);
+    setIsBulletFormat(false);
     setRawMarkdown('');
     queryDataItemContent(activePeriodId).then((markdown) => {
       if (markdown) {
-        setSections(parseEsgMarkdown(markdown));
+        if (isTaxNewsBulletFormat(markdown)) {
+          setIsBulletFormat(true);
+          setTaxNewsItems(parseTaxNewsBulletList(markdown));
+        } else {
+          setSections(parseEsgMarkdown(markdown));
+        }
         setRawMarkdown(markdown);
       }
       setContentLoading(false);
@@ -1514,6 +1599,8 @@ function NewsDigestSummaryTab({
     const periodLabel = stripItemPrefix(activeItemName) || activeItemName;
     downloadMarkdownAsPdf(`${tabTitle} ${periodLabel}`, rawMarkdown);
   }
+
+  const hasContent = isBulletFormat ? taxNewsItems.length > 0 : sections.length > 0;
 
   return (
     <div className="de-tax-news-wrap">
@@ -1549,7 +1636,7 @@ function NewsDigestSummaryTab({
           <div className="de-intl-tax-content">
             {contentLoading ? (
               <div className="de-esg-loading">Loading content…</div>
-            ) : sections.length === 0 ? (
+            ) : !hasContent ? (
               <div className="de-esg-empty">{zh ? '暫無相關新聞' : 'No articles found.'}</div>
             ) : (
               <>
@@ -1563,11 +1650,19 @@ function NewsDigestSummaryTab({
                     <span>{zh ? '下載 PDF' : 'Download PDF'}</span>
                   </button>
                 </div>
-                <div className="de-esg-topics-wrap">
-                  {sections.map((section, i) => (
-                    <EsgTopicSectionCard key={section.topic} section={section} defaultOpen={i === 0} />
-                  ))}
-                </div>
+                {isBulletFormat ? (
+                  <div className="de-esg-topic-body">
+                    {taxNewsItems.map((item, i) => (
+                      <TaxNewsItemCard key={i} item={item} accentColor={accentColor} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="de-esg-topics-wrap">
+                    {sections.map((section, i) => (
+                      <EsgTopicSectionCard key={section.topic} section={section} defaultOpen={i === 0} />
+                    ))}
+                  </div>
+                )}
               </>
             )}
           </div>
@@ -1827,13 +1922,6 @@ export default function DataCategoryContent({ params }: { params: { category: st
                   </div>
                 </div>
                 <p className="de-cat-hero-desc">{cat.description}</p>
-                {!isCapital && (
-                  <div className="de-cat-hero-stats">
-                    <span className="de-cat-stat" style={{ color: cat.color }}>{cat.items.length} records</span>
-                    <span className="de-cat-stat-divider">·</span>
-                    <span className="de-cat-stat">{allTags.length} tags</span>
-                  </div>
-                )}
               </div>
             </div>
 
