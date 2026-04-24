@@ -21716,3 +21716,10 @@ html.dark .banner-label {
 html.dark .banner-text {
   color: rgba(255,255,255,0.96);
 }
+html.dark .banner-link {
+  color: #ffffff;
+  border-bottom-color: rgba(255,255,255,0.55);
+}
+html.dark .banner-link:hover {
+  border-bottom-color: #ffffff;
+}
