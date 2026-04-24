@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import NoDataIcon from './NoDataIcon';
 import { PecMdEntry } from '@/app/data/preEarningCalls';
 import { getPreEarningCallByCoCd } from '@/app/lib/getPreEarningCallByCoCd';
+import { useTranscriptSearch, TranscriptSearchAccessors } from './useTranscriptSearch';
 
 interface PreEarningCallTabProps {
   symbol: string;
@@ -348,10 +349,18 @@ function PecDetail({ entry, companyName, keyword }: PecDetailProps) {
 
 // ── Main Component ─────────────────────────────────────────────────────────────
 
-function parseQuarterNumber(q: string): number {
-  const n = parseInt(q.replace('Q', ''), 10);
-  return isNaN(n) ? 0 : n;
-}
+// Module-level accessors (stable references for the shared hook).
+// PEC: title is derived from parsePecMd(e.content).title, which is always a
+// substring of e.content (the parser only trims / slices — it never adds text).
+// Searching e.content therefore always covers the title text.
+const pecAccessors: TranscriptSearchAccessors<PecMdEntry> = {
+  getYear: (e) => String(e.year),
+  getQtr: (e) => e.quarter,
+  // The parsed title is always a substring of content, so searching content
+  // already covers the title.
+  getSearchableText: (e) => e.content,
+  getKey: (e) => `${e.year}-${e.quarter}`,
+};
 
 export default function PreEarningCallTab({ symbol, companyName }: PreEarningCallTabProps) {
   // Fetch entries via simulated API (will be replaced with real API call)
@@ -370,83 +379,21 @@ export default function PreEarningCallTab({ symbol, companyName }: PreEarningCal
     return () => { cancelled = true; };
   }, [symbol]);
 
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [keyword, setKeyword] = useState('');
-  const [debouncedKeyword, setDebouncedKeyword] = useState('');
-  const [yearFilter, setYearFilter] = useState('all');
-  const [qtrFilter, setQtrFilter] = useState('all');
-  const searchRef = useRef<HTMLInputElement>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const handleKeywordChange = useCallback((value: string) => {
-    setKeyword(value);
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => setDebouncedKeyword(value), 200);
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, []);
-
-  const yearOptions = useMemo(() => {
-    const years = [...new Set(sortedEntries.map((e) => String(e.year)))];
-    return [{ value: 'all', label: 'All Years' }, ...years.map((y) => ({ value: y, label: y }))];
-  }, [sortedEntries]);
-
-  const qtrOptions = useMemo(() => {
-    const qtrs = [...new Set(sortedEntries.map((e) => e.quarter))].sort(
-      (a, b) => parseQuarterNumber(a) - parseQuarterNumber(b)
-    );
-    return [
-      { value: 'all', label: 'All Qtrs' },
-      ...qtrs.map((q) => ({ value: q, label: q })),
-    ];
-  }, [sortedEntries]);
-
-  const filteredEntries = useMemo(() => {
-    let list = sortedEntries;
-    if (yearFilter !== 'all') {
-      list = list.filter((e) => String(e.year) === yearFilter);
-    }
-    if (qtrFilter !== 'all') {
-      list = list.filter((e) => e.quarter === qtrFilter);
-    }
-    if (debouncedKeyword.trim()) {
-      const kw = debouncedKeyword.toLowerCase();
-      list = list.filter((e) => e.content.toLowerCase().includes(kw));
-    }
-    return list;
-  }, [sortedEntries, yearFilter, qtrFilter, debouncedKeyword]);
-
-  const activeEntry = useMemo(() => {
-    if (selectedId) {
-      const found = filteredEntries.find((e) => `${e.year}-${e.quarter}` === selectedId);
-      if (found) return found;
-    }
-    return filteredEntries[0] ?? null;
-  }, [filteredEntries, selectedId]);
-
-  const handleSelectEntry = useCallback((entry: PecMdEntry) => {
-    setSelectedId(`${entry.year}-${entry.quarter}`);
-  }, []);
-
-  const handleClearSearch = useCallback(() => {
-    setKeyword('');
-    setDebouncedKeyword('');
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    searchRef.current?.focus();
-  }, []);
-
-  useEffect(() => {
-    if (
-      selectedId &&
-      !filteredEntries.find((e) => `${e.year}-${e.quarter}` === selectedId)
-    ) {
-      setSelectedId(null);
-    }
-  }, [filteredEntries, selectedId]);
+  const {
+    keyword,
+    yearFilter,
+    qtrFilter,
+    searchRef,
+    filteredEntries,
+    activeEntry,
+    yearOptions,
+    qtrOptions,
+    setYearFilter,
+    setQtrFilter,
+    handleKeywordChange,
+    handleSelectEntry,
+    handleClearSearch,
+  } = useTranscriptSearch(sortedEntries, pecAccessors);
 
   if (loading) {
     return (
@@ -485,6 +432,7 @@ export default function PreEarningCallTab({ symbol, companyName }: PreEarningCal
             className="cp-irt-search-input"
             placeholder="Search earnings results…"
             value={keyword}
+            maxLength={100}
             onChange={(e) => handleKeywordChange(e.target.value)}
             aria-label="Search Pre-Earning Call results"
           />
