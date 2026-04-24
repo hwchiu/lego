@@ -83,7 +83,7 @@ export default function NewsCard({ item }: NewsCardProps) {
         <div className="news-card-tags">
           {item.tags.map((tag) => (
             <span key={tag.symbol} className="news-tag-group">
-              <Link href={`/company-profile/${tag.symbol}`} className="news-tag">
+              <Link href={`/company-profile/${tag.symbol}`} className="news-tag" target="_blank" rel="noopener noreferrer">
                 {tag.symbol}
               </Link>
             </span>
