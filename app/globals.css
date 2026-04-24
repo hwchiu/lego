@@ -5080,10 +5080,47 @@ html:not(.dark) .sidebar-submenu-icon-left {
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
-.cp-ir-fin-download-btn:hover {
+.cp-ir-fin-download-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.cp-ir-fin-download-btn:hover:not(:disabled) {
   background: var(--c-dark);
   color: var(--c-white);
   border-color: var(--c-dark);
+}
+/* ── No-file modal ── */
+.cp-ir-no-file-modal {
+  width: 360px;
+}
+.cp-ir-no-file-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cp-ir-no-file-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: #2563eb;
+  flex-shrink: 0;
+}
+.cp-ir-no-file-body {
+  padding: 20px;
+}
+.cp-ir-no-file-message {
+  font-size: 13.5px;
+  color: var(--c-text);
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+.cp-ir-no-file-actions {
+  display: flex;
+  justify-content: flex-end;
 }
 .cp-ir-doc-group {
   margin-bottom: 6px;
@@ -20434,10 +20471,14 @@ html.dark .cp-ir-fin-download-btn {
   border-color: var(--c-border);
   color: var(--c-text-3);
 }
-html.dark .cp-ir-fin-download-btn:hover {
+html.dark .cp-ir-fin-download-btn:hover:not(:disabled) {
   background: #334155;
   color: var(--c-text);
   border-color: var(--c-border-2);
+}
+html.dark .cp-ir-no-file-icon {
+  background: #1e3a5f;
+  color: #60a5fa;
 }
 
 /* ===== DARK MODE: aapl-ma components ===== */
