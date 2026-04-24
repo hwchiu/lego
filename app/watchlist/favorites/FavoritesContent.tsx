@@ -100,7 +100,7 @@ export default function FavoritesContent() {
       )}
 
       <WatchlistContent
-        params={{ id: 'favorites' }}
+        params={{ id: '0' }}
         initialSymbols={favoriteSymbols}
         watchlistNameOverride="Favorites"
         useOverrideName
