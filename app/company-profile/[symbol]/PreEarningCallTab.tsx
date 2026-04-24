@@ -263,8 +263,7 @@ function PecDetail({ entry, companyName, keyword }: PecDetailProps) {
 
       {/* Notice */}
       <div className="cp-pec-notice">
-        Notice: BD/IT team continue to improve the AI tool. Currently the summarized transcript is
-        for reference purpose only. (Contact Window: Alex Chang 張汶傑)
+          Notice: The Pre-earning call summary is collected & summary by AI. The purpose is reference only
       </div>
 
       {/* Body — two-section layout */}
