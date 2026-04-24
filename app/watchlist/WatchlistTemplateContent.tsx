@@ -1,23 +1,20 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { getWatchlistDetail } from '@/app/lib/watchlistApi';
 import { WatchlistContent } from '@/app/watchlist/[id]/WatchlistContent';
-import FavoritesContent from '@/app/watchlist/favorites/FavoritesContent';
 
 export default function WatchlistTemplateContent() {
   const searchParams = useSearchParams();
   const rawId = searchParams.get('id');
   const watchlistId = rawId !== null ? parseInt(rawId, 10) : null;
 
-  // Always call useMemo at the top level (Rules of Hooks)
   const { detail, symbols, watchlistName } = useMemo(() => {
-    // id=0 is reserved for Favorites — skip generic detail lookup
-    if (watchlistId === null || isNaN(watchlistId) || watchlistId === 0) {
+    if (watchlistId === null || isNaN(watchlistId)) {
       return { detail: null, symbols: [] as string[], watchlistName: '' };
     }
 
@@ -30,11 +27,6 @@ export default function WatchlistTemplateContent() {
 
     return { detail, symbols, watchlistName: detail.watchlistName };
   }, [watchlistId]);
-
-  // id=0 is reserved for the Favorites page
-  if (watchlistId === 0) {
-    return <FavoritesContent />;
-  }
 
   if (watchlistId === null || isNaN(watchlistId)) {
     return (

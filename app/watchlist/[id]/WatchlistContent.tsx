@@ -1179,19 +1179,19 @@ export function WatchlistContent({
 
     const numericId = parseInt(watchlistId);
 
-    if (hasChanges && !isNaN(numericId) && numericId !== 0) {
+    if (hasChanges && !isNaN(numericId)) {
       // POST: editWatchlist with new format
       const coCdList = editSymbolOrder.map((coCd, idx) => ({ coCd, orderIndex: idx, isPinned: 'N' as const }));
       await editWatchlist({ watchlistId: numericId, newWatchlistName: trimmed, coCdList });
       // Refresh from detail
       refreshFromDetail(numericId);
     } else {
-      // No structural changes, or id=0 (Favorites) — still call legacy stub for audit logging
+      // No structural changes — still call legacy stub for audit logging
       updateWatchlistInfo('demoUser', watchlistId, trimmed, [...editSymbolOrder]);
     }
 
-    // When editing the Favorites watchlist (id=0), persist changes to user-personality
-    if (watchlistId === '0') {
+    // When editing the Favorites watchlist, persist changes to user-personality
+    if (watchlistId === 'favorites') {
       setFavoritesInPersonality([...editSymbolOrder]);
       const refreshed = getFavoritesListByUserAcct('demoUser');
       onFavoritesSymbolsUpdate?.(refreshed);
@@ -1216,8 +1216,8 @@ export function WatchlistContent({
     setShowDeleteConfirm(false);
 
     const numericId = parseInt(watchlistId);
-    if (!isNaN(numericId) && numericId !== 0) {
-      // POST: deleteWatchlist (id=0 is Favorites and cannot be deleted)
+    if (!isNaN(numericId)) {
+      // POST: deleteWatchlist
       await deleteWatchlistById(numericId);
     }
 
@@ -1225,7 +1225,7 @@ export function WatchlistContent({
     contextDeleteWatchlist(watchlistId);
 
     // Remove cached detail from localStorage
-    if (typeof window !== 'undefined' && !isNaN(numericId) && numericId !== 0) {
+    if (typeof window !== 'undefined' && !isNaN(numericId)) {
       localStorage.removeItem(WL_DETAIL_LS_KEY(numericId));
     }
 
@@ -1250,13 +1250,13 @@ export function WatchlistContent({
     if (symbols.length > 0) {
       const numericId = parseInt(watchlistId);
 
-      if (!isNaN(numericId) && numericId !== 0) {
+      if (!isNaN(numericId)) {
         // POST: addCompanyToWatchlist with new format { watchlistId, coCdList }
         await addCompanyToWatchlist({ watchlistId: numericId, coCdList: symbols });
         // Refresh from getWatchlistDetail + getWatchlistData
         refreshFromDetail(numericId);
       } else {
-        // Non-numeric IDs or id=0 (Favorites) — use local-only path
+        // Non-numeric IDs (e.g. 'favorites') — use local-only path
         const newExtraHoldings = { ...extraHoldings };
         const newOrder = [...currentSymbolOrder];
         for (const sym of symbols) {
@@ -1270,9 +1270,9 @@ export function WatchlistContent({
         setSymbolOrder(watchlistId, newOrder);
       }
 
-      // When adding symbols to the Favorites watchlist (id=0), call addCompanyToMyFavorite
+      // When adding symbols to the Favorites watchlist, call addCompanyToMyFavorite
       // for each new symbol then refresh via getAllCoFavoriteList
-      if (watchlistId === '0') {
+      if (watchlistId === 'favorites') {
         const newSymbols = symbols.filter((s) => !currentSymbolOrder.includes(s));
         for (const sym of newSymbols) {
           await addCompanyToMyFavorite(sym);
