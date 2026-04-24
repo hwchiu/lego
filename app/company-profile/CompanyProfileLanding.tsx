@@ -361,21 +361,25 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
             </div>
 
             {/* ── Favorites section ── */}
-            {favorites.length > 0 && (
-              <div className="cp-favorites-section">
-                <div className="cp-favorites-header">
-                  <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
-                    <path
-                      d="M7 1.5l1.5 3.3L12.5 5l-2.5 2.6.6 3.7L7 9.6l-3.6 1.7.6-3.7L1.5 5l3.8-.7z"
-                      fill="#f59e0b"
-                      stroke="#f59e0b"
-                      strokeWidth="1.1"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  <span className="cp-favorites-title">Favorites</span>
+            <div className="cp-favorites-section">
+              <div className="cp-favorites-header">
+                <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
+                  <path
+                    d="M7 1.5l1.5 3.3L12.5 5l-2.5 2.6.6 3.7L7 9.6l-3.6 1.7.6-3.7L1.5 5l3.8-.7z"
+                    fill="#f59e0b"
+                    stroke="#f59e0b"
+                    strokeWidth="1.1"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span className="cp-favorites-title">Favorites</span>
+                {favorites.length > 0 && (
                   <span className="cp-favorites-count">{favorites.length}</span>
-                </div>
+                )}
+              </div>
+              {favorites.length === 0 ? (
+                <p className="cp-favorites-empty">There are no Company Favorites now. Start exploring now...</p>
+              ) : (
                 <div className="cp-favorites-tags">
                   {favorites.map((sym) => {
                     const co = getCompanyByCode(sym);
@@ -399,8 +403,8 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
                     );
                   })}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
 
             {/* ── Latest News section ── */}
             <div className="cp-news-section">

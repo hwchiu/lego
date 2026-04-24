@@ -13867,6 +13867,12 @@ html.dark .seg-item-l3.fin-stmt-td-item {
   white-space: nowrap;
 }
 
+.cp-favorites-empty {
+  font-size: 13px;
+  color: var(--c-text-3);
+  font-style: italic;
+}
+
 /* ── Earnings Page ── */
 .earn-page {
   padding: 24px 28px 40px;
@@ -21702,3 +21708,11 @@ html:not(.dark) .um-section--scenarios {
 
 html.dark .wl-modal--onboard .wl-onboard-hint { color: rgba(255,255,255,0.55); }
 html.dark .wl-onboard-dismiss-btn { color: rgba(255,255,255,0.4); }
+
+/* ── Banner dark mode fixes ── */
+html.dark .banner-label {
+  color: #ffffff;
+}
+html.dark .banner-text {
+  color: rgba(255,255,255,0.96);
+}
