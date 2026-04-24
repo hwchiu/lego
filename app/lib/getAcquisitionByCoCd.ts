@@ -24,7 +24,7 @@ interface AcquisitionRaw {
 export interface AcquisitionDeal {
   date: string;
   acquiredCompany: string;
-  categories: string;
+  categories: string[];
   valueM: number | null;
   url: string;
 }
@@ -43,7 +43,7 @@ function mapRawToDeal(raw: AcquisitionRaw): AcquisitionDeal {
   return {
     date: datePart,
     acquiredCompany: raw.target_name,
-    categories: raw.acq_catg,
+    categories: raw.acq_catg ? raw.acq_catg.split(',').map((s) => s.trim()).filter(Boolean) : [],
     valueM: raw.price_usd != null ? raw.price_usd / USD_TO_MILLIONS : null,
     url: raw.acq_url,
   };
