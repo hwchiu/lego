@@ -350,6 +350,9 @@ function PecDetail({ entry, companyName, keyword }: PecDetailProps) {
 // ── Main Component ─────────────────────────────────────────────────────────────
 
 // Module-level accessors (stable references for the shared hook).
+// PEC: title is derived from parsePecMd(e.content).title, which is always a
+// substring of e.content (the parser only trims / slices — it never adds text).
+// Searching e.content therefore always covers the title text.
 const pecAccessors: TranscriptSearchAccessors<PecMdEntry> = {
   getYear: (e) => String(e.year),
   getQtr: (e) => e.quarter,

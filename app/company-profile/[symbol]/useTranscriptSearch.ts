@@ -48,6 +48,11 @@ export interface TranscriptSearchResult<T> {
   handleClearSearch: () => void;
 }
 
+// ── Constants ─────────────────────────────────────────────────────────────────
+
+/** Debounce delay (ms) between the last keystroke and the filter update. */
+const SEARCH_DEBOUNCE_MS = 300;
+
 // ── Hook ──────────────────────────────────────────────────────────────────────
 
 /**
@@ -74,8 +79,7 @@ export function useTranscriptSearch<T>(
   const handleKeywordChange = useCallback((value: string) => {
     setKeyword(value);
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    // 300 ms debounce — gives the user time to finish a word before filtering.
-    debounceRef.current = setTimeout(() => setDebouncedKeyword(value), 300);
+    debounceRef.current = setTimeout(() => setDebouncedKeyword(value), SEARCH_DEBOUNCE_MS);
   }, []);
 
   // Clean up timer on unmount.
