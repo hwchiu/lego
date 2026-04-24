@@ -21079,6 +21079,27 @@ html.dark .de-tax-card-country {
   color: #c4b5fd;
 }
 
+/* Data Explore — News Summary card dark mode */
+html.dark .de-esg-news-card {
+  background: #1e293b;
+  border-color: var(--c-border);
+}
+html.dark .de-esg-news-card:hover {
+  border-color: var(--c-border-2);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+html.dark .de-esg-topic-header:hover {
+  background: #273549;
+}
+html.dark .de-esg-topic-count {
+  background: #0c2a3f;
+  color: #38bdf8;
+}
+html.dark .de-intl-tax-sidebar-item.active .de-intl-tax-sidebar-item-count {
+  background: #1e3a5f;
+  color: #93c5fd;
+}
+
 /* Amber / orange badges */
 html.dark .cp-ir-category-badge--corporate {
   background: #451a03;
