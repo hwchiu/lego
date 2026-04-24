@@ -683,18 +683,15 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
         }
       }
     } else {
+      // segLevel === 3: collect only level3 leaf items.
+      // Level2 items with no level3 children are automatically skipped because
+      // we only iterate l2g.level3Groups. Level1 items without level2 children
+      // are also automatically skipped because we only iterate l1g.level2Groups.
       for (const l1g of saleTypeGroup.level1Groups) {
         for (const l2g of l1g.level2Groups) {
-          if (l2g.level3Groups.length > 0) {
-            for (const l3g of l2g.level3Groups) {
-              pushNode(l3g.level3, l3g.rawValues);
-            }
-          } else {
-            pushNode(l2g.level2, l2g.rawValues);
+          for (const l3g of l2g.level3Groups) {
+            pushNode(l3g.level3, l3g.rawValues);
           }
-        }
-        if (l1g.level2Groups.length === 0) {
-          pushNode(l1g.level1, l1g.rawValues);
         }
       }
     }
