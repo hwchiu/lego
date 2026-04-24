@@ -224,7 +224,7 @@ function ExternalLinkIcon() {
 }
 
 function CompanyAcquisitionPanel({ deals, companyName }: { deals: AcquisitionDeal[]; companyName: string }) {
-  const allCategories = [...new Set(deals.map((d) => d.categories).filter((c): c is string => !!c))].sort();
+  const allCategories = [...new Set(deals.flatMap((d) => d.categories))].sort();
   const hasCategories = allCategories.length > 0;
 
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
@@ -246,7 +246,9 @@ function CompanyAcquisitionPanel({ deals, companyName }: { deals: AcquisitionDea
   }
 
   const filteredDeals =
-    selectedCategories.size === 0 ? deals : deals.filter((d) => selectedCategories.has(d.categories));
+    selectedCategories.size === 0
+      ? deals
+      : deals.filter((d) => d.categories.some((c) => selectedCategories.has(c)));
 
   const sortedDeals = [...filteredDeals]
     .filter((d) => selectedYear === null || d.date.startsWith(selectedYear))
@@ -335,7 +337,15 @@ function CompanyAcquisitionPanel({ deals, companyName }: { deals: AcquisitionDea
                 <tr key={i} className="aapl-ma-table-row">
                   <td className="aapl-ma-td-date">{deal.date}</td>
                   <td className="aapl-ma-td-company">{deal.acquiredCompany}</td>
-                  {hasCategories && <td>{deal.categories ? <span className="aapl-ma-industry-pill">{deal.categories}</span> : null}</td>}
+                  {hasCategories && (
+                    <td>
+                      {deal.categories.length > 0
+                        ? deal.categories.map((cat, j) => (
+                            <span key={j} className="aapl-ma-industry-pill">{cat}</span>
+                          ))
+                        : null}
+                    </td>
+                  )}
                   <td className="text-right aapl-ma-td-value">
                     {deal.valueM != null ? (
                       deal.valueM >= 1000

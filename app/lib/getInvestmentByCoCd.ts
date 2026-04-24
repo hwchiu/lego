@@ -27,7 +27,7 @@ interface InvestmentRaw {
 export interface InvestmentDeal {
   date: string;
   investedCompany: string;
-  categories: string;
+  categories: string[];
   round: string;
   valueM: number | null;
   investorsNum: number | null;
@@ -48,7 +48,7 @@ function mapRawToDeal(raw: InvestmentRaw): InvestmentDeal {
   return {
     date: datePart,
     investedCompany: raw.org_name,
-    categories: raw.org_catg ?? '',
+    categories: raw.org_catg ? raw.org_catg.split(',').map((s) => s.trim()).filter(Boolean) : [],
     round: raw.fund_type,
     valueM: raw.money_raised_usd != null ? raw.money_raised_usd / USD_TO_MILLIONS : null,
     investorsNum: raw.invest_num,
