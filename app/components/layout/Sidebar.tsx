@@ -123,7 +123,7 @@ function SubMenu({
           {/* Fixed: Favorites with a filled star icon (non-toggleable) */}
           <div className="sidebar-submenu-item sidebar-submenu-item--with-star">
             <StarIcon filled={true} />
-            <Link href="/watchlist/?id=0" className="sidebar-submenu-item-link">
+            <Link href="/watchlist/favorites/" className="sidebar-submenu-item-link">
               <span className="sidebar-submenu-label">{lang === 'zh' ? '我的最愛' : 'Favorites'}</span>
             </Link>
           </div>

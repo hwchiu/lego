@@ -116,12 +116,27 @@ export const WATCHLIST_CATEGORY_ID_MAP: Record<number, CategoryIdEntry> = {
 
 // ── Mock data for new API stubs ──────────────────────────────────────────────
 
-// NOTE: watchlistId=0 is reserved for the Favorites page (/watchlist/?id=0).
 const MOCK_WATCHLISTS: ApiWatchlist[] = [
+  { watchlistId: 0, watchlistName: 'Third Test',          isDefault: 'N', defaultViewId: null },
   { watchlistId: 1, watchlistName: 'Chocy Test Function', isDefault: 'N', defaultViewId: null },
 ];
 
 const MOCK_WATCHLIST_DETAILS: Record<number, WatchlistDetailResult> = {
+  0: {
+    watchlistId: 0,
+    watchlistName: 'Third Test',
+    isDefault: 'N',
+    defaultViewId: null,
+    companylist: [
+      { coCd: 'AAPL',  orderIndex: 0, isPinned: 'N' },
+      { coCd: 'NVDA',  orderIndex: 1, isPinned: 'N' },
+      { coCd: 'TSLA',  orderIndex: 2, isPinned: 'N' },
+      { coCd: 'GOOGL', orderIndex: 3, isPinned: 'N' },
+    ],
+    viewlist: [
+      { viewId: 0, viewName: 'Summary', isDefaultForWatchlist: 'Y', selectedCategories: [58, 59, 60, 63, 29, 90, 87, 88, 89] },
+    ],
+  },
   1: {
     watchlistId: 1,
     watchlistName: 'Chocy Test Function',
@@ -892,11 +907,11 @@ export function createWatchlistWithCompany(
   if (typeof window === 'undefined') return { watchlistId: -1 };
 
   const store = getApiCreatedStore();
-  // id=0 is reserved for Favorites; derive next ID from union of mock IDs and user-created IDs
+  // Derive next ID from the union of mock IDs and user-created IDs to avoid collisions
   const maxId = Math.max(
     ...MOCK_WATCHLISTS.map((w) => w.watchlistId),
     ...store.watchlists.map((w) => w.watchlistId),
-    0, // ensures at least 0 so new IDs start at 1
+    0,
   );
   const newId = maxId + 1;
 
@@ -934,9 +949,8 @@ export function getUserAllWatchlists(_userAcct: string): { result: ApiWatchlist[
   const { watchlists: userCreated, deletedIds } = getApiCreatedStore();
   const deletedSet = new Set(deletedIds);
   const allWatchlists = [
-    // id=0 is reserved for Favorites and is never included in the general watchlist list
-    ...MOCK_WATCHLISTS.filter((w) => !deletedSet.has(w.watchlistId) && w.watchlistId !== 0),
-    ...userCreated.filter((w) => !deletedSet.has(w.watchlistId) && w.watchlistId !== 0),
+    ...MOCK_WATCHLISTS.filter((w) => !deletedSet.has(w.watchlistId)),
+    ...userCreated.filter((w) => !deletedSet.has(w.watchlistId)),
   ];
   return { result: allWatchlists };
 }
