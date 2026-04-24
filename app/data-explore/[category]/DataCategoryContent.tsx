@@ -1467,6 +1467,41 @@ function EsgTopicSectionCard({ section, defaultOpen = true }: EsgTopicSectionPro
 function downloadMarkdownAsPdf(title: string, markdownContent: string): void {
   const TOPIC_SEP_RE = /={50,}[\s\S]*?NEXT\s+Topic[\s\S]*?={50,}/g;
 
+  // Detect bullet-list tax news format: starts with # heading and has **新聞日期
+  function isBulletListFormat(md: string): boolean {
+    return md.trimStart().startsWith('#') && /- \*\*新聞日期[：:]/.test(md);
+  }
+
+  // Convert bullet-list tax news format to HTML
+  function processBulletList(md: string): string {
+    const content = md.replace(/^#[^\n]*\n/, '').trim();
+    const blocks = content.split(/\n?- \*\*新聞日期[：:]\*\*/);
+    const parts: string[] = [];
+    for (const block of blocks) {
+      if (!block.trim()) continue;
+      const dateMatch = block.match(/^\s*([^<\n]+)/);
+      const titleMatch = block.match(/\*\*新聞標題[：:]\*\*\s*([^<\n]+)/);
+      const summaryMatch = block.match(/\*\*新聞重點摘要[：:]\*\*\s*([\s\S]*?)(?=\n\*\*新聞網址|$)/);
+      const urlMatch = block.match(/\*\*新聞網址:?\*\*\s*(\S+)/);
+      const date = dateMatch ? dateMatch[1].trim() : '';
+      const itemTitle = titleMatch ? titleMatch[1].trim() : '';
+      const summary = summaryMatch ? summaryMatch[1].replace(/<br\s*\/?>/gi, ' ').trim() : '';
+      const url = urlMatch ? urlMatch[1].trim() : '';
+      if (!itemTitle && !date) continue;
+      const titleHtml = url && url !== '#'
+        ? `<a href="${url}" style="color:#0ea5e9;text-decoration:none;">${itemTitle}</a>`
+        : itemTitle;
+      parts.push(
+        `<div class="article">` +
+        `<div class="article-meta">${date}</div>` +
+        `<div class="article-title">${titleHtml}</div>` +
+        (summary ? `<div class="article-summary">${summary}</div>` : '') +
+        `</div>`
+      );
+    }
+    return parts.join('\n');
+  }
+
   // Convert markdown table rows to simple text lines
   function processTable(block: string): string {
     const lines = block.split('\n');
@@ -1486,15 +1521,20 @@ function downloadMarkdownAsPdf(title: string, markdownContent: string): void {
     return dataLines.join('\n');
   }
 
-  const chunks = markdownContent.split(TOPIC_SEP_RE);
   let bodyHtml = '';
-  for (const chunk of chunks) {
-    const lines = chunk.split('\n').map((l) => l.trim()).filter(Boolean);
-    if (lines.length === 0) continue;
-    const headingLine = lines.find((l) => l.startsWith('##') && !l.includes('NEXT Topic'));
-    if (!headingLine) continue;
-    const topic = headingLine.replace(/^#+\s*/, '').trim();
-    bodyHtml += `<h2>${topic}</h2>\n${processTable(chunk)}\n`;
+
+  if (isBulletListFormat(markdownContent)) {
+    bodyHtml = processBulletList(markdownContent);
+  } else {
+    const chunks = markdownContent.split(TOPIC_SEP_RE);
+    for (const chunk of chunks) {
+      const lines = chunk.split('\n').map((l) => l.trim()).filter(Boolean);
+      if (lines.length === 0) continue;
+      const headingLine = lines.find((l) => l.startsWith('##') && !l.includes('NEXT Topic'));
+      if (!headingLine) continue;
+      const topic = headingLine.replace(/^#+\s*/, '').trim();
+      bodyHtml += `<h2>${topic}</h2>\n${processTable(chunk)}\n`;
+    }
   }
 
   const html = `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8">
