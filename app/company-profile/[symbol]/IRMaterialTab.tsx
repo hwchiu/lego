@@ -38,15 +38,57 @@ function DownloadIcon() {
   );
 }
 
+// ── NoFileModal ───────────────────────────────────────────────────────────────
+
+interface NoFileModalProps {
+  onClose: () => void;
+}
+
+function NoFileModal({ onClose }: NoFileModalProps) {
+  return (
+    <div className="wl-modal-overlay cp-ir-no-file-overlay" onClick={onClose}>
+      <div
+        className="wl-modal cp-ir-no-file-modal"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cp-ir-no-file-title"
+      >
+        <div className="wl-modal-header">
+          <div className="cp-ir-no-file-title-row">
+            <span className="cp-ir-no-file-icon" aria-hidden="true">
+              <svg viewBox="0 0 14 14" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="7" cy="7" r="6" />
+                <path d="M7 4.5v3M7 9.5v.5" />
+              </svg>
+            </span>
+            <span id="cp-ir-no-file-title" className="wl-modal-title">No File Available</span>
+          </div>
+        </div>
+        <div className="wl-modal-body cp-ir-no-file-body">
+          <p className="cp-ir-no-file-message">
+            There is currently no file available for download.
+          </p>
+          <div className="cp-ir-no-file-actions">
+            <button className="wl-modal-done-btn" onClick={onClose}>OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── IRContent ─────────────────────────────────────────────────────────────────
 
 interface IRContentProps {
   symbol: string;
   entries: IrMaterialEntry[];
   activeDocType: string;
+  onNoFile: () => void;
 }
 
-function IRContent({ symbol, entries, activeDocType }: IRContentProps) {
+function IRContent({ symbol, entries, activeDocType, onNoFile }: IRContentProps) {
+  const [downloading, setDownloading] = useState<string | null>(null);
   const filtered = entries.filter((e) => e.DOC_TYPE === activeDocType);
 
   if (filtered.length === 0) {
@@ -58,6 +100,16 @@ function IRContent({ symbol, entries, activeDocType }: IRContentProps) {
       </div>
     );
   }
+
+  const handleDownload = async (docId: string) => {
+    setDownloading(docId);
+    try {
+      const success = await downloadIrMaterialByDocId(docId);
+      if (!success) onNoFile();
+    } finally {
+      setDownloading(null);
+    }
+  };
 
   return (
     <div className="cp-ir-tab-content">
@@ -86,11 +138,12 @@ function IRContent({ symbol, entries, activeDocType }: IRContentProps) {
                   <td className="cp-ir-fin-td cp-ir-fin-td--action">
                     <button
                       className="cp-ir-fin-download-btn"
-                      onClick={() => downloadIrMaterialByDocId(doc.DOC_ID)}
+                      onClick={() => handleDownload(doc.DOC_ID)}
+                      disabled={downloading === doc.DOC_ID}
                       title="Download"
                     >
                       <DownloadIcon />
-                      <span>Download</span>
+                      <span>{downloading === doc.DOC_ID ? 'Loading…' : 'Download'}</span>
                     </button>
                   </td>
                 </tr>
@@ -109,6 +162,7 @@ export default function IRMaterialTab({ symbol }: IRMaterialTabProps) {
   const [entries, setEntries] = useState<IrMaterialEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeDocType, setActiveDocType] = useState<string>('');
+  const [showNoFileModal, setShowNoFileModal] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -149,25 +203,29 @@ export default function IRMaterialTab({ symbol }: IRMaterialTabProps) {
   const docTypes = [...new Set(entries.map((e) => e.DOC_TYPE))];
 
   return (
-    <div className="cp-tab-content-box cp-ir-material cp-ir-layout">
-      {/* ── Left vertical sub-tab menu ── */}
-      <div className="cp-ir-left-menu">
-        {docTypes.map((docType) => (
-          <button
-            key={docType}
-            className={`cp-ir-left-tab${activeDocType === docType ? ' active' : ''}`}
-            onClick={() => setActiveDocType(docType)}
-          >
-            {docType.toUpperCase()}
-          </button>
-        ))}
-      </div>
+    <>
+      {showNoFileModal && <NoFileModal onClose={() => setShowNoFileModal(false)} />}
+      <div className="cp-tab-content-box cp-ir-material cp-ir-layout">
+        {/* ── Left vertical sub-tab menu ── */}
+        <div className="cp-ir-left-menu">
+          {docTypes.map((docType) => (
+            <button
+              key={docType}
+              className={`cp-ir-left-tab${activeDocType === docType ? ' active' : ''}`}
+              onClick={() => setActiveDocType(docType)}
+            >
+              {docType.toUpperCase()}
+            </button>
+          ))}
+        </div>
 
-      <IRContent
-        symbol={symbol}
-        entries={entries}
-        activeDocType={activeDocType}
-      />
-    </div>
+        <IRContent
+          symbol={symbol}
+          entries={entries}
+          activeDocType={activeDocType}
+          onNoFile={() => setShowNoFileModal(true)}
+        />
+      </div>
+    </>
   );
 }

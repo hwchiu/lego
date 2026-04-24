@@ -34,14 +34,31 @@ export async function getIrMaterialByCoCd(company: string): Promise<IrMaterialEn
 /**
  * Simulated API: downloadIrMaterialByDocId
  *
- * Opens the PDF bytes file for the given DOC_ID in a new browser tab.
+ * Fetches the PDF for the given DOC_ID from the backend and triggers a
+ * browser download.  Returns `true` on success, `false` when the server
+ * returns an error, an empty body, or the request fails entirely.
+ *
  * In production this calls the backend to retrieve PDF bytes:
  *   GET /api/ir-materials/download?doc_id={docId}
  *
  * @param docId  Primary key of the IR material document (DOC_ID field)
+ * @returns Promise<boolean>  true = file downloaded, false = no data / error
  */
-export function downloadIrMaterialByDocId(docId: string): void {
-  // In production: open or stream the PDF from the backend API
+export async function downloadIrMaterialByDocId(docId: string): Promise<boolean> {
   const url = `/api/ir-materials/download?doc_id=${encodeURIComponent(docId)}`;
-  window.open(url, '_blank', 'noopener,noreferrer');
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return false;
+    const blob = await res.blob();
+    if (!blob || blob.size === 0) return false;
+    const objUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = objUrl;
+    a.download = `${docId}.pdf`;
+    a.click();
+    URL.revokeObjectURL(objUrl);
+    return true;
+  } catch {
+    return false;
+  }
 }
