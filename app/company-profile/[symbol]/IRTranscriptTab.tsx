@@ -434,7 +434,7 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
     if (selectedChipIds.size === 0) return;
     setIsExpandedState(true);
     setCollapsedAll(false);
-    setManualCollapsedIds((prev) => (prev.size === 0 ? prev : new Set()));
+    setManualCollapsedIds(new Set());
     setManualExpandedIds((prev) => {
       const next = new Set(prev);
       for (const section of allSections) {
