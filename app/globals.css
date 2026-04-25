@@ -5116,6 +5116,8 @@ html:not(.dark) .sidebar-submenu-icon-left {
   white-space: nowrap;
 }
 .cp-ir-fin-th--date { width: 110px; }
+.cp-ir-fin-th--fiscal-year { width: 90px; }
+.cp-ir-fin-th--fiscal-qtr { width: 80px; }
 .cp-ir-fin-th--type { width: 70px; }
 .cp-ir-fin-th--action { width: 110px; text-align: center; }
 .cp-ir-fin-tr:not(:last-child) { border-bottom: 1px solid var(--c-border); }
@@ -5127,6 +5129,8 @@ html:not(.dark) .sidebar-submenu-icon-left {
 }
 .cp-ir-fin-td--label { font-weight: 500; color: var(--c-text); }
 .cp-ir-fin-td--date { font-size: 12px; color: var(--c-text-3); white-space: nowrap; }
+.cp-ir-fin-td--fiscal-year { font-size: 12px; color: var(--c-text-3); white-space: nowrap; }
+.cp-ir-fin-td--fiscal-qtr { font-size: 12px; color: var(--c-text-3); white-space: nowrap; }
 .cp-ir-fin-td--type { }
 .cp-ir-fin-td--action { text-align: center; }
 .cp-ir-fin-download-btn {
