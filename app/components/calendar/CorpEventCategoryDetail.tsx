@@ -1,7 +1,7 @@
 'use client';
 
 import type { EventCalendarDetailItem } from '@/app/lib/eventCalendarApi';
-import { monthShortToFull, MONTH_SHORT } from '@/app/lib/calendarUtils';
+import { monthShortToFull } from '@/app/lib/calendarUtils';
 
 function formatDateLabel(dateLabel: string | undefined): string {
   if (!dateLabel) return '—';
@@ -21,15 +21,14 @@ function ExternalLinkIcon() {
 
 function formatEventDatetime(eventDatetime: string): string {
   if (!eventDatetime) return '—';
-  // Format: "2026-04-07 00:00:00.0" → "Apr 7, 2026 00:00:00"
+  // Format: "2026-04-07 00:00:00.0" → "2026-04-07 00:00:00"
   const spaceIdx = eventDatetime.indexOf(' ');
   if (spaceIdx === -1) return eventDatetime;
   const datePart = eventDatetime.substring(0, spaceIdx);
   const timePart = eventDatetime.substring(spaceIdx + 1).replace(/\.0$/, '');
   const [year, month, day] = datePart.split('-').map(Number);
   if (!year || !month || !day) return eventDatetime;
-  const monthLabel = MONTH_SHORT[month - 1];
-  return `${monthLabel} ${day}, ${year} ${timePart}`;
+  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')} ${timePart}`;
 }
 
 interface CorpEventCategoryDetailProps {
