@@ -294,9 +294,11 @@ function SimpleStatementTable({ data, viewMode, yearWindowStart, allYears }: Sim
 const SEGMENT_ANNUAL_Q = 'NA';
 
 const SALE_TYPE_LABELS: Record<string, string> = {
-  PG_REVENUE: 'Segment Revenue',
-  PG_REVENUE_END_USER: 'Segment Revenue (End User)',
+  PG_REVENUE: 'Segment Revenue ($M)',
+  PG_REVENUE_END_USER: 'Segment Revenue (End User) ($M)',
   PG_NUMBER_OF_UNITS_SOLD: 'Segment Number of Unit Sold',
+  PG_GROSS_MARGIN: 'Segment Gross Margin (%)',
+  PG_OPERATING_INCOME: 'Segment Operating Income ($M)'
 };
 
 function formatSaleTypeLabel(saleType: string): string {
