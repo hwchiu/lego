@@ -294,22 +294,30 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
   }, [allSections, keyword]);
 
   const [manualExpandedIds, setManualExpandedIds] = useState<Set<string>>(new Set());
+  // manualCollapsedIds tracks sections explicitly collapsed by the user (overrides keyword-expand)
+  const [manualCollapsedIds, setManualCollapsedIds] = useState<Set<string>>(new Set());
   // selectedChipIds tracks which exec chips are active for filtering (multi-select)
   const [selectedChipIds, setSelectedChipIds] = useState<Set<string>>(new Set());
-  // collapsedAll=true forces all sections to collapse (overrides keyword-expand)
+  // collapsedAll=true suppresses keyword-expand and only shows manualExpandedIds
   const [collapsedAll, setCollapsedAll] = useState(false);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  // Merge manually expanded with keyword-expanded, unless collapse-all is active
+  // Merge manually expanded with keyword-expanded.
+  // When collapsedAll=true, keyword expansion is suppressed (only manual expansions show).
+  // manualCollapsedIds always prevents a section from being keyword-auto-expanded.
   const expandedIds = useMemo(() => {
-    if (collapsedAll) return new Set<string>();
     const merged = new Set(manualExpandedIds);
-    keywordExpandedIds.forEach((id) => merged.add(id));
+    if (!collapsedAll) {
+      keywordExpandedIds.forEach((id) => {
+        if (!manualCollapsedIds.has(id)) merged.add(id);
+      });
+    }
     return merged;
-  }, [collapsedAll, manualExpandedIds, keywordExpandedIds]);
+  }, [collapsedAll, manualExpandedIds, keywordExpandedIds, manualCollapsedIds]);
 
   useEffect(() => {
     setManualExpandedIds(new Set());
+    setManualCollapsedIds(new Set());
     setSelectedChipIds(new Set());
     setCollapsedAll(false);
   }, [entry.co_cd, entry.fiscal_year_no, entry.fiscal_qtr_no]);
@@ -374,15 +382,15 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
     }, 60);
   }, [chipDisplayNames, qaSections]);
 
-  const handleToggle = useCallback((id: string) => {
-    setCollapsedAll(false);
+  const handleToggle = useCallback((id: string, expand: boolean) => {
     setManualExpandedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
+      expand ? next.add(id) : next.delete(id);
+      return next;
+    });
+    setManualCollapsedIds((prev) => {
+      const next = new Set(prev);
+      expand ? next.delete(id) : next.add(id);
       return next;
     });
   }, []);
@@ -420,6 +428,7 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
   useEffect(() => {
     if (selectedChipIds.size === 0) return;
     setCollapsedAll(false);
+    setManualCollapsedIds(new Set());
     setManualExpandedIds((prev) => {
       const next = new Set(prev);
       for (const section of allSections) {
@@ -449,9 +458,11 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
     if (allVisibleExpanded) {
       setCollapsedAll(true);
       setManualExpandedIds(new Set());
+      setManualCollapsedIds(new Set());
     } else {
       setCollapsedAll(false);
       setManualExpandedIds(new Set(allSections.filter(isSectionVisible).map((s) => s.id)));
+      setManualCollapsedIds(new Set());
     }
   }
 
@@ -467,7 +478,7 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
       >
         <button
           className={`cp-irt-speaker-header${isExpanded ? ' cp-irt-speaker-header--expanded' : ''}`}
-          onClick={() => handleToggle(section.id)}
+          onClick={() => handleToggle(section.id, !isExpanded)}
           aria-expanded={isExpanded}
         >
           <span className="cp-irt-speaker-name">{highlightText(section.speaker, keyword)}</span>
