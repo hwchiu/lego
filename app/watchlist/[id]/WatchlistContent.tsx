@@ -927,7 +927,7 @@ export function WatchlistContent({
   // Reset news pagination when tab changes or watched symbol list changes
   useEffect(() => {
     setNewsPage(0);
-  }, [feedTab, currentSymbolOrderKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [feedTab, currentSymbolOrderKey]); // currentSymbolOrderKey is a derived string; stable deps are intentional
 
   // Load extraHoldings from localStorage on mount
   useEffect(() => {
@@ -1859,18 +1859,18 @@ export function WatchlistContent({
                           >
                             ‹ Prev
                           </button>
-                          {getPaginationRange(newsPage, newsTotalPages).map((item) =>
-                            typeof item === 'string' ? (
-                              <span key={item} className="cp-news-tab-page-ellipsis">…</span>
+                          {getPaginationRange(newsPage, newsTotalPages).map((pageIndicator) =>
+                            typeof pageIndicator === 'string' ? (
+                              <span key={pageIndicator} className="cp-news-tab-page-ellipsis">…</span>
                             ) : (
                               <button
-                                key={item}
-                                className={`cp-news-tab-page-btn${newsPage === item ? ' active' : ''}`}
-                                onClick={() => setNewsPage(item)}
-                                aria-label={`Page ${item + 1}`}
-                                aria-current={newsPage === item ? 'page' : undefined}
+                                key={pageIndicator}
+                                className={`cp-news-tab-page-btn${newsPage === pageIndicator ? ' active' : ''}`}
+                                onClick={() => setNewsPage(pageIndicator)}
+                                aria-label={`Page ${pageIndicator + 1}`}
+                                aria-current={newsPage === pageIndicator ? 'page' : undefined}
                               >
-                                {item + 1}
+                                {pageIndicator + 1}
                               </button>
                             )
                           )}
