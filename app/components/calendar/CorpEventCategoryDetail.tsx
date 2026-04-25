@@ -21,14 +21,19 @@ function ExternalLinkIcon() {
 
 function formatEventDatetime(eventDatetime: string): string {
   if (!eventDatetime) return '—';
-  // Format: "2026-04-07 00:00:00.0" → "2026-04-07 00:00:00"
-  const spaceIdx = eventDatetime.indexOf(' ');
-  if (spaceIdx === -1) return eventDatetime;
-  const datePart = eventDatetime.substring(0, spaceIdx);
-  const timePart = eventDatetime.substring(spaceIdx + 1).replace(/\.0$/, '');
-  const [year, month, day] = datePart.split('-').map(Number);
-  if (!year || !month || !day) return eventDatetime;
-  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')} ${timePart}`;
+  // API returns UTC timestamps like "2026-04-07 00:00:00.0".
+  // Append 'Z' (after stripping trailing ".0") so Date parses it as UTC,
+  // then render using local-time getters to apply the browser's timezone.
+  const utcString = eventDatetime.replace(' ', 'T').replace(/\.0$/, '') + 'Z';
+  const date = new Date(utcString);
+  if (isNaN(date.getTime())) return eventDatetime;
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
 interface CorpEventCategoryDetailProps {
