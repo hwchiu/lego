@@ -79,13 +79,10 @@ export async function getEventCalendarDetail(
   const allItems = (await res.json()) as EventCalendarDetailItem[];
 
   // Filter by date (YYYY-MM-DD)
+  // EVENT_DATETIME format: "2026-04-07 00:00:00.0" — extract the date prefix directly
   const filtered = allItems.filter((item) => {
-    const d = new Date(item.EVENT_DATETIME);
-    if (isNaN(d.getTime())) return false;
-    const y = d.getFullYear();
-    const mo = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${y}-${mo}-${day}` === dateLabel;
+    if (!item.EVENT_DATETIME) return false;
+    return item.EVENT_DATETIME.substring(0, 10) === dateLabel;
   });
 
   if (category === 'All') return filtered;
