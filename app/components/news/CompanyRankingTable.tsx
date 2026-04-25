@@ -18,8 +18,14 @@ interface SparklineProps {
   height?: number;
 }
 
+function trimTrailingZeros(arr: number[]): number[] {
+  let end = arr.length;
+  while (end > 0 && arr[end - 1] === 0) end--;
+  return end === arr.length ? arr : arr.slice(0, end);
+}
+
 function Sparkline({ data, width = 84, height = 38 }: SparklineProps) {
-  const safeData = data.map((d) => (typeof d === 'number' && isFinite(d) ? d : 0));
+  const safeData = trimTrailingZeros(data).map((d) => (typeof d === 'number' && isFinite(d) ? d : 0));
   const allZero = safeData.every((d) => d === 0);
   if (allZero) {
     return (
@@ -78,7 +84,10 @@ export default function CompanyRankingTable({ selectedSymbol, onCompanyClick }: 
   return (
     <div className="chr-root">
       <div className="chr-header">
-        <span className="insight-block-title">Company Heat Ranking (Weekly Trend)</span>
+        <div className="chr-header-title-group">
+          <span className="insight-block-title">Company Heat Ranking</span>
+          <span className="chr-header-meta">Current Weekly Trend &middot; Data generated: UTC+0 10:00</span>
+        </div>
       </div>
       <div className="chr-carousel-wrap">
         <button
