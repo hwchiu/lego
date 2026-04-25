@@ -1765,6 +1765,19 @@ html:not(.dark) .sidebar-submenu-icon-left {
   font-weight: 400;
 }
 
+.chr-header-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chr-header-meta {
+  font-size: 11px;
+  color: var(--c-text-4);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
 .chr-carousel-wrap {
   display: flex;
   align-items: center;
