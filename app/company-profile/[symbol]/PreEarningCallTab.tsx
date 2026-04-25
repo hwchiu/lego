@@ -243,7 +243,7 @@ function PecDetail({ entry, companyName, keyword }: PecDetailProps) {
       <div className="cp-pec-card-header">
         <div className="cp-pec-card-header-left">
           <span className="cp-pec-card-company">PEC</span>
-          <div>
+          <div className="cp-pec-card-title-wrap">
             <div className="cp-pec-card-title">
               {companyName || entry.symbol} — {entry.quarter} FY{entry.year} Pre-Earnings Analysis
             </div>

@@ -77,6 +77,24 @@ function ChevronDownIcon({ className }: { className?: string }) {
   );
 }
 
+function ExpandAllIcon() {
+  return (
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+      <path d="M3 5L7 1L11 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3 9L7 13L11 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function CollapseAllIcon() {
+  return (
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+      <path d="M3 1L7 5L11 1" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3 13L7 9L11 13" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 // ── Parser types ──────────────────────────────────────────────────────────────
 
 interface SpeakerSection {
@@ -278,18 +296,22 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
   const [manualExpandedIds, setManualExpandedIds] = useState<Set<string>>(new Set());
   // selectedChipIds tracks which exec chips are active for filtering (multi-select)
   const [selectedChipIds, setSelectedChipIds] = useState<Set<string>>(new Set());
+  // collapsedAll=true forces all sections to collapse (overrides keyword-expand)
+  const [collapsedAll, setCollapsedAll] = useState(false);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  // Merge manually expanded with keyword-expanded
+  // Merge manually expanded with keyword-expanded, unless collapse-all is active
   const expandedIds = useMemo(() => {
+    if (collapsedAll) return new Set<string>();
     const merged = new Set(manualExpandedIds);
     keywordExpandedIds.forEach((id) => merged.add(id));
     return merged;
-  }, [manualExpandedIds, keywordExpandedIds]);
+  }, [collapsedAll, manualExpandedIds, keywordExpandedIds]);
 
   useEffect(() => {
     setManualExpandedIds(new Set());
     setSelectedChipIds(new Set());
+    setCollapsedAll(false);
   }, [entry.co_cd, entry.fiscal_year_no, entry.fiscal_qtr_no]);
 
   const managementParticipants = participants.filter((p) => p.type === 'management');
@@ -353,6 +375,7 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
   }, [chipDisplayNames, qaSections]);
 
   const handleToggle = useCallback((id: string) => {
+    setCollapsedAll(false);
     setManualExpandedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
@@ -380,7 +403,7 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
   // Determine whether a section is visible given the current chip filter.
   // "Operator" sections are always visible (conversation starters, above filter scope).
   // When no chips are selected, all sections are visible.
-  function isSectionVisible(section: SpeakerSection): boolean {
+  const isSectionVisible = useCallback((section: SpeakerSection): boolean => {
     if (selectedChipIds.size === 0) return true;
     if (/^operator$/i.test(section.displayName.trim())) return true;
     const speakerLower = section.speaker.toLowerCase();
@@ -391,6 +414,45 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
       }
     }
     return false;
+  }, [selectedChipIds, chipDisplayNames]);
+
+  // When chip selection changes, auto-expand all newly-visible sections
+  useEffect(() => {
+    if (selectedChipIds.size === 0) return;
+    setCollapsedAll(false);
+    setManualExpandedIds((prev) => {
+      const next = new Set(prev);
+      for (const section of allSections) {
+        if (/^operator$/i.test(section.displayName.trim())) { next.add(section.id); continue; }
+        const speakerLower = section.speaker.toLowerCase();
+        for (const chipId of selectedChipIds) {
+          const chipName = chipDisplayNames.get(chipId);
+          if (chipName && speakerLower.includes(chipName.toLowerCase())) {
+            next.add(section.id);
+            break;
+          }
+        }
+      }
+      return next;
+    });
+  }, [selectedChipIds, allSections, chipDisplayNames]);
+
+  // Whether all currently-visible sections are expanded (used for toggle-all button)
+  const allVisibleExpanded = useMemo(() => {
+    if (collapsedAll) return false;
+    const visible = allSections.filter(isSectionVisible);
+    if (visible.length === 0) return false;
+    return visible.every((s) => expandedIds.has(s.id));
+  }, [allSections, isSectionVisible, expandedIds, collapsedAll]);
+
+  function handleToggleAll() {
+    if (allVisibleExpanded) {
+      setCollapsedAll(true);
+      setManualExpandedIds(new Set());
+    } else {
+      setCollapsedAll(false);
+      setManualExpandedIds(new Set(allSections.filter(isSectionVisible).map((s) => s.id)));
+    }
   }
 
   function renderSpeakerSection(section: SpeakerSection) {
@@ -427,7 +489,7 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
       <div className="cp-pec-card-header">
         <div className="cp-pec-card-header-left">
           <span className="cp-pec-card-company cp-irt-badge">IR</span>
-          <div>
+          <div className="cp-pec-card-title-wrap">
             <div className="cp-pec-card-title">{highlightText(entry.doc_title, keyword)}</div>
             <div className="cp-pec-card-date">
               {entry.co_cd} · {entry.fiscal_qtr_no} {entry.fiscal_year_no}
@@ -436,6 +498,14 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
           </div>
         </div>
         <div className="cp-pec-card-actions">
+          <button
+            className="cp-pec-card-action-btn"
+            title={allVisibleExpanded ? 'Collapse all sections' : 'Expand all sections'}
+            aria-label={allVisibleExpanded ? 'Collapse all sections' : 'Expand all sections'}
+            onClick={handleToggleAll}
+          >
+            {allVisibleExpanded ? <CollapseAllIcon /> : <ExpandAllIcon />}
+          </button>
           <button
             className="cp-pec-card-action-btn"
             title="Download HTML"
