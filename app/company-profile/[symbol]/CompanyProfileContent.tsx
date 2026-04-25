@@ -158,6 +158,33 @@ const FIN_INDICES = [
 // Items per page in the News tab
 const NEWS_PAGE_SIZE = 8;
 
+// Parse a "YYYY-MM-DD" string as local-timezone midnight (not UTC midnight).
+// `new Date('2026-04-01')` is UTC midnight which causes off-by-one errors
+// when the article timestamp straddles a day boundary in the user's timezone.
+function parseLocalDate(dateStr: string): Date {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+// Format a news timestamp for the cp-news-tab-time label.
+// • < 24 h ago  → "Xh ago"
+// • 1–3 calendar days ago (browser local timezone) → "Xd ago"
+// • Older → "Mon D, YYYY HH:MM"  (same style as Market News NewsCard)
+function formatCpNewsTime(date: Date): string {
+  const now = new Date();
+  const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const pubLocal = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const calendarDaysAgo = Math.round((todayLocal.getTime() - pubLocal.getTime()) / 86_400_000);
+  const hoursAgo = Math.round((now.getTime() - date.getTime()) / 3_600_000);
+
+  if (hoursAgo < 24) return `${hoursAgo}h ago`;
+  if (calendarDaysAgo <= 3) return `${calendarDaysAgo}d ago`;
+
+  const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+  return `${dateStr} ${timeStr}`;
+}
+
 // Segment report constants for Revenue Breakdown derivation
 const REVENUE_SALE_TYPE = 'Revenue ($M)';
 const ANNUAL_QUARTER_VALUE = 'NA';
@@ -831,11 +858,11 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
       if (newsSources.size > 0 && !newsSources.has(item.source)) return false;
       if (newsPeriodStart) {
         const d = item.publishedAt;
-        if (d < new Date(newsPeriodStart)) return false;
+        if (d < parseLocalDate(newsPeriodStart)) return false;
       }
       if (newsPeriodEnd) {
         const d = item.publishedAt;
-        const end = new Date(newsPeriodEnd);
+        const end = parseLocalDate(newsPeriodEnd);
         end.setDate(end.getDate() + 1);
         if (d >= end) return false;
       }
@@ -1358,8 +1385,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                       <>
                         <div className="cp-news-tab-grid">
                           {pagedNews.map((item) => {
-                            const ago = Math.round((Date.now() - item.publishedAt.getTime()) / 3_600_000);
-                            const timeLabel = ago < 24 ? `${ago}h ago` : `${Math.floor(ago / 24)}d ago`;
+                            const timeLabel = formatCpNewsTime(item.publishedAt);
                             const categoryLabel = NEWS_CATEGORY_LABEL_MAP[item.category] ?? item.category;
                             return (
                               <a
