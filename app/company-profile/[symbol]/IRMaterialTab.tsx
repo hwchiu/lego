@@ -89,7 +89,9 @@ interface IRContentProps {
 
 function IRContent({ symbol, entries, activeDocType, onNoFile }: IRContentProps) {
   const [downloading, setDownloading] = useState<string | null>(null);
-  const filtered = entries.filter((e) => e.DOC_TYPE === activeDocType);
+  const filtered = entries
+    .filter((e) => e.DOC_TYPE === activeDocType)
+    .sort((a, b) => b.CREATE_DATE.localeCompare(a.CREATE_DATE));
 
   if (filtered.length === 0) {
     return (
