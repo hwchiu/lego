@@ -444,16 +444,6 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
           >
             <DownloadIcon />
           </button>
-          <a
-            href={entry.file_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cp-pec-card-action-btn"
-            title="Open source"
-            aria-label="Open source"
-          >
-            <ExternalLinkIcon />
-          </a>
         </div>
       </div>
 

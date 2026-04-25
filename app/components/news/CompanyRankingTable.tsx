@@ -86,7 +86,14 @@ export default function CompanyRankingTable({ selectedSymbol, onCompanyClick }: 
       <div className="chr-header">
         <div className="chr-header-title-group">
           <span className="insight-block-title">Company Heat Ranking</span>
-          <span className="chr-header-meta">Current Weekly Trend &middot; Data generated: UTC+0 10:00</span>
+          <span className="chr-header-meta">Current Weekly Trend &middot; Data generated: {(() => {
+            const now = new Date();
+            const utc8 = new Date(now.getTime() + 8 * 60 * 60 * 1000);
+            const y = utc8.getUTCFullYear();
+            const m = String(utc8.getUTCMonth() + 1).padStart(2, '0');
+            const d = String(utc8.getUTCDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+          })()} UTC+8 10:00 (Daily update)</span>
         </div>
       </div>
       <div className="chr-carousel-wrap">

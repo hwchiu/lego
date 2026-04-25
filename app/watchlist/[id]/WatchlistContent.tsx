@@ -755,6 +755,33 @@ interface UpdateFeedItem {
   dateLabel: string;
   dateMs: number;
   description?: string;
+  contactName?: string;
+}
+
+/** Format an event date string to local-timezone YYYY-MM-DD HH:MM */
+function formatEventDateLabel(dateStr: string): string {
+  if (!dateStr) return dateStr;
+  // Try to parse as ISO-like datetime first (e.g. "2026-04-07 00:00:00.0" or "2025-04-07")
+  const isoLike = dateStr.replace(' ', 'T').replace(/\.0+$/, '');
+  const asUtc = new Date(isoLike.includes('T') ? isoLike + 'Z' : isoLike);
+  // If parsing as datetime succeeded with a time component, use local time
+  if (!isNaN(asUtc.getTime()) && isoLike.includes('T')) {
+    const y = asUtc.getFullYear();
+    const mo = String(asUtc.getMonth() + 1).padStart(2, '0');
+    const d = String(asUtc.getDate()).padStart(2, '0');
+    const h = String(asUtc.getHours()).padStart(2, '0');
+    const mi = String(asUtc.getMinutes()).padStart(2, '0');
+    return `${y}-${mo}-${d} ${h}:${mi}`;
+  }
+  // Fall back: parse as a plain date string (e.g. "Apr 7, 2025")
+  const plain = new Date(dateStr);
+  if (!isNaN(plain.getTime())) {
+    const y = plain.getFullYear();
+    const mo = String(plain.getMonth() + 1).padStart(2, '0');
+    const d = String(plain.getDate()).padStart(2, '0');
+    return `${y}-${mo}-${d} 00:00`;
+  }
+  return dateStr;
 }
 
 function parseDateKey(dateKey: string): number {
@@ -1386,12 +1413,12 @@ export function WatchlistContent({
           items.push({
             id: `corp-${category}-${date}-${i}`,
             kind: 'event',
-            title: `${evt.eventType}: ${evt.company}`,
+            title: evt.description,
             source: evt.eventType,
             displaySymbols: [evt.cellLabel],
-            dateLabel: evt.eventDate,
+            contactName: evt.company,
+            dateLabel: formatEventDateLabel(evt.eventDate),
             dateMs: (() => { const t = new Date(evt.eventDate).getTime(); return isNaN(t) ? parseDateKey(date) : t; })(),
-            description: evt.description,
           });
         });
       });
@@ -1808,41 +1835,52 @@ export function WatchlistContent({
                           </svg>
                         </div>
                       )}
-                      <div className="wl-feed-body">
-                        <div className="wl-feed-title">{item.title}</div>
-                        {item.description && (
-                          <div className="wl-feed-description">{item.description}</div>
-                        )}
-                        <div className="wl-feed-meta">
-                          <span className="wl-feed-tickers">
-                            {item.displaySymbols.map((sym, i) => (
-                              <span key={sym}>
-                                {i > 0 && ', '}
-                                <a
-                                  href={`/lego/company-profile/${sym}/`}
-                                  className="wl-feed-ticker"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  {sym}
-                                </a>
-                              </span>
-                            ))}
-                          </span>
-                          <span className="wl-feed-dot">•</span>
-                          <span className="wl-feed-source">{item.source}</span>
-                          <span className="wl-feed-dot">•</span>
-                          <span className="wl-feed-time">{item.dateLabel}</span>
-                          {item.kind !== 'event' && (
+                      {item.kind === 'event' ? (
+                        <div className="wl-feed-body">
+                          <div className="wl-event-description">{item.title}</div>
+                          <div className="wl-feed-meta">
+                            <span className="wl-event-contact-name">{item.contactName}</span>
+                            <span className="wl-feed-dot">•</span>
+                            <span className="wl-event-event-type">{item.source}</span>
+                            <span className="wl-feed-dot">•</span>
+                            <span className="wl-event-event-datetime">{item.dateLabel}</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="wl-feed-body">
+                          <div className="wl-feed-title">{item.title}</div>
+                          {item.description && (
+                            <div className="wl-feed-description">{item.description}</div>
+                          )}
+                          <div className="wl-feed-meta">
+                            <span className="wl-feed-tickers">
+                              {item.displaySymbols.map((sym, i) => (
+                                <span key={sym}>
+                                  {i > 0 && ', '}
+                                  <a
+                                    href={`/lego/company-profile/${sym}/`}
+                                    className="wl-feed-ticker"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    {sym}
+                                  </a>
+                                </span>
+                              ))}
+                            </span>
+                            <span className="wl-feed-dot">•</span>
+                            <span className="wl-feed-source">{item.source}</span>
+                            <span className="wl-feed-dot">•</span>
+                            <span className="wl-feed-time">{item.dateLabel}</span>
                             <>
                               <span className="wl-feed-dot">•</span>
                               <span className={`wl-feed-kind-badge wl-feed-kind-badge--${item.kind}`}>
                                 {item.kind === 'news' ? 'News' : 'Press Release'}
                               </span>
                             </>
-                          )}
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   ))
                 )}
