@@ -19997,6 +19997,7 @@ html.dark .cp-pec-ai-html-content > ul > li > ul > li:nth-child(even) strong { c
   font-weight: 600;
 }
 .cp-mini-cal-cell.selected:hover { background: var(--c-dark); }
+.cp-mini-cal-cell.disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
 
 /* fileType tag on news card */
 .cp-news-filetype-tag {
