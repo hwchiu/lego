@@ -888,6 +888,7 @@ export function WatchlistContent({
 
   // Add Symbol state
   const [addSymbolQuery, setAddSymbolQuery] = useState('');
+  const [addSymbolError, setAddSymbolError] = useState('');
 
   // Extra holdings added by the user (persisted in localStorage)
   const [extraHoldings, setExtraHoldings] = useState<Record<string, Holding>>({});
@@ -1267,6 +1268,7 @@ export function WatchlistContent({
   function handleAddSymbolClose() {
     setShowAddSymbol(false);
     setAddSymbolQuery('');
+    setAddSymbolError('');
   }
 
   async function handleAddSymbolSubmit() {
@@ -1281,13 +1283,14 @@ export function WatchlistContent({
       const newEntries = parsed.filter((s) => !existingSet.has(s));
       const available = Math.max(0, WATCHLIST_MAX_COMPANIES - currentSymbolOrder.length);
       if (newEntries.length > available) {
-        alert('A watchlist can have a maximum of 10 companies.');
+        setAddSymbolError(
+          available === 0
+            ? `Watchlist is full (${WATCHLIST_MAX_COMPANIES} companies max). Remove a company to add more.`
+            : `Watchlist is limited to ${WATCHLIST_MAX_COMPANIES} companies. Only the first ${available} new ${available === 1 ? 'entry' : 'entries'} will be added.`
+        );
       }
-      // Only add up to the available slots (already-existing symbols pass through unchanged)
-      const symbols = [
-        ...parsed.filter((s) => existingSet.has(s)),
-        ...newEntries.slice(0, available),
-      ];
+      // Only add truly new symbols, up to the available slots
+      const symbols = newEntries.slice(0, available);
 
       if (symbols.length > 0) {
         const numericId = parseInt(watchlistId);
@@ -2056,18 +2059,22 @@ export function WatchlistContent({
                   <path d="M10.5 10.5L14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                 </svg>
                 <input
-                  className="wl-add-search-input"
+                  className={`wl-add-search-input${addSymbolError ? ' wl-add-search-input--error' : ''}`}
                   type="text"
                   placeholder="Add Companies (e.g AAPL, TSLA, etc...)"
                   value={addSymbolQuery}
-                  onChange={(e) => setAddSymbolQuery(e.target.value)}
+                  onChange={(e) => { setAddSymbolQuery(e.target.value); setAddSymbolError(''); }}
                   onKeyDown={(e) => e.key === 'Enter' && handleAddSymbolSubmit()}
                   autoFocus
                 />
               </div>
-              <div className="wl-add-hint">
-                Enter Companies separated by commas to add to your Watchlist.
-              </div>
+              {addSymbolError ? (
+                <div className="wl-add-error-msg">{addSymbolError}</div>
+              ) : (
+                <div className="wl-add-hint">
+                  Enter Companies separated by commas to add to your Watchlist. Max {WATCHLIST_MAX_COMPANIES} companies per watchlist.
+                </div>
+              )}
               {addSuggestions.length > 0 && (
                 <div className="wl-add-suggestions">
                   {addSuggestions.map((c) => (
@@ -2076,6 +2083,7 @@ export function WatchlistContent({
                       className="wl-add-suggestion-item"
                       onClick={() => setAddSymbolQuery((q) => {
                         const parts = q.split(',').map((s) => s.trim()).filter(Boolean);
+                        if (parts.includes(c.symbol)) return q;
                         parts[parts.length - 1] = c.symbol;
                         return parts.join(', ') + ', ';
                       })}
