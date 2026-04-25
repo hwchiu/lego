@@ -20689,6 +20689,22 @@ html.dark .cp-pec-ai-sentiment--bearish {
   border-color: #93c5fd;
   font-weight: 600;
 }
+.cp-irt-exec-nav--no-border {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 8px;
+}
+.cp-irt-analyst-chip:hover {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
+}
+.cp-irt-analyst-chip--active {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
+  font-weight: 600;
+}
 
 /* Speaker section container */
 .cp-irt-speaker-sections {

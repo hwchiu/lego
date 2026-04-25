@@ -292,14 +292,28 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
     setSelectedChipIds(new Set());
   }, [entry.co_cd, entry.fiscal_year_no, entry.fiscal_qtr_no]);
 
-  // Build a map from chip id → displayName for efficient lookup
+  const managementParticipants = participants.filter((p) => p.type === 'management');
+  const analystParticipants = participants.filter((p) => p.type === 'analyst');
+
+  // Analyst chips — one chip per analyst from the structured participants block.
+  // Use "analyst-{name}" as the virtual chip ID so IDs never collide with section IDs.
+  const analystChips = useMemo(
+    () => analystParticipants.map((p) => ({ id: `analyst-${p.name}`, displayName: p.name, role: p.role })),
+    [analystParticipants],
+  );
+
+  // Build a map from chip id → displayName for efficient lookup.
+  // Includes both exec section IDs and analyst virtual IDs.
   const chipDisplayNames = useMemo(() => {
     const map = new Map<string, string>();
     for (const s of managementSections) {
       map.set(s.id, s.displayName);
     }
+    for (const chip of analystChips) {
+      map.set(chip.id, chip.displayName);
+    }
     return map;
-  }, [managementSections]);
+  }, [managementSections, analystChips]);
 
   const handleChipClick = useCallback((id: string) => {
     setSelectedChipIds((prev) => {
@@ -313,16 +327,30 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
       next.add(id);
       return next;
     });
-    // Expand the section and scroll to it
+    // Expand the section and scroll to it.
+    // For exec chips the id is the section id directly; for analyst virtual IDs find
+    // the first Q&A section whose speaker contains the chip display name.
     setManualExpandedIds((prev) => {
       const next = new Set(prev);
       next.add(id);
       return next;
     });
     setTimeout(() => {
-      sectionRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (sectionRefs.current[id]) {
+        sectionRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        // Virtual analyst chip — find first matching Q&A section
+        const chipName = chipDisplayNames.get(id)?.toLowerCase() ?? '';
+        if (chipName) {
+          const match = qaSections.find((s) => s.speaker.toLowerCase().includes(chipName));
+          if (match) {
+            setManualExpandedIds((prev) => { const n = new Set(prev); n.add(match.id); return n; });
+            sectionRefs.current[match.id]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      }
     }, 60);
-  }, []);
+  }, [chipDisplayNames, qaSections]);
 
   const handleToggle = useCallback((id: string) => {
     setManualExpandedIds((prev) => {
@@ -393,9 +421,6 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
     );
   }
 
-  const managementParticipants = participants.filter((p) => p.type === 'management');
-  const analystParticipants = participants.filter((p) => p.type === 'analyst');
-
   return (
     <article className="cp-pec-card cp-irt-card">
       {/* Header */}
@@ -434,7 +459,7 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
 
       {/* Executives nav chips — quick jump to management speaker sections */}
       {execChips.length > 0 && (
-        <div className="cp-irt-exec-nav">
+        <div className={`cp-irt-exec-nav${analystChips.length > 0 ? ' cp-irt-exec-nav--no-border' : ''}`}>
           <span className="cp-irt-exec-nav-label">Executives</span>
           <div className="cp-irt-exec-chips">
             {execChips.map((s) => (
@@ -445,6 +470,25 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
                 title={s.speaker}
               >
                 {s.displayName}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Analysts nav chips — quick filter to analyst speaker sections */}
+      {analystChips.length > 0 && (
+        <div className="cp-irt-exec-nav">
+          <span className="cp-irt-exec-nav-label">Analysts</span>
+          <div className="cp-irt-exec-chips">
+            {analystChips.map((chip) => (
+              <button
+                key={chip.id}
+                className={`cp-irt-exec-chip cp-irt-analyst-chip${selectedChipIds.has(chip.id) ? ' cp-irt-analyst-chip--active' : ''}`}
+                onClick={() => handleChipClick(chip.id)}
+                title={`${chip.displayName} — ${chip.role}`}
+              >
+                {chip.displayName}
               </button>
             ))}
           </div>
