@@ -1047,6 +1047,9 @@ export function WatchlistContent({
     }
 
     if (coList.length > 0) {
+      const now = new Date();
+      const pad = (n: number) => String(n).padStart(2, '0');
+      const curr_dt = `${now.getUTCFullYear()}-${pad(now.getUTCMonth() + 1)}-${pad(now.getUTCDate())} ${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())}:${pad(now.getUTCSeconds())}`;
       getWatchlistData({
         watchlistId: numericId,
         viewId: activeTab === 'Summary' ? 0 : (customViews.find((v) => v.id === activeTab)?.apiViewId ?? 0),
@@ -1054,6 +1057,7 @@ export function WatchlistContent({
         quarter: [`Q${quarter.q}`],
         selectedCategories,
         co_cd: coList,
+        curr_dt,
       });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1138,6 +1142,9 @@ export function WatchlistContent({
 
   // Helper: build GetWatchlistDataParams from getWatchlistDetail result + current view
   function buildWatchlistDataParams(numericId: number, coList: string[], selectedCategories: number[], viewId: number): GetWatchlistDataParams {
+    const now = new Date();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const curr_dt = `${now.getUTCFullYear()}-${pad(now.getUTCMonth() + 1)}-${pad(now.getUTCDate())} ${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())}:${pad(now.getUTCSeconds())}`;
     return {
       watchlistId: numericId,
       viewId,
@@ -1145,6 +1152,7 @@ export function WatchlistContent({
       quarter: [`Q${quarter.q}`],
       selectedCategories,
       co_cd: coList,
+      curr_dt,
     };
   }
 
