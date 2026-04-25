@@ -35,6 +35,7 @@ import {
   getWatchlistDetail,
   getWatchlistData,
   getUserAllWatchlists,
+  WATCHLIST_MAX_COMPANIES,
 } from '@/app/lib/watchlistApi';
 import type { GetWatchlistDataParams } from '@/app/lib/watchlistApi';
 import { setFavoritesInPersonality } from '@/app/lib/getFavoritesByUserAcct';
@@ -1269,43 +1270,58 @@ export function WatchlistContent({
   }
 
   async function handleAddSymbolSubmit() {
-    const symbols = addSymbolQuery
+    const parsed = addSymbolQuery
       .split(',')
       .map((s) => s.trim().toUpperCase())
       .filter(Boolean);
 
-    if (symbols.length > 0) {
-      const numericId = parseInt(watchlistId);
-
-      if (!isNaN(numericId)) {
-        // POST: addCompanyToWatchlist with new format { watchlistId, coCdList }
-        await addCompanyToWatchlist({ watchlistId: numericId, coCdList: symbols });
-        // Refresh from getWatchlistDetail + getWatchlistData
-        refreshFromDetail(numericId);
-      } else {
-        // Non-numeric IDs (e.g. 'favorites') — use local-only path
-        const newExtraHoldings = { ...extraHoldings };
-        const newOrder = [...currentSymbolOrder];
-        for (const sym of symbols) {
-          if (newOrder.includes(sym)) continue;
-          newOrder.push(sym);
-          if (!holdingsLookup.has(sym) && !newExtraHoldings[sym]) {
-            newExtraHoldings[sym] = createPlaceholderHolding(sym);
-          }
-        }
-        setExtraHoldings(newExtraHoldings);
-        setSymbolOrder(watchlistId, newOrder);
+    if (parsed.length > 0) {
+      // Enforce 10-company limit per watchlist
+      const existingSet = new Set(currentSymbolOrder);
+      const newEntries = parsed.filter((s) => !existingSet.has(s));
+      const available = Math.max(0, WATCHLIST_MAX_COMPANIES - currentSymbolOrder.length);
+      if (newEntries.length > available) {
+        alert('A watchlist can have a maximum of 10 companies.');
       }
+      // Only add up to the available slots (already-existing symbols pass through unchanged)
+      const symbols = [
+        ...parsed.filter((s) => existingSet.has(s)),
+        ...newEntries.slice(0, available),
+      ];
 
-      // When adding symbols to the Favorites watchlist, call addCompanyToMyFavorite
-      // for each new symbol then refresh via getAllCoFavoriteList
-      if (watchlistId === 'favorites') {
-        const newSymbols = symbols.filter((s) => !currentSymbolOrder.includes(s));
-        for (const sym of newSymbols) {
-          await addCompanyToMyFavorite(sym);
+      if (symbols.length > 0) {
+        const numericId = parseInt(watchlistId);
+
+        if (!isNaN(numericId)) {
+          // POST: addCompanyToWatchlist with new format { watchlistId, coCdList }
+          await addCompanyToWatchlist({ watchlistId: numericId, coCdList: symbols });
+          // Refresh from getWatchlistDetail + getWatchlistData
+          refreshFromDetail(numericId);
+        } else {
+          // Non-numeric IDs (e.g. 'favorites') — use local-only path
+          const newExtraHoldings = { ...extraHoldings };
+          const newOrder = [...currentSymbolOrder];
+          for (const sym of symbols) {
+            if (newOrder.includes(sym)) continue;
+            newOrder.push(sym);
+            if (!holdingsLookup.has(sym) && !newExtraHoldings[sym]) {
+              newExtraHoldings[sym] = createPlaceholderHolding(sym);
+            }
+          }
+          setExtraHoldings(newExtraHoldings);
+          setSymbolOrder(watchlistId, newOrder);
         }
-        const refreshed = await getAllCoFavoriteList('demoUser');
-        onFavoritesSymbolsUpdate?.(refreshed.co_cd);
+
+        // When adding symbols to the Favorites watchlist, call addCompanyToMyFavorite
+        // for each new symbol then refresh via getAllCoFavoriteList
+        if (watchlistId === 'favorites') {
+          const newSymbols = symbols.filter((s) => !currentSymbolOrder.includes(s));
+          for (const sym of newSymbols) {
+            await addCompanyToMyFavorite(sym);
+          }
+          const refreshed = await getAllCoFavoriteList('demoUser');
+          onFavoritesSymbolsUpdate?.(refreshed.co_cd);
+        }
       }
     }
 

@@ -7,6 +7,7 @@ import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 import { useWatchlist } from '@/app/contexts/WatchlistContext';
+import { WATCHLIST_MAX_COMPANIES } from '@/app/lib/watchlistApi';
 
 // Symbol lookup map for quick name resolution
 const SYMBOL_LOOKUP = new Map(COMPANY_MASTER_LIST.map((c) => [c.symbol, c.name]));
@@ -89,14 +90,23 @@ export default function CreateWatchlistContent() {
       .map((s) => s.trim())
       .filter(Boolean);
     if (parts.length === 0) return;
-    setSymbols((prev) => {
-      const existing = new Set(prev);
-      const toAdd = parts.filter((s) => !existing.has(s));
-      return [...prev, ...toAdd];
-    });
+
+    // Compute using current `symbols` snapshot before the state update
+    const existing = new Set(symbols);
+    const toAdd = parts.filter((s) => !existing.has(s));
+    const available = Math.max(0, WATCHLIST_MAX_COMPANIES - symbols.length);
+
+    if (toAdd.length > available) {
+      alert('A watchlist can have a maximum of 10 companies.');
+    }
+
+    const toAddCapped = toAdd.slice(0, available);
+    if (toAddCapped.length > 0) {
+      setSymbols((prev) => [...prev, ...toAddCapped]);
+    }
     setAddSymbolInput('');
     setAddSuggestions([]);
-  }, [addSymbolInput]);
+  }, [addSymbolInput, symbols]);
 
   useEffect(() => {
     const q = addSymbolInput.toUpperCase().trim();
@@ -207,7 +217,18 @@ export default function CreateWatchlistContent() {
                           key={c.symbol}
                           className="cwl-add-suggestion-item"
                           onClick={() => {
-                            setSymbols((prev) => prev.includes(c.symbol) ? prev : [...prev, c.symbol]);
+                            if (symbols.includes(c.symbol)) {
+                              setAddSymbolInput('');
+                              setAddSuggestions([]);
+                              return;
+                            }
+                            if (symbols.length >= WATCHLIST_MAX_COMPANIES) {
+                              alert('A watchlist can have a maximum of 10 companies.');
+                              setAddSymbolInput('');
+                              setAddSuggestions([]);
+                              return;
+                            }
+                            setSymbols((prev) => [...prev, c.symbol]);
                             setAddSymbolInput('');
                             setAddSuggestions([]);
                           }}
