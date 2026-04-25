@@ -296,7 +296,7 @@ const rawNewsItems: RawNewsItem[] = [
 
 export const newsItems: NewsItem[] = rawNewsItems.map((item, index) => ({
   id: `news-${index + 1}`,
-  source: item.news_source,
+  source: /^[\x20-\x7E\uFF01-\uFF5E]*$/.test(item.news_source) ? item.news_source : 'Others',
   title: item.news_title,
   content: item.news_content,
   category: item.news_catg,

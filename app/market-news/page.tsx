@@ -42,7 +42,7 @@ async function getNewsSummary(params: {
 function mapSummaryToNewsItem(record: NewsSummaryRecord, index: number): NewsItem {
   return {
     id: `api-${record.co_cd}-${record.news_date}-${index}`,
-    source: record.news_source,
+    source: /^[\x20-\x7E\uFF01-\uFF5E]*$/.test(record.news_source) ? record.news_source : 'Others',
     title: record.news_title,
     content: record.news_content,
     category: record.news_catg,
