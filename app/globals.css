@@ -19693,15 +19693,57 @@ html.dark .cp-fin-index-tab:hover {
   margin-left: 0;
 }
 
+/* <p><strong> used as h4-equivalent heading (some HTML files use this instead of <h4>) */
+.cp-pec-ai-html-content p > strong:first-child {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #4f46e5;
+  margin: 14px 0 6px 0;
+  letter-spacing: 0.02em;
+}
+/* Hide the <br> that immediately follows a block-level strong to avoid a double line-break */
+.cp-pec-ai-html-content p > strong:first-child + br {
+  display: none;
+}
+/* Top-level <ol> items as theme cards — mirrors the existing > ul > li card style */
+.cp-pec-ai-html-content > ol > li {
+  background: var(--c-bg);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  border-left: 3px solid #818cf8;
+  list-style: none;
+  margin-left: -20px;
+}
+.cp-pec-ai-html-content > ol > li > ul {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 8px;
+}
+.cp-pec-ai-html-content > ol > li > ul > li {
+  background: none;
+  border-left: none;
+  padding: 6px 0;
+  margin-left: 0;
+  border-bottom: 1px solid var(--c-border);
+}
+.cp-pec-ai-html-content > ol > li > ul > li:last-child {
+  border-bottom: none;
+}
+
 html.dark .cp-pec-ai-html-content h3 { color: #f1f5f9; border-bottom-color: var(--c-accent); }
 html.dark .cp-pec-ai-html-content h4 { color: #a5b4fc; }
 html.dark .cp-pec-ai-html-content p,
 html.dark .cp-pec-ai-html-content li { color: #cbd5e1; }
 html.dark .cp-pec-ai-html-content strong { color: #f1f5f9; }
+html.dark .cp-pec-ai-html-content p > strong:first-child { color: #a5b4fc; }
 html.dark .cp-pec-ai-html-content > ul > li { background: rgba(255,255,255,0.04); border-left-color: #818cf8; }
 html.dark .cp-pec-ai-html-content > ul > li > ul > li { border-bottom-color: rgba(255,255,255,0.08); }
 html.dark .cp-pec-ai-html-content > ul > li > ul > li:nth-child(odd) strong { color: #38bdf8; }
 html.dark .cp-pec-ai-html-content > ul > li > ul > li:nth-child(even) strong { color: #4ade80; }
+html.dark .cp-pec-ai-html-content > ol > li { background: rgba(255,255,255,0.04); border-left-color: #818cf8; }
+html.dark .cp-pec-ai-html-content > ol > li > ul > li { border-bottom-color: rgba(255,255,255,0.08); }
 
 
 /* ===== TODAY'S MARKET SECTION (cp-market-*) ===== */
