@@ -763,6 +763,9 @@ export const DEFAULT_VIEW_CATEGORIES = [58, 59, 60, 63, 29, 90, 87, 88, 89] as c
 /** Fixed selectedCategories IDs for the Summary View */
 export const SUMMARY_VIEW_CATEGORY_IDS: number[] = [58, 59, 60, 63, 29, 90, 87, 88, 89];
 
+/** Maximum number of companies allowed in a single watchlist. */
+export const WATCHLIST_MAX_COMPANIES = 10;
+
 export interface EditWatchlistCoCdEntry {
   coCd: string;
   orderIndex: number;

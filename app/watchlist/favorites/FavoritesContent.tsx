@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getAllCoFavoriteList } from '@/app/lib/watchlistApi';
+import { getAllCoFavoriteList, WATCHLIST_MAX_COMPANIES } from '@/app/lib/watchlistApi';
 import { WatchlistContent } from '@/app/watchlist/[id]/WatchlistContent';
 
 const userAcct = 'demoUser';
@@ -17,7 +17,7 @@ export default function FavoritesContent() {
 
   useEffect(() => {
     getAllCoFavoriteList(userAcct).then((res) => {
-      const top10 = res.co_cd.slice(0, 10);
+      const top10 = res.co_cd.slice(0, WATCHLIST_MAX_COMPANIES);
       setFavoriteSymbols(top10);
       setLoaded(true);
       // Show onboarding dialog only when favorites are empty AND user hasn't dismissed before
@@ -111,7 +111,7 @@ export default function FavoritesContent() {
         disableCompanyDelete
         onFavoritesSymbolsUpdate={(_symbols) => {
           getAllCoFavoriteList(userAcct).then((res) => {
-            setFavoriteSymbols(res.co_cd.slice(0, 10));
+            setFavoriteSymbols(res.co_cd.slice(0, WATCHLIST_MAX_COMPANIES));
           });
         }}
       />

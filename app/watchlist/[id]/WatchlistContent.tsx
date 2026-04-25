@@ -35,6 +35,7 @@ import {
   getWatchlistDetail,
   getWatchlistData,
   getUserAllWatchlists,
+  WATCHLIST_MAX_COMPANIES,
 } from '@/app/lib/watchlistApi';
 import type { GetWatchlistDataParams } from '@/app/lib/watchlistApi';
 import { setFavoritesInPersonality } from '@/app/lib/getFavoritesByUserAcct';
@@ -1278,7 +1279,7 @@ export function WatchlistContent({
       // Enforce 10-company limit per watchlist
       const existingSet = new Set(currentSymbolOrder);
       const newEntries = parsed.filter((s) => !existingSet.has(s));
-      const available = Math.max(0, 10 - currentSymbolOrder.length);
+      const available = Math.max(0, WATCHLIST_MAX_COMPANIES - currentSymbolOrder.length);
       if (newEntries.length > available) {
         alert('A watchlist can have a maximum of 10 companies.');
       }

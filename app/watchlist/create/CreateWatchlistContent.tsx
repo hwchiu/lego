@@ -7,6 +7,7 @@ import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 import { useWatchlist } from '@/app/contexts/WatchlistContext';
+import { WATCHLIST_MAX_COMPANIES } from '@/app/lib/watchlistApi';
 
 // Symbol lookup map for quick name resolution
 const SYMBOL_LOOKUP = new Map(COMPANY_MASTER_LIST.map((c) => [c.symbol, c.name]));
@@ -82,8 +83,6 @@ export default function CreateWatchlistContent() {
     }
   }, [pendingNavId, router]);
 
-  const MAX_COMPANIES = 10;
-
   const handleAddSymbol = useCallback(() => {
     const parts = addSymbolInput
       .toUpperCase()
@@ -91,20 +90,19 @@ export default function CreateWatchlistContent() {
       .map((s) => s.trim())
       .filter(Boolean);
     if (parts.length === 0) return;
-    setSymbols((prev) => {
-      const existing = new Set(prev);
-      const toAdd = parts.filter((s) => !existing.has(s));
-      const available = Math.max(0, MAX_COMPANIES - prev.length);
-      if (toAdd.length > available) {
-        return available > 0 ? [...prev, ...toAdd.slice(0, available)] : prev;
-      }
-      return [...prev, ...toAdd];
-    });
-    // Show limit alert after state update (use current symbols length for the check)
+
+    // Compute using current `symbols` snapshot before the state update
     const existing = new Set(symbols);
     const toAdd = parts.filter((s) => !existing.has(s));
-    if (toAdd.length > Math.max(0, MAX_COMPANIES - symbols.length)) {
+    const available = Math.max(0, WATCHLIST_MAX_COMPANIES - symbols.length);
+
+    if (toAdd.length > available) {
       alert('A watchlist can have a maximum of 10 companies.');
+    }
+
+    const toAddCapped = toAdd.slice(0, available);
+    if (toAddCapped.length > 0) {
+      setSymbols((prev) => [...prev, ...toAddCapped]);
     }
     setAddSymbolInput('');
     setAddSuggestions([]);
@@ -224,7 +222,7 @@ export default function CreateWatchlistContent() {
                               setAddSuggestions([]);
                               return;
                             }
-                            if (symbols.length >= MAX_COMPANIES) {
+                            if (symbols.length >= WATCHLIST_MAX_COMPANIES) {
                               alert('A watchlist can have a maximum of 10 companies.');
                               setAddSymbolInput('');
                               setAddSuggestions([]);
