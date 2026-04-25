@@ -1720,6 +1720,32 @@ html:not(.dark) .sidebar-submenu-icon-left {
 .mn-filter-field--period {
   min-width: 260px;
 }
+.mn-search-btn {
+  height: 32px;
+  padding: 0 14px;
+  background: var(--c-dark);
+  color: var(--c-white);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+  flex-shrink: 0;
+  align-self: flex-end;
+}
+.mn-search-btn:hover { background: #2a3c52; }
+.mn-search-btn:active { background: #111d29; }
+.mn-search-error {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  background: #fff5f5;
+  border: 1px solid #fca5a5;
+  border-radius: var(--radius-sm);
+  color: #dc2626;
+  font-size: 12px;
+}
 
 /* ===== COMPANY HEAT RANKING CAROUSEL ===== */
 .chr-root {
@@ -19847,6 +19873,20 @@ html.dark .cp-pec-ai-html-content > ul > li > ul > li:nth-child(even) strong { c
 }
 .cp-datepicker-input:hover { border-color: var(--c-border-2); }
 .cp-datepicker-input.active { border-color: var(--c-accent); }
+.cp-datepicker-input--error {
+  border-color: #dc2626 !important;
+  background: #fff5f5;
+  animation: mn-shake 0.35s ease;
+}
+.cp-datepicker-input--error:hover { border-color: #b91c1c !important; }
+@keyframes mn-shake {
+  0%   { transform: translateX(0); }
+  20%  { transform: translateX(-5px); }
+  40%  { transform: translateX(5px); }
+  60%  { transform: translateX(-4px); }
+  80%  { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
 .cp-datepicker-icon { color: var(--c-text-3); flex-shrink: 0; }
 .cp-datepicker-text { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .cp-datepicker-text.placeholder { color: var(--c-text-4); }

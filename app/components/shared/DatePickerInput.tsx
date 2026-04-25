@@ -95,6 +95,7 @@ export interface DatePickerInputProps {
   onChange: (val: string) => void;
   placeholder?: string;
   onPageReset?: () => void;
+  error?: boolean;
 }
 
 export function formatDateDisplay(v: string): string {
@@ -104,7 +105,7 @@ export function formatDateDisplay(v: string): string {
   return `${CAL_MONTH_NAMES[d.getMonth()].slice(0, 3)} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
-export default function DatePickerInput({ value, onChange, placeholder = 'Select date', onPageReset }: DatePickerInputProps) {
+export default function DatePickerInput({ value, onChange, placeholder = 'Select date', onPageReset, error }: DatePickerInputProps) {
   const [open, setOpen] = useState(false);
   const [calStyle, setCalStyle] = useState<React.CSSProperties>({});
   const containerRef = useRef<HTMLDivElement>(null);
@@ -165,7 +166,7 @@ export default function DatePickerInput({ value, onChange, placeholder = 'Select
   return (
     <div className="cp-datepicker-wrap" ref={containerRef}>
       <div
-        className={`cp-datepicker-input${open ? ' active' : ''}`}
+        className={`cp-datepicker-input${open ? ' active' : ''}${error ? ' cp-datepicker-input--error' : ''}`}
         onClick={handleToggle}
         role="button"
         tabIndex={0}
