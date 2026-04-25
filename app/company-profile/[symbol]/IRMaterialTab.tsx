@@ -122,6 +122,8 @@ function IRContent({ symbol, entries, activeDocType, onNoFile }: IRContentProps)
             <thead>
               <tr>
                 <th className="cp-ir-fin-th">Document</th>
+                <th className="cp-ir-fin-th cp-ir-fin-th--fiscal-year">Fiscal Year</th>
+                <th className="cp-ir-fin-th cp-ir-fin-th--fiscal-qtr">Fiscal Qtr</th>
                 <th className="cp-ir-fin-th cp-ir-fin-th--date">Create Date</th>
                 <th className="cp-ir-fin-th cp-ir-fin-th--type">Type</th>
                 <th className="cp-ir-fin-th cp-ir-fin-th--action">Download</th>
@@ -131,8 +133,10 @@ function IRContent({ symbol, entries, activeDocType, onNoFile }: IRContentProps)
               {filtered.map((doc) => (
                 <tr key={doc.DOC_ID} className="cp-ir-fin-tr">
                   <td className="cp-ir-fin-td cp-ir-fin-td--label">
-                    {symbol} {doc.DOC_TYPE}
+                    {doc.DOC_TITLE}
                   </td>
+                  <td className="cp-ir-fin-td cp-ir-fin-td--fiscal-year">{doc.FISCAL_YEAR_NO}</td>
+                  <td className="cp-ir-fin-td cp-ir-fin-td--fiscal-qtr">{doc.FISCAL_QTR_NO}</td>
                   <td className="cp-ir-fin-td cp-ir-fin-td--date">{doc.CREATE_DATE}</td>
                   <td className="cp-ir-fin-td cp-ir-fin-td--type">
                     <PdfBadge />
