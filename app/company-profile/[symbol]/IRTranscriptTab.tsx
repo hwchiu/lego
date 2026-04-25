@@ -276,6 +276,8 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
   }, [allSections, keyword]);
 
   const [manualExpandedIds, setManualExpandedIds] = useState<Set<string>>(new Set());
+  // selectedChipIds tracks which exec chips are active for filtering (multi-select)
+  const [selectedChipIds, setSelectedChipIds] = useState<Set<string>>(new Set());
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // Merge manually expanded with keyword-expanded
@@ -287,9 +289,31 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
 
   useEffect(() => {
     setManualExpandedIds(new Set());
+    setSelectedChipIds(new Set());
   }, [entry.co_cd, entry.fiscal_year_no, entry.fiscal_qtr_no]);
 
+  // Build a map from chip id → displayName for efficient lookup
+  const chipDisplayNames = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const s of managementSections) {
+      map.set(s.id, s.displayName);
+    }
+    return map;
+  }, [managementSections]);
+
   const handleChipClick = useCallback((id: string) => {
+    setSelectedChipIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        // Toggle off — remove filter for this chip
+        next.delete(id);
+        return next;
+      }
+      // Toggle on — add filter and expand + scroll to section
+      next.add(id);
+      return next;
+    });
+    // Expand the section and scroll to it
     setManualExpandedIds((prev) => {
       const next = new Set(prev);
       next.add(id);
@@ -325,7 +349,24 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
   // Chips show management speakers only (or all if no structured data)
   const execChips = managementSections;
 
+  // Determine whether a section is visible given the current chip filter.
+  // "Operator" sections are always visible (conversation starters, above filter scope).
+  // When no chips are selected, all sections are visible.
+  function isSectionVisible(section: SpeakerSection): boolean {
+    if (selectedChipIds.size === 0) return true;
+    if (/^operator$/i.test(section.displayName.trim())) return true;
+    const speakerLower = section.speaker.toLowerCase();
+    for (const chipId of selectedChipIds) {
+      const chipName = chipDisplayNames.get(chipId);
+      if (chipName && speakerLower.includes(chipName.toLowerCase())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   function renderSpeakerSection(section: SpeakerSection) {
+    if (!isSectionVisible(section)) return null;
     const isExpanded = expandedIds.has(section.id);
     const highlightedHtml = keyword.trim() ? highlightHtml(section.contentHtml, keyword) : section.contentHtml;
     return (
@@ -399,7 +440,7 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
             {execChips.map((s) => (
               <button
                 key={s.id}
-                className={`cp-irt-exec-chip${expandedIds.has(s.id) ? ' cp-irt-exec-chip--active' : ''}`}
+                className={`cp-irt-exec-chip${selectedChipIds.has(s.id) ? ' cp-irt-exec-chip--active' : ''}`}
                 onClick={() => handleChipClick(s.id)}
                 title={s.speaker}
               >
