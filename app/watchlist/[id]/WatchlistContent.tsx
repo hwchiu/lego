@@ -39,6 +39,7 @@ import {
 } from '@/app/lib/watchlistApi';
 import type { GetWatchlistDataParams } from '@/app/lib/watchlistApi';
 import { setFavoritesInPersonality } from '@/app/lib/getFavoritesByUserAcct';
+import { getPaginationRange } from '@/app/lib/paginationUtils';
 
 // ── Custom View types ─────────────────────────────────────────────────────────
 interface CustomView {
@@ -830,6 +831,7 @@ export function WatchlistContent({
 
   const [activeTab, setActiveTab] = useState<string>('Summary');
   const [feedTab, setFeedTab] = useState<FeedTab>('Latest');
+  const [newsPage, setNewsPage] = useState(0);
 
   // Build dynamic quarter options (current quarter back 8 quarters)
   const recentQuarters = useMemo(() => buildRecentQuarters(), []);
@@ -921,6 +923,11 @@ export function WatchlistContent({
   useEffect(() => {
     setEditSymbolOrder(currentSymbolOrder.slice());
   }, [currentSymbolOrderKey]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Reset news pagination when tab changes or watched symbol list changes
+  useEffect(() => {
+    setNewsPage(0);
+  }, [feedTab, currentSymbolOrderKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Load extraHoldings from localStorage on mount
   useEffect(() => {
@@ -1401,6 +1408,10 @@ export function WatchlistContent({
     [watchlistSymbolSet],
   );
 
+  const WL_NEWS_PAGE_SIZE = 8;
+  const newsTotalPages = Math.max(1, Math.ceil(filteredNewsItems.length / WL_NEWS_PAGE_SIZE));
+  const pagedNewsItems = filteredNewsItems.slice(newsPage * WL_NEWS_PAGE_SIZE, (newsPage + 1) * WL_NEWS_PAGE_SIZE);
+
   const newsUpdateItems = useMemo((): UpdateFeedItem[] =>
     filteredNewsItems.map((item) => ({
       id: item.id,
@@ -1833,11 +1844,46 @@ export function WatchlistContent({
                   filteredNewsItems.length === 0 ? (
                     <div className="wl-feed-empty">No news found for your watchlist companies.</div>
                   ) : (
-                    <div className="wl-feed-news-grid">
-                      {filteredNewsItems.map((item) => (
-                        <NewsCard key={item.id} item={item} />
-                      ))}
-                    </div>
+                    <>
+                      <div className="wl-feed-news-grid">
+                        {pagedNewsItems.map((item) => (
+                          <NewsCard key={item.id} item={item} />
+                        ))}
+                      </div>
+                      {newsTotalPages > 1 && (
+                        <div className="cp-news-tab-pagination">
+                          <button
+                            className="cp-news-tab-page-btn"
+                            disabled={newsPage === 0}
+                            onClick={() => setNewsPage((p) => Math.max(0, p - 1))}
+                          >
+                            ‹ Prev
+                          </button>
+                          {getPaginationRange(newsPage, newsTotalPages).map((item) =>
+                            typeof item === 'string' ? (
+                              <span key={item} className="cp-news-tab-page-ellipsis">…</span>
+                            ) : (
+                              <button
+                                key={item}
+                                className={`cp-news-tab-page-btn${newsPage === item ? ' active' : ''}`}
+                                onClick={() => setNewsPage(item)}
+                                aria-label={`Page ${item + 1}`}
+                                aria-current={newsPage === item ? 'page' : undefined}
+                              >
+                                {item + 1}
+                              </button>
+                            )
+                          )}
+                          <button
+                            className="cp-news-tab-page-btn"
+                            disabled={newsPage >= newsTotalPages - 1}
+                            onClick={() => setNewsPage((p) => Math.min(p + 1, newsTotalPages - 1))}
+                          >
+                            Next ›
+                          </button>
+                        </div>
+                      )}
+                    </>
                   )
                 ) : currentUpdateItems.length === 0 ? (
                   <div className="wl-feed-empty">No updates found for your watchlist companies.</div>

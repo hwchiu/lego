@@ -171,6 +171,18 @@ export default function MarketNewsPage() {
     setFilterCompanySymbol(symbol);
   }
 
+  function handleClearAll() {
+    setFilterKeyword('');
+    setFilterKeywordApplied('');
+    setFilterPeriodStart('');
+    setFilterPeriodEnd('');
+    setPeriodStartError(false);
+    setPeriodEndError(false);
+    setFilterCompanySymbol(null);
+    setSearchResults(null);
+    setSearchError(false);
+  }
+
   async function handleSearch() {
     let hasError = false;
     if (!filterPeriodStart) { setPeriodStartError(true); hasError = true; }
@@ -265,6 +277,13 @@ export default function MarketNewsPage() {
                 disabled={isSearchLoading}
               >
                 {isSearchLoading ? 'Loading…' : 'Search'}
+              </button>
+              <button
+                className="mn-clear-btn"
+                onClick={handleClearAll}
+                disabled={isSearchLoading}
+              >
+                Clear
               </button>
             </div>
 
