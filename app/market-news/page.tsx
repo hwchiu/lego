@@ -92,8 +92,8 @@ export default function MarketNewsPage() {
   // Filter bar state
   const [filterKeyword, setFilterKeyword] = useState('');
   const [filterKeywordApplied, setFilterKeywordApplied] = useState('');
-  const [filterPeriodStart, setFilterPeriodStart] = useState(() => addMonths(todayStr(), -3));
-  const [filterPeriodEnd, setFilterPeriodEnd] = useState(() => todayStr());
+  const [filterPeriodStart, setFilterPeriodStart] = useState('');
+  const [filterPeriodEnd, setFilterPeriodEnd] = useState('');
   const [filterCompanySymbol, setFilterCompanySymbol] = useState<string | null>(null);
 
   // Validation error state for period inputs
@@ -105,24 +105,16 @@ export default function MarketNewsPage() {
   const [isSearchLoading, setIsSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState(false);
 
-  // Auto-calculate companion date (±3 months) when one date changes
+  // Update start date; end date is constrained to [start, start+3mo] via picker props
   const handlePeriodStartChange = useCallback((val: string) => {
     setFilterPeriodStart(val);
     setPeriodStartError(false);
-    if (val) {
-      setFilterPeriodEnd(addMonths(val, 3));
-      setPeriodEndError(false);
-    }
     setSearchResults(null);
   }, []);
 
   const handlePeriodEndChange = useCallback((val: string) => {
     setFilterPeriodEnd(val);
     setPeriodEndError(false);
-    if (val) {
-      setFilterPeriodStart(addMonths(val, -3));
-      setPeriodStartError(false);
-    }
     setSearchResults(null);
   }, []);
 
@@ -253,6 +245,8 @@ export default function MarketNewsPage() {
                     onChange={handlePeriodStartChange}
                     placeholder="Start date"
                     error={periodStartError}
+                    maxDate={filterPeriodEnd || undefined}
+                    minDate={filterPeriodEnd ? addMonths(filterPeriodEnd, -3) : undefined}
                   />
                   <span className="cp-news-period-sep">–</span>
                   <DatePickerInput
@@ -260,6 +254,8 @@ export default function MarketNewsPage() {
                     onChange={handlePeriodEndChange}
                     placeholder="End date"
                     error={periodEndError}
+                    minDate={filterPeriodStart || undefined}
+                    maxDate={filterPeriodStart ? addMonths(filterPeriodStart, 3) : undefined}
                   />
                 </div>
               </div>
