@@ -562,6 +562,8 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const [newsPeriodEnd, setNewsPeriodEnd] = useState('');
   const [newsCategorySearch, setNewsCategorySearch] = useState('');
   const [newsSourceSearch, setNewsSourceSearch] = useState('');
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [isSourceOpen, setIsSourceOpen] = useState(false);
 
   // Shared financial statement data — loaded once and shared with both
   // FIN. Statement tab and the Financial Indices / DOI & Revenue charts.
@@ -1237,48 +1239,46 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                       <div className="cp-news-filter-field">
                         <label className="cp-news-filter-label">News Category</label>
                         <div className="cp-news-multi-select">
-                          <div className="cp-news-multi-select-display">
-                            {newsCategories.size === 0 ? (
-                              <span className="cp-news-multi-placeholder">All Categories</span>
-                            ) : (
-                              [...newsCategories].map((c) => (
-                                <span key={c} className="cp-news-multi-chip">
-                                  {c}
-                                  <button onClick={() => toggleNewsCategory(c)} aria-label={`Remove ${c}`}>
-                                    <svg viewBox="0 0 10 10" fill="none" width="8" height="8"><path d="M2 2L8 8M8 2L2 8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
-                                  </button>
-                                </span>
-                              ))
-                            )}
-                          </div>
-                          <div className="cp-news-multi-options">
-                            <div className="cp-news-multi-search-wrap">
-                              <input
-                                className="cp-news-multi-search"
-                                type="text"
-                                placeholder="Search categories…"
-                                value={newsCategorySearch}
-                                onChange={(e) => setNewsCategorySearch(e.target.value)}
-                                onClick={(e) => e.stopPropagation()}
-                              />
-                            </div>
-                            {distinctCategories
-                              .filter((ft) => ft.toLowerCase().includes(newsCategorySearch.toLowerCase()))
-                              .map((ft) => (
-                                <button
-                                  key={ft}
-                                  className={`cp-news-multi-option${newsCategories.has(ft) ? ' active' : ''}`}
-                                  onClick={() => toggleNewsCategory(ft)}
-                                >
-                                  {newsCategories.has(ft) && (
-                                    <svg viewBox="0 0 12 12" fill="none" width="10" height="10" style={{ marginRight: 4 }}>
-                                      <path d="M2 6L5 9L10 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                    </svg>
-                                  )}
-                                  {ft}
+                          <div className="cp-news-multi-select-display" onClick={() => setIsCategoryOpen(true)}>
+                            {[...newsCategories].map((c) => (
+                              <span key={c} className="cp-news-multi-chip">
+                                {c}
+                                <button onClick={(e) => { e.stopPropagation(); toggleNewsCategory(c); }} aria-label={`Remove ${c}`}>
+                                  <svg viewBox="0 0 10 10" fill="none" width="8" height="8"><path d="M2 2L8 8M8 2L2 8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
                                 </button>
-                              ))}
+                              </span>
+                            ))}
+                            <input
+                              className="cp-news-multi-search cp-news-multi-search--inline"
+                              type="text"
+                              placeholder={newsCategories.size === 0 ? 'All Categories' : ''}
+                              value={newsCategorySearch}
+                              onChange={(e) => setNewsCategorySearch(e.target.value)}
+                              onFocus={() => setIsCategoryOpen(true)}
+                              onBlur={() => setTimeout(() => setIsCategoryOpen(false), 200)}
+                            />
                           </div>
+                          {isCategoryOpen && (
+                            <div className="cp-news-multi-options">
+                              {distinctCategories
+                                .filter((ft) => ft.toLowerCase().includes(newsCategorySearch.toLowerCase()))
+                                .map((ft) => (
+                                  <button
+                                    key={ft}
+                                    className={`cp-news-multi-option${newsCategories.has(ft) ? ' active' : ''}`}
+                                    onMouseDown={(e) => e.preventDefault()}
+                                    onClick={() => toggleNewsCategory(ft)}
+                                  >
+                                    {newsCategories.has(ft) && (
+                                      <svg viewBox="0 0 12 12" fill="none" width="10" height="10" style={{ marginRight: 4 }}>
+                                        <path d="M2 6L5 9L10 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                      </svg>
+                                    )}
+                                    {ft}
+                                  </button>
+                                ))}
+                            </div>
+                          )}
                         </div>
                       </div>
 
@@ -1286,48 +1286,46 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                       <div className="cp-news-filter-field">
                         <label className="cp-news-filter-label">News Source</label>
                         <div className="cp-news-multi-select">
-                          <div className="cp-news-multi-select-display">
-                            {newsSources.size === 0 ? (
-                              <span className="cp-news-multi-placeholder">All Sources</span>
-                            ) : (
-                              [...newsSources].map((s) => (
-                                <span key={s} className="cp-news-multi-chip">
-                                  {s}
-                                  <button onClick={() => toggleNewsSource(s)} aria-label={`Remove ${s}`}>
-                                    <svg viewBox="0 0 10 10" fill="none" width="8" height="8"><path d="M2 2L8 8M8 2L2 8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
-                                  </button>
-                                </span>
-                              ))
-                            )}
-                          </div>
-                          <div className="cp-news-multi-options">
-                            <div className="cp-news-multi-search-wrap">
-                              <input
-                                className="cp-news-multi-search"
-                                type="text"
-                                placeholder="Search sources…"
-                                value={newsSourceSearch}
-                                onChange={(e) => setNewsSourceSearch(e.target.value)}
-                                onClick={(e) => e.stopPropagation()}
-                              />
-                            </div>
-                            {distinctSources
-                              .filter((src) => src.toLowerCase().includes(newsSourceSearch.toLowerCase()))
-                              .map((src) => (
-                                <button
-                                  key={src}
-                                  className={`cp-news-multi-option${newsSources.has(src) ? ' active' : ''}`}
-                                  onClick={() => toggleNewsSource(src)}
-                                >
-                                  {newsSources.has(src) && (
-                                    <svg viewBox="0 0 12 12" fill="none" width="10" height="10" style={{ marginRight: 4 }}>
-                                      <path d="M2 6L5 9L10 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                    </svg>
-                                  )}
-                                  {src}
+                          <div className="cp-news-multi-select-display" onClick={() => setIsSourceOpen(true)}>
+                            {[...newsSources].map((s) => (
+                              <span key={s} className="cp-news-multi-chip">
+                                {s}
+                                <button onClick={(e) => { e.stopPropagation(); toggleNewsSource(s); }} aria-label={`Remove ${s}`}>
+                                  <svg viewBox="0 0 10 10" fill="none" width="8" height="8"><path d="M2 2L8 8M8 2L2 8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
                                 </button>
-                              ))}
+                              </span>
+                            ))}
+                            <input
+                              className="cp-news-multi-search cp-news-multi-search--inline"
+                              type="text"
+                              placeholder={newsSources.size === 0 ? 'All Sources' : ''}
+                              value={newsSourceSearch}
+                              onChange={(e) => setNewsSourceSearch(e.target.value)}
+                              onFocus={() => setIsSourceOpen(true)}
+                              onBlur={() => setTimeout(() => setIsSourceOpen(false), 200)}
+                            />
                           </div>
+                          {isSourceOpen && (
+                            <div className="cp-news-multi-options">
+                              {distinctSources
+                                .filter((src) => src.toLowerCase().includes(newsSourceSearch.toLowerCase()))
+                                .map((src) => (
+                                  <button
+                                    key={src}
+                                    className={`cp-news-multi-option${newsSources.has(src) ? ' active' : ''}`}
+                                    onMouseDown={(e) => e.preventDefault()}
+                                    onClick={() => toggleNewsSource(src)}
+                                  >
+                                    {newsSources.has(src) && (
+                                      <svg viewBox="0 0 12 12" fill="none" width="10" height="10" style={{ marginRight: 4 }}>
+                                        <path d="M2 6L5 9L10 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                      </svg>
+                                    )}
+                                    {src}
+                                  </button>
+                                ))}
+                            </div>
+                          )}
                         </div>
                       </div>
 
