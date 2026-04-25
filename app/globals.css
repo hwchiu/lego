@@ -7575,7 +7575,8 @@ html.dark .seg-item-l3.fin-stmt-td-item {
 .de-category-card--unreleased {
   cursor: default !important;
   pointer-events: none;
-  opacity: 0.55;
+  position: relative;
+  overflow: hidden;
 }
 .de-category-card--unreleased:hover {
   border-color: var(--c-border);
@@ -7583,20 +7584,33 @@ html.dark .seg-item-l3.fin-stmt-td-item {
   transform: none;
 }
 
-.de-coming-soon-badge {
-  display: inline-flex;
+.de-coming-soon-overlay {
+  position: absolute;
+  inset: 8px;
+  border-radius: calc(var(--radius) - 2px);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 3px 9px;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  justify-content: center;
+  gap: 6px;
+}
+
+.de-coming-soon-lock {
+  width: 22px;
+  height: 22px;
+  color: #475569;
+}
+
+.de-coming-soon-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #94a3b8;
-  background: transparent;
-  border: 1px dashed #cbd5e1;
-  border-radius: 20px;
-  user-select: none;
+  color: #475569;
 }
 
 /* ── Recent items grid ── */
@@ -21082,7 +21096,9 @@ html.dark .de-tag-filter-btn { background: #1e293b; border-color: #334155; color
 html.dark .de-tag-filter-btn:hover { background: #334155; color: #f1f5f9; }
 html.dark .de-related-cat-chip { background: #1e293b; border-color: #334155; color: #94a3b8; }
 html.dark .de-related-cat-chip:hover { background: #334155; color: #f1f5f9; }
-html.dark .de-coming-soon-badge { color: #64748b; border-color: #475569; }
+html.dark .de-coming-soon-overlay { background: rgba(15, 23, 42, 0.55); border-color: rgba(255,255,255,0.08); }
+html.dark .de-coming-soon-lock,
+html.dark .de-coming-soon-label { color: #94a3b8; }
 
 /* ── /ai-search (is- prefix) ── */
 html.dark .is-hero { background: #0f172a; }
