@@ -21,10 +21,15 @@ function ExternalLinkIcon() {
 
 function formatEventDatetime(eventDatetime: string): string {
   if (!eventDatetime) return '—';
-  const d = new Date(eventDatetime);
-  if (isNaN(d.getTime())) return eventDatetime;
-  const month = MONTH_SHORT[d.getMonth()];
-  return `${month} ${d.getDate()}, ${d.getFullYear()}`;
+  // Format: "2026-04-07 00:00:00.0" → "Apr 7, 2026 00:00:00"
+  const spaceIdx = eventDatetime.indexOf(' ');
+  if (spaceIdx === -1) return eventDatetime;
+  const datePart = eventDatetime.substring(0, spaceIdx);
+  const timePart = eventDatetime.substring(spaceIdx + 1).replace(/\.0$/, '');
+  const [year, month, day] = datePart.split('-').map(Number);
+  if (!year || !month || !day) return eventDatetime;
+  const monthLabel = MONTH_SHORT[month - 1];
+  return `${monthLabel} ${day}, ${year} ${timePart}`;
 }
 
 interface CorpEventCategoryDetailProps {
@@ -40,6 +45,14 @@ export default function CorpEventCategoryDetail({
 }: CorpEventCategoryDetailProps) {
   const displayDate = formatDateLabel(selectedDateLabel);
   const count = events.length;
+
+  // Sort by EVENT_DATETIME descending (furthest future first)
+  const sortedEvents = [...events].sort((a, b) => {
+    if (!a.EVENT_DATETIME && !b.EVENT_DATETIME) return 0;
+    if (!a.EVENT_DATETIME) return 1;
+    if (!b.EVENT_DATETIME) return -1;
+    return b.EVENT_DATETIME.localeCompare(a.EVENT_DATETIME);
+  });
 
   return (
     <div className="detail-card">
@@ -70,7 +83,7 @@ export default function CorpEventCategoryDetail({
               </tr>
             </thead>
             <tbody>
-              {events.map((e, i) => (
+              {sortedEvents.map((e, i) => (
                   <tr key={e.EVENT_ID || i}>
                     <td className="td-symbol corp-event-company">{e.COMPANY_NAME}</td>
                     <td className="corp-event-desc">{e.DESCRIPTION}</td>
