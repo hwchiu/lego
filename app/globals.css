@@ -2703,7 +2703,7 @@ html:not(.dark) .sidebar-submenu-icon-left {
   padding: 2px 5px;
   border-radius: 4px;
 }
-.wl-feed-list { display: flex; flex-direction: column; }
+.wl-feed-list { display: flex; flex-direction: column; padding-bottom: 16px; }
 .wl-feed-item {
   display: flex;
   align-items: flex-start;
