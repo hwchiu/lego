@@ -63,13 +63,20 @@ function todayStr(): string {
   return `${d.getFullYear()}-${mm}-${dd}`;
 }
 
-/** Adds (or subtracts) `months` to a 'YYYY-MM-DD' string, returns 'YYYY-MM-DD' */
+/** Adds (or subtracts) `months` to a 'YYYY-MM-DD' string, returns 'YYYY-MM-DD'.
+ *  Clamps day to the last day of the target month to avoid overflow (e.g. Jan 31 + 1mo → Feb 28). */
 function addMonths(dateStr: string, months: number): string {
   const d = new Date(dateStr + 'T00:00:00');
-  d.setMonth(d.getMonth() + months);
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  return `${d.getFullYear()}-${mm}-${dd}`;
+  const origDay = d.getDate();
+  const targetMonth = d.getMonth() + months;
+  const targetYear = d.getFullYear() + Math.floor(targetMonth / 12);
+  const normMonth = ((targetMonth % 12) + 12) % 12;
+  const lastDay = new Date(targetYear, normMonth + 1, 0).getDate();
+  const clampedDay = Math.min(origDay, lastDay);
+  const result = new Date(targetYear, normMonth, clampedDay);
+  const mm = String(result.getMonth() + 1).padStart(2, '0');
+  const dd = String(result.getDate()).padStart(2, '0');
+  return `${result.getFullYear()}-${mm}-${dd}`;
 }
 
 /** Formats 'YYYY-MM-DD' to 'YYYY-MM-DD HH:mm:ss' */
@@ -96,6 +103,7 @@ export default function MarketNewsPage() {
   // API search results (null = not yet searched, use local data)
   const [searchResults, setSearchResults] = useState<NewsItem[] | null>(null);
   const [isSearchLoading, setIsSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState(false);
 
   // Auto-calculate companion date (±3 months) when one date changes
   const handlePeriodStartChange = useCallback((val: string) => {
@@ -178,6 +186,7 @@ export default function MarketNewsPage() {
     if (hasError) return;
 
     setIsSearchLoading(true);
+    setSearchError(false);
     try {
       const records = await getNewsSummary({
         news_dt_from: toApiDateTime(filterPeriodStart, false),
@@ -186,7 +195,8 @@ export default function MarketNewsPage() {
       });
       setSearchResults(records.map(mapSummaryToNewsItem));
     } catch {
-      setSearchResults([]);
+      setSearchError(true);
+      setSearchResults(null);
     } finally {
       setIsSearchLoading(false);
     }
@@ -265,6 +275,11 @@ export default function MarketNewsPage() {
             <NewsCategoryTabs active={activeCategory} onChange={(cat) => { setActiveCategory(cat); setFilterCompanySymbol(null); }} />
           </div>
           <div className="mn-content-area">
+            {searchError && (
+              <div className="mn-search-error">
+                Unable to fetch news. Please check your connection and try again.
+              </div>
+            )}
             <div className="company-ranking-below-tabs">
               <CompanyRankingTable selectedSymbol={filterCompanySymbol ?? undefined} onCompanyClick={handleCompanyClick} />
             </div>
