@@ -298,11 +298,17 @@ const SALE_TYPE_LABELS: Record<string, string> = {
   PG_REVENUE_END_USER: 'Segment Revenue (End User) ($M)',
   PG_NUMBER_OF_UNITS_SOLD: 'Segment Number of Unit Sold',
   PG_GROSS_MARGIN: 'Segment Gross Margin (%)',
-  PG_OPERATING_INCOME: 'Segment Operating Income ($M)'
+  PG_OPERATING_INCOME: 'Segment Operating Income ($M)',
+  PG_OPERATING_MARGIN: 'Segment Operating Margin (%)'
 };
 
 function formatSaleTypeLabel(saleType: string): string {
   return SALE_TYPE_LABELS[saleType] ?? saleType;
+}
+
+/** Returns true for any sale type whose values should not be aggregated (e.g. margin percentages). */
+function isMarginType(saleType: string): boolean {
+  return saleType.includes('MARGIN');
 }
 
 /** Build a period label for a SegmentRecord. */
@@ -647,7 +653,7 @@ function SegmentReportTable({ records, viewMode, yearWindowStart, currency }: Se
         </thead>
         <tbody>
           {hierarchy.map((saleTypeGroup) => {
-            const isGrossMargin = saleTypeGroup.saleType === 'PG_GROSS_MARGIN';
+            const isMargin = isMarginType(saleTypeGroup.saleType);
             return (
               <React.Fragment key={saleTypeGroup.saleType}>
                 {/* sale_type header row — shows aggregated total for all l1 children */}
@@ -657,7 +663,7 @@ function SegmentReportTable({ records, viewMode, yearWindowStart, currency }: Se
                   periods={periods}
                   depth="sale-type"
                   saleType={saleTypeGroup.saleType}
-                  hideValues={isGrossMargin}
+                  hideValues={isMargin}
                 />
 
                 {saleTypeGroup.level1Groups.map((level1Group) => (
@@ -669,7 +675,7 @@ function SegmentReportTable({ records, viewMode, yearWindowStart, currency }: Se
                       periods={periods}
                       depth="l1"
                       saleType={saleTypeGroup.saleType}
-                      hideValues={isGrossMargin && level1Group.level2Groups.length > 0}
+                      hideValues={isMargin && level1Group.level2Groups.length > 0}
                     />
 
                     {level1Group.level2Groups.map((level2Group) => (
@@ -681,7 +687,7 @@ function SegmentReportTable({ records, viewMode, yearWindowStart, currency }: Se
                           periods={periods}
                           depth="l2"
                           saleType={saleTypeGroup.saleType}
-                          hideValues={isGrossMargin && level2Group.level3Groups.length > 0}
+                          hideValues={isMargin && level2Group.level3Groups.length > 0}
                         />
 
                         {level2Group.level3Groups.map((level3Group) => (
