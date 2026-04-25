@@ -7575,11 +7575,28 @@ html.dark .seg-item-l3.fin-stmt-td-item {
 .de-category-card--unreleased {
   cursor: default !important;
   pointer-events: none;
+  opacity: 0.55;
 }
 .de-category-card--unreleased:hover {
   border-color: var(--c-border);
   box-shadow: none;
   transform: none;
+}
+
+.de-coming-soon-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  background: transparent;
+  border: 1px dashed #cbd5e1;
+  border-radius: 20px;
+  user-select: none;
 }
 
 /* ── Recent items grid ── */
@@ -21065,6 +21082,7 @@ html.dark .de-tag-filter-btn { background: #1e293b; border-color: #334155; color
 html.dark .de-tag-filter-btn:hover { background: #334155; color: #f1f5f9; }
 html.dark .de-related-cat-chip { background: #1e293b; border-color: #334155; color: #94a3b8; }
 html.dark .de-related-cat-chip:hover { background: #334155; color: #f1f5f9; }
+html.dark .de-coming-soon-badge { color: #64748b; border-color: #475569; }
 
 /* ── /ai-search (is- prefix) ── */
 html.dark .is-hero { background: #0f172a; }

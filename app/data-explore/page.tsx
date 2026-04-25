@@ -50,7 +50,7 @@ function CategoryCard({ slug, label, icon, color, description, released }: Categ
     );
   }
   return (
-    <div className="de-category-card de-category-card--unreleased" style={{ opacity: 0.6, cursor: 'default' }}>
+    <div className="de-category-card de-category-card--unreleased">
       <div className="de-category-card-icon" style={{ color }}>
         {icon}
       </div>
@@ -58,7 +58,13 @@ function CategoryCard({ slug, label, icon, color, description, released }: Categ
         <div className="de-category-card-label">{label}</div>
         <div className="de-category-card-desc">{description}</div>
         <div className="de-category-card-footer">
-          <span className="de-category-card-arrow" style={{ opacity: 0 }}><ArrowIcon /></span>
+          <span className="de-coming-soon-badge">
+            <svg viewBox="0 0 14 14" fill="none" width="11" height="11" aria-hidden="true">
+              <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.4" />
+              <path d="M7 4.5V7l1.8 1.8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Coming Soon
+          </span>
         </div>
       </div>
     </div>
