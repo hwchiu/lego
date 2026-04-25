@@ -79,6 +79,7 @@ export interface GetWatchlistDataParams {
   quarter: string[];
   selectedCategories: number[];
   co_cd: string[];
+  curr_dt: string; // UTC+0 datetime, e.g. "2025-09-24 12:14:00"
 }
 
 export interface CategoryIdEntry {
