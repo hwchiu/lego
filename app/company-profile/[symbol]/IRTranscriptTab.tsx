@@ -300,6 +300,10 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
   const [selectedChipIds, setSelectedChipIds] = useState<Set<string>>(new Set());
   // collapsedAll=true suppresses keyword-expand and only shows manualExpandedIds
   const [collapsedAll, setCollapsedAll] = useState(false);
+  // isExpandedState tracks the user/auto-expand intent for the toggle-all button.
+  // Using an explicit state (not derived) ensures the button reflects intended state
+  // even when chips are selected and sections are auto-expanded.
+  const [isExpandedState, setIsExpandedState] = useState(false);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // Merge manually expanded with keyword-expanded.
@@ -320,10 +324,11 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
     setManualCollapsedIds(new Set());
     setSelectedChipIds(new Set());
     setCollapsedAll(false);
+    setIsExpandedState(false);
   }, [entry.co_cd, entry.fiscal_year_no, entry.fiscal_qtr_no]);
 
-  const managementParticipants = participants.filter((p) => p.type === 'management');
-  const analystParticipants = participants.filter((p) => p.type === 'analyst');
+  const managementParticipants = useMemo(() => participants.filter((p) => p.type === 'management'), [participants]);
+  const analystParticipants = useMemo(() => participants.filter((p) => p.type === 'analyst'), [participants]);
 
   // Analyst chips — one chip per analyst from the structured participants block.
   // Use "analyst-{name}" as the virtual chip ID so IDs never collide with section IDs.
@@ -427,8 +432,9 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
   // When chip selection changes, auto-expand all newly-visible sections
   useEffect(() => {
     if (selectedChipIds.size === 0) return;
+    setIsExpandedState(true);
     setCollapsedAll(false);
-    setManualCollapsedIds(new Set());
+    setManualCollapsedIds((prev) => (prev.size === 0 ? prev : new Set()));
     setManualExpandedIds((prev) => {
       const next = new Set(prev);
       for (const section of allSections) {
@@ -446,20 +452,14 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
     });
   }, [selectedChipIds, allSections, chipDisplayNames]);
 
-  // Whether all currently-visible sections are expanded (used for toggle-all button)
-  const allVisibleExpanded = useMemo(() => {
-    if (collapsedAll) return false;
-    const visible = allSections.filter(isSectionVisible);
-    if (visible.length === 0) return false;
-    return visible.every((s) => expandedIds.has(s.id));
-  }, [allSections, isSectionVisible, expandedIds, collapsedAll]);
-
   function handleToggleAll() {
-    if (allVisibleExpanded) {
+    if (isExpandedState) {
+      setIsExpandedState(false);
       setCollapsedAll(true);
       setManualExpandedIds(new Set());
       setManualCollapsedIds(new Set());
     } else {
+      setIsExpandedState(true);
       setCollapsedAll(false);
       setManualExpandedIds(new Set(allSections.filter(isSectionVisible).map((s) => s.id)));
       setManualCollapsedIds(new Set());
@@ -511,11 +511,11 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
         <div className="cp-pec-card-actions">
           <button
             className="cp-pec-card-action-btn"
-            title={allVisibleExpanded ? 'Collapse all sections' : 'Expand all sections'}
-            aria-label={allVisibleExpanded ? 'Collapse all sections' : 'Expand all sections'}
+            title={isExpandedState ? 'Collapse all sections' : 'Expand all sections'}
+            aria-label={isExpandedState ? 'Collapse all sections' : 'Expand all sections'}
             onClick={handleToggleAll}
           >
-            {allVisibleExpanded ? <CollapseAllIcon /> : <ExpandAllIcon />}
+            {isExpandedState ? <CollapseAllIcon /> : <ExpandAllIcon />}
           </button>
           <button
             className="cp-pec-card-action-btn"
