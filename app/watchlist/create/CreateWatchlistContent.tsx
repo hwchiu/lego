@@ -82,6 +82,8 @@ export default function CreateWatchlistContent() {
     }
   }, [pendingNavId, router]);
 
+  const MAX_COMPANIES = 10;
+
   const handleAddSymbol = useCallback(() => {
     const parts = addSymbolInput
       .toUpperCase()
@@ -92,11 +94,21 @@ export default function CreateWatchlistContent() {
     setSymbols((prev) => {
       const existing = new Set(prev);
       const toAdd = parts.filter((s) => !existing.has(s));
+      const available = Math.max(0, MAX_COMPANIES - prev.length);
+      if (toAdd.length > available) {
+        return available > 0 ? [...prev, ...toAdd.slice(0, available)] : prev;
+      }
       return [...prev, ...toAdd];
     });
+    // Show limit alert after state update (use current symbols length for the check)
+    const existing = new Set(symbols);
+    const toAdd = parts.filter((s) => !existing.has(s));
+    if (toAdd.length > Math.max(0, MAX_COMPANIES - symbols.length)) {
+      alert('A watchlist can have a maximum of 10 companies.');
+    }
     setAddSymbolInput('');
     setAddSuggestions([]);
-  }, [addSymbolInput]);
+  }, [addSymbolInput, symbols]);
 
   useEffect(() => {
     const q = addSymbolInput.toUpperCase().trim();
@@ -207,7 +219,18 @@ export default function CreateWatchlistContent() {
                           key={c.symbol}
                           className="cwl-add-suggestion-item"
                           onClick={() => {
-                            setSymbols((prev) => prev.includes(c.symbol) ? prev : [...prev, c.symbol]);
+                            if (symbols.includes(c.symbol)) {
+                              setAddSymbolInput('');
+                              setAddSuggestions([]);
+                              return;
+                            }
+                            if (symbols.length >= MAX_COMPANIES) {
+                              alert('A watchlist can have a maximum of 10 companies.');
+                              setAddSymbolInput('');
+                              setAddSuggestions([]);
+                              return;
+                            }
+                            setSymbols((prev) => [...prev, c.symbol]);
                             setAddSymbolInput('');
                             setAddSuggestions([]);
                           }}

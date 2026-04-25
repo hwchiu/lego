@@ -17,10 +17,11 @@ export default function FavoritesContent() {
 
   useEffect(() => {
     getAllCoFavoriteList(userAcct).then((res) => {
-      setFavoriteSymbols(res.co_cd);
+      const top10 = res.co_cd.slice(0, 10);
+      setFavoriteSymbols(top10);
       setLoaded(true);
       // Show onboarding dialog only when favorites are empty AND user hasn't dismissed before
-      if (res.co_cd.length === 0 && typeof window !== 'undefined') {
+      if (top10.length === 0 && typeof window !== 'undefined') {
         const dismissed = localStorage.getItem(ONBOARD_KEY);
         if (!dismissed) setShowOnboard(true);
       }
@@ -110,7 +111,7 @@ export default function FavoritesContent() {
         disableCompanyDelete
         onFavoritesSymbolsUpdate={(_symbols) => {
           getAllCoFavoriteList(userAcct).then((res) => {
-            setFavoriteSymbols(res.co_cd);
+            setFavoriteSymbols(res.co_cd.slice(0, 10));
           });
         }}
       />
