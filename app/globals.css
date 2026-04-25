@@ -1737,6 +1737,24 @@ html:not(.dark) .sidebar-submenu-icon-left {
 }
 .mn-search-btn:hover { background: #2a3c52; }
 .mn-search-btn:active { background: #111d29; }
+.mn-clear-btn {
+  height: 32px;
+  padding: 0 14px;
+  background: var(--c-white);
+  color: var(--c-text-2);
+  border: 1px solid var(--c-border-2);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+  align-self: flex-end;
+}
+.mn-clear-btn:hover:not(:disabled) { background: var(--c-bg); color: var(--c-text); }
+.mn-clear-btn:active:not(:disabled) { background: #e5e7eb; }
+.mn-clear-btn:disabled { opacity: 0.4; cursor: default; }
 .mn-search-error {
   margin-bottom: 12px;
   padding: 10px 14px;
