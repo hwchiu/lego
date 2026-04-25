@@ -19133,6 +19133,11 @@ html.dark .cp-fin-index-tab:hover {
   align-items: flex-start;
   gap: 14px;
   min-width: 0;
+  flex: 1;
+}
+.cp-pec-card-title-wrap {
+  min-width: 0;
+  flex: 1;
 }
 .cp-pec-card-company {
   flex-shrink: 0;
@@ -19152,6 +19157,8 @@ html.dark .cp-fin-index-tab:hover {
   color: var(--c-text);
   line-height: 1.4;
   margin-bottom: 4px;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 .cp-pec-card-date {
   font-size: 12px;
