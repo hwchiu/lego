@@ -560,6 +560,8 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const [newsSources, setNewsSources] = useState<Set<string>>(new Set());
   const [newsPeriodStart, setNewsPeriodStart] = useState('');
   const [newsPeriodEnd, setNewsPeriodEnd] = useState('');
+  const [newsCategorySearch, setNewsCategorySearch] = useState('');
+  const [newsSourceSearch, setNewsSourceSearch] = useState('');
 
   // Shared financial statement data — loaded once and shared with both
   // FIN. Statement tab and the Financial Indices / DOI & Revenue charts.
@@ -1250,20 +1252,32 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                             )}
                           </div>
                           <div className="cp-news-multi-options">
-                            {distinctCategories.map((ft) => (
-                              <button
-                                key={ft}
-                                className={`cp-news-multi-option${newsCategories.has(ft) ? ' active' : ''}`}
-                                onClick={() => toggleNewsCategory(ft)}
-                              >
-                                {newsCategories.has(ft) && (
-                                  <svg viewBox="0 0 12 12" fill="none" width="10" height="10" style={{ marginRight: 4 }}>
-                                    <path d="M2 6L5 9L10 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                  </svg>
-                                )}
-                                {ft}
-                              </button>
-                            ))}
+                            <div className="cp-news-multi-search-wrap">
+                              <input
+                                className="cp-news-multi-search"
+                                type="text"
+                                placeholder="Search categories…"
+                                value={newsCategorySearch}
+                                onChange={(e) => setNewsCategorySearch(e.target.value)}
+                                onClick={(e) => e.stopPropagation()}
+                              />
+                            </div>
+                            {distinctCategories
+                              .filter((ft) => ft.toLowerCase().includes(newsCategorySearch.toLowerCase()))
+                              .map((ft) => (
+                                <button
+                                  key={ft}
+                                  className={`cp-news-multi-option${newsCategories.has(ft) ? ' active' : ''}`}
+                                  onClick={() => toggleNewsCategory(ft)}
+                                >
+                                  {newsCategories.has(ft) && (
+                                    <svg viewBox="0 0 12 12" fill="none" width="10" height="10" style={{ marginRight: 4 }}>
+                                      <path d="M2 6L5 9L10 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                  )}
+                                  {ft}
+                                </button>
+                              ))}
                           </div>
                         </div>
                       </div>
@@ -1287,20 +1301,32 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                             )}
                           </div>
                           <div className="cp-news-multi-options">
-                            {distinctSources.map((src) => (
-                              <button
-                                key={src}
-                                className={`cp-news-multi-option${newsSources.has(src) ? ' active' : ''}`}
-                                onClick={() => toggleNewsSource(src)}
-                              >
-                                {newsSources.has(src) && (
-                                  <svg viewBox="0 0 12 12" fill="none" width="10" height="10" style={{ marginRight: 4 }}>
-                                    <path d="M2 6L5 9L10 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                  </svg>
-                                )}
-                                {src}
-                              </button>
-                            ))}
+                            <div className="cp-news-multi-search-wrap">
+                              <input
+                                className="cp-news-multi-search"
+                                type="text"
+                                placeholder="Search sources…"
+                                value={newsSourceSearch}
+                                onChange={(e) => setNewsSourceSearch(e.target.value)}
+                                onClick={(e) => e.stopPropagation()}
+                              />
+                            </div>
+                            {distinctSources
+                              .filter((src) => src.toLowerCase().includes(newsSourceSearch.toLowerCase()))
+                              .map((src) => (
+                                <button
+                                  key={src}
+                                  className={`cp-news-multi-option${newsSources.has(src) ? ' active' : ''}`}
+                                  onClick={() => toggleNewsSource(src)}
+                                >
+                                  {newsSources.has(src) && (
+                                    <svg viewBox="0 0 12 12" fill="none" width="10" height="10" style={{ marginRight: 4 }}>
+                                      <path d="M2 6L5 9L10 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                  )}
+                                  {src}
+                                </button>
+                              ))}
                           </div>
                         </div>
                       </div>

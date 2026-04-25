@@ -19832,6 +19832,26 @@ html.dark .cp-pec-ai-html-content > ul > li > ul > li:nth-child(even) strong { c
 }
 .cp-news-multi-option:hover { background: var(--c-bg); }
 .cp-news-multi-option.active { color: #1d4ed8; background: #eff6ff; }
+.cp-news-multi-search-wrap {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--c-border);
+  position: sticky;
+  top: 0;
+  background: var(--c-white);
+  z-index: 1;
+}
+.cp-news-multi-search {
+  width: 100%;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  font-size: 12px;
+  color: var(--c-text);
+  background: var(--c-white);
+  outline: none;
+  box-sizing: border-box;
+}
+.cp-news-multi-search:focus { border-color: var(--c-accent); }
 
 /* Period date inputs */
 .cp-news-period-wrap {
@@ -20594,6 +20614,16 @@ html.dark .cp-news-multi-option.active {
   color: #60a5fa;
   background: rgba(59,130,246,0.1);
 }
+html.dark .cp-news-multi-search-wrap {
+  background: #1e293b;
+  border-color: #334155;
+}
+html.dark .cp-news-multi-search {
+  background: #0f172a;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+html.dark .cp-news-multi-search:focus { border-color: var(--c-accent); }
 
 /* ===== DARK MODE: cp-pec-ai sentiment badges ===== */
 html.dark .cp-pec-ai-sentiment--bullish {
