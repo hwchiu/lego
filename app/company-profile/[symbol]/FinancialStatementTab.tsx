@@ -516,12 +516,14 @@ function SegDataRow({
   periods,
   depth,
   saleType,
+  hideValues,
 }: {
   label: string;
   rawValues: Record<string, number>;
   periods: string[];
   depth: 'sale-type' | 'l1' | 'l2' | 'l3';
   saleType: string;
+  hideValues?: boolean;
 }) {
   const isSaleType = depth === 'sale-type';
   return (
@@ -530,6 +532,9 @@ function SegDataRow({
         {label}
       </td>
       {periods.map((p) => {
+        if (hideValues) {
+          return <td key={p} className="td-num" />;
+        }
         const rawVal = rawValues[p];
         const val = rawVal != null ? formatSegmentValue(rawVal, saleType) : '—';
         const isNeg = val.startsWith('-') && val !== '-';
@@ -641,55 +646,61 @@ function SegmentReportTable({ records, viewMode, yearWindowStart, currency }: Se
           )}
         </thead>
         <tbody>
-          {hierarchy.map((saleTypeGroup) => (
-            <React.Fragment key={saleTypeGroup.saleType}>
-              {/* sale_type header row — shows aggregated total for all l1 children */}
-              <SegDataRow
-                label={formatSaleTypeLabel(saleTypeGroup.saleType)}
-                rawValues={saleTypeGroup.rawValues}
-                periods={periods}
-                depth="sale-type"
-                saleType={saleTypeGroup.saleType}
-              />
+          {hierarchy.map((saleTypeGroup) => {
+            const isGrossMargin = saleTypeGroup.saleType === 'PG_GROSS_MARGIN';
+            return (
+              <React.Fragment key={saleTypeGroup.saleType}>
+                {/* sale_type header row — shows aggregated total for all l1 children */}
+                <SegDataRow
+                  label={formatSaleTypeLabel(saleTypeGroup.saleType)}
+                  rawValues={saleTypeGroup.rawValues}
+                  periods={periods}
+                  depth="sale-type"
+                  saleType={saleTypeGroup.saleType}
+                  hideValues={isGrossMargin}
+                />
 
-              {saleTypeGroup.level1Groups.map((level1Group) => (
-                <React.Fragment key={buildSegmentKey([saleTypeGroup.saleType, level1Group.level1])}>
-                  {/* l1: aggregated from l2 children (if any), else own direct value */}
-                  <SegDataRow
-                    label={level1Group.level1}
-                    rawValues={level1Group.rawValues}
-                    periods={periods}
-                    depth="l1"
-                    saleType={saleTypeGroup.saleType}
-                  />
+                {saleTypeGroup.level1Groups.map((level1Group) => (
+                  <React.Fragment key={buildSegmentKey([saleTypeGroup.saleType, level1Group.level1])}>
+                    {/* l1: aggregated from l2 children (if any), else own direct value */}
+                    <SegDataRow
+                      label={level1Group.level1}
+                      rawValues={level1Group.rawValues}
+                      periods={periods}
+                      depth="l1"
+                      saleType={saleTypeGroup.saleType}
+                      hideValues={isGrossMargin && level1Group.level2Groups.length > 0}
+                    />
 
-                  {level1Group.level2Groups.map((level2Group) => (
-                    <React.Fragment key={buildSegmentKey([saleTypeGroup.saleType, level1Group.level1, level2Group.level2])}>
-                      {/* l2: aggregated from l3 children (if any), else own direct value */}
-                      <SegDataRow
-                        label={level2Group.level2}
-                        rawValues={level2Group.rawValues}
-                        periods={periods}
-                        depth="l2"
-                        saleType={saleTypeGroup.saleType}
-                      />
-
-                      {level2Group.level3Groups.map((level3Group) => (
+                    {level1Group.level2Groups.map((level2Group) => (
+                      <React.Fragment key={buildSegmentKey([saleTypeGroup.saleType, level1Group.level1, level2Group.level2])}>
+                        {/* l2: aggregated from l3 children (if any), else own direct value */}
                         <SegDataRow
-                          key={buildSegmentKey([saleTypeGroup.saleType, level1Group.level1, level2Group.level2, level3Group.level3])}
-                          label={level3Group.level3}
-                          rawValues={level3Group.rawValues}
+                          label={level2Group.level2}
+                          rawValues={level2Group.rawValues}
                           periods={periods}
-                          depth="l3"
+                          depth="l2"
                           saleType={saleTypeGroup.saleType}
+                          hideValues={isGrossMargin && level2Group.level3Groups.length > 0}
                         />
-                      ))}
-                    </React.Fragment>
-                  ))}
-                </React.Fragment>
-              ))}
-            </React.Fragment>
-          ))}
+
+                        {level2Group.level3Groups.map((level3Group) => (
+                          <SegDataRow
+                            key={buildSegmentKey([saleTypeGroup.saleType, level1Group.level1, level2Group.level2, level3Group.level3])}
+                            label={level3Group.level3}
+                            rawValues={level3Group.rawValues}
+                            periods={periods}
+                            depth="l3"
+                            saleType={saleTypeGroup.saleType}
+                          />
+                        ))}
+                      </React.Fragment>
+                    ))}
+                  </React.Fragment>
+                ))}
+              </React.Fragment>
+            );
+          })}
         </tbody>
       </table>
     </div>
