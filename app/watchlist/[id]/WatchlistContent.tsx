@@ -37,7 +37,7 @@ import {
   getUserAllWatchlists,
   WATCHLIST_MAX_COMPANIES,
 } from '@/app/lib/watchlistApi';
-import type { GetWatchlistDataParams } from '@/app/lib/watchlistApi';
+import type { GetWatchlistDataParams, WatchlistDataItem } from '@/app/lib/watchlistApi';
 import { setFavoritesInPersonality } from '@/app/lib/getFavoritesByUserAcct';
 import { getPaginationRange } from '@/app/lib/paginationUtils';
 
@@ -125,6 +125,12 @@ const BUILTIN_VIEWS = ['Summary'] as const;
 
 // Fixed selectedCategories IDs for the Summary view (API standard)
 const SUMMARY_FIXED_CATEGORIES = [58, 59, 60, 63, 29, 90, 87, 88, 89] as const;
+
+// Maps Summary string column ID → numeric category ID for columns whose value comes from fld_val
+const SUMMARY_COL_CATEGORY_ID: Record<string, number> = {
+  revenue: 58,
+  lastQtrRevenue: 87,
+};
 
 // localStorage key prefix for cached getWatchlistDetail responses
 const WL_DETAIL_LS_KEY = (id: number) => `wl-detail-${id}`;
@@ -262,13 +268,13 @@ function createPlaceholderHolding(symbol: string): Holding {
     cost,
     todayGain,
     todayGainPct,
-    revenue: `$${revenueB.toFixed(2)}B`,
+    revenue: revenueB.toFixed(2),
     revenueQoQ: `${qoqSign}${((seed % 15) + 1).toFixed(1)}%`,
     revenueYoY: `${yoySign}${((seed % 30) + 1).toFixed(1)}%`,
     grossMargin: `${grossMarginPct}%`,
     doi: `${doiDays}`,
     nextEarning: 'TBD',
-    lastQtrRevenue: `$${(revenueB * 1.05).toFixed(2)}B`,
+    lastQtrRevenue: (revenueB * 1.05).toFixed(2),
     lastQtrGrossMargin: `${grossMarginPct + 1}%`,
     lastQtrDOI: `${doiDays - 5}`,
   };
@@ -858,6 +864,9 @@ export function WatchlistContent({
   const [feedTab, setFeedTab] = useState<FeedTab>('Latest');
   const [newsPage, setNewsPage] = useState(0);
 
+  // API response data from getWatchlistData — used to render fld_val directly
+  const [watchlistApiData, setWatchlistApiData] = useState<WatchlistDataItem[]>([]);
+
   // Build dynamic quarter options (current quarter back 8 quarters)
   const recentQuarters = useMemo(() => buildRecentQuarters(), []);
   const [quarter, setQuarter] = useState(recentQuarters[0] ?? { year: 2026, q: 1 });
@@ -1082,7 +1091,7 @@ export function WatchlistContent({
       const now = new Date();
       const pad = (n: number) => String(n).padStart(2, '0');
       const curr_dt = `${now.getUTCFullYear()}-${pad(now.getUTCMonth() + 1)}-${pad(now.getUTCDate())} ${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())}:${pad(now.getUTCSeconds())}`;
-      getWatchlistData({
+      const result = getWatchlistData({
         watchlistId: numericId,
         viewId: activeTab === 'Summary' ? 0 : (customViews.find((v) => v.id === activeTab)?.apiViewId ?? 0),
         year: [String(quarter.year)],
@@ -1091,6 +1100,7 @@ export function WatchlistContent({
         co_cd: coList,
         curr_dt,
       });
+      setWatchlistApiData(result);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quarter, activeTab, watchlistId]);
@@ -1130,6 +1140,16 @@ export function WatchlistContent({
   const sortedHoldings = [...currentSymbolOrder]
     .map((sym) => holdingsLookup.get(sym) ?? extraHoldings[sym])
     .filter(Boolean) as Holding[];
+
+  // Lookup map: co_cd → (categoryId → fld_val) — used to render API response values directly
+  const apiDataLookup = useMemo(() => {
+    const map = new Map<string, Map<number, string | number | null>>();
+    for (const item of watchlistApiData) {
+      if (!map.has(item.co_cd)) map.set(item.co_cd, new Map());
+      map.get(item.co_cd)!.set(item.selectedCategories, item.fld_val);
+    }
+    return map;
+  }, [watchlistApiData]);
 
   // Company name lookup map (symbol → full name)
   const companyNameMap = new Map(COMPANY_MASTER_LIST.map((c) => [c.symbol, c.name]));
@@ -1216,7 +1236,8 @@ export function WatchlistContent({
     }
 
     const params = buildWatchlistDataParams(numericId, coList, selectedCategories, viewId);
-    getWatchlistData(params);
+    const data = getWatchlistData(params);
+    setWatchlistApiData(data);
     // Update local symbol order and extra holdings
     setSymbolOrder(watchlistId, coList);
     const newExtras = { ...extraHoldings };
@@ -1751,9 +1772,12 @@ export function WatchlistContent({
                           const def = ALL_COLUMNS[c];
                           if (!def) return <td key={c} className="wl-td">-</td>;
                           const cls = def.getClass ? def.getClass(h) : '';
+                          const catId = SUMMARY_COL_CATEGORY_ID[c];
+                          const fldVal = catId !== undefined ? apiDataLookup.get(h.symbol)?.get(catId) : undefined;
+                          const displayVal = (fldVal !== undefined && fldVal !== null) ? fldVal : def.getValue(h);
                           return (
                             <td key={c} className={`wl-td${cls ? ` ${cls}` : ''}`}>
-                              {def.getValue(h)}
+                              {displayVal}
                             </td>
                           );
                         })}
