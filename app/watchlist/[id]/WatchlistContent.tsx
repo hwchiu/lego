@@ -386,7 +386,11 @@ function ManageViewModal({
   const [modalTab, setModalTab] = useState<'create' | 'edit'>('create');
 
   // Create New View state — category/column data from getViewAllColumns()
-  const viewAllColumns = useMemo(() => getViewAllColumns(), []);
+  // Sort categories by categoryId ascending (as required by API response contract)
+  const viewAllColumns = useMemo(() => {
+    const cols = getViewAllColumns();
+    return [...cols].sort((a, b) => (a.categoryId < b.categoryId ? -1 : a.categoryId > b.categoryId ? 1 : 0));
+  }, []);
   const categoryLabels = useMemo(() => viewAllColumns.map((c) => c.categoryName), [viewAllColumns]);
   const categoryColumnMap = useMemo(() => {
     const map: Record<string, { column_id: number; column_name: string }[]> = {};
@@ -405,9 +409,12 @@ function ManageViewModal({
     return map;
   }, [viewAllColumns]);
 
+  const MAX_SELECTED_COLUMNS = 15;
+
   const [viewName, setViewName] = useState('');
   const [viewNameError, setViewNameError] = useState(false);
   const [columnsError, setColumnsError] = useState(false);
+  const [columnLimitWarning, setColumnLimitWarning] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>(categoryLabels[0] ?? '');
   const [selectedColumns, setSelectedColumns] = useState<number[]>([]);
 
@@ -421,14 +428,24 @@ function ManageViewModal({
   const availableColumns = categoryColumnMap[selectedCategory] ?? [];
 
   const handleToggleColumn = useCallback((colId: number) => {
-    setSelectedColumns((prev) =>
-      prev.includes(colId) ? prev.filter((c) => c !== colId) : [...prev, colId],
-    );
+    setSelectedColumns((prev) => {
+      if (prev.includes(colId)) {
+        setColumnLimitWarning(false);
+        return prev.filter((c) => c !== colId);
+      }
+      if (prev.length >= MAX_SELECTED_COLUMNS) {
+        setColumnLimitWarning(true);
+        return prev;
+      }
+      setColumnLimitWarning(false);
+      return [...prev, colId];
+    });
     setColumnsError(false);
   }, []);
 
   const handleRemoveSelectedColumn = useCallback((colId: number) => {
     setSelectedColumns((prev) => prev.filter((c) => c !== colId));
+    setColumnLimitWarning(false);
   }, []);
 
   // Drag handlers for selected columns reorder
@@ -612,6 +629,13 @@ function ManageViewModal({
               {columnsError && selectedColumns.length === 0 && (
                 <span className="wl-modal-field-error-msg" style={{ alignSelf: 'flex-end' }}>
                   Please select at least one column to create a view.
+                </span>
+              )}
+
+              {/* Column limit warning */}
+              {columnLimitWarning && (
+                <span className="wl-modal-field-error-msg" style={{ alignSelf: 'flex-end' }}>
+                  You can select a maximum of {MAX_SELECTED_COLUMNS} columns per view.
                 </span>
               )}
 
