@@ -3223,9 +3223,9 @@ html:not(.dark) .sidebar-submenu-icon-left {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  background: rgb(233 233 233 / 82%);
-  backdrop-filter: blur(0.5px);
-  -webkit-backdrop-filter: blur(0.5px);
+  background: rgb(243 244 246 / 60%);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
   border-radius: inherit;
 }
 .wl-feed-tab-cs-lock {
@@ -21221,9 +21221,8 @@ html.dark .search-category-btn:hover,
 html.dark .search-category-btn.active { background: #334155; color: #f1f5f9; border-color: #475569; }
 html.dark .wl-modal-done-btn,
 html.dark .wl-modal-submit-btn { background: #4fc3f7; color: #0f172a; }
-html.dark .wl-feed-tab-cs-overlay { background: rgba(15, 23, 42, 0.80); border-color: rgba(255,255,255,0.08); }
-html.dark .wl-feed-tab-cs-lock,
-html.dark .wl-feed-tab-cs-label { color: #94a3b8; }
+html.dark .wl-feed-tab-cs-overlay { background: rgba(15, 23, 42, 0.50); }
+html.dark .wl-feed-tab-cs-lock { color: #94a3b8; }
 html.dark .chatbot-fab { background: #1e293b; }
 html.dark .chatbot-dialog-header { background: #1e293b; }
 html.dark .chatbot-bubble--user { background: #1e3a5f; color: #f1f5f9; }

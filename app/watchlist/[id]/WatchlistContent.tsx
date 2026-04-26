@@ -1856,7 +1856,6 @@ export function WatchlistContent({
                       <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       <circle cx="12" cy="16" r="1.2" fill="currentColor" />
                     </svg>
-                    <span className="wl-feed-tab-cs-label">Coming Soon</span>
                   </span>
                 </button>
               </div>
