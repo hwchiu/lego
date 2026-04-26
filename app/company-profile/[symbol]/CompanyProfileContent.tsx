@@ -173,17 +173,12 @@ function parseLocalDate(dateStr: string): Date {
 
 // Format a news timestamp for the cp-news-tab-time label.
 // • < 24 h ago  → "Xh ago"
-// • 1–3 calendar days ago (browser local timezone) → "Xd ago"
 // • Older → "Mon D, YYYY HH:MM"  (same style as Market News NewsCard)
 function formatCpNewsTime(date: Date): string {
   const now = new Date();
-  const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const pubLocal = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  const calendarDaysAgo = Math.round((todayLocal.getTime() - pubLocal.getTime()) / 86_400_000);
   const hoursAgo = Math.round((now.getTime() - date.getTime()) / 3_600_000);
 
   if (hoursAgo < 24) return `${hoursAgo}h ago`;
-  if (calendarDaysAgo <= 3) return `${calendarDaysAgo}d ago`;
 
   const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
