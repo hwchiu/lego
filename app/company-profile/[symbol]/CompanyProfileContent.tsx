@@ -781,13 +781,40 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
       if (allPeriods.size === 0) continue;
       const latestPeriod = [...allPeriods].sort((a, b) => periodSortKey(b) - periodSortKey(a))[0];
 
-      // Use level-1 items for each category so all categories produce a breakdown
+      // Collect nodes at the configured seg level (falling back to the next
+      // higher level when the requested depth has no children for a given node).
+      const segLevel = segInfo?.SEG_LEVEL ?? '1';
       const nodes: Array<{ name: string; value: number }> = [];
       for (const l1g of saleTypeGroup.level1Groups) {
-        const value = l1g.rawValues[latestPeriod];
-        const name = l1g.level1;
-        if (value == null || name.toLowerCase().includes('total')) continue;
-        nodes.push({ name: name.replace(MILLION_DOLLAR_SUFFIX_RE, ''), value });
+        if (segLevel === '2' && l1g.level2Groups.length > 0) {
+          for (const l2g of l1g.level2Groups) {
+            const value = l2g.rawValues[latestPeriod];
+            const name = l2g.level2;
+            if (value == null || name.toLowerCase().includes('total')) continue;
+            nodes.push({ name: name.replace(MILLION_DOLLAR_SUFFIX_RE, ''), value });
+          }
+        } else if (segLevel === '3' && l1g.level2Groups.length > 0) {
+          for (const l2g of l1g.level2Groups) {
+            if (l2g.level3Groups.length > 0) {
+              for (const l3g of l2g.level3Groups) {
+                const value = l3g.rawValues[latestPeriod];
+                const name = l3g.level3;
+                if (value == null || name.toLowerCase().includes('total')) continue;
+                nodes.push({ name: name.replace(MILLION_DOLLAR_SUFFIX_RE, ''), value });
+              }
+            } else {
+              const value = l2g.rawValues[latestPeriod];
+              const name = l2g.level2;
+              if (value == null || name.toLowerCase().includes('total')) continue;
+              nodes.push({ name: name.replace(MILLION_DOLLAR_SUFFIX_RE, ''), value });
+            }
+          }
+        } else {
+          const value = l1g.rawValues[latestPeriod];
+          const name = l1g.level1;
+          if (value == null || name.toLowerCase().includes('total')) continue;
+          nodes.push({ name: name.replace(MILLION_DOLLAR_SUFFIX_RE, ''), value });
+        }
       }
 
       if (nodes.length === 0) continue;
