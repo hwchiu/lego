@@ -4352,7 +4352,7 @@ html:not(.dark) .sidebar-submenu-icon-left {
   display: grid;
   grid-template-columns: 1.5fr 1.5fr 7fr;
   gap: 16px;
-  align-items: start;
+  align-items: stretch;
 }
 
 /* Stacked cards column */
@@ -4364,6 +4364,10 @@ html:not(.dark) .sidebar-submenu-icon-left {
 
 .cp-col-stack > .cp-data-card {
   flex: none;
+}
+
+.cp-col-stack > .cp-data-card:last-child {
+  flex: 1;
 }
 
 .cp-data-card {

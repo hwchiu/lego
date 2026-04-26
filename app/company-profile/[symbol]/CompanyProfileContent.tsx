@@ -14,7 +14,7 @@ import { getAllCoFavoriteList, addCompanyToMyFavorite, removeCompanyFromFavorite
 import type { TagInfoDTO } from '@/app/lib/watchlistApi';
 import { getPaginationRange } from '@/app/lib/paginationUtils';
 import companyProfileMd from '@/content/company-profile.md';
-import FinancialStatementTab, { buildSegmentHierarchy } from './FinancialStatementTab';
+import FinancialStatementTab, { buildSegmentHierarchy, sortCategories } from './FinancialStatementTab';
 import CompanyMATab from './CompanyMATab';
 import InvestmentTab from './InvestmentTab';
 import AcquisitionTab from './AcquisitionTab';
@@ -677,7 +677,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     );
     if (!quarterlyRecords.length) return [];
 
-    // Collect unique categories in order of first appearance
+    // Collect unique categories sorted: platform before geometric, others after
     const categoryOrder: string[] = [];
     const categorySeen = new Set<string>();
     for (const r of quarterlyRecords) {
@@ -687,6 +687,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
         categorySeen.add(cat);
       }
     }
+    sortCategories(categoryOrder);
 
     function periodSortKey(p: string): number {
       const m = p.match(/^Q([1-4])\s+(\d{4})$/);
