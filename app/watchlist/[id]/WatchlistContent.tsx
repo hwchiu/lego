@@ -782,6 +782,7 @@ interface UpdateFeedItem {
   dateMs: number;
   description?: string;
   contactName?: string;
+  url?: string;
 }
 
 /** Format an event date string to local-timezone YYYY-MM-DD HH:MM */
@@ -1445,6 +1446,7 @@ export function WatchlistContent({
       displaySymbols: item.tags.filter((t) => watchlistSymbolSet.has(t.symbol)).map((t) => t.symbol),
       dateLabel: item.publishedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       dateMs: item.publishedAt.getTime(),
+      url: item.url,
     })),
     [filteredNewsItems],
   );
@@ -1481,6 +1483,7 @@ export function WatchlistContent({
             contactName: evt.company,
             dateLabel: formatEventDateLabel(evt.eventDate),
             dateMs: (() => { const t = new Date(evt.eventDate).getTime(); return isNaN(t) ? parseDateKey(date) : t; })(),
+            url: evt.webcastLink || undefined,
           });
         });
       });
@@ -1942,7 +1945,11 @@ export function WatchlistContent({
                       )}
                       {item.kind === 'event' ? (
                         <div className="wl-feed-body">
-                          <div className="wl-event-description">{item.title}</div>
+                          <div className="wl-event-description">
+                            {item.url ? (
+                              <a href={item.url} target="_blank" rel="noopener noreferrer">{item.title}</a>
+                            ) : item.title}
+                          </div>
                           <div className="wl-feed-meta">
                             <span className="wl-event-contact-name">{item.contactName}</span>
                             <span className="wl-feed-dot">•</span>
@@ -1953,7 +1960,11 @@ export function WatchlistContent({
                         </div>
                       ) : (
                         <div className="wl-feed-body">
-                          <div className="wl-feed-title">{item.title}</div>
+                          <div className="wl-feed-title">
+                            {item.url ? (
+                              <a href={item.url} target="_blank" rel="noopener noreferrer">{item.title}</a>
+                            ) : item.title}
+                          </div>
                           {item.description && (
                             <div className="wl-feed-description">{item.description}</div>
                           )}
