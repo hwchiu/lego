@@ -77,6 +77,24 @@ function ChevronDownIcon({ className }: { className?: string }) {
   );
 }
 
+function ExpandAllIcon() {
+  return (
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+      <path d="M3 5L7 1L11 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3 9L7 13L11 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function CollapseAllIcon() {
+  return (
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+      <path d="M3 1L7 5L11 1" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3 13L7 9L11 13" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 // ── Parser types ──────────────────────────────────────────────────────────────
 
 interface SpeakerSection {
@@ -276,38 +294,108 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
   }, [allSections, keyword]);
 
   const [manualExpandedIds, setManualExpandedIds] = useState<Set<string>>(new Set());
+  // manualCollapsedIds tracks sections explicitly collapsed by the user (overrides keyword-expand)
+  const [manualCollapsedIds, setManualCollapsedIds] = useState<Set<string>>(new Set());
+  // selectedChipIds tracks which exec chips are active for filtering (multi-select)
+  const [selectedChipIds, setSelectedChipIds] = useState<Set<string>>(new Set());
+  // collapsedAll=true suppresses keyword-expand and only shows manualExpandedIds
+  const [collapsedAll, setCollapsedAll] = useState(false);
+  // isExpandedState tracks the user/auto-expand intent for the toggle-all button.
+  // Using an explicit state (not derived) ensures the button reflects intended state
+  // even when chips are selected and sections are auto-expanded.
+  const [isExpandedState, setIsExpandedState] = useState(false);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  // Merge manually expanded with keyword-expanded
+  // Merge manually expanded with keyword-expanded.
+  // When collapsedAll=true, keyword expansion is suppressed (only manual expansions show).
+  // manualCollapsedIds always prevents a section from being keyword-auto-expanded.
   const expandedIds = useMemo(() => {
     const merged = new Set(manualExpandedIds);
-    keywordExpandedIds.forEach((id) => merged.add(id));
+    if (!collapsedAll) {
+      keywordExpandedIds.forEach((id) => {
+        if (!manualCollapsedIds.has(id)) merged.add(id);
+      });
+    }
     return merged;
-  }, [manualExpandedIds, keywordExpandedIds]);
+  }, [collapsedAll, manualExpandedIds, keywordExpandedIds, manualCollapsedIds]);
 
   useEffect(() => {
     setManualExpandedIds(new Set());
+    setManualCollapsedIds(new Set());
+    setSelectedChipIds(new Set());
+    setCollapsedAll(false);
+    setIsExpandedState(false);
   }, [entry.co_cd, entry.fiscal_year_no, entry.fiscal_qtr_no]);
 
+  const managementParticipants = useMemo(() => participants.filter((p) => p.type === 'management'), [participants]);
+  const analystParticipants = useMemo(() => participants.filter((p) => p.type === 'analyst'), [participants]);
+
+  // Analyst chips — one chip per analyst from the structured participants block.
+  // Use "analyst-{name}" as the virtual chip ID so IDs never collide with section IDs.
+  const analystChips = useMemo(
+    () => analystParticipants.map((p) => ({ id: `analyst-${p.name}`, displayName: p.name, role: p.role })),
+    [analystParticipants],
+  );
+
+  // Build a map from chip id → displayName for efficient lookup.
+  // Includes both exec section IDs and analyst virtual IDs.
+  const chipDisplayNames = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const s of managementSections) {
+      map.set(s.id, s.displayName);
+    }
+    for (const chip of analystChips) {
+      map.set(chip.id, chip.displayName);
+    }
+    return map;
+  }, [managementSections, analystChips]);
+
   const handleChipClick = useCallback((id: string) => {
+    setSelectedChipIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        // Toggle off — remove filter for this chip
+        next.delete(id);
+        return next;
+      }
+      // Toggle on — add filter and expand + scroll to section
+      next.add(id);
+      return next;
+    });
+    // Expand the section and scroll to it.
+    // For exec chips the id is the section id directly; for analyst virtual IDs find
+    // the first Q&A section whose speaker contains the chip display name.
     setManualExpandedIds((prev) => {
       const next = new Set(prev);
       next.add(id);
       return next;
     });
     setTimeout(() => {
-      sectionRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (sectionRefs.current[id]) {
+        sectionRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        // Virtual analyst chip — find first matching Q&A section
+        const chipName = chipDisplayNames.get(id)?.toLowerCase() ?? '';
+        if (chipName) {
+          const match = qaSections.find((s) => s.speaker.toLowerCase().includes(chipName));
+          if (match) {
+            setManualExpandedIds((prev) => { const n = new Set(prev); n.add(match.id); return n; });
+            sectionRefs.current[match.id]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      }
     }, 60);
-  }, []);
+  }, [chipDisplayNames, qaSections]);
 
-  const handleToggle = useCallback((id: string) => {
+  const handleToggle = useCallback((id: string, expand: boolean) => {
     setManualExpandedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
+      expand ? next.add(id) : next.delete(id);
+      return next;
+    });
+    setManualCollapsedIds((prev) => {
+      const next = new Set(prev);
+      expand ? next.delete(id) : next.add(id);
       return next;
     });
   }, []);
@@ -325,7 +413,61 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
   // Chips show management speakers only (or all if no structured data)
   const execChips = managementSections;
 
+  // Determine whether a section is visible given the current chip filter.
+  // "Operator" sections are always visible (conversation starters, above filter scope).
+  // When no chips are selected, all sections are visible.
+  const isSectionVisible = useCallback((section: SpeakerSection): boolean => {
+    if (selectedChipIds.size === 0) return true;
+    if (/^operator$/i.test(section.displayName.trim())) return true;
+    const speakerLower = section.speaker.toLowerCase();
+    for (const chipId of selectedChipIds) {
+      const chipName = chipDisplayNames.get(chipId);
+      if (chipName && speakerLower.includes(chipName.toLowerCase())) {
+        return true;
+      }
+    }
+    return false;
+  }, [selectedChipIds, chipDisplayNames]);
+
+  // When chip selection changes, auto-expand all newly-visible sections
+  useEffect(() => {
+    if (selectedChipIds.size === 0) return;
+    setIsExpandedState(true);
+    setCollapsedAll(false);
+    setManualCollapsedIds(new Set());
+    setManualExpandedIds((prev) => {
+      const next = new Set(prev);
+      for (const section of allSections) {
+        if (/^operator$/i.test(section.displayName.trim())) { next.add(section.id); continue; }
+        const speakerLower = section.speaker.toLowerCase();
+        for (const chipId of selectedChipIds) {
+          const chipName = chipDisplayNames.get(chipId);
+          if (chipName && speakerLower.includes(chipName.toLowerCase())) {
+            next.add(section.id);
+            break;
+          }
+        }
+      }
+      return next;
+    });
+  }, [selectedChipIds, allSections, chipDisplayNames]);
+
+  function handleToggleAll() {
+    if (isExpandedState) {
+      setIsExpandedState(false);
+      setCollapsedAll(true);
+      setManualExpandedIds(new Set());
+      setManualCollapsedIds(new Set());
+    } else {
+      setIsExpandedState(true);
+      setCollapsedAll(false);
+      setManualExpandedIds(new Set(allSections.filter(isSectionVisible).map((s) => s.id)));
+      setManualCollapsedIds(new Set());
+    }
+  }
+
   function renderSpeakerSection(section: SpeakerSection) {
+    if (!isSectionVisible(section)) return null;
     const isExpanded = expandedIds.has(section.id);
     const highlightedHtml = keyword.trim() ? highlightHtml(section.contentHtml, keyword) : section.contentHtml;
     return (
@@ -336,7 +478,7 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
       >
         <button
           className={`cp-irt-speaker-header${isExpanded ? ' cp-irt-speaker-header--expanded' : ''}`}
-          onClick={() => handleToggle(section.id)}
+          onClick={() => handleToggle(section.id, !isExpanded)}
           aria-expanded={isExpanded}
         >
           <span className="cp-irt-speaker-name">{highlightText(section.speaker, keyword)}</span>
@@ -352,16 +494,13 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
     );
   }
 
-  const managementParticipants = participants.filter((p) => p.type === 'management');
-  const analystParticipants = participants.filter((p) => p.type === 'analyst');
-
   return (
     <article className="cp-pec-card cp-irt-card">
       {/* Header */}
       <div className="cp-pec-card-header">
         <div className="cp-pec-card-header-left">
           <span className="cp-pec-card-company cp-irt-badge">IR</span>
-          <div>
+          <div className="cp-pec-card-title-wrap">
             <div className="cp-pec-card-title">{highlightText(entry.doc_title, keyword)}</div>
             <div className="cp-pec-card-date">
               {entry.co_cd} · {entry.fiscal_qtr_no} {entry.fiscal_year_no}
@@ -372,38 +511,55 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
         <div className="cp-pec-card-actions">
           <button
             className="cp-pec-card-action-btn"
+            title={isExpandedState ? 'Collapse all sections' : 'Expand all sections'}
+            aria-label={isExpandedState ? 'Collapse all sections' : 'Expand all sections'}
+            onClick={handleToggleAll}
+          >
+            {isExpandedState ? <CollapseAllIcon /> : <ExpandAllIcon />}
+          </button>
+          <button
+            className="cp-pec-card-action-btn"
             title="Download HTML"
             aria-label="Download HTML"
             onClick={handleDownload}
           >
             <DownloadIcon />
           </button>
-          <a
-            href={entry.file_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cp-pec-card-action-btn"
-            title="Open source"
-            aria-label="Open source"
-          >
-            <ExternalLinkIcon />
-          </a>
         </div>
       </div>
 
       {/* Executives nav chips — quick jump to management speaker sections */}
       {execChips.length > 0 && (
-        <div className="cp-irt-exec-nav">
+        <div className={`cp-irt-exec-nav${analystChips.length > 0 ? ' cp-irt-exec-nav--no-border' : ''}`}>
           <span className="cp-irt-exec-nav-label">Executives</span>
           <div className="cp-irt-exec-chips">
             {execChips.map((s) => (
               <button
                 key={s.id}
-                className={`cp-irt-exec-chip${expandedIds.has(s.id) ? ' cp-irt-exec-chip--active' : ''}`}
+                className={`cp-irt-exec-chip${selectedChipIds.has(s.id) ? ' cp-irt-exec-chip--active' : ''}`}
                 onClick={() => handleChipClick(s.id)}
                 title={s.speaker}
               >
                 {s.displayName}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Analysts nav chips — quick filter to analyst speaker sections */}
+      {analystChips.length > 0 && (
+        <div className="cp-irt-exec-nav">
+          <span className="cp-irt-exec-nav-label">Analysts</span>
+          <div className="cp-irt-exec-chips">
+            {analystChips.map((chip) => (
+              <button
+                key={chip.id}
+                className={`cp-irt-exec-chip cp-irt-analyst-chip${selectedChipIds.has(chip.id) ? ' cp-irt-analyst-chip--active' : ''}`}
+                onClick={() => handleChipClick(chip.id)}
+                title={`${chip.displayName} — ${chip.role}`}
+              >
+                {chip.displayName}
               </button>
             ))}
           </div>

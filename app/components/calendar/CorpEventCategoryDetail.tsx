@@ -1,7 +1,7 @@
 'use client';
 
 import type { EventCalendarDetailItem } from '@/app/lib/eventCalendarApi';
-import { monthShortToFull, MONTH_SHORT } from '@/app/lib/calendarUtils';
+import { monthShortToFull } from '@/app/lib/calendarUtils';
 
 function formatDateLabel(dateLabel: string | undefined): string {
   if (!dateLabel) return '—';
@@ -21,10 +21,18 @@ function ExternalLinkIcon() {
 
 function formatEventDatetime(eventDatetime: string): string {
   if (!eventDatetime) return '—';
-  const d = new Date(eventDatetime);
-  if (isNaN(d.getTime())) return eventDatetime;
-  const month = MONTH_SHORT[d.getMonth()];
-  return `${month} ${d.getDate()}, ${d.getFullYear()}`;
+  // API returns UTC timestamps like "2026-04-07 00:00:00.0".
+  // Append 'Z' (after stripping trailing ".0") so Date parses it as UTC,
+  // then render using local-time getters to apply the browser's timezone.
+  const utcString = eventDatetime.replace(' ', 'T').replace(/\.0$/, '') + 'Z';
+  const date = new Date(utcString);
+  if (isNaN(date.getTime())) return eventDatetime;
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
 
 interface CorpEventCategoryDetailProps {
@@ -40,6 +48,14 @@ export default function CorpEventCategoryDetail({
 }: CorpEventCategoryDetailProps) {
   const displayDate = formatDateLabel(selectedDateLabel);
   const count = events.length;
+
+  // Sort by EVENT_DATETIME descending (furthest future first)
+  const sortedEvents = [...events].sort((a, b) => {
+    if (!a.EVENT_DATETIME && !b.EVENT_DATETIME) return 0;
+    if (!a.EVENT_DATETIME) return 1;
+    if (!b.EVENT_DATETIME) return -1;
+    return b.EVENT_DATETIME.localeCompare(a.EVENT_DATETIME);
+  });
 
   return (
     <div className="detail-card">
@@ -70,7 +86,7 @@ export default function CorpEventCategoryDetail({
               </tr>
             </thead>
             <tbody>
-              {events.map((e, i) => (
+              {sortedEvents.map((e, i) => (
                   <tr key={e.EVENT_ID || i}>
                     <td className="td-symbol corp-event-company">{e.COMPANY_NAME}</td>
                     <td className="corp-event-desc">{e.DESCRIPTION}</td>

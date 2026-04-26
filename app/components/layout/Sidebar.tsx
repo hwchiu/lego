@@ -120,10 +120,9 @@ function SubMenu({
     <div className="sidebar-submenu" style={{ top }} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       {isWatchlistMenu ? (
         <>
-          {/* Fixed: Favorites with a filled star icon (non-toggleable) */}
-          <div className="sidebar-submenu-item sidebar-submenu-item--with-star">
-            <StarIcon filled={true} />
-            <Link href="/watchlist/favorites/" className="sidebar-submenu-item-link">
+          {/* Fixed: Favorites — bold with accent background to distinguish it */}
+          <div className="sidebar-submenu-item sidebar-submenu-item--favorites">
+            <Link href="/watchlist/favorites/" className="sidebar-submenu-item-link sidebar-submenu-item-link--full">
               <span className="sidebar-submenu-label">{lang === 'zh' ? '我的最愛' : 'Favorites'}</span>
             </Link>
           </div>
@@ -132,21 +131,11 @@ function SubMenu({
           {[...apiWatchlists]
             .sort((a, b) => a.watchlistId - b.watchlistId)
             .map((wl) => {
-              const wlKey = String(wl.watchlistId);
-              const isFav = favorites.has(wlKey);
               return (
-                <div key={wl.watchlistId} className="sidebar-submenu-item sidebar-submenu-item--with-star">
-                  <StarIcon
-                    filled={isFav}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      toggleFavorite(wlKey);
-                    }}
-                  />
+                <div key={wl.watchlistId} className="sidebar-submenu-item">
                   <Link
                     href={`/watchlist/?id=${wl.watchlistId}`}
-                    className="sidebar-submenu-item-link"
+                    className="sidebar-submenu-item-link sidebar-submenu-item-link--full"
                   >
                     <span className="sidebar-submenu-label">{wl.watchlistName}</span>
                   </Link>

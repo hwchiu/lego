@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { extractJson } from '@/app/lib/parseContent';
 import appleMaMd from '@/content/apple-ma.md';
 
@@ -173,7 +173,7 @@ function AAPLMAPanel() {
   const allIndustries = [...new Set(deals.map((d) => d.industry))].sort();
 
   const [selectedIndustries, setSelectedIndustries] = useState<Set<string>>(new Set());
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const [filterExpanded, setFilterExpanded] = useState(false);
 
   function toggleIndustry(ind: string) {
     setSelectedIndustries((prev) => {
@@ -188,10 +188,6 @@ function AAPLMAPanel() {
     setSelectedIndustries(new Set());
   }
 
-  function scrollIndustries(dir: 'left' | 'right') {
-    scrollRef.current?.scrollBy({ left: dir === 'left' ? -150 : 150, behavior: 'smooth' });
-  }
-
   const filteredDeals =
     selectedIndustries.size === 0 ? deals : deals.filter((d) => selectedIndustries.has(d.industry));
 
@@ -202,10 +198,9 @@ function AAPLMAPanel() {
   return (
     <div className="aapl-ma-panel">
       {/* ── Industry filter bar ── */}
-      <div className="aapl-ma-filter-bar">
+      <div className={`aapl-ma-filter-bar${filterExpanded ? ' aapl-ma-filter-bar--expanded' : ''}`}>
         <span className="aapl-ma-filter-label">INDUSTRY</span>
-        <button className="aapl-ma-scroll-btn" onClick={() => scrollIndustries('left')} aria-label="Scroll left">‹</button>
-        <div className="aapl-ma-tags-scroll" ref={scrollRef}>
+        <div className={filterExpanded ? 'aapl-ma-tags-wrap' : 'aapl-ma-tags-scroll'}>
           <button
             className={`aapl-ma-industry-tag${selectedIndustries.size === 0 ? ' aapl-ma-industry-tag--active' : ''}`}
             onClick={clearAllFilters}
@@ -222,12 +217,27 @@ function AAPLMAPanel() {
             </button>
           ))}
         </div>
-        <button className="aapl-ma-scroll-btn" onClick={() => scrollIndustries('right')} aria-label="Scroll right">›</button>
         {selectedIndustries.size > 0 && (
           <button className="aapl-ma-clear-btn" onClick={() => setSelectedIndustries(new Set())}>
             Clear
           </button>
         )}
+        <button
+          className="aapl-ma-expand-btn"
+          onClick={() => setFilterExpanded((v) => !v)}
+          aria-label={filterExpanded ? 'Collapse filter' : 'Expand filter'}
+          title={filterExpanded ? 'Collapse' : 'Expand'}
+        >
+          {filterExpanded ? (
+            <svg viewBox="0 0 14 14" width="14" height="14" fill="none" aria-hidden="true">
+              <path d="M2 9l5-5 5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          ) : (
+            <svg viewBox="0 0 14 14" width="14" height="14" fill="none" aria-hidden="true">
+              <path d="M2 5l5 5 5-5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          )}
+        </button>
       </div>
 
       {/* ── Bar chart ── */}

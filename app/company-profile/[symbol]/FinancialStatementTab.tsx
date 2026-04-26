@@ -294,13 +294,33 @@ function SimpleStatementTable({ data, viewMode, yearWindowStart, allYears }: Sim
 const SEGMENT_ANNUAL_Q = 'NA';
 
 const SALE_TYPE_LABELS: Record<string, string> = {
-  PG_REVENUE: 'Segment Revenue',
-  PG_REVENUE_END_USER: 'Segment Revenue (End User)',
-  PG_NUMBER_OF_UNITS_SOLD: 'Segment Number of Unit Sold',
+  PG_REVENUE_END_USER: 'Segment Revenue (End User) ($M)', //1
+  PG_REVENUE: 'Segment Revenue ($M)',  //2
+  PG_GROSS_MARGIN: 'Segment Gross Margin (%)', //3
+  PG_NUMBER_OF_UNITS_SOLD: 'Segment Number of Unit Sold', //4  
+  PG_OPERATING_INCOME: 'Segment Operating Income ($M)', //5
+  PG_OPERATING_MARGIN: 'Segment Operating Margin (%)' //6
 };
 
 function formatSaleTypeLabel(saleType: string): string {
   return SALE_TYPE_LABELS[saleType] ?? saleType;
+}
+
+/** Returns true for any sale type whose values should not be aggregated (e.g. margin percentages). */
+function isMarginType(saleType: string): boolean {
+  return saleType.includes('MARGIN');
+}
+
+/** Canonical category rendering order: platform before geometric, others after. */
+const CATEGORY_RENDER_ORDER = ['platform', 'geometric'];
+
+/** Sort an array of category strings in-place: platform first, geometric second, others last. */
+export function sortCategories(cats: string[]): void {
+  cats.sort((a, b) => {
+    const ia = CATEGORY_RENDER_ORDER.indexOf(a.toLowerCase());
+    const ib = CATEGORY_RENDER_ORDER.indexOf(b.toLowerCase());
+    return (ia === -1 ? Infinity : ia) - (ib === -1 ? Infinity : ib);
+  });
 }
 
 /** Build a period label for a SegmentRecord. */
@@ -450,6 +470,14 @@ export function buildSegmentHierarchy(
     l2g.level3Map.get(level3)![periodLabel] = rawVal;
   }
 
+  // ── Sort sale types by SALE_TYPE_LABELS key order ──
+  const saleTypeLabelKeys = Object.keys(SALE_TYPE_LABELS);
+  saleTypeOrder.sort((a, b) => {
+    const ia = saleTypeLabelKeys.indexOf(a);
+    const ib = saleTypeLabelKeys.indexOf(b);
+    return (ia === -1 ? Infinity : ia) - (ib === -1 ? Infinity : ib);
+  });
+
   // ── Build output with bottom-up aggregation ──
   return saleTypeOrder.map((saleType) => {
     const stg = saleTypeMap.get(saleType)!;
@@ -507,6 +535,43 @@ export function buildSegmentHierarchy(
   });
 }
 
+// ── Category-grouped hierarchy ────────────────────────────────────────────────
+
+export interface SegCategoryGroup {
+  category: string;
+  hierarchy: SegSaleTypeGroup[];
+}
+
+/**
+ * Build a nested hierarchy grouped first by the `category` field of each
+ * SegmentRecord, then by sale_type within each category.
+ *
+ * Records with no `category` value are grouped under an empty-string category.
+ */
+export function buildSegmentHierarchyByCategory(
+  records: SegmentRecord[],
+  currency: 'original' | 'usd' = 'usd',
+): SegCategoryGroup[] {
+  const categoryOrder: string[] = [];
+  const categorySeen = new Set<string>();
+
+  for (const record of records) {
+    const cat = record.category ?? '';
+    if (!categorySeen.has(cat)) {
+      categoryOrder.push(cat);
+      categorySeen.add(cat);
+    }
+  }
+
+  return categoryOrder.map((category) => ({
+    category,
+    hierarchy: buildSegmentHierarchy(
+      records.filter((r) => (r.category ?? '') === category),
+      currency,
+    ),
+  }));
+}
+
 /** Render a single data row for the segment table. */
 function SegDataRow({
   label,
@@ -514,12 +579,14 @@ function SegDataRow({
   periods,
   depth,
   saleType,
+  hideValues,
 }: {
   label: string;
   rawValues: Record<string, number>;
   periods: string[];
   depth: 'sale-type' | 'l1' | 'l2' | 'l3';
   saleType: string;
+  hideValues?: boolean;
 }) {
   const isSaleType = depth === 'sale-type';
   return (
@@ -528,6 +595,9 @@ function SegDataRow({
         {label}
       </td>
       {periods.map((p) => {
+        if (hideValues) {
+          return <td key={p} className="td-num" />;
+        }
         const rawVal = rawValues[p];
         const val = rawVal != null ? formatSegmentValue(rawVal, saleType) : '—';
         const isNeg = val.startsWith('-') && val !== '-';
@@ -549,38 +619,12 @@ interface SegmentReportTableProps {
   currency: Currency;
 }
 
-function SegmentReportTable({ records, viewMode, yearWindowStart, currency }: SegmentReportTableProps) {
-  // Filter records to the current view mode / year window
-  const filteredRecords = records.filter((r) => {
-    if (viewMode === 'annual') return r.calendar_quarter === SEGMENT_ANNUAL_Q;
-    return (
-      r.calendar_quarter !== SEGMENT_ANNUAL_Q &&
-      (r.calendar_year === yearWindowStart || r.calendar_year === yearWindowStart + 1)
-    );
-  });
-
-  if (filteredRecords.length === 0) {
-    return (
-      <div className="cp-tab-placeholder">
-        <span className="cp-tab-placeholder-text">No segment data for selected period.</span>
-      </div>
-    );
-  }
-
-  // Build ordered, deduplicated period labels
-  const periodSet = new Set<string>();
-  const sortKeyMap = new Map<string, number>();
-  for (const r of filteredRecords) {
-    const lbl = segPLabel(r.calendar_year, r.calendar_quarter);
-    periodSet.add(lbl);
-    if (!sortKeyMap.has(lbl)) sortKeyMap.set(lbl, segPSortKey(r.calendar_year, r.calendar_quarter));
-  }
-  const periods = [...periodSet].sort((a, b) => (sortKeyMap.get(a) ?? 0) - (sortKeyMap.get(b) ?? 0));
-
-  // Build hierarchical data structure (currency-aware, bottom-up aggregated)
-  const hierarchy = buildSegmentHierarchy(filteredRecords, currency);
-
-  // Build two-row quarterly header groups
+/** Build two-row header cell descriptors for a sorted list of period labels. */
+function buildPeriodHeaderCells(periods: string[]): {
+  row1Cells: Array<{ type: 'annual'; label: string } | { type: 'qgroup'; yearLabel: string; count: number }>;
+  row2Quarters: string[];
+  hasQuarterly: boolean;
+} {
   type Row1Cell =
     | { type: 'annual'; label: string }
     | { type: 'qgroup'; yearLabel: string; count: number };
@@ -603,8 +647,29 @@ function SegmentReportTable({ records, viewMode, yearWindowStart, currency }: Se
       row1Cells.push({ type: 'annual', label: p });
     }
   }
-  const hasQuarterly = row2Quarters.length > 0;
-  const colSpanAll = periods.length + 1;
+  return { row1Cells, row2Quarters, hasQuarterly: row2Quarters.length > 0 };
+}
+
+/** Renders the table for a single category's hierarchy with its own period set. */
+function SegmentCategoryTable({
+  categoryRecords,
+  currency,
+}: {
+  categoryRecords: SegmentRecord[];
+  currency: Currency;
+}) {
+  // Build ordered, deduplicated period labels for this category
+  const periodSet = new Set<string>();
+  const sortKeyMap = new Map<string, number>();
+  for (const r of categoryRecords) {
+    const lbl = segPLabel(r.calendar_year, r.calendar_quarter);
+    periodSet.add(lbl);
+    if (!sortKeyMap.has(lbl)) sortKeyMap.set(lbl, segPSortKey(r.calendar_year, r.calendar_quarter));
+  }
+  const periods = [...periodSet].sort((a, b) => (sortKeyMap.get(a) ?? 0) - (sortKeyMap.get(b) ?? 0));
+
+  const hierarchy = buildSegmentHierarchy(categoryRecords, currency);
+  const { row1Cells, row2Quarters, hasQuarterly } = buildPeriodHeaderCells(periods);
 
   return (
     <div className="fin-stmt-table-wrap">
@@ -639,57 +704,126 @@ function SegmentReportTable({ records, viewMode, yearWindowStart, currency }: Se
           )}
         </thead>
         <tbody>
-          {hierarchy.map((saleTypeGroup) => (
-            <React.Fragment key={saleTypeGroup.saleType}>
-              {/* sale_type header row — shows aggregated total for all l1 children */}
-              <SegDataRow
-                label={formatSaleTypeLabel(saleTypeGroup.saleType)}
-                rawValues={saleTypeGroup.rawValues}
-                periods={periods}
-                depth="sale-type"
-                saleType={saleTypeGroup.saleType}
-              />
+          {hierarchy.map((saleTypeGroup) => {
+            const isMargin = isMarginType(saleTypeGroup.saleType);
+            return (
+              <React.Fragment key={saleTypeGroup.saleType}>
+                {/* sale_type header row — shows aggregated total for all l1 children */}
+                <SegDataRow
+                  label={formatSaleTypeLabel(saleTypeGroup.saleType)}
+                  rawValues={saleTypeGroup.rawValues}
+                  periods={periods}
+                  depth="sale-type"
+                  saleType={saleTypeGroup.saleType}
+                  hideValues={isMargin}
+                />
 
-              {saleTypeGroup.level1Groups.map((level1Group) => (
-                <React.Fragment key={buildSegmentKey([saleTypeGroup.saleType, level1Group.level1])}>
-                  {/* l1: aggregated from l2 children (if any), else own direct value */}
-                  <SegDataRow
-                    label={level1Group.level1}
-                    rawValues={level1Group.rawValues}
-                    periods={periods}
-                    depth="l1"
-                    saleType={saleTypeGroup.saleType}
-                  />
+                {saleTypeGroup.level1Groups.map((level1Group) => (
+                  <React.Fragment key={buildSegmentKey([saleTypeGroup.saleType, level1Group.level1])}>
+                    {/* l1: aggregated from l2 children (if any), else own direct value */}
+                    <SegDataRow
+                      label={level1Group.level1}
+                      rawValues={level1Group.rawValues}
+                      periods={periods}
+                      depth="l1"
+                      saleType={saleTypeGroup.saleType}
+                      hideValues={isMargin && level1Group.level2Groups.length > 0}
+                    />
 
-                  {level1Group.level2Groups.map((level2Group) => (
-                    <React.Fragment key={buildSegmentKey([saleTypeGroup.saleType, level1Group.level1, level2Group.level2])}>
-                      {/* l2: aggregated from l3 children (if any), else own direct value */}
-                      <SegDataRow
-                        label={level2Group.level2}
-                        rawValues={level2Group.rawValues}
-                        periods={periods}
-                        depth="l2"
-                        saleType={saleTypeGroup.saleType}
-                      />
-
-                      {level2Group.level3Groups.map((level3Group) => (
+                    {level1Group.level2Groups.map((level2Group) => (
+                      <React.Fragment key={buildSegmentKey([saleTypeGroup.saleType, level1Group.level1, level2Group.level2])}>
+                        {/* l2: aggregated from l3 children (if any), else own direct value */}
                         <SegDataRow
-                          key={buildSegmentKey([saleTypeGroup.saleType, level1Group.level1, level2Group.level2, level3Group.level3])}
-                          label={level3Group.level3}
-                          rawValues={level3Group.rawValues}
+                          label={level2Group.level2}
+                          rawValues={level2Group.rawValues}
                           periods={periods}
-                          depth="l3"
+                          depth="l2"
                           saleType={saleTypeGroup.saleType}
+                          hideValues={isMargin && level2Group.level3Groups.length > 0}
                         />
-                      ))}
-                    </React.Fragment>
-                  ))}
-                </React.Fragment>
-              ))}
-            </React.Fragment>
-          ))}
+
+                        {level2Group.level3Groups.map((level3Group) => (
+                          <SegDataRow
+                            key={buildSegmentKey([saleTypeGroup.saleType, level1Group.level1, level2Group.level2, level3Group.level3])}
+                            label={level3Group.level3}
+                            rawValues={level3Group.rawValues}
+                            periods={periods}
+                            depth="l3"
+                            saleType={saleTypeGroup.saleType}
+                          />
+                        ))}
+                      </React.Fragment>
+                    ))}
+                  </React.Fragment>
+                ))}
+              </React.Fragment>
+            );
+          })}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+function SegmentReportTable({ records, viewMode, yearWindowStart, currency }: SegmentReportTableProps) {
+  // Filter records to the current view mode / year window
+  const filteredRecords = records.filter((r) => {
+    if (viewMode === 'annual') return r.calendar_quarter === SEGMENT_ANNUAL_Q;
+    return (
+      r.calendar_quarter !== SEGMENT_ANNUAL_Q &&
+      (r.calendar_year === yearWindowStart || r.calendar_year === yearWindowStart + 1)
+    );
+  });
+
+  if (filteredRecords.length === 0) {
+    return (
+      <div className="cp-tab-placeholder">
+        <span className="cp-tab-placeholder-text">No segment data for selected period.</span>
+      </div>
+    );
+  }
+
+  // Split by category (sorted: platform before geometric, others follow)
+  const categoryOrder: string[] = [];
+  const categorySeen = new Set<string>();
+  for (const r of filteredRecords) {
+    const cat = r.category ?? '';
+    if (!categorySeen.has(cat)) {
+      categoryOrder.push(cat);
+      categorySeen.add(cat);
+    }
+  }
+  sortCategories(categoryOrder);
+
+  // Render one table block per category (skip categories with no renderable data)
+  const categoryBlocks = categoryOrder
+    .map((category) => {
+      const catRecords = filteredRecords.filter((r) => (r.category ?? '') === category);
+      const hierarchy = buildSegmentHierarchy(catRecords, currency);
+      if (hierarchy.length === 0) return null;
+      const hasTitle = !!category;
+      return (
+        <div key={category} className={`seg-category-block${hasTitle ? ' seg-category-block--titled' : ''}`}>
+          {hasTitle && (
+            <div className="seg-category-title">{category.toUpperCase()}</div>
+          )}
+          <SegmentCategoryTable categoryRecords={catRecords} currency={currency} />
+        </div>
+      );
+    })
+    .filter(Boolean);
+
+  if (categoryBlocks.length === 0) {
+    return (
+      <div className="cp-tab-placeholder">
+        <span className="cp-tab-placeholder-text">No segment data for selected period.</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="seg-category-blocks">
+      {categoryBlocks}
     </div>
   );
 }

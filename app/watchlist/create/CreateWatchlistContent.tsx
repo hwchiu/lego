@@ -7,6 +7,7 @@ import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 import { useWatchlist } from '@/app/contexts/WatchlistContext';
+import { WATCHLIST_MAX_COMPANIES } from '@/app/lib/watchlistApi';
 
 // Symbol lookup map for quick name resolution
 const SYMBOL_LOOKUP = new Map(COMPANY_MASTER_LIST.map((c) => [c.symbol, c.name]));
@@ -68,6 +69,7 @@ export default function CreateWatchlistContent() {
   const [symbols, setSymbols] = useState<string[]>([]);
   const [addSymbolInput, setAddSymbolInput] = useState('');
   const [addSuggestions, setAddSuggestions] = useState<{ symbol: string; name: string }[]>([]);
+  const [addSymbolError, setAddSymbolError] = useState('');
 
   // Drag state
   const dragIdx = useRef<number | null>(null);
@@ -89,14 +91,29 @@ export default function CreateWatchlistContent() {
       .map((s) => s.trim())
       .filter(Boolean);
     if (parts.length === 0) return;
-    setSymbols((prev) => {
-      const existing = new Set(prev);
-      const toAdd = parts.filter((s) => !existing.has(s));
-      return [...prev, ...toAdd];
-    });
+
+    // Compute using current `symbols` snapshot before the state update
+    const existing = new Set(symbols);
+    const toAdd = parts.filter((s) => !existing.has(s));
+    const available = Math.max(0, WATCHLIST_MAX_COMPANIES - symbols.length);
+
+    if (toAdd.length > available) {
+      setAddSymbolError(
+        available === 0
+          ? `Watchlist is full (${WATCHLIST_MAX_COMPANIES} companies max). Remove a company to add more.`
+          : `Watchlist is limited to ${WATCHLIST_MAX_COMPANIES} companies. Only the first ${available} new ${available === 1 ? 'entry' : 'entries'} will be added.`
+      );
+    } else {
+      setAddSymbolError('');
+    }
+
+    const toAddCapped = toAdd.slice(0, available);
+    if (toAddCapped.length > 0) {
+      setSymbols((prev) => [...prev, ...toAddCapped]);
+    }
     setAddSymbolInput('');
     setAddSuggestions([]);
-  }, [addSymbolInput]);
+  }, [addSymbolInput, symbols]);
 
   useEffect(() => {
     const q = addSymbolInput.toUpperCase().trim();
@@ -191,15 +208,18 @@ export default function CreateWatchlistContent() {
 
                   <div className="cwl-add-row">
                     <input
-                      className="cwl-add-input"
+                      className={`cwl-add-input${addSymbolError ? ' cwl-add-input--error' : ''}`}
                       type="text"
                       placeholder="Add symbol (e.g. AAPL)"
                       value={addSymbolInput}
-                      onChange={(e) => setAddSymbolInput(e.target.value)}
+                      onChange={(e) => { setAddSymbolInput(e.target.value); setAddSymbolError(''); }}
                       onKeyDown={(e) => e.key === 'Enter' && handleAddSymbol()}
                     />
                     <button className="cwl-add-btn" onClick={handleAddSymbol}>+ Add</button>
                   </div>
+                  {addSymbolError && (
+                    <div className="cwl-add-error-msg">{addSymbolError}</div>
+                  )}
                   {addSuggestions.length > 0 && (
                     <div className="cwl-add-suggestions">
                       {addSuggestions.map((c) => (
@@ -207,7 +227,18 @@ export default function CreateWatchlistContent() {
                           key={c.symbol}
                           className="cwl-add-suggestion-item"
                           onClick={() => {
-                            setSymbols((prev) => prev.includes(c.symbol) ? prev : [...prev, c.symbol]);
+                            if (symbols.includes(c.symbol)) {
+                              setAddSymbolInput('');
+                              setAddSuggestions([]);
+                              return;
+                            }
+                            if (symbols.length >= WATCHLIST_MAX_COMPANIES) {
+                              setAddSymbolError(`Watchlist is limited to ${WATCHLIST_MAX_COMPANIES} companies. Remove a company to add more.`);
+                              setAddSymbolInput('');
+                              setAddSuggestions([]);
+                              return;
+                            }
+                            setSymbols((prev) => [...prev, c.symbol]);
                             setAddSymbolInput('');
                             setAddSuggestions([]);
                           }}

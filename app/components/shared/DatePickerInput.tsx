@@ -13,14 +13,19 @@ interface MiniCalendarProps {
   value: string; // 'YYYY-MM-DD' or ''
   onChange: (val: string) => void;
   onClose: () => void;
+  minDate?: string; // 'YYYY-MM-DD'
+  maxDate?: string; // 'YYYY-MM-DD'
 }
 
-function MiniCalendar({ value, onChange, onClose }: MiniCalendarProps) {
+function MiniCalendar({ value, onChange, onClose, minDate, maxDate }: MiniCalendarProps) {
   const today = new Date();
   const initDate = value ? new Date(value + 'T00:00:00') : today;
   const [viewYear, setViewYear] = useState(initDate.getFullYear());
   const [viewMonth, setViewMonth] = useState(initDate.getMonth());
   const selectedDate = value ? new Date(value + 'T00:00:00') : null;
+
+  const minDateObj = minDate ? new Date(minDate + 'T00:00:00') : null;
+  const maxDateObj = maxDate ? new Date(maxDate + 'T00:00:00') : null;
 
   const firstDay = new Date(viewYear, viewMonth, 1).getDay();
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
@@ -37,7 +42,11 @@ function MiniCalendar({ value, onChange, onClose }: MiniCalendarProps) {
   function selectDay(day: number) {
     const mm = String(viewMonth + 1).padStart(2, '0');
     const dd = String(day).padStart(2, '0');
-    onChange(`${viewYear}-${mm}-${dd}`);
+    const dateStr = `${viewYear}-${mm}-${dd}`;
+    const dateObj = new Date(dateStr + 'T00:00:00');
+    if (minDateObj && dateObj < minDateObj) return;
+    if (maxDateObj && dateObj > maxDateObj) return;
+    onChange(dateStr);
     onClose();
   }
 
@@ -71,11 +80,16 @@ function MiniCalendar({ value, onChange, onClose }: MiniCalendarProps) {
             day === selectedDate.getDate() &&
             viewMonth === selectedDate.getMonth() &&
             viewYear === selectedDate.getFullYear();
+          const cellDate = new Date(viewYear, viewMonth, day);
+          const isDisabled =
+            (minDateObj !== null && cellDate < minDateObj) ||
+            (maxDateObj !== null && cellDate > maxDateObj);
           return (
             <button
               key={day}
-              className={`cp-mini-cal-cell${isToday ? ' today' : ''}${isSelected ? ' selected' : ''}`}
+              className={`cp-mini-cal-cell${isToday ? ' today' : ''}${isSelected ? ' selected' : ''}${isDisabled ? ' disabled' : ''}`}
               onClick={() => selectDay(day)}
+              disabled={isDisabled}
             >
               {day}
             </button>
@@ -95,6 +109,9 @@ export interface DatePickerInputProps {
   onChange: (val: string) => void;
   placeholder?: string;
   onPageReset?: () => void;
+  error?: boolean;
+  minDate?: string; // 'YYYY-MM-DD'
+  maxDate?: string; // 'YYYY-MM-DD'
 }
 
 export function formatDateDisplay(v: string): string {
@@ -104,7 +121,7 @@ export function formatDateDisplay(v: string): string {
   return `${CAL_MONTH_NAMES[d.getMonth()].slice(0, 3)} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
-export default function DatePickerInput({ value, onChange, placeholder = 'Select date', onPageReset }: DatePickerInputProps) {
+export default function DatePickerInput({ value, onChange, placeholder = 'Select date', onPageReset, error, minDate, maxDate }: DatePickerInputProps) {
   const [open, setOpen] = useState(false);
   const [calStyle, setCalStyle] = useState<React.CSSProperties>({});
   const containerRef = useRef<HTMLDivElement>(null);
@@ -165,7 +182,7 @@ export default function DatePickerInput({ value, onChange, placeholder = 'Select
   return (
     <div className="cp-datepicker-wrap" ref={containerRef}>
       <div
-        className={`cp-datepicker-input${open ? ' active' : ''}`}
+        className={`cp-datepicker-input${open ? ' active' : ''}${error ? ' cp-datepicker-input--error' : ''}`}
         onClick={handleToggle}
         role="button"
         tabIndex={0}
@@ -193,7 +210,7 @@ export default function DatePickerInput({ value, onChange, placeholder = 'Select
       </div>
       {open && mounted && createPortal(
         <div ref={calRef} style={calStyle}>
-          <MiniCalendar value={value} onChange={handleChange} onClose={() => setOpen(false)} />
+          <MiniCalendar value={value} onChange={handleChange} onClose={() => setOpen(false)} minDate={minDate} maxDate={maxDate} />
         </div>,
         document.body
       )}

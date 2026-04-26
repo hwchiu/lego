@@ -128,7 +128,7 @@ function AiTranscriptDetail({ entry, companyName, keyword }: AiTranscriptDetailP
       <div className="cp-pec-card-header">
         <div className="cp-pec-card-header-left">
           <span className="cp-pec-card-company cp-pec-ai-badge">AI</span>
-          <div>
+          <div className="cp-pec-card-title-wrap">
             <div className="cp-pec-card-title">{highlightText(entry.doc_title, keyword)}</div>
             <div className="cp-pec-card-date">{entry.co_cd} · {entry.fiscal_qtr_no} {entry.fiscal_year_no}</div>
           </div>

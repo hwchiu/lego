@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
@@ -8,10 +8,82 @@ import NewsCategoryTabs from '@/app/components/news/NewsCategoryTabs';
 import NewsCard from '@/app/components/news/NewsCard';
 import CompanyRankingTable from '@/app/components/news/CompanyRankingTable';
 import DatePickerInput from '@/app/components/shared/DatePickerInput';
-import { newsItems, NewsCategory } from '@/app/data/news';
+import { newsItems, NewsCategory, NewsItem } from '@/app/data/news';
 import { getPaginationRange } from '@/app/lib/paginationUtils';
 
 const PAGE_SIZE = 8;
+
+interface NewsSummaryRecord {
+  news_date: string;
+  co_cd: string;
+  news_source: string;
+  comp_tag_short_name: string;
+  news_catg: string;
+  news_content: string;
+  news_url: string;
+  news_title: string;
+  update_date: string;
+}
+
+async function getNewsSummary(params: {
+  news_dt_from: string;
+  news_dt_to: string;
+  co_cd: string[];
+}): Promise<NewsSummaryRecord[]> {
+  const res = await fetch('/getNewsSummary', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(params),
+  });
+  if (!res.ok) throw new Error(`getNewsSummary failed: ${res.status}`);
+  return res.json();
+}
+
+function mapSummaryToNewsItem(record: NewsSummaryRecord, index: number): NewsItem {
+  return {
+    id: `api-${record.co_cd}-${record.news_date}-${index}`,
+    source: /^[\x20-\x7E\uFF01-\uFF5E]*$/.test(record.news_source) ? record.news_source : 'Others',
+    title: record.news_title,
+    content: record.news_content,
+    category: record.news_catg,
+    fileType: record.news_catg,
+    tags: record.co_cd
+      ? [{ symbol: record.co_cd, name: record.comp_tag_short_name || record.co_cd, change: 0 }]
+      : [],
+    publishedAt: new Date(record.news_date),
+    url: record.news_url,
+  };
+}
+
+/** Returns today's date as 'YYYY-MM-DD' */
+function todayStr(): string {
+  const d = new Date();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
+
+/** Adds (or subtracts) `months` to a 'YYYY-MM-DD' string, returns 'YYYY-MM-DD'.
+ *  Clamps day to the last day of the target month to avoid overflow (e.g. Jan 31 + 1mo → Feb 28). */
+function addMonths(dateStr: string, months: number): string {
+  const d = new Date(dateStr + 'T00:00:00');
+  const origDay = d.getDate();
+  const targetMonth = d.getMonth() + months;
+  const targetYear = d.getFullYear() + Math.floor(targetMonth / 12);
+  const normMonth = ((targetMonth % 12) + 12) % 12;
+  const lastDay = new Date(targetYear, normMonth + 1, 0).getDate();
+  const clampedDay = Math.min(origDay, lastDay);
+  const result = new Date(targetYear, normMonth, clampedDay);
+  const mm = String(result.getMonth() + 1).padStart(2, '0');
+  const dd = String(result.getDate()).padStart(2, '0');
+  return `${result.getFullYear()}-${mm}-${dd}`;
+}
+
+/** Formats 'YYYY-MM-DD' to 'YYYY-MM-DD HH:mm:ss' */
+function toApiDateTime(dateStr: string, endOfDay = false): string {
+  const time = endOfDay ? '23:59:59' : '00:00:00';
+  return `${dateStr} ${time}`;
+}
 
 export default function MarketNewsPage() {
   const [activeCategory, setActiveCategory] = useState<NewsCategory>('all');
@@ -24,12 +96,34 @@ export default function MarketNewsPage() {
   const [filterPeriodEnd, setFilterPeriodEnd] = useState('');
   const [filterCompanySymbol, setFilterCompanySymbol] = useState<string | null>(null);
 
+  // Validation error state for period inputs
+  const [periodStartError, setPeriodStartError] = useState(false);
+  const [periodEndError, setPeriodEndError] = useState(false);
+
+  // API search results (null = not yet searched, use local data)
+  const [searchResults, setSearchResults] = useState<NewsItem[] | null>(null);
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState(false);
+
+  // Update start date; end date is constrained to [start, start+3mo] via picker props
+  const handlePeriodStartChange = useCallback((val: string) => {
+    setFilterPeriodStart(val);
+    setPeriodStartError(false);
+    setSearchResults(null);
+  }, []);
+
+  const handlePeriodEndChange = useCallback((val: string) => {
+    setFilterPeriodEnd(val);
+    setPeriodEndError(false);
+    setSearchResults(null);
+  }, []);
+
   const categoryFiltered =
     activeCategory === 'all'
       ? newsItems
       : newsItems.filter((n) => n.category === activeCategory);
 
-  const filtered = useMemo(() => {
+  const localFiltered = useMemo(() => {
     const kw = filterKeywordApplied.trim().toLowerCase();
     return categoryFiltered.filter((item) => {
       if (kw) {
@@ -51,12 +145,14 @@ export default function MarketNewsPage() {
     });
   }, [categoryFiltered, filterKeywordApplied, filterCompanySymbol, filterPeriodStart, filterPeriodEnd]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const paged = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const displayItems = searchResults ?? localFiltered;
+
+  const totalPages = Math.max(1, Math.ceil(displayItems.length / PAGE_SIZE));
+  const paged = displayItems.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
   useEffect(() => {
     setPage(0);
-  }, [activeCategory, filterKeywordApplied, filterCompanySymbol, filterPeriodStart, filterPeriodEnd]);
+  }, [activeCategory, filterKeywordApplied, filterCompanySymbol, filterPeriodStart, filterPeriodEnd, searchResults]);
 
   const goTo = (p: number) => setPage(Math.max(0, Math.min(p, totalPages - 1)));
 
@@ -73,6 +169,41 @@ export default function MarketNewsPage() {
 
   function handleCompanyClick(symbol: string | null) {
     setFilterCompanySymbol(symbol);
+  }
+
+  function handleClearAll() {
+    setFilterKeyword('');
+    setFilterKeywordApplied('');
+    setFilterPeriodStart('');
+    setFilterPeriodEnd('');
+    setPeriodStartError(false);
+    setPeriodEndError(false);
+    setFilterCompanySymbol(null);
+    setSearchResults(null);
+    setSearchError(false);
+  }
+
+  async function handleSearch() {
+    let hasError = false;
+    if (!filterPeriodStart) { setPeriodStartError(true); hasError = true; }
+    if (!filterPeriodEnd) { setPeriodEndError(true); hasError = true; }
+    if (hasError) return;
+
+    setIsSearchLoading(true);
+    setSearchError(false);
+    try {
+      const records = await getNewsSummary({
+        news_dt_from: toApiDateTime(filterPeriodStart, false),
+        news_dt_to: toApiDateTime(filterPeriodEnd, true),
+        co_cd: [],
+      });
+      setSearchResults(records.map(mapSummaryToNewsItem));
+    } catch {
+      setSearchError(true);
+      setSearchResults(null);
+    } finally {
+      setIsSearchLoading(false);
+    }
   }
 
   return (
@@ -123,22 +254,47 @@ export default function MarketNewsPage() {
                 <div className="cp-news-period-wrap">
                   <DatePickerInput
                     value={filterPeriodStart}
-                    onChange={setFilterPeriodStart}
+                    onChange={handlePeriodStartChange}
                     placeholder="Start date"
+                    error={periodStartError}
+                    maxDate={filterPeriodEnd || undefined}
+                    minDate={filterPeriodEnd ? addMonths(filterPeriodEnd, -3) : undefined}
                   />
                   <span className="cp-news-period-sep">–</span>
                   <DatePickerInput
                     value={filterPeriodEnd}
-                    onChange={setFilterPeriodEnd}
+                    onChange={handlePeriodEndChange}
                     placeholder="End date"
+                    error={periodEndError}
+                    minDate={filterPeriodStart || undefined}
+                    maxDate={filterPeriodStart ? addMonths(filterPeriodStart, 3) : undefined}
                   />
                 </div>
               </div>
+              <button
+                className="mn-search-btn"
+                onClick={handleSearch}
+                disabled={isSearchLoading}
+              >
+                {isSearchLoading ? 'Loading…' : 'Search'}
+              </button>
+              <button
+                className="mn-clear-btn"
+                onClick={handleClearAll}
+                disabled={isSearchLoading}
+              >
+                Clear
+              </button>
             </div>
 
             <NewsCategoryTabs active={activeCategory} onChange={(cat) => { setActiveCategory(cat); setFilterCompanySymbol(null); }} />
           </div>
           <div className="mn-content-area">
+            {searchError && (
+              <div className="mn-search-error">
+                Unable to fetch news. Please check your connection and try again.
+              </div>
+            )}
             <div className="company-ranking-below-tabs">
               <CompanyRankingTable selectedSymbol={filterCompanySymbol ?? undefined} onCompanyClick={handleCompanyClick} />
             </div>

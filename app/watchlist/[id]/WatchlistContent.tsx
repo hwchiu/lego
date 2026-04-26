@@ -35,9 +35,11 @@ import {
   getWatchlistDetail,
   getWatchlistData,
   getUserAllWatchlists,
+  WATCHLIST_MAX_COMPANIES,
 } from '@/app/lib/watchlistApi';
-import type { GetWatchlistDataParams } from '@/app/lib/watchlistApi';
+import type { GetWatchlistDataParams, WatchlistDataItem } from '@/app/lib/watchlistApi';
 import { setFavoritesInPersonality } from '@/app/lib/getFavoritesByUserAcct';
+import { getPaginationRange } from '@/app/lib/paginationUtils';
 
 // ── Custom View types ─────────────────────────────────────────────────────────
 interface CustomView {
@@ -123,6 +125,12 @@ const BUILTIN_VIEWS = ['Summary'] as const;
 
 // Fixed selectedCategories IDs for the Summary view (API standard)
 const SUMMARY_FIXED_CATEGORIES = [58, 59, 60, 63, 29, 90, 87, 88, 89] as const;
+
+// Maps Summary string column ID → numeric category ID for columns whose value comes from fld_val
+const SUMMARY_COL_CATEGORY_ID: Record<string, number> = {
+  revenue: 58,
+  lastQtrRevenue: 87,
+};
 
 // localStorage key prefix for cached getWatchlistDetail responses
 const WL_DETAIL_LS_KEY = (id: number) => `wl-detail-${id}`;
@@ -210,15 +218,15 @@ function Sparkline1Y({ symbol }: { symbol: string }) {
   );
 }
 
-// ── Alpha Avatar ──────────────────────────────────────────────────────────────
-function AlphaAvatar() {
+// ── News Avatar ───────────────────────────────────────────────────────────────
+function NewsAvatar() {
   return (
-    <div className="wl-feed-avatar wl-feed-avatar--alpha">
-      <svg viewBox="0 0 28 28" fill="none" width="28" height="28">
-        <circle cx="14" cy="14" r="14" fill="#e5e7eb" />
-        <text x="14" y="19" textAnchor="middle" fontSize="14" fill="#9ca3af" fontFamily="serif">
-          α
-        </text>
+    <div className="wl-feed-avatar wl-feed-avatar--news">
+      <svg viewBox="0 0 28 28" fill="none" width="28" height="28" aria-hidden="true">
+        <circle cx="14" cy="14" r="14" fill="#dcfce7" />
+        <rect x="8" y="8" width="12" height="12" rx="1.5" stroke="#16a34a" strokeWidth="1.4" fill="none" />
+        <path d="M10 11h8" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M10 14h8M10 16.5h5" stroke="#16a34a" strokeWidth="1.2" strokeLinecap="round" />
       </svg>
     </div>
   );
@@ -260,13 +268,13 @@ function createPlaceholderHolding(symbol: string): Holding {
     cost,
     todayGain,
     todayGainPct,
-    revenue: `$${revenueB.toFixed(2)}B`,
+    revenue: revenueB.toFixed(2),
     revenueQoQ: `${qoqSign}${((seed % 15) + 1).toFixed(1)}%`,
     revenueYoY: `${yoySign}${((seed % 30) + 1).toFixed(1)}%`,
     grossMargin: `${grossMarginPct}%`,
     doi: `${doiDays}`,
     nextEarning: 'TBD',
-    lastQtrRevenue: `$${(revenueB * 1.05).toFixed(2)}B`,
+    lastQtrRevenue: (revenueB * 1.05).toFixed(2),
     lastQtrGrossMargin: `${grossMarginPct + 1}%`,
     lastQtrDOI: `${doiDays - 5}`,
   };
@@ -384,7 +392,11 @@ function ManageViewModal({
   const [modalTab, setModalTab] = useState<'create' | 'edit'>('create');
 
   // Create New View state — category/column data from getViewAllColumns()
-  const viewAllColumns = useMemo(() => getViewAllColumns(), []);
+  // Sort categories by categoryId ascending (as required by API response contract)
+  const viewAllColumns = useMemo(() => {
+    const cols = getViewAllColumns();
+    return [...cols].sort((a, b) => (a.categoryId < b.categoryId ? -1 : a.categoryId > b.categoryId ? 1 : 0));
+  }, []);
   const categoryLabels = useMemo(() => viewAllColumns.map((c) => c.categoryName), [viewAllColumns]);
   const categoryColumnMap = useMemo(() => {
     const map: Record<string, { column_id: number; column_name: string }[]> = {};
@@ -403,9 +415,12 @@ function ManageViewModal({
     return map;
   }, [viewAllColumns]);
 
+  const MAX_SELECTED_COLUMNS = 15;
+
   const [viewName, setViewName] = useState('');
   const [viewNameError, setViewNameError] = useState(false);
   const [columnsError, setColumnsError] = useState(false);
+  const [columnLimitWarning, setColumnLimitWarning] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>(categoryLabels[0] ?? '');
   const [selectedColumns, setSelectedColumns] = useState<number[]>([]);
 
@@ -419,14 +434,24 @@ function ManageViewModal({
   const availableColumns = categoryColumnMap[selectedCategory] ?? [];
 
   const handleToggleColumn = useCallback((colId: number) => {
-    setSelectedColumns((prev) =>
-      prev.includes(colId) ? prev.filter((c) => c !== colId) : [...prev, colId],
-    );
+    setSelectedColumns((prev) => {
+      if (prev.includes(colId)) {
+        setColumnLimitWarning(false);
+        return prev.filter((c) => c !== colId);
+      }
+      if (prev.length >= MAX_SELECTED_COLUMNS) {
+        setColumnLimitWarning(true);
+        return prev;
+      }
+      setColumnLimitWarning(false);
+      return [...prev, colId];
+    });
     setColumnsError(false);
   }, []);
 
   const handleRemoveSelectedColumn = useCallback((colId: number) => {
     setSelectedColumns((prev) => prev.filter((c) => c !== colId));
+    setColumnLimitWarning(false);
   }, []);
 
   // Drag handlers for selected columns reorder
@@ -613,6 +638,13 @@ function ManageViewModal({
                 </span>
               )}
 
+              {/* Column limit warning */}
+              {columnLimitWarning && (
+                <span className="wl-modal-field-error-msg" style={{ alignSelf: 'flex-end' }}>
+                  You can select a maximum of {MAX_SELECTED_COLUMNS} columns per view.
+                </span>
+              )}
+
               {/* Save button */}
               <button
                 className="wl-modal-done-btn"
@@ -755,6 +787,34 @@ interface UpdateFeedItem {
   dateLabel: string;
   dateMs: number;
   description?: string;
+  contactName?: string;
+  url?: string;
+}
+
+/** Format an event date string to local-timezone YYYY-MM-DD HH:MM */
+function formatEventDateLabel(dateStr: string): string {
+  if (!dateStr) return dateStr;
+  // Try to parse as ISO-like datetime first (e.g. "2026-04-07 00:00:00.0" or "2025-04-07")
+  const isoLike = dateStr.replace(' ', 'T').replace(/\.0+$/, '');
+  const asUtc = new Date(isoLike.includes('T') ? isoLike + 'Z' : isoLike);
+  // If parsing as datetime succeeded with a time component, use local time
+  if (!isNaN(asUtc.getTime()) && isoLike.includes('T')) {
+    const y = asUtc.getFullYear();
+    const mo = String(asUtc.getMonth() + 1).padStart(2, '0');
+    const d = String(asUtc.getDate()).padStart(2, '0');
+    const h = String(asUtc.getHours()).padStart(2, '0');
+    const mi = String(asUtc.getMinutes()).padStart(2, '0');
+    return `${y}-${mo}-${d} ${h}:${mi}`;
+  }
+  // Fall back: parse as a plain date string (e.g. "Apr 7, 2025")
+  const plain = new Date(dateStr);
+  if (!isNaN(plain.getTime())) {
+    const y = plain.getFullYear();
+    const mo = String(plain.getMonth() + 1).padStart(2, '0');
+    const d = String(plain.getDate()).padStart(2, '0');
+    return `${y}-${mo}-${d} 00:00`;
+  }
+  return dateStr;
 }
 
 function parseDateKey(dateKey: string): number {
@@ -802,6 +862,10 @@ export function WatchlistContent({
 
   const [activeTab, setActiveTab] = useState<string>('Summary');
   const [feedTab, setFeedTab] = useState<FeedTab>('Latest');
+  const [newsPage, setNewsPage] = useState(0);
+
+  // API response data from getWatchlistData — used to render fld_val directly
+  const [watchlistApiData, setWatchlistApiData] = useState<WatchlistDataItem[]>([]);
 
   // Build dynamic quarter options (current quarter back 8 quarters)
   const recentQuarters = useMemo(() => buildRecentQuarters(), []);
@@ -860,6 +924,7 @@ export function WatchlistContent({
 
   // Add Symbol state
   const [addSymbolQuery, setAddSymbolQuery] = useState('');
+  const [addSymbolError, setAddSymbolError] = useState('');
 
   // Extra holdings added by the user (persisted in localStorage)
   const [extraHoldings, setExtraHoldings] = useState<Record<string, Holding>>({});
@@ -892,6 +957,11 @@ export function WatchlistContent({
   useEffect(() => {
     setEditSymbolOrder(currentSymbolOrder.slice());
   }, [currentSymbolOrderKey]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Reset news pagination when tab changes or watched symbol list changes
+  useEffect(() => {
+    setNewsPage(0);
+  }, [feedTab, currentSymbolOrderKey]); // currentSymbolOrderKey is a derived string; stable deps are intentional
 
   // Load extraHoldings from localStorage on mount
   useEffect(() => {
@@ -1018,14 +1088,19 @@ export function WatchlistContent({
     }
 
     if (coList.length > 0) {
-      getWatchlistData({
+      const now = new Date();
+      const pad = (n: number) => String(n).padStart(2, '0');
+      const curr_dt = `${now.getUTCFullYear()}-${pad(now.getUTCMonth() + 1)}-${pad(now.getUTCDate())} ${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())}:${pad(now.getUTCSeconds())}`;
+      const result = getWatchlistData({
         watchlistId: numericId,
         viewId: activeTab === 'Summary' ? 0 : (customViews.find((v) => v.id === activeTab)?.apiViewId ?? 0),
         year: [String(quarter.year)],
         quarter: [`Q${quarter.q}`],
         selectedCategories,
         co_cd: coList,
+        curr_dt,
       });
+      setWatchlistApiData(result);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quarter, activeTab, watchlistId]);
@@ -1065,6 +1140,16 @@ export function WatchlistContent({
   const sortedHoldings = [...currentSymbolOrder]
     .map((sym) => holdingsLookup.get(sym) ?? extraHoldings[sym])
     .filter(Boolean) as Holding[];
+
+  // Lookup map: co_cd → (categoryId → fld_val) — used to render API response values directly
+  const apiDataLookup = useMemo(() => {
+    const map = new Map<string, Map<number, string | number | null>>();
+    for (const item of watchlistApiData) {
+      if (!map.has(item.co_cd)) map.set(item.co_cd, new Map());
+      map.get(item.co_cd)!.set(item.selectedCategories, item.fld_val);
+    }
+    return map;
+  }, [watchlistApiData]);
 
   // Company name lookup map (symbol → full name)
   const companyNameMap = new Map(COMPANY_MASTER_LIST.map((c) => [c.symbol, c.name]));
@@ -1109,6 +1194,9 @@ export function WatchlistContent({
 
   // Helper: build GetWatchlistDataParams from getWatchlistDetail result + current view
   function buildWatchlistDataParams(numericId: number, coList: string[], selectedCategories: number[], viewId: number): GetWatchlistDataParams {
+    const now = new Date();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const curr_dt = `${now.getUTCFullYear()}-${pad(now.getUTCMonth() + 1)}-${pad(now.getUTCDate())} ${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())}:${pad(now.getUTCSeconds())}`;
     return {
       watchlistId: numericId,
       viewId,
@@ -1116,6 +1204,7 @@ export function WatchlistContent({
       quarter: [`Q${quarter.q}`],
       selectedCategories,
       co_cd: coList,
+      curr_dt,
     };
   }
 
@@ -1147,7 +1236,8 @@ export function WatchlistContent({
     }
 
     const params = buildWatchlistDataParams(numericId, coList, selectedCategories, viewId);
-    getWatchlistData(params);
+    const data = getWatchlistData(params);
+    setWatchlistApiData(data);
     // Update local symbol order and extra holdings
     setSymbolOrder(watchlistId, coList);
     const newExtras = { ...extraHoldings };
@@ -1239,46 +1329,63 @@ export function WatchlistContent({
   function handleAddSymbolClose() {
     setShowAddSymbol(false);
     setAddSymbolQuery('');
+    setAddSymbolError('');
   }
 
   async function handleAddSymbolSubmit() {
-    const symbols = addSymbolQuery
+    const parsed = addSymbolQuery
       .split(',')
       .map((s) => s.trim().toUpperCase())
       .filter(Boolean);
 
-    if (symbols.length > 0) {
-      const numericId = parseInt(watchlistId);
-
-      if (!isNaN(numericId)) {
-        // POST: addCompanyToWatchlist with new format { watchlistId, coCdList }
-        await addCompanyToWatchlist({ watchlistId: numericId, coCdList: symbols });
-        // Refresh from getWatchlistDetail + getWatchlistData
-        refreshFromDetail(numericId);
-      } else {
-        // Non-numeric IDs (e.g. 'favorites') — use local-only path
-        const newExtraHoldings = { ...extraHoldings };
-        const newOrder = [...currentSymbolOrder];
-        for (const sym of symbols) {
-          if (newOrder.includes(sym)) continue;
-          newOrder.push(sym);
-          if (!holdingsLookup.has(sym) && !newExtraHoldings[sym]) {
-            newExtraHoldings[sym] = createPlaceholderHolding(sym);
-          }
-        }
-        setExtraHoldings(newExtraHoldings);
-        setSymbolOrder(watchlistId, newOrder);
+    if (parsed.length > 0) {
+      // Enforce 10-company limit per watchlist
+      const existingSet = new Set(currentSymbolOrder);
+      const newEntries = parsed.filter((s) => !existingSet.has(s));
+      const available = Math.max(0, WATCHLIST_MAX_COMPANIES - currentSymbolOrder.length);
+      if (newEntries.length > available) {
+        setAddSymbolError(
+          available === 0
+            ? `Watchlist is full (${WATCHLIST_MAX_COMPANIES} companies max). Remove a company to add more.`
+            : `Watchlist is limited to ${WATCHLIST_MAX_COMPANIES} companies. Only the first ${available} new ${available === 1 ? 'entry' : 'entries'} will be added.`
+        );
       }
+      // Only add truly new symbols, up to the available slots
+      const symbols = newEntries.slice(0, available);
 
-      // When adding symbols to the Favorites watchlist, call addCompanyToMyFavorite
-      // for each new symbol then refresh via getAllCoFavoriteList
-      if (watchlistId === 'favorites') {
-        const newSymbols = symbols.filter((s) => !currentSymbolOrder.includes(s));
-        for (const sym of newSymbols) {
-          await addCompanyToMyFavorite(sym);
+      if (symbols.length > 0) {
+        const numericId = parseInt(watchlistId);
+
+        if (!isNaN(numericId)) {
+          // POST: addCompanyToWatchlist with new format { watchlistId, coCdList }
+          await addCompanyToWatchlist({ watchlistId: numericId, coCdList: symbols });
+          // Refresh from getWatchlistDetail + getWatchlistData
+          refreshFromDetail(numericId);
+        } else {
+          // Non-numeric IDs (e.g. 'favorites') — use local-only path
+          const newExtraHoldings = { ...extraHoldings };
+          const newOrder = [...currentSymbolOrder];
+          for (const sym of symbols) {
+            if (newOrder.includes(sym)) continue;
+            newOrder.push(sym);
+            if (!holdingsLookup.has(sym) && !newExtraHoldings[sym]) {
+              newExtraHoldings[sym] = createPlaceholderHolding(sym);
+            }
+          }
+          setExtraHoldings(newExtraHoldings);
+          setSymbolOrder(watchlistId, newOrder);
         }
-        const refreshed = await getAllCoFavoriteList('demoUser');
-        onFavoritesSymbolsUpdate?.(refreshed.co_cd);
+
+        // When adding symbols to the Favorites watchlist, call addCompanyToMyFavorite
+        // for each new symbol then refresh via getAllCoFavoriteList
+        if (watchlistId === 'favorites') {
+          const newSymbols = symbols.filter((s) => !currentSymbolOrder.includes(s));
+          for (const sym of newSymbols) {
+            await addCompanyToMyFavorite(sym);
+          }
+          const refreshed = await getAllCoFavoriteList('demoUser');
+          onFavoritesSymbolsUpdate?.(refreshed.co_cd);
+        }
       }
     }
 
@@ -1347,6 +1454,10 @@ export function WatchlistContent({
     [watchlistSymbolSet],
   );
 
+  const WL_NEWS_PAGE_SIZE = 8;
+  const newsTotalPages = Math.max(1, Math.ceil(filteredNewsItems.length / WL_NEWS_PAGE_SIZE));
+  const pagedNewsItems = filteredNewsItems.slice(newsPage * WL_NEWS_PAGE_SIZE, (newsPage + 1) * WL_NEWS_PAGE_SIZE);
+
   const newsUpdateItems = useMemo((): UpdateFeedItem[] =>
     filteredNewsItems.map((item) => ({
       id: item.id,
@@ -1356,6 +1467,7 @@ export function WatchlistContent({
       displaySymbols: item.tags.filter((t) => watchlistSymbolSet.has(t.symbol)).map((t) => t.symbol),
       dateLabel: item.publishedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       dateMs: item.publishedAt.getTime(),
+      url: item.url,
     })),
     [filteredNewsItems],
   );
@@ -1386,12 +1498,13 @@ export function WatchlistContent({
           items.push({
             id: `corp-${category}-${date}-${i}`,
             kind: 'event',
-            title: `${evt.eventType}: ${evt.company}`,
+            title: evt.description,
             source: evt.eventType,
             displaySymbols: [evt.cellLabel],
-            dateLabel: evt.eventDate,
+            contactName: evt.company,
+            dateLabel: formatEventDateLabel(evt.eventDate),
             dateMs: (() => { const t = new Date(evt.eventDate).getTime(); return isNaN(t) ? parseDateKey(date) : t; })(),
-            description: evt.description,
+            url: evt.webcastLink || undefined,
           });
         });
       });
@@ -1659,9 +1772,12 @@ export function WatchlistContent({
                           const def = ALL_COLUMNS[c];
                           if (!def) return <td key={c} className="wl-td">-</td>;
                           const cls = def.getClass ? def.getClass(h) : '';
+                          const catId = SUMMARY_COL_CATEGORY_ID[c];
+                          const fldVal = catId !== undefined ? apiDataLookup.get(h.symbol)?.get(catId) : undefined;
+                          const displayVal = (fldVal !== undefined && fldVal !== null) ? fldVal : def.getValue(h);
                           return (
                             <td key={c} className={`wl-td${cls ? ` ${cls}` : ''}`}>
-                              {def.getValue(h)}
+                              {displayVal}
                             </td>
                           );
                         })}
@@ -1756,11 +1872,19 @@ export function WatchlistContent({
                   </button>
                 ))}
                 <button
-                  className={`wl-feed-tab${feedTab === 'Press Release' ? ' active' : ''}`}
-                  onClick={() => setFeedTab('Press Release')}
+                  className="wl-feed-tab wl-feed-tab--coming-soon"
+                  aria-disabled="true"
+                  tabIndex={-1}
                 >
                   Press Release
-                  <span className="wl-feed-tab-coming-soon">Coming Soon</span>
+                  <span className="wl-feed-tab-cs-overlay" aria-hidden="true">
+                    <span className="wl-feed-tab-cs-inner" aria-hidden="true" />
+                    <svg className="wl-feed-tab-cs-lock" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                      <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <circle cx="12" cy="16" r="1.2" fill="currentColor" />
+                    </svg>
+                  </span>
                 </button>
               </div>
 
@@ -1779,18 +1903,53 @@ export function WatchlistContent({
                   filteredNewsItems.length === 0 ? (
                     <div className="wl-feed-empty">No news found for your watchlist companies.</div>
                   ) : (
-                    <div className="wl-feed-news-grid">
-                      {filteredNewsItems.map((item) => (
-                        <NewsCard key={item.id} item={item} />
-                      ))}
-                    </div>
+                    <>
+                      <div className="wl-feed-news-grid">
+                        {pagedNewsItems.map((item) => (
+                          <NewsCard key={item.id} item={item} />
+                        ))}
+                      </div>
+                      {newsTotalPages > 1 && (
+                        <div className="cp-news-tab-pagination">
+                          <button
+                            className="cp-news-tab-page-btn"
+                            disabled={newsPage === 0}
+                            onClick={() => setNewsPage((p) => Math.max(0, p - 1))}
+                          >
+                            ‹ Prev
+                          </button>
+                          {getPaginationRange(newsPage, newsTotalPages).map((pageIndicator) =>
+                            typeof pageIndicator === 'string' ? (
+                              <span key={pageIndicator} className="cp-news-tab-page-ellipsis">…</span>
+                            ) : (
+                              <button
+                                key={pageIndicator}
+                                className={`cp-news-tab-page-btn${newsPage === pageIndicator ? ' active' : ''}`}
+                                onClick={() => setNewsPage(pageIndicator)}
+                                aria-label={`Page ${pageIndicator + 1}`}
+                                aria-current={newsPage === pageIndicator ? 'page' : undefined}
+                              >
+                                {pageIndicator + 1}
+                              </button>
+                            )
+                          )}
+                          <button
+                            className="cp-news-tab-page-btn"
+                            disabled={newsPage >= newsTotalPages - 1}
+                            onClick={() => setNewsPage((p) => Math.min(p + 1, newsTotalPages - 1))}
+                          >
+                            Next ›
+                          </button>
+                        </div>
+                      )}
+                    </>
                   )
                 ) : currentUpdateItems.length === 0 ? (
                   <div className="wl-feed-empty">No updates found for your watchlist companies.</div>
                 ) : (
                   currentUpdateItems.map((item, idx) => (
                     <div key={item.id} className={`wl-feed-item${idx < currentUpdateItems.length - 1 ? ' wl-feed-item--bordered' : ''}`}>
-                      {item.kind === 'news' ? <AlphaAvatar /> : item.kind === 'press-release' ? (
+                      {item.kind === 'news' ? <NewsAvatar /> : item.kind === 'press-release' ? (
                         <div className="wl-feed-avatar wl-feed-avatar--pr">
                           <svg viewBox="0 0 28 28" fill="none" width="28" height="28" aria-hidden="true">
                             <circle cx="14" cy="14" r="14" fill="#dbeafe" />
@@ -1808,41 +1967,60 @@ export function WatchlistContent({
                           </svg>
                         </div>
                       )}
-                      <div className="wl-feed-body">
-                        <div className="wl-feed-title">{item.title}</div>
-                        {item.description && (
-                          <div className="wl-feed-description">{item.description}</div>
-                        )}
-                        <div className="wl-feed-meta">
-                          <span className="wl-feed-tickers">
-                            {item.displaySymbols.map((sym, i) => (
-                              <span key={sym}>
-                                {i > 0 && ', '}
-                                <a
-                                  href={`/lego/company-profile/${sym}/`}
-                                  className="wl-feed-ticker"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  {sym}
-                                </a>
-                              </span>
-                            ))}
-                          </span>
-                          <span className="wl-feed-dot">•</span>
-                          <span className="wl-feed-source">{item.source}</span>
-                          <span className="wl-feed-dot">•</span>
-                          <span className="wl-feed-time">{item.dateLabel}</span>
-                          {item.kind !== 'event' && (
+                      {item.kind === 'event' ? (
+                        <div className="wl-feed-body">
+                          <div className="wl-event-description">
+                            {item.url ? (
+                              <a href={item.url} target="_blank" rel="noopener noreferrer">{item.title}</a>
+                            ) : item.title}
+                          </div>
+                          <div className="wl-feed-meta">
+                            <span className="wl-event-contact-name">{item.contactName}</span>
+                            <span className="wl-feed-dot">•</span>
+                            <span className="wl-event-event-type">{item.source}</span>
+                            <span className="wl-feed-dot">•</span>
+                            <span className="wl-event-event-datetime">{item.dateLabel}</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="wl-feed-body">
+                          <div className="wl-feed-title">
+                            {item.url ? (
+                              <a href={item.url} target="_blank" rel="noopener noreferrer">{item.title}</a>
+                            ) : item.title}
+                          </div>
+                          {item.description && (
+                            <div className="wl-feed-description">{item.description}</div>
+                          )}
+                          <div className="wl-feed-meta">
+                            <span className="wl-feed-tickers">
+                              {item.displaySymbols.map((sym, i) => (
+                                <span key={sym}>
+                                  {i > 0 && ', '}
+                                  <a
+                                    href={`/lego/company-profile/${sym}/`}
+                                    className="wl-feed-ticker"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    {sym}
+                                  </a>
+                                </span>
+                              ))}
+                            </span>
+                            <span className="wl-feed-dot">•</span>
+                            <span className="wl-feed-source">{item.source}</span>
+                            <span className="wl-feed-dot">•</span>
+                            <span className="wl-feed-time">{item.dateLabel}</span>
                             <>
                               <span className="wl-feed-dot">•</span>
                               <span className={`wl-feed-kind-badge wl-feed-kind-badge--${item.kind}`}>
                                 {item.kind === 'news' ? 'News' : 'Press Release'}
                               </span>
                             </>
-                          )}
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   ))
                 )}
@@ -2002,18 +2180,22 @@ export function WatchlistContent({
                   <path d="M10.5 10.5L14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                 </svg>
                 <input
-                  className="wl-add-search-input"
+                  className={`wl-add-search-input${addSymbolError ? ' wl-add-search-input--error' : ''}`}
                   type="text"
                   placeholder="Add Companies (e.g AAPL, TSLA, etc...)"
                   value={addSymbolQuery}
-                  onChange={(e) => setAddSymbolQuery(e.target.value)}
+                  onChange={(e) => { setAddSymbolQuery(e.target.value); setAddSymbolError(''); }}
                   onKeyDown={(e) => e.key === 'Enter' && handleAddSymbolSubmit()}
                   autoFocus
                 />
               </div>
-              <div className="wl-add-hint">
-                Enter Companies separated by commas to add to your Watchlist.
-              </div>
+              {addSymbolError ? (
+                <div className="wl-add-error-msg">{addSymbolError}</div>
+              ) : (
+                <div className="wl-add-hint">
+                  Enter Companies separated by commas to add to your Watchlist. Max {WATCHLIST_MAX_COMPANIES} companies per watchlist.
+                </div>
+              )}
               {addSuggestions.length > 0 && (
                 <div className="wl-add-suggestions">
                   {addSuggestions.map((c) => (
@@ -2022,6 +2204,7 @@ export function WatchlistContent({
                       className="wl-add-suggestion-item"
                       onClick={() => setAddSymbolQuery((q) => {
                         const parts = q.split(',').map((s) => s.trim()).filter(Boolean);
+                        if (parts.includes(c.symbol)) return q;
                         parts[parts.length - 1] = c.symbol;
                         return parts.join(', ') + ', ';
                       })}

@@ -229,7 +229,7 @@ function CompanyAcquisitionPanel({ deals, companyName }: { deals: AcquisitionDea
 
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const [selectedYear, setSelectedYear] = useState<string | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const [filterExpanded, setFilterExpanded] = useState(false);
   const tableRef = useRef<HTMLDivElement>(null);
 
   function toggleCategory(cat: string) {
@@ -239,10 +239,6 @@ function CompanyAcquisitionPanel({ deals, companyName }: { deals: AcquisitionDea
       else next.add(cat);
       return next;
     });
-  }
-
-  function scrollCategories(dir: 'left' | 'right') {
-    scrollRef.current?.scrollBy({ left: dir === 'left' ? -150 : 150, behavior: 'smooth' });
   }
 
   const filteredDeals =
@@ -265,10 +261,9 @@ function CompanyAcquisitionPanel({ deals, companyName }: { deals: AcquisitionDea
     <div className="aapl-ma-panel">
       {/* ── Category filter bar ── */}
       {hasCategories && (
-      <div className="aapl-ma-filter-bar">
+      <div className={`aapl-ma-filter-bar${filterExpanded ? ' aapl-ma-filter-bar--expanded' : ''}`}>
         <span className="aapl-ma-filter-label">CATEGORY</span>
-        <button className="aapl-ma-scroll-btn" onClick={() => scrollCategories('left')} aria-label="Scroll left">‹</button>
-        <div className="aapl-ma-tags-scroll" ref={scrollRef}>
+        <div className={filterExpanded ? 'aapl-ma-tags-wrap' : 'aapl-ma-tags-scroll'}>
           <button
             className={`aapl-ma-industry-tag${selectedCategories.size === 0 ? ' aapl-ma-industry-tag--active' : ''}`}
             onClick={() => setSelectedCategories(new Set())}
@@ -285,12 +280,27 @@ function CompanyAcquisitionPanel({ deals, companyName }: { deals: AcquisitionDea
             </button>
           ))}
         </div>
-        <button className="aapl-ma-scroll-btn" onClick={() => scrollCategories('right')} aria-label="Scroll right">›</button>
         {selectedCategories.size > 0 && (
           <button className="aapl-ma-clear-btn" onClick={() => setSelectedCategories(new Set())}>
             Clear
           </button>
         )}
+        <button
+          className="aapl-ma-expand-btn"
+          onClick={() => setFilterExpanded((v) => !v)}
+          aria-label={filterExpanded ? 'Collapse filter' : 'Expand filter'}
+          title={filterExpanded ? 'Collapse' : 'Expand'}
+        >
+          {filterExpanded ? (
+            <svg viewBox="0 0 14 14" width="14" height="14" fill="none" aria-hidden="true">
+              <path d="M2 9l5-5 5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          ) : (
+            <svg viewBox="0 0 14 14" width="14" height="14" fill="none" aria-hidden="true">
+              <path d="M2 5l5 5 5-5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          )}
+        </button>
       </div>
       )}
 

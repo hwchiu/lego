@@ -8,13 +8,13 @@ import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { COMPANY_MASTER_LIST, getCompanyByCode } from '@/app/data/companyMaster';
-import { newsItems, newsCategories as newsCategoryOptions } from '@/app/data/news';
+import { newsItems, newsCategories as newsCategoryOptions, type NewsItem } from '@/app/data/news';
 import { extractJson } from '@/app/lib/parseContent';
 import { getAllCoFavoriteList, addCompanyToMyFavorite, removeCompanyFromFavorite, getCompanyTagList } from '@/app/lib/watchlistApi';
 import type { TagInfoDTO } from '@/app/lib/watchlistApi';
 import { getPaginationRange } from '@/app/lib/paginationUtils';
 import companyProfileMd from '@/content/company-profile.md';
-import FinancialStatementTab, { buildSegmentHierarchy } from './FinancialStatementTab';
+import FinancialStatementTab, { buildSegmentHierarchy, sortCategories } from './FinancialStatementTab';
 import CompanyMATab from './CompanyMATab';
 import InvestmentTab from './InvestmentTab';
 import AcquisitionTab from './AcquisitionTab';
@@ -69,6 +69,11 @@ interface FinancialDataPoint {
 interface RevenueBreakdownItem {
   name: string;
   pct: number;
+}
+
+interface RevenueBreakdownGroup {
+  category: string;
+  items: RevenueBreakdownItem[];
 }
 
 interface DoiRevenuePoint {
@@ -157,6 +162,94 @@ const FIN_INDICES = [
 
 // Items per page in the News tab
 const NEWS_PAGE_SIZE = 8;
+
+// Parse a "YYYY-MM-DD" string as local-timezone midnight (not UTC midnight).
+// `new Date('2026-04-01')` is UTC midnight which causes off-by-one errors
+// when the article timestamp straddles a day boundary in the user's timezone.
+function parseLocalDate(dateStr: string): Date {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+// ── News API helpers (same logic as Market News page) ────────────────────────
+
+interface NewsSummaryRecord {
+  news_date: string;
+  co_cd: string;
+  news_source: string;
+  comp_tag_short_name: string;
+  news_catg: string;
+  news_content: string;
+  news_url: string;
+  news_title: string;
+  update_date: string;
+}
+
+async function getNewsSummary(params: {
+  news_dt_from: string;
+  news_dt_to: string;
+  co_cd: string[];
+}): Promise<NewsSummaryRecord[]> {
+  const res = await fetch('/getNewsSummary', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(params),
+  });
+  if (!res.ok) throw new Error(`getNewsSummary failed: ${res.status}`);
+  return res.json();
+}
+
+function mapSummaryToNewsItem(record: NewsSummaryRecord, index: number): NewsItem {
+  return {
+    id: `api-${record.co_cd}-${record.news_date}-${index}`,
+    source: /^[\x20-\x7E\uFF01-\uFF5E]*$/.test(record.news_source) ? record.news_source : 'Others',
+    title: record.news_title,
+    content: record.news_content,
+    category: record.news_catg,
+    fileType: record.news_catg,
+    tags: record.co_cd
+      ? [{ symbol: record.co_cd, name: record.comp_tag_short_name || record.co_cd, change: 0 }]
+      : [],
+    publishedAt: new Date(record.news_date),
+    url: record.news_url,
+  };
+}
+
+/** Adds (or subtracts) `months` to a 'YYYY-MM-DD' string, returns 'YYYY-MM-DD'.
+ *  Clamps day to the last day of the target month to avoid overflow. */
+function addMonths(dateStr: string, months: number): string {
+  const d = new Date(dateStr + 'T00:00:00');
+  const origDay = d.getDate();
+  const targetMonth = d.getMonth() + months;
+  const targetYear = d.getFullYear() + Math.floor(targetMonth / 12);
+  const normMonth = ((targetMonth % 12) + 12) % 12;
+  const lastDay = new Date(targetYear, normMonth + 1, 0).getDate();
+  const clampedDay = Math.min(origDay, lastDay);
+  const result = new Date(targetYear, normMonth, clampedDay);
+  const mm = String(result.getMonth() + 1).padStart(2, '0');
+  const dd = String(result.getDate()).padStart(2, '0');
+  return `${result.getFullYear()}-${mm}-${dd}`;
+}
+
+/** Formats 'YYYY-MM-DD' to 'YYYY-MM-DD HH:mm:ss' */
+function toApiDateTime(dateStr: string, endOfDay = false): string {
+  const time = endOfDay ? '23:59:59' : '00:00:00';
+  return `${dateStr} ${time}`;
+}
+
+// Format a news timestamp for the cp-news-tab-time label.
+// • < 24 h ago  → "Xh ago"
+// • Older → "Mon D, YYYY HH:MM"  (same style as Market News NewsCard)
+function formatCpNewsTime(date: Date): string {
+  const now = new Date();
+  const hoursAgo = Math.round((now.getTime() - date.getTime()) / 3_600_000);
+
+  if (hoursAgo < 24) return `${hoursAgo}h ago`;
+
+  const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+  return `${dateStr} ${timeStr}`;
+}
 
 // Segment report constants for Revenue Breakdown derivation
 const REVENUE_SALE_TYPE = 'Revenue ($M)';
@@ -560,6 +653,19 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const [newsSources, setNewsSources] = useState<Set<string>>(new Set());
   const [newsPeriodStart, setNewsPeriodStart] = useState('');
   const [newsPeriodEnd, setNewsPeriodEnd] = useState('');
+  const [newsCategorySearch, setNewsCategorySearch] = useState('');
+  const [newsSourceSearch, setNewsSourceSearch] = useState('');
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [isSourceOpen, setIsSourceOpen] = useState(false);
+
+  // News period validation errors
+  const [newsPeriodStartError, setNewsPeriodStartError] = useState(false);
+  const [newsPeriodEndError, setNewsPeriodEndError] = useState(false);
+
+  // News API search results (null = not yet searched, use local data)
+  const [newsApiResults, setNewsApiResults] = useState<NewsItem[] | null>(null);
+  const [newsIsSearchLoading, setNewsIsSearchLoading] = useState(false);
+  const [newsSearchError, setNewsSearchError] = useState(false);
 
   // Shared financial statement data — loaded once and shared with both
   // FIN. Statement tab and the Financial Indices / DOI & Revenue charts.
@@ -625,84 +731,104 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     [finFcstRecords, derivedCurrentQtr],
   );
 
-  // Derive revenue breakdown using segInfo (SEG_TYPE + SEG_LEVEL) from getSegInfoByCoCd.
-  // Uses buildSegmentHierarchy (same as Segment Report table) to avoid double-counting:
-  // when a level-1 item has level-2 children its rawValues are the bottom-up sum of
-  // children, so each item appears exactly once with the correct aggregated value.
-  const derivedRevenueBreakdown = useMemo<RevenueBreakdownItem[]>(() => {
+  // Derive revenue breakdown using segInfo (SEG_TYPE) from getSegInfoByCoCd.
+  // Records are split by `category` field; within each category, level-1 items
+  // are used so that every category yields a meaningful breakdown (even when
+  // the configured SEG_LEVEL references deeper levels that may not exist in all
+  // categories). Each category independently sums to 100%.
+  const derivedRevenueBreakdown = useMemo<RevenueBreakdownGroup[]>(() => {
     if (!segmentRecords.length) return [];
 
     const segType = segInfo?.SEG_TYPE ?? REVENUE_SALE_TYPE;
-    const segLevel = parseInt(segInfo?.SEG_LEVEL ?? '1', 10);
 
-    // Build hierarchy from quarterly records only (for the configured sale type)
+    // Filter for the configured sale type, quarterly records only
     const quarterlyRecords = segmentRecords.filter(
       (r) => r.sale_type === segType && r.calendar_quarter !== ANNUAL_QUARTER_VALUE,
     );
     if (!quarterlyRecords.length) return [];
 
-    const hierarchy = buildSegmentHierarchy(quarterlyRecords, 'usd');
-    const saleTypeGroup = hierarchy.find((g) => g.saleType === segType);
-    if (!saleTypeGroup) return [];
-
-    // Determine the latest quarterly period label ("Q1 2025" format)
-    const allPeriods = new Set<string>();
-    for (const l1g of saleTypeGroup.level1Groups) {
-      Object.keys(l1g.rawValues).forEach((p) => allPeriods.add(p));
+    // Collect unique categories sorted: platform before geometric, others after
+    const categoryOrder: string[] = [];
+    const categorySeen = new Set<string>();
+    for (const r of quarterlyRecords) {
+      const cat = r.category ?? '';
+      if (!categorySeen.has(cat)) {
+        categoryOrder.push(cat);
+        categorySeen.add(cat);
+      }
     }
-    if (allPeriods.size === 0) return [];
+    sortCategories(categoryOrder);
 
     function periodSortKey(p: string): number {
       const m = p.match(/^Q([1-4])\s+(\d{4})$/);
       if (!m) return 0;
       return parseInt(m[2], 10) * 10 + parseInt(m[1], 10);
     }
-    const latestPeriod = [...allPeriods].sort((a, b) => periodSortKey(b) - periodSortKey(a))[0];
 
-    // Extract nodes at the configured seg level with their aggregated values
-    const nodes: Array<{ name: string; value: number }> = [];
-    const pushNode = (name: string, rawValues: Record<string, number>) => {
-      const value = rawValues[latestPeriod];
-      if (value == null || name.toLowerCase().includes('total')) return;
-      nodes.push({ name: name.replace(MILLION_DOLLAR_SUFFIX_RE, ''), value });
-    };
+    const groups: RevenueBreakdownGroup[] = [];
 
-    if (segLevel === 1) {
+    for (const category of categoryOrder) {
+      const catRecords = quarterlyRecords.filter((r) => (r.category ?? '') === category);
+      const hierarchy = buildSegmentHierarchy(catRecords, 'usd');
+      const saleTypeGroup = hierarchy.find((g) => g.saleType === segType);
+      if (!saleTypeGroup) continue;
+
+      // Determine the latest quarterly period label for this category
+      const allPeriods = new Set<string>();
       for (const l1g of saleTypeGroup.level1Groups) {
-        pushNode(l1g.level1, l1g.rawValues);
+        Object.keys(l1g.rawValues).forEach((p) => allPeriods.add(p));
       }
-    } else if (segLevel === 2) {
+      if (allPeriods.size === 0) continue;
+      const latestPeriod = [...allPeriods].sort((a, b) => periodSortKey(b) - periodSortKey(a))[0];
+
+      // Collect nodes at the configured seg level (falling back to the next
+      // higher level when the requested depth has no children for a given node).
+      const segLevel = segInfo?.SEG_LEVEL ?? '1';
+      const nodes: Array<{ name: string; value: number }> = [];
       for (const l1g of saleTypeGroup.level1Groups) {
-        if (l1g.level2Groups.length > 0) {
+        if (segLevel === '2' && l1g.level2Groups.length > 0) {
           for (const l2g of l1g.level2Groups) {
-            pushNode(l2g.level2, l2g.rawValues);
+            const value = l2g.rawValues[latestPeriod];
+            const name = l2g.level2;
+            if (value == null || name.toLowerCase().includes('total')) continue;
+            nodes.push({ name: name.replace(MILLION_DOLLAR_SUFFIX_RE, ''), value });
+          }
+        } else if (segLevel === '3' && l1g.level2Groups.length > 0) {
+          for (const l2g of l1g.level2Groups) {
+            if (l2g.level3Groups.length > 0) {
+              for (const l3g of l2g.level3Groups) {
+                const value = l3g.rawValues[latestPeriod];
+                const name = l3g.level3;
+                if (value == null || name.toLowerCase().includes('total')) continue;
+                nodes.push({ name: name.replace(MILLION_DOLLAR_SUFFIX_RE, ''), value });
+              }
+            } else {
+              const value = l2g.rawValues[latestPeriod];
+              const name = l2g.level2;
+              if (value == null || name.toLowerCase().includes('total')) continue;
+              nodes.push({ name: name.replace(MILLION_DOLLAR_SUFFIX_RE, ''), value });
+            }
           }
         } else {
-          // level1 is a leaf — promote it to level2
-          pushNode(l1g.level1, l1g.rawValues);
+          const value = l1g.rawValues[latestPeriod];
+          const name = l1g.level1;
+          if (value == null || name.toLowerCase().includes('total')) continue;
+          nodes.push({ name: name.replace(MILLION_DOLLAR_SUFFIX_RE, ''), value });
         }
       }
-    } else {
-      // segLevel === 3: collect only level3 leaf items.
-      // Level2 items with no level3 children are automatically skipped because
-      // we only iterate l2g.level3Groups. Level1 items without level2 children
-      // are also automatically skipped because we only iterate l1g.level2Groups.
-      for (const l1g of saleTypeGroup.level1Groups) {
-        for (const l2g of l1g.level2Groups) {
-          for (const l3g of l2g.level3Groups) {
-            pushNode(l3g.level3, l3g.rawValues);
-          }
-        }
-      }
+
+      if (nodes.length === 0) continue;
+      const total = nodes.reduce((sum, n) => sum + n.value, 0);
+      if (total === 0) continue;
+
+      const items = nodes
+        .map((n) => ({ name: n.name, pct: Math.round((n.value / total) * 1000) / 10 }))
+        .sort((a, b) => b.pct - a.pct);
+
+      groups.push({ category, items });
     }
 
-    if (nodes.length === 0) return [];
-    const total = nodes.reduce((sum, n) => sum + n.value, 0);
-    if (total === 0) return [];
-
-    return nodes
-      .map((n) => ({ name: n.name, pct: Math.round((n.value / total) * 1000) / 10 }))
-      .sort((a, b) => b.pct - a.pct);
+    return groups;
   }, [segmentRecords, segInfo]);
 
   // Parse markdown data
@@ -806,6 +932,63 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     }
   }
 
+  // News period change handlers — clear API results and errors on change
+  const handleNewsPeriodStartChange = useCallback((val: string) => {
+    setNewsPeriodStart(val);
+    setNewsPeriodStartError(false);
+    setNewsApiResults(null);
+    setNewsPage(1);
+  }, []);
+
+  const handleNewsPeriodEndChange = useCallback((val: string) => {
+    setNewsPeriodEnd(val);
+    setNewsPeriodEndError(false);
+    setNewsApiResults(null);
+    setNewsPage(1);
+  }, []);
+
+  // Search handler — calls getNewsSummary with Period dates and this company's code
+  async function handleCpNewsSearch() {
+    let hasError = false;
+    if (!newsPeriodStart) { setNewsPeriodStartError(true); hasError = true; }
+    if (!newsPeriodEnd) { setNewsPeriodEndError(true); hasError = true; }
+    if (hasError) return;
+
+    setNewsIsSearchLoading(true);
+    setNewsSearchError(false);
+    try {
+      const records = await getNewsSummary({
+        news_dt_from: toApiDateTime(newsPeriodStart, false),
+        news_dt_to: toApiDateTime(newsPeriodEnd, true),
+        co_cd: [symbol],
+      });
+      setNewsApiResults(records.map(mapSummaryToNewsItem));
+      setNewsPage(1);
+    } catch {
+      setNewsSearchError(true);
+      setNewsApiResults(null);
+    } finally {
+      setNewsIsSearchLoading(false);
+    }
+  }
+
+  // Clear handler — resets all filters back to initial (local data)
+  function handleCpNewsClear() {
+    setNewsKeyword('');
+    setNewsKeywordApplied('');
+    setNewsCategories(new Set());
+    setNewsSources(new Set());
+    setNewsPeriodStart('');
+    setNewsPeriodEnd('');
+    setNewsPeriodStartError(false);
+    setNewsPeriodEndError(false);
+    setNewsCategorySearch('');
+    setNewsSourceSearch('');
+    setNewsApiResults(null);
+    setNewsSearchError(false);
+    setNewsPage(1);
+  }
+
   // News filtered by this company's symbol tag, then by user filters
   const companyNews = useMemo(() =>
     newsItems.filter((n) => n.tags.some((t) => t.symbol === symbol)),
@@ -815,29 +998,35 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const distinctCategories = useMemo(() => [...new Set(companyNews.map((n) => n.category))].sort(), [companyNews]);
   const distinctSources = useMemo(() => [...new Set(companyNews.map((n) => n.source))].sort(), [companyNews]);
 
+  // Base items: API results (already filtered by period) or local company news
+  const newsBaseItems = newsApiResults ?? companyNews;
+
   const filteredNews = useMemo(() => {
     const keywordLower = newsKeywordApplied.trim().toLowerCase();
 
-    return companyNews.filter((item) => {
+    return newsBaseItems.filter((item) => {
       if (keywordLower) {
         const searchable = `${item.title} ${item.content}`.toLowerCase();
         if (!searchable.includes(keywordLower)) return false;
       }
       if (newsCategories.size > 0 && (!item.category || !newsCategories.has(item.category))) return false;
       if (newsSources.size > 0 && !newsSources.has(item.source)) return false;
-      if (newsPeriodStart) {
-        const d = item.publishedAt;
-        if (d < new Date(newsPeriodStart)) return false;
-      }
-      if (newsPeriodEnd) {
-        const d = item.publishedAt;
-        const end = new Date(newsPeriodEnd);
-        end.setDate(end.getDate() + 1);
-        if (d >= end) return false;
+      // Only apply local period filter when API results are not active
+      if (!newsApiResults) {
+        if (newsPeriodStart) {
+          const d = item.publishedAt;
+          if (d < parseLocalDate(newsPeriodStart)) return false;
+        }
+        if (newsPeriodEnd) {
+          const d = item.publishedAt;
+          const end = parseLocalDate(newsPeriodEnd);
+          end.setDate(end.getDate() + 1);
+          if (d >= end) return false;
+        }
       }
       return true;
     });
-  }, [companyNews, newsKeywordApplied, newsCategories, newsSources, newsPeriodStart, newsPeriodEnd]);
+  }, [newsBaseItems, newsApiResults, newsKeywordApplied, newsCategories, newsSources, newsPeriodStart, newsPeriodEnd]);
 
   const newsTotalPages = Math.ceil(filteredNews.length / NEWS_PAGE_SIZE);
   const pagedNews = filteredNews.slice((newsPage - 1) * NEWS_PAGE_SIZE, newsPage * NEWS_PAGE_SIZE);
@@ -1120,8 +1309,8 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                       </div>
                       <div className="cp-card-divider" />
                       {(() => {
-                        const items = derivedRevenueBreakdown;
-                        if (items.length === 0) {
+                        const groups = derivedRevenueBreakdown;
+                        if (groups.length === 0) {
                           return (
                             <div className="cp-breakdown-nodata">
                               No Revenue Breakdown Data
@@ -1129,15 +1318,26 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                           );
                         }
                         return (
-                          <div className="cp-breakdown-list">
-                            {items.map((item) => (
-                              <div key={item.name} className="cp-breakdown-item">
-                                <div className="cp-breakdown-row">
-                                  <span className="cp-breakdown-name">{item.name}</span>
-                                  <span className="cp-breakdown-pct">{item.pct}%</span>
-                                </div>
-                                <div className="cp-breakdown-bar-wrap">
-                                  <div className="cp-breakdown-bar" style={{ width: `${Math.min(100, item.pct)}%` }} />
+                          <div className="cp-breakdown-groups">
+                            {groups.map((group) => (
+                              <div key={group.category || '__uncategorized__'} className="cp-breakdown-group">
+                                {group.category && (
+                                  <div className="cp-breakdown-category-title">
+                                    {group.category.toUpperCase()}
+                                  </div>
+                                )}
+                                <div className="cp-breakdown-list">
+                                  {group.items.map((item) => (
+                                    <div key={item.name} className="cp-breakdown-item">
+                                      <div className="cp-breakdown-row">
+                                        <span className="cp-breakdown-name">{item.name}</span>
+                                        <span className="cp-breakdown-pct">{item.pct}%</span>
+                                      </div>
+                                      <div className="cp-breakdown-bar-wrap">
+                                        <div className="cp-breakdown-bar" style={{ width: `${Math.min(100, item.pct)}%` }} />
+                                      </div>
+                                    </div>
+                                  ))}
                                 </div>
                               </div>
                             ))}
@@ -1235,36 +1435,46 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                       <div className="cp-news-filter-field">
                         <label className="cp-news-filter-label">News Category</label>
                         <div className="cp-news-multi-select">
-                          <div className="cp-news-multi-select-display">
-                            {newsCategories.size === 0 ? (
-                              <span className="cp-news-multi-placeholder">All Categories</span>
-                            ) : (
-                              [...newsCategories].map((c) => (
-                                <span key={c} className="cp-news-multi-chip">
-                                  {c}
-                                  <button onClick={() => toggleNewsCategory(c)} aria-label={`Remove ${c}`}>
-                                    <svg viewBox="0 0 10 10" fill="none" width="8" height="8"><path d="M2 2L8 8M8 2L2 8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
-                                  </button>
-                                </span>
-                              ))
-                            )}
-                          </div>
-                          <div className="cp-news-multi-options">
-                            {distinctCategories.map((ft) => (
-                              <button
-                                key={ft}
-                                className={`cp-news-multi-option${newsCategories.has(ft) ? ' active' : ''}`}
-                                onClick={() => toggleNewsCategory(ft)}
-                              >
-                                {newsCategories.has(ft) && (
-                                  <svg viewBox="0 0 12 12" fill="none" width="10" height="10" style={{ marginRight: 4 }}>
-                                    <path d="M2 6L5 9L10 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                  </svg>
-                                )}
-                                {ft}
-                              </button>
+                          <div className="cp-news-multi-select-display" onClick={() => setIsCategoryOpen(true)}>
+                            {[...newsCategories].map((c) => (
+                              <span key={c} className="cp-news-multi-chip">
+                                {c}
+                                <button onClick={(e) => { e.stopPropagation(); toggleNewsCategory(c); }} aria-label={`Remove ${c}`}>
+                                  <svg viewBox="0 0 10 10" fill="none" width="8" height="8"><path d="M2 2L8 8M8 2L2 8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
+                                </button>
+                              </span>
                             ))}
+                            <input
+                              className="cp-news-multi-search cp-news-multi-search--inline"
+                              type="text"
+                              placeholder={newsCategories.size === 0 ? 'All Categories' : ''}
+                              value={newsCategorySearch}
+                              onChange={(e) => setNewsCategorySearch(e.target.value)}
+                              onFocus={() => setIsCategoryOpen(true)}
+                              onBlur={() => setTimeout(() => setIsCategoryOpen(false), 200)}
+                            />
                           </div>
+                          {isCategoryOpen && (
+                            <div className="cp-news-multi-options">
+                              {distinctCategories
+                                .filter((ft) => ft.toLowerCase().includes(newsCategorySearch.toLowerCase()))
+                                .map((ft) => (
+                                  <button
+                                    key={ft}
+                                    className={`cp-news-multi-option${newsCategories.has(ft) ? ' active' : ''}`}
+                                    onMouseDown={(e) => e.preventDefault()}
+                                    onClick={() => toggleNewsCategory(ft)}
+                                  >
+                                    {newsCategories.has(ft) && (
+                                      <svg viewBox="0 0 12 12" fill="none" width="10" height="10" style={{ marginRight: 4 }}>
+                                        <path d="M2 6L5 9L10 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                      </svg>
+                                    )}
+                                    {ft}
+                                  </button>
+                                ))}
+                            </div>
+                          )}
                         </div>
                       </div>
 
@@ -1272,36 +1482,46 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                       <div className="cp-news-filter-field">
                         <label className="cp-news-filter-label">News Source</label>
                         <div className="cp-news-multi-select">
-                          <div className="cp-news-multi-select-display">
-                            {newsSources.size === 0 ? (
-                              <span className="cp-news-multi-placeholder">All Sources</span>
-                            ) : (
-                              [...newsSources].map((s) => (
-                                <span key={s} className="cp-news-multi-chip">
-                                  {s}
-                                  <button onClick={() => toggleNewsSource(s)} aria-label={`Remove ${s}`}>
-                                    <svg viewBox="0 0 10 10" fill="none" width="8" height="8"><path d="M2 2L8 8M8 2L2 8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
-                                  </button>
-                                </span>
-                              ))
-                            )}
-                          </div>
-                          <div className="cp-news-multi-options">
-                            {distinctSources.map((src) => (
-                              <button
-                                key={src}
-                                className={`cp-news-multi-option${newsSources.has(src) ? ' active' : ''}`}
-                                onClick={() => toggleNewsSource(src)}
-                              >
-                                {newsSources.has(src) && (
-                                  <svg viewBox="0 0 12 12" fill="none" width="10" height="10" style={{ marginRight: 4 }}>
-                                    <path d="M2 6L5 9L10 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                  </svg>
-                                )}
-                                {src}
-                              </button>
+                          <div className="cp-news-multi-select-display" onClick={() => setIsSourceOpen(true)}>
+                            {[...newsSources].map((s) => (
+                              <span key={s} className="cp-news-multi-chip">
+                                {s}
+                                <button onClick={(e) => { e.stopPropagation(); toggleNewsSource(s); }} aria-label={`Remove ${s}`}>
+                                  <svg viewBox="0 0 10 10" fill="none" width="8" height="8"><path d="M2 2L8 8M8 2L2 8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
+                                </button>
+                              </span>
                             ))}
+                            <input
+                              className="cp-news-multi-search cp-news-multi-search--inline"
+                              type="text"
+                              placeholder={newsSources.size === 0 ? 'All Sources' : ''}
+                              value={newsSourceSearch}
+                              onChange={(e) => setNewsSourceSearch(e.target.value)}
+                              onFocus={() => setIsSourceOpen(true)}
+                              onBlur={() => setTimeout(() => setIsSourceOpen(false), 200)}
+                            />
                           </div>
+                          {isSourceOpen && (
+                            <div className="cp-news-multi-options">
+                              {distinctSources
+                                .filter((src) => src.toLowerCase().includes(newsSourceSearch.toLowerCase()))
+                                .map((src) => (
+                                  <button
+                                    key={src}
+                                    className={`cp-news-multi-option${newsSources.has(src) ? ' active' : ''}`}
+                                    onMouseDown={(e) => e.preventDefault()}
+                                    onClick={() => toggleNewsSource(src)}
+                                  >
+                                    {newsSources.has(src) && (
+                                      <svg viewBox="0 0 12 12" fill="none" width="10" height="10" style={{ marginRight: 4 }}>
+                                        <path d="M2 6L5 9L10 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                      </svg>
+                                    )}
+                                    {src}
+                                  </button>
+                                ))}
+                            </div>
+                          )}
                         </div>
                       </div>
 
@@ -1311,20 +1531,48 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                         <div className="cp-news-period-wrap">
                           <DatePickerInput
                             value={newsPeriodStart}
-                            onChange={setNewsPeriodStart}
+                            onChange={handleNewsPeriodStartChange}
                             placeholder="Start date"
-                            onPageReset={() => setNewsPage(1)}
+                            error={newsPeriodStartError}
+                            maxDate={newsPeriodEnd || undefined}
+                            minDate={newsPeriodEnd ? addMonths(newsPeriodEnd, -3) : undefined}
                           />
                           <span className="cp-news-period-sep">–</span>
                           <DatePickerInput
                             value={newsPeriodEnd}
-                            onChange={setNewsPeriodEnd}
+                            onChange={handleNewsPeriodEndChange}
                             placeholder="End date"
-                            onPageReset={() => setNewsPage(1)}
+                            error={newsPeriodEndError}
+                            minDate={newsPeriodStart || undefined}
+                            maxDate={newsPeriodStart ? addMonths(newsPeriodStart, 3) : undefined}
                           />
                         </div>
                       </div>
+
+                      {/* Search & Clear actions */}
+                      <div className="cp-news-filter-actions">
+                        <button
+                          className="mn-search-btn"
+                          onClick={handleCpNewsSearch}
+                          disabled={newsIsSearchLoading}
+                        >
+                          {newsIsSearchLoading ? 'Loading…' : 'Search'}
+                        </button>
+                        <button
+                          className="mn-clear-btn"
+                          onClick={handleCpNewsClear}
+                          disabled={newsIsSearchLoading}
+                        >
+                          Clear
+                        </button>
+                      </div>
                     </div>
+
+                    {newsSearchError && (
+                      <div className="mn-search-error">
+                        Unable to fetch news. Please check your connection and try again.
+                      </div>
+                    )}
 
                     {filteredNews.length === 0 ? (
                       <div className="cp-tab-placeholder">
@@ -1334,8 +1582,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                       <>
                         <div className="cp-news-tab-grid">
                           {pagedNews.map((item) => {
-                            const ago = Math.round((Date.now() - item.publishedAt.getTime()) / 3_600_000);
-                            const timeLabel = ago < 24 ? `${ago}h ago` : `${Math.floor(ago / 24)}d ago`;
+                            const timeLabel = formatCpNewsTime(item.publishedAt);
                             const categoryLabel = NEWS_CATEGORY_LABEL_MAP[item.category] ?? item.category;
                             return (
                               <a

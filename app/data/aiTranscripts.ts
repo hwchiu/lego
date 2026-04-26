@@ -257,6 +257,32 @@ The company sees a very healthy climate for logic/foundry for the full year and 
 The company maintained stable performance in memory despite market downturns, with DRAM being the larger contributor. They expect DRAM to perform strongly in 2020, driven by non-patterning ALD applications, and see gradual increases in 3D NAND applications.</li>
 </ul></li>
 </ul>
+<p><strong>Market Observation Brief Summary:</strong><br />
+AAPL's 2025 Q4 update shows three coordinated themes: (1) <strong>Advanced‑node capacity &amp; memory‑price pressure</strong>: Apple reported an overall gross margin of 48.2 % with a sequential increase of 100 basis points, above the guidance range of 48 %– 49 % (AAPL‑CY‑2025‑Q4); the products segment posted a gross margin of 40.7 %, gaining 450 basis points sequentially (AAPL‑CY‑2025‑Q4); analysts highlighted a significant rise in market pricing for memory  components, describing it as a risk that could compress future gross margins (AAPL‑CY‑2025‑Q4). (2) <strong>AI strategy,  Google partnership &amp; compute demand</strong>: Apple emphasized that its AI suite is powered by Apple‑produced servers and functions as a product,  
+<p><strong>Market Observation Key Messages:</strong> </p>
+
+<ol>
+<li><p><strong>Advanced‑node capacity &amp; memory‑price pressure</strong></p>
+
+<ul>
+<li><strong>Memory Price Inflation Impact:</strong> Memory‑price dynamics intensified from the prior quarter; in Q3  2025 analysts identified memory price inflation as a central issue in Apple’s expense‑control discussions (AAPL‑CY‑2025‑Q3) and defined the cost trend as “the cost of memory components that were experiencing a notable inflationary trend” (AAPL‑CY‑2025‑Q3). By contrast, Q4 2025 the discussion shifted to the broader margin‑compression risk posed by rising memory prices (AAPL‑CY‑2025‑Q4).</li>
+<li><strong>Advanced‑Node Capacity Constraints:</strong> Advanced‑node capacity constraints were first  noted as a factor contributing to the Q2 2025 supply constraint (AAPL‑CY‑2025‑Q4). This same limitation was reiterated in Q3 2025, referencing the earlier identification (AAPL‑CY‑2025‑Q4) and again in Q4 2025 as part of the broader supply‑chain narrative (AAPL‑CY‑2025‑Q4).</li>
+</ul></li>
+<li><p><strong>AI strategy, Google partnership &amp; compute demand</strong></p>
+
+<ul>
+<li><strong>Google Partnership Announcement:</strong> The partnership with Google announced in Q4 2025 marks a new development relative to Q3 2025, where no Google collaboration is mentioned (AAPL‑CY‑2025‑Q4).</li>
+<li><strong>Capital Expenditure Volatility:</strong> CapEx trends show a progression from earlier quarters. In Q2 2025, CapEx was noted as up notably on a year‑to‑date basis, with management expecting substantial growth for the remainder of the year driven by AI investments (AAPL‑CY‑2025‑Q2). The Q4 2025 description of CapEx as volatile with December spending spikes (AAPL‑CY‑2025‑Q4) reflects the continuation of elevated AI‑related capital spending observed in Q2 2025, though the Q4 language emphasizes seasonality rather than a specific growth expectation.</li>
+</ul></li>
+<li><p><strong>Services, advertising, geographic demand &amp; margin mix</strong></p>
+
+<ul>
+<li><strong>Services Revenue Record:</strong> Apple reported total revenue of $143.8 billion in Q4 2025, setting all‑time records across multiple markets and services (AAPL‑CY‑2025‑Q4). Services revenue reached a new record, up 14 % year‑over‑year, with a services gross margin of 76.5 % of revenue (AAPL‑CY‑2025‑Q4). In Q3 2025 Services posted an all‑time revenue record of $28.8 billion, a 15 % YoY increase (AAPL‑CY‑2025‑Q3).</li>
+<li><strong>Advertising Placement Expansion:</strong> Apple also introduced additional advertising placements within App Store search results (AAPL‑CY‑2025‑Q4). Advertising initiatives were introduced in Q2 2025 (AAPL‑CY‑2025‑Q4) and reiterated in Q4 2025 (AAPL‑CY‑2025‑Q4). The same advertising placement expansion is referenced in Q1 2025 (AAPL‑CY‑2025‑Q4) and Q2 2025 (AAPL‑CY‑2025‑Q4), suggesting a multi‑quarter rollout of App Store search advertising that continued through Q4 2025.</li>
+</ul></li>
+</ol>
+
+
 ` },
   { doc_title: 'AI Summarization (Calendar year: Q4 2026)', co_cd: 'NVDA', company_name: 'NVIDIA Corp.', fiscal_year_no: '2026', fiscal_qtr_no: 'Q4', doc_html: NVDA_2026_Q4 },
 ];

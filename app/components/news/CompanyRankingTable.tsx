@@ -18,8 +18,14 @@ interface SparklineProps {
   height?: number;
 }
 
+function trimTrailingZeros(arr: number[]): number[] {
+  let end = arr.length;
+  while (end > 0 && arr[end - 1] === 0) end--;
+  return end === arr.length ? arr : arr.slice(0, end);
+}
+
 function Sparkline({ data, width = 84, height = 38 }: SparklineProps) {
-  const safeData = data.map((d) => (typeof d === 'number' && isFinite(d) ? d : 0));
+  const safeData = trimTrailingZeros(data).map((d) => (typeof d === 'number' && isFinite(d) ? d : 0));
   const allZero = safeData.every((d) => d === 0);
   if (allZero) {
     return (
@@ -78,7 +84,17 @@ export default function CompanyRankingTable({ selectedSymbol, onCompanyClick }: 
   return (
     <div className="chr-root">
       <div className="chr-header">
-        <span className="insight-block-title">Company Heat Ranking (Weekly Trend)</span>
+        <div className="chr-header-title-group">
+          <span className="insight-block-title">Company Heat Ranking</span>
+          <span className="chr-header-meta">Current Weekly Trend &middot; Data generated: {(() => {
+            const now = new Date();
+            const utc8 = new Date(now.getTime() + 8 * 60 * 60 * 1000);
+            const y = utc8.getUTCFullYear();
+            const m = String(utc8.getUTCMonth() + 1).padStart(2, '0');
+            const d = String(utc8.getUTCDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+          })()} UTC+8 10:00 (Daily update)</span>
+        </div>
       </div>
       <div className="chr-carousel-wrap">
         <button
