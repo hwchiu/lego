@@ -4352,7 +4352,7 @@ html:not(.dark) .sidebar-submenu-icon-left {
   display: grid;
   grid-template-columns: 1.5fr 1.5fr 7fr;
   gap: 16px;
-  align-items: stretch;
+  align-items: start;
 }
 
 /* Stacked cards column */
@@ -4364,10 +4364,6 @@ html:not(.dark) .sidebar-submenu-icon-left {
 
 .cp-col-stack > .cp-data-card {
   flex: none;
-}
-
-.cp-col-stack > .cp-data-card:last-child {
-  flex: 1;
 }
 
 .cp-data-card {
@@ -4524,6 +4520,8 @@ html:not(.dark) .sidebar-submenu-icon-left {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .cp-breakdown-group {
