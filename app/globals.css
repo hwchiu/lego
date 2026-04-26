@@ -1185,6 +1185,20 @@ input, select { font-family: var(--font); }
   padding: 5px 10px 5px 8px;
   gap: 6px;
 }
+/* Favorites item — bold text with a subtle accent background */
+.sidebar-submenu-item--favorites {
+  background: rgba(79,195,247,0.10);
+}
+.sidebar-submenu-item--favorites .sidebar-submenu-label {
+  font-weight: 700;
+  color: #7dd3fc;
+}
+.sidebar-submenu-item--favorites:hover {
+  background: rgba(79,195,247,0.20);
+}
+.sidebar-submenu-item--favorites:hover .sidebar-submenu-label {
+  color: #bae6fd;
+}
 .sidebar-submenu-item--create-wl {
   padding: 6px 12px;
   gap: 0;
@@ -21541,6 +21555,19 @@ html:not(.dark) .sidebar-submenu-item {
 html:not(.dark) .sidebar-submenu-item:hover {
   background: var(--c-bg);
   color: var(--c-text);
+}
+html:not(.dark) .sidebar-submenu-item--favorites {
+  background: rgba(2,132,199,0.07);
+}
+html:not(.dark) .sidebar-submenu-item--favorites .sidebar-submenu-label {
+  color: #0284c7;
+  font-weight: 700;
+}
+html:not(.dark) .sidebar-submenu-item--favorites:hover {
+  background: rgba(2,132,199,0.14);
+}
+html:not(.dark) .sidebar-submenu-item--favorites:hover .sidebar-submenu-label {
+  color: #0369a1;
 }
 html:not(.dark) .sidebar-submenu-divider {
   background: var(--c-border);
