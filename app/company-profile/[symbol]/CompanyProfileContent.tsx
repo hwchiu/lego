@@ -1159,10 +1159,12 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                         return (
                           <div className="cp-breakdown-groups">
                             {groups.map((group) => (
-                              <div key={group.category} className="cp-breakdown-group">
-                                <div className="cp-breakdown-category-title">
-                                  {group.category.toUpperCase()}
-                                </div>
+                              <div key={group.category || '__uncategorized__'} className="cp-breakdown-group">
+                                {group.category && (
+                                  <div className="cp-breakdown-category-title">
+                                    {group.category.toUpperCase()}
+                                  </div>
+                                )}
                                 <div className="cp-breakdown-list">
                                   {group.items.map((item) => (
                                     <div key={item.name} className="cp-breakdown-item">

@@ -7174,7 +7174,7 @@ html:not(.dark) .sidebar-submenu-icon-left {
 }
 
 /* When a category title sits above the table, remove top corners from the table wrap */
-.seg-category-block .fin-stmt-table-wrap {
+.seg-category-block--titled .fin-stmt-table-wrap {
   border-radius: 0 0 var(--radius) var(--radius);
   border-top: none;
 }

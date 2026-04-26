@@ -779,9 +779,10 @@ function SegmentReportTable({ records, viewMode, yearWindowStart, currency }: Se
     <div className="seg-category-blocks">
       {categoryOrder.map((category) => {
         const catRecords = filteredRecords.filter((r) => (r.category ?? '') === category);
+        const hasTitle = !!category;
         return (
-          <div key={category} className="seg-category-block">
-            {category && (
+          <div key={category} className={`seg-category-block${hasTitle ? ' seg-category-block--titled' : ''}`}>
+            {hasTitle && (
               <div className="seg-category-title">{category.toUpperCase()}</div>
             )}
             <SegmentCategoryTable categoryRecords={catRecords} currency={currency} />
