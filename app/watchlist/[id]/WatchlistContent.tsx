@@ -1845,11 +1845,18 @@ export function WatchlistContent({
                   </button>
                 ))}
                 <button
-                  className={`wl-feed-tab${feedTab === 'Press Release' ? ' active' : ''}`}
-                  onClick={() => setFeedTab('Press Release')}
+                  className="wl-feed-tab wl-feed-tab--coming-soon"
+                  aria-disabled="true"
+                  tabIndex={-1}
                 >
                   Press Release
-                  <span className="wl-feed-tab-coming-soon">Coming Soon</span>
+                  <span className="wl-feed-tab-cs-overlay" aria-hidden="true">
+                    <svg className="wl-feed-tab-cs-lock" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                      <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <circle cx="12" cy="16" r="1.2" fill="currentColor" />
+                    </svg>
+                  </span>
                 </button>
               </div>
 
