@@ -105,7 +105,8 @@ export default function DataExplorePage() {
                 <h1 className="de-hero-title">Data Explore</h1>
                 <p className="de-hero-sub">
                   Curated intelligence on TSMC and its supply chain ecosystem, covering ESG, regulatory policy,
-                  international standards, industry trends, company operations, and capital markets.
+                  international standards, industry trends, company operations, and capital markets —{' '}
+                  <strong>{totalCount}</strong> selected records.
                 </p>
               </div>
             </div>
