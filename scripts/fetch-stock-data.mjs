@@ -135,9 +135,8 @@ function readWatchlistHistoricalSections() {
 function fmt(n, currency) {
   if (n == null || isNaN(n)) return 'N/A';
   const sym = currency === 'JPY' ? '¥' : currency === 'TWD' ? 'NT$' : currency === 'EUR' ? '€' : '$';
-  if (Math.abs(n) >= 1e12) return `${sym}${(n / 1e12).toFixed(2)}T`;
-  if (Math.abs(n) >= 1e9) return `${sym}${(n / 1e9).toFixed(2)}B`;
-  if (Math.abs(n) >= 1e6) return `${sym}${(n / 1e6).toFixed(2)}M`;
+  if (Math.abs(n) >= 1e9) return `${sym}${(n / 1e9).toFixed(2)}`;
+  if (Math.abs(n) >= 1e6) return `${sym}${(n / 1e6).toFixed(2)}`;
   return `${sym}${n.toFixed(2)}`;
 }
 
