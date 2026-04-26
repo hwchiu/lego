@@ -8,7 +8,7 @@ import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { COMPANY_MASTER_LIST, getCompanyByCode } from '@/app/data/companyMaster';
-import { newsItems, newsCategories as newsCategoryOptions } from '@/app/data/news';
+import { newsItems, newsCategories as newsCategoryOptions, type NewsItem } from '@/app/data/news';
 import { extractJson } from '@/app/lib/parseContent';
 import { getAllCoFavoriteList, addCompanyToMyFavorite, removeCompanyFromFavorite, getCompanyTagList } from '@/app/lib/watchlistApi';
 import type { TagInfoDTO } from '@/app/lib/watchlistApi';
@@ -169,6 +169,72 @@ const NEWS_PAGE_SIZE = 8;
 function parseLocalDate(dateStr: string): Date {
   const [y, m, d] = dateStr.split('-').map(Number);
   return new Date(y, m - 1, d);
+}
+
+// ── News API helpers (same logic as Market News page) ────────────────────────
+
+interface NewsSummaryRecord {
+  news_date: string;
+  co_cd: string;
+  news_source: string;
+  comp_tag_short_name: string;
+  news_catg: string;
+  news_content: string;
+  news_url: string;
+  news_title: string;
+  update_date: string;
+}
+
+async function getNewsSummary(params: {
+  news_dt_from: string;
+  news_dt_to: string;
+  co_cd: string[];
+}): Promise<NewsSummaryRecord[]> {
+  const res = await fetch('/getNewsSummary', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(params),
+  });
+  if (!res.ok) throw new Error(`getNewsSummary failed: ${res.status}`);
+  return res.json();
+}
+
+function mapSummaryToNewsItem(record: NewsSummaryRecord, index: number): NewsItem {
+  return {
+    id: `api-${record.co_cd}-${record.news_date}-${index}`,
+    source: /^[\x20-\x7E\uFF01-\uFF5E]*$/.test(record.news_source) ? record.news_source : 'Others',
+    title: record.news_title,
+    content: record.news_content,
+    category: record.news_catg,
+    fileType: record.news_catg,
+    tags: record.co_cd
+      ? [{ symbol: record.co_cd, name: record.comp_tag_short_name || record.co_cd, change: 0 }]
+      : [],
+    publishedAt: new Date(record.news_date),
+    url: record.news_url,
+  };
+}
+
+/** Adds (or subtracts) `months` to a 'YYYY-MM-DD' string, returns 'YYYY-MM-DD'.
+ *  Clamps day to the last day of the target month to avoid overflow. */
+function addMonths(dateStr: string, months: number): string {
+  const d = new Date(dateStr + 'T00:00:00');
+  const origDay = d.getDate();
+  const targetMonth = d.getMonth() + months;
+  const targetYear = d.getFullYear() + Math.floor(targetMonth / 12);
+  const normMonth = ((targetMonth % 12) + 12) % 12;
+  const lastDay = new Date(targetYear, normMonth + 1, 0).getDate();
+  const clampedDay = Math.min(origDay, lastDay);
+  const result = new Date(targetYear, normMonth, clampedDay);
+  const mm = String(result.getMonth() + 1).padStart(2, '0');
+  const dd = String(result.getDate()).padStart(2, '0');
+  return `${result.getFullYear()}-${mm}-${dd}`;
+}
+
+/** Formats 'YYYY-MM-DD' to 'YYYY-MM-DD HH:mm:ss' */
+function toApiDateTime(dateStr: string, endOfDay = false): string {
+  const time = endOfDay ? '23:59:59' : '00:00:00';
+  return `${dateStr} ${time}`;
 }
 
 // Format a news timestamp for the cp-news-tab-time label.
@@ -592,6 +658,15 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isSourceOpen, setIsSourceOpen] = useState(false);
 
+  // News period validation errors
+  const [newsPeriodStartError, setNewsPeriodStartError] = useState(false);
+  const [newsPeriodEndError, setNewsPeriodEndError] = useState(false);
+
+  // News API search results (null = not yet searched, use local data)
+  const [newsApiResults, setNewsApiResults] = useState<NewsItem[] | null>(null);
+  const [newsIsSearchLoading, setNewsIsSearchLoading] = useState(false);
+  const [newsSearchError, setNewsSearchError] = useState(false);
+
   // Shared financial statement data — loaded once and shared with both
   // FIN. Statement tab and the Financial Indices / DOI & Revenue charts.
   const [companyStatements, setCompanyStatements] = useState<CompanyStatements | null>(null);
@@ -830,6 +905,63 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     }
   }
 
+  // News period change handlers — clear API results and errors on change
+  const handleNewsPeriodStartChange = useCallback((val: string) => {
+    setNewsPeriodStart(val);
+    setNewsPeriodStartError(false);
+    setNewsApiResults(null);
+    setNewsPage(1);
+  }, []);
+
+  const handleNewsPeriodEndChange = useCallback((val: string) => {
+    setNewsPeriodEnd(val);
+    setNewsPeriodEndError(false);
+    setNewsApiResults(null);
+    setNewsPage(1);
+  }, []);
+
+  // Search handler — calls getNewsSummary with Period dates and this company's code
+  async function handleCpNewsSearch() {
+    let hasError = false;
+    if (!newsPeriodStart) { setNewsPeriodStartError(true); hasError = true; }
+    if (!newsPeriodEnd) { setNewsPeriodEndError(true); hasError = true; }
+    if (hasError) return;
+
+    setNewsIsSearchLoading(true);
+    setNewsSearchError(false);
+    try {
+      const records = await getNewsSummary({
+        news_dt_from: toApiDateTime(newsPeriodStart, false),
+        news_dt_to: toApiDateTime(newsPeriodEnd, true),
+        co_cd: [symbol],
+      });
+      setNewsApiResults(records.map(mapSummaryToNewsItem));
+      setNewsPage(1);
+    } catch {
+      setNewsSearchError(true);
+      setNewsApiResults(null);
+    } finally {
+      setNewsIsSearchLoading(false);
+    }
+  }
+
+  // Clear handler — resets all filters back to initial (local data)
+  function handleCpNewsClear() {
+    setNewsKeyword('');
+    setNewsKeywordApplied('');
+    setNewsCategories(new Set());
+    setNewsSources(new Set());
+    setNewsPeriodStart('');
+    setNewsPeriodEnd('');
+    setNewsPeriodStartError(false);
+    setNewsPeriodEndError(false);
+    setNewsCategorySearch('');
+    setNewsSourceSearch('');
+    setNewsApiResults(null);
+    setNewsSearchError(false);
+    setNewsPage(1);
+  }
+
   // News filtered by this company's symbol tag, then by user filters
   const companyNews = useMemo(() =>
     newsItems.filter((n) => n.tags.some((t) => t.symbol === symbol)),
@@ -839,29 +971,35 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const distinctCategories = useMemo(() => [...new Set(companyNews.map((n) => n.category))].sort(), [companyNews]);
   const distinctSources = useMemo(() => [...new Set(companyNews.map((n) => n.source))].sort(), [companyNews]);
 
+  // Base items: API results (already filtered by period) or local company news
+  const newsBaseItems = newsApiResults ?? companyNews;
+
   const filteredNews = useMemo(() => {
     const keywordLower = newsKeywordApplied.trim().toLowerCase();
 
-    return companyNews.filter((item) => {
+    return newsBaseItems.filter((item) => {
       if (keywordLower) {
         const searchable = `${item.title} ${item.content}`.toLowerCase();
         if (!searchable.includes(keywordLower)) return false;
       }
       if (newsCategories.size > 0 && (!item.category || !newsCategories.has(item.category))) return false;
       if (newsSources.size > 0 && !newsSources.has(item.source)) return false;
-      if (newsPeriodStart) {
-        const d = item.publishedAt;
-        if (d < parseLocalDate(newsPeriodStart)) return false;
-      }
-      if (newsPeriodEnd) {
-        const d = item.publishedAt;
-        const end = parseLocalDate(newsPeriodEnd);
-        end.setDate(end.getDate() + 1);
-        if (d >= end) return false;
+      // Only apply local period filter when API results are not active
+      if (!newsApiResults) {
+        if (newsPeriodStart) {
+          const d = item.publishedAt;
+          if (d < parseLocalDate(newsPeriodStart)) return false;
+        }
+        if (newsPeriodEnd) {
+          const d = item.publishedAt;
+          const end = parseLocalDate(newsPeriodEnd);
+          end.setDate(end.getDate() + 1);
+          if (d >= end) return false;
+        }
       }
       return true;
     });
-  }, [companyNews, newsKeywordApplied, newsCategories, newsSources, newsPeriodStart, newsPeriodEnd]);
+  }, [newsBaseItems, newsApiResults, newsKeywordApplied, newsCategories, newsSources, newsPeriodStart, newsPeriodEnd]);
 
   const newsTotalPages = Math.ceil(filteredNews.length / NEWS_PAGE_SIZE);
   const pagedNews = filteredNews.slice((newsPage - 1) * NEWS_PAGE_SIZE, newsPage * NEWS_PAGE_SIZE);
@@ -1366,20 +1504,48 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                         <div className="cp-news-period-wrap">
                           <DatePickerInput
                             value={newsPeriodStart}
-                            onChange={setNewsPeriodStart}
+                            onChange={handleNewsPeriodStartChange}
                             placeholder="Start date"
-                            onPageReset={() => setNewsPage(1)}
+                            error={newsPeriodStartError}
+                            maxDate={newsPeriodEnd || undefined}
+                            minDate={newsPeriodEnd ? addMonths(newsPeriodEnd, -3) : undefined}
                           />
                           <span className="cp-news-period-sep">–</span>
                           <DatePickerInput
                             value={newsPeriodEnd}
-                            onChange={setNewsPeriodEnd}
+                            onChange={handleNewsPeriodEndChange}
                             placeholder="End date"
-                            onPageReset={() => setNewsPage(1)}
+                            error={newsPeriodEndError}
+                            minDate={newsPeriodStart || undefined}
+                            maxDate={newsPeriodStart ? addMonths(newsPeriodStart, 3) : undefined}
                           />
                         </div>
                       </div>
+
+                      {/* Search & Clear actions */}
+                      <div className="cp-news-filter-actions">
+                        <button
+                          className="mn-search-btn"
+                          onClick={handleCpNewsSearch}
+                          disabled={newsIsSearchLoading}
+                        >
+                          {newsIsSearchLoading ? 'Loading…' : 'Search'}
+                        </button>
+                        <button
+                          className="mn-clear-btn"
+                          onClick={handleCpNewsClear}
+                          disabled={newsIsSearchLoading}
+                        >
+                          Clear
+                        </button>
+                      </div>
                     </div>
+
+                    {newsSearchError && (
+                      <div className="mn-search-error">
+                        Unable to fetch news. Please check your connection and try again.
+                      </div>
+                    )}
 
                     {filteredNews.length === 0 ? (
                       <div className="cp-tab-placeholder">
