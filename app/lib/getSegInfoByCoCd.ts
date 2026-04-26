@@ -18,7 +18,7 @@ export interface SegInfoRecord {
  *   GET /api/seg-info?co_cd={coCd}
  */
 const SEG_INFO_MAP: Record<string, SegInfoRecord> = {
-  AAPL: { CO_CD: 'AAPL', SEG_LEVEL: '3', SEG_TYPE: 'PG_REVENUE' },
+  AAPL: { CO_CD: 'AAPL', SEG_LEVEL: '2', SEG_TYPE: 'PG_REVENUE' },
 };
 
 // ── API function ──────────────────────────────────────────────────────────────
