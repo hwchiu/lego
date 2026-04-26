@@ -212,15 +212,15 @@ function Sparkline1Y({ symbol }: { symbol: string }) {
   );
 }
 
-// ── Alpha Avatar ──────────────────────────────────────────────────────────────
-function AlphaAvatar() {
+// ── News Avatar ───────────────────────────────────────────────────────────────
+function NewsAvatar() {
   return (
-    <div className="wl-feed-avatar wl-feed-avatar--alpha">
-      <svg viewBox="0 0 28 28" fill="none" width="28" height="28">
-        <circle cx="14" cy="14" r="14" fill="#e5e7eb" />
-        <text x="14" y="19" textAnchor="middle" fontSize="14" fill="#9ca3af" fontFamily="serif">
-          α
-        </text>
+    <div className="wl-feed-avatar wl-feed-avatar--news">
+      <svg viewBox="0 0 28 28" fill="none" width="28" height="28" aria-hidden="true">
+        <circle cx="14" cy="14" r="14" fill="#dcfce7" />
+        <rect x="8" y="8" width="12" height="12" rx="1.5" stroke="#16a34a" strokeWidth="1.4" fill="none" />
+        <path d="M10 11h8" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M10 14h8M10 16.5h5" stroke="#16a34a" strokeWidth="1.2" strokeLinecap="round" />
       </svg>
     </div>
   );
@@ -1851,6 +1851,7 @@ export function WatchlistContent({
                 >
                   Press Release
                   <span className="wl-feed-tab-cs-overlay" aria-hidden="true">
+                    <span className="wl-feed-tab-cs-inner" aria-hidden="true" />
                     <svg className="wl-feed-tab-cs-lock" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                       <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
                       <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -1921,7 +1922,7 @@ export function WatchlistContent({
                 ) : (
                   currentUpdateItems.map((item, idx) => (
                     <div key={item.id} className={`wl-feed-item${idx < currentUpdateItems.length - 1 ? ' wl-feed-item--bordered' : ''}`}>
-                      {item.kind === 'news' ? <AlphaAvatar /> : item.kind === 'press-release' ? (
+                      {item.kind === 'news' ? <NewsAvatar /> : item.kind === 'press-release' ? (
                         <div className="wl-feed-avatar wl-feed-avatar--pr">
                           <svg viewBox="0 0 28 28" fill="none" width="28" height="28" aria-hidden="true">
                             <circle cx="14" cy="14" r="14" fill="#dbeafe" />

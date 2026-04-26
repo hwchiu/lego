@@ -3247,6 +3247,16 @@ html:not(.dark) .sidebar-submenu-icon-left {
   height: 11px;
   color: #475569;
   flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+.wl-feed-tab-cs-inner {
+  position: absolute;
+  inset: 4px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: inherit;
+  z-index: 0;
+  pointer-events: none;
 }
 .wl-feed-tab-cs-label {
   font-size: 8px;
