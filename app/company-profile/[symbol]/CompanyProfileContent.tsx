@@ -71,6 +71,11 @@ interface RevenueBreakdownItem {
   pct: number;
 }
 
+interface RevenueBreakdownGroup {
+  category: string;
+  items: RevenueBreakdownItem[];
+}
+
 interface DoiRevenuePoint {
   quarter: string;
   doi: number;
@@ -656,84 +661,76 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     [finFcstRecords, derivedCurrentQtr],
   );
 
-  // Derive revenue breakdown using segInfo (SEG_TYPE + SEG_LEVEL) from getSegInfoByCoCd.
-  // Uses buildSegmentHierarchy (same as Segment Report table) to avoid double-counting:
-  // when a level-1 item has level-2 children its rawValues are the bottom-up sum of
-  // children, so each item appears exactly once with the correct aggregated value.
-  const derivedRevenueBreakdown = useMemo<RevenueBreakdownItem[]>(() => {
+  // Derive revenue breakdown using segInfo (SEG_TYPE) from getSegInfoByCoCd.
+  // Records are split by `category` field; within each category, level-1 items
+  // are used so that every category yields a meaningful breakdown (even when
+  // the configured SEG_LEVEL references deeper levels that may not exist in all
+  // categories). Each category independently sums to 100%.
+  const derivedRevenueBreakdown = useMemo<RevenueBreakdownGroup[]>(() => {
     if (!segmentRecords.length) return [];
 
     const segType = segInfo?.SEG_TYPE ?? REVENUE_SALE_TYPE;
-    const segLevel = parseInt(segInfo?.SEG_LEVEL ?? '1', 10);
 
-    // Build hierarchy from quarterly records only (for the configured sale type)
+    // Filter for the configured sale type, quarterly records only
     const quarterlyRecords = segmentRecords.filter(
       (r) => r.sale_type === segType && r.calendar_quarter !== ANNUAL_QUARTER_VALUE,
     );
     if (!quarterlyRecords.length) return [];
 
-    const hierarchy = buildSegmentHierarchy(quarterlyRecords, 'usd');
-    const saleTypeGroup = hierarchy.find((g) => g.saleType === segType);
-    if (!saleTypeGroup) return [];
-
-    // Determine the latest quarterly period label ("Q1 2025" format)
-    const allPeriods = new Set<string>();
-    for (const l1g of saleTypeGroup.level1Groups) {
-      Object.keys(l1g.rawValues).forEach((p) => allPeriods.add(p));
+    // Collect unique categories in order of first appearance
+    const categoryOrder: string[] = [];
+    const categorySeen = new Set<string>();
+    for (const r of quarterlyRecords) {
+      const cat = r.category ?? '';
+      if (!categorySeen.has(cat)) {
+        categoryOrder.push(cat);
+        categorySeen.add(cat);
+      }
     }
-    if (allPeriods.size === 0) return [];
 
     function periodSortKey(p: string): number {
       const m = p.match(/^Q([1-4])\s+(\d{4})$/);
       if (!m) return 0;
       return parseInt(m[2], 10) * 10 + parseInt(m[1], 10);
     }
-    const latestPeriod = [...allPeriods].sort((a, b) => periodSortKey(b) - periodSortKey(a))[0];
 
-    // Extract nodes at the configured seg level with their aggregated values
-    const nodes: Array<{ name: string; value: number }> = [];
-    const pushNode = (name: string, rawValues: Record<string, number>) => {
-      const value = rawValues[latestPeriod];
-      if (value == null || name.toLowerCase().includes('total')) return;
-      nodes.push({ name: name.replace(MILLION_DOLLAR_SUFFIX_RE, ''), value });
-    };
+    const groups: RevenueBreakdownGroup[] = [];
 
-    if (segLevel === 1) {
+    for (const category of categoryOrder) {
+      const catRecords = quarterlyRecords.filter((r) => (r.category ?? '') === category);
+      const hierarchy = buildSegmentHierarchy(catRecords, 'usd');
+      const saleTypeGroup = hierarchy.find((g) => g.saleType === segType);
+      if (!saleTypeGroup) continue;
+
+      // Determine the latest quarterly period label for this category
+      const allPeriods = new Set<string>();
       for (const l1g of saleTypeGroup.level1Groups) {
-        pushNode(l1g.level1, l1g.rawValues);
+        Object.keys(l1g.rawValues).forEach((p) => allPeriods.add(p));
       }
-    } else if (segLevel === 2) {
+      if (allPeriods.size === 0) continue;
+      const latestPeriod = [...allPeriods].sort((a, b) => periodSortKey(b) - periodSortKey(a))[0];
+
+      // Use level-1 items for each category so all categories produce a breakdown
+      const nodes: Array<{ name: string; value: number }> = [];
       for (const l1g of saleTypeGroup.level1Groups) {
-        if (l1g.level2Groups.length > 0) {
-          for (const l2g of l1g.level2Groups) {
-            pushNode(l2g.level2, l2g.rawValues);
-          }
-        } else {
-          // level1 is a leaf — promote it to level2
-          pushNode(l1g.level1, l1g.rawValues);
-        }
+        const value = l1g.rawValues[latestPeriod];
+        const name = l1g.level1;
+        if (value == null || name.toLowerCase().includes('total')) continue;
+        nodes.push({ name: name.replace(MILLION_DOLLAR_SUFFIX_RE, ''), value });
       }
-    } else {
-      // segLevel === 3: collect only level3 leaf items.
-      // Level2 items with no level3 children are automatically skipped because
-      // we only iterate l2g.level3Groups. Level1 items without level2 children
-      // are also automatically skipped because we only iterate l1g.level2Groups.
-      for (const l1g of saleTypeGroup.level1Groups) {
-        for (const l2g of l1g.level2Groups) {
-          for (const l3g of l2g.level3Groups) {
-            pushNode(l3g.level3, l3g.rawValues);
-          }
-        }
-      }
+
+      if (nodes.length === 0) continue;
+      const total = nodes.reduce((sum, n) => sum + n.value, 0);
+      if (total === 0) continue;
+
+      const items = nodes
+        .map((n) => ({ name: n.name, pct: Math.round((n.value / total) * 1000) / 10 }))
+        .sort((a, b) => b.pct - a.pct);
+
+      groups.push({ category, items });
     }
 
-    if (nodes.length === 0) return [];
-    const total = nodes.reduce((sum, n) => sum + n.value, 0);
-    if (total === 0) return [];
-
-    return nodes
-      .map((n) => ({ name: n.name, pct: Math.round((n.value / total) * 1000) / 10 }))
-      .sort((a, b) => b.pct - a.pct);
+    return groups;
   }, [segmentRecords, segInfo]);
 
   // Parse markdown data
@@ -1151,8 +1148,8 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                       </div>
                       <div className="cp-card-divider" />
                       {(() => {
-                        const items = derivedRevenueBreakdown;
-                        if (items.length === 0) {
+                        const groups = derivedRevenueBreakdown;
+                        if (groups.length === 0) {
                           return (
                             <div className="cp-breakdown-nodata">
                               No Revenue Breakdown Data
@@ -1160,15 +1157,24 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                           );
                         }
                         return (
-                          <div className="cp-breakdown-list">
-                            {items.map((item) => (
-                              <div key={item.name} className="cp-breakdown-item">
-                                <div className="cp-breakdown-row">
-                                  <span className="cp-breakdown-name">{item.name}</span>
-                                  <span className="cp-breakdown-pct">{item.pct}%</span>
+                          <div className="cp-breakdown-groups">
+                            {groups.map((group) => (
+                              <div key={group.category} className="cp-breakdown-group">
+                                <div className="cp-breakdown-category-title">
+                                  {group.category.toUpperCase()}
                                 </div>
-                                <div className="cp-breakdown-bar-wrap">
-                                  <div className="cp-breakdown-bar" style={{ width: `${Math.min(100, item.pct)}%` }} />
+                                <div className="cp-breakdown-list">
+                                  {group.items.map((item) => (
+                                    <div key={item.name} className="cp-breakdown-item">
+                                      <div className="cp-breakdown-row">
+                                        <span className="cp-breakdown-name">{item.name}</span>
+                                        <span className="cp-breakdown-pct">{item.pct}%</span>
+                                      </div>
+                                      <div className="cp-breakdown-bar-wrap">
+                                        <div className="cp-breakdown-bar" style={{ width: `${Math.min(100, item.pct)}%` }} />
+                                      </div>
+                                    </div>
+                                  ))}
                                 </div>
                               </div>
                             ))}

@@ -4352,7 +4352,7 @@ html:not(.dark) .sidebar-submenu-icon-left {
   display: grid;
   grid-template-columns: 1.5fr 1.5fr 7fr;
   gap: 16px;
-  align-items: stretch;
+  align-items: start;
 }
 
 /* Stacked cards column */
@@ -4360,11 +4360,10 @@ html:not(.dark) .sidebar-submenu-icon-left {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  height: 100%;
 }
 
 .cp-col-stack > .cp-data-card {
-  flex: 1;
+  flex: none;
 }
 
 .cp-data-card {
@@ -4517,6 +4516,28 @@ html:not(.dark) .sidebar-submenu-icon-left {
 .cp-legend-label--gray { color: #9e9e9e; }
 
 /* Revenue breakdown */
+.cp-breakdown-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cp-breakdown-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cp-breakdown-category-title {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--c-text-3);
+  text-transform: uppercase;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--c-border);
+}
+
 .cp-breakdown-list {
   display: flex;
   flex-direction: column;
@@ -7152,6 +7173,12 @@ html:not(.dark) .sidebar-submenu-icon-left {
   border-radius: var(--radius);
 }
 
+/* When a category title sits above the table, remove top corners from the table wrap */
+.seg-category-block .fin-stmt-table-wrap {
+  border-radius: 0 0 var(--radius) var(--radius);
+  border-top: none;
+}
+
 .fin-stmt-table-wrap::-webkit-scrollbar {
   height: 6px;
 }
@@ -7330,7 +7357,39 @@ html:not(.dark) .sidebar-submenu-icon-left {
   font-style: italic;
 }
 
+/* Category-split segment table blocks */
+.seg-category-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.seg-category-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.seg-category-title {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-text-3);
+  padding: 8px 12px 6px;
+  background: #f8f9fb;
+  border: 1px solid var(--c-border);
+  border-bottom: none;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
 /* Dark mode */
+html.dark .seg-category-title {
+  background: #1e293b;
+  border-color: #334155;
+  color: #94a3b8;
+}
+
 html.dark .fin-stmt-simple-table .seg-sale-type-row td,
 html.dark .fin-stmt-simple-table .seg-sale-type-row:hover td {
   background: #334155;

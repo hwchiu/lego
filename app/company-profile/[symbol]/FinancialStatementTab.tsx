@@ -515,6 +515,43 @@ export function buildSegmentHierarchy(
   });
 }
 
+// ── Category-grouped hierarchy ────────────────────────────────────────────────
+
+export interface SegCategoryGroup {
+  category: string;
+  hierarchy: SegSaleTypeGroup[];
+}
+
+/**
+ * Build a nested hierarchy grouped first by the `category` field of each
+ * SegmentRecord, then by sale_type within each category.
+ *
+ * Records with no `category` value are grouped under an empty-string category.
+ */
+export function buildSegmentHierarchyByCategory(
+  records: SegmentRecord[],
+  currency: 'original' | 'usd' = 'usd',
+): SegCategoryGroup[] {
+  const categoryOrder: string[] = [];
+  const categorySeen = new Set<string>();
+
+  for (const record of records) {
+    const cat = record.category ?? '';
+    if (!categorySeen.has(cat)) {
+      categoryOrder.push(cat);
+      categorySeen.add(cat);
+    }
+  }
+
+  return categoryOrder.map((category) => ({
+    category,
+    hierarchy: buildSegmentHierarchy(
+      records.filter((r) => (r.category ?? '') === category),
+      currency,
+    ),
+  }));
+}
+
 /** Render a single data row for the segment table. */
 function SegDataRow({
   label,
@@ -562,38 +599,12 @@ interface SegmentReportTableProps {
   currency: Currency;
 }
 
-function SegmentReportTable({ records, viewMode, yearWindowStart, currency }: SegmentReportTableProps) {
-  // Filter records to the current view mode / year window
-  const filteredRecords = records.filter((r) => {
-    if (viewMode === 'annual') return r.calendar_quarter === SEGMENT_ANNUAL_Q;
-    return (
-      r.calendar_quarter !== SEGMENT_ANNUAL_Q &&
-      (r.calendar_year === yearWindowStart || r.calendar_year === yearWindowStart + 1)
-    );
-  });
-
-  if (filteredRecords.length === 0) {
-    return (
-      <div className="cp-tab-placeholder">
-        <span className="cp-tab-placeholder-text">No segment data for selected period.</span>
-      </div>
-    );
-  }
-
-  // Build ordered, deduplicated period labels
-  const periodSet = new Set<string>();
-  const sortKeyMap = new Map<string, number>();
-  for (const r of filteredRecords) {
-    const lbl = segPLabel(r.calendar_year, r.calendar_quarter);
-    periodSet.add(lbl);
-    if (!sortKeyMap.has(lbl)) sortKeyMap.set(lbl, segPSortKey(r.calendar_year, r.calendar_quarter));
-  }
-  const periods = [...periodSet].sort((a, b) => (sortKeyMap.get(a) ?? 0) - (sortKeyMap.get(b) ?? 0));
-
-  // Build hierarchical data structure (currency-aware, bottom-up aggregated)
-  const hierarchy = buildSegmentHierarchy(filteredRecords, currency);
-
-  // Build two-row quarterly header groups
+/** Build two-row header cell descriptors for a sorted list of period labels. */
+function buildPeriodHeaderCells(periods: string[]): {
+  row1Cells: Array<{ type: 'annual'; label: string } | { type: 'qgroup'; yearLabel: string; count: number }>;
+  row2Quarters: string[];
+  hasQuarterly: boolean;
+} {
   type Row1Cell =
     | { type: 'annual'; label: string }
     | { type: 'qgroup'; yearLabel: string; count: number };
@@ -616,8 +627,29 @@ function SegmentReportTable({ records, viewMode, yearWindowStart, currency }: Se
       row1Cells.push({ type: 'annual', label: p });
     }
   }
-  const hasQuarterly = row2Quarters.length > 0;
-  const colSpanAll = periods.length + 1;
+  return { row1Cells, row2Quarters, hasQuarterly: row2Quarters.length > 0 };
+}
+
+/** Renders the table for a single category's hierarchy with its own period set. */
+function SegmentCategoryTable({
+  categoryRecords,
+  currency,
+}: {
+  categoryRecords: SegmentRecord[];
+  currency: Currency;
+}) {
+  // Build ordered, deduplicated period labels for this category
+  const periodSet = new Set<string>();
+  const sortKeyMap = new Map<string, number>();
+  for (const r of categoryRecords) {
+    const lbl = segPLabel(r.calendar_year, r.calendar_quarter);
+    periodSet.add(lbl);
+    if (!sortKeyMap.has(lbl)) sortKeyMap.set(lbl, segPSortKey(r.calendar_year, r.calendar_quarter));
+  }
+  const periods = [...periodSet].sort((a, b) => (sortKeyMap.get(a) ?? 0) - (sortKeyMap.get(b) ?? 0));
+
+  const hierarchy = buildSegmentHierarchy(categoryRecords, currency);
+  const { row1Cells, row2Quarters, hasQuarterly } = buildPeriodHeaderCells(periods);
 
   return (
     <div className="fin-stmt-table-wrap">
@@ -709,6 +741,53 @@ function SegmentReportTable({ records, viewMode, yearWindowStart, currency }: Se
           })}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+function SegmentReportTable({ records, viewMode, yearWindowStart, currency }: SegmentReportTableProps) {
+  // Filter records to the current view mode / year window
+  const filteredRecords = records.filter((r) => {
+    if (viewMode === 'annual') return r.calendar_quarter === SEGMENT_ANNUAL_Q;
+    return (
+      r.calendar_quarter !== SEGMENT_ANNUAL_Q &&
+      (r.calendar_year === yearWindowStart || r.calendar_year === yearWindowStart + 1)
+    );
+  });
+
+  if (filteredRecords.length === 0) {
+    return (
+      <div className="cp-tab-placeholder">
+        <span className="cp-tab-placeholder-text">No segment data for selected period.</span>
+      </div>
+    );
+  }
+
+  // Split by category (in order of first appearance)
+  const categoryOrder: string[] = [];
+  const categorySeen = new Set<string>();
+  for (const r of filteredRecords) {
+    const cat = r.category ?? '';
+    if (!categorySeen.has(cat)) {
+      categoryOrder.push(cat);
+      categorySeen.add(cat);
+    }
+  }
+
+  // Render one table block per category
+  return (
+    <div className="seg-category-blocks">
+      {categoryOrder.map((category) => {
+        const catRecords = filteredRecords.filter((r) => (r.category ?? '') === category);
+        return (
+          <div key={category} className="seg-category-block">
+            {category && (
+              <div className="seg-category-title">{category.toUpperCase()}</div>
+            )}
+            <SegmentCategoryTable categoryRecords={catRecords} currency={currency} />
+          </div>
+        );
+      })}
     </div>
   );
 }
