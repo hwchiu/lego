@@ -311,6 +311,18 @@ function isMarginType(saleType: string): boolean {
   return saleType.includes('MARGIN');
 }
 
+/** Canonical category rendering order: platform before geometric, others after. */
+const CATEGORY_RENDER_ORDER = ['platform', 'geometric'];
+
+/** Sort an array of category strings in-place: platform first, geometric second, others last. */
+export function sortCategories(cats: string[]): void {
+  cats.sort((a, b) => {
+    const ia = CATEGORY_RENDER_ORDER.indexOf(a.toLowerCase());
+    const ib = CATEGORY_RENDER_ORDER.indexOf(b.toLowerCase());
+    return (ia === -1 ? Infinity : ia) - (ib === -1 ? Infinity : ib);
+  });
+}
+
 /** Build a period label for a SegmentRecord. */
 function segPLabel(calYear: number, calQ: string): string {
   return calQ === SEGMENT_ANNUAL_Q ? `FY${calYear}` : `${calQ} ${calYear}`;
@@ -457,6 +469,14 @@ export function buildSegmentHierarchy(
     }
     l2g.level3Map.get(level3)![periodLabel] = rawVal;
   }
+
+  // ── Sort sale types by SALE_TYPE_LABELS key order ──
+  const saleTypeLabelKeys = Object.keys(SALE_TYPE_LABELS);
+  saleTypeOrder.sort((a, b) => {
+    const ia = saleTypeLabelKeys.indexOf(a);
+    const ib = saleTypeLabelKeys.indexOf(b);
+    return (ia === -1 ? Infinity : ia) - (ib === -1 ? Infinity : ib);
+  });
 
   // ── Build output with bottom-up aggregation ──
   return saleTypeOrder.map((saleType) => {
@@ -763,7 +783,7 @@ function SegmentReportTable({ records, viewMode, yearWindowStart, currency }: Se
     );
   }
 
-  // Split by category (in order of first appearance)
+  // Split by category (sorted: platform before geometric, others follow)
   const categoryOrder: string[] = [];
   const categorySeen = new Set<string>();
   for (const r of filteredRecords) {
@@ -773,22 +793,37 @@ function SegmentReportTable({ records, viewMode, yearWindowStart, currency }: Se
       categorySeen.add(cat);
     }
   }
+  sortCategories(categoryOrder);
 
-  // Render one table block per category
+  // Render one table block per category (skip categories with no renderable data)
+  const categoryBlocks = categoryOrder
+    .map((category) => {
+      const catRecords = filteredRecords.filter((r) => (r.category ?? '') === category);
+      const hierarchy = buildSegmentHierarchy(catRecords, currency);
+      if (hierarchy.length === 0) return null;
+      const hasTitle = !!category;
+      return (
+        <div key={category} className={`seg-category-block${hasTitle ? ' seg-category-block--titled' : ''}`}>
+          {hasTitle && (
+            <div className="seg-category-title">{category.toUpperCase()}</div>
+          )}
+          <SegmentCategoryTable categoryRecords={catRecords} currency={currency} />
+        </div>
+      );
+    })
+    .filter(Boolean);
+
+  if (categoryBlocks.length === 0) {
+    return (
+      <div className="cp-tab-placeholder">
+        <span className="cp-tab-placeholder-text">No segment data for selected period.</span>
+      </div>
+    );
+  }
+
   return (
     <div className="seg-category-blocks">
-      {categoryOrder.map((category) => {
-        const catRecords = filteredRecords.filter((r) => (r.category ?? '') === category);
-        const hasTitle = !!category;
-        return (
-          <div key={category} className={`seg-category-block${hasTitle ? ' seg-category-block--titled' : ''}`}>
-            {hasTitle && (
-              <div className="seg-category-title">{category.toUpperCase()}</div>
-            )}
-            <SegmentCategoryTable categoryRecords={catRecords} currency={currency} />
-          </div>
-        );
-      })}
+      {categoryBlocks}
     </div>
   );
 }
