@@ -23068,6 +23068,9 @@ html.dark .data-table thead tr.sub-head th {
 html.dark .data-table tbody tr:hover td {
   background: #1a2537;
 }
+html.dark .data-table tbody td {
+  border-bottom-color: #334155;
+}
 
 /* ===== DARK MODE: toggle-btn ===== */
 html.dark .toggle-btn.active {
@@ -23102,6 +23105,13 @@ html.dark .fin-stmt-simple-table .fin-stmt-section-row td {
 }
 html.dark .fin-stmt-simple-table .fin-stmt-td-section-blank {
   background: #0f172a;
+}
+html.dark .fin-stmt-table-wrap {
+  background: #1e293b;
+}
+html.dark .fin-stmt-table-wrap .td-num {
+  background: #1e293b;
+  color: var(--c-text);
 }
 
 /* ===== DARK MODE: cp-ir-left-menu ===== */
