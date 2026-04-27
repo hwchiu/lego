@@ -50,6 +50,23 @@ interface CustomView {
   hidden: boolean;
 }
 
+// Converts a stored nextEarning date string (e.g. "Apr 29, 2026") to the
+// browser's local timezone and formats it as "YYYY-MM-DD HH:MM", matching the
+// Event Date column format used in the calendar views.
+function formatNextEarning(dateStr: string): string {
+  if (!dateStr || dateStr === 'N/A' || dateStr === 'TBD') return dateStr;
+  // Parse the date string as UTC midnight so that the local-time getters
+  // correctly apply the browser's timezone offset.
+  const date = new Date(dateStr + ' UTC');
+  if (isNaN(date.getTime())) return dateStr;
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${year}-${month}-${day} ${hours}:${minutes}`;
+}
+
 // Column definition: label + value getter + optional CSS class getter
 interface ColDef {
   label: string;
@@ -81,7 +98,7 @@ const ALL_COLUMNS: Record<string, ColDef> = {
   '52wLow':          { label: '52W Low',            getValue: () => '-' },
   beta:              { label: 'Beta',               getValue: () => '-' },
   marketCap:         { label: 'Market Cap',         getValue: () => '-' },
-  nextEarning:       { label: 'Next Earning Release', getValue: h => h.nextEarning },
+  nextEarning:       { label: 'Next Earning Release', getValue: h => formatNextEarning(h.nextEarning) },
   revenueQoQ:        { label: 'Revenue QoQ',        getValue: h => h.revenueQoQ, getClass: h => (h.revenueQoQ !== 'N/A' && h.revenueQoQ.startsWith('+')) ? 'pos' : (h.revenueQoQ !== 'N/A' ? 'neg' : '') },
   revenueYoY:        { label: 'Revenue YoY',        getValue: h => h.revenueYoY, getClass: h => (h.revenueYoY !== 'N/A' && h.revenueYoY.startsWith('+')) ? 'pos' : (h.revenueYoY !== 'N/A' ? 'neg' : '') },
   lastQtrRevenue:    { label: 'Last Qtr Revenue',   getValue: h => h.lastQtrRevenue },
