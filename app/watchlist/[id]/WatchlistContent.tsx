@@ -50,14 +50,15 @@ interface CustomView {
   hidden: boolean;
 }
 
-// Converts a stored nextEarning date string (e.g. "Apr 29, 2026") to the
-// browser's local timezone and formats it as "YYYY-MM-DD HH:MM", matching the
-// Event Date column format used in the calendar views.
+// Converts a stored nextEarning UTC timestamp (e.g. "2026-04-30 21:00:00.0")
+// to the browser's local timezone and formats it as "YYYY-MM-DD HH:MM",
+// matching the Event Date column format used in the calendar views.
 function formatNextEarning(dateStr: string): string {
   if (!dateStr || dateStr === 'N/A' || dateStr === 'TBD') return dateStr;
-  // Parse the date string as UTC midnight so that the local-time getters
-  // correctly apply the browser's timezone offset.
-  const date = new Date(dateStr + ' UTC');
+  // Strip trailing ".0", replace space with 'T', append 'Z' so Date parses it
+  // as UTC, then use local-time getters to apply the browser's timezone.
+  const utcString = dateStr.replace(' ', 'T').replace(/\.0$/, '') + 'Z';
+  const date = new Date(utcString);
   if (isNaN(date.getTime())) return dateStr;
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');

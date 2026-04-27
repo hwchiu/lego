@@ -125,7 +125,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+15.8%",
     "grossMargin": "19.1%",
     "doi": "N/A",
-    "nextEarning": "Jul 22, 2026",
+    "nextEarning": "2026-07-22 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -144,7 +144,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+5.0%",
     "grossMargin": "55.1%",
     "doi": "N/A",
-    "nextEarning": "Apr 29, 2026",
+    "nextEarning": "2026-04-29 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -163,7 +163,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+18.0%",
     "grossMargin": "59.7%",
     "doi": "N/A",
-    "nextEarning": "Apr 29, 2026",
+    "nextEarning": "2026-04-29 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -182,7 +182,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+0.5%",
     "grossMargin": "29.5%",
     "doi": "N/A",
-    "nextEarning": "May 8, 2026",
+    "nextEarning": "2026-05-08 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -201,7 +201,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+15.7%",
     "grossMargin": "47.3%",
     "doi": "N/A",
-    "nextEarning": "Apr 30, 2026",
+    "nextEarning": "2026-04-30 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -220,7 +220,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+73.2%",
     "grossMargin": "71.1%",
     "doi": "N/A",
-    "nextEarning": "May 20, 2026",
+    "nextEarning": "2026-05-20 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -239,7 +239,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+13.2%",
     "grossMargin": "52.6%",
     "doi": "N/A",
-    "nextEarning": "Jul 15, 2026",
+    "nextEarning": "2026-07-15 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -258,7 +258,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+16.7%",
     "grossMargin": "68.6%",
     "doi": "N/A",
-    "nextEarning": "Apr 29, 2026",
+    "nextEarning": "2026-04-29 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -277,7 +277,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+13.6%",
     "grossMargin": "50.3%",
     "doi": "N/A",
-    "nextEarning": "Apr 29, 2026",
+    "nextEarning": "2026-04-29 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -296,7 +296,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+23.8%",
     "grossMargin": "82.0%",
     "doi": "N/A",
-    "nextEarning": "Apr 29, 2026",
+    "nextEarning": "2026-04-29 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -315,7 +315,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+29.5%",
     "grossMargin": "76.7%",
     "doi": "N/A",
-    "nextEarning": "Jun 3, 2026",
+    "nextEarning": "2026-06-03 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -334,7 +334,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+12.1%",
     "grossMargin": "77.7%",
     "doi": "N/A",
-    "nextEarning": "May 27, 2026",
+    "nextEarning": "2026-05-27 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -353,7 +353,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+21.7%",
     "grossMargin": "67.1%",
     "doi": "N/A",
-    "nextEarning": "Jun 10, 2026",
+    "nextEarning": "2026-06-10 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -372,7 +372,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+34.1%",
     "grossMargin": "52.5%",
     "doi": "N/A",
-    "nextEarning": "May 5, 2026",
+    "nextEarning": "2026-05-05 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -391,7 +391,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "-4.1%",
     "grossMargin": "36.6%",
     "doi": "N/A",
-    "nextEarning": "Jul 23, 2026",
+    "nextEarning": "2026-07-23 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -410,7 +410,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+12.0%",
     "grossMargin": "89.4%",
     "doi": "N/A",
-    "nextEarning": "Jun 11, 2026",
+    "nextEarning": "2026-06-11 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -429,7 +429,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+16.2%",
     "grossMargin": "49.0%",
     "doi": "N/A",
-    "nextEarning": "Jul 16, 2026",
+    "nextEarning": "2026-07-16 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -448,7 +448,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+12.7%",
     "grossMargin": "0.0%",
     "doi": "N/A",
-    "nextEarning": "Jul 14, 2026",
+    "nextEarning": "2026-07-14 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -467,7 +467,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+14.6%",
     "grossMargin": "97.8%",
     "doi": "N/A",
-    "nextEarning": "Apr 28, 2026",
+    "nextEarning": "2026-04-28 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -486,7 +486,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+17.6%",
     "grossMargin": "100.0%",
     "doi": "N/A",
-    "nextEarning": "Apr 30, 2026",
+    "nextEarning": "2026-04-30 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -505,7 +505,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+11.8%",
     "grossMargin": "0.0%",
     "doi": "N/A",
-    "nextEarning": "Jul 14, 2026",
+    "nextEarning": "2026-07-14 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -524,7 +524,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+14.5%",
     "grossMargin": "82.3%",
     "doi": "N/A",
-    "nextEarning": "Jul 14, 2026",
+    "nextEarning": "2026-07-14 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -543,7 +543,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "-0.7%",
     "grossMargin": "26.1%",
     "doi": "N/A",
-    "nextEarning": "May 2, 2026",
+    "nextEarning": "2026-05-02 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -562,7 +562,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+2.0%",
     "grossMargin": "18.8%",
     "doi": "N/A",
-    "nextEarning": "Apr 21, 2026",
+    "nextEarning": "2026-04-21 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -581,7 +581,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+9.9%",
     "grossMargin": "68.0%",
     "doi": "N/A",
-    "nextEarning": "Jul 15, 2026",
+    "nextEarning": "2026-07-15 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -600,7 +600,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+42.6%",
     "grossMargin": "83.0%",
     "doi": "N/A",
-    "nextEarning": "Apr 30, 2026",
+    "nextEarning": "2026-04-30 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -619,7 +619,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "-1.2%",
     "grossMargin": "75.8%",
     "doi": "N/A",
-    "nextEarning": "May 5, 2026",
+    "nextEarning": "2026-05-05 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -638,7 +638,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+10.0%",
     "grossMargin": "71.6%",
     "doi": "N/A",
-    "nextEarning": "Apr 29, 2026",
+    "nextEarning": "2026-04-29 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -657,7 +657,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+5.0%",
     "grossMargin": "77.2%",
     "doi": "N/A",
-    "nextEarning": "Apr 30, 2026",
+    "nextEarning": "2026-04-30 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -676,7 +676,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+5.6%",
     "grossMargin": "24.9%",
     "doi": "N/A",
-    "nextEarning": "May 21, 2026",
+    "nextEarning": "2026-05-21 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -695,7 +695,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+21.5%",
     "grossMargin": "12.9%",
     "doi": "N/A",
-    "nextEarning": "May 28, 2026",
+    "nextEarning": "2026-05-28 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -714,7 +714,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+2.4%",
     "grossMargin": "61.6%",
     "doi": "N/A",
-    "nextEarning": "Apr 28, 2026",
+    "nextEarning": "2026-04-28 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -733,7 +733,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+8.5%",
     "grossMargin": "54.4%",
     "doi": "N/A",
-    "nextEarning": "Jul 16, 2026",
+    "nextEarning": "2026-07-16 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -752,7 +752,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+9.7%",
     "grossMargin": "57.4%",
     "doi": "N/A",
-    "nextEarning": "May 7, 2026",
+    "nextEarning": "2026-05-07 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -771,7 +771,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+0.1%",
     "grossMargin": "40.9%",
     "doi": "N/A",
-    "nextEarning": "Jun 25, 2026",
+    "nextEarning": "2026-06-25 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -790,7 +790,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+5.5%",
     "grossMargin": "22.2%",
     "doi": "N/A",
-    "nextEarning": "Apr 28, 2026",
+    "nextEarning": "2026-04-28 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -809,7 +809,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "-1.3%",
     "grossMargin": "31.0%",
     "doi": "N/A",
-    "nextEarning": "May 1, 2026",
+    "nextEarning": "2026-05-01 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -828,7 +828,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "-8.2%",
     "grossMargin": "41.9%",
     "doi": "N/A",
-    "nextEarning": "May 1, 2026",
+    "nextEarning": "2026-05-01 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -847,7 +847,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+18.0%",
     "grossMargin": "28.8%",
     "doi": "N/A",
-    "nextEarning": "Apr 30, 2026",
+    "nextEarning": "2026-04-30 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -866,7 +866,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+14.0%",
     "grossMargin": "4.8%",
     "doi": "N/A",
-    "nextEarning": "Apr 22, 2026",
+    "nextEarning": "2026-04-22 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -885,7 +885,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+24.7%",
     "grossMargin": "31.1%",
     "doi": "N/A",
-    "nextEarning": "Jul 16, 2026",
+    "nextEarning": "2026-07-16 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -904,7 +904,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+3.2%",
     "grossMargin": "56.4%",
     "doi": "N/A",
-    "nextEarning": "Jul 23, 2026",
+    "nextEarning": "2026-07-23 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -923,7 +923,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+5.2%",
     "grossMargin": "37.3%",
     "doi": "N/A",
-    "nextEarning": "May 6, 2026",
+    "nextEarning": "2026-05-06 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -942,7 +942,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+5.3%",
     "grossMargin": "70.1%",
     "doi": "N/A",
-    "nextEarning": "Apr 23, 2026",
+    "nextEarning": "2026-04-23 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -961,7 +961,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+11.3%",
     "grossMargin": "63.2%",
     "doi": "N/A",
-    "nextEarning": "Apr 28, 2026",
+    "nextEarning": "2026-04-28 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -980,7 +980,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+196.3%",
     "grossMargin": "58.4%",
     "doi": "N/A",
-    "nextEarning": "Jun 24, 2026",
+    "nextEarning": "2026-06-24 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -999,7 +999,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+22.1%",
     "grossMargin": "51.0%",
     "doi": "N/A",
-    "nextEarning": "May 28, 2026",
+    "nextEarning": "2026-05-28 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -1018,7 +1018,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+23.8%",
     "grossMargin": "50.0%",
     "doi": "N/A",
-    "nextEarning": "Apr 22, 2026",
+    "nextEarning": "2026-04-22 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -1037,7 +1037,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+7.2%",
     "grossMargin": "61.6%",
     "doi": "N/A",
-    "nextEarning": "Apr 29, 2026",
+    "nextEarning": "2026-04-29 00:00:00.0",
     "lastQtrRevenue": "N/A",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -1087,7 +1087,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+38.8%",
     "grossMargin": "57.8%",
     "doi": "55",
-    "nextEarning": "Jan 16, 2026",
+    "nextEarning": "2026-01-16 00:00:00.0",
     "lastQtrRevenue": "NT$759.69",
     "lastQtrGrossMargin": "57.8%",
     "lastQtrDOI": "55"
@@ -1106,7 +1106,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "-1.1%",
     "grossMargin": "19.8%",
     "doi": "42",
-    "nextEarning": "Jan 29, 2026",
+    "nextEarning": "2026-01-29 00:00:00.0",
     "lastQtrRevenue": "$25.71",
     "lastQtrGrossMargin": "19.8%",
     "lastQtrDOI": "42"
@@ -1125,7 +1125,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+3.1%",
     "grossMargin": "54.9%",
     "doi": "90",
-    "nextEarning": "Jan 29, 2026",
+    "nextEarning": "2026-01-29 00:00:00.0",
     "lastQtrRevenue": "$11.67",
     "lastQtrGrossMargin": "54.9%",
     "lastQtrDOI": "90"
@@ -1144,7 +1144,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+16.2%",
     "grossMargin": "58.9%",
     "doi": "N/A",
-    "nextEarning": "Feb 4, 2026",
+    "nextEarning": "2026-02-04 00:00:00.0",
     "lastQtrRevenue": "$88.27",
     "lastQtrGrossMargin": "58.9%",
     "lastQtrDOI": "N/A"
@@ -1163,7 +1163,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+1.0%",
     "grossMargin": "29.1%",
     "doi": "53",
-    "nextEarning": "Feb 13, 2026",
+    "nextEarning": "2026-02-13 00:00:00.0",
     "lastQtrRevenue": "¥3,350.5",
     "lastQtrGrossMargin": "29.1%",
     "lastQtrDOI": "53"
@@ -1182,7 +1182,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+4.9%",
     "grossMargin": "46.2%",
     "doi": "7",
-    "nextEarning": "Jan 30, 2026",
+    "nextEarning": "2026-01-30 00:00:00.0",
     "lastQtrRevenue": "$94.93",
     "lastQtrGrossMargin": "46.2%",
     "lastQtrDOI": "7"
@@ -1201,7 +1201,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+122.4%",
     "grossMargin": "74.6%",
     "doi": "78",
-    "nextEarning": "Feb 26, 2026",
+    "nextEarning": "2026-02-26 00:00:00.0",
     "lastQtrRevenue": "$35.08",
     "lastQtrGrossMargin": "74.6%",
     "lastQtrDOI": "78"
@@ -1220,7 +1220,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+0.6%",
     "grossMargin": "51.3%",
     "doi": "218",
-    "nextEarning": "Jan 29, 2026",
+    "nextEarning": "2026-01-29 00:00:00.0",
     "lastQtrRevenue": "€7.47",
     "lastQtrGrossMargin": "51.3%",
     "lastQtrDOI": "218"
@@ -1239,7 +1239,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+15.1%",
     "grossMargin": "68.4%",
     "doi": "N/A",
-    "nextEarning": "Jan 29, 2026",
+    "nextEarning": "2026-01-29 00:00:00.0",
     "lastQtrRevenue": "$65.59",
     "lastQtrGrossMargin": "68.4%",
     "lastQtrDOI": "N/A"
@@ -1258,7 +1258,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+11.0%",
     "grossMargin": "49.1%",
     "doi": "38",
-    "nextEarning": "Feb 6, 2026",
+    "nextEarning": "2026-02-06 00:00:00.0",
     "lastQtrRevenue": "$187.79",
     "lastQtrGrossMargin": "49.1%",
     "lastQtrDOI": "38"
@@ -1277,7 +1277,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+21.2%",
     "grossMargin": "82.7%",
     "doi": "N/A",
-    "nextEarning": "Jan 29, 2026",
+    "nextEarning": "2026-01-29 00:00:00.0",
     "lastQtrRevenue": "$48.39",
     "lastQtrGrossMargin": "82.7%",
     "lastQtrDOI": "N/A"
@@ -1296,7 +1296,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+25.2%",
     "grossMargin": "76.4%",
     "doi": "65",
-    "nextEarning": "Dec 12, 2025",
+    "nextEarning": "2025-12-12 00:00:00.0",
     "lastQtrRevenue": "$14.05",
     "lastQtrGrossMargin": "76.4%",
     "lastQtrDOI": "65"
@@ -1315,7 +1315,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+9.3%",
     "grossMargin": "77.2%",
     "doi": "N/A",
-    "nextEarning": "Feb 26, 2026",
+    "nextEarning": "2026-02-26 00:00:00.0",
     "lastQtrRevenue": "$9.44",
     "lastQtrGrossMargin": "77.2%",
     "lastQtrDOI": "N/A"
@@ -1334,7 +1334,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+19.1%",
     "grossMargin": "67.0%",
     "doi": "N/A",
-    "nextEarning": "Dec 9, 2025",
+    "nextEarning": "2025-12-09 00:00:00.0",
     "lastQtrRevenue": "$14.06",
     "lastQtrGrossMargin": "70.8%",
     "lastQtrDOI": "N/A"
@@ -1353,7 +1353,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+22.0%",
     "grossMargin": "51.0%",
     "doi": "102",
-    "nextEarning": "Jan 28, 2026",
+    "nextEarning": "2026-01-28 00:00:00.0",
     "lastQtrRevenue": "$6.82",
     "lastQtrGrossMargin": "50.0%",
     "lastQtrDOI": "102"
@@ -1372,7 +1372,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "-3.5%",
     "grossMargin": "39.2%",
     "doi": "125",
-    "nextEarning": "Jan 23, 2026",
+    "nextEarning": "2026-01-23 00:00:00.0",
     "lastQtrRevenue": "$13.28",
     "lastQtrGrossMargin": "42.1%",
     "lastQtrDOI": "125"
@@ -1391,7 +1391,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+10.4%",
     "grossMargin": "88.3%",
     "doi": "N/A",
-    "nextEarning": "Dec 11, 2025",
+    "nextEarning": "2025-12-11 00:00:00.0",
     "lastQtrRevenue": "$5.61",
     "lastQtrGrossMargin": "88.3%",
     "lastQtrDOI": "N/A"
@@ -1410,7 +1410,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+16.8%",
     "grossMargin": "46.7%",
     "doi": "N/A",
-    "nextEarning": "Jan 21, 2026",
+    "nextEarning": "2026-01-21 00:00:00.0",
     "lastQtrRevenue": "$9.83",
     "lastQtrGrossMargin": "46.7%",
     "lastQtrDOI": "N/A"
@@ -1429,7 +1429,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+2.0%",
     "grossMargin": "0.0%",
     "doi": "N/A",
-    "nextEarning": "Jan 15, 2026",
+    "nextEarning": "2026-01-15 00:00:00.0",
     "lastQtrRevenue": "$42.77",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -1448,7 +1448,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+12.4%",
     "grossMargin": "97.6%",
     "doi": "N/A",
-    "nextEarning": "Jan 28, 2026",
+    "nextEarning": "2026-01-28 00:00:00.0",
     "lastQtrRevenue": "$9.12",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -1467,7 +1467,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+14.8%",
     "grossMargin": "100.0%",
     "doi": "N/A",
-    "nextEarning": "Jan 30, 2026",
+    "nextEarning": "2026-01-30 00:00:00.0",
     "lastQtrRevenue": "$7.37",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -1486,7 +1486,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+5.8%",
     "grossMargin": "0.0%",
     "doi": "N/A",
-    "nextEarning": "Jan 15, 2026",
+    "nextEarning": "2026-01-15 00:00:00.0",
     "lastQtrRevenue": "$25.35",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -1505,7 +1505,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+12.9%",
     "grossMargin": "82.0%",
     "doi": "N/A",
-    "nextEarning": "Jan 15, 2026",
+    "nextEarning": "2026-01-15 00:00:00.0",
     "lastQtrRevenue": "$12.73",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -1524,7 +1524,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "-0.7%",
     "grossMargin": "26.1%",
     "doi": "N/A",
-    "nextEarning": "Mar 1, 2026",
+    "nextEarning": "2026-03-01 00:00:00.0",
     "lastQtrRevenue": "$92.75",
     "lastQtrGrossMargin": "N/A",
     "lastQtrDOI": "N/A"
@@ -1543,7 +1543,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+10.8%",
     "grossMargin": "18.3%",
     "doi": "N/A",
-    "nextEarning": "Jan 15, 2026",
+    "nextEarning": "2026-01-15 00:00:00.0",
     "lastQtrRevenue": "$100.82",
     "lastQtrGrossMargin": "18.3%",
     "lastQtrDOI": "N/A"
@@ -1562,7 +1562,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+7.4%",
     "grossMargin": "67.8%",
     "doi": "158",
-    "nextEarning": "Jan 22, 2026",
+    "nextEarning": "2026-01-22 00:00:00.0",
     "lastQtrRevenue": "$22.08",
     "lastQtrGrossMargin": "67.8%",
     "lastQtrDOI": "158"
@@ -1581,7 +1581,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+36.4%",
     "grossMargin": "79.0%",
     "doi": "N/A",
-    "nextEarning": "Feb 5, 2026",
+    "nextEarning": "2026-02-05 00:00:00.0",
     "lastQtrRevenue": "$11.44",
     "lastQtrGrossMargin": "79.0%",
     "lastQtrDOI": "N/A"
@@ -1600,7 +1600,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+11.1%",
     "grossMargin": "70.1%",
     "doi": "198",
-    "nextEarning": "Jan 28, 2026",
+    "nextEarning": "2026-01-28 00:00:00.0",
     "lastQtrRevenue": "$17.70",
     "lastQtrGrossMargin": "70.1%",
     "lastQtrDOI": "198"
@@ -1619,7 +1619,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+6.2%",
     "grossMargin": "69.8%",
     "doi": "N/A",
-    "nextEarning": "Jan 31, 2026",
+    "nextEarning": "2026-01-31 00:00:00.0",
     "lastQtrRevenue": "$15.10",
     "lastQtrGrossMargin": "69.8%",
     "lastQtrDOI": "N/A"
@@ -1638,7 +1638,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+6.4%",
     "grossMargin": "74.8%",
     "doi": "162",
-    "nextEarning": "Jan 28, 2026",
+    "nextEarning": "2026-01-28 00:00:00.0",
     "lastQtrRevenue": "$15.60",
     "lastQtrGrossMargin": "74.8%",
     "lastQtrDOI": "162"
@@ -1657,7 +1657,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+4.9%",
     "grossMargin": "25.0%",
     "doi": "39",
-    "nextEarning": "Feb 18, 2026",
+    "nextEarning": "2026-02-18 00:00:00.0",
     "lastQtrRevenue": "$169.59",
     "lastQtrGrossMargin": "25.0%",
     "lastQtrDOI": "39"
@@ -1676,7 +1676,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+8.3%",
     "grossMargin": "13.2%",
     "doi": "33",
-    "nextEarning": "Mar 5, 2026",
+    "nextEarning": "2026-03-05 00:00:00.0",
     "lastQtrRevenue": "$62.15",
     "lastQtrGrossMargin": "13.2%",
     "lastQtrDOI": "33"
@@ -1695,7 +1695,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+2.0%",
     "grossMargin": "60.5%",
     "doi": "N/A",
-    "nextEarning": "Feb 11, 2026",
+    "nextEarning": "2026-02-11 00:00:00.0",
     "lastQtrRevenue": "$11.85",
     "lastQtrGrossMargin": "60.5%",
     "lastQtrDOI": "N/A"
@@ -1714,7 +1714,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+1.6%",
     "grossMargin": "54.5%",
     "doi": "62",
-    "nextEarning": "Feb 4, 2026",
+    "nextEarning": "2026-02-04 00:00:00.0",
     "lastQtrRevenue": "$27.85",
     "lastQtrGrossMargin": "54.5%",
     "lastQtrDOI": "62"
@@ -1733,7 +1733,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+0.8%",
     "grossMargin": "54.0%",
     "doi": "N/A",
-    "nextEarning": "Jan 30, 2026",
+    "nextEarning": "2026-01-30 00:00:00.0",
     "lastQtrRevenue": "$6.59",
     "lastQtrGrossMargin": "54.0%",
     "lastQtrDOI": "N/A"
@@ -1752,7 +1752,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "-10.4%",
     "grossMargin": "44.6%",
     "doi": "95",
-    "nextEarning": "Dec 19, 2025",
+    "nextEarning": "2025-12-19 00:00:00.0",
     "lastQtrRevenue": "$11.59",
     "lastQtrGrossMargin": "44.6%",
     "lastQtrDOI": "95"
@@ -1771,7 +1771,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "-0.4%",
     "grossMargin": "27.9%",
     "doi": "N/A",
-    "nextEarning": "Jan 28, 2026",
+    "nextEarning": "2026-01-28 00:00:00.0",
     "lastQtrRevenue": "$9.07",
     "lastQtrGrossMargin": "27.9%",
     "lastQtrDOI": "N/A"
@@ -1790,7 +1790,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+0.9%",
     "grossMargin": "25.8%",
     "doi": "N/A",
-    "nextEarning": "Feb 7, 2026",
+    "nextEarning": "2026-02-07 00:00:00.0",
     "lastQtrRevenue": "$90.02",
     "lastQtrGrossMargin": "25.8%",
     "lastQtrDOI": "N/A"
@@ -1809,7 +1809,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "-1.4%",
     "grossMargin": "22.0%",
     "doi": "N/A",
-    "nextEarning": "Jan 31, 2026",
+    "nextEarning": "2026-01-31 00:00:00.0",
     "lastQtrRevenue": "$50.67",
     "lastQtrGrossMargin": "22.0%",
     "lastQtrDOI": "N/A"
@@ -1828,7 +1828,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "-2.8%",
     "grossMargin": "38.4%",
     "doi": "138",
-    "nextEarning": "Jan 28, 2026",
+    "nextEarning": "2026-01-28 00:00:00.0",
     "lastQtrRevenue": "$16.11",
     "lastQtrGrossMargin": "38.4%",
     "lastQtrDOI": "138"
@@ -1847,7 +1847,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+3.8%",
     "grossMargin": "11.0%",
     "doi": "N/A",
-    "nextEarning": "Jan 28, 2026",
+    "nextEarning": "2026-01-28 00:00:00.0",
     "lastQtrRevenue": "$17.84",
     "lastQtrGrossMargin": "11.0%",
     "lastQtrDOI": "N/A"
@@ -1866,7 +1866,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+6.1%",
     "grossMargin": "30.8%",
     "doi": "N/A",
-    "nextEarning": "Jan 22, 2026",
+    "nextEarning": "2026-01-22 00:00:00.0",
     "lastQtrRevenue": "$9.84",
     "lastQtrGrossMargin": "30.8%",
     "lastQtrDOI": "N/A"
@@ -1885,7 +1885,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+2.3%",
     "grossMargin": "51.8%",
     "doi": "N/A",
-    "nextEarning": "Jan 23, 2026",
+    "nextEarning": "2026-01-23 00:00:00.0",
     "lastQtrRevenue": "$6.09",
     "lastQtrGrossMargin": "51.8%",
     "lastQtrDOI": "N/A"
@@ -1904,7 +1904,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+4.0%",
     "grossMargin": "44.1%",
     "doi": "N/A",
-    "nextEarning": "Feb 5, 2026",
+    "nextEarning": "2026-02-05 00:00:00.0",
     "lastQtrRevenue": "$22.57",
     "lastQtrGrossMargin": "44.1%",
     "lastQtrDOI": "N/A"
@@ -1923,7 +1923,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+1.6%",
     "grossMargin": "68.3%",
     "doi": "N/A",
-    "nextEarning": "Jan 22, 2026",
+    "nextEarning": "2026-01-22 00:00:00.0",
     "lastQtrRevenue": "$31.92",
     "lastQtrGrossMargin": "68.3%",
     "lastQtrDOI": "N/A"
@@ -1942,7 +1942,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+5.3%",
     "grossMargin": "63.5%",
     "doi": "N/A",
-    "nextEarning": "Jan 28, 2026",
+    "nextEarning": "2026-01-28 00:00:00.0",
     "lastQtrRevenue": "$21.87",
     "lastQtrGrossMargin": "63.5%",
     "lastQtrDOI": "N/A"
@@ -1961,7 +1961,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+62.4%",
     "grossMargin": "38.0%",
     "doi": "125",
-    "nextEarning": "Dec 18, 2025",
+    "nextEarning": "2025-12-18 00:00:00.0",
     "lastQtrRevenue": "$8.71",
     "lastQtrGrossMargin": "38.0%",
     "lastQtrDOI": "125"
@@ -1980,7 +1980,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+18.4%",
     "grossMargin": "49.2%",
     "doi": "78",
-    "nextEarning": "Dec 10, 2025",
+    "nextEarning": "2025-12-10 00:00:00.0",
     "lastQtrRevenue": "$1.52",
     "lastQtrGrossMargin": "49.2%",
     "lastQtrDOI": "78"
@@ -1999,7 +1999,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+16.2%",
     "grossMargin": "47.4%",
     "doi": "82",
-    "nextEarning": "Jan 28, 2026",
+    "nextEarning": "2026-01-28 00:00:00.0",
     "lastQtrRevenue": "$4.26",
     "lastQtrGrossMargin": "47.4%",
     "lastQtrDOI": "82"
@@ -2018,7 +2018,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "revenueYoY": "+1.8%",
     "grossMargin": "61.0%",
     "doi": "87",
-    "nextEarning": "Jan 29, 2026",
+    "nextEarning": "2026-01-29 00:00:00.0",
     "lastQtrRevenue": "$3.08",
     "lastQtrGrossMargin": "61.0%",
     "lastQtrDOI": "87"

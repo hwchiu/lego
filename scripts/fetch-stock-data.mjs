@@ -160,7 +160,15 @@ function normalizeSparkline(prices) {
 function fmtDate(d) {
   if (!d) return 'N/A';
   const date = new Date(d);
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  if (isNaN(date.getTime())) return 'N/A';
+  // Store as UTC timestamp string matching the API format: "YYYY-MM-DD HH:MM:SS.0"
+  const year  = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const day   = String(date.getUTCDate()).padStart(2, '0');
+  const hours = String(date.getUTCHours()).padStart(2, '0');
+  const mins  = String(date.getUTCMinutes()).padStart(2, '0');
+  const secs  = String(date.getUTCSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day} ${hours}:${mins}:${secs}.0`;
 }
 
 function sleep(ms) {
