@@ -23104,6 +23104,13 @@ html.dark .fin-stmt-simple-table .fin-stmt-td-section-blank {
   background: #0f172a;
 }
 
+html.dark .fin-stmt-table thead th,
+html.dark .fin-stmt-table thead tr.sub-head th,
+html.dark .fin-stmt-table .th-group,
+html.dark .fin-stmt-simple-table thead th {
+  color: var(--c-text) !important;
+}
+
 /* ===== DARK MODE: cp-ir-left-menu ===== */
 html.dark .cp-ir-left-tab:hover {
   background: rgba(255, 255, 255, 0.08);
