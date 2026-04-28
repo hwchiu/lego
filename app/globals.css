@@ -3817,6 +3817,9 @@ html:not(.dark) .sidebar-submenu-icon-left {
   gap: 16px;
   padding: 16px 20px;
 }
+.wl-feed-news-grid--single {
+  grid-template-columns: 1fr;
+}
 @media (max-width: 860px) {
   .wl-feed-news-grid {
     grid-template-columns: 1fr;
