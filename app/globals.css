@@ -23665,6 +23665,33 @@ html.dark .cp-pec-ai-sentiment--bearish {
   border-color: #7dd3fc;
 }
 
+/* Dark mode for speaker sections (header & body) */
+html.dark .cp-irt-speaker-section {
+  border-color: #334155;
+}
+html.dark .cp-irt-speaker-header {
+  background: #1e293b;
+}
+html.dark .cp-irt-speaker-header:hover {
+  background: #1e3a5f;
+}
+html.dark .cp-irt-speaker-header--expanded {
+  background: #1a3152;
+  border-bottom-color: #334155;
+}
+html.dark .cp-irt-speaker-name {
+  color: #f1f5f9;
+}
+html.dark .cp-irt-speaker-body {
+  background: #0f172a;
+}
+html.dark .cp-irt-speaker-body p.p {
+  color: #cbd5e1;
+}
+html.dark .cp-irt-speaker-body strong {
+  color: #f1f5f9;
+}
+
 /* Dark mode for participants and dividers */
 html.dark .cp-irt-participants {
   background: #1e2d40;
