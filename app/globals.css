@@ -21215,6 +21215,9 @@ html.dark .cp-pec-card-action-btn:hover {
 html.dark .cp-pec-ai-quote-item {
   background: #6366f115;
 }
+html.dark .cp-pec-notice {
+  color: #f87171;
+}
 html.dark .cp-back-btn {
   color: var(--c-text-3);
 }
