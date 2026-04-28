@@ -301,18 +301,18 @@ select {
   margin-bottom: 2px;
 }
 .search-fin-cards {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 6px;
 }
 .search-fin-card {
-  display: flex;
-  align-items: stretch;
+  position: relative;
   border: 1px solid var(--c-border);
   border-radius: var(--radius);
   overflow: hidden;
   background: var(--c-white);
   transition: border-color 0.15s, box-shadow 0.15s;
+  min-height: 100px;
 }
 .search-fin-card:hover {
   border-color: var(--c-accent);
@@ -322,84 +322,106 @@ select {
   border-color: var(--c-accent);
   background: rgba(79, 195, 247, 0.04);
 }
+/* Pin button — absolute top-right corner */
+.search-fin-card-pin {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--c-border);
+  cursor: pointer;
+  color: var(--c-text-4);
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.search-fin-card-pin:hover {
+  background: var(--c-white);
+  border-color: var(--c-accent);
+  color: var(--c-accent);
+}
+.search-fin-card-pin--active {
+  color: var(--c-accent);
+  border-color: var(--c-accent);
+  background: rgba(79, 195, 247, 0.12);
+}
+/* Clickable card body */
 .search-fin-card-body {
-  flex: 1;
-  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding: 8px 10px;
+  gap: 0;
+  padding: 8px 8px 8px 8px;
+  width: 100%;
+  height: 100%;
   text-align: left;
   background: none;
   border: none;
   cursor: pointer;
 }
-.search-fin-card-header {
+/* Top row: FIN item name + period */
+.search-fin-card-top {
   display: flex;
-  align-items: baseline;
-  gap: 6px;
-  min-width: 0;
-}
-.search-fin-card-symbol {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--c-dark);
-  flex-shrink: 0;
-}
-.search-fin-card-name {
-  font-size: 11px;
-  color: var(--c-text-3);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4px;
+  margin-bottom: 4px;
+  padding-right: 18px; /* make room for pin button */
 }
 .search-fin-card-item {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 10.5px;
+  font-weight: 700;
   color: var(--c-text-2);
-  white-space: nowrap;
+  line-height: 1.3;
   overflow: hidden;
-  text-overflow: ellipsis;
-}
-.search-fin-card-footer {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  flex: 1;
+  min-width: 0;
 }
 .search-fin-card-period {
-  font-size: 10.5px;
+  font-size: 9.5px;
   font-weight: 600;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   color: var(--c-text-4);
   background: var(--c-bg);
-  padding: 1px 5px;
+  padding: 1px 4px;
   border-radius: 3px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
+/* Center: value — most prominent */
 .search-fin-card-value {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 800;
   color: var(--c-dark);
-}
-.search-fin-card-pin {
+  text-align: center;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  flex-shrink: 0;
-  background: none;
-  border: none;
-  border-left: 1px solid var(--c-border);
-  cursor: pointer;
+  padding: 4px 0;
+  letter-spacing: -0.02em;
+}
+/* Bottom: company tag */
+.search-fin-card-company {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+.search-fin-card-symbol {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   color: var(--c-text-4);
-  transition: background 0.12s, color 0.12s;
-}
-.search-fin-card-pin:hover {
   background: var(--c-bg);
-  color: var(--c-accent);
-}
-.search-fin-card-pin--active {
-  color: var(--c-accent);
-  background: rgba(79, 195, 247, 0.08);
+  padding: 1px 6px;
+  border-radius: 3px;
 }
 
 /* ===== BANNER CAROUSEL ===== */
@@ -15178,6 +15200,10 @@ html.dark .seg-item-l3.fin-stmt-td-item {
 
 /* ===== TABLET: ≤ 768px ===== */
 @media (max-width: 768px) {
+  /* Financial search cards — 2 per row on tablet */
+  .search-fin-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
   /* TopNav adjustments */
   .topnav {
     padding: 0 12px;
@@ -15700,6 +15726,10 @@ html.dark .seg-item-l3.fin-stmt-td-item {
     padding: 0 8px;
     gap: 8px;
     height: 50px;
+  }
+  /* Financial search cards — 2 per row on small phone */
+  .search-fin-cards {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .topnav-logo {
@@ -21060,17 +21090,24 @@ html.dark .search-fin-card:hover {
 html.dark .search-fin-card--pinned {
   background: rgba(79, 195, 247, 0.06);
 }
-html.dark .search-fin-card-symbol {
+html.dark .search-fin-card-value {
   color: var(--c-accent);
+}
+html.dark .search-fin-card-symbol {
+  background: #0f172a;
 }
 html.dark .search-fin-card-period {
   background: #0f172a;
 }
 html.dark .search-fin-card-pin {
-  border-left-color: var(--c-border);
+  background: rgba(30, 41, 59, 0.85);
+  border-color: var(--c-border);
 }
 html.dark .search-fin-card-pin:hover {
   background: #0f172a;
+}
+html.dark .search-fin-card-pin--active {
+  background: rgba(79, 195, 247, 0.15);
 }
 html.dark .search-dropdown-section--pinned {
   border-bottom-color: var(--c-border);

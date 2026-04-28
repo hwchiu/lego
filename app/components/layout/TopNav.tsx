@@ -121,7 +121,7 @@ function searchFinancialCards(query: string): FinCard[] {
       value: entry.value,
     });
 
-    if (results.length >= 6) break;
+    if (results.length >= 8) break;
   }
   return results;
 }
@@ -159,21 +159,7 @@ interface FinCardItemProps {
 function FinCardItem({ card, pinned, onPin, onUnpin, onNavigate }: FinCardItemProps) {
   return (
     <div className={`search-fin-card${pinned ? ' search-fin-card--pinned' : ''}`}>
-      <button
-        className="search-fin-card-body"
-        onMouseDown={(e) => { e.preventDefault(); onNavigate(card.symbol); }}
-        title={`Go to ${card.companyName} profile`}
-      >
-        <div className="search-fin-card-header">
-          <span className="search-fin-card-symbol">{card.symbol}</span>
-          <span className="search-fin-card-name">{card.companyName}</span>
-        </div>
-        <div className="search-fin-card-item">{card.item}</div>
-        <div className="search-fin-card-footer">
-          <span className="search-fin-card-period">{card.period}</span>
-          <span className="search-fin-card-value">{card.value}</span>
-        </div>
-      </button>
+      {/* Pin button — absolute top-right overlay */}
       <button
         className={`search-fin-card-pin${pinned ? ' search-fin-card-pin--active' : ''}`}
         onMouseDown={(e) => {
@@ -185,6 +171,27 @@ function FinCardItem({ card, pinned, onPin, onUnpin, onNavigate }: FinCardItemPr
         aria-label={pinned ? 'Unpin card' : 'Pin card'}
       >
         <PinIcon pinned={pinned} />
+      </button>
+
+      {/* Clickable card body — navigates to company profile */}
+      <button
+        className="search-fin-card-body"
+        onMouseDown={(e) => { e.preventDefault(); onNavigate(card.symbol); }}
+        title={`Go to ${card.companyName} profile`}
+      >
+        {/* Top row: FIN item name (left) + period (right) */}
+        <div className="search-fin-card-top">
+          <span className="search-fin-card-item">{card.item}</span>
+          <span className="search-fin-card-period">{card.period}</span>
+        </div>
+
+        {/* Center: value — most prominent element */}
+        <div className="search-fin-card-value">{card.value}</div>
+
+        {/* Bottom: company tag */}
+        <div className="search-fin-card-company">
+          <span className="search-fin-card-symbol">{card.symbol}</span>
+        </div>
       </button>
     </div>
   );
