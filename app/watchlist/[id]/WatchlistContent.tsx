@@ -1904,7 +1904,7 @@ export function WatchlistContent({
                     <div className="wl-feed-empty">No news found for your watchlist companies.</div>
                   ) : (
                     <>
-                      <div className="wl-feed-news-grid">
+                      <div className={`wl-feed-news-grid${splitLayout ? ' wl-feed-news-grid--single' : ''}`}>
                         {pagedNewsItems.map((item) => (
                           <NewsCard key={item.id} item={item} />
                         ))}
