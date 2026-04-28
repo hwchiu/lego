@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { useMobileSidebar, MOBILE_BREAKPOINT } from '@/app/contexts/MobileSidebarContext';
@@ -10,6 +11,12 @@ import { BASE_PATH } from '@/app/lib/basePath';
 import ThemeToggleButton from '@/app/components/ThemeToggleButton';
 import { getStatement } from '@/app/data/financialData';
 import type { StatementKey } from '@/app/data/financialData';
+import finSummaryConfig from '@/app/data/fin-summary-config.json';
+
+const SearchFinancialIndicesChart = dynamic(
+  () => import('@/app/company-profile/[symbol]/InvestmentNivoCharts').then((m) => m.FinancialIndicesNivoChart),
+  { ssr: false, loading: () => <div style={{ height: 200, background: 'var(--c-bg)', borderRadius: 6 }} /> },
+);
 
 const POPULAR_SEARCHES = ['TC', 'AAPL', 'NVDA'];
 
@@ -19,6 +26,133 @@ const COMPANY_MASTER_LC = COMPANY_MASTER_LIST.map((c) => ({
   symbolLc: c.symbol.toLowerCase(),
   nameLc: c.name.toLowerCase(),
 }));
+
+// ── Financial Indices chart helpers ─────────────────────────────────────────
+
+const FIN_INDICES = [
+  'Revenue',
+  'Gross Profit',
+  'Gross Margin',
+  'Operating Margin',
+  'Net Income',
+  'Net Margin',
+  'Cash & Cash Equivalents',
+] as const;
+
+type FinIndexName = typeof FIN_INDICES[number];
+
+/** Maps each FIN index to a keyword to detect in the search query. */
+const FIN_INDICES_KEYWORDS: Array<{ name: FinIndexName; keyword: string }> = [
+  { name: 'Revenue',                  keyword: 'revenue' },
+  { name: 'Gross Profit',             keyword: 'gross profit' },
+  { name: 'Gross Margin',             keyword: 'gross margin' },
+  { name: 'Operating Margin',         keyword: 'operating margin' },
+  { name: 'Net Income',               keyword: 'net income' },
+  { name: 'Net Margin',               keyword: 'net margin' },
+  { name: 'Cash & Cash Equivalents',  keyword: 'cash' },
+];
+
+interface FinancialDataPoint {
+  quarter: string;
+  netIncome: number;
+  totalRevenue: number;
+  grossProfit: number;
+  grossMarginPct: number;
+  operatingMarginPct: number;
+  netMarginPct: number;
+  cashEquivalents: number;
+  guidance: number | null;
+}
+
+/** Parse a formatted value string (e.g. "124,300" or "47.93%") to a number. */
+function parseItemValSearch(s: string): number {
+  if (!s || s === '—' || s === '-') return 0;
+  const clean = s.replace(/[$,\s]/g, '').replace(/%$/, '');
+  const n = parseFloat(clean);
+  return isNaN(n) ? 0 : n;
+}
+
+/** Parse a year range like "2023~2026" or "2023-2026" from the query. */
+function parseYearRange(q: string): { startYear: number; endYear: number } | null {
+  const m = q.match(/\b(20\d{2})\s*[~\-]\s*(20\d{2})\b/);
+  if (!m) return null;
+  const startYear = parseInt(m[1]);
+  const endYear = parseInt(m[2]);
+  if (startYear > endYear) return null;
+  return { startYear, endYear };
+}
+
+type FinSummaryConfigEntry = { index: string; rpt_fin_type: string; rpt_fin_item: string };
+
+/** Derive FinancialDataPoint[] for a company from static statement data, filtered by year range. */
+function deriveSearchFinIndicesData(
+  symbol: string,
+  startYear: number,
+  endYear: number,
+): FinancialDataPoint[] {
+  const incomeStmt = getStatement('income')[symbol];
+  const balanceStmt = getStatement('balance')[symbol];
+  if (!incomeStmt) return [];
+
+  const fiCfg = finSummaryConfig.financialIndices as FinSummaryConfigEntry[];
+
+  function findKey(
+    items: Record<string, string[]>,
+    indexName: string,
+    type: 'income' | 'balance',
+  ): string | undefined {
+    const entry = fiCfg.find((e) => e.index === indexName && e.rpt_fin_type === type);
+    if (!entry) return undefined;
+    return entry.rpt_fin_item in items ? entry.rpt_fin_item : undefined;
+  }
+
+  const incomeItems = incomeStmt.items;
+  const balanceItems = balanceStmt?.items ?? {};
+  const balancePeriods = balanceStmt?.periods ?? [];
+
+  const revKey  = findKey(incomeItems, 'Revenue',                  'income');
+  const gpKey   = findKey(incomeItems, 'Gross Profit',             'income');
+  const gmKey   = findKey(incomeItems, 'Gross Margin',             'income');
+  const omKey   = findKey(incomeItems, 'Operating Margin',         'income');
+  const niKey   = findKey(incomeItems, 'Net Income',               'income');
+  const nmKey   = findKey(incomeItems, 'Net Margin',               'income');
+  const cashKey = findKey(balanceItems, 'Cash & Cash Equivalents', 'balance');
+
+  function getVal(
+    items: Record<string, string[]>,
+    periods: string[],
+    key: string | undefined,
+    period: string,
+  ): number {
+    if (!key) return 0;
+    const idx = periods.indexOf(period);
+    if (idx < 0) return 0;
+    return parseItemValSearch(items[key]?.[idx] ?? '');
+  }
+
+  const result: FinancialDataPoint[] = [];
+  for (const period of incomeStmt.periods) {
+    // Only quarterly periods like "Q1 2023"
+    const m = period.match(/^(Q\d)\s+(\d{4})$/);
+    if (!m) continue;
+    const year = parseInt(m[2]);
+    if (year < startYear || year > endYear) continue;
+    const yy = m[2].slice(2);
+    const q = m[1];
+    result.push({
+      quarter:            `${yy}${q}`,
+      totalRevenue:       getVal(incomeItems, incomeStmt.periods, revKey,  period),
+      grossProfit:        getVal(incomeItems, incomeStmt.periods, gpKey,   period),
+      grossMarginPct:     getVal(incomeItems, incomeStmt.periods, gmKey,   period),
+      operatingMarginPct: getVal(incomeItems, incomeStmt.periods, omKey,   period),
+      netIncome:          getVal(incomeItems, incomeStmt.periods, niKey,   period),
+      netMarginPct:       getVal(incomeItems, incomeStmt.periods, nmKey,   period),
+      cashEquivalents:    balanceStmt ? getVal(balanceItems, balancePeriods, cashKey, period) : 0,
+      guidance:           null,
+    });
+  }
+  return result;
+}
 
 // ── Financial search types & helpers ────────────────────────────────────────
 
@@ -285,6 +419,53 @@ export default function TopNav() {
     return searchFinancialCards(q);
   }, [q]);
 
+  // Financial Indices chart result — shown when query contains company + optional FIN metric + year range
+  const finIndicesResult = useMemo(() => {
+    if (q.length < 6) return null;
+    const yearRange = parseYearRange(q);
+    if (!yearRange) return null;
+
+    // Find matched company
+    const matchedCompany = COMPANY_MASTER_LC.find((c) =>
+      q.includes(c.symbolLc) ||
+      c.nameLc.split(' ').some((w) => w.length >= 3 && q.includes(w)),
+    );
+    if (!matchedCompany) return null;
+
+    // Strip company name and year range from remaining query to detect FIN metric
+    let remaining = q
+      .replace(new RegExp(matchedCompany.symbolLc, 'g'), '')
+      .replace(/\b20\d{2}\s*[~\-]\s*20\d{2}\b/, '')
+      .trim();
+    for (const word of matchedCompany.nameLc.split(' ')) {
+      if (word.length >= 3) remaining = remaining.replace(new RegExp(word, 'g'), '').trim();
+    }
+
+    const matchedEntry = FIN_INDICES_KEYWORDS.find((f) => remaining.includes(f.keyword));
+    const matchedMetric: FinIndexName = matchedEntry?.name ?? 'Revenue';
+
+    const data = deriveSearchFinIndicesData(matchedCompany.symbol, yearRange.startYear, yearRange.endYear);
+    if (data.length === 0) return null;
+
+    return {
+      symbol: matchedCompany.symbol,
+      companyName: matchedCompany.name,
+      data,
+      matchedMetric,
+      yearRange,
+    };
+  }, [q]);
+
+  // Active tab for the Financial Indices chart in search dropdown
+  const [searchFinIndexTab, setSearchFinIndexTab] = useState<FinIndexName>('Revenue');
+
+  // Sync the active tab when the detected metric changes
+  useEffect(() => {
+    if (finIndicesResult?.matchedMetric) {
+      setSearchFinIndexTab(finIndicesResult.matchedMetric);
+    }
+  }, [finIndicesResult?.matchedMetric]);
+
   const pinnedIds = useMemo(() => new Set(pinnedCards.map((c) => c.id)), [pinnedCards]);
 
   // Navigate to company profile page
@@ -349,7 +530,7 @@ export default function TopNav() {
         <input
           className={`topnav-search${focused ? ' focused' : ''}`}
           type="text"
-          placeholder="Search company or ticker… (e.g. Apple Revenue)"
+          placeholder="Search company or ticker… (e.g. Apple Revenue 2023~2026)"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setFocused(true)}
@@ -427,8 +608,38 @@ export default function TopNav() {
               </div>
             )}
 
+            {/* Financial Indices chart — shown when query matches company + FIN metric + year range */}
+            {finIndicesResult && (
+              <div className="search-dropdown-section">
+                <div className="search-dropdown-section-label">Financial Indices</div>
+                <div className="search-indices-card">
+                  <div className="search-indices-card-header">
+                    <span className="news-tag search-fin-card-symbol">{finIndicesResult.symbol}</span>
+                    <span className="search-indices-card-range">
+                      {finIndicesResult.yearRange.startYear}–{finIndicesResult.yearRange.endYear}
+                    </span>
+                  </div>
+                  <div className="cp-fin-index-tabs">
+                    {FIN_INDICES.map((idx) => (
+                      <button
+                        key={idx}
+                        className={`cp-fin-index-tab${searchFinIndexTab === idx ? ' active' : ''}`}
+                        onMouseDown={(e) => { e.preventDefault(); setSearchFinIndexTab(idx); }}
+                      >
+                        {idx}
+                      </button>
+                    ))}
+                  </div>
+                  <SearchFinancialIndicesChart
+                    data={finIndicesResult.data}
+                    activeMetric={searchFinIndexTab}
+                  />
+                </div>
+              </div>
+            )}
+
             {/* No results */}
-            {q.length > 0 && filteredCompanies.length === 0 && finCards.length === 0 && (
+            {q.length > 0 && filteredCompanies.length === 0 && finCards.length === 0 && !finIndicesResult && (
               <div className="search-dropdown-section">
                 <div
                   className="search-dropdown-section-label"
