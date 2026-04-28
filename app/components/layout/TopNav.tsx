@@ -74,7 +74,7 @@ function parseItemValSearch(s: string): number {
 
 /** Parse a year range like "2023~2026" or "2023-2026" from the query. */
 function parseYearRange(q: string): { startYear: number; endYear: number } | null {
-  const m = q.match(/\b(20\d{2})\s*[~\-]\s*(20\d{2})\b/);
+  const m = q.match(/\b(20\d{2})\s*[~-]\s*(20\d{2})\b/);
   if (!m) return null;
   const startYear = parseInt(m[1]);
   const endYear = parseInt(m[2]);
@@ -133,7 +133,7 @@ function deriveSearchFinIndicesData(
   const result: FinancialDataPoint[] = [];
   for (const period of incomeStmt.periods) {
     // Only quarterly periods like "Q1 2023"
-    const m = period.match(/^(Q\d)\s+(\d{4})$/);
+    const m = period.match(/^(Q[1-4])\s+(\d{4})$/);
     if (!m) continue;
     const year = parseInt(m[2]);
     if (year < startYear || year > endYear) continue;
@@ -433,12 +433,13 @@ export default function TopNav() {
     if (!matchedCompany) return null;
 
     // Strip company name and year range from remaining query to detect FIN metric
+    const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     let remaining = q
-      .replace(new RegExp(matchedCompany.symbolLc, 'g'), '')
-      .replace(/\b20\d{2}\s*[~\-]\s*20\d{2}\b/, '')
+      .replace(new RegExp(escapeRegex(matchedCompany.symbolLc), 'g'), '')
+      .replace(/\b20\d{2}\s*[~-]\s*20\d{2}\b/, '')
       .trim();
     for (const word of matchedCompany.nameLc.split(' ')) {
-      if (word.length >= 3) remaining = remaining.replace(new RegExp(word, 'g'), '').trim();
+      if (word.length >= 3) remaining = remaining.replace(new RegExp(escapeRegex(word), 'g'), '').trim();
     }
 
     const matchedEntry = FIN_INDICES_KEYWORDS.find((f) => remaining.includes(f.keyword));
