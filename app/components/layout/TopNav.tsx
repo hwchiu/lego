@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
@@ -8,6 +8,8 @@ import { useLanguage } from '@/app/contexts/LanguageContext';
 import { useMobileSidebar, MOBILE_BREAKPOINT } from '@/app/contexts/MobileSidebarContext';
 import { BASE_PATH } from '@/app/lib/basePath';
 import ThemeToggleButton from '@/app/components/ThemeToggleButton';
+import { getStatement } from '@/app/data/financialData';
+import type { StatementKey } from '@/app/data/financialData';
 
 const POPULAR_SEARCHES = ['TC', 'AAPL', 'NVDA'];
 
@@ -18,10 +20,189 @@ const COMPANY_MASTER_LC = COMPANY_MASTER_LIST.map((c) => ({
   nameLc: c.name.toLowerCase(),
 }));
 
+// ── Financial search types & helpers ────────────────────────────────────────
+
+export interface FinCard {
+  id: string;
+  symbol: string;
+  companyName: string;
+  item: string;
+  period: string;
+  value: string;
+}
+
+/** Strip unit annotations from item names for keyword matching. */
+function simplifyItemName(item: string): string {
+  return item.replace(/\s*\([^)]+\)/g, '').trim().toLowerCase();
+}
+
+interface FinSearchEntry {
+  symbol: string;
+  companyName: string;
+  symbolLc: string;
+  nameLc: string;
+  item: string;
+  itemLc: string;
+  period: string;
+  value: string;
+}
+
+const FIN_STMT_KEYS: StatementKey[] = ['income', 'balance', 'cashflow'];
+let _finSearchCache: FinSearchEntry[] | null = null;
+
+function getFinSearchEntries(): FinSearchEntry[] {
+  if (_finSearchCache) return _finSearchCache;
+
+  const entries: FinSearchEntry[] = [];
+  for (const key of FIN_STMT_KEYS) {
+    const stmt = getStatement(key);
+    for (const [symbol, data] of Object.entries(stmt)) {
+      if (data.periods.length === 0) continue;
+      const company = COMPANY_MASTER_LIST.find((c) => c.symbol === symbol);
+      const companyName = company?.name ?? symbol;
+      const latestIdx = data.periods.length - 1;
+      const latestPeriod = data.periods[latestIdx];
+      for (const [item, values] of Object.entries(data.items)) {
+        const value = values[latestIdx] || '';
+        if (!value) continue;
+        entries.push({
+          symbol,
+          companyName,
+          symbolLc: symbol.toLowerCase(),
+          nameLc: companyName.toLowerCase(),
+          item,
+          itemLc: simplifyItemName(item),
+          period: latestPeriod,
+          value,
+        });
+      }
+    }
+  }
+  _finSearchCache = entries;
+  return entries;
+}
+
+function searchFinancialCards(query: string): FinCard[] {
+  const q = query.trim().toLowerCase();
+  if (q.length < 2) return [];
+
+  const entries = getFinSearchEntries();
+  const results: FinCard[] = [];
+  const seen = new Set<string>();
+
+  for (const entry of entries) {
+    const hasSymbol = q.includes(entry.symbolLc);
+    const hasName = entry.nameLc.split(' ').some((word) => word.length >= 3 && q.includes(word));
+    if (!hasSymbol && !hasName) continue;
+
+    // Derive remaining query after stripping the matched company reference
+    let remaining = q;
+    if (hasSymbol) remaining = remaining.replace(new RegExp(entry.symbolLc, 'g'), '').trim();
+    if (hasName) {
+      for (const word of entry.nameLc.split(' ')) {
+        if (word.length >= 3 && remaining.includes(word)) {
+          remaining = remaining.replace(new RegExp(word, 'g'), '').trim();
+        }
+      }
+    }
+
+    if (!remaining || !entry.itemLc.includes(remaining)) continue;
+
+    const id = `${entry.symbol}::${entry.item}`;
+    if (seen.has(id)) continue;
+    seen.add(id);
+
+    results.push({
+      id,
+      symbol: entry.symbol,
+      companyName: entry.companyName,
+      item: entry.item,
+      period: entry.period,
+      value: entry.value,
+    });
+
+    if (results.length >= 8) break;
+  }
+  return results;
+}
+
+// ── PinIcon ──────────────────────────────────────────────────────────────────
+
+function PinIcon({ pinned }: { pinned: boolean }) {
+  return (
+    <svg viewBox="0 0 14 14" width="12" height="12" fill="none" aria-hidden="true">
+      {pinned ? (
+        <>
+          <path d="M9 1L13 5L10 8L9 12L5 8L2 11" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" fill="currentColor" fillOpacity="0.2" />
+          <path d="M2 12L5 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+        </>
+      ) : (
+        <>
+          <path d="M9 1L13 5L10 8L9 12L5 8L2 11" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M2 12L5 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+        </>
+      )}
+    </svg>
+  );
+}
+
+// ── FinCardItem ──────────────────────────────────────────────────────────────
+
+interface FinCardItemProps {
+  card: FinCard;
+  pinned: boolean;
+  onPin: (card: FinCard) => void;
+  onUnpin: (id: string) => void;
+  onNavigate: (symbol: string) => void;
+}
+
+function FinCardItem({ card, pinned, onPin, onUnpin, onNavigate }: FinCardItemProps) {
+  return (
+    <div className={`search-fin-card${pinned ? ' search-fin-card--pinned' : ''}`}>
+      {/* Pin button — absolute top-right overlay */}
+      <button
+        className={`search-fin-card-pin${pinned ? ' search-fin-card-pin--active' : ''}`}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          if (pinned) onUnpin(card.id);
+          else onPin(card);
+        }}
+        title={pinned ? 'Unpin' : 'Pin to search bar'}
+        aria-label={pinned ? 'Unpin card' : 'Pin card'}
+      >
+        <PinIcon pinned={pinned} />
+      </button>
+
+      {/* Clickable card body — navigates to company profile */}
+      <button
+        className="search-fin-card-body"
+        onMouseDown={(e) => { e.preventDefault(); onNavigate(card.symbol); }}
+        title={`Go to ${card.companyName} profile`}
+      >
+        {/* Top row: FIN item name (left) + period (right) */}
+        <div className="search-fin-card-top">
+          <span className="search-fin-card-item">{card.item}</span>
+          <span className="search-fin-card-period">{card.period}</span>
+        </div>
+
+        {/* Center: value — most prominent element */}
+        <div className="search-fin-card-value">{card.value}</div>
+
+        {/* Bottom: company tag */}
+        <div className="search-fin-card-company">
+          <span className="search-fin-card-symbol">{card.symbol}</span>
+        </div>
+      </button>
+    </div>
+  );
+}
+
 interface UserInfo {
   name: string;
   avatar: string;
 }
+
+const PINNED_CARDS_KEY = 'topnav-pinned-fin-cards';
 
 export default function TopNav() {
   const router = useRouter();
@@ -50,6 +231,33 @@ export default function TopNav() {
   const [focused, setFocused] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
+  // Pinned financial cards — persisted in localStorage
+  const [pinnedCards, setPinnedCards] = useState<FinCard[]>([]);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(PINNED_CARDS_KEY);
+      if (stored) setPinnedCards(JSON.parse(stored));
+    } catch { /* ignore */ }
+  }, []);
+
+  const handlePin = useCallback((card: FinCard) => {
+    setPinnedCards((prev) => {
+      if (prev.some((c) => c.id === card.id)) return prev;
+      const next = [...prev, card];
+      try { localStorage.setItem(PINNED_CARDS_KEY, JSON.stringify(next)); } catch { /* ignore */ }
+      return next;
+    });
+  }, []);
+
+  const handleUnpin = useCallback((id: string) => {
+    setPinnedCards((prev) => {
+      const next = prev.filter((c) => c.id !== id);
+      try { localStorage.setItem(PINNED_CARDS_KEY, JSON.stringify(next)); } catch { /* ignore */ }
+      return next;
+    });
+  }, []);
+
   // Notification panel state
   const [notifOpen, setNotifOpen] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
@@ -59,13 +267,21 @@ export default function TopNav() {
   }, []);
 
   const q = query.trim().toLowerCase();
-  const showDropdown = focused && q.length > 0;
+  const showDropdown = focused && (q.length > 0 || pinnedCards.length > 0);
 
   // Filter companies by query (company search only)
   const filteredCompanies =
     q.length > 0
       ? COMPANY_MASTER_LC.filter((c) => c.symbolLc.includes(q) || c.nameLc.includes(q)).slice(0, 8)
       : [];
+
+  // Financial card search results
+  const finCards = useMemo(() => {
+    if (q.length < 2) return [];
+    return searchFinancialCards(q);
+  }, [q]);
+
+  const pinnedIds = useMemo(() => new Set(pinnedCards.map((c) => c.id)), [pinnedCards]);
 
   // Navigate to company profile page
   function navigateToCompany(symbol: string) {
@@ -129,7 +345,7 @@ export default function TopNav() {
         <input
           className={`topnav-search${focused ? ' focused' : ''}`}
           type="text"
-          placeholder="Search a company or ticker…"
+          placeholder="Search company or ticker… (e.g. Apple Revenue)"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setFocused(true)}
@@ -138,6 +354,28 @@ export default function TopNav() {
 
         {showDropdown && (
           <div className="search-dropdown">
+            {/* Pinned financial cards — always visible while dropdown is open */}
+            {pinnedCards.length > 0 && (
+              <div className="search-dropdown-section search-dropdown-section--pinned">
+                <div className="search-dropdown-section-label">
+                  <PinIcon pinned={true} />
+                  <span>{lang === 'zh' ? '已釘選' : 'Pinned'}</span>
+                </div>
+                <div className="search-fin-cards">
+                  {pinnedCards.map((card) => (
+                    <FinCardItem
+                      key={card.id}
+                      card={card}
+                      pinned={true}
+                      onPin={handlePin}
+                      onUnpin={handleUnpin}
+                      onNavigate={navigateToCompany}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Company search results — shown when user has typed */}
             {q.length > 0 && filteredCompanies.length > 0 && (
               <div className="search-dropdown-section">
@@ -164,8 +402,29 @@ export default function TopNav() {
               </div>
             )}
 
+            {/* Financial data cards — shown when query matches company + item */}
+            {finCards.length > 0 && (
+              <div className="search-dropdown-section">
+                <div className="search-dropdown-section-label">
+                  {lang === 'zh' ? '財務資料' : 'Financial Data'}
+                </div>
+                <div className="search-fin-cards">
+                  {finCards.map((card) => (
+                    <FinCardItem
+                      key={card.id}
+                      card={card}
+                      pinned={pinnedIds.has(card.id)}
+                      onPin={handlePin}
+                      onUnpin={handleUnpin}
+                      onNavigate={navigateToCompany}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* No results */}
-            {q.length > 0 && filteredCompanies.length === 0 && (
+            {q.length > 0 && filteredCompanies.length === 0 && finCards.length === 0 && (
               <div className="search-dropdown-section">
                 <div
                   className="search-dropdown-section-label"
@@ -286,3 +545,4 @@ export default function TopNav() {
     </header>
   );
 }
+
