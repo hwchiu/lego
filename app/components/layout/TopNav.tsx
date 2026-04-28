@@ -41,17 +41,6 @@ const FIN_INDICES = [
 
 type FinIndexName = typeof FIN_INDICES[number];
 
-/** Maps each FIN index to a keyword to detect in the search query. */
-const FIN_INDICES_KEYWORDS: Array<{ name: FinIndexName; keyword: string }> = [
-  { name: 'Revenue',                  keyword: 'revenue' },
-  { name: 'Gross Profit',             keyword: 'gross profit' },
-  { name: 'Gross Margin',             keyword: 'gross margin' },
-  { name: 'Operating Margin',         keyword: 'operating margin' },
-  { name: 'Net Income',               keyword: 'net income' },
-  { name: 'Net Margin',               keyword: 'net margin' },
-  { name: 'Cash & Cash Equivalents',  keyword: 'cash' },
-];
-
 interface FinancialDataPoint {
   quarter: string;
   netIncome: number;
@@ -84,7 +73,10 @@ function parseYearRange(q: string): { startYear: number; endYear: number } | nul
 
 type FinSummaryConfigEntry = { index: string; rpt_fin_type: string; rpt_fin_item: string };
 
-/** Derive FinancialDataPoint[] for a company from static statement data, filtered by year range. */
+/** Derive FinancialDataPoint[] for a company from static statement data, filtered by year range.
+ *  Synthesises missing quarters from annual totals (÷4) so the chart always has data.
+ *  Ensures at least 20 quarters (5 years) by extending the effective start year if needed.
+ */
 function deriveSearchFinIndicesData(
   symbol: string,
   startYear: number,
@@ -130,16 +122,15 @@ function deriveSearchFinIndicesData(
     return parseItemValSearch(items[key]?.[idx] ?? '');
   }
 
-  const result: FinancialDataPoint[] = [];
+  // --- Build a map of actual quarterly data: "YYYY-Qn" → FinancialDataPoint
+  const quarterlyMap = new Map<string, FinancialDataPoint>();
   for (const period of incomeStmt.periods) {
-    // Only quarterly periods like "Q1 2023"
-    const m = period.match(/^(Q[1-4])\s+(\d{4})$/);
-    if (!m) continue;
-    const year = parseInt(m[2]);
-    if (year < startYear || year > endYear) continue;
-    const yy = m[2].slice(2);
-    const q = m[1];
-    result.push({
+    const mq = period.match(/^(Q[1-4])\s+(\d{4})$/);
+    if (!mq) continue;
+    const year = parseInt(mq[2]);
+    const q = mq[1];
+    const yy = mq[2].slice(2);
+    quarterlyMap.set(`${year}-${q}`, {
       quarter:            `${yy}${q}`,
       totalRevenue:       getVal(incomeItems, incomeStmt.periods, revKey,  period),
       grossProfit:        getVal(incomeItems, incomeStmt.periods, gpKey,   period),
@@ -150,6 +141,57 @@ function deriveSearchFinIndicesData(
       cashEquivalents:    balanceStmt ? getVal(balanceItems, balancePeriods, cashKey, period) : 0,
       guidance:           null,
     });
+  }
+
+  // --- Build a map of annual data: year → values (income items ÷ 4; margin/% kept as-is)
+  type AnnualVals = { rev: number; gp: number; gm: number; om: number; ni: number; nm: number; cash: number };
+  const annualMap = new Map<number, AnnualVals>();
+  for (const period of incomeStmt.periods) {
+    const ma = period.match(/^FY(\d{4})$/);
+    if (!ma) continue;
+    const year = parseInt(ma[1]);
+    const bPeriod = `FY${year}`; // balance sheet uses the same label
+    annualMap.set(year, {
+      rev:  getVal(incomeItems, incomeStmt.periods, revKey, period),
+      gp:   getVal(incomeItems, incomeStmt.periods, gpKey,  period),
+      gm:   getVal(incomeItems, incomeStmt.periods, gmKey,  period),
+      om:   getVal(incomeItems, incomeStmt.periods, omKey,  period),
+      ni:   getVal(incomeItems, incomeStmt.periods, niKey,  period),
+      nm:   getVal(incomeItems, incomeStmt.periods, nmKey,  period),
+      cash: balanceStmt ? getVal(balanceItems, balancePeriods, cashKey, bPeriod) : 0,
+    });
+  }
+
+  // Ensure at least 20 quarters (5 years) by extending startYear backwards if needed
+  const requestedQuarters = (endYear - startYear + 1) * 4;
+  const effectiveStartYear = requestedQuarters >= 20 ? startYear : endYear - 4;
+
+  // Generate one FinancialDataPoint per quarter in the effective range
+  const result: FinancialDataPoint[] = [];
+  for (let y = effectiveStartYear; y <= endYear; y++) {
+    for (let qi = 1; qi <= 4; qi++) {
+      const q = `Q${qi}` as const;
+      const key = `${y}-${q}`;
+      const yy = String(y).slice(2);
+
+      if (quarterlyMap.has(key)) {
+        result.push(quarterlyMap.get(key)!);
+      } else {
+        // Synthesise from annual data: flow items ÷4, margin % kept as-is
+        const ann = annualMap.get(y);
+        result.push({
+          quarter:            `${yy}${q}`,
+          totalRevenue:       ann ? ann.rev / 4 : 0,
+          grossProfit:        ann ? ann.gp  / 4 : 0,
+          grossMarginPct:     ann ? ann.gm       : 0,
+          operatingMarginPct: ann ? ann.om       : 0,
+          netIncome:          ann ? ann.ni  / 4 : 0,
+          netMarginPct:       ann ? ann.nm       : 0,
+          cashEquivalents:    ann ? ann.cash     : 0,
+          guidance:           null,
+        });
+      }
+    }
   }
   return result;
 }
@@ -419,7 +461,7 @@ export default function TopNav() {
     return searchFinancialCards(q);
   }, [q]);
 
-  // Financial Indices chart result — shown when query contains company + optional FIN metric + year range
+  // Financial Indices chart result — shown when query contains company name/symbol + year range
   const finIndicesResult = useMemo(() => {
     if (q.length < 6) return null;
     const yearRange = parseYearRange(q);
@@ -432,19 +474,6 @@ export default function TopNav() {
     );
     if (!matchedCompany) return null;
 
-    // Strip company name and year range from remaining query to detect FIN metric
-    const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    let remaining = q
-      .replace(new RegExp(escapeRegex(matchedCompany.symbolLc), 'g'), '')
-      .replace(/\b20\d{2}\s*[~-]\s*20\d{2}\b/, '')
-      .trim();
-    for (const word of matchedCompany.nameLc.split(' ')) {
-      if (word.length >= 3) remaining = remaining.replace(new RegExp(escapeRegex(word), 'g'), '').trim();
-    }
-
-    const matchedEntry = FIN_INDICES_KEYWORDS.find((f) => remaining.includes(f.keyword));
-    const matchedMetric: FinIndexName = matchedEntry?.name ?? 'Revenue';
-
     const data = deriveSearchFinIndicesData(matchedCompany.symbol, yearRange.startYear, yearRange.endYear);
     if (data.length === 0) return null;
 
@@ -452,7 +481,6 @@ export default function TopNav() {
       symbol: matchedCompany.symbol,
       companyName: matchedCompany.name,
       data,
-      matchedMetric,
       yearRange,
     };
   }, [q]);
@@ -460,12 +488,12 @@ export default function TopNav() {
   // Active tab for the Financial Indices chart in search dropdown
   const [searchFinIndexTab, setSearchFinIndexTab] = useState<FinIndexName>('Revenue');
 
-  // Sync the active tab when the detected metric changes
+  // Reset the active tab to 'Revenue' whenever a new chart result appears
   useEffect(() => {
-    if (finIndicesResult?.matchedMetric) {
-      setSearchFinIndexTab(finIndicesResult.matchedMetric);
+    if (finIndicesResult) {
+      setSearchFinIndexTab('Revenue');
     }
-  }, [finIndicesResult?.matchedMetric]);
+  }, [finIndicesResult?.symbol, finIndicesResult?.yearRange]);
 
   const pinnedIds = useMemo(() => new Set(pinnedCards.map((c) => c.id)), [pinnedCards]);
 
@@ -531,7 +559,7 @@ export default function TopNav() {
         <input
           className={`topnav-search${focused ? ' focused' : ''}`}
           type="text"
-          placeholder="Search company or ticker… (e.g. Apple Revenue 2023~2026)"
+          placeholder="Search company or ticker… (e.g. Apple 2023-2026)"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setFocused(true)}
