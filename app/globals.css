@@ -5103,10 +5103,10 @@ html:not(.dark) .sidebar-submenu-icon-left {
   gap: 20px;
 }
 
-/* Main 3-column grid: narrow cols 1 & 2, col 3 takes 70% for charts */
+/* Main 3-column grid: col 1 narrow, col 2 medium (stacked Next Qtr + Revenue Breakdown), col 3 wide for charts */
 .cp-cards-main-grid {
   display: grid;
-  grid-template-columns: 1.5fr 1.5fr 7fr;
+  grid-template-columns: 1fr 2fr 7fr;
   gap: 16px;
   align-items: stretch;
 }
@@ -25211,4 +25211,37 @@ html.dark .banner-link:hover {
   background: var(--c-text-4);
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+/* ── Dark mode: Delete Watchlist button ── */
+html.dark .wl-modal-delete-wl-btn {
+  background: transparent;
+  border-color: #f87171;
+  color: #f87171;
+}
+html.dark .wl-modal-delete-wl-btn:hover {
+  background: rgba(248, 113, 113, 0.12);
+}
+html.dark .wl-confirm-icon-wrap {
+  background: rgba(248, 113, 113, 0.15);
+}
+
+/* ── Dark mode: Revenue Breakdown scrollbar ── */
+html.dark .cp-breakdown-groups {
+  scrollbar-color: #475569 #1e293b;
+  scrollbar-width: thin;
+}
+html.dark .cp-breakdown-groups::-webkit-scrollbar {
+  width: 6px;
+}
+html.dark .cp-breakdown-groups::-webkit-scrollbar-track {
+  background: #1e293b;
+  border-radius: 3px;
+}
+html.dark .cp-breakdown-groups::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+html.dark .cp-breakdown-groups::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
 }
