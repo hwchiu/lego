@@ -25248,3 +25248,14 @@ html.dark .cp-breakdown-groups::-webkit-scrollbar-thumb {
 html.dark .cp-breakdown-groups::-webkit-scrollbar-thumb:hover {
   background: #64748b;
 }
+
+html.dark .chr-card--active {
+  background: #2d1a1a;
+  border-color: #bf3030;
+  box-shadow: 0 2px 8px rgba(191, 48, 48, 0.35);
+}
+
+html.dark .chr-card:hover {
+  border-color: #bf3030;
+  box-shadow: 0 2px 8px rgba(191, 48, 48, 0.25);
+}
