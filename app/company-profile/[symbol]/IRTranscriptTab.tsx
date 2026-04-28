@@ -351,18 +351,19 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
   }, [managementSections, analystChips]);
 
   const handleChipClick = useCallback((id: string) => {
+    const isDeselecting = selectedChipIds.has(id);
     setSelectedChipIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
-        // Toggle off — remove filter for this chip
         next.delete(id);
-        return next;
+      } else {
+        next.add(id);
       }
-      // Toggle on — add filter and expand + scroll to section
-      next.add(id);
       return next;
     });
-    // Expand the section and scroll to it.
+    // When deselecting, only remove the filter — do not scroll.
+    if (isDeselecting) return;
+    // Toggle on — expand the section and scroll to it.
     // For exec chips the id is the section id directly; for analyst virtual IDs find
     // the first Q&A section whose speaker contains the chip display name.
     setManualExpandedIds((prev) => {
@@ -385,7 +386,7 @@ function IrtDetail({ entry, keyword }: IrtDetailProps) {
         }
       }
     }, 60);
-  }, [chipDisplayNames, qaSections]);
+  }, [selectedChipIds, chipDisplayNames, qaSections]);
 
   const handleToggle = useCallback((id: string, expand: boolean) => {
     setManualExpandedIds((prev) => {

@@ -78,6 +78,14 @@ function NoFileModal({ onClose }: NoFileModalProps) {
   );
 }
 
+function qtrNum(qtr: string): number {
+  if (qtr === 'Q4') return 4;
+  if (qtr === 'Q3') return 3;
+  if (qtr === 'Q2') return 2;
+  if (qtr === 'Q1') return 1;
+  return 0; // annual / empty
+}
+
 // ── IRContent ─────────────────────────────────────────────────────────────────
 
 interface IRContentProps {
@@ -91,7 +99,11 @@ function IRContent({ symbol, entries, activeDocType, onNoFile }: IRContentProps)
   const [downloading, setDownloading] = useState<string | null>(null);
   const filtered = entries
     .filter((e) => e.DOC_TYPE === activeDocType)
-    .sort((a, b) => b.CREATE_DATE.localeCompare(a.CREATE_DATE));
+    .sort((a, b) => {
+      const yearDiff = parseInt(b.FISCAL_YEAR_NO || '0', 10) - parseInt(a.FISCAL_YEAR_NO || '0', 10);
+      if (yearDiff !== 0) return yearDiff;
+      return qtrNum(b.FISCAL_QTR_NO) - qtrNum(a.FISCAL_QTR_NO);
+    });
 
   if (filtered.length === 0) {
     return (
