@@ -422,6 +422,25 @@ select {
   cursor: pointer;
 }
 
+/* Financial Indices chart card in search dropdown */
+.search-indices-card {
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 10px 12px 8px;
+}
+.search-indices-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.search-indices-card-range {
+  font-size: 11px;
+  color: var(--c-text-3);
+  font-weight: 500;
+}
+
 /* ===== BANNER CAROUSEL ===== */
 .banner-wrap {
   flex-shrink: 0;
@@ -21115,6 +21134,10 @@ html.dark .search-fin-card-pin--active {
 }
 html.dark .search-dropdown-section--pinned {
   border-bottom-color: var(--c-border);
+}
+html.dark .search-indices-card {
+  background: #1e293b;
+  border-color: var(--c-border);
 }
 html.dark .kg-hero,
 html.dark .kg-graph-container,
