@@ -162,13 +162,9 @@ function deriveSearchFinIndicesData(
     });
   }
 
-  // Ensure at least 20 quarters (5 years) by extending startYear backwards if needed
-  const requestedQuarters = (endYear - startYear + 1) * 4;
-  const effectiveStartYear = requestedQuarters >= 20 ? startYear : endYear - 4;
-
-  // Generate one FinancialDataPoint per quarter in the effective range
+  // Generate one FinancialDataPoint per quarter in the requested range
   const result: FinancialDataPoint[] = [];
-  for (let y = effectiveStartYear; y <= endYear; y++) {
+  for (let y = startYear; y <= endYear; y++) {
     for (let qi = 1; qi <= 4; qi++) {
       const q = `Q${qi}` as const;
       const key = `${y}-${q}`;
@@ -307,9 +303,9 @@ function searchFinancialCards(query: string): FinCard[] {
 function PinIcon({ pinned }: { pinned: boolean }) {
   return (
     <svg viewBox="0 0 14 14" width="12" height="12" fill="none" aria-hidden="true">
-      {/* Location-pin: circle head + pointed tail */}
-      <circle cx="7" cy="5.5" r="2" stroke="currentColor" strokeWidth="1.3" fill={pinned ? 'currentColor' : 'none'} fillOpacity={pinned ? 0.3 : 0} />
-      <path d="M7 13C7 13 2.5 8.5 2.5 5.5a4.5 4.5 0 1 1 9 0C11.5 8.5 7 13 7 13Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" fill={pinned ? 'currentColor' : 'none'} fillOpacity={pinned ? 0.15 : 0} />
+      {/* Thumbtack (圖釘): flat disc head + pin shaft */}
+      <circle cx="7" cy="4.5" r="3" stroke="currentColor" strokeWidth="1.3" fill={pinned ? 'currentColor' : 'none'} fillOpacity={pinned ? 0.25 : 0} />
+      <line x1="7" y1="7.5" x2="7" y2="13" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
     </svg>
   );
 }
