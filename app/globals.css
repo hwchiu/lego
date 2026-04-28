@@ -22787,7 +22787,7 @@ html.dark .cp-pec-ai-html-content > ol > li > ul > li {
 .fin-stmt-table thead tr.sub-head th,
 .fin-stmt-table .th-group,
 .fin-stmt-simple-table thead th {
-  color: #111827 !important;
+  color: var(--c-text);
 }
 
 /* ===== NEWS FILTER BAR RESPONSIVE ===== */
