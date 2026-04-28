@@ -56,6 +56,8 @@ function buildYearData(deals: InvestmentDeal[]): YearChartData[] {
 // Replaces the hand-rolled SVG stacked-bar + line chart.
 
 export function InvestmentBarLineChartNivo({ deals, selectedYear, onYearClick }: BarLineChartProps) {
+  const { theme: appTheme } = useTheme();
+  const isDark = appTheme === 'dark';
   const yearData = buildYearData(deals);
 
   const maxCount = Math.max(...yearData.map((d) => d.disclosedCount + d.undisclosedCount), 1);
@@ -131,7 +133,7 @@ export function InvestmentBarLineChartNivo({ deals, selectedYear, onYearClick }:
           <polyline
             points={polylineStr}
             fill="none"
-            stroke="#111827"
+            stroke={isDark ? '#e5e7eb' : '#111827'}
             strokeWidth="2"
             strokeLinejoin="round"
             strokeLinecap="round"
@@ -145,7 +147,7 @@ export function InvestmentBarLineChartNivo({ deals, selectedYear, onYearClick }:
               cx={p.cx}
               cy={p.cy}
               r={isSelected ? 5 : 3}
-              fill={isSelected ? '#6366f1' : '#111827'}
+              fill={isSelected ? '#6366f1' : isDark ? '#e5e7eb' : '#111827'}
               stroke="#fff"
               strokeWidth={isSelected ? 2 : 1.5}
               style={{ cursor: 'pointer' }}
@@ -228,10 +230,10 @@ export function InvestmentBarLineChartNivo({ deals, selectedYear, onYearClick }:
           );
         }}
         theme={{
-          grid: { line: { stroke: '#f0f0f0', strokeWidth: 1 } },
+          grid: { line: { stroke: isDark ? '#374151' : '#f0f0f0', strokeWidth: 1 } },
           axis: {
             ticks: { text: { fontSize: 9, fill: '#9ca3af' } },
-            legend: { text: { fontSize: 9, fill: '#6b7280' } },
+            legend: { text: { fontSize: 9, fill: isDark ? '#d1d5db' : '#6b7280' } },
           },
         }}
         legends={[
@@ -242,7 +244,7 @@ export function InvestmentBarLineChartNivo({ deals, selectedYear, onYearClick }:
             data: [
               { id: 'disclosedCount', label: 'Count of Disclosed Value', color: '#bf3030' },
               { id: 'undisclosedCount', label: 'Count of Undisclosed Value', color: '#1673EE' },
-              { id: 'line', label: 'Disclosed Value (M)', color: '#111827' },
+              { id: 'line', label: 'Disclosed Value (M)', color: isDark ? '#e5e7eb' : '#111827' },
             ],
             itemWidth: 175,
             itemHeight: 20,
@@ -250,7 +252,7 @@ export function InvestmentBarLineChartNivo({ deals, selectedYear, onYearClick }:
             translateY: -28,
             symbolSize: 8,
             symbolShape: 'square',
-            itemTextColor: '#374151',
+            itemTextColor: isDark ? '#e5e7eb' : '#374151',
             itemsSpacing: 2,
           },
         ]}
@@ -360,6 +362,8 @@ function buildAcqYearData(deals: InvestmentDeal[]): YearChartData[] {
 }
 
 export function AcquisitionBarLineChartNivo({ deals, selectedYear, onYearClick }: BarLineChartProps) {
+  const { theme: appTheme } = useTheme();
+  const isDark = appTheme === 'dark';
   const yearData = buildAcqYearData(deals);
 
   const maxCount = Math.max(...yearData.map((d) => d.disclosedCount + d.undisclosedCount), 1);
@@ -434,7 +438,7 @@ export function AcquisitionBarLineChartNivo({ deals, selectedYear, onYearClick }
           <polyline
             points={polylineStr}
             fill="none"
-            stroke="#111827"
+            stroke={isDark ? '#e5e7eb' : '#111827'}
             strokeWidth="1.5"
             strokeLinejoin="round"
             strokeLinecap="round"
@@ -448,7 +452,7 @@ export function AcquisitionBarLineChartNivo({ deals, selectedYear, onYearClick }
               cx={p.cx}
               cy={p.cy}
               r={isSelected ? 5 : 2.5}
-              fill={isSelected ? '#6366f1' : '#111827'}
+              fill={isSelected ? '#6366f1' : isDark ? '#e5e7eb' : '#111827'}
               stroke="#fff"
               strokeWidth={isSelected ? 2 : 1.5}
               style={{ cursor: 'pointer' }}
@@ -527,10 +531,10 @@ export function AcquisitionBarLineChartNivo({ deals, selectedYear, onYearClick }
           );
         }}
         theme={{
-          grid: { line: { stroke: '#f0f0f0', strokeWidth: 1 } },
+          grid: { line: { stroke: isDark ? '#374151' : '#f0f0f0', strokeWidth: 1 } },
           axis: {
             ticks: { text: { fontSize: 9, fill: '#9ca3af' } },
-            legend: { text: { fontSize: 9, fill: '#6b7280' } },
+            legend: { text: { fontSize: 9, fill: isDark ? '#d1d5db' : '#6b7280' } },
           },
         }}
         legends={[
@@ -541,7 +545,7 @@ export function AcquisitionBarLineChartNivo({ deals, selectedYear, onYearClick }
             data: [
               { id: 'disclosedCount', label: 'Count of Disclosed Value', color: '#bf3030' },
               { id: 'undisclosedCount', label: 'Count of Undisclosed Value', color: '#1673EE' },
-              { id: 'line', label: 'Disclosed Value (M)', color: '#111827' },
+              { id: 'line', label: 'Disclosed Value (M)', color: isDark ? '#e5e7eb' : '#111827' },
             ],
             itemWidth: 175,
             itemHeight: 20,
@@ -549,7 +553,7 @@ export function AcquisitionBarLineChartNivo({ deals, selectedYear, onYearClick }
             translateY: -28,
             symbolSize: 8,
             symbolShape: 'square',
-            itemTextColor: '#374151',
+            itemTextColor: isDark ? '#e5e7eb' : '#374151',
             itemsSpacing: 2,
           },
         ]}
@@ -592,6 +596,8 @@ function formatChartLabel(valueM: number): string {
 }
 
 export function FundingLineChartNivo({ deals, selectedYear, onYearClick }: FundingLineChartProps) {
+  const { theme: appTheme } = useTheme();
+  const isDark = appTheme === 'dark';
   const yearData = buildFundingYearData(deals);
   if (yearData.length === 0) return null;
 
@@ -649,7 +655,7 @@ export function FundingLineChartNivo({ deals, selectedYear, onYearClick }: Fundi
               textAnchor="middle"
               fontSize={9}
               fontWeight={600}
-              fill="#374151"
+              fill={isDark ? '#e5e7eb' : '#374151'}
               pointerEvents="none"
             >
               {formatChartLabel(val)}
@@ -721,10 +727,10 @@ export function FundingLineChartNivo({ deals, selectedYear, onYearClick }: Fundi
           </div>
         )}
         theme={{
-          grid: { line: { stroke: '#f0f0f0', strokeWidth: 1 } },
+          grid: { line: { stroke: isDark ? '#374151' : '#f0f0f0', strokeWidth: 1 } },
           axis: {
             ticks: { text: { fontSize: 9, fill: '#9ca3af' } },
-            legend: { text: { fontSize: 9, fill: '#6b7280' } },
+            legend: { text: { fontSize: 9, fill: isDark ? '#d1d5db' : '#6b7280' } },
           },
         }}
       />
