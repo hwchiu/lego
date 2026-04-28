@@ -131,17 +131,9 @@ function searchFinancialCards(query: string): FinCard[] {
 function PinIcon({ pinned }: { pinned: boolean }) {
   return (
     <svg viewBox="0 0 14 14" width="12" height="12" fill="none" aria-hidden="true">
-      {pinned ? (
-        <>
-          <path d="M9 1L13 5L10 8L9 12L5 8L2 11" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" fill="currentColor" fillOpacity="0.2" />
-          <path d="M2 12L5 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-        </>
-      ) : (
-        <>
-          <path d="M9 1L13 5L10 8L9 12L5 8L2 11" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M2 12L5 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-        </>
-      )}
+      {/* Location-pin: circle head + pointed tail */}
+      <circle cx="7" cy="5.5" r="2" stroke="currentColor" strokeWidth="1.3" fill={pinned ? 'currentColor' : 'none'} fillOpacity={pinned ? 0.3 : 0} />
+      <path d="M7 13C7 13 2.5 8.5 2.5 5.5a4.5 4.5 0 1 1 9 0C11.5 8.5 7 13 7 13Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" fill={pinned ? 'currentColor' : 'none'} fillOpacity={pinned ? 0.15 : 0} />
     </svg>
   );
 }
@@ -157,9 +149,42 @@ interface FinCardItemProps {
 }
 
 function FinCardItem({ card, pinned, onPin, onUnpin, onNavigate }: FinCardItemProps) {
+  // Determine value colour: strip commas/spaces, check leading sign
+  const rawNum = card.value.replace(/[,\s]/g, '');
+  const isNeg = rawNum.startsWith('-');
+  const isPos = !isNeg && /^[+]?\d/.test(rawNum) && rawNum !== '0';
+  const valueClass = isNeg
+    ? 'search-fin-card-value search-fin-card-value--neg'
+    : isPos
+    ? 'search-fin-card-value search-fin-card-value--pos'
+    : 'search-fin-card-value';
+
   return (
     <div className={`search-fin-card${pinned ? ' search-fin-card--pinned' : ''}`}>
-      {/* Pin button — absolute top-right overlay */}
+      {/* Clickable card body — navigates to company profile */}
+      <button
+        className="search-fin-card-body"
+        onMouseDown={(e) => { e.preventDefault(); onNavigate(card.symbol); }}
+        title={`Go to ${card.companyName} profile`}
+      >
+        {/* Top: period badge aligned right */}
+        <div className="search-fin-card-top">
+          <span className="search-fin-card-period">{card.period}</span>
+        </div>
+
+        {/* FIN item name */}
+        <div className="search-fin-card-item">{card.item}</div>
+
+        {/* Center: value — most prominent element */}
+        <div className={valueClass}>{card.value}</div>
+
+        {/* Bottom: company tag — styled like news-tag, links to company profile */}
+        <div className="search-fin-card-company">
+          <span className="news-tag search-fin-card-symbol">{card.symbol}</span>
+        </div>
+      </button>
+
+      {/* Pin button — absolute bottom-right overlay */}
       <button
         className={`search-fin-card-pin${pinned ? ' search-fin-card-pin--active' : ''}`}
         onMouseDown={(e) => {
@@ -171,27 +196,6 @@ function FinCardItem({ card, pinned, onPin, onUnpin, onNavigate }: FinCardItemPr
         aria-label={pinned ? 'Unpin card' : 'Pin card'}
       >
         <PinIcon pinned={pinned} />
-      </button>
-
-      {/* Clickable card body — navigates to company profile */}
-      <button
-        className="search-fin-card-body"
-        onMouseDown={(e) => { e.preventDefault(); onNavigate(card.symbol); }}
-        title={`Go to ${card.companyName} profile`}
-      >
-        {/* Top row: FIN item name (left) + period (right) */}
-        <div className="search-fin-card-top">
-          <span className="search-fin-card-item">{card.item}</span>
-          <span className="search-fin-card-period">{card.period}</span>
-        </div>
-
-        {/* Center: value — most prominent element */}
-        <div className="search-fin-card-value">{card.value}</div>
-
-        {/* Bottom: company tag */}
-        <div className="search-fin-card-company">
-          <span className="search-fin-card-symbol">{card.symbol}</span>
-        </div>
       </button>
     </div>
   );
