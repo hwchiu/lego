@@ -25748,6 +25748,11 @@ html.dark .pr-archive-api-badge-clear:hover {
   box-shadow: 0 2px 12px rgba(79, 195, 247, 0.12);
 }
 
+.pr-archive-tile:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
+
 /* Tile media (company color square) */
 .pr-archive-tile-media {
   width: 72px;
@@ -25989,7 +25994,7 @@ html.dark .pr-archive-api-badge-clear:hover {
   display: flex;
   align-items: center;
   gap: 6px;
-  height: 34px;
+  min-height: 34px;
   padding: 0 14px;
   background: var(--c-dark);
   color: var(--c-white);

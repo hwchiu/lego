@@ -136,7 +136,7 @@ function ArchiveTile({ pr, lang }: ArchiveTileProps) {
       href={pr.url}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label={pr.title}
+      aria-label={`${pr.title} — ${pr.company} (${pr.relationship})`}
     >
       <div className="pr-archive-tile-media" style={{ background: color }}>
         <span className="pr-archive-tile-ticker">{initials}</span>
