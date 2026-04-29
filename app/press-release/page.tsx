@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
@@ -8,762 +8,436 @@ import { useLanguage } from '@/app/contexts/LanguageContext';
 import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 import {
   pressReleases,
-  allTopics,
-  getTopicCounts,
-  groupByTimeline,
+  getPressReleaseArchiveGroups,
   type PressRelease,
-  type TimelineGroup,
-  type TimelineGranularity,
+  type PRArchiveGroup,
 } from '@/app/data/pressReleases';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ─── Company color palette ────────────────────────────────────────────────────
 
-type PRTab = 'timeline' | 'list';
-type RelFilter = 'all' | 'customer' | 'supplier';
+const TICKER_COLORS: Record<string, string> = {
+  NVDA: '#76b900',
+  AAPL: '#555555',
+  ASML: '#0066cc',
+  AMD: '#ed1c24',
+  QCOM: '#3253dc',
+  AVGO: '#cf0a2c',
+  AMAT: '#003087',
+  '2454.TW': '#ee1c2e',
+  LRCX: '#003f7e',
+  KLAC: '#0055a4',
+  '8035.T': '#c8000b',
+  TSM: '#1a2332',
+  TC: '#1a2332',
+};
 
-const PAGE_SIZE = 10;
+function getTickerColor(ticker: string): string {
+  return TICKER_COLORS[ticker] ?? '#374151';
+}
 
-// ─── PressReleaseCard ─────────────────────────────────────────────────────────
+function getTileInitials(ticker: string): string {
+  return ticker.replace('.TW', '').replace('.T', '').slice(0, 4);
+}
 
-interface PressReleaseCardProps {
+// ─── Icons ────────────────────────────────────────────────────────────────────
+
+function ChevronDownIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="12" height="12" fill="none" aria-hidden="true">
+      <path d="M2 5L7 10L12 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function ChevronUpIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="12" height="12" fill="none" aria-hidden="true">
+      <path d="M2 9L7 4L12 9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function ExpandAllIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
+      <path d="M2 4H12M2 7H12M2 10H12" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <path d="M5 5.5L7 7.5L9 5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5 8.5L7 10.5L9 8.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function CollapseAllIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
+      <path d="M2 4H12M2 7H12M2 10H12" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <path d="M5 8.5L7 6.5L9 8.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5 5.5L7 3.5L9 5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function TagIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="10" height="10" fill="none" aria-hidden="true">
+      <path d="M1.5 1.5H7.5L12.5 6.5L7.5 11.5L1.5 6.5V1.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+      <circle cx="4.5" cy="4.5" r="1" fill="currentColor" />
+    </svg>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
+      <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M8.5 8.5L12.5 12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="10" height="10" fill="none" aria-hidden="true">
+      <path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function LoadingIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true" className="pr-spin">
+      <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.4" strokeDasharray="12 22" />
+    </svg>
+  );
+}
+
+// ─── Archive Tile ─────────────────────────────────────────────────────────────
+
+interface ArchiveTileProps {
   pr: PressRelease;
-  compact?: boolean;
   lang: 'zh' | 'en';
 }
 
-function PressReleaseCard({ pr, compact = false, lang }: PressReleaseCardProps) {
-  const date = new Date(pr.publishedAt);
-  const dateStr = date.toLocaleDateString(lang === 'en' ? 'en-US' : 'zh-TW', {
+function ArchiveTile({ pr, lang }: ArchiveTileProps) {
+  const [y, m, d] = pr.publishedAt.split('-').map(Number);
+  const dateUTC = new Date(Date.UTC(y, m - 1, d));
+  const dateStr = dateUTC.toLocaleDateString(lang === 'en' ? 'en-US' : 'zh-TW', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
+    timeZone: 'UTC',
   });
+  const color = getTickerColor(pr.ticker);
+  const initials = getTileInitials(pr.ticker);
 
   return (
-    <div className={`pr-card${compact ? ' pr-card--compact' : ''}`}>
-      {/* Corner triangle: blue for customer, dark-red for supplier */}
-      <div className={`pr-card-tri ${pr.relationship === 'customer' ? 'pr-card-tri--customer' : 'pr-card-tri--supplier'}`} />
-
-      {/* Date top-left + symbol tag for compact cards */}
-      <div className="pr-card-date-row">
-        <div className="pr-card-date">{dateStr}</div>
-        {compact && pr.ticker && <span className="pr-tag pr-tag--symbol pr-card-compact-company">{pr.ticker}</span>}
+    <div className="pr-archive-tile">
+      <div className="pr-archive-tile-media" style={{ background: color }}>
+        <span className="pr-archive-tile-ticker">{initials}</span>
       </div>
-
-      {/* Title */}
-      <div className="pr-card-title">{pr.title}</div>
-
-      {/* Summary (full card only) */}
-      {!compact && <div className="pr-card-summary">{pr.summary}</div>}
-
-      {/* Tags split into sections (full card only) */}
-      {!compact && (
-        <div className="pr-card-tags-wrap">
-          {pr.ticker && (
-            <div className="pr-card-tag-section">
-              <span className="pr-card-tag-label">Symbol</span>
-              <div className="pr-card-tags">
-                <span className="pr-tag pr-tag--symbol">{pr.ticker}</span>
-              </div>
-            </div>
-          )}
-          <div className="pr-card-tag-section">
-            <span className="pr-card-tag-label">Company</span>
-            <div className="pr-card-tags">
-              <span className="pr-tag pr-tag--neutral">{pr.company}</span>
-            </div>
-          </div>
-          <div className="pr-card-tag-section">
-            <span className="pr-card-tag-label">Industry</span>
-            <div className="pr-card-tags">
-              <span className="pr-tag pr-tag--neutral">{pr.industry}</span>
-            </div>
-          </div>
-          {pr.topics.length > 0 && (
-            <div className="pr-card-tag-section">
-              <span className="pr-card-tag-label">Topic</span>
-              <div className="pr-card-tags">
-                {pr.topics.map((t) => (
-                  <span key={t} className="pr-tag pr-tag--neutral">
-                    {t}
-                  </span>
-                ))}
-                {pr.trendingTopics.slice(0, 1).map((t) => (
-                  <span key={t} className="pr-tag pr-tag--neutral">
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* View count */}
-      <div className="pr-card-stats">
-        <svg
-          viewBox="0 0 14 14"
-          width="11"
-          height="11"
-          fill="none"
-          aria-hidden="true"
-          style={{ opacity: 0.5 }}
-        >
-          <path
-            d="M1 7C1 7 3 3 7 3C11 3 13 7 13 7C13 7 11 11 7 11C3 11 1 7 1 7Z"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeLinejoin="round"
-          />
-          <circle cx="7" cy="7" r="1.8" fill="currentColor" />
-        </svg>
-        <span>{(pr.viewCount / 1000).toFixed(1)}K</span>
-      </div>
-    </div>
-  );
-}
-
-// ─── Gallery Modal ─────────────────────────────────────────────────────────────
-
-interface GalleryModalProps {
-  group: TimelineGroup;
-  onClose: () => void;
-  lang: 'zh' | 'en';
-}
-
-function GalleryModal({ group, onClose, lang }: GalleryModalProps) {
-  return (
-    <div className="pr-gallery-overlay" onClick={onClose}>
-      <div className="pr-gallery-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="pr-gallery-header">
-          <div className="pr-gallery-title-row">
-            <span className="pr-gallery-period">{group.label}</span>
-            <span className="pr-gallery-count">
-              {group.total} {lang === 'en' ? 'articles' : '篇'}
-            </span>
-          </div>
-          <button className="pr-gallery-close" onClick={onClose} aria-label="Close">
-            <svg viewBox="0 0 14 14" width="14" height="14" fill="none" aria-hidden="true">
-              <path
-                d="M2 2L12 12M12 2L2 12"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-              />
-            </svg>
-          </button>
-        </div>
-        <div className="pr-gallery-grid">
-          {group.items.map((pr) => (
-            <PressReleaseCard key={pr.id} pr={pr} lang={lang} />
-          ))}
+      <div className="pr-archive-tile-info">
+        <h3 className="pr-archive-tile-title">{pr.title}</h3>
+        <p className="pr-archive-tile-desc">{pr.summary}</p>
+        <div className="pr-archive-tile-footer">
+          <span className={`pr-archive-tile-tag pr-archive-tile-tag--${pr.relationship}`}>
+            <TagIcon />
+            {pr.company}
+          </span>
+          <time className="pr-archive-tile-date" dateTime={pr.publishedAt}>{dateStr}</time>
         </div>
       </div>
     </div>
   );
 }
 
-// ─── CardStack ────────────────────────────────────────────────────────────────
+// ─── Archive Group ────────────────────────────────────────────────────────────
 
-interface CardStackProps {
-  group: TimelineGroup;
-  articles: PressRelease[];
-  onOpenGallery: (group: TimelineGroup) => void;
+interface ArchiveGroupProps {
+  group: PRArchiveGroup;
+  isExpanded: boolean;
+  onToggle: () => void;
   lang: 'zh' | 'en';
 }
 
-function CardStack({ group, articles, onOpenGallery, lang }: CardStackProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
-
-  if (articles.length === 0) return null;
-
-  const layerCount = Math.min(articles.length - 1, 3); // up to 3 decorative layers behind top card
+function ArchiveGroup({ group, isExpanded, onToggle, lang }: ArchiveGroupProps) {
+  const articleWord = group.items.length === 1
+    ? (lang === 'en' ? 'article' : '篇')
+    : (lang === 'en' ? 'articles' : '篇');
 
   return (
-    <div
-      className="pr-card-stack"
-      onClick={() => onOpenGallery(group)}
-      onMouseEnter={() => setIsExpanded(true)}
-      onMouseLeave={() => {
-        setIsExpanded(false);
-        setHoveredIdx(null);
-      }}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') onOpenGallery(group);
-      }}
-      aria-label={`View ${articles.length} articles for ${group.label}`}
-    >
-      {/* Decorative background layers */}
-      {Array.from({ length: layerCount }, (_, i) => (
-        <div key={i} className={`pr-card-stack-layer pr-card-stack-layer--${i + 1}`} />
-      ))}
-      {/* Top card */}
-      <div className="pr-card-stack-top">
-        <PressReleaseCard pr={articles[0]} compact lang={lang} />
+    <section className="pr-archive-group" aria-label={group.label}>
+      <div
+        className="pr-archive-group-header"
+        onClick={onToggle}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggle(); } }}
+        aria-expanded={isExpanded}
+      >
+        <span className="pr-archive-group-label">{group.label}</span>
+        <span className="pr-archive-group-count">
+          {group.items.length} {articleWord}
+        </span>
+        <span className="pr-archive-group-toggle" aria-hidden="true">
+          {isExpanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
+        </span>
       </div>
-      {/* Count badge */}
-      {articles.length > 1 && (
-        <div className="pr-card-stack-badge">{articles.length}</div>
-      )}
 
-      {/* Hover expand: fan-out card list below the stack */}
-      {isExpanded && articles.length > 1 && (
-        <div
-          className="pr-card-stack-expand"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {articles.map((pr, i) => {
-            const date = new Date(pr.publishedAt);
-            const dateStr = date.toLocaleDateString(lang === 'en' ? 'en-US' : 'zh-TW', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-            });
-            const isActive = hoveredIdx === i;
-            return (
-              <div
-                key={pr.id}
-                className={`pr-card-stack-expand-item${isActive ? ' active' : ''}`}
-                onMouseEnter={() => setHoveredIdx(i)}
-                onMouseLeave={() => setHoveredIdx(null)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onOpenGallery(group);
-                }}
-              >
-                <span
-                  className={`pr-card-stack-expand-dot${pr.relationship === 'customer' ? ' customer' : ' supplier'}`}
-                />
-                <div className="pr-card-stack-expand-body">
-                  <div className="pr-card-stack-expand-date">{dateStr}</div>
-                  <div className="pr-card-stack-expand-title">{pr.title}</div>
-                  {isActive && pr.summary && (
-                    <div className="pr-card-stack-expand-summary">{pr.summary}</div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
+      <div className={`pr-archive-group-body${isExpanded ? ' expanded' : ''}`}>
+        {isExpanded && (
+          <div className="pr-archive-tiles">
+            {group.items.map((pr) => (
+              <ArchiveTile key={pr.id} pr={pr} lang={lang} />
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
 
-// ─── TimelineView ─────────────────────────────────────────────────────────────
+// ─── Company Multi-Select ─────────────────────────────────────────────────────
 
-interface TimelineViewProps {
-  items: PressRelease[];
+interface CompanyFilterProps {
+  selectedCodes: string[];
+  onSelectionChange: (codes: string[]) => void;
+  onSearch: (codes: string[]) => void;
+  isLoading: boolean;
   lang: 'zh' | 'en';
-  companyFilter: string;
 }
 
-function TimelineView({ items, lang, companyFilter }: TimelineViewProps) {
-  const [granularity, setGranularity] = useState<TimelineGranularity>('year');
-  // null = show All topics (no filter), Set = filter to these topics
-  const [selectedTopics, setSelectedTopics] = useState<Set<string> | null>(null);
-  const [openGroup, setOpenGroup] = useState<TimelineGroup | null>(null);
+function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, lang }: CompanyFilterProps) {
+  const [query, setQuery] = useState('');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const filteredItems = useMemo(() => {
-    let list = items;
-    if (companyFilter) {
-      const q = companyFilter.toUpperCase();
-      list = list.filter((pr) => pr.ticker.toUpperCase() === q || pr.company.toLowerCase().includes(companyFilter.toLowerCase()));
+  const filtered = useMemo(() => {
+    if (!query.trim()) return COMPANY_MASTER_LIST.slice(0, 50);
+    const q = query.toLowerCase();
+    return COMPANY_MASTER_LIST.filter(
+      (c) => c.symbol.toLowerCase().includes(q) || c.name.toLowerCase().includes(q),
+    ).slice(0, 50);
+  }, [query]);
+
+  function handleToggle(symbol: string) {
+    const next = selectedCodes.includes(symbol)
+      ? selectedCodes.filter((s) => s !== symbol)
+      : [...selectedCodes, symbol];
+    onSelectionChange(next);
+  }
+
+  function handleRemove(symbol: string) {
+    onSelectionChange(selectedCodes.filter((s) => s !== symbol));
+  }
+
+  function handleClearAll() {
+    onSelectionChange([]);
+    setQuery('');
+  }
+
+  function handleSearchClick() {
+    onSearch(selectedCodes);
+  }
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function onOutside(e: MouseEvent) {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
     }
-    if (selectedTopics !== null && selectedTopics.size > 0)
-      list = list.filter((pr) => pr.topics.some((t) => selectedTopics.has(t)));
-    return list;
-  }, [items, companyFilter, selectedTopics]);
+    document.addEventListener('mousedown', onOutside);
+    return () => document.removeEventListener('mousedown', onOutside);
+  }, []);
+
+  const labels = {
+    placeholder:   { zh: '搜尋公司名稱或代碼...', en: 'Search company name or ticker…' },
+    selected:      { zh: '已選', en: 'Selected' },
+    clearAll:      { zh: '清除全部', en: 'Clear all' },
+    search:        { zh: '搜尋', en: 'Search' },
+    noResults:     { zh: '查無結果', en: 'No results' },
+    companies:     { zh: '公司', en: 'companies' },
+    filterByComp:  { zh: '依公司篩選', en: 'Filter by Company' },
+  };
+
+  return (
+    <div className="pr-co-filter" ref={wrapRef}>
+      <div className="pr-co-filter-label">{labels.filterByComp[lang]}</div>
+
+      {/* Input + dropdown trigger */}
+      <div className="pr-co-filter-input-row">
+        <div className={`pr-co-filter-input-wrap${dropdownOpen ? ' open' : ''}`}>
+          <SearchIcon />
+          <input
+            ref={inputRef}
+            className="pr-co-filter-input"
+            type="text"
+            placeholder={labels.placeholder[lang]}
+            value={query}
+            onChange={(e) => { setQuery(e.target.value); setDropdownOpen(true); }}
+            onFocus={() => setDropdownOpen(true)}
+            autoComplete="off"
+          />
+          {query && (
+            <button className="pr-co-filter-input-clear" onClick={() => setQuery('')} aria-label="Clear input">
+              <CloseIcon />
+            </button>
+          )}
+        </div>
+        <button
+          className={`pr-co-filter-search-btn${selectedCodes.length === 0 ? ' disabled' : ''}`}
+          onClick={handleSearchClick}
+          disabled={selectedCodes.length === 0 || isLoading}
+          title={labels.search[lang]}
+        >
+          {isLoading ? <LoadingIcon /> : <SearchIcon />}
+          <span>{labels.search[lang]}</span>
+        </button>
+      </div>
+
+      {/* Dropdown */}
+      {dropdownOpen && (
+        <div className="pr-co-filter-dropdown">
+          {filtered.length === 0 ? (
+            <div className="pr-co-filter-no-results">{labels.noResults[lang]}</div>
+          ) : (
+            filtered.map((c) => {
+              const active = selectedCodes.includes(c.symbol);
+              return (
+                <button
+                  key={c.symbol}
+                  className={`pr-co-filter-option${active ? ' selected' : ''}`}
+                  onMouseDown={(e) => { e.preventDefault(); handleToggle(c.symbol); }}
+                >
+                  <span className="pr-co-filter-option-check" aria-hidden="true">
+                    {active ? '✓' : ''}
+                  </span>
+                  <span className="pr-co-filter-option-symbol">{c.symbol}</span>
+                  <span className="pr-co-filter-option-name">{c.name}</span>
+                </button>
+              );
+            })
+          )}
+        </div>
+      )}
+
+      {/* Selected chips */}
+      {selectedCodes.length > 0 && (
+        <div className="pr-co-filter-chips">
+          <span className="pr-co-filter-chips-label">
+            {labels.selected[lang]} {selectedCodes.length} {labels.companies[lang]}:
+          </span>
+          <div className="pr-co-filter-chips-list">
+            {selectedCodes.map((code) => (
+              <span key={code} className="pr-co-filter-chip">
+                {code}
+                <button
+                  className="pr-co-filter-chip-remove"
+                  onClick={() => handleRemove(code)}
+                  aria-label={`Remove ${code}`}
+                >
+                  <CloseIcon />
+                </button>
+              </span>
+            ))}
+            <button className="pr-co-filter-clear-all" onClick={handleClearAll}>
+              {labels.clearAll[lang]}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
+
+export default function PressReleasePage() {
+  const { lang } = useLanguage();
+
+  // Company filter state
+  const [selectedCodes, setSelectedCodes] = useState<string[]>([]);
+  const [apiItems, setApiItems] = useState<PressRelease[] | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+
+  // Displayed items: API results when available, otherwise all local data
+  const displayedItems = apiItems ?? pressReleases;
 
   const groups = useMemo(
-    () => groupByTimeline(filteredItems, granularity, 2, lang),
-    [filteredItems, granularity, lang],
+    () => getPressReleaseArchiveGroups(displayedItems, lang),
+    [displayedItems, lang],
   );
-  const topicCounts = useMemo(() => getTopicCounts(items), [items]);
 
-  function toggleTopic(topic: string) {
-    setSelectedTopics((prev) => {
-      if (prev === null) {
-        // "All" mode: selecting a specific topic switches from show-all to that single topic
-        return new Set([topic]);
-      }
+  // Expand ALL groups by default
+  const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
+
+  // When groups change, expand all
+  useEffect(() => {
+    setExpandedKeys(new Set(groups.map((g) => g.key)));
+  }, [groups]);
+
+  const allExpanded = groups.length > 0 && expandedKeys.size >= groups.length;
+
+  function handleToggleGroup(key: string) {
+    setExpandedKeys((prev) => {
       const next = new Set(prev);
-      if (next.has(topic)) next.delete(topic);
-      else next.add(topic);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
       return next;
     });
   }
 
-  function selectAllTopics() {
-    setSelectedTopics(null);
-  }
-
-  const handleOpenGallery = useCallback((group: TimelineGroup) => {
-    setOpenGroup(group);
-  }, []);
-
-  const handleCloseGallery = useCallback(() => {
-    setOpenGroup(null);
-  }, []);
-
-  const hasFilters = selectedTopics !== null && selectedTopics.size > 0;
-
-  return (
-    <div className="pr-timeline-layout">
-      {/* Gallery modal */}
-      {openGroup && (
-        <GalleryModal group={openGroup} onClose={handleCloseGallery} lang={lang} />
-      )}
-
-      {/* Left: Topics filter panel (30%) */}
-      <aside className="pr-topics-panel">
-        <div className="pr-topics-panel-title">
-          {lang === 'en' ? 'Filter by Topic' : '依主題篩選'}
-        </div>
-        <div className="pr-topics-list">
-          {/* All option */}
-          <button
-            className={`pr-topic-item${selectedTopics === null ? ' active' : ''}`}
-            onClick={selectAllTopics}
-          >
-            <span className="pr-topic-name">{lang === 'en' ? 'All' : '全部'}</span>
-            <span className="pr-topic-count">{filteredItems.length}</span>
-          </button>
-          {allTopics.map((topic) => {
-            const count = topicCounts[topic] ?? 0;
-            const isActive = selectedTopics !== null && selectedTopics.has(topic);
-            return (
-              <button
-                key={topic}
-                className={`pr-topic-item${isActive ? ' active' : ''}`}
-                onClick={() => toggleTopic(topic)}
-              >
-                <span className="pr-topic-name">{topic}</span>
-                <span className="pr-topic-count">{count}</span>
-              </button>
-            );
-          })}
-        </div>
-        {hasFilters && (
-          <div className="pr-topics-active-info">
-            {lang === 'en'
-              ? `${selectedTopics!.size} topic(s) selected · ${filteredItems.length} articles`
-              : `已選 ${selectedTopics!.size} 個 Topic，顯示 ${filteredItems.length} 篇`}
-          </div>
-        )}
-      </aside>
-
-      {/* Right: Timeline main content (70%) */}
-      <div className="pr-timeline-main">
-        {/* Granularity filter bar (Relation filter removed, use Company search above) */}
-        <div className="pr-granularity-bar">
-          <span className="pr-granularity-label">
-            {lang === 'en' ? 'Time Dimension' : '檢視維度'}
-          </span>
-          {(['year', 'quarter', 'month'] as TimelineGranularity[]).map((g) => (
-            <button
-              key={g}
-              className={`pr-granularity-btn${granularity === g ? ' active' : ''}`}
-              onClick={() => setGranularity(g)}
-            >
-              {g === 'year'
-                ? lang === 'en'
-                  ? 'Annual'
-                  : '年度'
-                : g === 'quarter'
-                  ? lang === 'en'
-                    ? 'Quarterly'
-                    : '季度'
-                  : lang === 'en'
-                    ? 'Monthly'
-                    : '月份'}
-            </button>
-          ))}
-
-          {hasFilters && (
-            <button
-              className="pr-granularity-clear"
-              onClick={selectAllTopics}
-            >
-              {lang === 'en' ? 'Clear Filters' : '清除篩選'}
-            </button>
-          )}
-        </div>
-
-        {filteredItems.length === 0 ? (
-          <div className="pr-empty">
-            <div className="pr-empty-text">
-              {lang === 'en'
-                ? 'No matching Press Releases'
-                : '無符合篩選條件的 Press Release'}
-            </div>
-          </div>
-        ) : (
-          <div className="pr-timeline">
-            {groups.map((group) => {
-              // Left = Customer, Right = Supplier
-              const leftItems = group.items.filter((pr) => pr.relationship === 'customer');
-              const rightItems = group.items.filter((pr) => pr.relationship === 'supplier');
-              return (
-                <div className="pr-timeline-group" key={group.key}>
-                  {/* BI-style timeline node */}
-                  <div className="pr-timeline-node-wrap">
-                    <div className="pr-timeline-node">
-                      <div className="pr-timeline-node-dot" />
-                      <div className="pr-timeline-node-inner">
-                        <div className="pr-timeline-node-label">{group.label}</div>
-                        <div className="pr-timeline-node-count">
-                          <span className="pr-timeline-node-count-num">{group.total}</span>
-                          <span className="pr-timeline-node-count-unit">
-                            {lang === 'en' ? 'articles' : '篇'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Card stacks */}
-                  <div className="pr-timeline-cards-row">
-                    <div className="pr-timeline-side pr-timeline-side--left">
-                      {leftItems.length > 0 && (
-                        <CardStack
-                          group={group}
-                          articles={leftItems}
-                          onOpenGallery={handleOpenGallery}
-                          lang={lang}
-                        />
-                      )}
-                    </div>
-                    <div className="pr-timeline-side pr-timeline-side--right">
-                      {rightItems.length > 0 && (
-                        <CardStack
-                          group={group}
-                          articles={rightItems}
-                          onOpenGallery={handleOpenGallery}
-                          lang={lang}
-                        />
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-            <div className="pr-timeline-end" />
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ─── ListView ─────────────────────────────────────────────────────────────────
-
-interface ListViewProps {
-  items: PressRelease[];
-  lang: 'zh' | 'en';
-  companyFilter: string;
-}
-
-function ListView({ items, lang, companyFilter }: ListViewProps) {
-  const [page, setPage] = useState(0);
-  const [search, setSearch] = useState('');
-  const [filterRelationship, setFilterRelationship] = useState<RelFilter>('all');
-  const [dateFrom, setDateFrom] = useState('');
-  const [dateTo, setDateTo] = useState('');
-
-  const filtered = useMemo(() => {
-    let list = [...items].sort(
-      (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
-    );
-    if (companyFilter.trim()) {
-      const cq = companyFilter.toUpperCase();
-      list = list.filter((pr) => pr.ticker.toUpperCase() === cq || pr.company.toLowerCase().includes(companyFilter.toLowerCase()));
-    }
-    if (filterRelationship !== 'all')
-      list = list.filter((pr) => pr.relationship === filterRelationship);
-    if (dateFrom) list = list.filter((pr) => pr.publishedAt >= dateFrom);
-    if (dateTo) list = list.filter((pr) => pr.publishedAt <= dateTo);
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      list = list.filter(
-        (pr) =>
-          pr.title.toLowerCase().includes(q) ||
-          pr.company.toLowerCase().includes(q) ||
-          pr.ticker.toLowerCase().includes(q) ||
-          pr.topics.some((t) => t.toLowerCase().includes(q)),
-      );
-    }
-    return list;
-  }, [items, search, filterRelationship, dateFrom, dateTo, companyFilter]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const paged = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
-
-  function goTo(p: number) {
-    setPage(Math.max(0, Math.min(totalPages - 1, p)));
-  }
-
-  function handleSearch(val: string) {
-    setSearch(val);
-    setPage(0);
-  }
-
-  function handleRelFilter(val: RelFilter) {
-    setFilterRelationship(val);
-    setPage(0);
-  }
-
-  return (
-    <div className="pr-list-view">
-      {/* Search + relationship tabs */}
-      <div className="pr-list-filter-bar">
-        <div className="pr-list-search-wrap">
-          <svg
-            viewBox="0 0 14 14"
-            width="13"
-            height="13"
-            fill="none"
-            aria-hidden="true"
-            className="pr-list-search-icon"
-          >
-            <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" strokeWidth="1.3" />
-            <path d="M8.5 8.5L12.5 12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-          <input
-            className="pr-list-search"
-            type="text"
-            placeholder={
-              lang === 'en'
-                ? 'Search title, company or topic…'
-                : '搜尋標題、公司名稱或主題...'
-            }
-            value={search}
-            onChange={(e) => handleSearch(e.target.value)}
-          />
-        </div>
-        <div className="pr-list-rel-tabs">
-          {(['all', 'customer', 'supplier'] as const).map((r) => (
-            <button
-              key={r}
-              className={`pr-list-rel-tab${filterRelationship === r ? ' active' : ''}`}
-              onClick={() => handleRelFilter(r)}
-            >
-              {r === 'all'
-                ? lang === 'en'
-                  ? 'All'
-                  : '全部'
-                : r === 'customer'
-                  ? lang === 'en'
-                    ? 'Customer'
-                    : '客戶'
-                  : lang === 'en'
-                    ? 'Supplier'
-                    : '供應商'}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Date range filter */}
-      <div className="pr-date-filter-bar">
-        <span className="pr-date-filter-label">
-          {lang === 'en' ? 'Date Range' : '時間區間'}
-        </span>
-        <div className="pr-date-filter-inputs">
-          <div className="pr-date-input-wrap">
-            <svg
-              viewBox="0 0 14 14"
-              width="11"
-              height="11"
-              fill="none"
-              aria-hidden="true"
-              className="pr-date-cal-icon"
-            >
-              <rect x="1" y="2.5" width="12" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.2" />
-              <path d="M1 5.5H13" stroke="currentColor" strokeWidth="1.2" />
-              <path d="M4.5 1V4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-              <path d="M9.5 1V4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-            </svg>
-            <input
-              className="pr-date-input"
-              type="date"
-              value={dateFrom}
-              onChange={(e) => {
-                setDateFrom(e.target.value);
-                setPage(0);
-              }}
-              aria-label={lang === 'en' ? 'Start date' : '開始日期'}
-            />
-          </div>
-          <span className="pr-date-sep">—</span>
-          <div className="pr-date-input-wrap">
-            <svg
-              viewBox="0 0 14 14"
-              width="11"
-              height="11"
-              fill="none"
-              aria-hidden="true"
-              className="pr-date-cal-icon"
-            >
-              <rect x="1" y="2.5" width="12" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.2" />
-              <path d="M1 5.5H13" stroke="currentColor" strokeWidth="1.2" />
-              <path d="M4.5 1V4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-              <path d="M9.5 1V4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-            </svg>
-            <input
-              className="pr-date-input"
-              type="date"
-              value={dateTo}
-              onChange={(e) => {
-                setDateTo(e.target.value);
-                setPage(0);
-              }}
-              aria-label={lang === 'en' ? 'End date' : '結束日期'}
-            />
-          </div>
-          {(dateFrom || dateTo) && (
-            <button
-              className="pr-date-clear"
-              onClick={() => {
-                setDateFrom('');
-                setDateTo('');
-                setPage(0);
-              }}
-            >
-              {lang === 'en' ? 'Clear' : '清除'}
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Article count */}
-      <div className="pr-list-count">
-        {lang === 'en' ? (
-          <>
-            <strong>{filtered.length}</strong> articles · sorted by date, newest first
-          </>
-        ) : (
-          <>
-            共 <strong>{filtered.length}</strong> 篇，依時間由近到遠排序
-          </>
-        )}
-      </div>
-
-      {/* List */}
-      {paged.length === 0 ? (
-        <div className="pr-empty">
-          <div className="pr-empty-text">
-            {lang === 'en' ? 'No matching Press Releases' : '無符合條件的 Press Release'}
-          </div>
-        </div>
-      ) : (
-        <div className="pr-list">
-          {paged.map((pr) => (
-            <PressReleaseCard key={pr.id} pr={pr} lang={lang} />
-          ))}
-        </div>
-      )}
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="pr-pagination">
-          <button
-            className="pr-page-arrow"
-            onClick={() => goTo(page - 1)}
-            disabled={page === 0}
-          >
-            <svg viewBox="0 0 14 14" width="12" height="12" fill="none" aria-hidden="true">
-              <path
-                d="M8.5 3L4.5 7L8.5 11"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i}
-              className={`pr-page-btn${page === i ? ' active' : ''}`}
-              onClick={() => goTo(i)}
-            >
-              {i + 1}
-            </button>
-          ))}
-          <button
-            className="pr-page-arrow"
-            onClick={() => goTo(page + 1)}
-            disabled={page >= totalPages - 1}
-          >
-            <svg viewBox="0 0 14 14" width="12" height="12" fill="none" aria-hidden="true">
-              <path
-                d="M5.5 3L9.5 7L5.5 11"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
-export default function PressReleasePage() {
-  const [activeTab, setActiveTab] = useState<PRTab>('timeline');
-  const [companyFilter, setCompanyFilter] = useState('');
-  const [companySuggestions, setCompanySuggestions] = useState<typeof COMPANY_MASTER_LIST>([]);
-  const companyInputRef = useRef<HTMLInputElement>(null);
-  const companyWrapRef = useRef<HTMLDivElement>(null);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const { lang } = useLanguage();
-
-  function handleCompanyInput(val: string) {
-    setCompanyFilter(val);
-    if (val.trim().length > 0) {
-      const q = val.toUpperCase();
-      const suggestions = COMPANY_MASTER_LIST.filter(
-        (c) =>
-          c.symbol.startsWith(q) ||
-          c.name.toLowerCase().includes(val.toLowerCase()),
-      ).slice(0, 8);
-      setCompanySuggestions(suggestions);
-      setShowSuggestions(true);
+  function handleToggleAll() {
+    if (allExpanded) {
+      setExpandedKeys(new Set());
     } else {
-      setCompanySuggestions([]);
-      setShowSuggestions(false);
+      setExpandedKeys(new Set(groups.map((g) => g.key)));
     }
   }
 
-  function clearCompanyFilter() {
-    setCompanyFilter('');
-    setCompanySuggestions([]);
-    setShowSuggestions(false);
-  }
-
-  function selectCompany(symbol: string) {
-    setCompanyFilter(symbol);
-    setShowSuggestions(false);
-    setCompanySuggestions([]);
-  }
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (companyWrapRef.current && !companyWrapRef.current.contains(e.target as Node)) {
-        setShowSuggestions(false);
-      }
+  const handleSearch = useCallback(async (codes: string[]) => {
+    if (codes.length === 0) {
+      setApiItems(null);
+      setApiError(null);
+      return;
     }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    setIsLoading(true);
+    setApiError(null);
+    try {
+      const res = await fetch('/getPressReleaseByCoCd', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ co_cd: codes }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data: PressRelease[] = await res.json();
+      setApiItems(data);
+    } catch (err) {
+      setApiError(lang === 'zh' ? '搜尋失敗，顯示本地資料' : 'Search failed — showing local data');
+      setApiItems(null);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [lang]);
+
+  function handleSelectionChange(codes: string[]) {
+    setSelectedCodes(codes);
+    // Clear API results when selection changes so user must click Search
+    if (codes.length === 0) {
+      setApiItems(null);
+      setApiError(null);
+    }
+  }
+
+  const labels = {
+    eyebrow:     { zh: 'Press Release', en: 'Press Release' },
+    total:       { zh: `共 ${displayedItems.length} 篇`, en: `${displayedItems.length} articles` },
+    expandAll:   { zh: '展開全部', en: 'Expand All' },
+    collapseAll: { zh: '收合全部', en: 'Collapse All' },
+    apiResult:   { zh: 'API 搜尋結果', en: 'API search results' },
+  };
 
   return (
     <>
@@ -773,103 +447,66 @@ export default function PressReleasePage() {
         <Sidebar />
         <main className="main-content">
           <div className="page-pad">
-            {/* Compact header — title removed per design */}
-            <div className="pr-page-header">
-              <span className="section-eyebrow">Press Release</span>
-            </div>
+            <div className="pr-archive-page">
+              {/* Company filter */}
+              <CompanyFilter
+                selectedCodes={selectedCodes}
+                onSelectionChange={handleSelectionChange}
+                onSearch={handleSearch}
+                isLoading={isLoading}
+                lang={lang}
+              />
 
-            {/* Tab navigation + Company search + Color legend */}
-            <div className="pr-tab-header-row">
-              <div className="cp-nav-tabs" style={{ marginBottom: 0 }}>
-                <button
-                  className={`cp-nav-tab${activeTab === 'timeline' ? ' active' : ''}`}
-                  onClick={() => setActiveTab('timeline')}
-                >
-                  Timeline View
-                  <span className="badge-new" style={{ marginLeft: 6 }}>
-                    NEW
-                  </span>
-                </button>
-                <button
-                  className={`cp-nav-tab${activeTab === 'list' ? ' active' : ''}`}
-                  onClick={() => setActiveTab('list')}
-                >
-                  List View
-                </button>
-              </div>
+              {/* API error notice */}
+              {apiError && (
+                <div className="pr-archive-api-error">{apiError}</div>
+              )}
 
-              {/* Company search bar */}
-              <div className="pr-company-search-wrap" ref={companyWrapRef}>
-                <svg
-                  viewBox="0 0 14 14"
-                  width="13"
-                  height="13"
-                  fill="none"
-                  aria-hidden="true"
-                  className="pr-company-search-icon"
-                >
-                  <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" strokeWidth="1.3" />
-                  <path d="M8.5 8.5L12.5 12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-                <input
-                  ref={companyInputRef}
-                  className="pr-company-search-input"
-                  type="text"
-                  placeholder={lang === 'en' ? 'Search by symbol (e.g. AAPL)…' : '輸入 symbol 篩選公司...'}
-                  value={companyFilter}
-                  onChange={(e) => handleCompanyInput(e.target.value)}
-                  onFocus={() => companyFilter && setShowSuggestions(true)}
-                />
-                {companyFilter && (
-                  <button
-                    className="pr-company-search-clear"
-                    onClick={clearCompanyFilter}
-                    aria-label="Clear company filter"
-                  >
-                    <svg viewBox="0 0 14 14" width="11" height="11" fill="none" aria-hidden="true">
-                      <path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                    </svg>
+              {/* API result badge */}
+              {apiItems !== null && (
+                <div className="pr-archive-api-badge">
+                  <SearchIcon />
+                  {labels.apiResult[lang]} · {apiItems.length} {lang === 'en' ? 'results' : '筆'}
+                  <button className="pr-archive-api-badge-clear" onClick={() => { setApiItems(null); setSelectedCodes([]); }}>
+                    <CloseIcon />
                   </button>
-                )}
-                {showSuggestions && companySuggestions.length > 0 && (
-                  <div className="pr-company-suggestions">
-                    {companySuggestions.map((c) => (
-                      <button
-                        key={c.symbol}
-                        className="pr-company-suggestion-item"
-                        onMouseDown={(e) => { e.preventDefault(); selectCompany(c.symbol); }}
-                      >
-                        <span className="pr-company-suggestion-symbol">{c.symbol}</span>
-                        <span className="pr-company-suggestion-name">{c.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
+                </div>
+              )}
+
+              {/* Page header */}
+              <div className="pr-archive-header">
+                <div className="pr-archive-header-left">
+                  <span className="section-eyebrow">{labels.eyebrow[lang]}</span>
+                  <span className="pr-archive-total">{labels.total[lang]}</span>
+                </div>
+                <div className="pr-archive-header-right">
+                  <button
+                    className="pr-archive-expand-btn"
+                    onClick={handleToggleAll}
+                    title={allExpanded ? labels.collapseAll[lang] : labels.expandAll[lang]}
+                  >
+                    {allExpanded ? <CollapseAllIcon /> : <ExpandAllIcon />}
+                    <span>{allExpanded ? labels.collapseAll[lang] : labels.expandAll[lang]}</span>
+                  </button>
+                </div>
               </div>
 
-              {/* Color legend */}
-              <div className="pr-legend">
-                <span className="pr-legend-item">
-                  <span className="pr-legend-tri pr-legend-tri--customer" aria-hidden="true">●</span>
-                  <span className="pr-legend-label">Customer</span>
-                </span>
-                <span className="pr-legend-item">
-                  <span className="pr-legend-tri pr-legend-tri--supplier" aria-hidden="true">●</span>
-                  <span className="pr-legend-label">Supplier</span>
-                </span>
+              {/* Archive groups */}
+              <div className="pr-archive-groups">
+                {groups.map((group) => (
+                  <ArchiveGroup
+                    key={group.key}
+                    group={group}
+                    isExpanded={expandedKeys.has(group.key)}
+                    onToggle={() => handleToggleGroup(group.key)}
+                    lang={lang}
+                  />
+                ))}
               </div>
             </div>
-            <div className="pr-tab-divider" />
-
-            {activeTab === 'timeline' ? (
-              <TimelineView items={pressReleases} lang={lang} companyFilter={companyFilter} />
-            ) : (
-              <ListView items={pressReleases} lang={lang} companyFilter={companyFilter} />
-            )}
           </div>
         </main>
       </div>
     </>
   );
 }
-
