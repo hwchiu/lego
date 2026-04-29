@@ -583,7 +583,13 @@ interface CompanyProfileContentProps {
 }
 
 export default function CompanyProfileContent({ symbol }: CompanyProfileContentProps) {
-  const [activeTab, setActiveTab] = useState<Tab>('FIN. Summary');
+  const [activeTab, setActiveTab] = useState<Tab>(() => {
+    if (typeof window !== 'undefined') {
+      const param = new URLSearchParams(window.location.search).get('tab');
+      if (param && (TABS as readonly string[]).includes(param)) return param as Tab;
+    }
+    return 'FIN. Summary';
+  });
   const [activeFinIndex, setActiveFinIndex] = useState<string>('Revenue');
   const [isFavorite, setIsFavorite] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
