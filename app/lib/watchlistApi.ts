@@ -1071,7 +1071,7 @@ export interface GetFinIdxCardDataParams {
 export interface SubscribeEntry {
   co_cd: string;
   event: number[];
-  // View: number[]; // future expansion
+  // View?: number[]; // Reserved for future View subscription expansion (not yet implemented)
 }
 
 export interface UpdateSubscribeInfoPayload {

@@ -394,6 +394,7 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
     save:            { zh: '儲存',                   en: 'Save'                        },
     saving:          { zh: '儲存中...',              en: 'Saving...'                   },
     saved:           { zh: '✓ 已儲存',              en: '✓ Saved'                     },
+    close:           { zh: '關閉',                   en: 'Close'                       },
     noCompanies:     { zh: '目前沒有 Favorite 公司', en: 'No favorite companies yet.'  },
     comingSoon:      { zh: '即將推出',               en: 'Coming Soon'                 },
     comingSoonDesc:  { zh: 'View 訂閱功能正在開發中，即將推出。',
@@ -409,8 +410,18 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
   const [selectedCo, setSelectedCo] = useState<string | 'all'>('all');
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const saveSuccessTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Load existing subscriptions from localStorage on mount
+  // Clean up the save-success timer on unmount to avoid state updates on unmounted component
+  useEffect(() => {
+    return () => {
+      if (saveSuccessTimerRef.current !== null) clearTimeout(saveSuccessTimerRef.current);
+    };
+  }, []);
+
+  // Load existing subscriptions from localStorage on mount.
+  // All companies are pre-initialized with empty Sets so they always appear
+  // in the left panel regardless of whether they have stored subscriptions.
   useEffect(() => {
     const init: Record<string, Set<number>> = {};
     companies.forEach((co) => { init[co] = new Set(); });
@@ -453,15 +464,14 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
 
   const handleToggleEvent = useCallback((eventId: number) => {
     setCompanyEventMap((prev) => {
-      const next: Record<string, Set<number>> = {};
       const targets = selectedCo === 'all' ? companies : [selectedCo as string];
-      for (const co of companies) {
-        next[co] = new Set(prev[co] ?? []);
-      }
       const checked = rightPanelEvents.has(eventId);
+      // Shallow-copy the map and only clone Sets that are being modified
+      const next: Record<string, Set<number>> = { ...prev };
       for (const co of targets) {
-        if (checked) next[co].delete(eventId);
-        else next[co].add(eventId);
+        const updated = new Set(prev[co] ?? []);
+        if (checked) updated.delete(eventId); else updated.add(eventId);
+        next[co] = updated;
       }
       return next;
     });
@@ -469,9 +479,9 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
 
   const handleSelectAllEvents = useCallback((checked: boolean) => {
     setCompanyEventMap((prev) => {
-      const next: Record<string, Set<number>> = {};
-      for (const co of companies) next[co] = new Set(prev[co] ?? []);
       const targets = selectedCo === 'all' ? companies : [selectedCo as string];
+      // Shallow-copy the map and only replace Sets for target companies
+      const next: Record<string, Set<number>> = { ...prev };
       for (const co of targets) {
         next[co] = checked ? new Set(EVENT_CATEGORIES_LIST.map((e) => e.id)) : new Set<number>();
       }
@@ -483,9 +493,9 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
   const handleApplyToAll = useCallback(() => {
     const evtsCopy = new Set(rightPanelEvents);
     setCompanyEventMap((prev) => {
-      const next: Record<string, Set<number>> = {};
+      const next: Record<string, Set<number>> = { ...prev };
       for (const co of companies) next[co] = new Set(evtsCopy);
-      return { ...prev, ...next };
+      return next;
     });
   }, [companies, rightPanelEvents]);
 
@@ -501,7 +511,11 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
       const payload: UpdateSubscribeInfoPayload = { subscribe: subscribeList };
       await updateSubscribeInfo(payload);
       setSaveSuccess(true);
-      setTimeout(() => { setSaveSuccess(false); onClose(); }, 900);
+      if (saveSuccessTimerRef.current !== null) clearTimeout(saveSuccessTimerRef.current);
+      saveSuccessTimerRef.current = setTimeout(() => {
+        setSaveSuccess(false);
+        onClose();
+      }, 900);
     } finally {
       setSaving(false);
     }
@@ -528,7 +542,7 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
             )}
           </div>
           <div className="wl-modal-header-actions">
-            <button className="wl-modal-cancel-btn" onClick={onClose}>Close</button>
+            <button className="wl-modal-cancel-btn" onClick={onClose}>{labels.close[lang]}</button>
           </div>
         </div>
 
