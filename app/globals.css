@@ -25429,3 +25429,337 @@ html.dark .chr-card:hover {
   color: var(--c-text-3);
   letter-spacing: 0.02em;
 }
+
+/* ===== PRESS RELEASE ARCHIVE ===== */
+
+.pr-archive-page {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Page header */
+.pr-archive-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 12px;
+}
+
+.pr-archive-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pr-archive-total {
+  font-size: 11.5px;
+  color: var(--c-text-4);
+  padding: 2px 8px;
+  background: var(--c-bg);
+  border-radius: 20px;
+}
+
+.pr-archive-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pr-archive-expand-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid var(--c-border-2);
+  border-radius: var(--radius);
+  background: var(--c-white);
+  color: var(--c-text-2);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+
+.pr-archive-expand-btn:hover {
+  border-color: var(--c-accent);
+  color: var(--c-accent);
+  background: #f0faff;
+}
+
+/* Groups container */
+.pr-archive-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Individual group */
+.pr-archive-group {
+  border-bottom: 1px solid var(--c-border);
+}
+
+.pr-archive-group:first-child {
+  border-top: 1px solid var(--c-border);
+}
+
+/* Group header (clickable bar) */
+.pr-archive-group-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 0;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.12s;
+}
+
+.pr-archive-group-header:hover {
+  background: var(--c-bg);
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-left: -8px;
+  margin-right: -8px;
+  border-radius: var(--radius-sm);
+}
+
+/* Type badge */
+.pr-archive-group-type-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.pr-archive-group-type-badge--day {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.pr-archive-group-type-badge--week {
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.pr-archive-group-type-badge--month {
+  background: #fdf4ff;
+  color: #7e22ce;
+}
+
+.pr-archive-group-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--c-text);
+  flex: 1;
+}
+
+.pr-archive-group-count {
+  font-size: 11.5px;
+  color: var(--c-text-4);
+}
+
+.pr-archive-group-toggle {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--c-text-3);
+  transition: color 0.12s;
+}
+
+.pr-archive-group-header:hover .pr-archive-group-toggle {
+  color: var(--c-text);
+}
+
+/* Group body */
+.pr-archive-group-body {
+  overflow: hidden;
+}
+
+.pr-archive-group-body.expanded {
+  padding-bottom: 20px;
+}
+
+/* Tiles grid */
+.pr-archive-tiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding-top: 12px;
+}
+
+/* Individual tile — Apple Newsroom "media-and-text" style */
+.pr-archive-tile {
+  display: flex;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-lg);
+  background: var(--c-white);
+  cursor: default;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.pr-archive-tile:hover {
+  border-color: var(--c-accent);
+  box-shadow: 0 2px 12px rgba(79, 195, 247, 0.12);
+}
+
+/* Tile media (company color square) */
+.pr-archive-tile-media {
+  width: 72px;
+  min-width: 72px;
+  height: 72px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pr-archive-tile-ticker {
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.92);
+  letter-spacing: -0.3px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Tile info */
+.pr-archive-tile-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pr-archive-tile-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-text);
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 0.12s;
+}
+
+.pr-archive-tile:hover .pr-archive-tile-title {
+  color: #0284c7;
+}
+
+.pr-archive-tile-desc {
+  font-size: 12px;
+  color: var(--c-text-3);
+  line-height: 1.55;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+
+.pr-archive-tile-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+
+.pr-archive-tile-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10.5px;
+  font-weight: 600;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pr-archive-tile-tag--customer {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.pr-archive-tile-tag--supplier {
+  background: #fce7f3;
+  color: #9d174d;
+}
+
+.pr-archive-tile-date {
+  font-size: 11px;
+  color: var(--c-text-4);
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+/* ─── Press Release Archive — Responsive ─── */
+
+@media (max-width: 900px) {
+  .pr-archive-tiles {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .pr-archive-header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .pr-archive-expand-btn {
+    font-size: 11.5px;
+    padding: 5px 10px;
+  }
+
+  .pr-archive-tile {
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .pr-archive-tile-media {
+    width: 56px;
+    min-width: 56px;
+    height: 56px;
+  }
+
+  .pr-archive-tile-ticker {
+    font-size: 10px;
+  }
+
+  .pr-archive-tile-title {
+    font-size: 12.5px;
+  }
+
+  .pr-archive-group-label {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pr-archive-tile-media {
+    display: none;
+  }
+
+  .pr-archive-tile-date {
+    margin-left: 0;
+  }
+}
