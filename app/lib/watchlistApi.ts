@@ -1072,6 +1072,9 @@ export function getFinIdxCardData(params: GetFinIdxCardDataParams): WatchlistDat
   const holding = holdingsDataMap[co_cd];
 
   const nowStr = new Date().toISOString().replace('T', ' ').slice(0, 23);
+  // Use the same latest-period defaults as getWatchlistData (Q1 2026)
+  const calYear = 2026;
+  const calQ = 'Q1';
   const items: WatchlistDataItem[] = [];
 
   for (const catId of FIN_IDX_CARD_CATEGORIES) {
@@ -1080,17 +1083,17 @@ export function getFinIdxCardData(params: GetFinIdxCardDataParams): WatchlistDat
     const fieldFn = CATEGORY_TO_HOLDING_FIELD[catId];
     const fldVal = (holding && fieldFn) ? fieldFn(holding) : null;
     items.push({
-      calendar_quarter: null,
+      calendar_quarter: calQ,
       co_cd,
       fld_val: fldVal,
       curr_cd: null,
-      fiscal_year: null,
+      fiscal_year: calYear,
       op_seg: null,
       val_unit: null,
       update_dt: nowStr,
       doc_amt: null,
-      calendar_year: null,
-      fiscal_quarter: null,
+      calendar_year: calYear,
+      fiscal_quarter: calQ,
       rpt_fin_item: meta.rpt_fin_item,
       selectedCategories: catId,
     });

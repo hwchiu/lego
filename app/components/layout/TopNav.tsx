@@ -559,11 +559,17 @@ export default function TopNav() {
                           <div className="search-fin-idx-cards">
                             {(finIdxDataMap[company.symbol] ?? []).map((item) => {
                               const rawVal = String(item.fld_val ?? '—');
+                              const yrQtr = item.calendar_year && item.fiscal_quarter
+                                ? `${item.calendar_year} ${item.fiscal_quarter}`
+                                : null;
                               return (
                                 <div key={item.rpt_fin_item} className="search-fin-card">
-                                  <div className="search-fin-card-body" style={{ cursor: 'default' }}>
+                                  <div className="search-fin-card-body search-fin-card-body--no-pin" style={{ cursor: 'default' }}>
                                     <div className="search-fin-card-item">{item.rpt_fin_item}</div>
                                     <div className={getFinValueClass(rawVal)}>{rawVal}</div>
+                                    {yrQtr && (
+                                      <div className="search-fin-idx-yr-tag">{yrQtr}</div>
+                                    )}
                                   </div>
                                 </div>
                               );

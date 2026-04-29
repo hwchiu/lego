@@ -305,6 +305,24 @@ select {
   background: rgba(79, 195, 247, 0.08);
   border-color: var(--c-accent);
 }
+/* Year+Quarter tag — bottom-right of each fin-idx card */
+.search-fin-idx-yr-tag {
+  position: absolute;
+  bottom: 5px;
+  right: 6px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--c-text-4);
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: 3px;
+  padding: 1px 5px;
+  white-space: nowrap;
+  line-height: 1.5;
+  pointer-events: none;
+}
 /* History list */
 .search-history-list {
   list-style: none;
@@ -428,6 +446,10 @@ select {
   background: none;
   border: none;
   cursor: pointer;
+}
+/* Fin-idx variant — no pin button; yr-tag sits at bottom-right */
+.search-fin-card-body--no-pin {
+  padding-bottom: 22px;
 }
 /* Top row: period badge aligned right */
 .search-fin-card-top {
@@ -15297,7 +15319,8 @@ html.dark .seg-item-l3.fin-stmt-td-item {
 /* ===== TABLET: ≤ 768px ===== */
 @media (max-width: 768px) {
   /* Financial search cards — 2 per row on tablet */
-  .search-fin-cards {
+  .search-fin-cards,
+  .search-fin-idx-cards {
     grid-template-columns: repeat(2, 1fr);
   }
   /* TopNav adjustments */
@@ -15824,7 +15847,8 @@ html.dark .seg-item-l3.fin-stmt-td-item {
     height: 50px;
   }
   /* Financial search cards — 2 per row on small phone */
-  .search-fin-cards {
+  .search-fin-cards,
+  .search-fin-idx-cards {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -21236,6 +21260,11 @@ html.dark .search-fin-idx-more-btn {
 html.dark .search-fin-idx-more-btn:hover {
   background: rgba(79, 195, 247, 0.12);
   border-color: var(--c-accent);
+}
+html.dark .search-fin-idx-yr-tag {
+  background: #1e293b;
+  border-color: #374151;
+  color: var(--c-text-3);
 }
 html.dark .kg-hero,
 html.dark .kg-graph-container,
