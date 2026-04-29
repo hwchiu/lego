@@ -25242,6 +25242,26 @@ html.dark .wl-confirm-icon-wrap {
   background: rgba(248, 113, 113, 0.15);
 }
 
+/* ── Dark mode: Updates feed scrollbar ── */
+html.dark .wl-feed-list {
+  scrollbar-color: #475569 #1e293b;
+  scrollbar-width: thin;
+}
+html.dark .wl-feed-list::-webkit-scrollbar {
+  width: 6px;
+}
+html.dark .wl-feed-list::-webkit-scrollbar-track {
+  background: #1e293b;
+  border-radius: 3px;
+}
+html.dark .wl-feed-list::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+html.dark .wl-feed-list::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
 /* ── Dark mode: Revenue Breakdown scrollbar ── */
 html.dark .cp-breakdown-groups {
   scrollbar-color: #475569 #1e293b;
