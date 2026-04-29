@@ -10,7 +10,7 @@
 2. [伺服器環境準備](#2-伺服器環境準備)
 3. [Docker Compose 服務定義](#3-docker-compose-服務定義)
 4. [GitHub Actions 自動部署流程](#4-github-actions-自動部署流程)
-5. [伺服器端 Auto-Deploy 腳本](#5-伺服器端-auto-deploy-腳本)
+5. [Watchtower 自動更新機制](#5-watchtower-自動更新機制)
 6. [MariaDB 整合說明](#6-mariadb-整合說明)
 7. [日常開發流程](#7-日常開發流程)
 8. [環境變數與機密管理](#8-環境變數與機密管理)
@@ -30,18 +30,24 @@
 │  GitHub Actions (CI/CD Pipeline)                    │
 │    1. Build Next.js static output                   │
 │    2. Build Docker image                            │
-│    3. Push image to registry (GHCR)                 │
-│    4. SSH trigger deploy on Linux server            │
+│    3. Push image to Docker Hub                      │
+│       (docker.io/hwchiu/lego:latest)                │
 └──────────────────────────┬──────────────────────────┘
-                           │ SSH deploy trigger
+                           │ image push
+                           ▼
+                   ┌───────────────┐
+                   │  Docker Hub   │
+                   │ hwchiu/lego   │
+                   └───────┬───────┘
+                           │ Watchtower polls every 5 min
                            ▼
 ┌─────────────────────────────────────────────────────┐
 │               Linux Server (自有機器)                 │
 │                                                      │
 │  ┌─────────────┐   ┌──────────────┐                 │
 │  │   Nginx     │   │  Next.js /   │                 │
-│  │  (Reverse   │──▶│  Frontend    │                 │
-│  │   Proxy)    │   │  Container   │                 │
+│  │  (Reverse   │──▶│  Frontend    │◀── Watchtower   │
+│  │   Proxy)    │   │  Container   │    auto-update  │
 │  └─────────────┘   └──────┬───────┘                 │
 │                           │ API calls               │
 │                    ┌──────▼───────┐                 │
@@ -64,7 +70,8 @@
 | Backend API | 提供動態資料 API（連接 MariaDB） | Node.js / Express（或其他） |
 | Database | 持久化儲存 | MariaDB (Docker) |
 | Reverse Proxy | 統一入口、SSL 終止 | Nginx |
-| Registry | Docker Image 儲存 | GitHub Container Registry (GHCR) |
+| Registry | Docker Image 儲存 | Docker Hub (`docker.io/hwchiu/lego`) |
+| Watchtower | 自動偵測並更新容器 image | containrrr/watchtower |
 
 ---
 
@@ -132,10 +139,8 @@ version: '3.8'
 services:
   # ── Frontend (Next.js static + Nginx) ──────────────────
   frontend:
-    image: ghcr.io/<GITHUB_USERNAME>/lego-frontend:latest
+    image: docker.io/hwchiu/lego:latest
     restart: unless-stopped
-    environment:
-      - NEXT_PUBLIC_API_URL=http://backend:3001
     depends_on:
       - backend
     networks:
@@ -143,7 +148,7 @@ services:
 
   # ── Backend API ────────────────────────────────────────
   backend:
-    image: ghcr.io/<GITHUB_USERNAME>/lego-backend:latest
+    image: docker.io/hwchiu/lego-backend:latest
     restart: unless-stopped
     environment:
       - DB_HOST=mariadb
@@ -198,6 +203,26 @@ services:
     networks:
       - lego-net
 
+  # ── Watchtower（自動更新容器 image）───────────────────
+  watchtower:
+    image: containrrr/watchtower:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/lego/secrets/docker-config.json:/config.json:ro
+    environment:
+      # 每 300 秒（5 分鐘）輪詢一次 Docker Hub
+      - WATCHTOWER_POLL_INTERVAL=300
+      # 只監控有 com.centurylinklabs.watchtower.enable=true label 的容器
+      - WATCHTOWER_LABEL_ENABLE=true
+      # 更新後清除舊 image
+      - WATCHTOWER_CLEANUP=true
+      # 傳送通知（選用，可設為 slack/email）
+      - WATCHTOWER_NOTIFICATIONS=shoutrrr
+      - WATCHTOWER_NOTIFICATION_URL=${WATCHTOWER_NOTIFICATION_URL:-}
+    networks:
+      - lego-net
+
 secrets:
   db_password:
     file: /opt/lego/secrets/db_password.txt
@@ -208,6 +233,8 @@ networks:
   lego-net:
     driver: bridge
 ```
+
+> **說明**：Watchtower 會定期輪詢 Docker Hub，一旦偵測到 `docker.io/hwchiu/lego:latest` 有新版本，便自動 `docker pull` 並重啟對應容器，無需人工介入。
 
 ### 3.1 Nginx 反向代理設定
 
@@ -262,129 +289,93 @@ chmod 600 /opt/lego/secrets/*.txt
 
 | Secret 名稱 | 說明 |
 |-------------|------|
-| `DEPLOY_SSH_KEY` | 伺服器 deploy 使用者的 SSH 私鑰（步驟 2.2 產生）|
-| `DEPLOY_HOST` | 伺服器 IP 或 domain |
-| `DEPLOY_USER` | 部署帳號（`deploy`）|
-| `GHCR_TOKEN` | GitHub Personal Access Token（有 `write:packages` 權限）|
+| `DOCKERHUB_USERNAME` | Docker Hub 帳號（`hwchiu`）|
+| `DOCKERHUB_TOKEN` | Docker Hub Access Token（建議用 token 不用密碼）|
 
-### 4.2 新增部署 Workflow
+> Docker Hub Access Token 建立方式：Docker Hub → Account Settings → Security → New Access Token
 
-建立 `.github/workflows/deploy-server.yml`：
+### 4.2 Workflow 檔案
 
-```yaml
-name: Deploy to Linux Server
+實際的 workflow 位於 `.github/workflows/deploy-server.yml`，流程為：
 
-on:
-  push:
-    branches: [main]
-  workflow_dispatch:
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/lego-frontend
-
-jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=branch
-            type=sha,prefix=sha-
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-  deploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Deploy to server via SSH
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          script: |
-            cd /opt/lego
-
-            # 登入 GHCR
-            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-            # 拉取最新 image
-            docker pull ghcr.io/${{ github.repository_owner }}/lego-frontend:latest
-
-            # 滾動更新（zero-downtime）
-            docker compose up -d --no-deps --pull always frontend
-
-            # 清除舊 image
-            docker image prune -f
-
-            echo "✅ Deployment complete at $(date)"
-```
+1. `main` branch 有新 commit 時觸發
+2. Build Docker image（使用 repo 根目錄的 `Dockerfile`）
+3. Push 到 `docker.io/hwchiu/lego:latest`
+4. Watchtower 在伺服器端自動偵測新 image 並重啟容器（**無需 SSH**）
 
 ---
 
-## 5. 伺服器端 Auto-Deploy 腳本
+## 5. Watchtower 自動更新機制
 
-在伺服器上建立一個手動觸發的部署腳本 `/opt/lego/scripts/deploy.sh`，方便緊急時手動更新：
+Watchtower 是一個在伺服器上執行的 Docker 容器，它會定期輪詢 Docker Hub，若偵測到 image 有新版本，便自動 `pull` 並重啟對應的容器，**整個過程完全不需要人為介入或 SSH 連線**。
 
-```bash
-#!/usr/bin/env bash
-# /opt/lego/scripts/deploy.sh
-set -euo pipefail
+### 5.1 運作流程
 
-COMPOSE_FILE="/opt/lego/docker-compose.yml"
-LOG_FILE="/opt/lego/logs/deploy.log"
-
-log() {
-  echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOG_FILE"
-}
-
-log "Starting deployment..."
-
-# 拉取所有服務最新 image
-docker compose -f "$COMPOSE_FILE" pull
-
-# 重啟有更新的服務（zero-downtime for frontend/backend）
-docker compose -f "$COMPOSE_FILE" up -d --remove-orphans
-
-# MariaDB volume 資料不會被清除
-log "Services running:"
-docker compose -f "$COMPOSE_FILE" ps
-
-# 清除懸掛 image
-docker image prune -f
-
-log "Deployment complete."
+```
+GitHub Actions push image
+       │
+       ▼
+Docker Hub (hwchiu/lego:latest 有新 digest)
+       │
+       ▼  Watchtower 每 5 分鐘檢查一次
+Watchtower 偵測到新版本
+       │
+       ▼
+docker pull hwchiu/lego:latest
+       │
+       ▼
+重啟 frontend 容器（graceful restart）
+       │
+       ▼
+舊 image 自動清除
 ```
 
+### 5.2 Docker Hub 認證設定（讓 Watchtower 可 pull private image）
+
+若 Docker Hub repository 為 **public**，可跳過此步驟。
+若為 **private**，需在伺服器上提供認證設定：
+
 ```bash
-chmod +x /opt/lego/scripts/deploy.sh
+# 在伺服器上以 deploy 使用者登入 Docker Hub
+docker login docker.io -u hwchiu
+
+# 將認證資訊複製到 Watchtower 掛載路徑
+cp ~/.docker/config.json /opt/lego/secrets/docker-config.json
+chmod 600 /opt/lego/secrets/docker-config.json
+```
+
+### 5.3 標記哪些容器要被 Watchtower 管理
+
+在 `docker-compose.yml` 的 `frontend`（及 `backend`）服務加上 label：
+
+```yaml
+frontend:
+  image: docker.io/hwchiu/lego:latest
+  labels:
+    - "com.centurylinklabs.watchtower.enable=true"
+```
+
+未加 label 的容器（如 `mariadb`、`nginx`）不會被 Watchtower 自動更新，確保資料庫穩定性。
+
+### 5.4 調整輪詢頻率
+
+| 情境 | 建議間隔 | 設定值 |
+|------|----------|--------|
+| 開發測試（快速反映） | 1 分鐘 | `WATCHTOWER_POLL_INTERVAL=60` |
+| 正式環境（預設） | 5 分鐘 | `WATCHTOWER_POLL_INTERVAL=300` |
+| 低頻更新 | 1 小時 | `WATCHTOWER_POLL_INTERVAL=3600` |
+
+### 5.5 手動觸發 Watchtower（立即檢查）
+
+```bash
+# 在伺服器上執行一次性檢查
+docker run --rm \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /opt/lego/secrets/docker-config.json:/config.json:ro \
+  containrrr/watchtower --run-once
+
+# 或直接重啟 watchtower 容器
+docker compose -f /opt/lego/docker-compose.yml restart watchtower
 ```
 
 ---
@@ -462,9 +453,10 @@ crontab -e
 4. 人工 Review PR → Merge to main
 5. GitHub Actions 自動觸發：
    a. Build Docker image
-   b. Push to GHCR
-   c. SSH 到伺服器執行 rolling update
-6. 伺服器更新完成，前端/後端立即反映新版本
+   b. Push 到 docker.io/hwchiu/lego:latest
+6. Watchtower（伺服器端）偵測到新 image（約 5 分鐘內）
+7. Watchtower 自動 pull + 重啟 frontend 容器
+8. 伺服器立即反映新版本（全程無需人工介入）
 ```
 
 ### 7.2 分支策略
@@ -506,9 +498,8 @@ docker exec -it $(docker compose -f /opt/lego/docker-compose.yml ps -q mariadb) 
 
 | Secret | 說明 |
 |--------|------|
-| `DEPLOY_SSH_KEY` | 伺服器 SSH 私鑰 |
-| `DEPLOY_HOST` | 伺服器 IP/domain |
-| `DEPLOY_USER` | 部署帳號 |
+| `DOCKERHUB_USERNAME` | Docker Hub 帳號（`hwchiu`）|
+| `DOCKERHUB_TOKEN` | Docker Hub Access Token |
 
 ### 前端環境變數（Build-time）
 
@@ -530,8 +521,21 @@ Next.js 靜態輸出的環境變數須在 build 時注入（`NEXT_PUBLIC_*`）�
 ### Q: 部署後前端沒有更新？
 
 ```bash
-# 確認 image 是否已更新
-docker images ghcr.io/<owner>/lego-frontend
+# 確認 Watchtower 是否正在執行
+docker compose -f /opt/lego/docker-compose.yml ps watchtower
+
+# 查看 Watchtower log，確認是否有偵測到新 image
+docker compose -f /opt/lego/docker-compose.yml logs --tail=50 watchtower
+
+# 確認 Docker Hub 上的 image digest 已更新
+docker pull docker.io/hwchiu/lego:latest
+docker inspect docker.io/hwchiu/lego:latest | grep -i digest
+
+# 手動觸發立即更新
+docker run --rm \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /opt/lego/secrets/docker-config.json:/config.json:ro \
+  containrrr/watchtower --run-once
 
 # 強制重建容器
 docker compose -f /opt/lego/docker-compose.yml up -d --force-recreate frontend
@@ -559,19 +563,19 @@ mysql -h mariadb -u lego_user -p
 2. 確認伺服器 SSH port（預設 22）已開放防火牆
 3. 在伺服器測試：`ssh -i ~/.ssh/github_deploy deploy@<host>`
 
-### Q: GHCR image pull 失敗（未授權）？
+### Q: GitHub Actions push image 失敗？
 
-確認 deploy workflow 使用了正確的 token：
+確認 `DOCKERHUB_USERNAME` 與 `DOCKERHUB_TOKEN` Secrets 已正確設定：
 
 ```yaml
 - uses: docker/login-action@v3
   with:
-    registry: ghcr.io
-    username: ${{ github.actor }}
-    password: ${{ secrets.GITHUB_TOKEN }}
+    registry: docker.io
+    username: ${{ secrets.DOCKERHUB_USERNAME }}
+    password: ${{ secrets.DOCKERHUB_TOKEN }}
 ```
 
-若 GHCR package 設為 private，需確認 repository 的 package 已授予 Actions 讀取權限。
+若 token 過期，到 Docker Hub → Account Settings → Security 重新產生。
 
 ---
 
@@ -579,7 +583,7 @@ mysql -h mariadb -u lego_user -p
 
 ```
 /opt/lego/
-├── docker-compose.yml          # 主要服務定義
+├── docker-compose.yml          # 主要服務定義（含 Watchtower）
 ├── data/
 │   ├── mariadb/                # MariaDB 資料（persistent volume）
 │   └── backups/                # 資料庫備份
@@ -588,9 +592,9 @@ mysql -h mariadb -u lego_user -p
 │   └── conf.d/
 │       └── lego.conf           # Nginx 反向代理設定
 ├── scripts/
-│   ├── deploy.sh               # 手動部署腳本
 │   └── init.sql                # MariaDB 初始化 SQL
 └── secrets/                    # 機密（chmod 600，不進版控）
     ├── db_password.txt
-    └── db_root_password.txt
+    ├── db_root_password.txt
+    └── docker-config.json      # Docker Hub 認證（private image 時使用）
 ```
