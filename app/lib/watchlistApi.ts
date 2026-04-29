@@ -1045,3 +1045,56 @@ export function getWatchlistData(params: GetWatchlistDataParams): WatchlistDataI
 
   return items;
 }
+
+// ── getFinIdxCardData ────────────────────────────────────────────────────────
+
+/**
+ * Fixed set of category IDs shown in the search-bar financial index cards.
+ * Maps to: Revenue, Revenue QoQ, Gross Margin, Next Earning Release.
+ */
+const FIN_IDX_CARD_CATEGORIES = [1, 2, 4, 6] as const;
+
+export interface GetFinIdxCardDataParams {
+  co_cd: string;
+}
+
+/**
+ * Fetch the 4 financial index cards for a company.
+ * Returns one WatchlistDataItem per category (Revenue, Revenue QoQ, Gross Margin,
+ * Next Earning Release), using the latest available data.
+ *
+ * Stub implementation — mirrors the pattern of getWatchlistData.
+ * Real integration: GET /getFinIdxCardData?co_cd={co_cd}
+ */
+export function getFinIdxCardData(params: GetFinIdxCardDataParams): WatchlistDataItem[] {
+  console.log('[API stub] getFinIdxCardData', params);
+  const { co_cd } = params;
+  const holding = holdingsDataMap[co_cd];
+
+  const nowStr = new Date().toISOString().replace('T', ' ').slice(0, 23);
+  const items: WatchlistDataItem[] = [];
+
+  for (const catId of FIN_IDX_CARD_CATEGORIES) {
+    const meta = WATCHLIST_CATEGORY_ID_MAP[catId];
+    if (!meta) continue;
+    const fieldFn = CATEGORY_TO_HOLDING_FIELD[catId];
+    const fldVal = (holding && fieldFn) ? fieldFn(holding) : null;
+    items.push({
+      calendar_quarter: null as unknown as string,
+      co_cd,
+      fld_val: fldVal,
+      curr_cd: null as unknown as string,
+      fiscal_year: null,
+      op_seg: null as unknown as string,
+      val_unit: null as unknown as string,
+      update_dt: nowStr,
+      doc_amt: null,
+      calendar_year: null as unknown as number,
+      fiscal_quarter: null as unknown as string,
+      rpt_fin_item: meta.rpt_fin_item,
+      selectedCategories: catId,
+    });
+  }
+
+  return items;
+}
