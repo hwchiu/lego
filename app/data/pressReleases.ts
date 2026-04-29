@@ -13,6 +13,7 @@ export interface PressRelease {
   publishedAt: string; // ISO date string YYYY-MM-DD
   summary: string;
   viewCount: number;
+  url: string; // Source URL for the press release
 }
 
 export const pressReleases: PressRelease[] = extractJson<PressRelease[]>(rawContent);

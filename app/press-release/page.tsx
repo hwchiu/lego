@@ -131,7 +131,13 @@ function ArchiveTile({ pr, lang }: ArchiveTileProps) {
   const initials = getTileInitials(pr.ticker);
 
   return (
-    <div className="pr-archive-tile">
+    <a
+      className="pr-archive-tile"
+      href={pr.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${pr.title} — ${pr.company} (${pr.relationship})`}
+    >
       <div className="pr-archive-tile-media" style={{ background: color }}>
         <span className="pr-archive-tile-ticker">{initials}</span>
       </div>
@@ -146,7 +152,7 @@ function ArchiveTile({ pr, lang }: ArchiveTileProps) {
           <time className="pr-archive-tile-date" dateTime={pr.publishedAt}>{dateStr}</time>
         </div>
       </div>
-    </div>
+    </a>
   );
 }
 
