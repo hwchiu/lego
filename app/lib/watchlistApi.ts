@@ -57,17 +57,17 @@ export interface WatchlistDetailResponse {
 }
 
 export interface WatchlistDataItem {
-  calendar_quarter: string;
+  calendar_quarter: string | null;
   co_cd: string;
   fld_val: string | number | null;
-  curr_cd: string;
+  curr_cd: string | null;
   fiscal_year: number | null;
-  op_seg: string;
-  val_unit: string;
-  update_dt: string;
+  op_seg: string | null;
+  val_unit: string | null;
+  update_dt: string | null;
   doc_amt: string | number | null;
-  calendar_year: number;
-  fiscal_quarter: string;
+  calendar_year: number | null;
+  fiscal_quarter: string | null;
   rpt_fin_item: string;
   selectedCategories: number;
 }
@@ -1041,6 +1041,62 @@ export function getWatchlistData(params: GetWatchlistDataParams): WatchlistDataI
         selectedCategories: catId,
       });
     }
+  }
+
+  return items;
+}
+
+// ── getFinIdxCardData ────────────────────────────────────────────────────────
+
+/**
+ * Fixed set of category IDs shown in the search-bar financial index cards.
+ * Maps to: Revenue, Revenue QoQ, Gross Margin, Next Earning Release.
+ */
+const FIN_IDX_CARD_CATEGORIES = [1, 2, 4, 6] as const;
+
+export interface GetFinIdxCardDataParams {
+  co_cd: string;
+}
+
+/**
+ * Fetch the 4 financial index cards for a company.
+ * Returns one WatchlistDataItem per category (Revenue, Revenue QoQ, Gross Margin,
+ * Next Earning Release), using the latest available data.
+ *
+ * Stub implementation — mirrors the pattern of getWatchlistData.
+ * Real integration: GET /getFinIdxCardData?co_cd={co_cd}
+ */
+export function getFinIdxCardData(params: GetFinIdxCardDataParams): WatchlistDataItem[] {
+  console.log('[API stub] getFinIdxCardData', params);
+  const { co_cd } = params;
+  const holding = holdingsDataMap[co_cd];
+
+  const nowStr = new Date().toISOString().replace('T', ' ').slice(0, 23);
+  // Use the same latest-period defaults as getWatchlistData (Q1 2026)
+  const calYear = 2026;
+  const calQ = 'Q1';
+  const items: WatchlistDataItem[] = [];
+
+  for (const catId of FIN_IDX_CARD_CATEGORIES) {
+    const meta = WATCHLIST_CATEGORY_ID_MAP[catId];
+    if (!meta) continue;
+    const fieldFn = CATEGORY_TO_HOLDING_FIELD[catId];
+    const fldVal = (holding && fieldFn) ? fieldFn(holding) : null;
+    items.push({
+      calendar_quarter: calQ,
+      co_cd,
+      fld_val: fldVal,
+      curr_cd: null,
+      fiscal_year: calYear,
+      op_seg: null,
+      val_unit: null,
+      update_dt: nowStr,
+      doc_amt: null,
+      calendar_year: calYear,
+      fiscal_quarter: calQ,
+      rpt_fin_item: meta.rpt_fin_item,
+      selectedCategories: catId,
+    });
   }
 
   return items;

@@ -10,8 +10,9 @@ import { useMobileSidebar, MOBILE_BREAKPOINT } from '@/app/contexts/MobileSideba
 import { BASE_PATH } from '@/app/lib/basePath';
 import ThemeToggleButton from '@/app/components/ThemeToggleButton';
 import { getStatement } from '@/app/data/financialData';
-import type { StatementKey } from '@/app/data/financialData';
 import finSummaryConfig from '@/app/data/fin-summary-config.json';
+import { getFinIdxCardData } from '@/app/lib/watchlistApi';
+import type { WatchlistDataItem } from '@/app/lib/watchlistApi';
 
 const SearchFinancialIndicesChart = dynamic(
   () => import('@/app/company-profile/[symbol]/InvestmentNivoCharts').then((m) => m.FinancialIndicesNivoChart),
@@ -192,7 +193,7 @@ function deriveSearchFinIndicesData(
   return result;
 }
 
-// ── Financial search types & helpers ────────────────────────────────────────
+// ── FinCard type (for pinned cards) ─────────────────────────────────────────
 
 export interface FinCard {
   id: string;
@@ -201,101 +202,6 @@ export interface FinCard {
   item: string;
   period: string;
   value: string;
-}
-
-/** Strip unit annotations from item names for keyword matching. */
-function simplifyItemName(item: string): string {
-  return item.replace(/\s*\([^)]+\)/g, '').trim().toLowerCase();
-}
-
-interface FinSearchEntry {
-  symbol: string;
-  companyName: string;
-  symbolLc: string;
-  nameLc: string;
-  item: string;
-  itemLc: string;
-  period: string;
-  value: string;
-}
-
-const FIN_STMT_KEYS: StatementKey[] = ['income', 'balance', 'cashflow'];
-let _finSearchCache: FinSearchEntry[] | null = null;
-
-function getFinSearchEntries(): FinSearchEntry[] {
-  if (_finSearchCache) return _finSearchCache;
-
-  const entries: FinSearchEntry[] = [];
-  for (const key of FIN_STMT_KEYS) {
-    const stmt = getStatement(key);
-    for (const [symbol, data] of Object.entries(stmt)) {
-      if (data.periods.length === 0) continue;
-      const company = COMPANY_MASTER_LIST.find((c) => c.symbol === symbol);
-      const companyName = company?.name ?? symbol;
-      const latestIdx = data.periods.length - 1;
-      const latestPeriod = data.periods[latestIdx];
-      for (const [item, values] of Object.entries(data.items)) {
-        const value = values[latestIdx] || '';
-        if (!value) continue;
-        entries.push({
-          symbol,
-          companyName,
-          symbolLc: symbol.toLowerCase(),
-          nameLc: companyName.toLowerCase(),
-          item,
-          itemLc: simplifyItemName(item),
-          period: latestPeriod,
-          value,
-        });
-      }
-    }
-  }
-  _finSearchCache = entries;
-  return entries;
-}
-
-function searchFinancialCards(query: string): FinCard[] {
-  const q = query.trim().toLowerCase();
-  if (q.length < 2) return [];
-
-  const entries = getFinSearchEntries();
-  const results: FinCard[] = [];
-  const seen = new Set<string>();
-
-  for (const entry of entries) {
-    const hasSymbol = q.includes(entry.symbolLc);
-    const hasName = entry.nameLc.split(' ').some((word) => word.length >= 3 && q.includes(word));
-    if (!hasSymbol && !hasName) continue;
-
-    // Derive remaining query after stripping the matched company reference
-    let remaining = q;
-    if (hasSymbol) remaining = remaining.replace(new RegExp(entry.symbolLc, 'g'), '').trim();
-    if (hasName) {
-      for (const word of entry.nameLc.split(' ')) {
-        if (word.length >= 3 && remaining.includes(word)) {
-          remaining = remaining.replace(new RegExp(word, 'g'), '').trim();
-        }
-      }
-    }
-
-    if (!remaining || !entry.itemLc.includes(remaining)) continue;
-
-    const id = `${entry.symbol}::${entry.item}`;
-    if (seen.has(id)) continue;
-    seen.add(id);
-
-    results.push({
-      id,
-      symbol: entry.symbol,
-      companyName: entry.companyName,
-      item: entry.item,
-      period: entry.period,
-      value: entry.value,
-    });
-
-    if (results.length >= 8) break;
-  }
-  return results;
 }
 
 // ── PinIcon ──────────────────────────────────────────────────────────────────
@@ -310,7 +216,34 @@ function PinIcon({ pinned }: { pinned: boolean }) {
   );
 }
 
+// ── FinIdxIcon — financial index button icon ─────────────────────────────────
+
+function FinIdxIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
+      {/* Bar chart bars */}
+      <rect x="1" y="8" width="2.5" height="5" rx="0.5" stroke="currentColor" strokeWidth="1.1" />
+      <rect x="5.75" y="5" width="2.5" height="8" rx="0.5" stroke="currentColor" strokeWidth="1.1" />
+      <rect x="10.5" y="2" width="2.5" height="11" rx="0.5" stroke="currentColor" strokeWidth="1.1" />
+      {/* Trend line */}
+      <path d="M2.25 7.5 L7 4 L12.75 1.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 // ── FinCardItem ──────────────────────────────────────────────────────────────
+
+/** Determine CSS class for a financial value string. */
+function getFinValueClass(value: string): string {
+  const rawNum = value.replace(/[,\s]/g, '');
+  const isNeg = rawNum.startsWith('-');
+  const isPos = !isNeg && /^[+]?\d/.test(rawNum) && rawNum !== '0' && rawNum !== '—';
+  return isNeg
+    ? 'search-fin-card-value search-fin-card-value--neg'
+    : isPos
+    ? 'search-fin-card-value search-fin-card-value--pos'
+    : 'search-fin-card-value';
+}
 
 interface FinCardItemProps {
   card: FinCard;
@@ -321,15 +254,7 @@ interface FinCardItemProps {
 }
 
 function FinCardItem({ card, pinned, onPin, onUnpin, onNavigate }: FinCardItemProps) {
-  // Determine value colour: strip commas/spaces, check leading sign
-  const rawNum = card.value.replace(/[,\s]/g, '');
-  const isNeg = rawNum.startsWith('-');
-  const isPos = !isNeg && /^[+]?\d/.test(rawNum) && rawNum !== '0';
-  const valueClass = isNeg
-    ? 'search-fin-card-value search-fin-card-value--neg'
-    : isPos
-    ? 'search-fin-card-value search-fin-card-value--pos'
-    : 'search-fin-card-value';
+  const valueClass = getFinValueClass(card.value);
 
   return (
     <div className={`search-fin-card${pinned ? ' search-fin-card--pinned' : ''}`}>
@@ -451,12 +376,6 @@ export default function TopNav() {
       ? COMPANY_MASTER_LC.filter((c) => c.symbolLc.includes(q) || c.nameLc.includes(q)).slice(0, 8)
       : [];
 
-  // Financial card search results
-  const finCards = useMemo(() => {
-    if (q.length < 2) return [];
-    return searchFinancialCards(q);
-  }, [q]);
-
   // Financial Indices chart result — shown when query contains company name/symbol + year range
   const finIndicesResult = useMemo(() => {
     if (q.length < 6) return null;
@@ -492,6 +411,21 @@ export default function TopNav() {
   }, [finIndicesResult?.symbol, finIndicesResult?.yearRange]);
 
   const pinnedIds = useMemo(() => new Set(pinnedCards.map((c) => c.id)), [pinnedCards]);
+
+  // Expanded fin-idx panel state: tracks which company symbol has the panel open
+  const [expandedFinIdxSymbol, setExpandedFinIdxSymbol] = useState<string | null>(null);
+  // Cached fin-idx card data keyed by symbol
+  const [finIdxDataMap, setFinIdxDataMap] = useState<Record<string, WatchlistDataItem[]>>({});
+
+  const handleFinIdxToggle = useCallback((symbol: string) => {
+    // Fetch data outside the setState callback to avoid stale closure issues
+    setFinIdxDataMap((m) => {
+      if (m[symbol]) return m;
+      const data = getFinIdxCardData({ co_cd: symbol });
+      return { ...m, [symbol]: data };
+    });
+    setExpandedFinIdxSymbol((prev) => (prev === symbol ? null : symbol));
+  }, []);
 
   // Navigate to company profile page
   function navigateToCompany(symbol: string) {
@@ -593,43 +527,77 @@ export default function TopNav() {
                 <ul className="search-popular-list">
                   {filteredCompanies.map((company) => (
                     <li key={company.symbol}>
-                      <button
-                        className="search-popular-item"
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          navigateToCompany(company.symbol);
-                        }}
-                      >
-                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
-                          <rect x="1.5" y="2" width="10" height="9" rx="1" stroke="currentColor" strokeWidth="1.2" />
-                          <path d="M4 5h5M4 7.5h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
-                        </svg>
-                        <strong>{company.symbol}</strong>&nbsp;{company.name}
-                      </button>
+                      <div className="search-popular-item-wrap">
+                        <button
+                          className="search-popular-item"
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            navigateToCompany(company.symbol);
+                          }}
+                        >
+                          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                            <rect x="1.5" y="2" width="10" height="9" rx="1" stroke="currentColor" strokeWidth="1.2" />
+                            <path d="M4 5h5M4 7.5h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+                          </svg>
+                          <strong>{company.symbol}</strong>&nbsp;{company.name}
+                        </button>
+                        <button
+                          className={`search-fin-idx-btn${expandedFinIdxSymbol === company.symbol ? ' active' : ''}`}
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            handleFinIdxToggle(company.symbol);
+                          }}
+                          title={lang === 'zh' ? '財務指標' : 'Financial Index'}
+                          aria-label={lang === 'zh' ? '展開財務指標' : 'Expand financial index'}
+                        >
+                          <FinIdxIcon />
+                        </button>
+                      </div>
+                      {/* Expandable fin-idx card panel */}
+                      {expandedFinIdxSymbol === company.symbol && (
+                        <div className="search-fin-idx-panel">
+                          <div className="search-fin-idx-cards">
+                            {(finIdxDataMap[company.symbol] ?? []).map((item) => {
+                              const rawVal = String(item.fld_val ?? '—');
+                              const yrQtr = item.calendar_year && item.fiscal_quarter
+                                ? `${item.calendar_year} ${item.fiscal_quarter}`
+                                : null;
+                              return (
+                                <div key={item.rpt_fin_item} className="search-fin-card">
+                                  <div className="search-fin-card-body search-fin-card-body--no-pin" style={{ cursor: 'default' }}>
+                                    <div className="search-fin-card-item">{item.rpt_fin_item}</div>
+                                    <div className={getFinValueClass(rawVal)}>{rawVal}</div>
+                                    {yrQtr && (
+                                      <div className="search-fin-idx-yr-tag">{yrQtr}</div>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <div className="search-fin-idx-panel-footer">
+                            <a
+                              className="search-fin-idx-more-btn"
+                              href={`/lego/company-profile/${company.symbol}/?tab=FIN.+Statement`}
+                              onMouseDown={(e) => { e.stopPropagation(); }}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setFocused(false);
+                                setQuery('');
+                                router.push(`/company-profile/${company.symbol}/?tab=FIN.+Statement`);
+                              }}
+                            >
+                              {lang === 'zh' ? '更多資訊' : 'More Information'}
+                              <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
+                                <path d="M2.5 5.5h6M6 3l2.5 2.5L6 8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            </a>
+                          </div>
+                        </div>
+                      )}
                     </li>
                   ))}
                 </ul>
-              </div>
-            )}
-
-            {/* Financial data cards — shown when query matches company + item */}
-            {finCards.length > 0 && (
-              <div className="search-dropdown-section">
-                <div className="search-dropdown-section-label">
-                  {lang === 'zh' ? '財務資料' : 'Financial Data'}
-                </div>
-                <div className="search-fin-cards">
-                  {finCards.map((card) => (
-                    <FinCardItem
-                      key={card.id}
-                      card={card}
-                      pinned={pinnedIds.has(card.id)}
-                      onPin={handlePin}
-                      onUnpin={handleUnpin}
-                      onNavigate={navigateToCompany}
-                    />
-                  ))}
-                </div>
               </div>
             )}
 
@@ -664,7 +632,7 @@ export default function TopNav() {
             )}
 
             {/* No results */}
-            {q.length > 0 && filteredCompanies.length === 0 && finCards.length === 0 && !finIndicesResult && (
+            {q.length > 0 && filteredCompanies.length === 0 && !finIndicesResult && (
               <div className="search-dropdown-section">
                 <div
                   className="search-dropdown-section-label"

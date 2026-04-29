@@ -220,7 +220,8 @@ select {
   display: flex;
   align-items: center;
   gap: 8px;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   padding: 5px 6px;
   border: none;
   background: none;
@@ -238,6 +239,89 @@ select {
 }
 .search-popular-item:hover {
   background: var(--c-bg);
+}
+/* Wrapper for company item + fin-idx icon */
+.search-popular-item-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+/* Financial index icon button */
+.search-fin-idx-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border: 1px solid var(--c-border);
+  background: none;
+  border-radius: var(--radius-sm);
+  color: var(--c-text-4);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.search-fin-idx-btn:hover {
+  background: var(--c-bg);
+  border-color: var(--c-accent);
+  color: var(--c-accent);
+}
+.search-fin-idx-btn.active {
+  background: rgba(79, 195, 247, 0.1);
+  border-color: var(--c-accent);
+  color: var(--c-accent);
+}
+/* Expandable fin-idx card panel */
+.search-fin-idx-panel {
+  padding: 6px 0 4px 18px;
+}
+.search-fin-idx-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 6px;
+}
+/* Footer with "More Information" button */
+.search-fin-idx-panel-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+.search-fin-idx-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--c-accent);
+  text-decoration: none;
+  border: 1px solid var(--c-border);
+  background: var(--c-white);
+  border-radius: var(--radius-sm);
+  padding: 3px 8px 3px 10px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.search-fin-idx-more-btn:hover {
+  background: rgba(79, 195, 247, 0.08);
+  border-color: var(--c-accent);
+}
+/* Year+Quarter tag — bottom-right of each fin-idx card */
+.search-fin-idx-yr-tag {
+  position: absolute;
+  bottom: 5px;
+  right: 6px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--c-text-4);
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: 3px;
+  padding: 1px 5px;
+  white-space: nowrap;
+  line-height: 1.5;
+  pointer-events: none;
 }
 /* History list */
 .search-history-list {
@@ -362,6 +446,10 @@ select {
   background: none;
   border: none;
   cursor: pointer;
+}
+/* Fin-idx variant — no pin button; yr-tag sits at bottom-right */
+.search-fin-card-body--no-pin {
+  padding-bottom: 22px;
 }
 /* Top row: period badge aligned right */
 .search-fin-card-top {
@@ -15231,7 +15319,8 @@ html.dark .seg-item-l3.fin-stmt-td-item {
 /* ===== TABLET: ≤ 768px ===== */
 @media (max-width: 768px) {
   /* Financial search cards — 2 per row on tablet */
-  .search-fin-cards {
+  .search-fin-cards,
+  .search-fin-idx-cards {
     grid-template-columns: repeat(2, 1fr);
   }
   /* TopNav adjustments */
@@ -15758,7 +15847,8 @@ html.dark .seg-item-l3.fin-stmt-td-item {
     height: 50px;
   }
   /* Financial search cards — 2 per row on small phone */
-  .search-fin-cards {
+  .search-fin-cards,
+  .search-fin-idx-cards {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -21151,6 +21241,30 @@ html.dark .search-dropdown-section--pinned {
 html.dark .search-indices-card {
   background: #1e293b;
   border-color: var(--c-border);
+}
+html.dark .search-fin-idx-btn {
+  border-color: var(--c-border);
+  color: var(--c-text-4);
+}
+html.dark .search-fin-idx-btn:hover,
+html.dark .search-fin-idx-btn.active {
+  background: rgba(79, 195, 247, 0.12);
+  border-color: var(--c-accent);
+  color: var(--c-accent);
+}
+html.dark .search-fin-idx-more-btn {
+  background: #1e293b;
+  border-color: var(--c-border);
+  color: var(--c-accent);
+}
+html.dark .search-fin-idx-more-btn:hover {
+  background: rgba(79, 195, 247, 0.12);
+  border-color: var(--c-accent);
+}
+html.dark .search-fin-idx-yr-tag {
+  background: #1e293b;
+  border-color: #374151;
+  color: var(--c-text-3);
 }
 html.dark .kg-hero,
 html.dark .kg-graph-container,
