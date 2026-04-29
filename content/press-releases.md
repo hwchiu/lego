@@ -11,11 +11,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "NVDA",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["AI & Computing", "Semiconductors", "Innovation & R&D"],
-    "trendingTopics": ["#BlackwellUltra", "#AI", "#GPU"],
+    "topics": [
+      "AI & Computing",
+      "Semiconductors",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#BlackwellUltra",
+      "#AI",
+      "#GPU"
+    ],
     "publishedAt": "2025-01-06",
     "summary": "NVIDIA unveiled the Blackwell Ultra GB300 architecture featuring TSMC's advanced process node with 192GB HBM3e memory, delivering 1.5x performance uplift for generative AI workloads.",
-    "viewCount": 98400
+    "viewCount": 98400,
+    "url": "https://nvidianews.nvidia.com/news/"
   },
   {
     "id": "pr-002",
@@ -24,11 +33,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AAPL",
     "relationship": "customer",
     "industry": "Consumer Electronics",
-    "topics": ["Financial Results", "Consumer Electronics", "AI & Computing"],
-    "trendingTopics": ["#Apple", "#iPhone16", "#AppleIntelligence"],
+    "topics": [
+      "Financial Results",
+      "Consumer Electronics",
+      "AI & Computing"
+    ],
+    "trendingTopics": [
+      "#Apple",
+      "#iPhone16",
+      "#AppleIntelligence"
+    ],
     "publishedAt": "2025-02-02",
     "summary": "Apple reported record Q1 FY2025 revenue of $124.3B, driven by strong iPhone 16 series demand featuring the A18 chip manufactured on TSMC's 3nm process. Apple Intelligence features contributed to upgrade cycle acceleration.",
-    "viewCount": 87300
+    "viewCount": 87300,
+    "url": "https://www.apple.com/newsroom/"
   },
   {
     "id": "pr-003",
@@ -37,11 +55,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "ASML",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Financial Results", "EUV Lithography", "Semiconductors"],
-    "trendingTopics": ["#ASML", "#EUV", "#HiNA"],
+    "topics": [
+      "Financial Results",
+      "EUV Lithography",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#ASML",
+      "#EUV",
+      "#HiNA"
+    ],
     "publishedAt": "2025-01-29",
     "summary": "ASML reported Q4 2024 net sales of €9.3B and guided 2025 revenue between €30–35B. The company delivered its first High-NA EUV systems, with TSMC among early adopters for 2nm node manufacturing.",
-    "viewCount": 72100
+    "viewCount": 72100,
+    "url": "https://www.asml.com/en/news/press-releases/"
   },
   {
     "id": "pr-004",
@@ -50,11 +77,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AMD",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["AI & Computing", "Strategic Partnerships", "Semiconductors"],
-    "trendingTopics": ["#AMD", "#MI400", "#AIChip"],
+    "topics": [
+      "AI & Computing",
+      "Strategic Partnerships",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#AMD",
+      "#MI400",
+      "#AIChip"
+    ],
     "publishedAt": "2025-02-18",
     "summary": "AMD announced expanded partnership with TSMC for the MI400 series AI accelerators built on TSMC's 3nm CoWoS-L advanced packaging technology, targeting hyperscaler deployments in H2 2025.",
-    "viewCount": 61500
+    "viewCount": 61500,
+    "url": "https://ir.amd.com/news-events/press-releases/"
   },
   {
     "id": "pr-005",
@@ -63,11 +99,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "QCOM",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["AI & Computing", "5G & Wireless", "Consumer Electronics"],
-    "trendingTopics": ["#Snapdragon8sElite", "#MobileAI", "#Qualcomm"],
+    "topics": [
+      "AI & Computing",
+      "5G & Wireless",
+      "Consumer Electronics"
+    ],
+    "trendingTopics": [
+      "#Snapdragon8sElite",
+      "#MobileAI",
+      "#Qualcomm"
+    ],
     "publishedAt": "2025-03-17",
     "summary": "Qualcomm introduced the Snapdragon 8s Elite SoC manufactured on TSMC's 3nm process, featuring Oryon CPU cores and an enhanced Hexagon NPU delivering 50 TOPS for on-device AI applications.",
-    "viewCount": 54800
+    "viewCount": 54800,
+    "url": "https://investor.qualcomm.com/news-releases/"
   },
   {
     "id": "pr-006",
@@ -76,11 +121,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "NVDA",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["AI & Computing", "Cloud & Data Center", "Semiconductors"],
-    "trendingTopics": ["#H200", "#NVDA", "#AIInfrastructure"],
+    "topics": [
+      "AI & Computing",
+      "Cloud & Data Center",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#H200",
+      "#NVDA",
+      "#AIInfrastructure"
+    ],
     "publishedAt": "2024-03-18",
     "summary": "NVIDIA confirmed H200 Tensor Core GPU has entered volume production at TSMC, featuring 141GB HBM3e memory with 4.8TB/s bandwidth. Major cloud providers including AWS, Google Cloud and Azure announced deployment timelines.",
-    "viewCount": 95200
+    "viewCount": 95200,
+    "url": "https://nvidianews.nvidia.com/news/"
   },
   {
     "id": "pr-007",
@@ -89,11 +143,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AAPL",
     "relationship": "customer",
     "industry": "Consumer Electronics",
-    "topics": ["Strategic Partnerships", "Semiconductors", "Innovation & R&D"],
-    "trendingTopics": ["#Apple2nm", "#TSMC", "#A19Chip"],
+    "topics": [
+      "Strategic Partnerships",
+      "Semiconductors",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#Apple2nm",
+      "#TSMC",
+      "#A19Chip"
+    ],
     "publishedAt": "2024-05-07",
     "summary": "Apple and TSMC expanded their long-term 2nm collaboration agreement, with Apple securing priority allocation at TSMC's Arizona Fab 21 for next-generation A19 and M5 series chips, reinforcing Apple's silicon leadership strategy.",
-    "viewCount": 83600
+    "viewCount": 83600,
+    "url": "https://www.apple.com/newsroom/"
   },
   {
     "id": "pr-008",
@@ -102,11 +165,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AVGO",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Financial Results", "AI & Computing", "Cloud & Data Center"],
-    "trendingTopics": ["#Broadcom", "#AIRevenue", "#CustomSilicon"],
+    "topics": [
+      "Financial Results",
+      "AI & Computing",
+      "Cloud & Data Center"
+    ],
+    "trendingTopics": [
+      "#Broadcom",
+      "#AIRevenue",
+      "#CustomSilicon"
+    ],
     "publishedAt": "2024-09-05",
     "summary": "Broadcom reported Q3 FY2024 revenue of $13.1B with AI-related revenue surpassing $3B, driven by custom AI ASIC demand from hyperscalers. TSMC's advanced packaging CoWoS technology underpins Broadcom's XPU designs.",
-    "viewCount": 71400
+    "viewCount": 71400,
+    "url": "https://investors.broadcom.com/news-releases/"
   },
   {
     "id": "pr-009",
@@ -115,11 +187,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AMD",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Cloud & Data Center", "Semiconductors", "Financial Results"],
-    "trendingTopics": ["#EPYC", "#CloudInfrastructure", "#AMD"],
+    "topics": [
+      "Cloud & Data Center",
+      "Semiconductors",
+      "Financial Results"
+    ],
+    "trendingTopics": [
+      "#EPYC",
+      "#CloudInfrastructure",
+      "#AMD"
+    ],
     "publishedAt": "2024-08-12",
     "summary": "AMD reported that EPYC 9004 series processors have been deployed by 9 of the top 10 cloud providers, with server revenue growing 115% year-over-year. All EPYC chips are manufactured on TSMC's 5nm process with 3D V-Cache.",
-    "viewCount": 58300
+    "viewCount": 58300,
+    "url": "https://ir.amd.com/news-events/press-releases/"
   },
   {
     "id": "pr-010",
@@ -128,11 +209,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "ASML",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["EUV Lithography", "Innovation & R&D", "Semiconductors"],
-    "trendingTopics": ["#HighNA", "#EUV2.0", "#1nmNode"],
+    "topics": [
+      "EUV Lithography",
+      "Innovation & R&D",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#HighNA",
+      "#EUV2.0",
+      "#1nmNode"
+    ],
     "publishedAt": "2024-07-17",
     "summary": "ASML completed delivery of its first High-NA EUV (TWINSCAN EXE:5000) system to an undisclosed leading-edge foundry, widely reported to be Intel. TSMC has placed orders for EXE:5200 systems expected in late 2025 for its 1.4nm A14 process node.",
-    "viewCount": 89700
+    "viewCount": 89700,
+    "url": "https://www.asml.com/en/news/press-releases/"
   },
   {
     "id": "pr-011",
@@ -141,11 +231,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AMAT",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Manufacturing", "Innovation & R&D", "Semiconductors"],
-    "trendingTopics": ["#GateAllAround", "#AMAT", "#CVD"],
+    "topics": [
+      "Manufacturing",
+      "Innovation & R&D",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#GateAllAround",
+      "#AMAT",
+      "#CVD"
+    ],
     "publishedAt": "2024-11-14",
     "summary": "Applied Materials launched the Vantage LINX CVD system specifically designed for gate-all-around nanosheet transistor production at 2nm and below, enabling TSMC and other foundries to meet increasing complexity at advanced nodes.",
-    "viewCount": 43200
+    "viewCount": 43200,
+    "url": "https://investor.appliedmaterials.com/news-releases/"
   },
   {
     "id": "pr-012",
@@ -154,11 +253,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "2454.TW",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Consumer Electronics", "5G & Wireless", "AI & Computing"],
-    "trendingTopics": ["#Dimensity9400", "#MediaTek", "#3nm"],
+    "topics": [
+      "Consumer Electronics",
+      "5G & Wireless",
+      "AI & Computing"
+    ],
+    "trendingTopics": [
+      "#Dimensity9400",
+      "#MediaTek",
+      "#3nm"
+    ],
     "publishedAt": "2024-10-09",
     "summary": "MediaTek confirmed mass production of the Dimensity 9400 flagship SoC on TSMC's N3E process, featuring an all-big-core CPU architecture and 4th-generation AI Processing Unit achieving 50 TOPS for mobile generative AI.",
-    "viewCount": 49600
+    "viewCount": 49600,
+    "url": "https://www.mediatek.com/news-events/press-releases/"
   },
   {
     "id": "pr-013",
@@ -167,11 +275,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "QCOM",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Strategic Partnerships", "AI & Computing", "Consumer Electronics"],
-    "trendingTopics": ["#SnapdragonX", "#AIpc", "#Qualcomm"],
+    "topics": [
+      "Strategic Partnerships",
+      "AI & Computing",
+      "Consumer Electronics"
+    ],
+    "trendingTopics": [
+      "#SnapdragonX",
+      "#AIpc",
+      "#Qualcomm"
+    ],
     "publishedAt": "2024-02-26",
     "summary": "Qualcomm announced the Snapdragon X Elite and X Plus processors for Windows AI PCs, manufactured exclusively on TSMC's 4nm N4P process. The SoCs integrate Oryon CPU cores delivering 45 TOPS NPU performance for Copilot+ PC requirements.",
-    "viewCount": 67800
+    "viewCount": 67800,
+    "url": "https://investor.qualcomm.com/news-releases/"
   },
   {
     "id": "pr-014",
@@ -180,11 +297,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "LRCX",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Manufacturing", "Innovation & R&D", "EUV Lithography"],
-    "trendingTopics": ["#AtomicLayerEtch", "#Lam", "#2nmNode"],
+    "topics": [
+      "Manufacturing",
+      "Innovation & R&D",
+      "EUV Lithography"
+    ],
+    "trendingTopics": [
+      "#AtomicLayerEtch",
+      "#Lam",
+      "#2nmNode"
+    ],
     "publishedAt": "2024-06-10",
     "summary": "Lam Research unveiled the Sense.i Atomic Layer Etching platform enabling angstrom-level precision for nanosheet gate formation in 2nm and 1.4nm manufacturing, with TSMC citing adoption in its N2 process qualification.",
-    "viewCount": 38900
+    "viewCount": 38900,
+    "url": "https://investor.lamresearch.com/news-releases/"
   },
   {
     "id": "pr-015",
@@ -193,11 +319,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "KLAC",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Manufacturing", "EUV Lithography", "Innovation & R&D"],
-    "trendingTopics": ["#KLAC", "#YieldManagement", "#EUVInspection"],
+    "topics": [
+      "Manufacturing",
+      "EUV Lithography",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#KLAC",
+      "#YieldManagement",
+      "#EUVInspection"
+    ],
     "publishedAt": "2024-09-23",
     "summary": "KLA introduced the 2925 BBP inspection system with 10x sensitivity improvement over previous generation, addressing EUV stochastic defect detection requirements for 3nm and 2nm logic at TSMC and other leading foundries.",
-    "viewCount": 31700
+    "viewCount": 31700,
+    "url": "https://ir.kla.com/news-events/press-releases/"
   },
   {
     "id": "pr-016",
@@ -206,11 +341,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "NVDA",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Financial Results", "AI & Computing", "Cloud & Data Center"],
-    "trendingTopics": ["#NVDA", "#AIRevenue", "#DataCenter"],
+    "topics": [
+      "Financial Results",
+      "AI & Computing",
+      "Cloud & Data Center"
+    ],
+    "trendingTopics": [
+      "#NVDA",
+      "#AIRevenue",
+      "#DataCenter"
+    ],
     "publishedAt": "2024-02-21",
     "summary": "NVIDIA reported record Q4 FY2024 revenue of $22.1B, with Data Center revenue of $18.4B up 409% year-over-year. TSMC's CoWoS advanced packaging capacity expansion was cited as critical for meeting accelerating H100/H200 demand.",
-    "viewCount": 112000
+    "viewCount": 112000,
+    "url": "https://nvidianews.nvidia.com/news/"
   },
   {
     "id": "pr-017",
@@ -219,11 +363,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AAPL",
     "relationship": "customer",
     "industry": "Consumer Electronics",
-    "topics": ["Consumer Electronics", "Semiconductors", "Innovation & R&D"],
-    "trendingTopics": ["#iPhone15Pro", "#A17Pro", "#3nmApple"],
+    "topics": [
+      "Consumer Electronics",
+      "Semiconductors",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#iPhone15Pro",
+      "#A17Pro",
+      "#3nmApple"
+    ],
     "publishedAt": "2023-09-12",
     "summary": "Apple introduced the A17 Pro chip manufactured on TSMC's industry-first 3nm (N3B) process, featuring a 6-core CPU delivering 10% faster performance and a 16-core Neural Engine capable of 35 TOPS, powering Apple's first AAA gaming titles.",
-    "viewCount": 134500
+    "viewCount": 134500,
+    "url": "https://www.apple.com/newsroom/"
   },
   {
     "id": "pr-018",
@@ -232,11 +385,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "ASML",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Financial Results", "EUV Lithography", "Supply Chain"],
-    "trendingTopics": ["#ASML", "#EUVSupply", "#Foundry2023"],
+    "topics": [
+      "Financial Results",
+      "EUV Lithography",
+      "Supply Chain"
+    ],
+    "trendingTopics": [
+      "#ASML",
+      "#EUVSupply",
+      "#Foundry2023"
+    ],
     "publishedAt": "2023-07-19",
     "summary": "ASML reported Q2 2023 net sales of €6.9B and total EUV system deliveries of 10 units in H1 2023, with TSMC being the largest EUV customer. Full-year guidance raised to €27–29B on continued leading-edge logic demand.",
-    "viewCount": 56800
+    "viewCount": 56800,
+    "url": "https://www.asml.com/en/news/press-releases/"
   },
   {
     "id": "pr-019",
@@ -245,11 +407,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AVGO",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Mergers & Acquisitions", "Cloud & Data Center", "Financial Results"],
-    "trendingTopics": ["#Broadcom", "#VMware", "#M&A"],
+    "topics": [
+      "Mergers & Acquisitions",
+      "Cloud & Data Center",
+      "Financial Results"
+    ],
+    "trendingTopics": [
+      "#Broadcom",
+      "#VMware",
+      "#M&A"
+    ],
     "publishedAt": "2023-11-22",
     "summary": "Broadcom completed the acquisition of VMware for approximately $61B, creating a diversified infrastructure technology leader. Broadcom's semiconductor division, a major TSMC customer, continues ramping custom AI silicon for hyperscalers.",
-    "viewCount": 91200
+    "viewCount": 91200,
+    "url": "https://investors.broadcom.com/news-releases/"
   },
   {
     "id": "pr-020",
@@ -258,11 +429,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AMD",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["AI & Computing", "Cloud & Data Center", "Semiconductors"],
-    "trendingTopics": ["#MI300X", "#LLM", "#AIInference"],
+    "topics": [
+      "AI & Computing",
+      "Cloud & Data Center",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#MI300X",
+      "#LLM",
+      "#AIInference"
+    ],
     "publishedAt": "2023-12-06",
     "summary": "AMD's MI300X accelerator, manufactured on TSMC 5nm with advanced 3D packaging, achieved industry-leading performance on LLM benchmarks including GPT-3 and Llama 2, with 192GB HBM3 enabling large model inference in a single card.",
-    "viewCount": 78400
+    "viewCount": 78400,
+    "url": "https://ir.amd.com/news-events/press-releases/"
   },
   {
     "id": "pr-021",
@@ -271,11 +451,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AMAT",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Financial Results", "Manufacturing", "Supply Chain"],
-    "trendingTopics": ["#AMAT", "#WaferFab", "#EquipmentRevenue"],
+    "topics": [
+      "Financial Results",
+      "Manufacturing",
+      "Supply Chain"
+    ],
+    "trendingTopics": [
+      "#AMAT",
+      "#WaferFab",
+      "#EquipmentRevenue"
+    ],
     "publishedAt": "2023-11-16",
     "summary": "Applied Materials reported a record FY2023 revenue of $26.5B, with leading-edge deposition and patterning equipment demand led by TSMC's N3/N2 process ramp. Backlog remains elevated, indicating strong 2024 equipment demand.",
-    "viewCount": 44300
+    "viewCount": 44300,
+    "url": "https://investor.appliedmaterials.com/news-releases/"
   },
   {
     "id": "pr-022",
@@ -284,11 +473,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "2454.TW",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Consumer Electronics", "5G & Wireless", "Semiconductors"],
-    "trendingTopics": ["#Dimensity9300", "#5GSoC", "#MediaTekAI"],
+    "topics": [
+      "Consumer Electronics",
+      "5G & Wireless",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#Dimensity9300",
+      "#5GSoC",
+      "#MediaTekAI"
+    ],
     "publishedAt": "2023-11-06",
     "summary": "MediaTek unveiled the Dimensity 9300 using TSMC's N4P process, featuring an all-big-core (4x Cortex-X4 + 4x Cortex-A720) architecture achieving a 40% CPU performance boost and MediaTek's 7th-gen APU for real-time generative AI.",
-    "viewCount": 47900
+    "viewCount": 47900,
+    "url": "https://www.mediatek.com/news-events/press-releases/"
   },
   {
     "id": "pr-023",
@@ -297,11 +495,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "QCOM",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Automotive", "Financial Results", "5G & Wireless"],
-    "trendingTopics": ["#Qualcomm", "#AutomotiveSemiconductor", "#IoT"],
+    "topics": [
+      "Automotive",
+      "Financial Results",
+      "5G & Wireless"
+    ],
+    "trendingTopics": [
+      "#Qualcomm",
+      "#AutomotiveSemiconductor",
+      "#IoT"
+    ],
     "publishedAt": "2023-05-03",
     "summary": "Qualcomm's Q2 FY2023 results featured record automotive revenue of $447M (+20% YoY) and IoT revenue of $1.5B. The Snapdragon Ride platform for ADAS, fabricated on TSMC 5nm, secured design wins at 25 auto OEMs.",
-    "viewCount": 39600
+    "viewCount": 39600,
+    "url": "https://investor.qualcomm.com/news-releases/"
   },
   {
     "id": "pr-024",
@@ -310,11 +517,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "LRCX",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Manufacturing", "Innovation & R&D", "Semiconductors"],
-    "trendingTopics": ["#LamResearch", "#CVD", "#3nmManufacturing"],
+    "topics": [
+      "Manufacturing",
+      "Innovation & R&D",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#LamResearch",
+      "#CVD",
+      "#3nmManufacturing"
+    ],
     "publishedAt": "2023-09-18",
     "summary": "Lam Research launched the ALTUS Max tungsten CVD system addressing resistivity challenges at gate contact dimensions in 3nm logic, supporting TSMC's high-volume N3E production ramp with improved fill capabilities.",
-    "viewCount": 28500
+    "viewCount": 28500,
+    "url": "https://investor.lamresearch.com/news-releases/"
   },
   {
     "id": "pr-025",
@@ -323,11 +539,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "8035.T",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Manufacturing", "Innovation & R&D", "Supply Chain"],
-    "trendingTopics": ["#TEL", "#HARetch", "#3DIntegration"],
+    "topics": [
+      "Manufacturing",
+      "Innovation & R&D",
+      "Supply Chain"
+    ],
+    "trendingTopics": [
+      "#TEL",
+      "#HARetch",
+      "#3DIntegration"
+    ],
     "publishedAt": "2023-05-24",
     "summary": "Tokyo Electron introduced upgraded Tactras Spectra etch systems enabling 100:1+ aspect ratio etching for advanced 3D integration and backside power delivery networks, addressing TSMC N2 and SRAM density requirements.",
-    "viewCount": 26400
+    "viewCount": 26400,
+    "url": "https://www.tel.com/news/press/"
   },
   {
     "id": "pr-026",
@@ -336,11 +561,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "NVDA",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["AI & Computing", "Innovation & R&D", "Cloud & Data Center"],
-    "trendingTopics": ["#GraceHopper", "#AIComputing", "#NVIDIAGPU"],
+    "topics": [
+      "AI & Computing",
+      "Innovation & R&D",
+      "Cloud & Data Center"
+    ],
+    "trendingTopics": [
+      "#GraceHopper",
+      "#AIComputing",
+      "#NVIDIAGPU"
+    ],
     "publishedAt": "2022-03-22",
     "summary": "NVIDIA announced the Grace Hopper Superchip combining ARM-based Grace CPU and Hopper H100 GPU via NVLink-C2C interconnect, manufactured on TSMC 4N process. The 900GB/s chip-to-chip bandwidth targets AI and HPC workloads.",
-    "viewCount": 76500
+    "viewCount": 76500,
+    "url": "https://nvidianews.nvidia.com/news/"
   },
   {
     "id": "pr-027",
@@ -349,11 +583,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AAPL",
     "relationship": "customer",
     "industry": "Consumer Electronics",
-    "topics": ["Consumer Electronics", "Semiconductors", "Innovation & R&D"],
-    "trendingTopics": ["#AppleM2", "#TSMC5nm", "#MacBookAir"],
+    "topics": [
+      "Consumer Electronics",
+      "Semiconductors",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#AppleM2",
+      "#TSMC5nm",
+      "#MacBookAir"
+    ],
     "publishedAt": "2022-06-06",
     "summary": "Apple introduced the M2 chip fabricated on TSMC's N5P (5nm generation 2) process with 20 billion transistors, delivering 18% faster CPU and 35% faster GPU performance over M1. Integrated into the redesigned MacBook Air 2022.",
-    "viewCount": 88900
+    "viewCount": 88900,
+    "url": "https://www.apple.com/newsroom/"
   },
   {
     "id": "pr-028",
@@ -362,11 +605,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "ASML",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["EUV Lithography", "Supply Chain", "Semiconductors"],
-    "trendingTopics": ["#ASML200EUV", "#EUVMilestone", "#LithographyEquipment"],
+    "topics": [
+      "EUV Lithography",
+      "Supply Chain",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#ASML200EUV",
+      "#EUVMilestone",
+      "#LithographyEquipment"
+    ],
     "publishedAt": "2022-02-09",
     "summary": "ASML reached the milestone of delivering its 200th EUV (TWINSCAN NXE) system, with TSMC holding the largest installed base. ASML guided 55+ EUV systems for 2022 shipments with full-year revenue of €20B, driven by logic demand.",
-    "viewCount": 52300
+    "viewCount": 52300,
+    "url": "https://www.asml.com/en/news/press-releases/"
   },
   {
     "id": "pr-029",
@@ -375,11 +627,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AMD",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Cloud & Data Center", "Semiconductors", "Innovation & R&D"],
-    "trendingTopics": ["#EPYCGenoa", "#5nmServer", "#AMD"],
+    "topics": [
+      "Cloud & Data Center",
+      "Semiconductors",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#EPYCGenoa",
+      "#5nmServer",
+      "#AMD"
+    ],
     "publishedAt": "2022-11-10",
     "summary": "AMD launched the EPYC 9004 'Genoa' series built on TSMC's 5nm process with up to 96 Zen 4 cores, breaking 26+ world records on SPECrate2017_int and SPECrate2017_fp, enabling significant TCO savings for cloud infrastructure.",
-    "viewCount": 63700
+    "viewCount": 63700,
+    "url": "https://ir.amd.com/news-events/press-releases/"
   },
   {
     "id": "pr-030",
@@ -388,11 +649,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AMAT",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Financial Results", "Manufacturing", "Supply Chain"],
-    "trendingTopics": ["#AMAT", "#WaferFab", "#SemiconductorEquipment"],
+    "topics": [
+      "Financial Results",
+      "Manufacturing",
+      "Supply Chain"
+    ],
+    "trendingTopics": [
+      "#AMAT",
+      "#WaferFab",
+      "#SemiconductorEquipment"
+    ],
     "publishedAt": "2022-11-17",
     "summary": "Applied Materials achieved record FY2022 net revenue of $25.8B (+12% YoY), driven by advanced logic demand from TSMC's N3 ramp. CVD, etch, and CMP equipment saw strong bookings momentum for 2023.",
-    "viewCount": 41800
+    "viewCount": 41800,
+    "url": "https://investor.appliedmaterials.com/news-releases/"
   },
   {
     "id": "pr-031",
@@ -401,11 +671,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AVGO",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Mergers & Acquisitions", "Cloud & Data Center", "Strategic Partnerships"],
-    "trendingTopics": ["#BroadcomVMware", "#M&A", "#EnterpriseCloud"],
+    "topics": [
+      "Mergers & Acquisitions",
+      "Cloud & Data Center",
+      "Strategic Partnerships"
+    ],
+    "trendingTopics": [
+      "#BroadcomVMware",
+      "#M&A",
+      "#EnterpriseCloud"
+    ],
     "publishedAt": "2022-05-26",
     "summary": "Broadcom announced a definitive agreement to acquire VMware for approximately $61B, one of the largest tech acquisitions in history. Broadcom's semiconductor business continues TSMC-manufactured custom AI ASIC expansion in parallel.",
-    "viewCount": 85600
+    "viewCount": 85600,
+    "url": "https://investors.broadcom.com/news-releases/"
   },
   {
     "id": "pr-032",
@@ -414,11 +693,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "QCOM",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Consumer Electronics", "5G & Wireless", "Semiconductors"],
-    "trendingTopics": ["#Snapdragon8Gen2", "#4nm", "#MobileSoC"],
+    "topics": [
+      "Consumer Electronics",
+      "5G & Wireless",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#Snapdragon8Gen2",
+      "#4nm",
+      "#MobileSoC"
+    ],
     "publishedAt": "2022-11-15",
     "summary": "Qualcomm confirmed mass production of the Snapdragon 8 Gen 2 on TSMC's N4P process, featuring a 35% CPU performance improvement and 25% power reduction. The SoC powers Samsung Galaxy S23 and other flagship Android devices for 2023.",
-    "viewCount": 61200
+    "viewCount": 61200,
+    "url": "https://investor.qualcomm.com/news-releases/"
   },
   {
     "id": "pr-033",
@@ -427,11 +715,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "2454.TW",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Financial Results", "5G & Wireless", "Consumer Electronics"],
-    "trendingTopics": ["#MediaTek", "#SmartphoneSoC", "#5GLeadership"],
+    "topics": [
+      "Financial Results",
+      "5G & Wireless",
+      "Consumer Electronics"
+    ],
+    "trendingTopics": [
+      "#MediaTek",
+      "#SmartphoneSoC",
+      "#5GLeadership"
+    ],
     "publishedAt": "2022-08-04",
     "summary": "MediaTek reported achieving the #1 global smartphone SoC market share position in H1 2022, with 5G chip shipments up 45% year-over-year. The Dimensity series, produced on TSMC 4/5nm processes, drives mainstream 5G adoption globally.",
-    "viewCount": 44700
+    "viewCount": 44700,
+    "url": "https://www.mediatek.com/news-events/press-releases/"
   },
   {
     "id": "pr-034",
@@ -440,11 +737,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "LRCX",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Manufacturing", "Innovation & R&D", "Semiconductors"],
-    "trendingTopics": ["#BSPDN", "#AdvancedPackaging", "#LamResearch"],
+    "topics": [
+      "Manufacturing",
+      "Innovation & R&D",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#BSPDN",
+      "#AdvancedPackaging",
+      "#LamResearch"
+    ],
     "publishedAt": "2022-06-13",
     "summary": "Lam Research introduced SABRE 3D electrochemical deposition for backside power delivery network (BSPDN) implementations, enabling power rail integration under the device for next-gen logic at TSMC and other leading-edge fabs.",
-    "viewCount": 29300
+    "viewCount": 29300,
+    "url": "https://investor.lamresearch.com/news-releases/"
   },
   {
     "id": "pr-035",
@@ -453,11 +759,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "KLAC",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["EUV Lithography", "Manufacturing", "Strategic Partnerships"],
-    "trendingTopics": ["#KLA", "#EUVInspection", "#YieldManagement"],
+    "topics": [
+      "EUV Lithography",
+      "Manufacturing",
+      "Strategic Partnerships"
+    ],
+    "trendingTopics": [
+      "#KLA",
+      "#EUVInspection",
+      "#YieldManagement"
+    ],
     "publishedAt": "2022-09-14",
     "summary": "KLA announced multi-year partnerships with leading foundries including TSMC for its full-suite EUV patterning inspection and process control solutions, combining 2930 optical and e-beam inspection to ensure EUV stochastic defect capture.",
-    "viewCount": 33600
+    "viewCount": 33600,
+    "url": "https://ir.kla.com/news-events/press-releases/"
   },
   {
     "id": "pr-036",
@@ -466,11 +781,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "NVDA",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["AI & Computing", "Cloud & Data Center", "Semiconductors"],
-    "trendingTopics": ["#H100", "#HopperGPU", "#NVIDIAIDC"],
+    "topics": [
+      "AI & Computing",
+      "Cloud & Data Center",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#H100",
+      "#HopperGPU",
+      "#NVIDIAIDC"
+    ],
     "publishedAt": "2022-08-08",
     "summary": "NVIDIA's H100 Tensor Core GPU, built on TSMC's 4N (customized 4nm) process with 80 billion transistors and NVLink 4.0, began sampling at major cloud providers. The SXM5 form factor delivers 3.35 TFLOPS FP8 for generative AI training.",
-    "viewCount": 81300
+    "viewCount": 81300,
+    "url": "https://nvidianews.nvidia.com/news/"
   },
   {
     "id": "pr-037",
@@ -479,11 +803,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "ASML",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Financial Results", "EUV Lithography", "Supply Chain"],
-    "trendingTopics": ["#ASML", "#EUVCapacity", "#SemiconductorSupplyChain"],
+    "topics": [
+      "Financial Results",
+      "EUV Lithography",
+      "Supply Chain"
+    ],
+    "trendingTopics": [
+      "#ASML",
+      "#EUVCapacity",
+      "#SemiconductorSupplyChain"
+    ],
     "publishedAt": "2022-10-19",
     "summary": "ASML reported Q3 2022 net sales of €5.8B with record EUV revenue of €2.2B. Management highlighted supply chain constraints limiting further EUV shipment growth, with TSMC, Samsung and Intel on waitlists for 2023 delivery slots.",
-    "viewCount": 48700
+    "viewCount": 48700,
+    "url": "https://www.asml.com/en/news/press-releases/"
   },
   {
     "id": "pr-038",
@@ -492,11 +825,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AMD",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Consumer Electronics", "Semiconductors", "Innovation & R&D"],
-    "trendingTopics": ["#RDNA3", "#RX7900XTX", "#TSMC5nm"],
+    "topics": [
+      "Consumer Electronics",
+      "Semiconductors",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#RDNA3",
+      "#RX7900XTX",
+      "#TSMC5nm"
+    ],
     "publishedAt": "2022-12-13",
     "summary": "AMD launched the Radeon RX 7900 XTX discrete GPU leveraging TSMC 5nm for the main die and 6nm for MCDs (Memory Cache Dies), implementing chiplet architecture to deliver competitive gaming and creative workstation performance.",
-    "viewCount": 52100
+    "viewCount": 52100,
+    "url": "https://ir.amd.com/news-events/press-releases/"
   },
   {
     "id": "pr-039",
@@ -505,11 +847,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "8035.T",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Financial Results", "Manufacturing", "Supply Chain"],
-    "trendingTopics": ["#TEL", "#EquipmentBookings", "#FoundryExpansion"],
+    "topics": [
+      "Financial Results",
+      "Manufacturing",
+      "Supply Chain"
+    ],
+    "trendingTopics": [
+      "#TEL",
+      "#EquipmentBookings",
+      "#FoundryExpansion"
+    ],
     "publishedAt": "2022-05-11",
     "summary": "Tokyo Electron reported FY2022 net sales of ¥2.3T (record high), with foundry segment (led by TSMC) accounting for 50% of revenue. TEL guided strong FY2023 bookings on TSMC Fab 18 and Arizona Fab 21 equipment orders.",
-    "viewCount": 35400
+    "viewCount": 35400,
+    "url": "https://www.tel.com/news/press/"
   },
   {
     "id": "pr-040",
@@ -518,11 +869,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "QCOM",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Strategic Partnerships", "Semiconductors", "Innovation & R&D"],
-    "trendingTopics": ["#Snapdragon8Gen3", "#TSMC3nm", "#Qualcomm"],
+    "topics": [
+      "Strategic Partnerships",
+      "Semiconductors",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#Snapdragon8Gen3",
+      "#TSMC3nm",
+      "#Qualcomm"
+    ],
     "publishedAt": "2023-03-07",
     "summary": "Qualcomm and TSMC announced deepened collaboration for the Snapdragon 8 Gen 3 SoC development on TSMC's 4nm N4P+ process, with planning sessions for eventual migration to 3nm N3E. The partnership targets global flagship smartphone launches in Q4 2023.",
-    "viewCount": 55900
+    "viewCount": 55900,
+    "url": "https://investor.qualcomm.com/news-releases/"
   },
   {
     "id": "pr-041",
@@ -531,11 +891,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "NVDA",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["AI & Computing", "Semiconductors", "Cloud & Data Center"],
-    "trendingTopics": ["#BlackwellB200", "#NVDA", "#AIInfrastructure"],
+    "topics": [
+      "AI & Computing",
+      "Semiconductors",
+      "Cloud & Data Center"
+    ],
+    "trendingTopics": [
+      "#BlackwellB200",
+      "#NVDA",
+      "#AIInfrastructure"
+    ],
     "publishedAt": "2025-05-14",
     "summary": "NVIDIA confirmed that its Blackwell B200 GPU has commenced mass production at TSMC on the customized 4NP process node, with volume shipments beginning in Q2 2025. The B200 features 192GB HBM3e memory and delivers up to 20 PFLOPS FP4 performance for generative AI inference.",
-    "viewCount": 112400
+    "viewCount": 112400,
+    "url": "https://nvidianews.nvidia.com/news/"
   },
   {
     "id": "pr-042",
@@ -544,11 +913,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AAPL",
     "relationship": "customer",
     "industry": "Consumer Electronics",
-    "topics": ["Consumer Electronics", "Innovation & R&D", "Semiconductors"],
-    "trendingTopics": ["#M4Ultra", "#AppleSilicon", "#MacPro2025"],
+    "topics": [
+      "Consumer Electronics",
+      "Innovation & R&D",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#M4Ultra",
+      "#AppleSilicon",
+      "#MacPro2025"
+    ],
     "publishedAt": "2025-05-20",
     "summary": "Apple launched the M4 Ultra chip — its most powerful silicon to date — manufactured on TSMC's N3E (3nm) process. Featuring 32-core CPU and 80-core GPU with 192GB unified memory, the M4 Ultra powers the redesigned Mac Pro and delivers 3x the performance of the M1 Ultra.",
-    "viewCount": 94700
+    "viewCount": 94700,
+    "url": "https://www.apple.com/newsroom/"
   },
   {
     "id": "pr-043",
@@ -557,11 +935,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "ASML",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["EUV Lithography", "Semiconductors", "Innovation & R&D"],
-    "trendingTopics": ["#HighNAEUV", "#ASML", "#2nmNode"],
+    "topics": [
+      "EUV Lithography",
+      "Semiconductors",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#HighNAEUV",
+      "#ASML",
+      "#2nmNode"
+    ],
     "publishedAt": "2025-06-11",
     "summary": "ASML successfully installed and qualified its first High-NA EUV (TWINSCAN EXE:5000) system at TSMC's advanced R&D center in Hsinchu. The system, capable of 0.55 NA optics and single-exposure patterning at 8nm resolution, will enable TSMC's N2P and A16 process nodes for 2027+ production.",
-    "viewCount": 78500
+    "viewCount": 78500,
+    "url": "https://www.asml.com/en/news/press-releases/"
   },
   {
     "id": "pr-044",
@@ -570,11 +957,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AVGO",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["AI & Computing", "Cloud & Data Center", "Financial Results"],
-    "trendingTopics": ["#BroadcomAI", "#ASIC", "#AVGO"],
+    "topics": [
+      "AI & Computing",
+      "Cloud & Data Center",
+      "Financial Results"
+    ],
+    "trendingTopics": [
+      "#BroadcomAI",
+      "#ASIC",
+      "#AVGO"
+    ],
     "publishedAt": "2025-06-05",
     "summary": "Broadcom reported fiscal Q2 2025 results with AI semiconductor revenue of $4.1B (+44% YoY), driven by custom AI ASIC volumes for two major hyperscaler customers. TSMC's 3nm node was cited as critical for the XPU roadmap targeting 60 TFLOPS performance in next-generation designs.",
-    "viewCount": 67200
+    "viewCount": 67200,
+    "url": "https://investors.broadcom.com/news-releases/"
   },
   {
     "id": "pr-045",
@@ -583,11 +979,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "NVDA",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Semiconductors", "AI & Computing", "Strategic Partnerships"],
-    "trendingTopics": ["#RubinGPU", "#NVDA", "#FoundryRace"],
+    "topics": [
+      "Semiconductors",
+      "AI & Computing",
+      "Strategic Partnerships"
+    ],
+    "trendingTopics": [
+      "#RubinGPU",
+      "#NVDA",
+      "#FoundryRace"
+    ],
     "publishedAt": "2025-07-22",
     "summary": "Industry sources revealed that NVIDIA's next-generation Rubin GPU (2nm-class) development is proceeding with TSMC as the lead foundry on N2 process, while Samsung Foundry is developing an alternative 2nm-class process. TSMC's advanced packaging CoWoS-S remains the preferred choice for HBM4 integration.",
-    "viewCount": 89100
+    "viewCount": 89100,
+    "url": "https://nvidianews.nvidia.com/news/"
   },
   {
     "id": "pr-046",
@@ -596,11 +1001,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "LRCX",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Financial Results", "Manufacturing", "Supply Chain"],
-    "trendingTopics": ["#LamResearch", "#SemiconductorEquipment", "#LRCX"],
+    "topics": [
+      "Financial Results",
+      "Manufacturing",
+      "Supply Chain"
+    ],
+    "trendingTopics": [
+      "#LamResearch",
+      "#SemiconductorEquipment",
+      "#LRCX"
+    ],
     "publishedAt": "2025-07-30",
     "summary": "Lam Research delivered record fiscal Q4 FY2025 revenue of $5.12B (+24% YoY), with etch and deposition equipment orders from TSMC's Fab 18 (N2 ramp) and Arizona Fab 21 accounting for 28% of total revenue. Management guided $21B+ annual revenue for FY2026.",
-    "viewCount": 43800
+    "viewCount": 43800,
+    "url": "https://investor.lamresearch.com/news-releases/"
   },
   {
     "id": "pr-047",
@@ -609,11 +1023,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AAPL",
     "relationship": "customer",
     "industry": "Consumer Electronics",
-    "topics": ["Consumer Electronics", "Innovation & R&D", "Semiconductors"],
-    "trendingTopics": ["#iPhone17Pro", "#A19Pro", "#TSMC2nm"],
+    "topics": [
+      "Consumer Electronics",
+      "Innovation & R&D",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#iPhone17Pro",
+      "#A19Pro",
+      "#TSMC2nm"
+    ],
     "publishedAt": "2025-09-10",
     "summary": "Apple unveiled the iPhone 17 Pro and iPhone 17 Pro Max featuring the A19 Pro chip — the world's first mass-produced 2nm smartphone processor — manufactured on TSMC's N2 process. The chip delivers 30% CPU performance gains and 40% improved power efficiency vs. A18 Pro.",
-    "viewCount": 142600
+    "viewCount": 142600,
+    "url": "https://www.apple.com/newsroom/"
   },
   {
     "id": "pr-048",
@@ -622,11 +1045,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "TC",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Financial Results", "Semiconductors", "AI & Computing"],
-    "trendingTopics": ["#TSMC", "#Q3Results", "#AIBoom"],
+    "topics": [
+      "Financial Results",
+      "Semiconductors",
+      "AI & Computing"
+    ],
+    "trendingTopics": [
+      "#TSMC",
+      "#Q3Results",
+      "#AIBoom"
+    ],
     "publishedAt": "2025-10-16",
     "summary": "TSMC reported Q3 2025 consolidated net revenue of NT$759.69B (+12.8% QoQ, +38.8% YoY), driven by 3nm and 5nm demand from AI accelerator and smartphone clients. Gross margin reached 57.8%. Management guided Q4 revenue of NT$868-888B and raised FY2025 capex guidance to $38-39B.",
-    "viewCount": 135800
+    "viewCount": 135800,
+    "url": "https://ir.tsmc.com/english/news-and-events/press-releases"
   },
   {
     "id": "pr-049",
@@ -635,11 +1067,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "NVDA",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["AI & Computing", "Cloud & Data Center", "Semiconductors"],
-    "trendingTopics": ["#GB300NVL72", "#BlackwellUltra", "#AIData Center"],
+    "topics": [
+      "AI & Computing",
+      "Cloud & Data Center",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#GB300NVL72",
+      "#BlackwellUltra",
+      "#AIData Center"
+    ],
     "publishedAt": "2025-11-18",
     "summary": "NVIDIA announced that GB300 NVL72 — a full-rack AI compute solution featuring 72 Blackwell Ultra GPUs interconnected via NVLink — has achieved production readiness at TSMC. The system delivers 1.44 ExaFLOPS FP4 performance and is sampling with major CSPs for Q1 2026 deployments.",
-    "viewCount": 121300
+    "viewCount": 121300,
+    "url": "https://nvidianews.nvidia.com/news/"
   },
   {
     "id": "pr-050",
@@ -648,11 +1089,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "KLAC",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Manufacturing", "EUV Lithography", "Semiconductors"],
-    "trendingTopics": ["#KLA", "#2nmYield", "#ProcessControl"],
+    "topics": [
+      "Manufacturing",
+      "EUV Lithography",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#KLA",
+      "#2nmYield",
+      "#ProcessControl"
+    ],
     "publishedAt": "2025-12-03",
     "summary": "KLA announced deployment of its eDIT (eBeam Defect Inspection Technology) system at TSMC's N2 production line in Fab 18. The system enables sub-2nm defect detection with 100% wafer coverage, critical for achieving >80% die yield on TSMC's most advanced logic process.",
-    "viewCount": 38700
+    "viewCount": 38700,
+    "url": "https://ir.kla.com/news-events/press-releases/"
   },
   {
     "id": "pr-051",
@@ -661,11 +1111,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "TC",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Financial Results", "Semiconductors", "Innovation & R&D"],
-    "trendingTopics": ["#TSMC", "#Q4Results", "#N2Ramp"],
+    "topics": [
+      "Financial Results",
+      "Semiconductors",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#TSMC",
+      "#Q4Results",
+      "#N2Ramp"
+    ],
     "publishedAt": "2026-01-16",
     "summary": "TSMC reported Q4 2025 net revenue of NT$868.46B (+14.3% QoQ, +38.8% YoY) and full-year 2025 revenue of NT$3.33T (+38.8% YoY). Gross margin reached 59.0%. N2 production ramp is progressing ahead of schedule, with smartphone and AI customers confirmed for H1 2026 volume production.",
-    "viewCount": 156900
+    "viewCount": 156900,
+    "url": "https://ir.tsmc.com/english/news-and-events/press-releases"
   },
   {
     "id": "pr-052",
@@ -674,11 +1133,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AMAT",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Financial Results", "Manufacturing", "AI & Computing"],
-    "trendingTopics": ["#AMAT", "#SemiconductorEquipment", "#AICapex"],
+    "topics": [
+      "Financial Results",
+      "Manufacturing",
+      "AI & Computing"
+    ],
+    "trendingTopics": [
+      "#AMAT",
+      "#SemiconductorEquipment",
+      "#AICapex"
+    ],
     "publishedAt": "2026-02-19",
     "summary": "Applied Materials reported fiscal Q1 2026 net revenue of $7.17B (+7% YoY), exceeding analyst consensus. Management cited sustained leading-edge logic demand — primarily from TSMC's N2 and A16 process ramp — as the primary growth driver, and guided Q2 FY2026 revenue of $7.40B ±$400M.",
-    "viewCount": 51200
+    "viewCount": 51200,
+    "url": "https://investor.appliedmaterials.com/news-releases/"
   },
   {
     "id": "pr-053",
@@ -687,11 +1155,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "QCOM",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Semiconductors", "5G & Wireless", "Innovation & R&D"],
-    "trendingTopics": ["#Snapdragon8Elite2", "#TSMC2nm", "#MobileSoC"],
+    "topics": [
+      "Semiconductors",
+      "5G & Wireless",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#Snapdragon8Elite2",
+      "#TSMC2nm",
+      "#MobileSoC"
+    ],
     "publishedAt": "2026-02-24",
     "summary": "Qualcomm announced successful tape-out of Snapdragon 8 Elite 2 on TSMC's N2 process, targeting mass production in Q3 2026 for flagship Android devices from Samsung, Xiaomi and OPPO. The SoC features next-gen Oryon CPU cores and a 100 TOPS Hexagon NPU for advanced on-device AI.",
-    "viewCount": 72400
+    "viewCount": 72400,
+    "url": "https://investor.qualcomm.com/news-releases/"
   },
   {
     "id": "pr-054",
@@ -700,11 +1177,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "NVDA",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Financial Results", "AI & Computing", "Cloud & Data Center"],
-    "trendingTopics": ["#NVDA", "#DataCenterRevenue", "#Blackwell"],
+    "topics": [
+      "Financial Results",
+      "AI & Computing",
+      "Cloud & Data Center"
+    ],
+    "trendingTopics": [
+      "#NVDA",
+      "#DataCenterRevenue",
+      "#Blackwell"
+    ],
     "publishedAt": "2026-02-26",
     "summary": "NVIDIA reported fiscal Q4 FY2026 revenue of $44.1B (+78% YoY), with Data Center revenue of $39.1B driven by Blackwell GPU demand. CEO Jensen Huang highlighted TSMC's leading-edge CoWoS advanced packaging as essential to meeting global AI infrastructure demand, with Rubin architecture planned for 2026.",
-    "viewCount": 198600
+    "viewCount": 198600,
+    "url": "https://nvidianews.nvidia.com/news/"
   },
   {
     "id": "pr-055",
@@ -713,11 +1199,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AMD",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["AI & Computing", "Cloud & Data Center", "Semiconductors"],
-    "trendingTopics": ["#MI400", "#AMD", "#TSMC2nm"],
+    "topics": [
+      "AI & Computing",
+      "Cloud & Data Center",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#MI400",
+      "#AMD",
+      "#TSMC2nm"
+    ],
     "publishedAt": "2026-03-12",
     "summary": "AMD confirmed that MI400 AI accelerators — built on TSMC's N2 process with CoWoS-L advanced packaging and HBM4 memory — have entered customer sampling. Volume production is targeted for H2 2026, with major cloud providers including Microsoft Azure and Google Cloud as initial customers.",
-    "viewCount": 84300
+    "viewCount": 84300,
+    "url": "https://ir.amd.com/news-events/press-releases/"
   },
   {
     "id": "pr-056",
@@ -726,11 +1221,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "NVDA",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["AI & Computing", "Semiconductors", "Innovation & R&D"],
-    "trendingTopics": ["#VeraRubin", "#NVDA", "#2nmGPU"],
+    "topics": [
+      "AI & Computing",
+      "Semiconductors",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#VeraRubin",
+      "#NVDA",
+      "#2nmGPU"
+    ],
     "publishedAt": "2026-04-29",
     "summary": "NVIDIA publicly disclosed full architecture details of the Vera Rubin GPU, confirming exclusive manufacturing on TSMC's N2 process node. The GPU features 1,000 TFLOPS FP4 performance and an NVLink-C2C bandwidth of 7.2 TB/s, targeting exascale AI training clusters for 2027 volume production.",
-    "viewCount": 187500
+    "viewCount": 187500,
+    "url": "https://nvidianews.nvidia.com/news/"
   },
   {
     "id": "pr-057",
@@ -739,11 +1243,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "TSM",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Financial Results", "Semiconductors", "Innovation & R&D"],
-    "trendingTopics": ["#TSMC", "#N2Yield", "#AprilRevenue"],
+    "topics": [
+      "Financial Results",
+      "Semiconductors",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#TSMC",
+      "#N2Yield",
+      "#AprilRevenue"
+    ],
     "publishedAt": "2026-04-28",
     "summary": "TSMC announced April 2026 consolidated revenue of NT$296.4B (+41.3% YoY), driven by surging N2 demand from AI and smartphone customers. The company confirmed that N2 wafer yield has surpassed its internal qualification milestone ahead of schedule, enabling confident H2 2026 ramp.",
-    "viewCount": 143200
+    "viewCount": 143200,
+    "url": "https://ir.tsmc.com/english/news-and-events/press-releases"
   },
   {
     "id": "pr-058",
@@ -752,11 +1265,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AMD",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Cloud & Data Center", "Semiconductors", "Innovation & R&D"],
-    "trendingTopics": ["#TurinX", "#EPYC", "#3DVCache"],
+    "topics": [
+      "Cloud & Data Center",
+      "Semiconductors",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#TurinX",
+      "#EPYC",
+      "#3DVCache"
+    ],
     "publishedAt": "2026-04-27",
     "summary": "AMD unveiled the EPYC 'Turin-X' roadmap featuring 3D V-Cache stacking on TSMC's N2 process, targeting cloud and enterprise server deployments in Q1 2027. The new architecture promises 60% higher memory bandwidth per core versus the previous generation, with HBM4-equipped configurations for AI inference.",
-    "viewCount": 96700
+    "viewCount": 96700,
+    "url": "https://ir.amd.com/news-events/press-releases/"
   },
   {
     "id": "pr-059",
@@ -765,11 +1287,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "QCOM",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Consumer Electronics", "5G & Wireless", "Semiconductors"],
-    "trendingTopics": ["#Snapdragon8Elite2", "#TSMC2nm", "#MobileAI"],
+    "topics": [
+      "Consumer Electronics",
+      "5G & Wireless",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#Snapdragon8Elite2",
+      "#TSMC2nm",
+      "#MobileAI"
+    ],
     "publishedAt": "2026-04-25",
     "summary": "Qualcomm confirmed the commencement of mass production for the Snapdragon 8 Elite 2 SoC at TSMC, with initial wafers already shipped to Samsung, Xiaomi, and OnePlus for integration into flagship Android devices targeting Q3 2026 market launch. The chip delivers 2x AI performance vs. the previous generation.",
-    "viewCount": 118400
+    "viewCount": 118400,
+    "url": "https://investor.qualcomm.com/news-releases/"
   },
   {
     "id": "pr-060",
@@ -778,11 +1309,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AAPL",
     "relationship": "customer",
     "industry": "Consumer Electronics",
-    "topics": ["Consumer Electronics", "Innovation & R&D", "Semiconductors"],
-    "trendingTopics": ["#M5Chip", "#TSMC2nm", "#MacBookPro"],
+    "topics": [
+      "Consumer Electronics",
+      "Innovation & R&D",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#M5Chip",
+      "#TSMC2nm",
+      "#MacBookPro"
+    ],
     "publishedAt": "2026-04-24",
     "summary": "Supply chain sources confirmed Apple completed tape-out of the M5 and M5 Pro chips on TSMC's N2P (enhanced 2nm) process, targeting MacBook Pro refresh in early 2027. The M5 is expected to deliver 25% higher CPU throughput and 40% improved energy efficiency compared to the M4 series.",
-    "viewCount": 132800
+    "viewCount": 132800,
+    "url": "https://www.apple.com/newsroom/"
   },
   {
     "id": "pr-061",
@@ -791,11 +1331,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "ASML",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Financial Results", "EUV Lithography", "Semiconductors"],
-    "trendingTopics": ["#ASML", "#Q1Results", "#2nmLithography"],
+    "topics": [
+      "Financial Results",
+      "EUV Lithography",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#ASML",
+      "#Q1Results",
+      "#2nmLithography"
+    ],
     "publishedAt": "2026-04-23",
     "summary": "ASML reported Q1 2026 net sales of €9.87B (+28% YoY), with High-NA EUV system orders nearly doubling sequentially. TSMC remains the largest EUV customer, with confirmed orders for 12 additional High-NA systems for N2 and A16 process development in 2026-2027.",
-    "viewCount": 87300
+    "viewCount": 87300,
+    "url": "https://www.asml.com/en/news/press-releases/"
   },
   {
     "id": "pr-062",
@@ -804,11 +1353,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AVGO",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["AI & Computing", "Cloud & Data Center", "Financial Results"],
-    "trendingTopics": ["#BroadcomAI", "#CustomASIC", "#AVGO"],
+    "topics": [
+      "AI & Computing",
+      "Cloud & Data Center",
+      "Financial Results"
+    ],
+    "trendingTopics": [
+      "#BroadcomAI",
+      "#CustomASIC",
+      "#AVGO"
+    ],
     "publishedAt": "2026-04-22",
     "summary": "Broadcom announced fiscal Q2 FY2026 AI semiconductor revenue of $5.6B (+36% YoY), driven by custom XPU designs for three major hyperscaler customers. The company raised full-year AI revenue guidance to $22B and noted TSMC's N2 CoWoS-L packaging as essential for next-generation 60+ TFLOPS XPU designs.",
-    "viewCount": 74100
+    "viewCount": 74100,
+    "url": "https://investors.broadcom.com/news-releases/"
   },
   {
     "id": "pr-063",
@@ -817,11 +1375,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "TSM",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Semiconductors", "Innovation & R&D", "AI & Computing"],
-    "trendingTopics": ["#CoWoSX", "#TSMC", "#ChipletIntegration"],
+    "topics": [
+      "Semiconductors",
+      "Innovation & R&D",
+      "AI & Computing"
+    ],
+    "trendingTopics": [
+      "#CoWoSX",
+      "#TSMC",
+      "#ChipletIntegration"
+    ],
     "publishedAt": "2026-04-21",
     "summary": "TSMC introduced CoWoS-X, its next-generation advanced packaging platform enabling 3D stacking of up to 8 chiplets with silicon photonics integration. The platform supports HBM5 memory interfaces and 12.8 Tb/s optical I/O bandwidth, targeting GPU and AI accelerator products planned from 2028 onwards.",
-    "viewCount": 91500
+    "viewCount": 91500,
+    "url": "https://ir.tsmc.com/english/news-and-events/press-releases"
   },
   {
     "id": "pr-064",
@@ -830,11 +1397,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "NVDA",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Semiconductors", "Strategic Partnerships", "Innovation & R&D"],
-    "trendingTopics": ["#SamsungGAA", "#2nmRace", "#FoundryCompetition"],
+    "topics": [
+      "Semiconductors",
+      "Strategic Partnerships",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#SamsungGAA",
+      "#2nmRace",
+      "#FoundryCompetition"
+    ],
     "publishedAt": "2026-04-19",
     "summary": "Industry reports confirmed Samsung Foundry's 2nm GAA process achieved engineering sample tape-outs from multiple customers. NVIDIA stated it continues to evaluate all leading foundry options for Rubin successor, while TSMC cited its N2 yield advantages and CoWoS integration as differentiating factors for AI chip customers.",
-    "viewCount": 108300
+    "viewCount": 108300,
+    "url": "https://nvidianews.nvidia.com/news/"
   },
   {
     "id": "pr-065",
@@ -843,11 +1419,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "LRCX",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Manufacturing", "Innovation & R&D", "Semiconductors"],
-    "trendingTopics": ["#Vantara", "#BSPDN", "#LamResearch"],
+    "topics": [
+      "Manufacturing",
+      "Innovation & R&D",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#Vantara",
+      "#BSPDN",
+      "#LamResearch"
+    ],
     "publishedAt": "2026-04-16",
     "summary": "Lam Research launched the Vantara selective CVD system enabling atomic-precision deposition for backside power delivery network (BSPDN) structures at sub-2nm nodes. TSMC's A16 process — featuring BSPDN — is among the first production users, with initial tool shipments scheduled for Q2 2026.",
-    "viewCount": 39200
+    "viewCount": 39200,
+    "url": "https://investor.lamresearch.com/news-releases/"
   },
   {
     "id": "pr-066",
@@ -856,11 +1441,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AMAT",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Manufacturing", "EUV Lithography", "Innovation & R&D"],
-    "trendingTopics": ["#CenturaAvant", "#HighNAEUV", "#AMAT"],
+    "topics": [
+      "Manufacturing",
+      "EUV Lithography",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#CenturaAvant",
+      "#HighNAEUV",
+      "#AMAT"
+    ],
     "publishedAt": "2026-04-11",
     "summary": "Applied Materials introduced the Centura Avant deposition platform specifically optimized for High-NA EUV underlayer films, addressing the critical CD uniformity requirements of sub-2nm patterning. TSMC is the lead development partner, targeting the N2P and A14 process node qualifications.",
-    "viewCount": 43800
+    "viewCount": 43800,
+    "url": "https://investor.appliedmaterials.com/news-releases/"
   },
   {
     "id": "pr-067",
@@ -869,11 +1463,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "KLAC",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Manufacturing", "EUV Lithography", "Semiconductors"],
-    "trendingTopics": ["#eDIT2", "#KLA", "#2nmYield"],
+    "topics": [
+      "Manufacturing",
+      "EUV Lithography",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#eDIT2",
+      "#KLA",
+      "#2nmYield"
+    ],
     "publishedAt": "2026-04-08",
     "summary": "KLA Corporation announced the eDIT Gen2 e-beam defect inspection system with 2x defect capture improvement over the first generation, enabling >90% stochastic defect detection for High-NA EUV layers. TSMC has qualified the system for use in Fab 18's N2 production and A16 development lines.",
-    "viewCount": 31600
+    "viewCount": 31600,
+    "url": "https://ir.kla.com/news-events/press-releases/"
   },
   {
     "id": "pr-068",
@@ -882,11 +1485,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "NVDA",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["AI & Computing", "Cloud & Data Center", "Semiconductors"],
-    "trendingTopics": ["#GB300NVL72", "#AIInfrastructure", "#NVDA"],
+    "topics": [
+      "AI & Computing",
+      "Cloud & Data Center",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#GB300NVL72",
+      "#AIInfrastructure",
+      "#NVDA"
+    ],
     "publishedAt": "2026-04-04",
     "summary": "NVIDIA began volume shipments of the GB300 NVL72 full-rack AI system to major cloud service providers. AWS, Google Cloud, and Microsoft Azure reported up to 40% throughput improvement over GB200 NVL72 in LLM training benchmarks. TSMC confirmed record CoWoS-S panel-level packaging output to meet demand.",
-    "viewCount": 152400
+    "viewCount": 152400,
+    "url": "https://nvidianews.nvidia.com/news/"
   },
   {
     "id": "pr-069",
@@ -895,11 +1507,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "2454.TW",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Consumer Electronics", "AI & Computing", "Semiconductors"],
-    "trendingTopics": ["#Dimensity9600", "#MediaTek", "#MobileAI2nm"],
+    "topics": [
+      "Consumer Electronics",
+      "AI & Computing",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#Dimensity9600",
+      "#MediaTek",
+      "#MobileAI2nm"
+    ],
     "publishedAt": "2026-04-01",
     "summary": "MediaTek revealed the Dimensity 9600 SoC, manufactured on TSMC's N2 process, achieving 8x AI processing performance over the Dimensity 9400. The chip features an integrated transformer inference engine capable of running 13B-parameter LLMs on-device at 30 tokens per second with 8-bit quantization.",
-    "viewCount": 76800
+    "viewCount": 76800,
+    "url": "https://www.mediatek.com/news-events/press-releases/"
   },
   {
     "id": "pr-070",
@@ -908,11 +1529,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "TSM",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Semiconductors", "Innovation & R&D", "Strategic Partnerships"],
-    "trendingTopics": ["#TSMC", "#N2P", "#A16Process"],
+    "topics": [
+      "Semiconductors",
+      "Innovation & R&D",
+      "Strategic Partnerships"
+    ],
+    "trendingTopics": [
+      "#TSMC",
+      "#N2P",
+      "#A16Process"
+    ],
     "publishedAt": "2026-04-29",
     "summary": "TSMC's 2026 North America Technology Symposium revealed roadmap details for N2P (enhanced 2nm) and A16 processes. N2P delivers 5% additional performance over N2 at the same power, while A16 integrates backside power delivery for the first time, targeting high-performance compute and AI accelerator chips in 2028.",
-    "viewCount": 156200
+    "viewCount": 156200,
+    "url": "https://ir.tsmc.com/english/news-and-events/press-releases"
   },
   {
     "id": "pr-071",
@@ -921,11 +1551,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "QCOM",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Strategic Partnerships", "Semiconductors", "5G & Wireless"],
-    "trendingTopics": ["#QCOM", "#IntelFoundry", "#FoundryMarketShare"],
+    "topics": [
+      "Strategic Partnerships",
+      "Semiconductors",
+      "5G & Wireless"
+    ],
+    "trendingTopics": [
+      "#QCOM",
+      "#IntelFoundry",
+      "#FoundryMarketShare"
+    ],
     "publishedAt": "2026-04-29",
     "summary": "Industry sources confirmed Qualcomm awarded the Snapdragon 8 Elite 3 chip (2026 flagship) exclusively to TSMC N2P, foregoing Intel Foundry Services evaluation. The decision, driven by TSMC's yield advantage and CoWoS packaging maturity, represents a significant blow to Intel's foundry ambitions in mobile premium segment.",
-    "viewCount": 97400
+    "viewCount": 97400,
+    "url": "https://investor.qualcomm.com/news-releases/"
   },
   {
     "id": "pr-072",
@@ -934,11 +1573,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AMAT",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Financial Results", "Manufacturing", "AI & Computing"],
-    "trendingTopics": ["#AMAT", "#WaferFab", "#N2Equipment"],
+    "topics": [
+      "Financial Results",
+      "Manufacturing",
+      "AI & Computing"
+    ],
+    "trendingTopics": [
+      "#AMAT",
+      "#WaferFab",
+      "#N2Equipment"
+    ],
     "publishedAt": "2026-04-29",
     "summary": "Applied Materials disclosed Q2 FY2026 preliminary orders of $8.1B (+14% YoY), with TSMC's N2 production ramp and A16 development contributing $2.4B in equipment bookings. CVD and ALD systems for gate-all-around transistors and backside power delivery were the fastest-growing product categories.",
-    "viewCount": 64700
+    "viewCount": 64700,
+    "url": "https://investor.appliedmaterials.com/news-releases/"
   },
   {
     "id": "pr-073",
@@ -947,11 +1595,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "QCOM",
     "relationship": "customer",
     "industry": "Consumer Electronics",
-    "topics": ["Consumer Electronics", "5G & Wireless", "AI & Computing"],
-    "trendingTopics": ["#GalaxyS26", "#Snapdragon8Elite2", "#2nmSmartphone"],
+    "topics": [
+      "Consumer Electronics",
+      "5G & Wireless",
+      "AI & Computing"
+    ],
+    "trendingTopics": [
+      "#GalaxyS26",
+      "#Snapdragon8Elite2",
+      "#2nmSmartphone"
+    ],
     "publishedAt": "2026-04-28",
     "summary": "Samsung confirmed the Galaxy S26 flagship series will exclusively feature the Snapdragon 8 Elite 2 SoC manufactured on TSMC's N2 process. Pre-orders in key markets surpassed Galaxy S25 series by 38%, with AI camera and real-time translation features highlighting the on-device AI capabilities of the new chip.",
-    "viewCount": 134800
+    "viewCount": 134800,
+    "url": "https://investor.qualcomm.com/news-releases/"
   },
   {
     "id": "pr-074",
@@ -960,11 +1617,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "LRCX",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Strategic Partnerships", "Manufacturing", "Supply Chain"],
-    "trendingTopics": ["#LamResearch", "#LRCX", "#TSMCSupply"],
+    "topics": [
+      "Strategic Partnerships",
+      "Manufacturing",
+      "Supply Chain"
+    ],
+    "trendingTopics": [
+      "#LamResearch",
+      "#LRCX",
+      "#TSMCSupply"
+    ],
     "publishedAt": "2026-04-28",
     "summary": "Lam Research announced a $3.5B multi-year equipment supply agreement with TSMC covering etch, deposition, and clean tools for N2, A16, and future A14 process nodes. The deal includes priority delivery slots for High-NA EUV-compatible ALE systems and new selective etch platforms for backside power delivery structures.",
-    "viewCount": 78300
+    "viewCount": 78300,
+    "url": "https://investor.lamresearch.com/news-releases/"
   },
   {
     "id": "pr-075",
@@ -973,11 +1639,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "NVDA",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["AI & Computing", "Cloud & Data Center", "Strategic Partnerships"],
-    "trendingTopics": ["#NVIDIAMicrosoft", "#AzureAI", "#GB300Cluster"],
+    "topics": [
+      "AI & Computing",
+      "Cloud & Data Center",
+      "Strategic Partnerships"
+    ],
+    "trendingTopics": [
+      "#NVIDIAMicrosoft",
+      "#AzureAI",
+      "#GB300Cluster"
+    ],
     "publishedAt": "2026-04-28",
     "summary": "NVIDIA and Microsoft Azure announced construction of a 200,000-GPU AI supercomputer cluster based on GB300 NVL72 systems, targeting exascale AI model training for Microsoft's next-generation Copilot models. TSMC CoWoS-S advanced packaging is the enabling technology for the GB300's HBM4 integration at this scale.",
-    "viewCount": 212500
+    "viewCount": 212500,
+    "url": "https://nvidianews.nvidia.com/news/"
   },
   {
     "id": "pr-076",
@@ -986,11 +1661,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AMD",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Mergers & Acquisitions", "Cloud & Data Center", "AI & Computing"],
-    "trendingTopics": ["#AMDAcquisition", "#Pensando", "#DataCenterAI"],
+    "topics": [
+      "Mergers & Acquisitions",
+      "Cloud & Data Center",
+      "AI & Computing"
+    ],
+    "trendingTopics": [
+      "#AMDAcquisition",
+      "#Pensando",
+      "#DataCenterAI"
+    ],
     "publishedAt": "2026-04-27",
     "summary": "AMD announced acquisition of AI networking startup Pensando Systems for $1.9B to enhance its data center SmartNIC and DPU portfolio. Pensando's P4-programmable data path processors will be integrated with AMD's Instinct MI400 GPU series for optimized AI training fabric in hyperscale deployments.",
-    "viewCount": 88600
+    "viewCount": 88600,
+    "url": "https://ir.amd.com/news-events/press-releases/"
   },
   {
     "id": "pr-077",
@@ -999,11 +1683,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "KLAC",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Financial Results", "Manufacturing", "Semiconductors"],
-    "trendingTopics": ["#KLA", "#KLAC", "#ProcessControl"],
+    "topics": [
+      "Financial Results",
+      "Manufacturing",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#KLA",
+      "#KLAC",
+      "#ProcessControl"
+    ],
     "publishedAt": "2026-04-27",
     "summary": "KLA reported Q3 FY2026 revenue of $3.61B (+31% YoY), beating consensus by $120M. The outperformance was driven by accelerated 2nm process control tool deployments at TSMC and two additional leading-edge foundries. Management raised FY2026 revenue guidance to $14.2B and guided another strong quarter.",
-    "viewCount": 51200
+    "viewCount": 51200,
+    "url": "https://ir.kla.com/news-events/press-releases/"
   },
   {
     "id": "pr-078",
@@ -1012,11 +1705,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AAPL",
     "relationship": "customer",
     "industry": "Consumer Electronics",
-    "topics": ["AI & Computing", "Consumer Electronics", "Innovation & R&D"],
-    "trendingTopics": ["#WWDC2026", "#iOS20", "#AppleIntelligence2"],
+    "topics": [
+      "AI & Computing",
+      "Consumer Electronics",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#WWDC2026",
+      "#iOS20",
+      "#AppleIntelligence2"
+    ],
     "publishedAt": "2026-04-27",
     "summary": "Apple previewed iOS 20 foundation model capabilities running entirely on-device using the A19 Pro chip's 16-core Neural Engine (manufactured on TSMC N2). The model handles complex multi-step reasoning, real-time language translation, and image generation without cloud connectivity, targeting privacy-first AI workflows.",
-    "viewCount": 178400
+    "viewCount": 178400,
+    "url": "https://www.apple.com/newsroom/"
   },
   {
     "id": "pr-079",
@@ -1025,11 +1727,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AVGO",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["AI & Computing", "Semiconductors", "Innovation & R&D"],
-    "trendingTopics": ["#BroadcomXPU", "#HBM4", "#CustomAI"],
+    "topics": [
+      "AI & Computing",
+      "Semiconductors",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#BroadcomXPU",
+      "#HBM4",
+      "#CustomAI"
+    ],
     "publishedAt": "2026-04-26",
     "summary": "Broadcom disclosed architectural details of its next-generation XPU Gen4 custom AI accelerator, manufactured on TSMC's N3P process with CoWoS-L advanced packaging integrating 8 HBM4 stacks. The chip targets 80 TFLOPS FP8 performance at 900W TDP, designed for the inference stage of large language model deployments at Google and Meta.",
-    "viewCount": 93100
+    "viewCount": 93100,
+    "url": "https://investors.broadcom.com/news-releases/"
   },
   {
     "id": "pr-080",
@@ -1038,11 +1749,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "8035.T",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Manufacturing", "Innovation & R&D", "Semiconductors"],
-    "trendingTopics": ["#TEL", "#Vigus", "#BacksidePower"],
+    "topics": [
+      "Manufacturing",
+      "Innovation & R&D",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#TEL",
+      "#Vigus",
+      "#BacksidePower"
+    ],
     "publishedAt": "2026-04-26",
     "summary": "Tokyo Electron introduced the Vigus multi-station capacitively coupled plasma etch system, purpose-built for backside power delivery network (BSPDN) trench formation in TSMC's A16 process. The system achieves 99.8% within-wafer uniformity for deep tungsten contact etching required by the nano-TSV structures in A16.",
-    "viewCount": 34900
+    "viewCount": 34900,
+    "url": "https://www.tel.com/news/press/"
   },
   {
     "id": "pr-081",
@@ -1051,11 +1771,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "ASML",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["EUV Lithography", "Innovation & R&D", "Semiconductors"],
-    "trendingTopics": ["#HighNA", "#EUVThroughput", "#ASML"],
+    "topics": [
+      "EUV Lithography",
+      "Innovation & R&D",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#HighNA",
+      "#EUVThroughput",
+      "#ASML"
+    ],
     "publishedAt": "2026-04-25",
     "summary": "ASML and TSMC jointly announced achieving 200 wafers-per-hour throughput on the High-NA EUV TWINSCAN EXE:5000 system at TSMC's Hsinchu R&D fab, doubling the throughput milestone set in 2025. This productivity level enables economic single-exposure patterning for TSMC's N2P and A16 process nodes.",
-    "viewCount": 82700
+    "viewCount": 82700,
+    "url": "https://www.asml.com/en/news/press-releases/"
   },
   {
     "id": "pr-082",
@@ -1064,11 +1793,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "QCOM",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Financial Results", "AI & Computing", "Automotive"],
-    "trendingTopics": ["#Qualcomm", "#QCOM", "#AIRevenue"],
+    "topics": [
+      "Financial Results",
+      "AI & Computing",
+      "Automotive"
+    ],
+    "trendingTopics": [
+      "#Qualcomm",
+      "#QCOM",
+      "#AIRevenue"
+    ],
     "publishedAt": "2026-04-25",
     "summary": "Qualcomm reported fiscal Q2 FY2026 revenue of $11.7B (+22% YoY), with Handset revenue growing 18%, Automotive +65%, and IoT +42%. On-device AI capabilities enabled by the Snapdragon 8 Elite 2 (TSMC N2) were cited as a key differentiator driving premium Android market share gains in Asia and Europe.",
-    "viewCount": 111800
+    "viewCount": 111800,
+    "url": "https://investor.qualcomm.com/news-releases/"
   },
   {
     "id": "pr-083",
@@ -1077,11 +1815,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "NVDA",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["AI & Computing", "Innovation & R&D", "Cloud & Data Center"],
-    "trendingTopics": ["#RubinGPU", "#NVLink6", "#JensenHuang"],
+    "topics": [
+      "AI & Computing",
+      "Innovation & R&D",
+      "Cloud & Data Center"
+    ],
+    "trendingTopics": [
+      "#RubinGPU",
+      "#NVLink6",
+      "#JensenHuang"
+    ],
     "publishedAt": "2026-04-24",
     "summary": "NVIDIA CEO Jensen Huang delivered a keynote revealing the Rubin GPU's detailed architecture: dual-die design on TSMC N2, 1,000 TFLOPS FP4, 576GB HBM4 via CoWoS-X, and NVLink 6.0 delivering 3.6TB/s inter-GPU bandwidth. The Rubin NVL144 rack system targets 3 ExaFLOPS AI performance for 2027 hyperscaler deployments.",
-    "viewCount": 195700
+    "viewCount": 195700,
+    "url": "https://nvidianews.nvidia.com/news/"
   },
   {
     "id": "pr-084",
@@ -1090,11 +1837,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AMD",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["Financial Results", "AI & Computing", "Semiconductors"],
-    "trendingTopics": ["#AMD", "#InstinctGPU", "#AIRevenue"],
+    "topics": [
+      "Financial Results",
+      "AI & Computing",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#AMD",
+      "#InstinctGPU",
+      "#AIRevenue"
+    ],
     "publishedAt": "2026-04-24",
     "summary": "AMD reported Q1 FY2026 net revenue of $7.44B (+33% YoY), with Data Center segment revenue of $4.0B (+63% YoY) driven by Instinct MI300X and early MI400 shipments. AI GPU revenue exceeded $3B for the first time in a single quarter, with strong demand from cloud and enterprise customers on TSMC's 3nm/N2 processes.",
-    "viewCount": 143200
+    "viewCount": 143200,
+    "url": "https://ir.amd.com/news-events/press-releases/"
   },
   {
     "id": "pr-085",
@@ -1103,11 +1859,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "LRCX",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Innovation & R&D", "Manufacturing", "Semiconductors"],
-    "trendingTopics": ["#LamResearch", "#ALE", "#N1.4"],
+    "topics": [
+      "Innovation & R&D",
+      "Manufacturing",
+      "Semiconductors"
+    ],
+    "trendingTopics": [
+      "#LamResearch",
+      "#ALE",
+      "#N1.4"
+    ],
     "publishedAt": "2026-04-24",
     "summary": "Lam Research and TSMC published a joint white paper on co-developed atomic layer etching (ALE) processes enabling 0.3nm selectivity control for TSMC's planned N1.4 gate-all-around nanosheet transistors. The process leverages novel gas chemistry and plasma pulse synchronization to achieve sub-monolayer silicon removal precision.",
-    "viewCount": 41300
+    "viewCount": 41300,
+    "url": "https://investor.lamresearch.com/news-releases/"
   },
   {
     "id": "pr-086",
@@ -1116,11 +1881,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "AAPL",
     "relationship": "customer",
     "industry": "Consumer Electronics",
-    "topics": ["Financial Results", "Consumer Electronics", "AI & Computing"],
-    "trendingTopics": ["#Apple", "#Q2FY2026", "#iPhone17Pro"],
+    "topics": [
+      "Financial Results",
+      "Consumer Electronics",
+      "AI & Computing"
+    ],
+    "trendingTopics": [
+      "#Apple",
+      "#Q2FY2026",
+      "#iPhone17Pro"
+    ],
     "publishedAt": "2026-04-23",
     "summary": "Apple reported fiscal Q2 FY2026 net revenue of $96.4B (+11% YoY), driven by strong iPhone 17 Pro demand featuring the A19 Pro chip on TSMC's 2nm N2 process. Gross margin expanded to 47.8%, helped by favorable chip cost curves as TSMC's N2 node matures. Apple Intelligence adoption is driving accelerated upgrade cycles.",
-    "viewCount": 167300
+    "viewCount": 167300,
+    "url": "https://www.apple.com/newsroom/"
   },
   {
     "id": "pr-087",
@@ -1129,11 +1903,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "KLAC",
     "relationship": "supplier",
     "industry": "Semiconductor Equipment",
-    "topics": ["Innovation & R&D", "Manufacturing", "AI & Computing"],
-    "trendingTopics": ["#KLA", "#LamResearch", "#InLineAI"],
+    "topics": [
+      "Innovation & R&D",
+      "Manufacturing",
+      "AI & Computing"
+    ],
+    "trendingTopics": [
+      "#KLA",
+      "#LamResearch",
+      "#InLineAI"
+    ],
     "publishedAt": "2026-04-23",
     "summary": "KLA and Lam Research announced a joint solution combining KLA's Zeta-5000 optical metrology and Lam's Coronus plasma etch with shared AI inference to enable real-time closed-loop process control for 2nm logic. TSMC is the validation partner, aiming to reduce unscheduled downtime by 35% on N2 production lines.",
-    "viewCount": 47800
+    "viewCount": 47800,
+    "url": "https://ir.kla.com/news-events/press-releases/"
   },
   {
     "id": "pr-088",
@@ -1142,11 +1925,20 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "ticker": "NVDA",
     "relationship": "customer",
     "industry": "Semiconductors",
-    "topics": ["AI & Computing", "Semiconductors", "Supply Chain"],
-    "trendingTopics": ["#BlackwellUltra", "#CoWoS", "#AISupplyChain"],
+    "topics": [
+      "AI & Computing",
+      "Semiconductors",
+      "Supply Chain"
+    ],
+    "trendingTopics": [
+      "#BlackwellUltra",
+      "#CoWoS",
+      "#AISupplyChain"
+    ],
     "publishedAt": "2026-04-23",
     "summary": "NVIDIA disclosed that Blackwell Ultra (GB300) production has been ramped to full capacity, with TSMC tripling CoWoS-S advanced packaging throughput at its Fab 18 Taichung site. The company confirmed all hyperscaler delivery commitments for Q2 2026 will be met, and guided continued supply expansion through H2 2026 for Rubin architecture volume.",
-    "viewCount": 176500
+    "viewCount": 176500,
+    "url": "https://nvidianews.nvidia.com/news/"
   }
 ]
 ```

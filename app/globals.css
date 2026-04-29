@@ -25415,6 +25415,131 @@ html.dark .chr-card:hover {
   box-shadow: 0 2px 8px rgba(191, 48, 48, 0.25);
 }
 
+/* ===== DARK MODE — PRESS RELEASE ARCHIVE ===== */
+
+/* Company filter panel */
+html.dark .pr-co-filter {
+  background: var(--c-white);
+  border-color: var(--c-border);
+}
+
+html.dark .pr-co-filter-input-wrap.open,
+html.dark .pr-co-filter-input-wrap:focus-within {
+  background: #1e293b;
+}
+
+html.dark .pr-co-filter-dropdown {
+  background: #1e293b;
+  border-color: var(--c-border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+html.dark .pr-co-filter-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+html.dark .pr-co-filter-dropdown::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+html.dark .pr-co-filter-dropdown::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+html.dark .pr-co-filter-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+html.dark .pr-co-filter-option:hover {
+  background: #334155;
+}
+
+html.dark .pr-co-filter-option.selected {
+  background: #1e3a5f;
+}
+
+/* Company chips (selected company tags) */
+html.dark .pr-co-filter-chip {
+  background: #1e3a5f;
+  color: #93c5fd;
+}
+
+html.dark .pr-co-filter-chip-remove {
+  color: #60a5fa;
+}
+
+html.dark .pr-co-filter-chip-remove:hover {
+  background: #1d4ed8;
+  color: #bfdbfe;
+}
+
+html.dark .pr-co-filter-clear-all:hover {
+  background: #3f1515;
+}
+
+/* Search button (disabled state in dark mode) */
+html.dark .pr-co-filter-search-btn.disabled {
+  background: #334155;
+  color: #64748b;
+}
+
+/* Expand / Collapse all button */
+html.dark .pr-archive-expand-btn {
+  background: var(--c-white);
+  border-color: var(--c-border);
+  color: var(--c-text-2);
+}
+
+html.dark .pr-archive-expand-btn:hover {
+  background: #1e3a5f;
+  border-color: var(--c-accent);
+  color: var(--c-accent);
+}
+
+/* Archive group header hover */
+html.dark .pr-archive-group-header:hover {
+  background: #1e293b;
+}
+
+/* Tile card */
+html.dark .pr-archive-tile {
+  background: var(--c-white);
+  border-color: var(--c-border);
+}
+
+html.dark .pr-archive-tile:hover .pr-archive-tile-title {
+  color: var(--c-accent);
+}
+
+/* Company relationship tags */
+html.dark .pr-archive-tile-tag--customer {
+  background: #1e3a5f;
+  color: #93c5fd;
+}
+
+html.dark .pr-archive-tile-tag--supplier {
+  background: #3f1a36;
+  color: #f0abcc;
+}
+
+/* API error / badge */
+html.dark .pr-archive-api-error {
+  background: #3f1515;
+  color: #fca5a5;
+}
+
+html.dark .pr-archive-api-badge {
+  background: #0f2a1a;
+  border-color: #166534;
+  color: #86efac;
+}
+
+html.dark .pr-archive-api-badge-clear {
+  color: #86efac;
+}
+
+html.dark .pr-archive-api-badge-clear:hover {
+  background: #166534;
+}
+
 /* ── Loading state for watchlist table ── */
 .wl-table-loading {
   display: flex;
@@ -25612,8 +25737,10 @@ html.dark .chr-card:hover {
   border: 1px solid var(--c-border);
   border-radius: var(--radius-lg);
   background: var(--c-white);
-  cursor: default;
+  color: inherit;
+  cursor: pointer;
   transition: border-color 0.15s, box-shadow 0.15s;
+  text-decoration: none;
 }
 
 .pr-archive-tile:hover {
@@ -25862,20 +25989,22 @@ html.dark .chr-card:hover {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 16px;
-  background: var(--c-accent);
+  height: 34px;
+  padding: 0 14px;
+  background: var(--c-dark);
   color: var(--c-white);
   border: none;
-  border-radius: var(--radius);
-  font-size: 12.5px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.15s, opacity 0.15s;
+  transition: background 0.15s;
+  flex-shrink: 0;
 }
 
 .pr-co-filter-search-btn:hover:not(.disabled) {
-  background: #29b6f6;
+  background: #2a3c52;
 }
 
 .pr-co-filter-search-btn.disabled {
