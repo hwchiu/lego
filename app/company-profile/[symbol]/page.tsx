@@ -9,7 +9,7 @@ export function generateStaticParams() {
 
 export default function CompanyDetailPage({ params }: { params: { symbol: string } }) {
   return (
-    <Suspense>
+    <Suspense fallback={null}>
       <CompanyProfileContent symbol={params.symbol} />
     </Suspense>
   );

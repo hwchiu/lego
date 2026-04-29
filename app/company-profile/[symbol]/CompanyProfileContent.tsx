@@ -657,6 +657,8 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     const param = searchParams.get('tab');
     if (param && (TABS as readonly string[]).includes(param)) {
       setActiveTab(param as Tab);
+    } else if (!param) {
+      setActiveTab('FIN. Summary');
     }
   }, [searchParams]);
 
