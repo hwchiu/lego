@@ -74,23 +74,8 @@ export const projectedEarningsReleaseEvents = extractJsonBySection<Record<string
 );
 
 // ─── Event Category IDs (for Subscribe API) ──────────────────────────────────
-/** Maps each event category name to its numeric ID used in the Subscribe API. */
-export const EVENT_CATEGORY_IDS: Record<string, number> = {
-  'Shareholders Meeting': 1,
-  'Sales Revenue Release': 2,
-  'Dividend': 3,
-  'Confirmed Earnings Release': 4,
-  'Conference': 5,
-  'Earnings': 6,
-  'Analysts Investors Meeting': 7,
-  'Split': 8,
-  'Special Situation': 9,
-  'Sales Revenue Call': 10,
-  'Guidance Call': 11,
-  'Projected Earnings Release': 12,
-};
 
-/** Ordered list of all event categories with their IDs. */
+/** Ordered list of all event categories with their IDs used in the Subscribe API. */
 export const EVENT_CATEGORIES_LIST: { id: number; name: string }[] = [
   { id: 1,  name: 'Shareholders Meeting' },
   { id: 2,  name: 'Sales Revenue Release' },

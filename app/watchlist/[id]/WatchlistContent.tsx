@@ -462,6 +462,14 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
   const allEventsSelected = EVENT_CATEGORIES_LIST.every((e) => rightPanelEvents.has(e.id));
   const someEventsSelected = EVENT_CATEGORIES_LIST.some((e) => rightPanelEvents.has(e.id));
 
+  // Drive the indeterminate state of the Select All checkbox via a ref + effect
+  const selectAllCheckboxRef = useRef<HTMLInputElement | null>(null);
+  useEffect(() => {
+    if (selectAllCheckboxRef.current) {
+      selectAllCheckboxRef.current.indeterminate = !allEventsSelected && someEventsSelected;
+    }
+  }, [allEventsSelected, someEventsSelected]);
+
   const handleToggleEvent = useCallback((eventId: number) => {
     setCompanyEventMap((prev) => {
       const targets = selectedCo === 'all' ? companies : [selectedCo as string];
@@ -491,10 +499,9 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
 
   // Copy the current right-panel event selection to every company
   const handleApplyToAll = useCallback(() => {
-    const evtsCopy = new Set(rightPanelEvents);
     setCompanyEventMap((prev) => {
       const next: Record<string, Set<number>> = { ...prev };
-      for (const co of companies) next[co] = new Set(evtsCopy);
+      for (const co of companies) next[co] = new Set(rightPanelEvents);
       return next;
     });
   }, [companies, rightPanelEvents]);
@@ -633,8 +640,8 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
                       <label className="wl-sub-select-all-label">
                         <input
                           type="checkbox"
+                          ref={selectAllCheckboxRef}
                           checked={allEventsSelected}
-                          ref={(el) => { if (el) el.indeterminate = !allEventsSelected && someEventsSelected; }}
                           onChange={(e) => handleSelectAllEvents(e.target.checked)}
                         />
                         {labels.selectAll[lang]}
