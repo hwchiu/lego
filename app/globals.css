@@ -25292,3 +25292,26 @@ html.dark .chr-card:hover {
   border-color: #bf3030;
   box-shadow: 0 2px 8px rgba(191, 48, 48, 0.25);
 }
+
+/* ── Loading state for watchlist table ── */
+.wl-table-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+}
+
+.wl-content-area--split .wl-table-loading {
+  min-height: calc(100vh - 250px);
+  min-height: calc(100vh - 250px);
+}
+
+.wl-table-loading-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--c-text-3);
+  letter-spacing: 0.02em;
+}
