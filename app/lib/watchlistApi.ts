@@ -1066,6 +1066,34 @@ export interface GetFinIdxCardDataParams {
  * Stub implementation — mirrors the pattern of getWatchlistData.
  * Real integration: GET /getFinIdxCardData?co_cd={co_cd}
  */
+// ─── Subscribe Info API ──────────────────────────────────────────────────────
+
+export interface SubscribeEntry {
+  co_cd: string;
+  event: number[];
+  // View: number[]; // future expansion
+}
+
+export interface UpdateSubscribeInfoPayload {
+  subscribe: SubscribeEntry[];
+}
+
+/**
+ * Update the user's event subscription preferences for Favorites companies.
+ * Payload: { subscribe: [{ co_cd, event: number[] }] }
+ * Stub — persists to localStorage and logs to console.
+ * Real integration: POST /updateSubscribeInfo
+ */
+export async function updateSubscribeInfo(
+  payload: UpdateSubscribeInfoPayload,
+): Promise<{ success: boolean }> {
+  console.log('[API stub] updateSubscribeInfo', payload);
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('wl-favorites-subscribe', JSON.stringify(payload));
+  }
+  return { success: true };
+}
+
 export function getFinIdxCardData(params: GetFinIdxCardDataParams): WatchlistDataItem[] {
   console.log('[API stub] getFinIdxCardData', params);
   const { co_cd } = params;

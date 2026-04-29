@@ -12,12 +12,14 @@ import { holdingsData as holdingsDataMap, holdingsDataQ4_2025 } from '@/app/data
 import type { HoldingEntity } from '@/app/data/watchlistData';
 import { mainNav } from '@/app/data/navigation';
 import { useWatchlist } from '@/app/contexts/WatchlistContext';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 import { CATALOG_VIEW_CATEGORIES, CATALOG_COLUMN_LABELS, CATALOG_COLUMN_ID_TO_STRING_ID } from '@/app/data/watchlistColumns';
 import { newsItems } from '@/app/data/news';
 import NewsCard from '@/app/components/news/NewsCard';
 import { pressReleases } from '@/app/data/pressReleases';
 import { CORP_EVENT_CATEGORY_MAP } from '@/app/data/corpEvents';
 import type { CorpEvent } from '@/app/data/corpEvents';
+import { EVENT_CATEGORIES_LIST } from '@/app/data/corpEvents';
 import {
   buildRecentQuarters,
   getViewCatgNColInfo,
@@ -35,9 +37,10 @@ import {
   getWatchlistDetail,
   getWatchlistData,
   getUserAllWatchlists,
+  updateSubscribeInfo,
   WATCHLIST_MAX_COMPANIES,
 } from '@/app/lib/watchlistApi';
-import type { GetWatchlistDataParams, WatchlistDataItem } from '@/app/lib/watchlistApi';
+import type { GetWatchlistDataParams, WatchlistDataItem, UpdateSubscribeInfoPayload } from '@/app/lib/watchlistApi';
 import { setFavoritesInPersonality } from '@/app/lib/getFavoritesByUserAcct';
 import { getPaginationRange } from '@/app/lib/paginationUtils';
 
@@ -365,6 +368,312 @@ async function downloadHoldingsExcel(watchlistName: string, holdings: Holding[])
   a.download = `${watchlistName}.xlsx`;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+// ── Subscribe Modal ───────────────────────────────────────────────────────────
+
+const LS_SUBSCRIBE_KEY = 'wl-favorites-subscribe';
+
+interface SubscribeModalProps {
+  companies: string[];
+  onClose: () => void;
+}
+
+function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
+  const { lang } = useLanguage();
+
+  const labels = {
+    title:           { zh: '訂閱通知',              en: 'Subscribe'                   },
+    eventTab:        { zh: '事件',                   en: 'Event'                       },
+    viewTab:         { zh: '檢視',                   en: 'View'                        },
+    allCompanies:    { zh: '所有公司',               en: 'All Companies'               },
+    companiesTitle:  { zh: '公司',                   en: 'Companies'                   },
+    eventTypes:      { zh: '事件類型',               en: 'Event Types'                 },
+    selectAll:       { zh: '全選',                   en: 'Select All'                  },
+    applyToAll:      { zh: '套用至所有公司',         en: 'Apply to All Companies'      },
+    save:            { zh: '儲存',                   en: 'Save'                        },
+    saving:          { zh: '儲存中...',              en: 'Saving...'                   },
+    saved:           { zh: '✓ 已儲存',              en: '✓ Saved'                     },
+    noCompanies:     { zh: '目前沒有 Favorite 公司', en: 'No favorite companies yet.'  },
+    comingSoon:      { zh: '即將推出',               en: 'Coming Soon'                 },
+    comingSoonDesc:  { zh: 'View 訂閱功能正在開發中，即將推出。',
+                       en: 'View subscription is under development and will be available soon.' },
+    allHint:         { zh: '在此選擇的事件將套用至所有公司',
+                       en: 'Events selected here apply to all companies'              },
+  };
+
+  const [subTab, setSubTab] = useState<'event' | 'view'>('event');
+  // Working copy: maps coCd → set of subscribed event IDs
+  const [companyEventMap, setCompanyEventMap] = useState<Record<string, Set<number>>>({});
+  // Which entry is focused in left panel: a specific co_cd or 'all'
+  const [selectedCo, setSelectedCo] = useState<string | 'all'>('all');
+  const [saving, setSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  // Load existing subscriptions from localStorage on mount
+  useEffect(() => {
+    const init: Record<string, Set<number>> = {};
+    companies.forEach((co) => { init[co] = new Set(); });
+    try {
+      const stored = localStorage.getItem(LS_SUBSCRIBE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored) as UpdateSubscribeInfoPayload;
+        for (const entry of parsed.subscribe) {
+          if (companies.includes(entry.co_cd)) {
+            init[entry.co_cd] = new Set(entry.event);
+          }
+        }
+      }
+    } catch { /* silent */ }
+    setCompanyEventMap(init);
+  }, [companies]);
+
+  // Events visible in the right panel for the current selection
+  const rightPanelEvents = useMemo<Set<number>>(() => {
+    if (selectedCo === 'all') {
+      if (companies.length === 0) return new Set<number>();
+      let intersection: Set<number> | null = null;
+      for (const co of companies) {
+        const evts = companyEventMap[co] ?? new Set<number>();
+        if (intersection === null) {
+          intersection = new Set(evts);
+        } else {
+          for (const evt of intersection) {
+            if (!evts.has(evt)) intersection.delete(evt);
+          }
+        }
+      }
+      return intersection ?? new Set<number>();
+    }
+    return companyEventMap[selectedCo] ?? new Set<number>();
+  }, [selectedCo, companyEventMap, companies]);
+
+  const allEventsSelected = EVENT_CATEGORIES_LIST.every((e) => rightPanelEvents.has(e.id));
+  const someEventsSelected = EVENT_CATEGORIES_LIST.some((e) => rightPanelEvents.has(e.id));
+
+  const handleToggleEvent = useCallback((eventId: number) => {
+    setCompanyEventMap((prev) => {
+      const next: Record<string, Set<number>> = {};
+      const targets = selectedCo === 'all' ? companies : [selectedCo as string];
+      for (const co of companies) {
+        next[co] = new Set(prev[co] ?? []);
+      }
+      const checked = rightPanelEvents.has(eventId);
+      for (const co of targets) {
+        if (checked) next[co].delete(eventId);
+        else next[co].add(eventId);
+      }
+      return next;
+    });
+  }, [selectedCo, companies, rightPanelEvents]);
+
+  const handleSelectAllEvents = useCallback((checked: boolean) => {
+    setCompanyEventMap((prev) => {
+      const next: Record<string, Set<number>> = {};
+      for (const co of companies) next[co] = new Set(prev[co] ?? []);
+      const targets = selectedCo === 'all' ? companies : [selectedCo as string];
+      for (const co of targets) {
+        next[co] = checked ? new Set(EVENT_CATEGORIES_LIST.map((e) => e.id)) : new Set<number>();
+      }
+      return next;
+    });
+  }, [selectedCo, companies]);
+
+  // Copy the current right-panel event selection to every company
+  const handleApplyToAll = useCallback(() => {
+    const evtsCopy = new Set(rightPanelEvents);
+    setCompanyEventMap((prev) => {
+      const next: Record<string, Set<number>> = {};
+      for (const co of companies) next[co] = new Set(evtsCopy);
+      return { ...prev, ...next };
+    });
+  }, [companies, rightPanelEvents]);
+
+  const handleSave = useCallback(async () => {
+    setSaving(true);
+    try {
+      const subscribeList = companies
+        .filter((co) => (companyEventMap[co]?.size ?? 0) > 0)
+        .map((co) => ({
+          co_cd: co,
+          event: Array.from(companyEventMap[co] ?? []).sort((a, b) => a - b),
+        }));
+      const payload: UpdateSubscribeInfoPayload = { subscribe: subscribeList };
+      await updateSubscribeInfo(payload);
+      setSaveSuccess(true);
+      setTimeout(() => { setSaveSuccess(false); onClose(); }, 900);
+    } finally {
+      setSaving(false);
+    }
+  }, [companies, companyEventMap, onClose]);
+
+  const getCompanyCount = (co: string) => companyEventMap[co]?.size ?? 0;
+  const subscribedCoCount = companies.filter((co) => getCompanyCount(co) > 0).length;
+
+  return (
+    <div className="wl-modal-overlay" onClick={onClose}>
+      <div className="wl-modal wl-modal--subscribe" onClick={(e) => e.stopPropagation()}>
+        {/* Header */}
+        <div className="wl-modal-header">
+          <div className="wl-sub-header-left">
+            {/* Bell icon */}
+            <svg viewBox="0 0 14 14" fill="none" width="14" height="14" aria-hidden="true">
+              <path d="M7 1.5a4 4 0 0 0-4 4v2.5L2 9.5h10l-1-1.5V5.5a4 4 0 0 0-4-4Z"
+                stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M5.5 9.5a1.5 1.5 0 0 0 3 0" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+            </svg>
+            <span className="wl-modal-title">{labels.title[lang]}</span>
+            {subscribedCoCount > 0 && (
+              <span className="wl-sub-header-badge">{subscribedCoCount}</span>
+            )}
+          </div>
+          <div className="wl-modal-header-actions">
+            <button className="wl-modal-cancel-btn" onClick={onClose}>Close</button>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="wl-mv-tabs">
+          <button
+            className={`wl-mv-tab${subTab === 'event' ? ' active' : ''}`}
+            onClick={() => setSubTab('event')}
+          >
+            {labels.eventTab[lang]}
+          </button>
+          {/* View tab — Coming Soon / lock overlay */}
+          <button
+            className="wl-mv-tab wl-mv-tab--coming-soon"
+            aria-disabled="true"
+            tabIndex={-1}
+          >
+            {labels.viewTab[lang]}
+            <span className="wl-feed-tab-cs-overlay" aria-hidden="true">
+              <span className="wl-feed-tab-cs-inner" aria-hidden="true" />
+              <svg className="wl-feed-tab-cs-lock" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="12" cy="16" r="1.2" fill="currentColor" />
+              </svg>
+            </span>
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="wl-modal-body wl-modal-body--scroll">
+          {subTab === 'event' ? (
+            companies.length === 0 ? (
+              <div className="wl-feed-coming-soon">
+                <span className="wl-feed-coming-soon-title">{labels.noCompanies[lang]}</span>
+              </div>
+            ) : (
+              <div className="wl-sub-layout">
+                {/* Left panel — Companies */}
+                <div className="wl-sub-panel">
+                  <div className="wl-sub-panel-header">
+                    <span className="wl-sub-panel-title">{labels.companiesTitle[lang]}</span>
+                  </div>
+                  <div className="wl-sub-panel-body">
+                    {/* All Companies row */}
+                    <button
+                      className={`wl-sub-company-item wl-sub-company-item--all${selectedCo === 'all' ? ' active' : ''}`}
+                      onClick={() => setSelectedCo('all')}
+                    >
+                      <span className="wl-sub-company-name">
+                        <svg viewBox="0 0 14 14" fill="none" width="11" height="11" aria-hidden="true">
+                          <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.3" />
+                          <path d="M4 7h6M7 4v6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                        </svg>
+                        {labels.allCompanies[lang]}
+                      </span>
+                      <span className="wl-sub-badge wl-sub-badge--muted">
+                        {subscribedCoCount}/{companies.length}
+                      </span>
+                    </button>
+                    {/* Individual company rows */}
+                    {companies.map((co) => {
+                      const count = getCompanyCount(co);
+                      return (
+                        <button
+                          key={co}
+                          className={`wl-sub-company-item${selectedCo === co ? ' active' : ''}`}
+                          onClick={() => setSelectedCo(co)}
+                        >
+                          <span className="wl-sub-company-name">{co}</span>
+                          {count > 0 && <span className="wl-sub-badge">{count}</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Right panel — Event types */}
+                <div className="wl-sub-panel wl-sub-panel--events">
+                  <div className="wl-sub-panel-header">
+                    <span className="wl-sub-panel-title">{labels.eventTypes[lang]}</span>
+                    <div className="wl-sub-panel-header-actions">
+                      {selectedCo !== 'all' && (
+                        <button className="wl-sub-apply-all-btn" onClick={handleApplyToAll}>
+                          {labels.applyToAll[lang]}
+                        </button>
+                      )}
+                      <label className="wl-sub-select-all-label">
+                        <input
+                          type="checkbox"
+                          checked={allEventsSelected}
+                          ref={(el) => { if (el) el.indeterminate = !allEventsSelected && someEventsSelected; }}
+                          onChange={(e) => handleSelectAllEvents(e.target.checked)}
+                        />
+                        {labels.selectAll[lang]}
+                      </label>
+                    </div>
+                  </div>
+                  <div className="wl-sub-panel-body">
+                    {selectedCo === 'all' && (
+                      <div className="wl-sub-all-hint">{labels.allHint[lang]}</div>
+                    )}
+                    {EVENT_CATEGORIES_LIST.map((ec) => (
+                      <label key={ec.id} className="wl-sub-event-item">
+                        <input
+                          type="checkbox"
+                          checked={rightPanelEvents.has(ec.id)}
+                          onChange={() => handleToggleEvent(ec.id)}
+                        />
+                        <span className="wl-sub-event-name">{ec.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )
+          ) : (
+            /* View tab — Coming Soon */
+            <div className="wl-feed-coming-soon">
+              <svg viewBox="0 0 24 24" fill="none" width="36" height="36" aria-hidden="true">
+                <rect x="5" y="11" width="14" height="10" rx="2" stroke="#9ca3af" strokeWidth="1.5" strokeLinejoin="round" />
+                <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="#9ca3af" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="12" cy="16" r="1.2" fill="#9ca3af" />
+              </svg>
+              <span className="wl-feed-coming-soon-title">{labels.comingSoon[lang]}</span>
+              <span className="wl-feed-coming-soon-desc">{labels.comingSoonDesc[lang]}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Footer — only on Event tab with companies */}
+        {subTab === 'event' && companies.length > 0 && (
+          <div className="wl-sub-footer">
+            <button
+              className={`wl-sub-save-btn${saveSuccess ? ' wl-sub-save-btn--success' : ''}`}
+              onClick={handleSave}
+              disabled={saving || saveSuccess}
+            >
+              {saveSuccess ? labels.saved[lang] : saving ? labels.saving[lang] : labels.save[lang]}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 // ── Manage View Modal ─────────────────────────────────────────────────────────
@@ -837,6 +1146,8 @@ interface WatchlistContentProps {
   disableCompanyDelete?: boolean;
   /** Called when the favorites symbol list is updated (used by FavoritesContent to refresh). */
   onFavoritesSymbolsUpdate?: (symbols: string[]) => void;
+  /** When true, shows the Subscribe button in the action bar (Favorites page only). */
+  showSubscribeButton?: boolean;
 }
 
 export function WatchlistContent({
@@ -849,10 +1160,12 @@ export function WatchlistContent({
   disableNameEdit = false,
   disableCompanyDelete = false,
   onFavoritesSymbolsUpdate,
+  showSubscribeButton = false,
 }: WatchlistContentProps) {
   const watchlistId = params.id;
   const { watchlistNames, setWatchlistName, symbolOrders, setSymbolOrder, favorites, toggleFavorite, dynamicWatchlists, deletedWatchlists, deleteWatchlist: contextDeleteWatchlist, refreshApiWatchlists } = useWatchlist();
   const router = useRouter();
+  const { lang } = useLanguage();
 
   const watchlistName =
     useOverrideName && watchlistNameOverride
@@ -911,6 +1224,7 @@ export function WatchlistContent({
   const [showAddSymbol, setShowAddSymbol] = useState(false);
   const [showManageView, setShowManageView] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showSubscribe, setShowSubscribe] = useState(false);
 
   // Manage Alerts toggles
   const [newsAlert, setNewsAlert] = useState(true);
@@ -1624,6 +1938,17 @@ export function WatchlistContent({
 
               {/* Action buttons */}
               <div className="wl-action-btns">
+                {/* Subscribe button — Favorites page only */}
+                {showSubscribeButton && (
+                  <button className="wl-action-btn" onClick={() => setShowSubscribe(true)}>
+                    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+                      <path d="M7 1.5a4 4 0 0 0-4 4v2.5L2 9.5h10l-1-1.5V5.5a4 4 0 0 0-4-4Z"
+                        stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M5.5 9.5a1.5 1.5 0 0 0 3 0" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                    </svg>
+                    <span className="wl-action-btn-label">{lang === 'zh' ? '訂閱' : 'Subscribe'}</span>
+                  </button>
+                )}
                 <button className="wl-action-btn" onClick={() => setShowAddSymbol(true)}>
                   <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
                     <path
@@ -2224,6 +2549,14 @@ export function WatchlistContent({
             </div>
           </div>
         </div>
+      )}
+
+      {/* ── Subscribe Modal ───────────────────────────────────────────────── */}
+      {showSubscribeButton && showSubscribe && (
+        <SubscribeModal
+          companies={sortedHoldings.map((h) => h.symbol)}
+          onClose={() => setShowSubscribe(false)}
+        />
       )}
 
       {/* ── Manage View Modal ────────────────────────────────────────────── */}

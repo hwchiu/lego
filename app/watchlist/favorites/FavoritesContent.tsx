@@ -109,6 +109,7 @@ export default function FavoritesContent() {
         disableDeleteWatchlist
         disableNameEdit
         disableCompanyDelete
+        showSubscribeButton
         onFavoritesSymbolsUpdate={(_symbols) => {
           getAllCoFavoriteList(userAcct).then((res) => {
             setFavoriteSymbols(res.co_cd.slice(0, WATCHLIST_MAX_COMPANIES));
