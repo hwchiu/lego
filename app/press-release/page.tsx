@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 import {
   pressReleases,
   getPressReleaseArchiveGroups,
@@ -85,6 +86,31 @@ function TagIcon() {
   );
 }
 
+function SearchIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
+      <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M8.5 8.5L12.5 12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="10" height="10" fill="none" aria-hidden="true">
+      <path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function LoadingIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true" className="pr-spin">
+      <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.4" strokeDasharray="12 22" />
+    </svg>
+  );
+}
+
 // ─── Archive Tile ─────────────────────────────────────────────────────────────
 
 interface ArchiveTileProps {
@@ -133,14 +159,7 @@ interface ArchiveGroupProps {
   lang: 'zh' | 'en';
 }
 
-const GROUP_TYPE_LABELS: Record<string, { zh: string; en: string }> = {
-  day:   { zh: '日', en: 'Daily' },
-  week:  { zh: '週', en: 'Weekly' },
-  month: { zh: '月', en: 'Monthly' },
-};
-
 function ArchiveGroup({ group, isExpanded, onToggle, lang }: ArchiveGroupProps) {
-  const typeBadge = GROUP_TYPE_LABELS[group.type]?.[lang] ?? group.type;
   const articleWord = group.items.length === 1
     ? (lang === 'en' ? 'article' : '篇')
     : (lang === 'en' ? 'articles' : '篇');
@@ -155,9 +174,6 @@ function ArchiveGroup({ group, isExpanded, onToggle, lang }: ArchiveGroupProps) 
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggle(); } }}
         aria-expanded={isExpanded}
       >
-        <span className={`pr-archive-group-type-badge pr-archive-group-type-badge--${group.type}`}>
-          {typeBadge}
-        </span>
         <span className="pr-archive-group-label">{group.label}</span>
         <span className="pr-archive-group-count">
           {group.items.length} {articleWord}
@@ -180,24 +196,187 @@ function ArchiveGroup({ group, isExpanded, onToggle, lang }: ArchiveGroupProps) 
   );
 }
 
+// ─── Company Multi-Select ─────────────────────────────────────────────────────
+
+interface CompanyFilterProps {
+  selectedCodes: string[];
+  onSelectionChange: (codes: string[]) => void;
+  onSearch: (codes: string[]) => void;
+  isLoading: boolean;
+  lang: 'zh' | 'en';
+}
+
+function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, lang }: CompanyFilterProps) {
+  const [query, setQuery] = useState('');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const filtered = useMemo(() => {
+    if (!query.trim()) return COMPANY_MASTER_LIST.slice(0, 50);
+    const q = query.toLowerCase();
+    return COMPANY_MASTER_LIST.filter(
+      (c) => c.symbol.toLowerCase().includes(q) || c.name.toLowerCase().includes(q),
+    ).slice(0, 50);
+  }, [query]);
+
+  function handleToggle(symbol: string) {
+    const next = selectedCodes.includes(symbol)
+      ? selectedCodes.filter((s) => s !== symbol)
+      : [...selectedCodes, symbol];
+    onSelectionChange(next);
+  }
+
+  function handleRemove(symbol: string) {
+    onSelectionChange(selectedCodes.filter((s) => s !== symbol));
+  }
+
+  function handleClearAll() {
+    onSelectionChange([]);
+    setQuery('');
+  }
+
+  function handleSearchClick() {
+    onSearch(selectedCodes);
+  }
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function onOutside(e: MouseEvent) {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', onOutside);
+    return () => document.removeEventListener('mousedown', onOutside);
+  }, []);
+
+  const labels = {
+    placeholder:   { zh: '搜尋公司名稱或代碼...', en: 'Search company name or ticker…' },
+    selected:      { zh: '已選', en: 'Selected' },
+    clearAll:      { zh: '清除全部', en: 'Clear all' },
+    search:        { zh: '搜尋', en: 'Search' },
+    noResults:     { zh: '查無結果', en: 'No results' },
+    companies:     { zh: '公司', en: 'companies' },
+    filterByComp:  { zh: '依公司篩選', en: 'Filter by Company' },
+  };
+
+  return (
+    <div className="pr-co-filter" ref={wrapRef}>
+      <div className="pr-co-filter-label">{labels.filterByComp[lang]}</div>
+
+      {/* Input + dropdown trigger */}
+      <div className="pr-co-filter-input-row">
+        <div className={`pr-co-filter-input-wrap${dropdownOpen ? ' open' : ''}`}>
+          <SearchIcon />
+          <input
+            ref={inputRef}
+            className="pr-co-filter-input"
+            type="text"
+            placeholder={labels.placeholder[lang]}
+            value={query}
+            onChange={(e) => { setQuery(e.target.value); setDropdownOpen(true); }}
+            onFocus={() => setDropdownOpen(true)}
+            autoComplete="off"
+          />
+          {query && (
+            <button className="pr-co-filter-input-clear" onClick={() => setQuery('')} aria-label="Clear input">
+              <CloseIcon />
+            </button>
+          )}
+        </div>
+        <button
+          className={`pr-co-filter-search-btn${selectedCodes.length === 0 ? ' disabled' : ''}`}
+          onClick={handleSearchClick}
+          disabled={selectedCodes.length === 0 || isLoading}
+          title={labels.search[lang]}
+        >
+          {isLoading ? <LoadingIcon /> : <SearchIcon />}
+          <span>{labels.search[lang]}</span>
+        </button>
+      </div>
+
+      {/* Dropdown */}
+      {dropdownOpen && (
+        <div className="pr-co-filter-dropdown">
+          {filtered.length === 0 ? (
+            <div className="pr-co-filter-no-results">{labels.noResults[lang]}</div>
+          ) : (
+            filtered.map((c) => {
+              const active = selectedCodes.includes(c.symbol);
+              return (
+                <button
+                  key={c.symbol}
+                  className={`pr-co-filter-option${active ? ' selected' : ''}`}
+                  onMouseDown={(e) => { e.preventDefault(); handleToggle(c.symbol); }}
+                >
+                  <span className="pr-co-filter-option-check" aria-hidden="true">
+                    {active ? '✓' : ''}
+                  </span>
+                  <span className="pr-co-filter-option-symbol">{c.symbol}</span>
+                  <span className="pr-co-filter-option-name">{c.name}</span>
+                </button>
+              );
+            })
+          )}
+        </div>
+      )}
+
+      {/* Selected chips */}
+      {selectedCodes.length > 0 && (
+        <div className="pr-co-filter-chips">
+          <span className="pr-co-filter-chips-label">
+            {labels.selected[lang]} {selectedCodes.length} {labels.companies[lang]}:
+          </span>
+          <div className="pr-co-filter-chips-list">
+            {selectedCodes.map((code) => (
+              <span key={code} className="pr-co-filter-chip">
+                {code}
+                <button
+                  className="pr-co-filter-chip-remove"
+                  onClick={() => handleRemove(code)}
+                  aria-label={`Remove ${code}`}
+                >
+                  <CloseIcon />
+                </button>
+              </span>
+            ))}
+            <button className="pr-co-filter-clear-all" onClick={handleClearAll}>
+              {labels.clearAll[lang]}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function PressReleasePage() {
   const { lang } = useLanguage();
 
+  // Company filter state
+  const [selectedCodes, setSelectedCodes] = useState<string[]>([]);
+  const [apiItems, setApiItems] = useState<PressRelease[] | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+
+  // Displayed items: API results when available, otherwise all local data
+  const displayedItems = apiItems ?? pressReleases;
+
   const groups = useMemo(
-    () => getPressReleaseArchiveGroups(pressReleases, lang),
-    [lang],
+    () => getPressReleaseArchiveGroups(displayedItems, lang),
+    [displayedItems, lang],
   );
 
-  // Expand first 3 groups by default (most recent)
+  // Expand ALL groups by default
   const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
 
+  // When groups change, expand all
   useEffect(() => {
-    const initial = new Set(groups.slice(0, 3).map((g) => g.key));
-    setExpandedKeys(initial);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    setExpandedKeys(new Set(groups.map((g) => g.key)));
+  }, [groups]);
 
   const allExpanded = groups.length > 0 && expandedKeys.size >= groups.length;
 
@@ -218,11 +397,46 @@ export default function PressReleasePage() {
     }
   }
 
+  const handleSearch = useCallback(async (codes: string[]) => {
+    if (codes.length === 0) {
+      setApiItems(null);
+      setApiError(null);
+      return;
+    }
+    setIsLoading(true);
+    setApiError(null);
+    try {
+      const res = await fetch('/getPressReleaseByCoCd', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ co_cd: codes }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data: PressRelease[] = await res.json();
+      setApiItems(data);
+    } catch (err) {
+      setApiError(lang === 'zh' ? '搜尋失敗，顯示本地資料' : 'Search failed — showing local data');
+      setApiItems(null);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [lang]);
+
+  function handleSelectionChange(codes: string[]) {
+    setSelectedCodes(codes);
+    // Clear API results when selection changes so user must click Search
+    if (codes.length === 0) {
+      setApiItems(null);
+      setApiError(null);
+    }
+  }
+
   const labels = {
     eyebrow:     { zh: 'Press Release', en: 'Press Release' },
-    total:       { zh: `共 ${pressReleases.length} 篇`, en: `${pressReleases.length} articles` },
+    total:       { zh: `共 ${displayedItems.length} 篇`, en: `${displayedItems.length} articles` },
     expandAll:   { zh: '展開全部', en: 'Expand All' },
     collapseAll: { zh: '收合全部', en: 'Collapse All' },
+    apiResult:   { zh: 'API 搜尋結果', en: 'API search results' },
   };
 
   return (
@@ -234,6 +448,31 @@ export default function PressReleasePage() {
         <main className="main-content">
           <div className="page-pad">
             <div className="pr-archive-page">
+              {/* Company filter */}
+              <CompanyFilter
+                selectedCodes={selectedCodes}
+                onSelectionChange={handleSelectionChange}
+                onSearch={handleSearch}
+                isLoading={isLoading}
+                lang={lang}
+              />
+
+              {/* API error notice */}
+              {apiError && (
+                <div className="pr-archive-api-error">{apiError}</div>
+              )}
+
+              {/* API result badge */}
+              {apiItems !== null && (
+                <div className="pr-archive-api-badge">
+                  <SearchIcon />
+                  {labels.apiResult[lang]} · {apiItems.length} {lang === 'en' ? 'results' : '筆'}
+                  <button className="pr-archive-api-badge-clear" onClick={() => { setApiItems(null); setSelectedCodes([]); }}>
+                    <CloseIcon />
+                  </button>
+                </div>
+              )}
+
               {/* Page header */}
               <div className="pr-archive-header">
                 <div className="pr-archive-header-left">

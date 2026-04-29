@@ -25763,3 +25763,330 @@ html.dark .chr-card:hover {
     margin-left: 0;
   }
 }
+
+/* ===== PRESS RELEASE — COMPANY FILTER ===== */
+
+.pr-co-filter {
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  margin-bottom: 18px;
+  position: relative;
+}
+
+.pr-co-filter-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-text-3);
+  margin-bottom: 10px;
+}
+
+.pr-co-filter-input-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.pr-co-filter-input-wrap {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--c-border-2);
+  border-radius: var(--radius);
+  background: var(--c-bg);
+  padding: 0 10px;
+  gap: 7px;
+  transition: border-color 0.15s;
+}
+
+.pr-co-filter-input-wrap.open,
+.pr-co-filter-input-wrap:focus-within {
+  border-color: var(--c-accent);
+  background: var(--c-white);
+  box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.1);
+}
+
+.pr-co-filter-input-wrap svg {
+  color: var(--c-text-4);
+  flex-shrink: 0;
+}
+
+.pr-co-filter-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  color: var(--c-text);
+  padding: 8px 0;
+  outline: none;
+  font-family: var(--font);
+}
+
+.pr-co-filter-input::placeholder {
+  color: var(--c-text-4);
+}
+
+.pr-co-filter-input-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--c-text-4);
+  flex-shrink: 0;
+  border-radius: 50%;
+  transition: background 0.12s, color 0.12s;
+}
+
+.pr-co-filter-input-clear:hover {
+  background: var(--c-border);
+  color: var(--c-text);
+}
+
+.pr-co-filter-search-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--c-accent);
+  color: var(--c-white);
+  border: none;
+  border-radius: var(--radius);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.pr-co-filter-search-btn:hover:not(.disabled) {
+  background: #29b6f6;
+}
+
+.pr-co-filter-search-btn.disabled {
+  background: var(--c-border-2);
+  color: var(--c-text-4);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Dropdown */
+.pr-co-filter-dropdown {
+  position: absolute;
+  top: calc(100% - 8px);
+  left: 18px;
+  right: 18px;
+  background: var(--c-white);
+  border: 1px solid var(--c-border-2);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  z-index: 200;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.pr-co-filter-no-results {
+  padding: 16px 14px;
+  font-size: 12.5px;
+  color: var(--c-text-4);
+  text-align: center;
+}
+
+.pr-co-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.pr-co-filter-option:hover {
+  background: var(--c-bg);
+}
+
+.pr-co-filter-option.selected {
+  background: #eff6ff;
+}
+
+.pr-co-filter-option-check {
+  width: 16px;
+  font-size: 11px;
+  color: var(--c-accent);
+  font-weight: 700;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.pr-co-filter-option-symbol {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--c-text);
+  min-width: 60px;
+  flex-shrink: 0;
+}
+
+.pr-co-filter-option-name {
+  font-size: 12px;
+  color: var(--c-text-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Selected chips */
+.pr-co-filter-chips {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.pr-co-filter-chips-label {
+  font-size: 11px;
+  color: var(--c-text-4);
+  padding-top: 4px;
+  flex-shrink: 0;
+}
+
+.pr-co-filter-chips-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.pr-co-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px 3px 10px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.pr-co-filter-chip-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #3b82f6;
+  border-radius: 50%;
+  transition: background 0.1s, color 0.1s;
+  padding: 0;
+}
+
+.pr-co-filter-chip-remove:hover {
+  background: #bfdbfe;
+  color: #1d4ed8;
+}
+
+.pr-co-filter-clear-all {
+  font-size: 11.5px;
+  color: var(--c-neg);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s;
+}
+
+.pr-co-filter-clear-all:hover {
+  background: #fee2e2;
+}
+
+/* API status elements */
+.pr-archive-api-error {
+  padding: 8px 14px;
+  background: #fee2e2;
+  color: var(--c-neg);
+  border-radius: var(--radius);
+  font-size: 12.5px;
+  margin-bottom: 12px;
+}
+
+.pr-archive-api-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #15803d;
+  margin-bottom: 12px;
+}
+
+.pr-archive-api-badge-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #15803d;
+  border-radius: 50%;
+  padding: 0;
+  transition: background 0.1s;
+}
+
+.pr-archive-api-badge-clear:hover {
+  background: #bbf7d0;
+}
+
+/* Spin animation for loading icon */
+@keyframes pr-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.pr-spin {
+  animation: pr-spin 0.8s linear infinite;
+}
+
+/* ─── Responsive (Company Filter) ─── */
+
+@media (max-width: 768px) {
+  .pr-co-filter {
+    padding: 12px 14px;
+  }
+
+  .pr-co-filter-input-row {
+    flex-wrap: wrap;
+  }
+
+  .pr-co-filter-search-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .pr-co-filter-dropdown {
+    left: 14px;
+    right: 14px;
+  }
+}
