@@ -233,6 +233,18 @@ function FinIdxIcon() {
 
 // ── FinCardItem ──────────────────────────────────────────────────────────────
 
+/** Determine CSS class for a financial value string. */
+function getFinValueClass(value: string): string {
+  const rawNum = value.replace(/[,\s]/g, '');
+  const isNeg = rawNum.startsWith('-');
+  const isPos = !isNeg && /^[+]?\d/.test(rawNum) && rawNum !== '0' && rawNum !== '—';
+  return isNeg
+    ? 'search-fin-card-value search-fin-card-value--neg'
+    : isPos
+    ? 'search-fin-card-value search-fin-card-value--pos'
+    : 'search-fin-card-value';
+}
+
 interface FinCardItemProps {
   card: FinCard;
   pinned: boolean;
@@ -242,15 +254,7 @@ interface FinCardItemProps {
 }
 
 function FinCardItem({ card, pinned, onPin, onUnpin, onNavigate }: FinCardItemProps) {
-  // Determine value colour: strip commas/spaces, check leading sign
-  const rawNum = card.value.replace(/[,\s]/g, '');
-  const isNeg = rawNum.startsWith('-');
-  const isPos = !isNeg && /^[+]?\d/.test(rawNum) && rawNum !== '0';
-  const valueClass = isNeg
-    ? 'search-fin-card-value search-fin-card-value--neg'
-    : isPos
-    ? 'search-fin-card-value search-fin-card-value--pos'
-    : 'search-fin-card-value';
+  const valueClass = getFinValueClass(card.value);
 
   return (
     <div className={`search-fin-card${pinned ? ' search-fin-card--pinned' : ''}`}>
@@ -414,16 +418,14 @@ export default function TopNav() {
   const [finIdxDataMap, setFinIdxDataMap] = useState<Record<string, WatchlistDataItem[]>>({});
 
   const handleFinIdxToggle = useCallback((symbol: string) => {
-    setExpandedFinIdxSymbol((prev) => {
-      if (prev === symbol) return null;
-      // Load data if not cached
-      if (!finIdxDataMap[symbol]) {
-        const data = getFinIdxCardData({ co_cd: symbol });
-        setFinIdxDataMap((m) => ({ ...m, [symbol]: data }));
-      }
-      return symbol;
+    // Fetch data outside the setState callback to avoid stale closure issues
+    setFinIdxDataMap((m) => {
+      if (m[symbol]) return m;
+      const data = getFinIdxCardData({ co_cd: symbol });
+      return { ...m, [symbol]: data };
     });
-  }, [finIdxDataMap]);
+    setExpandedFinIdxSymbol((prev) => (prev === symbol ? null : symbol));
+  }, []);
 
   // Navigate to company profile page
   function navigateToCompany(symbol: string) {
@@ -557,19 +559,11 @@ export default function TopNav() {
                           <div className="search-fin-idx-cards">
                             {(finIdxDataMap[company.symbol] ?? []).map((item) => {
                               const rawVal = String(item.fld_val ?? '—');
-                              const rawNum = rawVal.replace(/[,\s]/g, '');
-                              const isNeg = rawNum.startsWith('-');
-                              const isPos = !isNeg && /^[+]?\d/.test(rawNum) && rawNum !== '0' && rawNum !== '—';
-                              const valClass = isNeg
-                                ? 'search-fin-card-value search-fin-card-value--neg'
-                                : isPos
-                                ? 'search-fin-card-value search-fin-card-value--pos'
-                                : 'search-fin-card-value';
                               return (
                                 <div key={item.rpt_fin_item} className="search-fin-card">
                                   <div className="search-fin-card-body" style={{ cursor: 'default' }}>
                                     <div className="search-fin-card-item">{item.rpt_fin_item}</div>
-                                    <div className={valClass}>{rawVal}</div>
+                                    <div className={getFinValueClass(rawVal)}>{rawVal}</div>
                                   </div>
                                 </div>
                               );

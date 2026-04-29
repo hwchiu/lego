@@ -57,17 +57,17 @@ export interface WatchlistDetailResponse {
 }
 
 export interface WatchlistDataItem {
-  calendar_quarter: string;
+  calendar_quarter: string | null;
   co_cd: string;
   fld_val: string | number | null;
-  curr_cd: string;
+  curr_cd: string | null;
   fiscal_year: number | null;
-  op_seg: string;
-  val_unit: string;
-  update_dt: string;
+  op_seg: string | null;
+  val_unit: string | null;
+  update_dt: string | null;
   doc_amt: string | number | null;
-  calendar_year: number;
-  fiscal_quarter: string;
+  calendar_year: number | null;
+  fiscal_quarter: string | null;
   rpt_fin_item: string;
   selectedCategories: number;
 }
@@ -1080,17 +1080,17 @@ export function getFinIdxCardData(params: GetFinIdxCardDataParams): WatchlistDat
     const fieldFn = CATEGORY_TO_HOLDING_FIELD[catId];
     const fldVal = (holding && fieldFn) ? fieldFn(holding) : null;
     items.push({
-      calendar_quarter: null as unknown as string,
+      calendar_quarter: null,
       co_cd,
       fld_val: fldVal,
-      curr_cd: null as unknown as string,
+      curr_cd: null,
       fiscal_year: null,
-      op_seg: null as unknown as string,
-      val_unit: null as unknown as string,
+      op_seg: null,
+      val_unit: null,
       update_dt: nowStr,
       doc_amt: null,
-      calendar_year: null as unknown as number,
-      fiscal_quarter: null as unknown as string,
+      calendar_year: null,
+      fiscal_quarter: null,
       rpt_fin_item: meta.rpt_fin_item,
       selectedCategories: catId,
     });
