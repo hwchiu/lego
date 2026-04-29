@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import DatePickerInput from '@/app/components/shared/DatePickerInput';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -583,11 +584,10 @@ interface CompanyProfileContentProps {
 }
 
 export default function CompanyProfileContent({ symbol }: CompanyProfileContentProps) {
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<Tab>(() => {
-    if (typeof window !== 'undefined') {
-      const param = new URLSearchParams(window.location.search).get('tab');
-      if (param && (TABS as readonly string[]).includes(param)) return param as Tab;
-    }
+    const param = searchParams.get('tab');
+    if (param && (TABS as readonly string[]).includes(param)) return param as Tab;
     return 'FIN. Summary';
   });
   const [activeFinIndex, setActiveFinIndex] = useState<string>('Revenue');
@@ -651,6 +651,16 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const scrollTabs = useCallback((dir: 'left' | 'right') => {
     tabsScrollRef.current?.scrollBy({ left: dir === 'left' ? -150 : 150, behavior: 'smooth' });
   }, []);
+
+  // Sync activeTab when the URL search params change (e.g. client-side navigation with ?tab=)
+  useEffect(() => {
+    const param = searchParams.get('tab');
+    if (param && (TABS as readonly string[]).includes(param)) {
+      setActiveTab(param as Tab);
+    } else if (!param) {
+      setActiveTab('FIN. Summary');
+    }
+  }, [searchParams]);
 
   // News filter state
   const [newsKeyword, setNewsKeyword] = useState('');

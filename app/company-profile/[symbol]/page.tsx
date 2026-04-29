@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import CompanyProfileContent from './CompanyProfileContent';
 import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 
@@ -7,5 +8,9 @@ export function generateStaticParams() {
 }
 
 export default function CompanyDetailPage({ params }: { params: { symbol: string } }) {
-  return <CompanyProfileContent symbol={params.symbol} />;
+  return (
+    <Suspense fallback={null}>
+      <CompanyProfileContent symbol={params.symbol} />
+    </Suspense>
+  );
 }
