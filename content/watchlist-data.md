@@ -84,7 +84,7 @@
 ## Entity Data
 
 > Auto-updated by `scripts/fetch-stock-data.mjs`.
-> Last updated: 2026-04-29T22:31:09.895Z
+> Last updated: 2026-04-30T00:47:03.405Z
 
 Full holding-table data for every tracked symbol. User-added symbols are persisted in `localStorage` under the key `wl-extra-holdings`.
 
