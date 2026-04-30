@@ -31,6 +31,8 @@ jobs:
           node-version: 20
           cache: npm
 
+      - uses: actions/configure-pages@v4
+
       - run: npm ci
 
       - name: Fetch live stock data
@@ -47,8 +49,6 @@ jobs:
           git push
 
       - run: npx next build
-
-      - uses: actions/configure-pages@v4
 
       - uses: actions/upload-pages-artifact@v3
         with:
