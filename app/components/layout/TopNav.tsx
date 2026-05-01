@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
+import { COMPANY_MASTER_LIST, getCompanyByCode } from '@/app/data/companyMaster';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { useMobileSidebar, MOBILE_BREAKPOINT } from '@/app/contexts/MobileSidebarContext';
 import { BASE_PATH } from '@/app/lib/basePath';
@@ -26,6 +26,7 @@ const COMPANY_MASTER_LC = COMPANY_MASTER_LIST.map((c) => ({
   ...c,
   symbolLc: c.symbol.toLowerCase(),
   nameLc: c.name.toLowerCase(),
+  isFinAlive: getCompanyByCode(c.symbol)?.IS_FIN_ALIVE === 'Y',
 }));
 
 // ── Financial Indices chart helpers ─────────────────────────────────────────
@@ -541,20 +542,22 @@ export default function TopNav() {
                           </svg>
                           <strong>{company.symbol}</strong>&nbsp;{company.name}
                         </button>
-                        <button
-                          className={`search-fin-idx-btn${expandedFinIdxSymbol === company.symbol ? ' active' : ''}`}
-                          onMouseDown={(e) => {
-                            e.preventDefault();
-                            handleFinIdxToggle(company.symbol);
-                          }}
-                          title={lang === 'zh' ? '財務指標' : 'Financial Index'}
-                          aria-label={lang === 'zh' ? '展開財務指標' : 'Expand financial index'}
-                        >
-                          <FinIdxIcon />
-                        </button>
+                        {company.isFinAlive && (
+                          <button
+                            className={`search-fin-idx-btn${expandedFinIdxSymbol === company.symbol ? ' active' : ''}`}
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              handleFinIdxToggle(company.symbol);
+                            }}
+                            title={lang === 'zh' ? '財務指標' : 'Financial Index'}
+                            aria-label={lang === 'zh' ? '展開財務指標' : 'Expand financial index'}
+                          >
+                            <FinIdxIcon />
+                          </button>
+                        )}
                       </div>
                       {/* Expandable fin-idx card panel */}
-                      {expandedFinIdxSymbol === company.symbol && (
+                      {company.isFinAlive && expandedFinIdxSymbol === company.symbol && (
                         <div className="search-fin-idx-panel">
                           <div className="search-fin-idx-cards">
                             {(finIdxDataMap[company.symbol] ?? []).map((item) => {
@@ -753,4 +756,3 @@ export default function TopNav() {
     </header>
   );
 }
-
