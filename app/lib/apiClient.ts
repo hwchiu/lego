@@ -43,15 +43,15 @@ export async function apiFetch<T = unknown>(
   let lastError: Error = new ApiError(`Failed to fetch ${url}`);
 
   for (let attempt = 0; attempt <= retries; attempt++) {
-    // Merge timeout + external abort into one signal
+    if (externalSignal?.aborted) {
+      throw new ApiError('Request aborted', undefined, url);
+    }
+
+    // Each attempt gets its own timeout controller so it can be cleared reliably.
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
     if (externalSignal) {
-      if (externalSignal.aborted) {
-        clearTimeout(timeoutId);
-        throw new ApiError('Request aborted', undefined, url);
-      }
       externalSignal.addEventListener('abort', () => controller.abort(), { once: true });
     }
 
@@ -64,9 +64,7 @@ export async function apiFetch<T = unknown>(
 
       return (await res.json()) as T;
     } catch (err) {
-      clearTimeout(timeoutId);
-
-      // Do not retry if aborted externally or by timeout after all retries
+      // Do not retry if aborted externally
       if (externalSignal?.aborted) throw new ApiError('Request aborted', undefined, url);
 
       lastError = err instanceof Error ? err : new ApiError(String(err), undefined, url);
@@ -80,6 +78,7 @@ export async function apiFetch<T = unknown>(
         await new Promise((resolve) => setTimeout(resolve, retryDelayMs * (attempt + 1)));
       }
     } finally {
+      // Always clear the timeout to prevent memory leaks, regardless of outcome
       clearTimeout(timeoutId);
     }
   }

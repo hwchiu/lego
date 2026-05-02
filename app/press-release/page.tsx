@@ -508,8 +508,7 @@ export default function PressReleasePage() {
   useEffect(() => {
     fetchPage(0, activeFilter, true);
     return () => { abortRef.current?.abort(); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeFilter]);
+  }, [activeFilter, fetchPage]);
 
   // ── Infinite scroll sentinel ──
   const sentinelRef = useRef<HTMLDivElement>(null);

@@ -13,7 +13,7 @@ export const PressReleaseSchema = z.object({
   industry: z.string(),
   topics: z.array(z.string()),
   trendingTopics: z.array(z.string()),
-  publishedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'publishedAt must be YYYY-MM-DD'),
+  publishedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format in press release data'),
   summary: z.string(),
   viewCount: z.number(),
   url: z.string(),
