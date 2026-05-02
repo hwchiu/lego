@@ -7,11 +7,11 @@ import Sidebar from '@/app/components/layout/Sidebar';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 import {
-  pressReleases,
-  getPressReleaseArchiveGroups,
+  getPressReleases,
+  PAGE_SIZE,
   type PressRelease,
-  type PRArchiveGroup,
-} from '@/app/data/pressReleases';
+} from '@/app/lib/pressReleaseApi';
+import { getPressReleaseArchiveGroups, type PRArchiveGroup } from '@/app/data/pressReleases';
 
 // ─── Company color palette ────────────────────────────────────────────────────
 
@@ -103,10 +103,29 @@ function CloseIcon() {
   );
 }
 
-function LoadingIcon() {
+function SpinnerIcon({ size = 14 }: { size?: number }) {
   return (
-    <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true" className="pr-spin">
+    <svg viewBox="0 0 14 14" width={size} height={size} fill="none" aria-hidden="true" className="pr-spin">
       <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.4" strokeDasharray="12 22" />
+    </svg>
+  );
+}
+
+function AlertIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="14" height="14" fill="none" aria-hidden="true">
+      <path d="M7 1.5L12.5 11.5H1.5L7 1.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+      <path d="M7 5.5V8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <circle cx="7" cy="10" r="0.6" fill="currentColor" />
+    </svg>
+  );
+}
+
+function RefreshIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
+      <path d="M2 7a5 5 0 1 0 1.3-3.3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2 3.5V7H5.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -216,7 +235,6 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
   const [query, setQuery] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const filtered = useMemo(() => {
     if (!query.trim()) return COMPANY_MASTER_LIST.slice(0, 50);
@@ -246,7 +264,6 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
     onSearch(selectedCodes);
   }
 
-  // Close dropdown on outside click
   useEffect(() => {
     function onOutside(e: MouseEvent) {
       if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
@@ -271,12 +288,10 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
     <div className="pr-co-filter" ref={wrapRef}>
       <div className="pr-co-filter-label">{labels.filterByComp[lang]}</div>
 
-      {/* Input + dropdown trigger */}
       <div className="pr-co-filter-input-row">
         <div className={`pr-co-filter-input-wrap${dropdownOpen ? ' open' : ''}`}>
           <SearchIcon />
           <input
-            ref={inputRef}
             className="pr-co-filter-input"
             type="text"
             placeholder={labels.placeholder[lang]}
@@ -297,12 +312,11 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
           disabled={selectedCodes.length === 0 || isLoading}
           title={labels.search[lang]}
         >
-          {isLoading ? <LoadingIcon /> : <SearchIcon />}
+          {isLoading ? <SpinnerIcon size={13} /> : <SearchIcon />}
           <span>{labels.search[lang]}</span>
         </button>
       </div>
 
-      {/* Dropdown */}
       {dropdownOpen && (
         <div className="pr-co-filter-dropdown">
           {filtered.length === 0 ? (
@@ -328,7 +342,6 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
         </div>
       )}
 
-      {/* Selected chips */}
       {selectedCodes.length > 0 && (
         <div className="pr-co-filter-chips">
           <span className="pr-co-filter-chips-label">
@@ -357,35 +370,165 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
   );
 }
 
+// ─── Loading Skeleton ─────────────────────────────────────────────────────────
+
+function LoadingSkeleton() {
+  return (
+    <div className="pr-loading-wrap" role="status" aria-label="Loading press releases">
+      <div className="pr-loading-inner">
+        <SpinnerIcon size={24} />
+        <span className="pr-loading-text">Loading press releases…</span>
+      </div>
+    </div>
+  );
+}
+
+// ─── Error Banner ─────────────────────────────────────────────────────────────
+
+interface ErrorBannerProps {
+  message: string;
+  onRetry: () => void;
+  lang: 'zh' | 'en';
+}
+
+function ErrorBanner({ message, onRetry, lang }: ErrorBannerProps) {
+  const retryLabel = lang === 'zh' ? '重試' : 'Retry';
+  return (
+    <div className="pr-error-banner" role="alert">
+      <span className="pr-error-icon"><AlertIcon /></span>
+      <span className="pr-error-message">{message}</span>
+      <button className="pr-error-retry" onClick={onRetry}>
+        <RefreshIcon />
+        {retryLabel}
+      </button>
+    </div>
+  );
+}
+
+// ─── Load-more sentinel ───────────────────────────────────────────────────────
+
+interface LoadMoreSentinelProps {
+  isLoading: boolean;
+  hasMore: boolean;
+  lang: 'zh' | 'en';
+  sentinelRef: React.RefObject<HTMLDivElement | null>;
+}
+
+function LoadMoreSentinel({ isLoading, hasMore, lang, sentinelRef }: LoadMoreSentinelProps) {
+  if (!hasMore && !isLoading) {
+    return (
+      <div className="pr-end-marker">
+        {lang === 'zh' ? '— 已顯示全部 —' : '— End of results —'}
+      </div>
+    );
+  }
+  return (
+    <div ref={sentinelRef} className="pr-load-more-sentinel">
+      {isLoading && (
+        <div className="pr-load-more-spinner">
+          <SpinnerIcon size={16} />
+          <span>{lang === 'zh' ? '載入更多...' : 'Loading more…'}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function PressReleasePage() {
   const { lang } = useLanguage();
 
-  // Company filter state
+  // ── Data state ──
+  const [loadedItems, setLoadedItems] = useState<PressRelease[]>([]);
+  const [total, setTotal] = useState(0);
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+
+  // ── UI state ──
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // ── Company filter state ──
   const [selectedCodes, setSelectedCodes] = useState<string[]>([]);
-  const [apiItems, setApiItems] = useState<PressRelease[] | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState<string[]>([]);
 
-  // Displayed items: API results when available, otherwise all local data
-  const displayedItems = apiItems ?? pressReleases;
-
+  // ── Archive group state ──
   const groups = useMemo(
-    () => getPressReleaseArchiveGroups(displayedItems, lang),
-    [displayedItems, lang],
+    () => getPressReleaseArchiveGroups(loadedItems, lang),
+    [loadedItems, lang],
   );
-
-  // Expand ALL groups by default
   const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
 
-  // When groups change, expand all
+  // Expand all new groups when groups change
   useEffect(() => {
     setExpandedKeys(new Set(groups.map((g) => g.key)));
   }, [groups]);
 
   const allExpanded = groups.length > 0 && expandedKeys.size >= groups.length;
 
+  // ── Fetch logic ──
+  const abortRef = useRef<AbortController | null>(null);
+
+  const fetchPage = useCallback(async (nextOffset: number, tickers: string[], isFirstPage: boolean) => {
+    abortRef.current?.abort();
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
+
+    if (isFirstPage) {
+      setIsInitialLoading(true);
+      setError(null);
+    } else {
+      setIsLoadingMore(true);
+    }
+
+    try {
+      const page = await getPressReleases(nextOffset, PAGE_SIZE, tickers, ctrl.signal);
+
+      if (ctrl.signal.aborted) return;
+
+      setLoadedItems((prev) => isFirstPage ? page.items : [...prev, ...page.items]);
+      setTotal(page.total);
+      setOffset(nextOffset + page.items.length);
+      setHasMore(page.hasMore);
+    } catch (err) {
+      if (ctrl.signal.aborted) return;
+      const msg = err instanceof Error ? err.message : String(err);
+      setError(lang === 'zh' ? `載入失敗：${msg}` : `Failed to load: ${msg}`);
+    } finally {
+      if (!ctrl.signal.aborted) {
+        setIsInitialLoading(false);
+        setIsLoadingMore(false);
+      }
+    }
+  }, [lang]);
+
+  // ── Initial load and filter change ──
+  useEffect(() => {
+    fetchPage(0, activeFilter, true);
+    return () => { abortRef.current?.abort(); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeFilter]);
+
+  // ── Infinite scroll sentinel ──
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isLoadingMore && !isInitialLoading && !error) {
+          fetchPage(offset, activeFilter, false);
+        }
+      },
+      { rootMargin: '200px' },
+    );
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [hasMore, isLoadingMore, isInitialLoading, error, offset, activeFilter, fetchPage]);
+
+  // ── Handlers ──
   function handleToggleGroup(key: string) {
     setExpandedKeys((prev) => {
       const next = new Set(prev);
@@ -403,46 +546,31 @@ export default function PressReleasePage() {
     }
   }
 
-  const handleSearch = useCallback(async (codes: string[]) => {
-    if (codes.length === 0) {
-      setApiItems(null);
-      setApiError(null);
-      return;
-    }
-    setIsLoading(true);
-    setApiError(null);
-    try {
-      const res = await fetch('/getPressReleaseByCoCd', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ co_cd: codes }),
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data: PressRelease[] = await res.json();
-      setApiItems(data);
-    } catch (err) {
-      setApiError(lang === 'zh' ? '搜尋失敗，顯示本地資料' : 'Search failed — showing local data');
-      setApiItems(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [lang]);
+  function handleSearch(codes: string[]) {
+    setActiveFilter(codes);
+    setLoadedItems([]);
+    setOffset(0);
+    setHasMore(true);
+  }
 
   function handleSelectionChange(codes: string[]) {
     setSelectedCodes(codes);
-    // Clear API results when selection changes so user must click Search
     if (codes.length === 0) {
-      setApiItems(null);
-      setApiError(null);
+      handleSearch([]);
     }
   }
 
+  function handleRetry() {
+    fetchPage(offset, activeFilter, offset === 0);
+  }
+
+  // ── Labels ──
   const labels = {
-    eyebrow:     { zh: 'Press Release', en: 'Press Release' },
-    total:       { zh: `共 ${displayedItems.length} 篇`, en: `${displayedItems.length} articles` },
-    expandAll:   { zh: '展開全部', en: 'Expand All' },
-    collapseAll: { zh: '收合全部', en: 'Collapse All' },
-    apiResult:   { zh: 'API 搜尋結果', en: 'API search results' },
+    eyebrow:      { zh: 'Press Release', en: 'Press Release' },
+    loaded:       { zh: `已載入 ${loadedItems.length} / ${total} 篇`, en: `Showing ${loadedItems.length} of ${total}` },
+    expandAll:    { zh: '展開全部', en: 'Expand All' },
+    collapseAll:  { zh: '收合全部', en: 'Collapse All' },
+    filterResult: { zh: '篩選結果', en: 'Filtered results' },
   };
 
   return (
@@ -459,56 +587,76 @@ export default function PressReleasePage() {
                 selectedCodes={selectedCodes}
                 onSelectionChange={handleSelectionChange}
                 onSearch={handleSearch}
-                isLoading={isLoading}
+                isLoading={isInitialLoading}
                 lang={lang}
               />
 
-              {/* API error notice */}
-              {apiError && (
-                <div className="pr-archive-api-error">{apiError}</div>
-              )}
-
-              {/* API result badge */}
-              {apiItems !== null && (
+              {/* Active filter badge */}
+              {activeFilter.length > 0 && (
                 <div className="pr-archive-api-badge">
                   <SearchIcon />
-                  {labels.apiResult[lang]} · {apiItems.length} {lang === 'en' ? 'results' : '筆'}
-                  <button className="pr-archive-api-badge-clear" onClick={() => { setApiItems(null); setSelectedCodes([]); }}>
+                  {labels.filterResult[lang]} · {activeFilter.join(', ')} · {total} {lang === 'en' ? 'results' : '筆'}
+                  <button
+                    className="pr-archive-api-badge-clear"
+                    onClick={() => { setSelectedCodes([]); handleSearch([]); }}
+                    aria-label="Clear filter"
+                  >
                     <CloseIcon />
                   </button>
                 </div>
               )}
 
-              {/* Page header */}
-              <div className="pr-archive-header">
-                <div className="pr-archive-header-left">
-                  <span className="section-eyebrow">{labels.eyebrow[lang]}</span>
-                  <span className="pr-archive-total">{labels.total[lang]}</span>
-                </div>
-                <div className="pr-archive-header-right">
-                  <button
-                    className="pr-archive-expand-btn"
-                    onClick={handleToggleAll}
-                    title={allExpanded ? labels.collapseAll[lang] : labels.expandAll[lang]}
-                  >
-                    {allExpanded ? <CollapseAllIcon /> : <ExpandAllIcon />}
-                    <span>{allExpanded ? labels.collapseAll[lang] : labels.expandAll[lang]}</span>
-                  </button>
-                </div>
-              </div>
+              {/* Initial loading */}
+              {isInitialLoading && <LoadingSkeleton />}
 
-              {/* Archive groups */}
-              <div className="pr-archive-groups">
-                {groups.map((group) => (
-                  <ArchiveGroup
-                    key={group.key}
-                    group={group}
-                    isExpanded={expandedKeys.has(group.key)}
-                    onToggle={() => handleToggleGroup(group.key)}
+              {/* Error state */}
+              {!isInitialLoading && error && (
+                <ErrorBanner message={error} onRetry={handleRetry} lang={lang} />
+              )}
+
+              {/* Content */}
+              {!isInitialLoading && !error && (
+                <>
+                  {/* Page header */}
+                  <div className="pr-archive-header">
+                    <div className="pr-archive-header-left">
+                      <span className="section-eyebrow">{labels.eyebrow[lang]}</span>
+                      <span className="pr-archive-total">{labels.loaded[lang]}</span>
+                    </div>
+                    <div className="pr-archive-header-right">
+                      <button
+                        className="pr-archive-expand-btn"
+                        onClick={handleToggleAll}
+                        title={allExpanded ? labels.collapseAll[lang] : labels.expandAll[lang]}
+                      >
+                        {allExpanded ? <CollapseAllIcon /> : <ExpandAllIcon />}
+                        <span>{allExpanded ? labels.collapseAll[lang] : labels.expandAll[lang]}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Archive groups */}
+                  <div className="pr-archive-groups">
+                    {groups.map((group) => (
+                      <ArchiveGroup
+                        key={group.key}
+                        group={group}
+                        isExpanded={expandedKeys.has(group.key)}
+                        onToggle={() => handleToggleGroup(group.key)}
+                        lang={lang}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Infinite scroll sentinel + load-more indicator */}
+                  <LoadMoreSentinel
+                    isLoading={isLoadingMore}
+                    hasMore={hasMore}
                     lang={lang}
+                    sentinelRef={sentinelRef}
                   />
-                ))}
-              </div>
+                </>
+              )}
             </div>
           </div>
         </main>
