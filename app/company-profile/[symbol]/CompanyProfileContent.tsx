@@ -834,10 +834,13 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
       }
 
       if (nodes.length === 0) continue;
-      const total = nodes.reduce((sum, n) => sum + n.value, 0);
+      // Exclude items with negative values from ratio calculation
+      const positiveNodes = nodes.filter((n) => n.value > 0);
+      if (positiveNodes.length === 0) continue;
+      const total = positiveNodes.reduce((sum, n) => sum + n.value, 0);
       if (total === 0) continue;
 
-      const items = nodes
+      const items = positiveNodes
         .map((n) => ({ name: n.name, pct: Math.round((n.value / total) * 1000) / 10 }))
         .sort((a, b) => b.pct - a.pct);
 
