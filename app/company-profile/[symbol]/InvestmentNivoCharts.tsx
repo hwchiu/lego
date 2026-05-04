@@ -3,6 +3,7 @@
 import { ResponsiveBar } from '@nivo/bar';
 import { ResponsiveLine } from '@nivo/line';
 import { useTheme } from '@/app/contexts/ThemeContext';
+import { formatUsdM } from '@/app/lib/formatters';
 
 // ── Shared types ──────────────────────────────────────────────────────────────
 
@@ -219,11 +220,7 @@ export function InvestmentBarLineChartNivo({ deals, selectedYear, onYearClick }:
               </div>
               {d.disclosedValueM > 0 && (
                 <div>
-                  Value: $
-                  {d.disclosedValueM >= 1000
-                    ? `${(d.disclosedValueM / 1000).toFixed(1)}B`
-                    : d.disclosedValueM.toLocaleString()}
-                  M
+                  Value: {formatUsdM(d.disclosedValueM)}
                 </div>
               )}
             </div>
@@ -520,11 +517,7 @@ export function AcquisitionBarLineChartNivo({ deals, selectedYear, onYearClick }
               <div>Undisclosed: {d.undisclosedCount} deal{d.undisclosedCount !== 1 ? 's' : ''}</div>
               {d.disclosedValueM > 0 && (
                 <div>
-                  Value: $
-                  {d.disclosedValueM >= 1000
-                    ? `${(d.disclosedValueM / 1000).toFixed(1)}B`
-                    : d.disclosedValueM.toLocaleString()}
-                  M
+                  Value: {formatUsdM(d.disclosedValueM)}
                 </div>
               )}
             </div>
@@ -590,9 +583,7 @@ function buildFundingYearData(deals: FundingDealMinimal[]) {
 
 /** Format a value in millions with $ prefix for chart labels */
 function formatChartLabel(valueM: number): string {
-  if (valueM >= 1000) return `$${(valueM / 1000).toFixed(1)}B`;
-  if (valueM >= 1) return `$${Math.round(valueM).toLocaleString()}M`;
-  return `$${valueM.toFixed(2)}M`;
+  return formatUsdM(valueM);
 }
 
 export function FundingLineChartNivo({ deals, selectedYear, onYearClick }: FundingLineChartProps) {
@@ -698,10 +689,7 @@ export function FundingLineChartNivo({ deals, selectedYear, onYearClick }: Fundi
         axisLeft={{
           tickValues: 5,
           tickSize: 0,
-          format: (v) =>
-            Number(v) >= 1000
-              ? `$${(Number(v) / 1000).toFixed(0)}B`
-              : `$${Math.round(Number(v))}M`,
+          format: (v) => formatUsdM(Number(v), 0),
           legend: 'USD $M',
           legendPosition: 'middle',
           legendOffset: -68,
@@ -720,9 +708,7 @@ export function FundingLineChartNivo({ deals, selectedYear, onYearClick }: Fundi
           >
             <strong>{point.data.xFormatted}</strong>
             <div>
-              {Number(point.data.y) >= 1000
-                ? `$${(Number(point.data.y) / 1000).toFixed(1)}B`
-                : `$${Number(point.data.y).toLocaleString()}M`}
+              {formatUsdM(Number(point.data.y))}
             </div>
           </div>
         )}
@@ -873,7 +859,7 @@ export function FinancialIndicesNivoChart({ data, activeMetric }: FinIndicesChar
           const label = seriesLabel[String(id)] ?? cfg.label;
           const formattedValue = cfg.isPercent
             ? `${Number(value).toFixed(1)}%`
-            : `$${Number(value).toLocaleString()}M`;
+            : formatUsdM(Number(value));
           return (
             <div
               style={{
@@ -1078,9 +1064,7 @@ export function DoiRevenueNivoChart({ data }: DoiRevNivoChartProps) {
               {qtrEntry && (
                 <div>
                   Revenue:{' '}
-                  {qtrEntry.revenue >= 1000
-                    ? `$${(qtrEntry.revenue / 1000).toFixed(1)}B`
-                    : `$${qtrEntry.revenue.toLocaleString()}M`}
+                  {formatUsdM(qtrEntry.revenue)}
                 </div>
               )}
             </div>

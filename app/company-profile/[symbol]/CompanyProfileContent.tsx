@@ -33,6 +33,7 @@ import { getFundingByCoCd, type FundingRecord } from '@/app/lib/getFundingByCoCd
 import type { StatementData } from '@/app/data/financialData';
 import tvConfigMd from '@/content/tradingview.md';
 import finSummaryConfig from '@/app/data/fin-summary-config.json';
+import { formatNumber, formatSignedPct, formatPct } from '@/app/lib/formatters';
 
 const FinancialIndicesNivoChart = dynamic(
   () => import('./InvestmentNivoCharts').then((m) => m.FinancialIndicesNivoChart),
@@ -1262,21 +1263,21 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                     <div className="cp-fin-metrics">
                       <div className="cp-fin-metric">
                         <div className="cp-fin-metric-label">Revenue ({cq.revenueUnit})</div>
-                        <div className="cp-fin-metric-value">{cq.revenue.toLocaleString()}</div>
-                        <div className="cp-fin-metric-note">Last Quarter: {cq.lastQuarterRevenue.toLocaleString()}</div>
+                        <div className="cp-fin-metric-value">{formatNumber(cq.revenue)}</div>
+                        <div className="cp-fin-metric-note">Last Quarter: {formatNumber(cq.lastQuarterRevenue)}</div>
                       </div>
                       <div className="cp-fin-metric-sep" />
                       <div className="cp-fin-metric">
                         <div className="cp-fin-metric-label">Revenue QoQ</div>
                         <div className={`cp-fin-metric-value ${cq.revenueQoQ >= 0 ? 'pos' : 'neg'}`}>
-                          {cq.revenueQoQ >= 0 ? '+' : ''}{cq.revenueQoQ}%
+                          {formatSignedPct(cq.revenueQoQ, 1)}
                         </div>
                       </div>
                       <div className="cp-fin-metric-sep" />
                       <div className="cp-fin-metric">
                         <div className="cp-fin-metric-label">Gross Margin</div>
                         <div className="cp-fin-metric-value">
-                          {cq.grossMargin}%
+                          {formatPct(cq.grossMargin)}
                         </div>
                         <div className="cp-fin-metric-note">Last Quarter: {cq.lastQuarterGrossMarginNote}</div>
                       </div>
@@ -1298,8 +1299,8 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                           <div className="cp-fin-metric-label">Revenue Midpoint Guidance</div>
                           <div className="cp-fin-metric-value">
                             {derivedNextQtr.revenueMidpointGuidance != null
-                              ? derivedNextQtr.revenueMidpointGuidance.toLocaleString()
-                              : finData.nextQtr.revenueMidpointGuidance.toLocaleString()}
+                              ? formatNumber(derivedNextQtr.revenueMidpointGuidance)
+                              : formatNumber(finData.nextQtr.revenueMidpointGuidance)}
                           </div>
                         </div>
                         <div className="cp-fin-metric-sep" />
@@ -1311,7 +1312,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                               : finData.nextQtr.revenueQoQ;
                             return (
                               <div className={`cp-fin-metric-value ${qoq >= 0 ? 'pos' : 'neg'}`}>
-                                {qoq >= 0 ? '+' : ''}{qoq}%
+                                {formatSignedPct(qoq, 1)}
                               </div>
                             );
                           })()}
@@ -1347,7 +1348,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                                     <div key={item.name} className="cp-breakdown-item">
                                       <div className="cp-breakdown-row">
                                         <span className="cp-breakdown-name">{item.name}</span>
-                                        <span className="cp-breakdown-pct">{item.pct}%</span>
+                                        <span className="cp-breakdown-pct">{formatPct(item.pct)}</span>
                                       </div>
                                       <div className="cp-breakdown-bar-wrap">
                                         <div className="cp-breakdown-bar" style={{ width: `${Math.min(100, item.pct)}%` }} />

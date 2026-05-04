@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { EpsRow, RevenueRow, BeatMiss } from '@/app/data/earnings';
-import { monthShortToFull } from '@/app/lib/calendarUtils';
+import { formatDateLabelFull } from '@/app/lib/formatters';
 
 /**
  * Matches optional sign characters in money strings:
@@ -200,14 +200,7 @@ export default function DetailTable({
   const [activeTab, setActiveTab] = useState<'eps' | 'revenue'>('eps');
 
   // Format the date label for display, e.g. "Apr 5" → "05 April"
-  const displayDate = selectedDateLabel
-    ? (() => {
-        const parts = selectedDateLabel.split(' ');
-        const day = parts[1]?.padStart(2, '0') ?? '';
-        const month = monthShortToFull(parts[0]);
-        return `${day} ${month}`;
-      })()
-    : '—';
+  const displayDate = formatDateLabelFull(selectedDateLabel);
 
   const count = companyCount ?? epsData.length;
 

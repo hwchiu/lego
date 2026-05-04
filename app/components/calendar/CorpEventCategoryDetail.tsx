@@ -1,15 +1,7 @@
 'use client';
 
 import type { EventCalendarDetailItem } from '@/app/lib/eventCalendarApi';
-import { monthShortToFull } from '@/app/lib/calendarUtils';
-
-function formatDateLabel(dateLabel: string | undefined): string {
-  if (!dateLabel) return '—';
-  const parts = dateLabel.split(' ');
-  const day = parts[1]?.padStart(2, '0') ?? '';
-  const month = monthShortToFull(parts[0]);
-  return `${day} ${month}`;
-}
+import { formatDateLabelFull, formatEventDatetime } from '@/app/lib/formatters';
 
 function ExternalLinkIcon() {
   return (
@@ -17,22 +9,6 @@ function ExternalLinkIcon() {
       <path d="M7 1h3v3M10 1L5.5 5.5M4 2H2a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
-}
-
-function formatEventDatetime(eventDatetime: string): string {
-  if (!eventDatetime) return '—';
-  // API returns UTC timestamps like "2026-04-07 00:00:00.0".
-  // Append 'Z' (after stripping trailing ".0") so Date parses it as UTC,
-  // then render using local-time getters to apply the browser's timezone.
-  const utcString = eventDatetime.replace(' ', 'T').replace(/\.0$/, '') + 'Z';
-  const date = new Date(utcString);
-  if (isNaN(date.getTime())) return eventDatetime;
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
 
 interface CorpEventCategoryDetailProps {
@@ -46,7 +22,7 @@ export default function CorpEventCategoryDetail({
   events,
   selectedDateLabel,
 }: CorpEventCategoryDetailProps) {
-  const displayDate = formatDateLabel(selectedDateLabel);
+  const displayDate = formatDateLabelFull(selectedDateLabel);
   const count = events.length;
 
   // Sort by EVENT_DATETIME descending (furthest future first)

@@ -30,6 +30,7 @@ import type {
   CountryEvent,
   CurrencyEvent,
 } from '@/app/data/eventCategories';
+import { formatPrice, formatSigned, formatSignedPct, formatNumber } from '@/app/lib/formatters';
 
 // ── Custom View types ─────────────────────────────────────────────────────────
 interface CustomView {
@@ -55,9 +56,9 @@ const CATALOG_COL_STUBS: Record<string, ColDef> = Object.fromEntries(
 
 const ALL_COLUMNS: Record<string, ColDef> = {
   ...CATALOG_COL_STUBS,
-  price:             { label: 'Price',              getValue: h => h.price.toFixed(2) },
-  change:            { label: 'Change',             getValue: h => `${h.change >= 0 ? '+' : ''}${h.change.toFixed(2)}`, getClass: h => h.change >= 0 ? 'pos' : 'neg' },
-  changePct:         { label: 'Change %',           getValue: h => `${h.changePct >= 0 ? '+' : ''}${h.changePct.toFixed(2)}%`, getClass: h => h.changePct >= 0 ? 'pos' : 'neg' },
+  price:             { label: 'Price',              getValue: h => formatPrice(h.price) },
+  change:            { label: 'Change',             getValue: h => formatSigned(h.change), getClass: h => h.change >= 0 ? 'pos' : 'neg' },
+  changePct:         { label: 'Change %',           getValue: h => formatSignedPct(h.changePct), getClass: h => h.changePct >= 0 ? 'pos' : 'neg' },
   volume:            { label: 'Volume',             getValue: () => '-' },
   avgVolume:         { label: 'Avg Volume (30D)',   getValue: () => '-' },
   '52wHigh':         { label: '52W High',           getValue: () => '-' },
@@ -76,8 +77,8 @@ const ALL_COLUMNS: Record<string, ColDef> = {
   evEbitda:          { label: 'EV/EBITDA',          getValue: () => '-' },
   dividendYield:     { label: 'Dividend Yield',     getValue: () => '-' },
   revCagr3y:         { label: 'Revenue CAGR (3Y)',  getValue: () => '-' },
-  todayGain:         { label: "Today's Gain",       getValue: h => `${h.todayGain >= 0 ? '+' : ''}${h.todayGain.toFixed(2)}`, getClass: h => h.todayGain >= 0 ? 'pos' : 'neg' },
-  todayGainPct:      { label: "Today's % Gain",     getValue: h => `${h.todayGainPct >= 0 ? '+' : ''}${h.todayGainPct.toFixed(2)}%`, getClass: h => h.todayGainPct >= 0 ? 'pos' : 'neg' },
+  todayGain:         { label: "Today's Gain",       getValue: h => formatSigned(h.todayGain), getClass: h => h.todayGain >= 0 ? 'pos' : 'neg' },
+  todayGainPct:      { label: "Today's % Gain",     getValue: h => formatSignedPct(h.todayGainPct), getClass: h => h.todayGainPct >= 0 ? 'pos' : 'neg' },
   return1m:          { label: '1M Return',          getValue: () => '-' },
   return3m:          { label: '3M Return',          getValue: () => '-' },
   return1y:          { label: '1Y Return',          getValue: () => '-' },
@@ -92,11 +93,11 @@ const ALL_COLUMNS: Record<string, ColDef> = {
   roic:              { label: 'ROIC',               getValue: () => '-' },
   lastQtrGrossMargin:{ label: 'Last Qtr Gross Margin', getValue: h => h.lastQtrGrossMargin },
   shares:            { label: 'Shares',             getValue: h => h.shares },
-  cost:              { label: 'Cost',               getValue: h => h.cost.toFixed(2) },
+  cost:              { label: 'Cost',               getValue: h => formatPrice(h.cost) },
   revenue:           { label: 'Revenue',            getValue: h => h.revenue },
-  marketValue:       { label: 'Market Value',       getValue: h => (h.price * h.shares).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
-  unrealizedPL:      { label: 'Unrealized P&L',     getValue: h => { const v = (h.price - h.cost) * h.shares; return `${v >= 0 ? '+' : ''}${v.toFixed(2)}`; }, getClass: h => (h.price - h.cost) >= 0 ? 'pos' : 'neg' },
-  unrealizedPct:     { label: 'Unrealized %',       getValue: h => { const pct = ((h.price - h.cost) / h.cost) * 100; return `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%`; }, getClass: h => h.price >= h.cost ? 'pos' : 'neg' },
+  marketValue:       { label: 'Market Value',       getValue: h => formatNumber(h.price * h.shares, 2) },
+  unrealizedPL:      { label: 'Unrealized P&L',     getValue: h => { const v = (h.price - h.cost) * h.shares; return formatSigned(v); }, getClass: h => (h.price - h.cost) >= 0 ? 'pos' : 'neg' },
+  unrealizedPct:     { label: 'Unrealized %',       getValue: h => { const pct = ((h.price - h.cost) / h.cost) * 100; return formatSignedPct(pct); }, getClass: h => h.price >= h.cost ? 'pos' : 'neg' },
   debtEquity:        { label: 'Debt/Equity',        getValue: () => '-' },
   currentRatio:      { label: 'Current Ratio',      getValue: () => '-' },
   netDebt:           { label: 'Net Debt',           getValue: () => '-' },

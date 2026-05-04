@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { getInvestmentByCoCd, InvestmentDeal, InvestmentResult } from '@/app/lib/getInvestmentByCoCd';
+import { formatUsdM } from '@/app/lib/formatters';
 
 const InvestmentBarLineChartNivo = dynamic(
   () => import('./InvestmentNivoCharts').then((m) => m.InvestmentBarLineChartNivo),
@@ -160,9 +161,7 @@ function CompanyInvestmentPanel({ deals, companyName }: { deals: InvestmentDeal[
                   <td><span className="aapl-ma-type-badge aapl-ma-type-acq">{deal.round}</span></td>
                   <td className="text-right aapl-ma-td-value">
                     {deal.valueM != null ? (
-                      deal.valueM >= 1000
-                        ? `$${(deal.valueM / 1000).toFixed(2)}B`
-                        : `$${deal.valueM.toLocaleString()}M`
+                      formatUsdM(deal.valueM, 2)
                     ) : (
                       <span className="aapl-ma-undisclosed">Undisclosed</span>
                     )}
