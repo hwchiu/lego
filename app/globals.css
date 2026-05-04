@@ -25747,6 +25747,7 @@ html.dark .pr-archive-api-badge-clear:hover {
   background: var(--c-white);
   border: 1px solid var(--c-border);
   border-radius: var(--radius);
+  margin-bottom: 20px; 
 }
 
 .wl-content-area--split .wl-table-loading {
