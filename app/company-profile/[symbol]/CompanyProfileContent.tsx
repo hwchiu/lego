@@ -33,6 +33,7 @@ import { getFundingByCoCd, type FundingRecord } from '@/app/lib/getFundingByCoCd
 import type { StatementData } from '@/app/data/financialData';
 import tvConfigMd from '@/content/tradingview.md';
 import finSummaryConfig from '@/app/data/fin-summary-config.json';
+import UnfavoriteAlert from '@/app/components/shared/UnfavoriteAlert';
 
 const FinancialIndicesNivoChart = dynamic(
   () => import('./InvestmentNivoCharts').then((m) => m.FinancialIndicesNivoChart),
@@ -592,6 +593,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   });
   const [activeFinIndex, setActiveFinIndex] = useState<string>('Revenue');
   const [isFavorite, setIsFavorite] = useState(false);
+  const [unfavAlertVisible, setUnfavAlertVisible] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   const [newsPage, setNewsPage] = useState(1);
   const stockContainerRef = useRef<HTMLDivElement>(null);
@@ -901,6 +903,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
 
   async function toggleFavorite() {
     try {
+      const wasAlreadyFavorite = isFavorite;
       if (isFavorite) {
         await removeCompanyFromFavorite(symbol);
       } else {
@@ -908,6 +911,9 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
       }
       const res = await getAllCoFavoriteList(USER_ACCT);
       setIsFavorite(res.co_cd.includes(symbol));
+      if (wasAlreadyFavorite) {
+        setUnfavAlertVisible(true);
+      }
     } catch {
       // ignore
     }
@@ -1106,6 +1112,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     <>
       <TopNav />
       <Banner />
+      <UnfavoriteAlert visible={unfavAlertVisible} onClose={() => setUnfavAlertVisible(false)} />
       <div className="app-body">
         <Sidebar />
         <main className="main-content">
