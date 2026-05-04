@@ -16995,12 +16995,12 @@ html.dark .seg-item-l3.fin-stmt-td-item {
   position: absolute;
   top: calc(100% + 10px);
   right: 0;
-  width: 380px;
+  width: 360px;
   max-height: 520px;
   background: var(--c-white);
   border: 1px solid var(--c-border);
   border-radius: var(--radius-lg);
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.13);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14);
   z-index: 300;
   display: flex;
   flex-direction: column;
@@ -17010,7 +17010,7 @@ html.dark .seg-item-l3.fin-stmt-td-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 13px 16px 10px;
+  padding: 14px 18px 12px;
   border-bottom: 1px solid var(--c-border);
   flex-shrink: 0;
 }
@@ -17095,10 +17095,28 @@ html.dark .seg-item-l3.fin-stmt-td-item {
   scrollbar-width: thin;
 }
 .topnav-notif-empty {
-  padding: 36px 16px;
+  padding: 40px 20px 36px;
   text-align: center;
   color: var(--c-text-4);
   font-size: 12.5px;
+}
+.topnav-notif-empty-icon {
+  display: block;
+  margin: 0 auto 14px;
+  opacity: 0.32;
+}
+.topnav-notif-empty-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-text-2);
+  margin-bottom: 6px;
+}
+.topnav-notif-empty-desc {
+  font-size: 12px;
+  color: var(--c-text-3);
+  line-height: 1.55;
+  max-width: 220px;
+  margin: 0 auto;
 }
 /* Notification item */
 .topnav-notif-item {
@@ -17260,7 +17278,7 @@ html.dark .seg-item-l3.fin-stmt-td-item {
 .topnav-notif-settings-list {
   display: flex;
   flex-direction: column;
-  padding: 8px 0;
+  padding: 6px 0 10px;
   flex: 1;
 }
 
@@ -17269,10 +17287,10 @@ html.dark .seg-item-l3.fin-stmt-td-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 13px 16px;
+  padding: 12px 18px;
   border-bottom: 1px solid var(--c-border);
-  gap: 12px;
-  min-height: 56px;
+  gap: 16px;
+  min-height: 52px;
 }
 .topnav-notif-settings-item:last-child {
   border-bottom: none;
@@ -17288,6 +17306,13 @@ html.dark .seg-item-l3.fin-stmt-td-item {
   gap: 3px;
   flex: 1;
   min-width: 0;
+}
+/* Inline variant: label + badge on same row */
+.topnav-notif-settings-item-left--inline {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
 }
 
 .topnav-notif-settings-label {

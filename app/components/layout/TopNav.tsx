@@ -755,14 +755,15 @@ export default function TopNav() {
                     aria-label={lang === 'zh' ? '通知設定' : 'Notification Settings'}
                     title={lang === 'zh' ? '通知設定' : 'Settings'}
                   >
-                    {/* Gear / Settings icon */}
-                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-                      <circle cx="7.5" cy="7.5" r="2" stroke="currentColor" strokeWidth="1.3" />
+                    {/* Settings icon (cog with gear teeth) */}
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                       <path
-                        d="M7.5 1.5v1M7.5 12.5v1M1.5 7.5h1M12.5 7.5h1M3.4 3.4l.7.7M10.9 10.9l.7.7M10.9 3.4l-.7.7M3.4 10.9l.7-.7"
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
                         stroke="currentColor"
-                        strokeWidth="1.3"
+                        strokeWidth="1.8"
                         strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
                     </svg>
                   </button>
@@ -774,7 +775,7 @@ export default function TopNav() {
                 <div className="topnav-notif-settings-list">
                   {/* Notification toggle — Coming Soon (disabled) */}
                   <div className="topnav-notif-settings-item topnav-notif-settings-item--disabled">
-                    <div className="topnav-notif-settings-item-left">
+                    <div className="topnav-notif-settings-item-left topnav-notif-settings-item-left--inline">
                       <span className="topnav-notif-settings-label">
                         {lang === 'zh' ? '通知' : 'Notification'}
                       </span>
@@ -833,15 +834,15 @@ export default function TopNav() {
               ) : (
                 /* Coming soon placeholder */
                 <div className="topnav-notif-list">
-                  <div className="topnav-notif-empty" style={{ padding: '24px 16px', textAlign: 'center' }}>
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true" style={{ margin: '0 auto 10px', display: 'block', opacity: 0.35 }}>
+                  <div className="topnav-notif-empty">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true" className="topnav-notif-empty-icon">
                       <path d="M16 4a9 9 0 0 1 9 9v5.6l2.2 3.4H4.8L7 18.6V13A9 9 0 0 1 16 4Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
                       <path d="M12.4 26a3.6 3.6 0 0 0 7.2 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
                     </svg>
-                    <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: 4 }}>
+                    <div className="topnav-notif-empty-title">
                       {lang === 'zh' ? '即將上線' : 'Coming Soon'}
                     </div>
-                    <div style={{ fontSize: '11.5px', color: 'var(--c-text-3)' }}>
+                    <div className="topnav-notif-empty-desc">
                       {lang === 'zh'
                         ? '通知功能尚未上線，敬請期待。'
                         : 'The notifications feature is not yet available. Stay tuned!'}
