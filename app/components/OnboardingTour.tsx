@@ -2,10 +2,21 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-// ── Cookie helpers ────────────────────────────────────────────────────────────
+// ── Constants ─────────────────────────────────────────────────────────────────
 
 const COOKIE_NAME = 'mic-onboarding-v1';
 const COOKIE_EXPIRY_DAYS = 365;
+const MS_PER_DAY = 864e5;
+const TOUR_INITIAL_DELAY_MS = 700;
+const ANIMATION_DURATION_MS = 400;
+const SPOTLIGHT_PADDING = 8;
+const CALLOUT_WIDTH = 360;
+const CALLOUT_MARGIN = 18;
+const VIEWPORT_EDGE_MARGIN = 12;
+const CALLOUT_VERTICAL_OFFSET = 30;
+const CALLOUT_MAX_HEIGHT = 380;
+
+// ── Cookie helpers ────────────────────────────────────────────────────────────
 
 function getCookie(name: string): string | null {
   if (typeof document === 'undefined') return null;
@@ -14,7 +25,7 @@ function getCookie(name: string): string | null {
 }
 
 function setCookie(name: string, value: string, days: number) {
-  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  const expires = new Date(Date.now() + days * MS_PER_DAY).toUTCString();
   document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
 }
 
@@ -234,7 +245,7 @@ export default function OnboardingTour() {
       const t = setTimeout(() => {
         setEntering(true);
         setVisible(true);
-      }, 700);
+      }, TOUR_INITIAL_DELAY_MS);
       return () => clearTimeout(t);
     }
   }, []);
@@ -242,7 +253,7 @@ export default function OnboardingTour() {
   // Remove entering class after animation
   useEffect(() => {
     if (!entering) return;
-    const t = setTimeout(() => setEntering(false), 400);
+    const t = setTimeout(() => setEntering(false), ANIMATION_DURATION_MS);
     return () => clearTimeout(t);
   }, [entering, step]);
 
@@ -265,39 +276,41 @@ export default function OnboardingTour() {
     }
 
     const rect = el.getBoundingClientRect();
-    const pad = 8;
 
     setSpotlightRect({
-      top: rect.top - pad,
-      left: rect.left - pad,
-      width: rect.width + pad * 2,
-      height: rect.height + pad * 2,
+      top: rect.top - SPOTLIGHT_PADDING,
+      left: rect.left - SPOTLIGHT_PADDING,
+      width: rect.width + SPOTLIGHT_PADDING * 2,
+      height: rect.height + SPOTLIGHT_PADDING * 2,
     });
-
-    const CALLOUT_W = 360;
-    const CALLOUT_MARGIN = 18;
 
     if (currentStep.calloutSide === 'bottom') {
       // Position callout below the target, left-aligned to target
-      const left = Math.max(12, Math.min(rect.left - pad, window.innerWidth - CALLOUT_W - 12));
+      const left = Math.max(
+        VIEWPORT_EDGE_MARGIN,
+        Math.min(rect.left - SPOTLIGHT_PADDING, window.innerWidth - CALLOUT_WIDTH - VIEWPORT_EDGE_MARGIN),
+      );
       setCalloutPos({
-        top: rect.bottom + pad + CALLOUT_MARGIN,
+        top: rect.bottom + SPOTLIGHT_PADDING + CALLOUT_MARGIN,
         left,
-        width: CALLOUT_W,
+        width: CALLOUT_WIDTH,
       });
       setArrowClass('tour-callout--arrow-top');
     } else if (currentStep.calloutSide === 'left') {
       // Position callout to the left of the target
-      const right = window.innerWidth - rect.left + pad + CALLOUT_MARGIN;
-      const top = Math.max(12, Math.min(rect.top - 30, window.innerHeight - 380));
+      const right = window.innerWidth - rect.left + SPOTLIGHT_PADDING + CALLOUT_MARGIN;
+      const top = Math.max(
+        VIEWPORT_EDGE_MARGIN,
+        Math.min(rect.top - CALLOUT_VERTICAL_OFFSET, window.innerHeight - CALLOUT_MAX_HEIGHT),
+      );
       setCalloutPos({
         top,
         right,
-        width: CALLOUT_W,
+        width: CALLOUT_WIDTH,
       });
       setArrowClass('tour-callout--arrow-right');
     } else {
-      setCalloutPos({ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: CALLOUT_W });
+      setCalloutPos({ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: CALLOUT_WIDTH });
       setArrowClass('');
     }
   }, [currentStep]);
