@@ -362,10 +362,23 @@ export default function TopNav() {
 
   // Notification panel state
   const [notifOpen, setNotifOpen] = useState(false);
+  const [notifSettingsView, setNotifSettingsView] = useState(false);
+  const [notifSettings, setNotifSettings] = useState({
+    notification: true,
+    email: true,
+    eventBooking: true,
+  });
   const notifRef = useRef<HTMLDivElement>(null);
 
   const handleNotifToggle = useCallback(() => {
-    setNotifOpen((prev) => !prev);
+    setNotifOpen((prev) => {
+      if (prev) setNotifSettingsView(false);
+      return !prev;
+    });
+  }, []);
+
+  const handleNotifSettingToggle = useCallback((key: keyof typeof notifSettings) => {
+    setNotifSettings((prev) => ({ ...prev, [key]: !prev[key] }));
   }, []);
 
   const q = query.trim().toLowerCase();
@@ -719,26 +732,116 @@ export default function TopNav() {
             <div className="topnav-notif-panel">
               {/* Panel header */}
               <div className="topnav-notif-panel-header">
-                <span className="topnav-notif-panel-title">{lang === 'zh' ? '通知' : 'Notifications'}</span>
+                {notifSettingsView ? (
+                  <button
+                    className="topnav-notif-settings-back"
+                    onClick={() => setNotifSettingsView(false)}
+                    aria-label={lang === 'zh' ? '返回通知' : 'Back to notifications'}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                      <path d="M9 2L4 7L9 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                ) : null}
+                <span className="topnav-notif-panel-title">
+                  {notifSettingsView
+                    ? (lang === 'zh' ? '通知設定' : 'Notification Settings')
+                    : (lang === 'zh' ? '通知' : 'Notifications')}
+                </span>
+                {!notifSettingsView && (
+                  <button
+                    className="topnav-notif-settings-btn"
+                    onClick={() => setNotifSettingsView(true)}
+                    aria-label={lang === 'zh' ? '通知設定' : 'Notification Settings'}
+                    title={lang === 'zh' ? '通知設定' : 'Settings'}
+                  >
+                    {/* Gear / Settings icon */}
+                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+                      <circle cx="7.5" cy="7.5" r="2" stroke="currentColor" strokeWidth="1.3" />
+                      <path
+                        d="M7.5 1.5v1M7.5 12.5v1M1.5 7.5h1M12.5 7.5h1M3.4 3.4l.7.7M10.9 10.9l.7.7M10.9 3.4l-.7.7M3.4 10.9l.7-.7"
+                        stroke="currentColor"
+                        strokeWidth="1.3"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </button>
+                )}
               </div>
 
-              {/* Coming soon placeholder */}
-              <div className="topnav-notif-list">
-                <div className="topnav-notif-empty" style={{ padding: '24px 16px', textAlign: 'center' }}>
-                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true" style={{ margin: '0 auto 10px', display: 'block', opacity: 0.35 }}>
-                    <path d="M16 4a9 9 0 0 1 9 9v5.6l2.2 3.4H4.8L7 18.6V13A9 9 0 0 1 16 4Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
-                    <path d="M12.4 26a3.6 3.6 0 0 0 7.2 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-                  </svg>
-                  <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: 4 }}>
-                    {lang === 'zh' ? '即將上線' : 'Coming Soon'}
+              {notifSettingsView ? (
+                /* Settings view */
+                <div className="topnav-notif-settings-list">
+                  {/* Notification toggle — Coming Soon (disabled) */}
+                  <div className="topnav-notif-settings-item topnav-notif-settings-item--disabled">
+                    <div className="topnav-notif-settings-item-left">
+                      <span className="topnav-notif-settings-label">
+                        {lang === 'zh' ? '通知' : 'Notification'}
+                      </span>
+                      <span className="topnav-notif-settings-coming-soon">
+                        {lang === 'zh' ? '即將上線' : 'Coming Soon'}
+                      </span>
+                    </div>
+                    <div className="topnav-notif-toggle topnav-notif-toggle--disabled" aria-disabled="true">
+                      <div className="topnav-notif-toggle-thumb" />
+                    </div>
                   </div>
-                  <div style={{ fontSize: '11.5px', color: 'var(--c-text-3)' }}>
-                    {lang === 'zh'
-                      ? '通知功能尚未上線，敬請期待。'
-                      : 'The notifications feature is not yet available. Stay tuned!'}
+
+                  {/* Email toggle */}
+                  <div className="topnav-notif-settings-item">
+                    <div className="topnav-notif-settings-item-left">
+                      <span className="topnav-notif-settings-label">
+                        {lang === 'zh' ? 'Email' : 'Email'}
+                      </span>
+                    </div>
+                    <button
+                      className={`topnav-notif-toggle${notifSettings.email ? ' topnav-notif-toggle--on' : ''}`}
+                      onClick={() => handleNotifSettingToggle('email')}
+                      role="switch"
+                      aria-checked={notifSettings.email}
+                      aria-label={lang === 'zh' ? '電子郵件通知' : 'Email notifications'}
+                    >
+                      <div className="topnav-notif-toggle-thumb" />
+                    </button>
+                  </div>
+
+                  {/* Event Booking in Outlook toggle */}
+                  <div className="topnav-notif-settings-item">
+                    <div className="topnav-notif-settings-item-left">
+                      <span className="topnav-notif-settings-label">
+                        {lang === 'zh' ? '在 Outlook 中建立活動' : 'Event Booking in Outlook'}
+                      </span>
+                    </div>
+                    <button
+                      className={`topnav-notif-toggle${notifSettings.eventBooking ? ' topnav-notif-toggle--on' : ''}`}
+                      onClick={() => handleNotifSettingToggle('eventBooking')}
+                      role="switch"
+                      aria-checked={notifSettings.eventBooking}
+                      aria-label={lang === 'zh' ? '在 Outlook 中建立活動' : 'Event Booking in Outlook'}
+                    >
+                      <div className="topnav-notif-toggle-thumb" />
+                    </button>
                   </div>
                 </div>
-              </div>
+              ) : (
+                /* Coming soon placeholder */
+                <div className="topnav-notif-list">
+                  <div className="topnav-notif-empty" style={{ padding: '24px 16px', textAlign: 'center' }}>
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true" style={{ margin: '0 auto 10px', display: 'block', opacity: 0.35 }}>
+                      <path d="M16 4a9 9 0 0 1 9 9v5.6l2.2 3.4H4.8L7 18.6V13A9 9 0 0 1 16 4Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+                      <path d="M12.4 26a3.6 3.6 0 0 0 7.2 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                    </svg>
+                    <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: 4 }}>
+                      {lang === 'zh' ? '即將上線' : 'Coming Soon'}
+                    </div>
+                    <div style={{ fontSize: '11.5px', color: 'var(--c-text-3)' }}>
+                      {lang === 'zh'
+                        ? '通知功能尚未上線，敬請期待。'
+                        : 'The notifications feature is not yet available. Stay tuned!'}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
