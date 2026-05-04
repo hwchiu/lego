@@ -841,7 +841,7 @@ interface FinancialStatementTabProps {
 export default function FinancialStatementTab({ symbol, companyStatements: propStatements, segmentRecords: propSegmentRecords }: FinancialStatementTabProps) {
   const [statementType, setStatementType] = useState<StatementType>('income');
   const [viewMode, setViewMode] = useState<ViewMode>('quarterly');
-  const [currency, setCurrency] = useState<Currency>('original');
+  const [currency, setCurrency] = useState<Currency>('usd');
   const [availableStatements, setAvailableStatements] = useState<CompanyStatements>({});
   const [loading, setLoading] = useState<boolean>(true);
 

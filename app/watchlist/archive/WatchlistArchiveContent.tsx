@@ -30,7 +30,7 @@ import type {
   CountryEvent,
   CurrencyEvent,
 } from '@/app/data/eventCategories';
-import { formatPrice, formatSigned, formatSignedPct, formatNumber } from '@/app/lib/formatters';
+import { formatPrice, formatSigned, formatSignedPct, formatNumber, inferColorClass, inferColorArgb } from '@/app/lib/formatters';
 
 // ── Custom View types ─────────────────────────────────────────────────────────
 interface CustomView {
@@ -66,8 +66,8 @@ const ALL_COLUMNS: Record<string, ColDef> = {
   beta:              { label: 'Beta',               getValue: () => '-' },
   marketCap:         { label: 'Market Cap',         getValue: () => '-' },
   nextEarning:       { label: 'Next Earning Release', getValue: h => h.nextEarning },
-  revenueQoQ:        { label: 'Revenue QoQ',        getValue: h => h.revenueQoQ, getClass: h => (h.revenueQoQ !== 'N/A' && h.revenueQoQ.startsWith('+')) ? 'pos' : (h.revenueQoQ !== 'N/A' ? 'neg' : '') },
-  revenueYoY:        { label: 'Revenue YoY',        getValue: h => h.revenueYoY, getClass: h => (h.revenueYoY !== 'N/A' && h.revenueYoY.startsWith('+')) ? 'pos' : (h.revenueYoY !== 'N/A' ? 'neg' : '') },
+  revenueQoQ:        { label: 'Revenue QoQ',        getValue: h => h.revenueQoQ, getClass: h => inferColorClass(h.revenueQoQ) },
+  revenueYoY:        { label: 'Revenue YoY',        getValue: h => h.revenueYoY, getClass: h => inferColorClass(h.revenueYoY) },
   lastQtrRevenue:    { label: 'Last Qtr Revenue',   getValue: h => h.lastQtrRevenue },
   epsGrowthYoY:      { label: 'EPS Growth YoY',     getValue: () => '-' },
   peRatio:           { label: 'P/E Ratio',          getValue: () => '-' },
@@ -261,13 +261,10 @@ const HEADERS = [
   'Last Qtr Revenue', 'Last Qtr Gross Margin', 'Last Qtr DOI',
 ];
 
-// Determine the text color ARGB for a cell value based on how the table renders it.
+// Determine the text color ARGB for a cell value based on its content/type.
+// No column-name hard-coding: color is inferred from the actual value.
 function getCellColor(h: Holding, col: string): string | null {
-  if (col === 'Change' || col === 'Change %') return h.change >= 0 ? 'FF16A34A' : 'FFDC2626';
-  if (col === "Today's Gain" || col === "Today's % Gain") return h.todayGain >= 0 ? 'FF16A34A' : 'FFDC2626';
-  if (col === 'Revenue QoQ') return h.revenueQoQ.startsWith('+') ? 'FF16A34A' : 'FFDC2626';
-  if (col === 'Revenue YoY') return h.revenueYoY.startsWith('+') ? 'FF16A34A' : 'FFDC2626';
-  return null;
+  return inferColorArgb(getCellValue(h, col));
 }
 
 function getCellValue(h: Holding, col: string): string | number {

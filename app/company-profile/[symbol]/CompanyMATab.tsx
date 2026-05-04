@@ -84,7 +84,7 @@ function AAPLBarChart({ deals }: { deals: AAPLDeal[] }) {
           <g key={t}>
             <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y} stroke="#f0f0f0" strokeWidth="1" />
             <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize="9" fill="#9ca3af">
-              {val >= 1000 ? formatUsdM(val, 1) : val > 0 ? `$${Math.round(val)}M` : '$0'}
+              {val >= 1000 ? formatUsdM(val, 1) : val > 0 ? formatUsdM(val) : '$0'}
             </text>
           </g>
         ))}
