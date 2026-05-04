@@ -364,7 +364,7 @@ export default function TopNav() {
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifSettingsView, setNotifSettingsView] = useState(false);
   const [notifSettings, setNotifSettings] = useState({
-    notification: true,
+    notification: false,
     email: true,
     eventBooking: true,
   });
@@ -782,9 +782,16 @@ export default function TopNav() {
                         {lang === 'zh' ? '即將上線' : 'Coming Soon'}
                       </span>
                     </div>
-                    <div className="topnav-notif-toggle topnav-notif-toggle--disabled" aria-disabled="true">
+                    <button
+                      className="topnav-notif-toggle topnav-notif-toggle--disabled"
+                      disabled
+                      aria-disabled="true"
+                      role="switch"
+                      aria-checked={false}
+                      aria-label={lang === 'zh' ? '通知（即將上線）' : 'Notification (Coming Soon)'}
+                    >
                       <div className="topnav-notif-toggle-thumb" />
-                    </div>
+                    </button>
                   </div>
 
                   {/* Email toggle */}

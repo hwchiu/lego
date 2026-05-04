@@ -165,9 +165,12 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
   const toolsMenuRef = useRef<HTMLDivElement>(null);
 
   const handleUnfavorite = useCallback((sym: string) => {
-    setUnfavAlertVisible(true);
+    // Only show the alert when actually removing from favorites (sym is in the favorites array)
+    if (favorites.includes(sym)) {
+      setUnfavAlertVisible(true);
+    }
     onToggleFavorite(sym);
-  }, [onToggleFavorite]);
+  }, [favorites, onToggleFavorite]);
 
   // Latest 6 news items sorted by time descending
   const latestNews = useMemo(
