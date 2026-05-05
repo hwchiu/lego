@@ -34,6 +34,7 @@ import type { StatementData } from '@/app/data/financialData';
 import tvConfigMd from '@/content/tradingview.md';
 import finSummaryConfig from '@/app/data/fin-summary-config.json';
 import { formatNumber, formatSignedPct, formatPct } from '@/app/lib/formatters';
+import UnfavoriteAlert from '@/app/components/shared/UnfavoriteAlert';
 
 const FinancialIndicesNivoChart = dynamic(
   () => import('./InvestmentNivoCharts').then((m) => m.FinancialIndicesNivoChart),
@@ -593,6 +594,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   });
   const [activeFinIndex, setActiveFinIndex] = useState<string>('Revenue');
   const [isFavorite, setIsFavorite] = useState(false);
+  const [unfavAlertVisible, setUnfavAlertVisible] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   const [newsPage, setNewsPage] = useState(1);
   const stockContainerRef = useRef<HTMLDivElement>(null);
@@ -835,10 +837,13 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
       }
 
       if (nodes.length === 0) continue;
-      const total = nodes.reduce((sum, n) => sum + n.value, 0);
+      // Exclude items with negative values from ratio calculation
+      const positiveNodes = nodes.filter((n) => n.value > 0);
+      if (positiveNodes.length === 0) continue;
+      const total = positiveNodes.reduce((sum, n) => sum + n.value, 0);
       if (total === 0) continue;
 
-      const items = nodes
+      const items = positiveNodes
         .map((n) => ({ name: n.name, pct: Math.round((n.value / total) * 1000) / 10 }))
         .sort((a, b) => b.pct - a.pct);
 
@@ -902,6 +907,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
 
   async function toggleFavorite() {
     try {
+      const wasAlreadyFavorite = isFavorite;
       if (isFavorite) {
         await removeCompanyFromFavorite(symbol);
       } else {
@@ -909,6 +915,9 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
       }
       const res = await getAllCoFavoriteList(USER_ACCT);
       setIsFavorite(res.co_cd.includes(symbol));
+      if (wasAlreadyFavorite) {
+        setUnfavAlertVisible(true);
+      }
     } catch {
       // ignore
     }
@@ -1107,6 +1116,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     <>
       <TopNav />
       <Banner />
+      <UnfavoriteAlert visible={unfavAlertVisible} onClose={() => setUnfavAlertVisible(false)} />
       <div className="app-body">
         <Sidebar />
         <main className="main-content">

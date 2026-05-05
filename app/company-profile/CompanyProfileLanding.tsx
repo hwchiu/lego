@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
@@ -9,6 +9,7 @@ import Sidebar from '@/app/components/layout/Sidebar';
 import { COMPANY_MASTER_LIST, getCompanyByCode } from '@/app/data/companyMaster';
 import { newsItems } from '@/app/data/news';
 import NewsCard from '@/app/components/news/NewsCard';
+import UnfavoriteAlert from '@/app/components/shared/UnfavoriteAlert';
 
 // ── Feature flags — set to true to re-enable features in the next phase ──────
 const FEATURE_ADD_FILE = false;
@@ -158,9 +159,18 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
   const [query, setQuery] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [showTools, setShowTools] = useState(false);
+  const [unfavAlertVisible, setUnfavAlertVisible] = useState(false);
   const inputWrapRef = useRef<HTMLDivElement>(null);
   const toolsBtnRef = useRef<HTMLButtonElement>(null);
   const toolsMenuRef = useRef<HTMLDivElement>(null);
+
+  const handleUnfavorite = useCallback((sym: string) => {
+    // Only show the alert when actually removing from favorites (sym is in the favorites array)
+    if (favorites.includes(sym)) {
+      setUnfavAlertVisible(true);
+    }
+    onToggleFavorite(sym);
+  }, [favorites, onToggleFavorite]);
 
   // Latest 6 news items sorted by time descending
   const latestNews = useMemo(
@@ -231,6 +241,7 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
     <>
       <TopNav />
       <Banner />
+      <UnfavoriteAlert visible={unfavAlertVisible} onClose={() => setUnfavAlertVisible(false)} />
       <div className="app-body">
         <Sidebar />
         <main className="main-content">
@@ -391,7 +402,7 @@ export default function CompanyProfileLanding({ favorites, onToggleFavorite }: C
                         </Link>
                         <button
                           className="cp-favorites-tag-remove"
-                          onClick={(e) => { e.preventDefault(); onToggleFavorite(sym); }}
+                          onClick={(e) => { e.preventDefault(); handleUnfavorite(sym); }}
                           aria-label={`Remove ${sym} from favorites`}
                           title="Remove from favorites"
                         >
