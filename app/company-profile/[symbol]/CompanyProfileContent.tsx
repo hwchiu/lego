@@ -218,6 +218,14 @@ function mapSummaryToNewsItem(record: NewsSummaryRecord, index: number): NewsIte
   };
 }
 
+/** Returns today's date as 'YYYY-MM-DD' in the browser's local timezone. */
+function todayStr(): string {
+  const d = new Date();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
+
 /** Adds (or subtracts) `months` to a 'YYYY-MM-DD' string, returns 'YYYY-MM-DD'.
  *  Clamps day to the last day of the target month to avoid overflow. */
 function addMonths(dateStr: string, months: number): string {
@@ -1571,7 +1579,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                             placeholder="End date"
                             error={newsPeriodEndError}
                             minDate={newsPeriodStart || undefined}
-                            maxDate={newsPeriodStart ? addMonths(newsPeriodStart, 3) : undefined}
+                            maxDate={newsPeriodStart ? (addMonths(newsPeriodStart, 3) < todayStr() ? addMonths(newsPeriodStart, 3) : todayStr()) : todayStr()}
                           />
                         </div>
                       </div>
