@@ -215,30 +215,28 @@ export function formatIsoDate(dateStr: string | undefined): string {
  * without hard-coding column names.
  *
  * Rules (applied in order):
- * - `number > 0`          → `"pos"` (green)
+ * - `number > 0`          → `""` (neutral)
  * - `number < 0`          → `"neg"` (red)
  * - `number === 0`         → `""` (neutral)
- * - `string` starts `"+"` → `"pos"`
+ * - `string` starts `"+"` → `""` (neutral)
  * - `string` starts `"-"` → `"neg"`
  * - everything else        → `""` (neutral)
  *
  * @param value  A numeric or string cell value
- * @returns `"pos"` | `"neg"` | `""`
+ * @returns `"neg"` | `""`
  *
  * @example
- * inferColorClass(1.5)     // "pos"
+ * inferColorClass(1.5)     // ""
  * inferColorClass(-0.3)    // "neg"
- * inferColorClass("+1.2%") // "pos"
+ * inferColorClass("+1.2%") // ""
  * inferColorClass("-0.5%") // "neg"
  * inferColorClass("N/A")   // ""
  */
 export function inferColorClass(value: string | number): 'pos' | 'neg' | '' {
   if (typeof value === 'number') {
-    if (value > 0) return 'pos';
     if (value < 0) return 'neg';
     return '';
   }
-  if (value.startsWith('+')) return 'pos';
   if (value.startsWith('-')) return 'neg';
   return '';
 }

@@ -57,8 +57,8 @@ const CATALOG_COL_STUBS: Record<string, ColDef> = Object.fromEntries(
 const ALL_COLUMNS: Record<string, ColDef> = {
   ...CATALOG_COL_STUBS,
   price:             { label: 'Price',              getValue: h => formatPrice(h.price) },
-  change:            { label: 'Change',             getValue: h => formatSigned(h.change), getClass: h => h.change >= 0 ? 'pos' : 'neg' },
-  changePct:         { label: 'Change %',           getValue: h => formatSignedPct(h.changePct), getClass: h => h.changePct >= 0 ? 'pos' : 'neg' },
+  change:            { label: 'Change',             getValue: h => formatSigned(h.change), getClass: h => h.change < 0 ? 'neg' : '' },
+  changePct:         { label: 'Change %',           getValue: h => formatSignedPct(h.changePct), getClass: h => h.changePct < 0 ? 'neg' : '' },
   volume:            { label: 'Volume',             getValue: () => '-' },
   avgVolume:         { label: 'Avg Volume (30D)',   getValue: () => '-' },
   '52wHigh':         { label: '52W High',           getValue: () => '-' },
@@ -77,8 +77,8 @@ const ALL_COLUMNS: Record<string, ColDef> = {
   evEbitda:          { label: 'EV/EBITDA',          getValue: () => '-' },
   dividendYield:     { label: 'Dividend Yield',     getValue: () => '-' },
   revCagr3y:         { label: 'Revenue CAGR (3Y)',  getValue: () => '-' },
-  todayGain:         { label: "Today's Gain",       getValue: h => formatSigned(h.todayGain), getClass: h => h.todayGain >= 0 ? 'pos' : 'neg' },
-  todayGainPct:      { label: "Today's % Gain",     getValue: h => formatSignedPct(h.todayGainPct), getClass: h => h.todayGainPct >= 0 ? 'pos' : 'neg' },
+  todayGain:         { label: "Today's Gain",       getValue: h => formatSigned(h.todayGain), getClass: h => h.todayGain < 0 ? 'neg' : '' },
+  todayGainPct:      { label: "Today's % Gain",     getValue: h => formatSignedPct(h.todayGainPct), getClass: h => h.todayGainPct < 0 ? 'neg' : '' },
   return1m:          { label: '1M Return',          getValue: () => '-' },
   return3m:          { label: '3M Return',          getValue: () => '-' },
   return1y:          { label: '1Y Return',          getValue: () => '-' },
@@ -96,8 +96,8 @@ const ALL_COLUMNS: Record<string, ColDef> = {
   cost:              { label: 'Cost',               getValue: h => formatPrice(h.cost) },
   revenue:           { label: 'Revenue',            getValue: h => h.revenue },
   marketValue:       { label: 'Market Value',       getValue: h => formatNumber(h.price * h.shares, 2) },
-  unrealizedPL:      { label: 'Unrealized P&L',     getValue: h => { const v = (h.price - h.cost) * h.shares; return formatSigned(v); }, getClass: h => (h.price - h.cost) >= 0 ? 'pos' : 'neg' },
-  unrealizedPct:     { label: 'Unrealized %',       getValue: h => { const pct = ((h.price - h.cost) / h.cost) * 100; return formatSignedPct(pct); }, getClass: h => h.price >= h.cost ? 'pos' : 'neg' },
+  unrealizedPL:      { label: 'Unrealized P&L',     getValue: h => { const v = (h.price - h.cost) * h.shares; return formatSigned(v); }, getClass: h => (h.price - h.cost) < 0 ? 'neg' : '' },
+  unrealizedPct:     { label: 'Unrealized %',       getValue: h => { const pct = ((h.price - h.cost) / h.cost) * 100; return formatSignedPct(pct); }, getClass: h => h.price < h.cost ? 'neg' : '' },
   debtEquity:        { label: 'Debt/Equity',        getValue: () => '-' },
   currentRatio:      { label: 'Current Ratio',      getValue: () => '-' },
   netDebt:           { label: 'Net Debt',           getValue: () => '-' },
@@ -1377,7 +1377,7 @@ export default function WatchlistArchiveContent() {
                       <div className="wl-index-card" key={idx.name}>
                         <div className="wl-index-name">{idx.name}</div>
                         <div className="wl-index-value">{idx.value.toLocaleString()}</div>
-                        <div className={`wl-index-change ${pos ? 'pos' : 'neg'}`}>
+                        <div className={`wl-index-change ${pos ? '' : 'neg'}`}>
                           {pos ? '+' : ''}
                           {idx.change.toFixed(2)}&nbsp;
                           <span>
@@ -1628,21 +1628,21 @@ export default function WatchlistArchiveContent() {
                           <Link href={`/company-profile/${h.symbol}/`} className="wl-symbol-link" target="_blank" rel="noopener noreferrer">{h.symbol}</Link>
                         </td>
                         <td className="wl-td">{h.price.toFixed(2)}</td>
-                        <td className={`wl-td ${h.change >= 0 ? 'pos' : 'neg'}`}>
+                        <td className={`wl-td ${h.change < 0 ? 'neg' : ''}`}>
                           {h.change >= 0 ? '+' : ''}
                           {h.change.toFixed(2)}
                         </td>
-                        <td className={`wl-td ${h.changePct >= 0 ? 'pos' : 'neg'}`}>
+                        <td className={`wl-td ${h.changePct < 0 ? 'neg' : ''}`}>
                           {h.changePct >= 0 ? '+' : ''}
                           {h.changePct.toFixed(2)}%
                         </td>
                         <td className="wl-td">{h.shares}</td>
                         <td className="wl-td">{h.cost.toFixed(2)}</td>
-                        <td className={`wl-td ${h.todayGain >= 0 ? 'pos' : 'neg'}`}>
+                        <td className={`wl-td ${h.todayGain < 0 ? 'neg' : ''}`}>
                           {h.todayGain >= 0 ? '+' : ''}
                           {h.todayGain.toFixed(2)}
                         </td>
-                        <td className={`wl-td ${h.todayGainPct >= 0 ? 'pos' : 'neg'}`}>
+                        <td className={`wl-td ${h.todayGainPct < 0 ? 'neg' : ''}`}>
                           {h.todayGainPct >= 0 ? '+' : ''}
                           {h.todayGainPct.toFixed(2)}%
                         </td>
@@ -1650,10 +1650,10 @@ export default function WatchlistArchiveContent() {
                           <Sparkline1Y symbol={h.symbol} />
                         </td>
                         <td className="wl-td">{h.revenue}</td>
-                        <td className={`wl-td ${h.revenueQoQ.startsWith('+') ? 'pos' : 'neg'}`}>
+                        <td className={`wl-td ${h.revenueQoQ.startsWith('-') ? 'neg' : ''}`}>
                           {h.revenueQoQ}
                         </td>
-                        <td className={`wl-td ${h.revenueYoY.startsWith('+') ? 'pos' : 'neg'}`}>
+                        <td className={`wl-td ${h.revenueYoY.startsWith('-') ? 'neg' : ''}`}>
                           {h.revenueYoY}
                         </td>
                         <td className="wl-td">{h.grossMargin}</td>
@@ -1817,7 +1817,7 @@ export default function WatchlistArchiveContent() {
                   </div>
                   <div className="wl-holdings-kpi">
                     <span className="wl-holdings-kpi-label">Unrealized P&amp;L</span>
-                    <span className={`wl-holdings-kpi-value ${totalUnrealizedGain >= 0 ? 'pos' : 'neg'}`}>
+                    <span className={`wl-holdings-kpi-value ${totalUnrealizedGain < 0 ? 'neg' : ''}`}>
                       {totalUnrealizedGain >= 0 ? '+' : ''}
                       {totalUnrealizedGain.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       <span className="wl-holdings-kpi-pct">
@@ -1828,7 +1828,7 @@ export default function WatchlistArchiveContent() {
                   </div>
                   <div className="wl-holdings-kpi">
                     <span className="wl-holdings-kpi-label">Today&apos;s P&amp;L</span>
-                    <span className={`wl-holdings-kpi-value ${totalGain >= 0 ? 'pos' : 'neg'}`}>
+                    <span className={`wl-holdings-kpi-value ${totalGain < 0 ? 'neg' : ''}`}>
                       {totalGain >= 0 ? '+' : ''}
                       {totalGain.toFixed(2)}
                       <span className="wl-holdings-kpi-pct">
@@ -1883,11 +1883,11 @@ export default function WatchlistArchiveContent() {
                             <td className="wl-td">{h.shares.toLocaleString()}</td>
                             <td className="wl-td">{h.cost.toFixed(2)}</td>
                             <td className="wl-td">{h.price.toFixed(2)}</td>
-                            <td className={`wl-td ${h.change >= 0 ? 'pos' : 'neg'}`}>
+                            <td className={`wl-td ${h.change < 0 ? 'neg' : ''}`}>
                               {h.change >= 0 ? '+' : ''}
                               {h.change.toFixed(2)}
                             </td>
-                            <td className={`wl-td ${h.changePct >= 0 ? 'pos' : 'neg'}`}>
+                            <td className={`wl-td ${h.changePct < 0 ? 'neg' : ''}`}>
                               {h.changePct >= 0 ? '+' : ''}
                               {h.changePct.toFixed(2)}%
                             </td>
@@ -1897,19 +1897,19 @@ export default function WatchlistArchiveContent() {
                             <td className="wl-td">
                               {costBasis.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </td>
-                            <td className={`wl-td ${unrealizedGain >= 0 ? 'pos' : 'neg'}`}>
+                            <td className={`wl-td ${unrealizedGain < 0 ? 'neg' : ''}`}>
                               {unrealizedGain >= 0 ? '+' : ''}
                               {unrealizedGain.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </td>
-                            <td className={`wl-td ${unrealizedPct >= 0 ? 'pos' : 'neg'}`}>
+                            <td className={`wl-td ${unrealizedPct < 0 ? 'neg' : ''}`}>
                               {unrealizedPct >= 0 ? '+' : ''}
                               {unrealizedPct.toFixed(2)}%
                             </td>
-                            <td className={`wl-td ${h.todayGain >= 0 ? 'pos' : 'neg'}`}>
+                            <td className={`wl-td ${h.todayGain < 0 ? 'neg' : ''}`}>
                               {h.todayGain >= 0 ? '+' : ''}
                               {h.todayGain.toFixed(2)}
                             </td>
-                            <td className={`wl-td ${h.todayGainPct >= 0 ? 'pos' : 'neg'}`}>
+                            <td className={`wl-td ${h.todayGainPct < 0 ? 'neg' : ''}`}>
                               {h.todayGainPct >= 0 ? '+' : ''}
                               {h.todayGainPct.toFixed(2)}%
                             </td>
