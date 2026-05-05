@@ -1107,6 +1107,9 @@ function ManageViewModal({
 // ── Main page ─────────────────────────────────────────────────────────────────
 type FeedTab = 'Latest' | 'News' | 'Press Release' | 'Event';
 
+/** Number of days used as the look-back window for news and look-ahead window for events in the Latest tab. */
+const LATEST_TAB_DAYS_WINDOW = 3;
+
 // ── Unified Updates feed item ─────────────────────────────────────────────────
 interface UpdateFeedItem {
   id: string;
@@ -1850,16 +1853,17 @@ export function WatchlistContent({
 
   const latestUpdateItems = useMemo((): UpdateFeedItem[] => {
     const nowMs = Date.now();
-    const threeDaysMs = 3 * 24 * 60 * 60 * 1000;
+    const windowMs = LATEST_TAB_DAYS_WINDOW * 24 * 60 * 60 * 1000;
 
-    // News: only items published within the last 3 days (past 3 days up to now)
+    // News: only items published within the last LATEST_TAB_DAYS_WINDOW days
     const recentNews = newsUpdateItems.filter(
-      (item) => item.dateMs >= nowMs - threeDaysMs && item.dateMs <= nowMs,
+      (item) => item.dateMs >= nowMs - windowMs && item.dateMs <= nowMs,
     );
 
-    // Events: only items occurring from now through the next 3 days
+    // Events: only items occurring from now through the next LATEST_TAB_DAYS_WINDOW days.
+    // Press Release items are excluded here — they are shown in their own dedicated "Coming Soon" tab.
     const upcomingEvents = eventUpdateItems.filter(
-      (item) => item.dateMs >= nowMs && item.dateMs <= nowMs + threeDaysMs,
+      (item) => item.dateMs >= nowMs && item.dateMs <= nowMs + windowMs,
     );
 
     return [...recentNews, ...upcomingEvents].sort((a, b) => b.dateMs - a.dateMs);
