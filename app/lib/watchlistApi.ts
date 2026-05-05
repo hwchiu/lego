@@ -16,6 +16,7 @@ import { watchlistColumnCatalog } from '@/app/data/watchlistColumns';
 import type { WatchlistColumnCatalog } from '@/app/data/watchlistColumns';
 import { holdingsData as holdingsDataMap, holdingsDataQ4_2025 } from '@/app/data/watchlistData';
 import type { HoldingEntity } from '@/app/data/watchlistData';
+import { EVENT_CATEGORIES_LIST } from '@/app/data/corpEvents';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -1079,16 +1080,86 @@ export interface UpdateSubscribeInfoPayload {
 }
 
 /**
- * Update the user's event subscription preferences for Favorites companies.
+ * Input payload for /querySubInfoByWatchlistId.
+ * Identifies which watchlist's subscription state to fetch.
+ */
+export interface QuerySubInfoByWatchlistIdPayload {
+  watchlistId: number;
+}
+
+/**
+ * A single event type item returned by /getSubItem.
+ */
+export interface SubEventItem {
+  event_id: number;
+  event_type: string;
+}
+
+/**
+ * Response format for /getSubItem.
+ * Contains available event subscription types (view types reserved for future use).
+ */
+export interface GetSubItemResponse {
+  event: SubEventItem[];
+  view: unknown[]; // Reserved for future View subscription expansion
+}
+
+/** localStorage key prefix for per-watchlist subscription data */
+const WL_SUBSCRIBE_PREFIX = 'wl-subscribe-';
+
+/**
+ * Query existing subscription info for a watchlist.
+ * Returns the list of companies and their subscribed event IDs.
+ * Stub — reads from localStorage keyed by watchlistId.
+ * Real integration: POST /querySubInfoByWatchlistId  { watchlistId }
+ */
+export async function querySubInfoByWatchlistId(
+  payload: QuerySubInfoByWatchlistIdPayload,
+): Promise<UpdateSubscribeInfoPayload> {
+  console.log('[API stub] querySubInfoByWatchlistId', payload);
+  if (typeof window === 'undefined') return { subscribe: [] };
+  try {
+    const perWatchlistKey = `${WL_SUBSCRIBE_PREFIX}${payload.watchlistId}`;
+    const stored = localStorage.getItem(perWatchlistKey);
+    if (stored) return JSON.parse(stored) as UpdateSubscribeInfoPayload;
+    // Backward-compat: fall back to legacy global key
+    const legacy = localStorage.getItem('wl-favorites-subscribe');
+    if (legacy) return JSON.parse(legacy) as UpdateSubscribeInfoPayload;
+  } catch {
+    // silent
+  }
+  return { subscribe: [] };
+}
+
+/**
+ * Get the available subscription event types.
+ * Returns event type IDs and names to be rendered in the Subscribe modal.
+ * Stub — returns event categories derived from EVENT_CATEGORIES_LIST.
+ * Real integration: GET /getSubItem
+ */
+export async function getSubItem(): Promise<GetSubItemResponse> {
+  console.log('[API stub] getSubItem');
+  return {
+    event: EVENT_CATEGORIES_LIST.map((e) => ({ event_id: e.id, event_type: e.name })),
+    view: [], // View subscription not yet implemented
+  };
+}
+
+/**
+ * Update the user's event subscription preferences for a watchlist.
  * Payload: { subscribe: [{ co_cd, event: number[] }] }
- * Stub — persists to localStorage and logs to console.
- * Real integration: POST /updateSubscribeInfo
+ * Stub — persists to localStorage keyed by watchlistId.
+ * Real integration: POST /updateSubscribeInfo  { watchlistId, subscribe: [...] }
  */
 export async function updateSubscribeInfo(
+  watchlistId: number,
   payload: UpdateSubscribeInfoPayload,
 ): Promise<{ success: boolean }> {
-  console.log('[API stub] updateSubscribeInfo', payload);
+  console.log('[API stub] updateSubscribeInfo', { watchlistId, ...payload });
   if (typeof window !== 'undefined') {
+    const key = `${WL_SUBSCRIBE_PREFIX}${watchlistId}`;
+    localStorage.setItem(key, JSON.stringify(payload));
+    // Also update legacy key for backward compatibility
     localStorage.setItem('wl-favorites-subscribe', JSON.stringify(payload));
   }
   return { success: true };

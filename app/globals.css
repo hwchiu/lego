@@ -26684,6 +26684,9 @@ html.dark .pr-archive-api-badge-clear:hover {
 
 /* Save button */
 .wl-sub-save-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   padding: 7px 24px;
   border: none;
   border-radius: var(--radius);
@@ -26706,6 +26709,15 @@ html.dark .pr-archive-api-badge-clear:hover {
 
 .wl-sub-save-btn--success {
   background: var(--c-pos);
+}
+
+/* Spinner animation for Subscribe button loading state */
+@keyframes wl-spin {
+  to { transform: rotate(360deg); }
+}
+
+.wl-action-btn-spinner {
+  animation: wl-spin 0.7s linear infinite;
 }
 
 /* RWD — tablet / mobile */
