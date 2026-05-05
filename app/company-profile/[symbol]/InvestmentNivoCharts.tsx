@@ -300,7 +300,7 @@ export function MABarChartSmallNivo({
           tickValues: 3,
           tickSize: 0,
           format: (v) =>
-            `$${Math.round((Number(v) / sharedMax) * valueMax)}B`,
+            `$${Math.round((Number(v) / sharedMax) * valueMax)}`,
         }}
         theme={{
           grid: { line: { stroke: '#f0f0f0', strokeWidth: 1 } },

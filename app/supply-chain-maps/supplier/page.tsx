@@ -6,6 +6,7 @@ import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import SupplierGraph from './SupplierGraph';
+import { formatUsdM } from '@/app/lib/formatters';
 import { TC_TIER1_SUPPLIERS, TC_TIER2_SUPPLIERS, EDGE_ENTITIES } from '@/app/data/tcSupplierData';
 
 function BackArrowIcon() {
@@ -42,8 +43,7 @@ const tier1TotalRevenue = EDGE_ENTITIES.filter((e) => e.from === 'TC').reduce(
 );
 
 function formatRevenue(millionUsd: number): string {
-  if (millionUsd >= 1000) return `$${(millionUsd / 1000).toFixed(1)}B`;
-  return `$${millionUsd}M`;
+  return formatUsdM(millionUsd);
 }
 
 export default function SupplierPage() {
