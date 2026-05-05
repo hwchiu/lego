@@ -7,6 +7,7 @@ import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import CustomerGraph from '@/app/supply-chain-maps/customer/CustomerGraph';
 import { TC_CUSTOMERS, INDUSTRY_TRANSACTION_SUMMARY } from '@/app/data/tcCustomerData';
+import { formatUsdM } from '@/app/lib/formatters';
 
 function BackArrowIcon() {
   return (
@@ -34,8 +35,7 @@ const CUSTOMER_TABS = ['Network Graph', 'Table View', 'Analytics', 'Risk Heatmap
 type CustomerTab = (typeof CUSTOMER_TABS)[number];
 
 function formatAmount(millionUsd: number): string {
-  if (millionUsd >= 1000) return `$${(millionUsd / 1000).toFixed(1)}B`;
-  return `$${millionUsd}M`;
+  return formatUsdM(millionUsd);
 }
 
 const TOP_INDUSTRIES = [...INDUSTRY_TRANSACTION_SUMMARY]

@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { getFundingByCoCd, FundingRecord } from '@/app/lib/getFundingByCoCd';
+import { formatUsdM, formatIsoDate } from '@/app/lib/formatters';
 
 const FundingLineChartNivo = dynamic(
   () => import('./InvestmentNivoCharts').then((m) => m.FundingLineChartNivo),
@@ -10,13 +11,6 @@ const FundingLineChartNivo = dynamic(
 );
 
 // ── Types ─────────────────────────────────────────────────────────────────────
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-/** Extract YYYY-MM-DD from publ_dt string like "2022-02-16 00:00:00.0" */
-function formatDate(publDt: string): string {
-  return publDt.slice(0, 10);
-}
 
 // ── Funding Panel (used for any company with funding data) ───────────────────
 
@@ -27,13 +21,6 @@ function ExternalLinkIcon() {
       <path d="M8 1h4v4M7 6l5-5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   );
-}
-
-/** Format USD value for display: ≥1B → "$X.XB", else "$X,XXXM" */
-function formatUsdValueM(valueM: number): string {
-  return valueM >= 1000
-    ? `$${(valueM / 1000).toFixed(1)}B`
-    : `$${valueM.toLocaleString()}M`;
 }
 
 function FundingPanel({ symbol, records }: { symbol: string; records: FundingRecord[] }) {
@@ -73,7 +60,7 @@ function FundingPanel({ symbol, records }: { symbol: string; records: FundingRec
         <div className="aapl-funding-total-card">
           <div className="aapl-funding-total-title">Total Funding Amount (USD $M)</div>
           <div className="aapl-funding-total-value">
-            {formatUsdValueM(totalFundingM)}
+            {formatUsdM(totalFundingM)}
           </div>
           <div className="aapl-funding-total-sub">{records.length} funding events recorded</div>
         </div>
@@ -117,7 +104,7 @@ function FundingPanel({ symbol, records }: { symbol: string; records: FundingRec
                 const valueM = record.money_raised_usd != null ? record.money_raised_usd / 1_000_000 : null;
                 return (
                   <tr key={i} className="aapl-ma-table-row">
-                    <td className="aapl-ma-td-date">{formatDate(record.publ_dt)}</td>
+                    <td className="aapl-ma-td-date">{formatIsoDate(record.publ_dt)}</td>
                     <td className="aapl-ma-td-company">{record.invest_name}</td>
                     <td><span className="aapl-ma-type-badge aapl-ma-type-acq">{record.fund_type}</span></td>
                     <td className="text-right">
@@ -125,9 +112,7 @@ function FundingPanel({ symbol, records }: { symbol: string; records: FundingRec
                     </td>
                     <td className="text-right aapl-ma-td-value">
                       {valueM != null ? (
-                        valueM >= 1000
-                          ? `$${(valueM / 1000).toFixed(2)}B`
-                          : `$${valueM.toLocaleString()}M`
+                        formatUsdM(valueM, 2)
                       ) : (
                         <span className="aapl-ma-undisclosed">Undisclosed</span>
                       )}
