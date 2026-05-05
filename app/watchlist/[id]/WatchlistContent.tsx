@@ -1266,6 +1266,7 @@ export function WatchlistContent({
   const [showSubscribe, setShowSubscribe] = useState(false);
   // Subscribe modal data — loaded by calling APIs when the button is clicked
   const [subscribeLoading, setSubscribeLoading] = useState(false);
+  const [subscribeError, setSubscribeError] = useState(false);
   const [subscribeInitialData, setSubscribeInitialData] = useState<UpdateSubscribeInfoPayload>({ subscribe: [] });
   const [subscribeAvailableEvents, setSubscribeAvailableEvents] = useState<SubEventItem[]>([]);
 
@@ -2000,6 +2001,7 @@ export function WatchlistContent({
                     disabled={subscribeLoading}
                     onClick={async () => {
                       setSubscribeLoading(true);
+                      setSubscribeError(false);
                       try {
                         const [subInfo, subItems] = await Promise.all([
                           querySubInfoByWatchlistId({ watchlistId: numericWatchlistId }),
@@ -2008,6 +2010,8 @@ export function WatchlistContent({
                         setSubscribeInitialData(subInfo);
                         setSubscribeAvailableEvents(subItems.event);
                         setShowSubscribe(true);
+                      } catch {
+                        setSubscribeError(true);
                       } finally {
                         setSubscribeLoading(false);
                       }
@@ -2017,6 +2021,11 @@ export function WatchlistContent({
                       <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" className="wl-action-btn-spinner">
                         <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.4" strokeDasharray="20 12" strokeLinecap="round" />
                       </svg>
+                    ) : subscribeError ? (
+                      <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+                        <path d="M7 2v5M7 10v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                        <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.3" />
+                      </svg>
                     ) : (
                       <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
                         <path d="M7 1.5a4 4 0 0 0-4 4v2.5L2 9.5h10l-1-1.5V5.5a4 4 0 0 0-4-4Z"
@@ -2024,7 +2033,11 @@ export function WatchlistContent({
                         <path d="M5.5 9.5a1.5 1.5 0 0 0 3 0" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
                       </svg>
                     )}
-                    <span className="wl-action-btn-label">{lang === 'zh' ? '訂閱' : 'Subscribe'}</span>
+                    <span className="wl-action-btn-label">
+                      {subscribeError
+                        ? (lang === 'zh' ? '載入失敗' : 'Load failed')
+                        : (lang === 'zh' ? '訂閱' : 'Subscribe')}
+                    </span>
                   </button>
                 )}
                 <button className="wl-action-btn" onClick={() => setShowAddSymbol(true)}>

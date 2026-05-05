@@ -1106,6 +1106,8 @@ export interface GetSubItemResponse {
 
 /** localStorage key prefix for per-watchlist subscription data */
 const WL_SUBSCRIBE_PREFIX = 'wl-subscribe-';
+/** Legacy localStorage key kept for backward compatibility with data saved before per-watchlist keys were introduced. */
+const LEGACY_SUBSCRIBE_KEY = 'wl-favorites-subscribe';
 
 /**
  * Query existing subscription info for a watchlist.
@@ -1122,8 +1124,8 @@ export async function querySubInfoByWatchlistId(
     const perWatchlistKey = `${WL_SUBSCRIBE_PREFIX}${payload.watchlistId}`;
     const stored = localStorage.getItem(perWatchlistKey);
     if (stored) return JSON.parse(stored) as UpdateSubscribeInfoPayload;
-    // Backward-compat: fall back to legacy global key
-    const legacy = localStorage.getItem('wl-favorites-subscribe');
+    // Backward-compat: fall back to legacy global key (data saved before per-watchlist keys)
+    const legacy = localStorage.getItem(LEGACY_SUBSCRIBE_KEY);
     if (legacy) return JSON.parse(legacy) as UpdateSubscribeInfoPayload;
   } catch {
     // silent
@@ -1149,6 +1151,8 @@ export async function getSubItem(): Promise<GetSubItemResponse> {
  * Update the user's event subscription preferences for a watchlist.
  * Payload: { subscribe: [{ co_cd, event: number[] }] }
  * Stub — persists to localStorage keyed by watchlistId.
+ * The legacy global key is also updated during the migration period so that
+ * older code paths reading LEGACY_SUBSCRIBE_KEY continue to work until fully removed.
  * Real integration: POST /updateSubscribeInfo  { watchlistId, subscribe: [...] }
  */
 export async function updateSubscribeInfo(
@@ -1159,8 +1163,7 @@ export async function updateSubscribeInfo(
   if (typeof window !== 'undefined') {
     const key = `${WL_SUBSCRIBE_PREFIX}${watchlistId}`;
     localStorage.setItem(key, JSON.stringify(payload));
-    // Also update legacy key for backward compatibility
-    localStorage.setItem('wl-favorites-subscribe', JSON.stringify(payload));
+    localStorage.setItem(LEGACY_SUBSCRIBE_KEY, JSON.stringify(payload));
   }
   return { success: true };
 }
