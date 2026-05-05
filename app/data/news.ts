@@ -50,7 +50,7 @@ interface RawNewsItem {
   tag_change: number;
 }
 
-const now = new Date('2026-04-02T03:06:53Z');
+const now = new Date('2026-05-05T12:00:00Z');
 
 function pad2(n: number): string {
   return String(n).padStart(2, '0');
@@ -183,6 +183,66 @@ const rawNewsItems: RawNewsItem[] = [
     news_title: 'Intel Foundry Services Secures $3B U.S. Government Contract to Produce Domestic Defense Chips',
     update_date: ts8(0, 10, 18),
     tag_change: 7.6,
+  },
+  {
+    news_date: ts8(0, 8, 30),
+    co_cd: 'TSLA',
+    news_source: 'Reuters',
+    comp_tag_short_name: 'Tesla',
+    news_catg: 'tech',
+    news_content: 'Tesla raised its Q1 2026 delivery guidance ahead of tomorrow\'s earnings call, citing stronger-than-expected demand for the refreshed Model Y and Model 3 in Europe and Asia.',
+    news_url: 'https://www.reuters.com/technology/tesla-q1-2026-delivery-guidance-raise',
+    news_title: 'Tesla Raises Q1 2026 Delivery Guidance Ahead of Earnings, Cites Strong Model Y Demand in Europe and Asia',
+    update_date: ts8(0, 8, 44),
+    tag_change: 4.8,
+  },
+  {
+    news_date: ts8(1, 16, 0),
+    co_cd: 'GOOGL',
+    news_source: 'Bloomberg',
+    comp_tag_short_name: 'Alphabet',
+    news_catg: 'earnings',
+    news_content: 'Alphabet is expected to report Q1 2026 earnings tomorrow with analyst consensus at $3.08 EPS. Google Cloud AI workloads and YouTube Shorts monetization are key catalysts to watch.',
+    news_url: 'https://www.bloomberg.com/news/articles/alphabet-q1-2026-earnings-preview',
+    news_title: 'Alphabet Q1 2026 Earnings Preview: Cloud AI and YouTube Shorts in Focus as Consensus Set at $3.08 EPS',
+    update_date: ts8(1, 16, 14),
+    tag_change: 1.2,
+  },
+  {
+    news_date: ts8(1, 10, 15),
+    co_cd: 'QCOM',
+    news_source: 'CNBC',
+    comp_tag_short_name: 'Qualcomm',
+    news_catg: 'semiconductor',
+    news_content: 'Qualcomm previewed record automotive revenue for Q2 FY2026 ahead of its May 7 earnings call, driven by AI cockpit SoC adoption in BMW, Mercedes-Benz, and major Chinese EV makers.',
+    news_url: 'https://www.cnbc.com/2026/05/04/qualcomm-automotive-revenue-record-q2-2026',
+    news_title: 'Qualcomm Previews Record Automotive Revenue for Q2 FY2026 Ahead of May 7 Earnings, BMW and Mercedes Leading',
+    update_date: ts8(1, 10, 30),
+    tag_change: 3.5,
+  },
+  {
+    news_date: ts8(2, 14, 0),
+    co_cd: 'TSLA',
+    news_source: 'Financial Times',
+    comp_tag_short_name: 'Tesla',
+    news_catg: 'tech',
+    news_content: 'Tesla\'s Optimus humanoid robot shipped its 15,000th unit to factory clients across Asia, with TSMC and Foxconn facilities deploying the robots in chip and electronics assembly lines.',
+    news_url: 'https://www.ft.com/content/tesla-optimus-15000-units-asia-factories',
+    news_title: 'Tesla Optimus Robot Reaches 15,000 Units Deployed in Asian Factories Including TSMC and Foxconn Lines',
+    update_date: ts8(2, 14, 14),
+    tag_change: 6.2,
+  },
+  {
+    news_date: ts8(2, 9, 30),
+    co_cd: 'GOOGL',
+    news_source: 'TechCrunch',
+    comp_tag_short_name: 'Alphabet',
+    news_catg: 'ai',
+    news_content: 'Google DeepMind launched Gemini 2.5 Ultra with a breakthrough 3-million-token context window and native code execution, surpassing all frontier model benchmarks.',
+    news_url: 'https://techcrunch.com/2026/05/03/google-deepmind-gemini-25-ultra-3m-context',
+    news_title: 'Google DeepMind Unveils Gemini 2.5 Ultra with 3M-Token Context and Native Code Execution, Tops All Benchmarks',
+    update_date: ts8(2, 9, 44),
+    tag_change: 5.7,
   },
   {
     news_date: ts8(2, 18, 15),

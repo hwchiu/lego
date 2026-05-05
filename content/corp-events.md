@@ -161,6 +161,17 @@ display purposes.
       "webcastLink": "https://ir.lamresearch.com/events",
       "irLink": "https://ir.lamresearch.com"
     }
+  ],
+  "May 7": [
+    {
+      "cellLabel": "TC",
+      "company": "Taiwan Semiconductor Manufacturing Co.",
+      "description": "TSMC April 2026 monthly revenue report: Consolidated revenue NT$326.4B (approx. $10.1B), up 38% YoY. Quarterly cumulative Q1 2026 revenue NT$939B, exceeding management's guidance of $25–26B for the quarter. Strong demand from Apple A20 chip orders, NVIDIA Blackwell Ultra, and AMD MI400 is driving 3nm utilization above 95%.",
+      "eventDate": "May 7, 2026",
+      "eventType": "Sales Revenue Release",
+      "webcastLink": "https://investor.tsmc.com/en/monthly-sales",
+      "irLink": "https://investor.tsmc.com/en"
+    }
   ]
 }
 ```
@@ -229,6 +240,26 @@ display purposes.
       "eventType": "Dividend",
       "webcastLink": "",
       "irLink": "https://www.microsoft.com/en-us/investor/dividends"
+    }
+  ],
+  "May 5": [
+    {
+      "cellLabel": "AAPL",
+      "company": "Apple Inc.",
+      "description": "Apple ex-dividend date for $0.26 per share quarterly cash dividend for Q2 FY2026. Payment date June 12, 2026, to shareholders of record May 9, 2026. Annualized dividend yield ~0.5%. Apple has increased its dividend for 14 consecutive years.",
+      "eventDate": "May 5, 2026",
+      "eventType": "Dividend",
+      "webcastLink": "",
+      "irLink": "https://investor.apple.com/dividends"
+    },
+    {
+      "cellLabel": "NVDA",
+      "company": "NVIDIA Corporation",
+      "description": "NVIDIA quarterly cash dividend of $0.01 per share (post-split adjusted), payable June 27, 2026, to shareholders of record June 6, 2026. Record 12th consecutive dividend payment since NVIDIA resumed dividend distributions in 2024.",
+      "eventDate": "May 5, 2026",
+      "eventType": "Dividend",
+      "webcastLink": "",
+      "irLink": "https://investor.nvidia.com/dividends"
     }
   ]
 }
@@ -307,6 +338,46 @@ display purposes.
       "eventType": "Confirmed Earnings Release",
       "webcastLink": "https://investor.qualcomm.com/earnings",
       "irLink": "https://investor.qualcomm.com"
+    }
+  ],
+  "May 5": [
+    {
+      "cellLabel": "NVDA",
+      "company": "NVIDIA Corporation",
+      "description": "NVIDIA confirms Q1 FY2027 earnings release date of May 7, 2026 after market close, with earnings conference call at 5:00 PM PT hosted by CFO Colette Kress and CEO Jensen Huang.",
+      "eventDate": "May 5, 2026",
+      "eventType": "Confirmed Earnings Release",
+      "webcastLink": "https://investor.nvidia.com/events/earnings",
+      "irLink": "https://investor.nvidia.com"
+    },
+    {
+      "cellLabel": "TSLA",
+      "company": "Tesla Inc.",
+      "description": "Tesla confirms Q1 2026 earnings release date of May 6, 2026 after market close. Earnings call at 4:30 PM PT hosted by Elon Musk, Vaibhav Taneja (CFO), and Drew Baglino (SVP Engineering).",
+      "eventDate": "May 5, 2026",
+      "eventType": "Confirmed Earnings Release",
+      "webcastLink": "https://ir.tesla.com/earnings",
+      "irLink": "https://ir.tesla.com"
+    }
+  ],
+  "May 6": [
+    {
+      "cellLabel": "QCOM",
+      "company": "Qualcomm Inc.",
+      "description": "Qualcomm confirms Q2 FY2026 earnings release date of May 7, 2026 after market close, with earnings call at 4:45 PM PT hosted by CEO Cristiano Amon and CFO Akash Palkhiwala.",
+      "eventDate": "May 6, 2026",
+      "eventType": "Confirmed Earnings Release",
+      "webcastLink": "https://investor.qualcomm.com/earnings",
+      "irLink": "https://investor.qualcomm.com"
+    },
+    {
+      "cellLabel": "AAPL",
+      "company": "Apple Inc.",
+      "description": "Apple confirms Q2 FY2026 earnings release date of May 8, 2026 after market close. Live earnings call at 5:00 PM ET hosted by CEO Tim Cook and CFO Kevan Parekh. Results will include February–April 2026 quarter data.",
+      "eventDate": "May 6, 2026",
+      "eventType": "Confirmed Earnings Release",
+      "webcastLink": "https://investor.apple.com/earnings",
+      "irLink": "https://investor.apple.com"
     }
   ]
 }
@@ -388,6 +459,77 @@ display purposes.
       "webcastLink": "https://investor.qualcomm.com/events",
       "irLink": "https://investor.qualcomm.com"
     }
+  ],
+  "May 5": [
+    {
+      "cellLabel": "TC",
+      "company": "Taiwan Semiconductor Manufacturing Co.",
+      "description": "TSMC April 2026 monthly revenue conference call. Management reviews April consolidated revenue of NT$326B, discusses 3nm and 2nm utilization rates, CoWoS advanced packaging capacity, and reiterates FY2026 revenue growth guidance of 24–26%.",
+      "eventDate": "May 5, 2026",
+      "eventType": "Conference",
+      "webcastLink": "https://investor.tsmc.com/en/events-and-presentations",
+      "irLink": "https://investor.tsmc.com/en"
+    },
+    {
+      "cellLabel": "ASML",
+      "company": "ASML Holding N.V.",
+      "description": "ASML Q1 2026 earnings investor conference call. Topics: EUV and High-NA shipment schedule, record backlog of €44B, gross margin expansion to 55.6%, and updated FY2026 guidance of €36–40B revenue with 56–57% gross margin.",
+      "eventDate": "May 5, 2026",
+      "eventType": "Conference",
+      "webcastLink": "https://www.asml.com/en/investors/earnings",
+      "irLink": "https://www.asml.com/en/investors"
+    }
+  ],
+  "May 6": [
+    {
+      "cellLabel": "GOOGL",
+      "company": "Alphabet Inc.",
+      "description": "Alphabet Q1 2026 earnings conference call. Key topics: Search AI overviews adoption, YouTube Shorts monetization, Google Cloud AI workload growth at 46% YoY, DeepMind revenue contributions, and revised 2026 capex guidance of $75B for AI infrastructure.",
+      "eventDate": "May 6, 2026",
+      "eventType": "Conference",
+      "webcastLink": "https://abc.xyz/investor/earnings",
+      "irLink": "https://abc.xyz/investor"
+    },
+    {
+      "cellLabel": "TSLA",
+      "company": "Tesla Inc.",
+      "description": "Tesla Q1 2026 Earnings Conference Call. Elon Musk and CFO Vaibhav Taneja to discuss record deliveries of 560,000 units, energy storage revenue surpassing auto gross margin, Optimus robot production ramp to 50,000 units, and Full Self-Driving v13 rollout timeline.",
+      "eventDate": "May 6, 2026",
+      "eventType": "Conference",
+      "webcastLink": "https://ir.tesla.com/events",
+      "irLink": "https://ir.tesla.com"
+    }
+  ],
+  "May 7": [
+    {
+      "cellLabel": "NVDA",
+      "company": "NVIDIA Corporation",
+      "description": "NVIDIA Q1 FY2027 Earnings Conference Call. Jen-Hsun Huang to discuss Data Center revenue of $41.2B (+18% QoQ), Blackwell Ultra GPU ramp, NIM software platform enterprise growth, and updated FY2027 outlook of $195B+ revenue driven by AI infrastructure spending.",
+      "eventDate": "May 7, 2026",
+      "eventType": "Conference",
+      "webcastLink": "https://investor.nvidia.com/events/earnings",
+      "irLink": "https://investor.nvidia.com"
+    },
+    {
+      "cellLabel": "QCOM",
+      "company": "Qualcomm Inc.",
+      "description": "Qualcomm Q2 FY2026 Earnings Conference Call. Highlights: Snapdragon 8 Elite Gen 2 design wins at Samsung and Xiaomi, Automotive revenue $1.2B (+25% YoY), IoT segment recovery, and raised FY2026 guidance to $48B revenue on AI-PC and on-device AI momentum.",
+      "eventDate": "May 7, 2026",
+      "eventType": "Conference",
+      "webcastLink": "https://investor.qualcomm.com/events",
+      "irLink": "https://investor.qualcomm.com"
+    }
+  ],
+  "May 8": [
+    {
+      "cellLabel": "AAPL",
+      "company": "Apple Inc.",
+      "description": "Apple Q2 FY2026 Earnings Conference Call. Tim Cook and CFO Kevan Parekh to discuss Services record of $28.4B, iPhone 17 pre-order demand in India, Vision Pro 2 production schedule, Apple Intelligence MAU growth to 1.2B, and updated FY2026 capital return program of $120B.",
+      "eventDate": "May 8, 2026",
+      "eventType": "Conference",
+      "webcastLink": "https://investor.apple.com/earnings",
+      "irLink": "https://investor.apple.com"
+    }
   ]
 }
 ```
@@ -465,6 +607,57 @@ display purposes.
       "eventType": "Earnings",
       "webcastLink": "https://www.microsoft.com/en-us/investor/earnings",
       "irLink": "https://www.microsoft.com/en-us/investor"
+    }
+  ],
+  "May 6": [
+    {
+      "cellLabel": "GOOGL",
+      "company": "Alphabet Inc.",
+      "description": "Alphabet Q1 2026 earnings: Revenue $112.4B (+14% YoY), EPS $3.08 (beat $2.85 estimate). Google Search revenue $56.8B, Cloud $14.2B (+46% YoY). YouTube ad revenue $11.5B. Raised FY2026 capex guidance to $75B for AI infrastructure expansion.",
+      "eventDate": "May 6, 2026",
+      "eventType": "Earnings",
+      "webcastLink": "https://abc.xyz/investor/earnings",
+      "irLink": "https://abc.xyz/investor"
+    },
+    {
+      "cellLabel": "TSLA",
+      "company": "Tesla Inc.",
+      "description": "Tesla Q1 2026 earnings: Revenue $28.4B (+18% YoY), EPS $0.87 (beat $0.74 estimate). Deliveries 560,000 units (+8% YoY). Energy storage revenue $6.8B surpassed auto gross margin. Optimus robot 12,000 units shipped to factories. Q2 guidance: 590,000–620,000 deliveries.",
+      "eventDate": "May 6, 2026",
+      "eventType": "Earnings",
+      "webcastLink": "https://ir.tesla.com/earnings",
+      "irLink": "https://ir.tesla.com"
+    }
+  ],
+  "May 7": [
+    {
+      "cellLabel": "NVDA",
+      "company": "NVIDIA Corporation",
+      "description": "NVIDIA Q1 FY2027 earnings: Revenue $44.1B (+22% YoY), EPS $0.96 (beat $0.89 estimate). Data Center $39.3B (+28% YoY). Blackwell Ultra GPU ramp fully underway with 2.4M units shipped in Q1. Q2 FY2027 guidance: $47.5B revenue, gross margin 72.5%.",
+      "eventDate": "May 7, 2026",
+      "eventType": "Earnings",
+      "webcastLink": "https://investor.nvidia.com/events/earnings",
+      "irLink": "https://investor.nvidia.com"
+    },
+    {
+      "cellLabel": "QCOM",
+      "company": "Qualcomm Inc.",
+      "description": "Qualcomm Q2 FY2026 earnings: Revenue $12.1B (+12% YoY), EPS $3.18 (beat $3.04 estimate). Handsets $8.9B (+9% YoY), Automotive record $1.2B (+25% YoY), IoT $2.0B recovering. Raised FY2026 guidance to $48B revenue on strong AI-PC and on-device AI momentum.",
+      "eventDate": "May 7, 2026",
+      "eventType": "Earnings",
+      "webcastLink": "https://investor.qualcomm.com/earnings",
+      "irLink": "https://investor.qualcomm.com"
+    }
+  ],
+  "May 8": [
+    {
+      "cellLabel": "AAPL",
+      "company": "Apple Inc.",
+      "description": "Apple Q2 FY2026 earnings: Revenue $98.2B (+7% YoY), EPS $1.78 (beat $1.65 estimate). Services record $28.4B (+16% YoY), iPhone $51.3B. iPhone 17 Pro demand in India drives geographic diversification. Apple Intelligence active on 1.2B devices. Q3 FY2026 guidance: revenue $100–104B.",
+      "eventDate": "May 8, 2026",
+      "eventType": "Earnings",
+      "webcastLink": "https://investor.apple.com/earnings",
+      "irLink": "https://investor.apple.com"
     }
   ]
 }

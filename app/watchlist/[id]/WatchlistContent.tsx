@@ -1848,11 +1848,22 @@ export function WatchlistContent({
     return items.sort((a, b) => b.dateMs - a.dateMs);
   }, [watchlistSymbolSet]);
 
-  const latestUpdateItems = useMemo(
-    (): UpdateFeedItem[] =>
-      [...newsUpdateItems, ...prUpdateItems, ...eventUpdateItems].sort((a, b) => b.dateMs - a.dateMs),
-    [newsUpdateItems, prUpdateItems, eventUpdateItems],
-  );
+  const latestUpdateItems = useMemo((): UpdateFeedItem[] => {
+    const nowMs = Date.now();
+    const threeDaysMs = 3 * 24 * 60 * 60 * 1000;
+
+    // News: only items published within the last 3 days (past 3 days up to now)
+    const recentNews = newsUpdateItems.filter(
+      (item) => item.dateMs >= nowMs - threeDaysMs && item.dateMs <= nowMs,
+    );
+
+    // Events: only items occurring from now through the next 3 days
+    const upcomingEvents = eventUpdateItems.filter(
+      (item) => item.dateMs >= nowMs && item.dateMs <= nowMs + threeDaysMs,
+    );
+
+    return [...recentNews, ...upcomingEvents].sort((a, b) => b.dateMs - a.dateMs);
+  }, [newsUpdateItems, eventUpdateItems]);
 
   const currentUpdateItems: UpdateFeedItem[] =
     feedTab === 'Latest' ? latestUpdateItems
