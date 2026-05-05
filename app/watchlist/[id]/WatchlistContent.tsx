@@ -19,7 +19,6 @@ import NewsCard from '@/app/components/news/NewsCard';
 import { pressReleases } from '@/app/data/pressReleases';
 import { CORP_EVENT_CATEGORY_MAP } from '@/app/data/corpEvents';
 import type { CorpEvent } from '@/app/data/corpEvents';
-import { EVENT_CATEGORIES_LIST } from '@/app/data/corpEvents';
 import {
   buildRecentQuarters,
   getViewCatgNColInfo,
@@ -38,9 +37,11 @@ import {
   getWatchlistData,
   getUserAllWatchlists,
   updateSubscribeInfo,
+  querySubInfoByWatchlistId,
+  getSubItem,
   WATCHLIST_MAX_COMPANIES,
 } from '@/app/lib/watchlistApi';
-import type { GetWatchlistDataParams, WatchlistDataItem, UpdateSubscribeInfoPayload } from '@/app/lib/watchlistApi';
+import type { GetWatchlistDataParams, WatchlistDataItem, UpdateSubscribeInfoPayload, SubEventItem } from '@/app/lib/watchlistApi';
 import { setFavoritesInPersonality } from '@/app/lib/getFavoritesByUserAcct';
 import { getPaginationRange } from '@/app/lib/paginationUtils';
 import { formatPrice, formatSigned, formatSignedPct, formatNumber, inferColorClass, inferColorArgb } from '@/app/lib/formatters';
@@ -372,14 +373,15 @@ async function downloadHoldingsExcel(watchlistName: string, holdings: Holding[])
 
 // ── Subscribe Modal ───────────────────────────────────────────────────────────
 
-const LS_SUBSCRIBE_KEY = 'wl-favorites-subscribe';
-
 interface SubscribeModalProps {
   companies: string[];
+  watchlistId: number;
+  initialSubscriptions: UpdateSubscribeInfoPayload;
+  availableEvents: SubEventItem[];
   onClose: () => void;
 }
 
-function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
+function SubscribeModal({ companies, watchlistId, initialSubscriptions, availableEvents, onClose }: SubscribeModalProps) {
   const { lang } = useLanguage();
 
   const labels = {
@@ -393,7 +395,6 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
     applyToAll:      { zh: '套用至所有公司',         en: 'Apply to All Companies'      },
     save:            { zh: '儲存',                   en: 'Save'                        },
     saving:          { zh: '儲存中...',              en: 'Saving...'                   },
-    saved:           { zh: '✓ 已儲存',              en: '✓ Saved'                     },
     close:           { zh: '關閉',                   en: 'Close'                       },
     noCompanies:     { zh: '目前沒有 Favorite 公司', en: 'No favorite companies yet.'  },
     comingSoon:      { zh: '即將推出',               en: 'Coming Soon'                 },
@@ -402,6 +403,12 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
     allHint:         { zh: '在此選擇的事件將套用至所有公司',
                        en: 'Events selected here apply to all companies'              },
   };
+
+  // Sort available events by event_id ascending
+  const sortedAvailableEvents = useMemo(
+    () => [...availableEvents].sort((a, b) => a.event_id - b.event_id),
+    [availableEvents],
+  );
 
   const [subTab, setSubTab] = useState<'event' | 'view'>('event');
   // Working copy: maps coCd → set of subscribed event IDs
@@ -419,25 +426,19 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
     };
   }, []);
 
-  // Load existing subscriptions from localStorage on mount.
+  // Initialize company event map from the pre-fetched initialSubscriptions prop.
   // All companies are pre-initialized with empty Sets so they always appear
   // in the left panel regardless of whether they have stored subscriptions.
   useEffect(() => {
     const init: Record<string, Set<number>> = {};
     companies.forEach((co) => { init[co] = new Set(); });
-    try {
-      const stored = localStorage.getItem(LS_SUBSCRIBE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored) as UpdateSubscribeInfoPayload;
-        for (const entry of parsed.subscribe) {
-          if (companies.includes(entry.co_cd)) {
-            init[entry.co_cd] = new Set(entry.event);
-          }
-        }
+    for (const entry of initialSubscriptions.subscribe) {
+      if (companies.includes(entry.co_cd)) {
+        init[entry.co_cd] = new Set(entry.event);
       }
-    } catch { /* silent */ }
+    }
     setCompanyEventMap(init);
-  }, [companies]);
+  }, [companies, initialSubscriptions]);
 
   // Events visible in the right panel for the current selection
   const rightPanelEvents = useMemo<Set<number>>(() => {
@@ -459,8 +460,8 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
     return companyEventMap[selectedCo] ?? new Set<number>();
   }, [selectedCo, companyEventMap, companies]);
 
-  const allEventsSelected = EVENT_CATEGORIES_LIST.every((e) => rightPanelEvents.has(e.id));
-  const someEventsSelected = EVENT_CATEGORIES_LIST.some((e) => rightPanelEvents.has(e.id));
+  const allEventsSelected = sortedAvailableEvents.every((e) => rightPanelEvents.has(e.event_id));
+  const someEventsSelected = sortedAvailableEvents.some((e) => rightPanelEvents.has(e.event_id));
 
   // Drive the indeterminate state of the Select All checkbox via a ref + effect
   const selectAllCheckboxRef = useRef<HTMLInputElement | null>(null);
@@ -491,11 +492,11 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
       // Shallow-copy the map and only replace Sets for target companies
       const next: Record<string, Set<number>> = { ...prev };
       for (const co of targets) {
-        next[co] = checked ? new Set(EVENT_CATEGORIES_LIST.map((e) => e.id)) : new Set<number>();
+        next[co] = checked ? new Set(sortedAvailableEvents.map((e) => e.event_id)) : new Set<number>();
       }
       return next;
     });
-  }, [selectedCo, companies]);
+  }, [selectedCo, companies, sortedAvailableEvents]);
 
   // Copy the current right-panel event selection to every company
   const handleApplyToAll = useCallback(() => {
@@ -516,7 +517,7 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
           event: Array.from(companyEventMap[co] ?? []).sort((a, b) => a - b),
         }));
       const payload: UpdateSubscribeInfoPayload = { subscribe: subscribeList };
-      await updateSubscribeInfo(payload);
+      await updateSubscribeInfo(watchlistId, payload);
       setSaveSuccess(true);
       if (saveSuccessTimerRef.current !== null) clearTimeout(saveSuccessTimerRef.current);
       saveSuccessTimerRef.current = setTimeout(() => {
@@ -526,7 +527,7 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
     } finally {
       setSaving(false);
     }
-  }, [companies, companyEventMap, onClose]);
+  }, [watchlistId, companies, companyEventMap, onClose]);
 
   const getCompanyCount = (co: string) => companyEventMap[co]?.size ?? 0;
   const subscribedCoCount = companies.filter((co) => getCompanyCount(co) > 0).length;
@@ -652,14 +653,14 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
                     {selectedCo === 'all' && (
                       <div className="wl-sub-all-hint">{labels.allHint[lang]}</div>
                     )}
-                    {EVENT_CATEGORIES_LIST.map((ec) => (
-                      <label key={ec.id} className="wl-sub-event-item">
+                    {sortedAvailableEvents.map((ec) => (
+                      <label key={ec.event_id} className="wl-sub-event-item">
                         <input
                           type="checkbox"
-                          checked={rightPanelEvents.has(ec.id)}
-                          onChange={() => handleToggleEvent(ec.id)}
+                          checked={rightPanelEvents.has(ec.event_id)}
+                          onChange={() => handleToggleEvent(ec.event_id)}
                         />
-                        <span className="wl-sub-event-name">{ec.name}</span>
+                        <span className="wl-sub-event-name">{ec.event_type}</span>
                       </label>
                     ))}
                   </div>
@@ -688,7 +689,18 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
               onClick={handleSave}
               disabled={saving || saveSuccess}
             >
-              {saveSuccess ? labels.saved[lang] : saving ? labels.saving[lang] : labels.save[lang]}
+              {saveSuccess ? (
+                <>
+                  <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+                    <path d="M2 7l3.5 3.5L12 3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  {lang === 'zh' ? '已儲存' : 'Saved'}
+                </>
+              ) : saving ? (
+                labels.saving[lang]
+              ) : (
+                labels.save[lang]
+              )}
             </button>
           </div>
         )}
@@ -1187,6 +1199,9 @@ export function WatchlistContent({
   showSubscribeButton = false,
 }: WatchlistContentProps) {
   const watchlistId = params.id;
+  // Numeric watchlist ID used for API calls (e.g. querySubInfoByWatchlistId, updateSubscribeInfo).
+  // For string IDs like 'favorites', defaults to 0 to match the mock watchlistId in stubs.
+  const numericWatchlistId: number = Number.isInteger(Number(watchlistId)) ? Number(watchlistId) : 0;
   const { watchlistNames, setWatchlistName, symbolOrders, setSymbolOrder, favorites, toggleFavorite, dynamicWatchlists, deletedWatchlists, deleteWatchlist: contextDeleteWatchlist, refreshApiWatchlists } = useWatchlist();
   const router = useRouter();
   const { lang } = useLanguage();
@@ -1249,6 +1264,11 @@ export function WatchlistContent({
   const [showManageView, setShowManageView] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showSubscribe, setShowSubscribe] = useState(false);
+  // Subscribe modal data — loaded by calling APIs when the button is clicked
+  const [subscribeLoading, setSubscribeLoading] = useState(false);
+  const [subscribeError, setSubscribeError] = useState(false);
+  const [subscribeInitialData, setSubscribeInitialData] = useState<UpdateSubscribeInfoPayload>({ subscribe: [] });
+  const [subscribeAvailableEvents, setSubscribeAvailableEvents] = useState<SubEventItem[]>([]);
 
   // Manage Alerts toggles
   const [newsAlert, setNewsAlert] = useState(true);
@@ -1976,13 +1996,48 @@ export function WatchlistContent({
               <div className="wl-action-btns">
                 {/* Subscribe button — Favorites page only */}
                 {showSubscribeButton && (
-                  <button className="wl-action-btn" onClick={() => setShowSubscribe(true)}>
-                    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
-                      <path d="M7 1.5a4 4 0 0 0-4 4v2.5L2 9.5h10l-1-1.5V5.5a4 4 0 0 0-4-4Z"
-                        stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M5.5 9.5a1.5 1.5 0 0 0 3 0" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-                    </svg>
-                    <span className="wl-action-btn-label">{lang === 'zh' ? '訂閱' : 'Subscribe'}</span>
+                  <button
+                    className="wl-action-btn"
+                    disabled={subscribeLoading}
+                    onClick={async () => {
+                      setSubscribeLoading(true);
+                      setSubscribeError(false);
+                      try {
+                        const [subInfo, subItems] = await Promise.all([
+                          querySubInfoByWatchlistId({ watchlistId: numericWatchlistId }),
+                          getSubItem(),
+                        ]);
+                        setSubscribeInitialData(subInfo);
+                        setSubscribeAvailableEvents(subItems.event);
+                        setShowSubscribe(true);
+                      } catch {
+                        setSubscribeError(true);
+                      } finally {
+                        setSubscribeLoading(false);
+                      }
+                    }}
+                  >
+                    {subscribeLoading ? (
+                      <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" className="wl-action-btn-spinner">
+                        <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.4" strokeDasharray="20 12" strokeLinecap="round" />
+                      </svg>
+                    ) : subscribeError ? (
+                      <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+                        <path d="M7 2v5M7 10v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                        <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.3" />
+                      </svg>
+                    ) : (
+                      <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+                        <path d="M7 1.5a4 4 0 0 0-4 4v2.5L2 9.5h10l-1-1.5V5.5a4 4 0 0 0-4-4Z"
+                          stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M5.5 9.5a1.5 1.5 0 0 0 3 0" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                      </svg>
+                    )}
+                    <span className="wl-action-btn-label">
+                      {subscribeError
+                        ? (lang === 'zh' ? '載入失敗' : 'Load failed')
+                        : (lang === 'zh' ? '訂閱' : 'Subscribe')}
+                    </span>
                   </button>
                 )}
                 <button className="wl-action-btn" onClick={() => setShowAddSymbol(true)}>
@@ -2591,6 +2646,9 @@ export function WatchlistContent({
       {showSubscribeButton && showSubscribe && (
         <SubscribeModal
           companies={sortedHoldings.map((h) => h.symbol)}
+          watchlistId={numericWatchlistId}
+          initialSubscriptions={subscribeInitialData}
+          availableEvents={subscribeAvailableEvents}
           onClose={() => setShowSubscribe(false)}
         />
       )}
