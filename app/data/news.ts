@@ -1,3 +1,6 @@
+import rawMarketNewsContent from '@/content/market-news.md';
+import { extractJson } from '@/app/lib/parseContent';
+
 export interface NewsCompanyTag {
   symbol: string;
   name: string;
@@ -1099,14 +1102,51 @@ const rawNewsItems: RawNewsItem[] = [
   },
 ];
 
-export const newsItems: NewsItem[] = rawNewsItems.map((item, index) => ({
-  id: `news-${index + 1}`,
-  source: /^[\x20-\x7E\uFF01-\uFF5E]*$/.test(item.news_source) ? item.news_source : 'Others',
-  title: item.news_title,
-  content: item.news_content,
-  category: item.news_catg,
-  fileType: item.news_catg,
-  tags: [{ symbol: item.co_cd, name: item.comp_tag_short_name, change: item.tag_change }],
-  publishedAt: new Date(item.news_date),
-  url: item.news_url,
-}));
+// ── Crawled news from content/market-news.md (written daily by fetch-stock-data.mjs) ──
+
+interface CrawledNewsItem {
+  news_date: string;
+  co_cd: string;
+  news_source: string;
+  comp_tag_short_name: string;
+  news_catg: string;
+  news_content: string;
+  news_url: string;
+  news_title: string;
+  update_date: string;
+  tag_change: number;
+}
+
+const crawledNewsItems: CrawledNewsItem[] = (() => {
+  try {
+    const items = extractJson<CrawledNewsItem[]>(rawMarketNewsContent);
+    return Array.isArray(items) ? items : [];
+  } catch {
+    return [];
+  }
+})();
+
+export const newsItems: NewsItem[] = [
+  ...crawledNewsItems.map((item, index) => ({
+    id: `crawled-news-${index + 1}`,
+    source: item.news_source || 'Google News',
+    title: item.news_title,
+    content: item.news_content,
+    category: item.news_catg,
+    fileType: item.news_catg,
+    tags: [{ symbol: item.co_cd, name: item.comp_tag_short_name, change: item.tag_change }],
+    publishedAt: new Date(item.news_date),
+    url: item.news_url,
+  })),
+  ...rawNewsItems.map((item, index) => ({
+    id: `news-${index + 1}`,
+    source: /^[\x20-\x7E\uFF01-\uFF5E]*$/.test(item.news_source) ? item.news_source : 'Others',
+    title: item.news_title,
+    content: item.news_content,
+    category: item.news_catg,
+    fileType: item.news_catg,
+    tags: [{ symbol: item.co_cd, name: item.comp_tag_short_name, change: item.tag_change }],
+    publishedAt: new Date(item.news_date),
+    url: item.news_url,
+  })),
+];

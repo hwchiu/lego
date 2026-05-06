@@ -10,9 +10,12 @@
  * Usage:  node scripts/fetch-stock-data.mjs
  *
  * Outputs:
- *   content/market-indices.md   — market indices with sparklines
- *   content/sp500-quotes.md     — price quotes for all S&P 500 companies
- *   content/watchlist-data.md   — updated Entity Data section with real prices
+ *   content/market-indices.md    — market indices with sparklines
+ *   content/sp500-quotes.md      — price quotes for all S&P 500 companies
+ *   content/watchlist-data.md    — updated Entity Data section with real prices
+ *   content/market-news.md       — 3 latest Google News items (semiconductor/tech)
+ *   content/press-releases.md    — prepended with 3 new press releases from Yahoo Finance
+ *   content/corp-events.md       — Projected Earnings Release section updated with upcoming earnings
  */
 
 import YahooFinance from 'yahoo-finance2';
@@ -36,6 +39,54 @@ const INDEX_MAP = [
 
 const BATCH_SIZE = 50;
 const BATCH_DELAY_MS = 500;
+
+// ── News / PR / Events crawl config ─────────────────────────────────────────
+
+/** Companies tracked for press-release search and calendar events */
+const TRACKED_COMPANIES = [
+  { symbol: 'NVDA', name: 'NVIDIA Corporation',             relationship: 'customer', industry: 'Semiconductors' },
+  { symbol: 'AAPL', name: 'Apple Inc.',                     relationship: 'customer', industry: 'Consumer Electronics' },
+  { symbol: 'AMD',  name: 'Advanced Micro Devices, Inc.',   relationship: 'customer', industry: 'Semiconductors' },
+  { symbol: 'QCOM', name: 'Qualcomm Inc.',                  relationship: 'customer', industry: 'Semiconductors' },
+  { symbol: 'AVGO', name: 'Broadcom Inc.',                  relationship: 'customer', industry: 'Semiconductors' },
+  { symbol: 'ASML', name: 'ASML Holding N.V.',              relationship: 'supplier', industry: 'Semiconductor Equipment' },
+  { symbol: 'AMAT', name: 'Applied Materials, Inc.',        relationship: 'supplier', industry: 'Semiconductor Equipment' },
+  { symbol: 'LRCX', name: 'Lam Research Corporation',       relationship: 'supplier', industry: 'Semiconductor Equipment' },
+  { symbol: 'MSFT', name: 'Microsoft Corporation',          relationship: 'customer', industry: 'Technology' },
+  { symbol: 'INTC', name: 'Intel Corporation',              relationship: 'customer', industry: 'Semiconductors' },
+  { symbol: 'MU',   name: 'Micron Technology, Inc.',        relationship: 'supplier', industry: 'Memory Semiconductors' },
+  { symbol: 'TSLA', name: 'Tesla, Inc.',                    relationship: 'customer', industry: 'Electric Vehicles' },
+  { symbol: 'GOOGL',name: 'Alphabet Inc.',                  relationship: 'customer', industry: 'Technology' },
+  { symbol: 'AMZN', name: 'Amazon.com, Inc.',               relationship: 'customer', industry: 'Technology' },
+  { symbol: 'META', name: 'Meta Platforms, Inc.',           relationship: 'customer', industry: 'Technology' },
+  { symbol: 'TXN',  name: 'Texas Instruments Incorporated', relationship: 'supplier', industry: 'Semiconductors' },
+  { symbol: 'KLAC', name: 'KLA Corporation',                relationship: 'supplier', industry: 'Semiconductor Equipment' },
+];
+
+/** PR distribution publishers — news with these sources are treated as press releases */
+const PR_PUBLISHERS = [
+  'PR Newswire', 'PRNewswire', 'Business Wire', 'Businesswire',
+  'Globe Newswire', 'GlobeNewswire', 'Accesswire', 'EIN Presswire',
+];
+
+/** Number of items to fetch per category per daily run */
+const DAILY_NEWS_COUNT = 3;
+const DAILY_PR_COUNT = 3;
+const DAILY_EVENT_COUNT = 3;
+
+/** Google News RSS search query for semiconductor/tech industry */
+const GOOGLE_NEWS_QUERY = 'TSMC semiconductor chip AI supply chain NVIDIA Apple';
+
+/** News category keyword classifier */
+const CATEGORY_KEYWORDS = {
+  semiconductor: ['semiconductor', 'chip', 'wafer', 'foundry', 'TSMC', 'ASML', 'EUV', 'process node', 'fab', 'lithography'],
+  ai:            ['AI', 'artificial intelligence', 'machine learning', 'LLM', 'GPU', 'deep learning', 'neural', 'generative'],
+  earnings:      ['earnings', 'revenue', 'quarterly', 'EPS', 'guidance', 'profit', 'results', 'financial'],
+  supplyChain:   ['supply chain', 'inventory', 'supplier', 'manufacturing', 'production', 'capacity', 'allocation'],
+  investment:    ['investment', 'acquisition', 'deal', 'funding', 'IPO', 'buyback', 'dividend', 'capital'],
+  policy:        ['regulation', 'policy', 'antitrust', 'export', 'ban', 'tariff', 'government', 'sanction', 'DOJ', 'FTC'],
+  tech:          ['launch', 'product', 'software', 'platform', 'cloud', 'device', 'feature', 'update'],
+};
 
 // ── Read S&P 500 symbol list from content/company_master.md ─────────────────
 
@@ -173,6 +224,256 @@ function chunk(arr, size) {
   return chunks;
 }
 
+// ── News category classifier ──────────────────────────────────────────────────
+
+function classifyCategory(text) {
+  const lower = text.toLowerCase();
+  for (const [cat, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
+    if (keywords.some((kw) => lower.includes(kw.toLowerCase()))) return cat;
+  }
+  return 'tech';
+}
+
+// ── Google News RSS parser (no extra dependencies) ────────────────────────────
+
+function extractXmlText(xml, tag) {
+  const re = new RegExp(`<${tag}[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]></${tag}>|<${tag}[^>]*>([\\s\\S]*?)</${tag}>`, 'i');
+  const m = re.exec(xml);
+  if (!m) return '';
+  return (m[1] ?? m[2] ?? '').trim();
+}
+
+function parseRssItems(xml) {
+  const items = [];
+  const itemRe = /<item>([\s\S]*?)<\/item>/gi;
+  let m;
+  while ((m = itemRe.exec(xml)) !== null) {
+    const block = m[1];
+    const title = extractXmlText(block, 'title').replace(/\s*-\s*[^-]+$/, '').trim(); // strip " - Source" suffix
+    const link  = extractXmlText(block, 'link') || (block.match(/<link\/>[\s\S]*?<([^/][^>]*)>/) || [])[1] || '';
+    const pubDate = extractXmlText(block, 'pubDate');
+    const source  = extractXmlText(block, 'source');
+    // Google News sometimes puts the link in a CDATA comment or after <link/>
+    const rawLink = block.match(/https?:\/\/[^\s<"]+/)?.[0] || link;
+    if (title) items.push({ title, link: rawLink || link, pubDate, source });
+  }
+  return items;
+}
+
+// ── Fetch Google News ─────────────────────────────────────────────────────────
+
+async function fetchGoogleNews(count = DAILY_NEWS_COUNT) {
+  console.log('\n📰 Fetching Google News RSS...');
+  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(GOOGLE_NEWS_QUERY)}&hl=en-US&gl=US&ceid=US:en`;
+  try {
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; NewsBot/1.0)' },
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const xml = await res.text();
+    const parsed = parseRssItems(xml);
+    const items = parsed.slice(0, count);
+    const now = new Date().toISOString();
+
+    const newsItems = items.map((item) => {
+      const pubDate = item.pubDate ? new Date(item.pubDate).toISOString() : now;
+      const category = classifyCategory(item.title);
+      // Try to match a known company ticker from the title/link
+      const matched = TRACKED_COMPANIES.find((c) =>
+        item.title.toLowerCase().includes(c.symbol.toLowerCase()) ||
+        item.title.toLowerCase().includes(c.name.split(' ')[0].toLowerCase()),
+      );
+      return {
+        news_date: pubDate,
+        co_cd: matched?.symbol || 'SEMI',
+        news_source: item.source || 'Google News',
+        comp_tag_short_name: matched?.name.split(' ')[0] || 'Semiconductor',
+        news_catg: category,
+        news_content: item.title,
+        news_url: item.link,
+        news_title: item.title,
+        update_date: now,
+        tag_change: 0,
+      };
+    });
+
+    console.log(`  ✅ Fetched ${newsItems.length} Google News items`);
+    return newsItems;
+  } catch (err) {
+    console.error(`  ❌ Google News fetch failed: ${err.message}`);
+    return [];
+  }
+}
+
+// ── Fetch Press Releases via Yahoo Finance search ─────────────────────────────
+
+async function fetchYahooPressReleases(count = DAILY_PR_COUNT) {
+  console.log('\n📋 Fetching press releases via Yahoo Finance search...');
+  const results = [];
+  const now = new Date();
+
+  for (const company of TRACKED_COMPANIES) {
+    if (results.length >= count) break;
+    try {
+      const searchResult = await yahooFinance.search(company.symbol, { newsCount: 10 });
+      const newsArray = searchResult?.news || [];
+      for (const item of newsArray) {
+        if (results.length >= count) break;
+        if (!item.title || !item.link) continue;
+        const isPR = PR_PUBLISHERS.some((pub) =>
+          (item.publisher || '').toLowerCase().includes(pub.toLowerCase()),
+        );
+        if (!isPR) continue;
+        const pubDate = item.providerPublishTime
+          ? new Date(item.providerPublishTime * 1000).toISOString().slice(0, 10)
+          : now.toISOString().slice(0, 10);
+        const topics = [classifyCategory(item.title)];
+        const topicsMap = {
+          semiconductor: 'Semiconductors',
+          ai:            'AI & Computing',
+          earnings:      'Financial Results',
+          supplyChain:   'Supply Chain',
+          investment:    'Investment',
+          policy:        'Policy & Regulation',
+          tech:          'Technology',
+        };
+        const industryTopic = topicsMap[topics[0]] || 'Technology';
+        results.push({
+          id: `pr-crawled-${Date.now()}-${results.length}`,
+          title: item.title,
+          company: company.name,
+          ticker: company.symbol,
+          relationship: company.relationship,
+          industry: company.industry,
+          topics: [industryTopic],
+          trendingTopics: [`#${company.symbol}`],
+          publishedAt: pubDate,
+          summary: item.title,
+          viewCount: 0,
+          url: item.link,
+        });
+        console.log(`  ✅ PR: [${company.symbol}] ${item.title.slice(0, 70)}...`);
+      }
+    } catch (err) {
+      console.error(`  ❌ PR search for ${company.symbol}: ${err.message}`);
+    }
+  }
+
+  // Fallback: if no strict PR matches, take any top news from Yahoo Finance search
+  if (results.length < count) {
+    for (const company of TRACKED_COMPANIES) {
+      if (results.length >= count) break;
+      try {
+        const searchResult = await yahooFinance.search(company.symbol, { newsCount: 5 });
+        const newsArray = searchResult?.news || [];
+        for (const item of newsArray) {
+          if (results.length >= count) break;
+          if (!item.title || !item.link) continue;
+          // Skip if already added
+          if (results.some((r) => r.title === item.title)) continue;
+          const pubDate = item.providerPublishTime
+            ? new Date(item.providerPublishTime * 1000).toISOString().slice(0, 10)
+            : now.toISOString().slice(0, 10);
+          const topics = [classifyCategory(item.title)];
+          const topicsMap = {
+            semiconductor: 'Semiconductors',
+            ai:            'AI & Computing',
+            earnings:      'Financial Results',
+            supplyChain:   'Supply Chain',
+            investment:    'Investment',
+            policy:        'Policy & Regulation',
+            tech:          'Technology',
+          };
+          const industryTopic = topicsMap[topics[0]] || 'Technology';
+          results.push({
+            id: `pr-crawled-${Date.now()}-${results.length}`,
+            title: item.title,
+            company: company.name,
+            ticker: company.symbol,
+            relationship: company.relationship,
+            industry: company.industry,
+            topics: [industryTopic],
+            trendingTopics: [`#${company.symbol}`],
+            publishedAt: pubDate,
+            summary: item.title,
+            viewCount: 0,
+            url: item.link,
+          });
+          console.log(`  ✅ PR (fallback): [${company.symbol}] ${item.title.slice(0, 70)}...`);
+        }
+      } catch { /* skip */ }
+    }
+  }
+
+  console.log(`  ✅ Collected ${results.length} press release items`);
+  return results.slice(0, count);
+}
+
+// ── Fetch upcoming corporate events via Yahoo Finance calendarEvents ───────────
+
+/**
+ * Formats a JavaScript Date as "Mon DD, YYYY" (e.g., "May 12, 2026")
+ * matching the date-key format used in corp-events.md.
+ */
+function fmtEventDate(date) {
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+/** Returns "Mon DD" key used as the JSON property key in corp-events sections */
+function fmtDateKey(date) {
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+async function fetchCorpEarningsEvents(count = DAILY_EVENT_COUNT) {
+  console.log('\n📅 Fetching upcoming earnings events via Yahoo Finance...');
+  const events = []; // { dateKey, company, symbol, earningsDate }
+  const today = new Date();
+
+  for (const company of TRACKED_COMPANIES) {
+    if (events.length >= count) break;
+    try {
+      const summary = await yahooFinance.quoteSummary(company.symbol, {
+        modules: ['calendarEvents'],
+      });
+      const earningsDates = summary?.calendarEvents?.earnings?.earningsDate || [];
+      for (const d of earningsDates) {
+        const date = new Date(d);
+        if (date > today) {
+          events.push({ date, company });
+          console.log(`  ✅ ${company.symbol} earnings: ${fmtEventDate(date)}`);
+          break; // take only the next upcoming date per company
+        }
+      }
+    } catch (err) {
+      console.error(`  ❌ Calendar events for ${company.symbol}: ${err.message}`);
+    }
+  }
+
+  // Sort by date ascending and take the first `count`
+  events.sort((a, b) => a.date - b.date);
+  const selected = events.slice(0, count);
+
+  // Convert to CorpEvent objects grouped by date key
+  const grouped = {};
+  for (const { date, company } of selected) {
+    const key = fmtDateKey(date);
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push({
+      cellLabel: company.symbol,
+      company: company.name,
+      description: `${company.name} projected earnings release. Analyst estimates and guidance details will be available closer to the date. Key metrics to watch: revenue growth, margin trends, and forward guidance.`,
+      eventDate: fmtEventDate(date),
+      eventType: 'Projected Earnings Release',
+      webcastLink: `https://finance.yahoo.com/quote/${company.symbol}`,
+      irLink: `https://finance.yahoo.com/quote/${company.symbol}`,
+    });
+  }
+
+  console.log(`  ✅ Collected events for ${selected.length} companies`);
+  return grouped;
+}
+
 // ── Fetch indices ────────────────────────────────────────────────────────────
 
 async function fetchIndices() {
@@ -283,6 +584,108 @@ async function fetchHoldingsDetail(holdingSymbols) {
     }
   }
   return results;
+}
+
+// ── Write Market News Markdown ────────────────────────────────────────────────
+
+function writeMarketNewsMd(newsItems) {
+  const md = `# Market News — Daily Crawl
+
+> Auto-generated by \`scripts/fetch-stock-data.mjs\` — do not edit manually.
+> Last updated: ${new Date().toISOString()}
+
+\`\`\`json
+${JSON.stringify(newsItems, null, 2)}
+\`\`\`
+`;
+  const path = resolve(CONTENT_DIR, 'market-news.md');
+  writeFileSync(path, md, 'utf-8');
+  console.log(`\n📁 Wrote ${path} (${newsItems.length} news items)`);
+}
+
+// ── Prepend Press Releases to existing press-releases.md ─────────────────────
+
+function readPressReleasesMd() {
+  try {
+    const md = readFileSync(resolve(CONTENT_DIR, 'press-releases.md'), 'utf-8');
+    const match = md.match(/```json\s*([\s\S]*?)\s*```/);
+    if (match) return JSON.parse(match[1]);
+  } catch { /* file doesn't exist */ }
+  return [];
+}
+
+function writePressReleasesMd(items) {
+  const md = `# Press Releases — TSMC Key Suppliers & Customers
+
+> Auto-updated by \`scripts/fetch-stock-data.mjs\`.
+> Last updated: ${new Date().toISOString()}
+
+Data sourced from public press releases of TSMC's key ecosystem partners.
+
+\`\`\`json
+${JSON.stringify(items, null, 2)}
+\`\`\`
+`;
+  const path = resolve(CONTENT_DIR, 'press-releases.md');
+  writeFileSync(path, md, 'utf-8');
+  console.log(`📁 Wrote ${path} (${items.length} total press release items)`);
+}
+
+function prependPressReleasesMd(newItems) {
+  if (!newItems.length) {
+    console.log('  ⚠️  No new press release items to prepend');
+    return;
+  }
+  const existing = readPressReleasesMd();
+  // De-duplicate by title
+  const existingTitles = new Set(existing.map((r) => r.title));
+  const dedupedNew = newItems.filter((r) => !existingTitles.has(r.title));
+  writePressReleasesMd([...dedupedNew, ...existing]);
+  console.log(`  ✅ Prepended ${dedupedNew.length} new press release(s) (${newItems.length - dedupedNew.length} duplicate(s) skipped)`);
+}
+
+// ── Update Projected Earnings Release section in corp-events.md ──────────────
+
+function updateCorpEventsMd(newEventGroups) {
+  if (!Object.keys(newEventGroups).length) {
+    console.log('  ⚠️  No new corp event items to add');
+    return;
+  }
+  try {
+    const mdPath = resolve(CONTENT_DIR, 'corp-events.md');
+    const md = readFileSync(mdPath, 'utf-8');
+
+    // Find the "Projected Earnings Release" section and its JSON block
+    const sectionRe = /(## Projected Earnings Release\s*\n```json\s*)([\s\S]*?)(\s*```)/;
+    const m = sectionRe.exec(md);
+    if (!m) {
+      console.warn('  ⚠️  Projected Earnings Release section not found in corp-events.md');
+      return;
+    }
+
+    const existing = JSON.parse(m[2]);
+    // Merge new events: add new date keys, or append to existing date keys
+    for (const [dateKey, entries] of Object.entries(newEventGroups)) {
+      if (!existing[dateKey]) {
+        existing[dateKey] = entries;
+      } else {
+        // Append only if not already present (same cellLabel + eventDate)
+        for (const entry of entries) {
+          const already = existing[dateKey].some(
+            (e) => e.cellLabel === entry.cellLabel && e.eventDate === entry.eventDate,
+          );
+          if (!already) existing[dateKey].push(entry);
+        }
+      }
+    }
+
+    const updatedMd = md.replace(sectionRe, `$1${JSON.stringify(existing, null, 2)}$3`);
+    writeFileSync(mdPath, updatedMd, 'utf-8');
+    const count = Object.values(newEventGroups).reduce((s, arr) => s + arr.length, 0);
+    console.log(`📁 Updated corp-events.md: added ${count} projected earnings event(s)`);
+  } catch (err) {
+    console.error(`  ❌ Failed to update corp-events.md: ${err.message}`);
+  }
 }
 
 // ── Write Markdown files ─────────────────────────────────────────────────────
@@ -408,6 +811,17 @@ async function main() {
   writeMarketIndicesMd(indices);
   writeSP500QuotesMd(allQuotes);
   writeWatchlistDataMd(allQuotes, holdingsDetail, portfolio);
+
+  // ── Daily crawl: news, press releases, corporate events ──────────────────
+  const [googleNews, pressReleases, corpEventGroups] = await Promise.all([
+    fetchGoogleNews(DAILY_NEWS_COUNT),
+    fetchYahooPressReleases(DAILY_PR_COUNT),
+    fetchCorpEarningsEvents(DAILY_EVENT_COUNT),
+  ]);
+
+  writeMarketNewsMd(googleNews);
+  prependPressReleasesMd(pressReleases);
+  updateCorpEventsMd(corpEventGroups);
 
   console.log('\n✅ Done! Content Markdown files updated.');
 }
