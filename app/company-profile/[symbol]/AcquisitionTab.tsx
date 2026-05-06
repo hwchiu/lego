@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { getAcquisitionByCoCd, AcquisitionDeal, AcquisitionResult } from '@/app/lib/getAcquisitionByCoCd';
-import { formatRawUsdToM } from '@/app/lib/formatters';
+import { formatRawUsdToM, formatUsdM, usdToM } from '@/app/lib/formatters';
 
 const AcquisitionBarLineChartNivo = dynamic(
   () => import('./InvestmentNivoCharts').then((m) => m.AcquisitionBarLineChartNivo),
@@ -37,7 +37,7 @@ function buildYearData(deals: AcquisitionDeal[]): YearChartData[] {
     if (!entry) continue;
     if (d.valueUsd != null) {
       entry.disclosedCount += 1;
-      entry.disclosedValueM += d.valueUsd / 1_000_000;
+      entry.disclosedValueM += usdToM(d.valueUsd);
     } else {
       entry.undisclosedCount += 1;
     }
@@ -205,7 +205,7 @@ function AcquisitionBarLineChart({ deals }: { deals: AcquisitionDeal[] }) {
           <div>Disclosed: {tooltip.disclosed} deal{tooltip.disclosed !== 1 ? 's' : ''}</div>
           <div>Undisclosed: {tooltip.undisclosed} deal{tooltip.undisclosed !== 1 ? 's' : ''}</div>
           {tooltip.valueM > 0 && (
-            <div>Value: {formatRawUsdToM(tooltip.valueM * 1_000_000)} M</div>
+            <div>Value: {formatUsdM(tooltip.valueM)} M</div>
           )}
         </div>
       )}

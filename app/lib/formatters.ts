@@ -48,6 +48,25 @@ export function formatUsdM(valueM: number, decimals = 1): string {
 }
 
 /**
+ * Convert a raw USD amount (as returned from the API) to a numeric millions value.
+ *
+ * This is the numeric counterpart of {@link formatRawUsdToM} and is intended for
+ * use in data-aggregation code where the result is still a number (e.g. summing
+ * deal values before displaying them with {@link formatUsdM}).
+ *
+ * @param rawUsd  Raw USD amount from API (e.g. `250000000` for $250 M)
+ * @returns Numeric value in millions (e.g. `250`)
+ *
+ * @example
+ * usdToM(250000000)   // 250
+ * usdToM(1500000000)  // 1500
+ * usdToM(250000)      // 0.25
+ */
+export function usdToM(rawUsd: number): number {
+  return rawUsd / 1_000_000;
+}
+
+/**
  * Format a raw USD value (as returned from the API, no unit) into a millions
  * display string with 2 decimal places and **no "$" prefix**.
  *
@@ -62,8 +81,7 @@ export function formatUsdM(valueM: number, decimals = 1): string {
  * formatRawUsdToM(250000)      // "0.25"
  */
 export function formatRawUsdToM(rawUsd: number): string {
-  const millions = rawUsd / 1_000_000;
-  return millions.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return usdToM(rawUsd).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 // ── 2. Stock Price ─────────────────────────────────────────────────────────────
