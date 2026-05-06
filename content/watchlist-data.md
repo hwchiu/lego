@@ -84,7 +84,7 @@
 ## Entity Data
 
 > Auto-updated by `scripts/fetch-stock-data.mjs`.
-> Last updated: 2026-05-05T22:30:54.765Z
+> Last updated: 2026-05-06T01:46:21.510Z
 
 Full holding-table data for every tracked symbol. User-added symbols are persisted in `localStorage` under the key `wl-extra-holdings`.
 
@@ -418,11 +418,11 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "NFLX": {
     "symbol": "NFLX",
     "price": 87.89,
-    "change": -3.15,
+    "change": -3.14,
     "changePct": -3.45,
     "shares": 15,
     "cost": 445.3,
-    "todayGain": -47.25,
+    "todayGain": -47.1,
     "todayGainPct": -3.45,
     "revenue": "$46.89",
     "revenueQoQ": "N/A",
