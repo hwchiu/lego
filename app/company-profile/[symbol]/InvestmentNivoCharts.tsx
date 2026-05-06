@@ -9,7 +9,7 @@ import { formatUsdM } from '@/app/lib/formatters';
 
 interface InvestmentDeal {
   date: string;
-  valueUsd: number | null;
+  valueM: number | null;
 }
 
 // ── InvestmentBarLineChartNivo props ──────────────────────────────────────────
@@ -43,9 +43,9 @@ function buildYearData(deals: InvestmentDeal[]): YearChartData[] {
     const yr = parseInt(d.date.slice(0, 4), 10);
     const entry = map.get(yr);
     if (!entry) continue;
-    if (d.valueUsd != null) {
+    if (d.valueM != null) {
       entry.disclosedCount += 1;
-      entry.disclosedValueM += d.valueUsd / 1_000_000;
+      entry.disclosedValueM += d.valueM;
     } else {
       entry.undisclosedCount += 1;
     }
@@ -348,9 +348,9 @@ function buildAcqYearData(deals: InvestmentDeal[]): YearChartData[] {
     const yr = parseInt(d.date.slice(0, 4), 10);
     const entry = map.get(yr);
     if (!entry) continue;
-    if (d.valueUsd != null) {
+    if (d.valueM != null) {
       entry.disclosedCount += 1;
-      entry.disclosedValueM += d.valueUsd / 1_000_000;
+      entry.disclosedValueM += d.valueM;
     } else {
       entry.undisclosedCount += 1;
     }

@@ -29,7 +29,7 @@ export interface InvestmentDeal {
   investedCompany: string;
   categories: string[];
   round: string;
-  valueUsd: number | null;
+  valueM: number | null;
   investorsNum: number | null;
   url: string;
 }
@@ -41,6 +41,8 @@ export interface InvestmentResult {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
+const USD_TO_MILLIONS = 1_000_000;
+
 function mapRawToDeal(raw: InvestmentRaw): InvestmentDeal {
   const datePart = raw.publ_dt.slice(0, 10);
   return {
@@ -48,7 +50,7 @@ function mapRawToDeal(raw: InvestmentRaw): InvestmentDeal {
     investedCompany: raw.org_name,
     categories: raw.org_catg ? raw.org_catg.split(',').map((s) => s.trim()).filter(Boolean) : [],
     round: raw.fund_type,
-    valueUsd: raw.money_raised_usd,
+    valueM: raw.money_raised_usd != null ? raw.money_raised_usd / USD_TO_MILLIONS : null,
     investorsNum: raw.invest_num,
     url: raw.trans_name_url,
   };

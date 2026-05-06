@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { getAcquisitionByCoCd, AcquisitionDeal, AcquisitionResult } from '@/app/lib/getAcquisitionByCoCd';
-import { formatRawUsdToM } from '@/app/lib/formatters';
+import { formatUsdM } from '@/app/lib/formatters';
 
 const AcquisitionBarLineChartNivo = dynamic(
   () => import('./InvestmentNivoCharts').then((m) => m.AcquisitionBarLineChartNivo),
@@ -35,9 +35,9 @@ function buildYearData(deals: AcquisitionDeal[]): YearChartData[] {
     const yr = parseInt(d.date.slice(0, 4), 10);
     const entry = map.get(yr);
     if (!entry) continue;
-    if (d.valueUsd != null) {
+    if (d.valueM != null) {
       entry.disclosedCount += 1;
-      entry.disclosedValueM += d.valueUsd / 1_000_000;
+      entry.disclosedValueM += d.valueM;
     } else {
       entry.undisclosedCount += 1;
     }
@@ -205,7 +205,7 @@ function AcquisitionBarLineChart({ deals }: { deals: AcquisitionDeal[] }) {
           <div>Disclosed: {tooltip.disclosed} deal{tooltip.disclosed !== 1 ? 's' : ''}</div>
           <div>Undisclosed: {tooltip.undisclosed} deal{tooltip.undisclosed !== 1 ? 's' : ''}</div>
           {tooltip.valueM > 0 && (
-            <div>Value: {formatRawUsdToM(tooltip.valueM * 1_000_000)} M</div>
+            <div>Value: {formatUsdM(tooltip.valueM)}</div>
           )}
         </div>
       )}
@@ -358,8 +358,8 @@ function CompanyAcquisitionPanel({ deals, companyName }: { deals: AcquisitionDea
                     </td>
                   )}
                   <td className="text-right aapl-ma-td-value">
-                    {deal.valueUsd != null ? (
-                      formatRawUsdToM(deal.valueUsd)
+                    {deal.valueM != null ? (
+                      formatUsdM(deal.valueM, 2)
                     ) : (
                       <span className="aapl-ma-undisclosed">Undisclosed</span>
                     )}
