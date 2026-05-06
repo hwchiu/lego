@@ -798,20 +798,23 @@ export default function TopNav() {
                     </div>
                   )}
 
-                  {/* Notification toggle */}
-                  <div className="topnav-notif-settings-item">
-                    <div className="topnav-notif-settings-item-left">
+                  {/* Notification toggle — Coming Soon (disabled) */}
+                  <div className="topnav-notif-settings-item topnav-notif-settings-item--disabled">
+                    <div className="topnav-notif-settings-item-left topnav-notif-settings-item-left--inline">
                       <span className="topnav-notif-settings-label">
                         {lang === 'zh' ? '通知' : 'Notification'}
                       </span>
+                      <span className="topnav-notif-settings-coming-soon">
+                        {lang === 'zh' ? '即將上線' : 'Coming Soon'}
+                      </span>
                     </div>
                     <button
-                      className={`topnav-notif-toggle${notifSettings.notification ? ' topnav-notif-toggle--on' : ''}`}
-                      onClick={() => handleNotifSettingToggle('notification')}
+                      className="topnav-notif-toggle topnav-notif-toggle--disabled"
+                      disabled
+                      aria-disabled="true"
                       role="switch"
-                      aria-checked={notifSettings.notification}
-                      aria-label={lang === 'zh' ? '通知' : 'Notification'}
-                      disabled={notifSettingsLoading}
+                      aria-checked={false}
+                      aria-label={lang === 'zh' ? '通知（即將上線）' : 'Notification (Coming Soon)'}
                     >
                       <div className="topnav-notif-toggle-thumb" />
                     </button>

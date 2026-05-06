@@ -15,19 +15,23 @@ export interface NotificationSettings {
   eventBooking: boolean;
 }
 
-/** Convert API payload (Y/N) to UI booleans */
+/** Convert API payload (Y/N) to UI booleans.
+ * NOTE: `is_notice_enable` is always treated as `false` (Coming Soon — not yet active).
+ */
 export function payloadToSettings(payload: NotificationSettingsPayload): NotificationSettings {
   return {
-    notification: payload.is_notice_enable === 'Y',
+    notification: false, // Coming Soon: always off regardless of API value
     email: payload.is_email_enable === 'Y',
     eventBooking: payload.is_event_booking_enable === 'Y',
   };
 }
 
-/** Convert UI booleans back to API payload (Y/N) */
+/** Convert UI booleans back to API payload (Y/N).
+ * NOTE: `is_notice_enable` is always sent as `'N'` (Coming Soon — not yet active).
+ */
 export function settingsToPayload(settings: NotificationSettings): NotificationSettingsPayload {
   return {
-    is_notice_enable: settings.notification ? 'Y' : 'N',
+    is_notice_enable: 'N', // Coming Soon: always N regardless of UI state
     is_email_enable: settings.email ? 'Y' : 'N',
     is_event_booking_enable: settings.eventBooking ? 'Y' : 'N',
   };
