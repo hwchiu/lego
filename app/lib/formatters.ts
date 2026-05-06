@@ -47,6 +47,25 @@ export function formatUsdM(valueM: number, decimals = 1): string {
   return `$${valueM.toFixed(2)}`;
 }
 
+/**
+ * Format a raw USD value (as returned from the API, no unit) into a millions
+ * display string with 2 decimal places and **no "$" prefix**.
+ *
+ * Divide by 1,000,000, then format with thousands separator and 2 decimals.
+ *
+ * @param rawUsd  Raw USD amount from API (e.g. `250000000` for $250 M)
+ * @returns Formatted millions string without "$" (e.g. `"250.00"`, `"1,500.00"`)
+ *
+ * @example
+ * formatRawUsdToM(250000000)   // "250.00"
+ * formatRawUsdToM(1500000000)  // "1,500.00"
+ * formatRawUsdToM(250000)      // "0.25"
+ */
+export function formatRawUsdToM(rawUsd: number): string {
+  const millions = rawUsd / 1_000_000;
+  return millions.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 // ── 2. Stock Price ─────────────────────────────────────────────────────────────
 
 /**

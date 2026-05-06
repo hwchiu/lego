@@ -25,7 +25,7 @@ export interface AcquisitionDeal {
   date: string;
   acquiredCompany: string;
   categories: string[];
-  valueM: number | null;
+  valueUsd: number | null;
   url: string;
 }
 
@@ -36,15 +36,13 @@ export interface AcquisitionResult {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-const USD_TO_MILLIONS = 1_000_000;
-
 function mapRawToDeal(raw: AcquisitionRaw): AcquisitionDeal {
   const datePart = raw.publ_dt ? raw.publ_dt.slice(0, 10) : '';
   return {
     date: datePart,
     acquiredCompany: raw.target_name,
     categories: raw.acq_catg ? raw.acq_catg.split(',').map((s) => s.trim()).filter(Boolean) : [],
-    valueM: raw.price_usd != null ? raw.price_usd / USD_TO_MILLIONS : null,
+    valueUsd: raw.price_usd,
     url: raw.acq_url,
   };
 }
