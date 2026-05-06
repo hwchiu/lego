@@ -249,13 +249,17 @@ function parseRssItems(xml) {
   let m;
   while ((m = itemRe.exec(xml)) !== null) {
     const block = m[1];
-    const title = extractXmlText(block, 'title').replace(/\s*-\s*[^-]+$/, '').trim(); // strip " - Source" suffix
-    const link  = extractXmlText(block, 'link') || (block.match(/<link\/>[\s\S]*?<([^/][^>]*)>/) || [])[1] || '';
+    // Strip trailing " - Source Name" suffix only when it's a short recognisable source label
+    const rawTitle = extractXmlText(block, 'title');
+    const titleSuffixRe = /\s+-\s+[\w][^-]{1,40}$/;  // " - Short Source Name" at end
+    const title = rawTitle.replace(titleSuffixRe, '').trim() || rawTitle.trim();
+    // Prefer the <link> text content; Google News RSS 2.0 puts the URL there directly
+    const link = extractXmlText(block, 'link');
     const pubDate = extractXmlText(block, 'pubDate');
     const source  = extractXmlText(block, 'source');
-    // Google News sometimes puts the link in a CDATA comment or after <link/>
-    const rawLink = block.match(/https?:\/\/[^\s<"]+/)?.[0] || link;
-    if (title) items.push({ title, link: rawLink || link, pubDate, source });
+    // Fallback: grab the first https URL from the raw block (handles <link/> atom-style feeds)
+    const rawLink = link || (block.match(/https?:\/\/[^\s<"']{10,}/)?.[0] ?? '');
+    if (title) items.push({ title, link: rawLink, pubDate, source });
   }
   return items;
 }
@@ -280,9 +284,10 @@ async function fetchGoogleNews(count = DAILY_NEWS_COUNT) {
       const pubDate = item.pubDate ? new Date(item.pubDate).toISOString() : now;
       const category = classifyCategory(item.title);
       // Try to match a known company ticker from the title/link
+      const titleLower = item.title.toLowerCase();
       const matched = TRACKED_COMPANIES.find((c) =>
-        item.title.toLowerCase().includes(c.symbol.toLowerCase()) ||
-        item.title.toLowerCase().includes(c.name.split(' ')[0].toLowerCase()),
+        titleLower.includes(c.symbol.toLowerCase()) ||
+        titleLower.includes(c.name.split(' ')[0].toLowerCase()),
       );
       return {
         news_date: pubDate,
@@ -312,6 +317,40 @@ async function fetchYahooPressReleases(count = DAILY_PR_COUNT) {
   console.log('\n📋 Fetching press releases via Yahoo Finance search...');
   const results = [];
   const now = new Date();
+  let idCounter = 0;
+
+  const TOPICS_MAP = {
+    semiconductor: 'Semiconductors',
+    ai:            'AI & Computing',
+    earnings:      'Financial Results',
+    supplyChain:   'Supply Chain',
+    investment:    'Investment',
+    policy:        'Policy & Regulation',
+    tech:          'Technology',
+  };
+
+  function buildPRItem(item, company) {
+    const pubDate = item.providerPublishTime
+      ? new Date(item.providerPublishTime * 1000).toISOString().slice(0, 10)
+      : now.toISOString().slice(0, 10);
+    const category = classifyCategory(item.title);
+    const industryTopic = TOPICS_MAP[category] || 'Technology';
+    idCounter += 1;
+    return {
+      id: `pr-crawled-${idCounter}`,
+      title: item.title,
+      company: company.name,
+      ticker: company.symbol,
+      relationship: company.relationship,
+      industry: company.industry,
+      topics: [industryTopic],
+      trendingTopics: [`#${company.symbol}`],
+      publishedAt: pubDate,
+      summary: item.title,
+      viewCount: 0,
+      url: item.link,
+    };
+  }
 
   for (const company of TRACKED_COMPANIES) {
     if (results.length >= count) break;
@@ -325,34 +364,7 @@ async function fetchYahooPressReleases(count = DAILY_PR_COUNT) {
           (item.publisher || '').toLowerCase().includes(pub.toLowerCase()),
         );
         if (!isPR) continue;
-        const pubDate = item.providerPublishTime
-          ? new Date(item.providerPublishTime * 1000).toISOString().slice(0, 10)
-          : now.toISOString().slice(0, 10);
-        const topics = [classifyCategory(item.title)];
-        const topicsMap = {
-          semiconductor: 'Semiconductors',
-          ai:            'AI & Computing',
-          earnings:      'Financial Results',
-          supplyChain:   'Supply Chain',
-          investment:    'Investment',
-          policy:        'Policy & Regulation',
-          tech:          'Technology',
-        };
-        const industryTopic = topicsMap[topics[0]] || 'Technology';
-        results.push({
-          id: `pr-crawled-${Date.now()}-${results.length}`,
-          title: item.title,
-          company: company.name,
-          ticker: company.symbol,
-          relationship: company.relationship,
-          industry: company.industry,
-          topics: [industryTopic],
-          trendingTopics: [`#${company.symbol}`],
-          publishedAt: pubDate,
-          summary: item.title,
-          viewCount: 0,
-          url: item.link,
-        });
+        results.push(buildPRItem(item, company));
         console.log(`  ✅ PR: [${company.symbol}] ${item.title.slice(0, 70)}...`);
       }
     } catch (err) {
@@ -372,37 +384,12 @@ async function fetchYahooPressReleases(count = DAILY_PR_COUNT) {
           if (!item.title || !item.link) continue;
           // Skip if already added
           if (results.some((r) => r.title === item.title)) continue;
-          const pubDate = item.providerPublishTime
-            ? new Date(item.providerPublishTime * 1000).toISOString().slice(0, 10)
-            : now.toISOString().slice(0, 10);
-          const topics = [classifyCategory(item.title)];
-          const topicsMap = {
-            semiconductor: 'Semiconductors',
-            ai:            'AI & Computing',
-            earnings:      'Financial Results',
-            supplyChain:   'Supply Chain',
-            investment:    'Investment',
-            policy:        'Policy & Regulation',
-            tech:          'Technology',
-          };
-          const industryTopic = topicsMap[topics[0]] || 'Technology';
-          results.push({
-            id: `pr-crawled-${Date.now()}-${results.length}`,
-            title: item.title,
-            company: company.name,
-            ticker: company.symbol,
-            relationship: company.relationship,
-            industry: company.industry,
-            topics: [industryTopic],
-            trendingTopics: [`#${company.symbol}`],
-            publishedAt: pubDate,
-            summary: item.title,
-            viewCount: 0,
-            url: item.link,
-          });
+          results.push(buildPRItem(item, company));
           console.log(`  ✅ PR (fallback): [${company.symbol}] ${item.title.slice(0, 70)}...`);
         }
-      } catch { /* skip */ }
+      } catch (err) {
+        console.error(`  ❌ PR fallback search for ${company.symbol}: ${err.message}`);
+      }
     }
   }
 
@@ -424,6 +411,10 @@ function fmtEventDate(date) {
 function fmtDateKey(date) {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
+
+/** Template for projected earnings event descriptions (filled at runtime) */
+const PROJECTED_EARNINGS_DESC_TEMPLATE = (companyName) =>
+  `${companyName} projected earnings release. Analyst estimates and guidance details will be available closer to the date. Key metrics to watch: revenue growth, margin trends, and forward guidance.`;
 
 async function fetchCorpEarningsEvents(count = DAILY_EVENT_COUNT) {
   console.log('\n📅 Fetching upcoming earnings events via Yahoo Finance...');
@@ -462,7 +453,7 @@ async function fetchCorpEarningsEvents(count = DAILY_EVENT_COUNT) {
     grouped[key].push({
       cellLabel: company.symbol,
       company: company.name,
-      description: `${company.name} projected earnings release. Analyst estimates and guidance details will be available closer to the date. Key metrics to watch: revenue growth, margin trends, and forward guidance.`,
+      description: PROJECTED_EARNINGS_DESC_TEMPLATE(company.name),
       eventDate: fmtEventDate(date),
       eventType: 'Projected Earnings Release',
       webcastLink: `https://finance.yahoo.com/quote/${company.symbol}`,
