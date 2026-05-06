@@ -3,7 +3,7 @@
 import { ResponsiveBar } from '@nivo/bar';
 import { ResponsiveLine } from '@nivo/line';
 import { useTheme } from '@/app/contexts/ThemeContext';
-import { formatUsdM } from '@/app/lib/formatters';
+import { formatUsdM, usdToM } from '@/app/lib/formatters';
 
 // ── Shared types ──────────────────────────────────────────────────────────────
 
@@ -45,7 +45,7 @@ function buildYearData(deals: InvestmentDeal[]): YearChartData[] {
     if (!entry) continue;
     if (d.valueUsd != null) {
       entry.disclosedCount += 1;
-      entry.disclosedValueM += d.valueUsd / 1_000_000;
+      entry.disclosedValueM += usdToM(d.valueUsd);
     } else {
       entry.undisclosedCount += 1;
     }
@@ -350,7 +350,7 @@ function buildAcqYearData(deals: InvestmentDeal[]): YearChartData[] {
     if (!entry) continue;
     if (d.valueUsd != null) {
       entry.disclosedCount += 1;
-      entry.disclosedValueM += d.valueUsd / 1_000_000;
+      entry.disclosedValueM += usdToM(d.valueUsd);
     } else {
       entry.undisclosedCount += 1;
     }
