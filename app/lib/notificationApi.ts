@@ -41,7 +41,7 @@ const API_BASE = process.env.NODE_ENV === 'production' ? '/lego' : '';
  */
 export async function getNotificationSettings(): Promise<NotificationSettings> {
   const res = await fetch(`${API_BASE}/getNotificationSettings`);
-  if (!res.ok) throw new Error(`getNotificationSettings failed: ${res.status}`);
+  if (!res.ok) throw new Error(`getNotificationSettings failed: ${res.status} ${res.statusText}`);
   const payload = (await res.json()) as NotificationSettingsPayload;
   return payloadToSettings(payload);
 }
@@ -57,5 +57,5 @@ export async function updateNotificationSettings(settings: NotificationSettings)
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
-  if (!res.ok) throw new Error(`updateNotificationSettings failed: ${res.status}`);
+  if (!res.ok) throw new Error(`updateNotificationSettings failed: ${res.status} ${res.statusText}`);
 }

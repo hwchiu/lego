@@ -386,7 +386,7 @@ export default function TopNav() {
       setNotifSettingsLoading(true);
       getNotificationSettings()
         .then((settings) => setNotifSettings(settings))
-        .catch(() => {/* keep existing state on error */})
+        .catch((err) => { console.error('Failed to fetch notification settings:', err); })
         .finally(() => setNotifSettingsLoading(false));
       return true;
     });
@@ -395,7 +395,7 @@ export default function TopNav() {
   const handleNotifSettingToggle = useCallback((key: keyof NotificationSettings) => {
     setNotifSettings((prev) => {
       const next = { ...prev, [key]: !prev[key] };
-      updateNotificationSettings(next).catch(() => {/* silent fail — UI already updated optimistically */});
+      updateNotificationSettings(next).catch((err) => { console.error('Failed to update notification settings:', err); });
       return next;
     });
   }, []);
