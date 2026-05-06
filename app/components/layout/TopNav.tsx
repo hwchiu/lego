@@ -13,6 +13,11 @@ import { getStatement } from '@/app/data/financialData';
 import finSummaryConfig from '@/app/data/fin-summary-config.json';
 import { getFinIdxCardData } from '@/app/lib/watchlistApi';
 import type { WatchlistDataItem } from '@/app/lib/watchlistApi';
+import {
+  getNotificationSettings,
+  updateNotificationSettings,
+} from '@/app/lib/notificationApi';
+import type { NotificationSettings } from '@/app/lib/notificationApi';
 
 const SearchFinancialIndicesChart = dynamic(
   () => import('@/app/company-profile/[symbol]/InvestmentNivoCharts').then((m) => m.FinancialIndicesNivoChart),
@@ -363,22 +368,36 @@ export default function TopNav() {
   // Notification panel state
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifSettingsView, setNotifSettingsView] = useState(false);
-  const [notifSettings, setNotifSettings] = useState({
+  const [notifSettings, setNotifSettings] = useState<NotificationSettings>({
     notification: false,
     email: true,
     eventBooking: true,
   });
+  const [notifSettingsLoading, setNotifSettingsLoading] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
 
   const handleNotifToggle = useCallback(() => {
     setNotifOpen((prev) => {
-      if (prev) setNotifSettingsView(false);
-      return !prev;
+      if (prev) {
+        setNotifSettingsView(false);
+        return false;
+      }
+      // Fetch current settings from API when opening the panel
+      setNotifSettingsLoading(true);
+      getNotificationSettings()
+        .then((settings) => setNotifSettings(settings))
+        .catch(() => {/* keep existing state on error */})
+        .finally(() => setNotifSettingsLoading(false));
+      return true;
     });
   }, []);
 
-  const handleNotifSettingToggle = useCallback((key: keyof typeof notifSettings) => {
-    setNotifSettings((prev) => ({ ...prev, [key]: !prev[key] }));
+  const handleNotifSettingToggle = useCallback((key: keyof NotificationSettings) => {
+    setNotifSettings((prev) => {
+      const next = { ...prev, [key]: !prev[key] };
+      updateNotificationSettings(next).catch(() => {/* silent fail — UI already updated optimistically */});
+      return next;
+    });
   }, []);
 
   const q = query.trim().toLowerCase();
@@ -773,23 +792,26 @@ export default function TopNav() {
               {notifSettingsView ? (
                 /* Settings view */
                 <div className="topnav-notif-settings-list">
-                  {/* Notification toggle — Coming Soon (disabled) */}
-                  <div className="topnav-notif-settings-item topnav-notif-settings-item--disabled">
-                    <div className="topnav-notif-settings-item-left topnav-notif-settings-item-left--inline">
+                  {notifSettingsLoading && (
+                    <div className="topnav-notif-settings-loading">
+                      {lang === 'zh' ? '載入中…' : 'Loading…'}
+                    </div>
+                  )}
+
+                  {/* Notification toggle */}
+                  <div className="topnav-notif-settings-item">
+                    <div className="topnav-notif-settings-item-left">
                       <span className="topnav-notif-settings-label">
                         {lang === 'zh' ? '通知' : 'Notification'}
                       </span>
-                      <span className="topnav-notif-settings-coming-soon">
-                        {lang === 'zh' ? '即將上線' : 'Coming Soon'}
-                      </span>
                     </div>
                     <button
-                      className="topnav-notif-toggle topnav-notif-toggle--disabled"
-                      disabled
-                      aria-disabled="true"
+                      className={`topnav-notif-toggle${notifSettings.notification ? ' topnav-notif-toggle--on' : ''}`}
+                      onClick={() => handleNotifSettingToggle('notification')}
                       role="switch"
-                      aria-checked={false}
-                      aria-label={lang === 'zh' ? '通知（即將上線）' : 'Notification (Coming Soon)'}
+                      aria-checked={notifSettings.notification}
+                      aria-label={lang === 'zh' ? '通知' : 'Notification'}
+                      disabled={notifSettingsLoading}
                     >
                       <div className="topnav-notif-toggle-thumb" />
                     </button>
@@ -808,6 +830,7 @@ export default function TopNav() {
                       role="switch"
                       aria-checked={notifSettings.email}
                       aria-label={lang === 'zh' ? '電子郵件通知' : 'Email notifications'}
+                      disabled={notifSettingsLoading}
                     >
                       <div className="topnav-notif-toggle-thumb" />
                     </button>
@@ -826,6 +849,7 @@ export default function TopNav() {
                       role="switch"
                       aria-checked={notifSettings.eventBooking}
                       aria-label={lang === 'zh' ? '在 Outlook 中建立活動' : 'Event Booking in Outlook'}
+                      disabled={notifSettingsLoading}
                     >
                       <div className="topnav-notif-toggle-thumb" />
                     </button>
