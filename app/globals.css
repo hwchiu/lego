@@ -26410,6 +26410,101 @@ html.dark .pr-archive-api-badge-clear:hover {
   animation: pr-spin 0.8s linear infinite;
 }
 
+/* ─── Loading skeleton ─── */
+
+.pr-loading-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 0;
+}
+
+.pr-loading-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  color: var(--c-text-3);
+}
+
+.pr-loading-text {
+  font-size: 13px;
+  color: var(--c-text-3);
+}
+
+/* ─── Error banner ─── */
+
+.pr-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  border-radius: var(--radius);
+  color: var(--c-neg);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.pr-error-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.pr-error-message {
+  flex: 1;
+  min-width: 0;
+}
+
+.pr-error-retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  background: var(--c-neg);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+
+.pr-error-retry:hover {
+  opacity: 0.85;
+}
+
+/* ─── Infinite scroll sentinel ─── */
+
+.pr-load-more-sentinel {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.pr-load-more-spinner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--c-text-3);
+  font-size: 12.5px;
+}
+
+.pr-end-marker {
+  text-align: center;
+  padding: 28px 0 12px;
+  font-size: 12px;
+  color: var(--c-text-4);
+  letter-spacing: 0.05em;
+}
+
 /* ─── Responsive (Company Filter) ─── */
 
 @media (max-width: 768px) {
