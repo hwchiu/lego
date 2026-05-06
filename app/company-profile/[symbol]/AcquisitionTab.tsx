@@ -205,7 +205,7 @@ function AcquisitionBarLineChart({ deals }: { deals: AcquisitionDeal[] }) {
           <div>Disclosed: {tooltip.disclosed} deal{tooltip.disclosed !== 1 ? 's' : ''}</div>
           <div>Undisclosed: {tooltip.undisclosed} deal{tooltip.undisclosed !== 1 ? 's' : ''}</div>
           {tooltip.valueM > 0 && (
-            <div>Value: {tooltip.valueM.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} M</div>
+            <div>Value: {formatRawUsdToM(tooltip.valueM * 1_000_000)} M</div>
           )}
         </div>
       )}

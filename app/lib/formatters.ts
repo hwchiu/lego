@@ -51,7 +51,7 @@ export function formatUsdM(valueM: number, decimals = 1): string {
  * Format a raw USD value (as returned from the API, no unit) into a millions
  * display string with 2 decimal places and **no "$" prefix**.
  *
- * Divide by 1 000 000, then format with thousands separator and 2 decimals.
+ * Divide by 1,000,000, then format with thousands separator and 2 decimals.
  *
  * @param rawUsd  Raw USD amount from API (e.g. `250000000` for $250 M)
  * @returns Formatted millions string without "$" (e.g. `"250.00"`, `"1,500.00"`)
