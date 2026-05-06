@@ -1,5 +1,71 @@
 [
   {
+    "id": "pr-089",
+    "title": "TSMC Reports April 2026 Revenue of NT$349.6 Billion, Up 48.1% YoY",
+    "company": "TSMC",
+    "ticker": "TSM",
+    "relationship": "customer",
+    "industry": "Semiconductors",
+    "topics": [
+      "Financial Results",
+      "Semiconductors",
+      "AI & Computing"
+    ],
+    "trendingTopics": [
+      "#TSMC",
+      "#RevenueRecord",
+      "#AIChipDemand"
+    ],
+    "publishedAt": "2026-05-06",
+    "summary": "TSMC announced April 2026 consolidated revenue of NT$349.6 billion, a 48.1% increase year-over-year and a 3.7% increase month-over-month. The record monthly revenue reflects sustained hyperscaler demand for CoWoS-packaged AI accelerators on N3 and N2 process nodes, with management reaffirming full-year 2026 guidance of approximately 30% revenue growth.",
+    "viewCount": 215000,
+    "url": "https://ir.tsmc.com/english/news/"
+  },
+  {
+    "id": "pr-090",
+    "title": "Apple Announces M5 MacBook Pro with TSMC 3nm Second-Generation Process",
+    "company": "Apple Inc.",
+    "ticker": "AAPL",
+    "relationship": "customer",
+    "industry": "Consumer Electronics",
+    "topics": [
+      "Consumer Electronics",
+      "Semiconductors",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#M5Chip",
+      "#MacBookPro",
+      "#TSMC3nm"
+    ],
+    "publishedAt": "2026-05-06",
+    "summary": "Apple unveiled the M5 MacBook Pro lineup powered by the M5 system-on-chip built on TSMC's second-generation 3nm process (N3E). The M5 delivers up to 35% faster CPU performance and 45% faster GPU performance compared to M4, with a new 40-core Neural Engine enabling real-time on-device language model inference without cloud dependency.",
+    "viewCount": 198300,
+    "url": "https://www.apple.com/newsroom/"
+  },
+  {
+    "id": "pr-091",
+    "title": "NVIDIA Confirms Rubin Ultra GPU Tape-Out on TSMC A14 Process Node",
+    "company": "NVIDIA Corporation",
+    "ticker": "NVDA",
+    "relationship": "customer",
+    "industry": "Semiconductors",
+    "topics": [
+      "AI & Computing",
+      "Semiconductors",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#RubinUltra",
+      "#TSMC_A14",
+      "#NextGenAI"
+    ],
+    "publishedAt": "2026-05-06",
+    "summary": "NVIDIA confirmed that the Rubin Ultra GPU has completed tape-out on TSMC's A14 (1.4nm-class) angstrom-era process node, targeting risk production in Q1 2027 and volume production in H2 2027. The Rubin Ultra integrates 1.4 trillion transistors using TSMC's backside power delivery network (BSPDN) and features 12-stack HBM4 with 16 TB/s aggregate bandwidth per module.",
+    "viewCount": 231400,
+    "url": "https://nvidianews.nvidia.com/news/"
+  },
+  {
     "id": "pr-056",
     "title": "NVIDIA Reveals Vera Rubin GPU Architecture; TSMC 2nm Partnership Confirmed for 2027 Production",
     "company": "NVIDIA Corporation",
