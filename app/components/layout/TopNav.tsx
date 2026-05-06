@@ -13,6 +13,11 @@ import { getStatement } from '@/app/data/financialData';
 import finSummaryConfig from '@/app/data/fin-summary-config.json';
 import { getFinIdxCardData } from '@/app/lib/watchlistApi';
 import type { WatchlistDataItem } from '@/app/lib/watchlistApi';
+import {
+  getNotificationSettings,
+  updateNotificationSettings,
+} from '@/app/lib/notificationApi';
+import type { NotificationSettings } from '@/app/lib/notificationApi';
 
 const SearchFinancialIndicesChart = dynamic(
   () => import('@/app/company-profile/[symbol]/InvestmentNivoCharts').then((m) => m.FinancialIndicesNivoChart),
@@ -363,22 +368,36 @@ export default function TopNav() {
   // Notification panel state
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifSettingsView, setNotifSettingsView] = useState(false);
-  const [notifSettings, setNotifSettings] = useState({
+  const [notifSettings, setNotifSettings] = useState<NotificationSettings>({
     notification: false,
     email: true,
     eventBooking: true,
   });
+  const [notifSettingsLoading, setNotifSettingsLoading] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
 
   const handleNotifToggle = useCallback(() => {
     setNotifOpen((prev) => {
-      if (prev) setNotifSettingsView(false);
-      return !prev;
+      if (prev) {
+        setNotifSettingsView(false);
+        return false;
+      }
+      // Fetch current settings from API when opening the panel
+      setNotifSettingsLoading(true);
+      getNotificationSettings()
+        .then((settings) => setNotifSettings(settings))
+        .catch((err) => { console.error('Failed to fetch notification settings:', err); })
+        .finally(() => setNotifSettingsLoading(false));
+      return true;
     });
   }, []);
 
-  const handleNotifSettingToggle = useCallback((key: keyof typeof notifSettings) => {
-    setNotifSettings((prev) => ({ ...prev, [key]: !prev[key] }));
+  const handleNotifSettingToggle = useCallback((key: keyof NotificationSettings) => {
+    setNotifSettings((prev) => {
+      const next = { ...prev, [key]: !prev[key] };
+      updateNotificationSettings(next).catch((err) => { console.error('Failed to update notification settings:', err); });
+      return next;
+    });
   }, []);
 
   const q = query.trim().toLowerCase();
@@ -773,6 +792,12 @@ export default function TopNav() {
               {notifSettingsView ? (
                 /* Settings view */
                 <div className="topnav-notif-settings-list">
+                  {notifSettingsLoading && (
+                    <div className="topnav-notif-settings-loading">
+                      {lang === 'zh' ? '載入中…' : 'Loading…'}
+                    </div>
+                  )}
+
                   {/* Notification toggle — Coming Soon (disabled) */}
                   <div className="topnav-notif-settings-item topnav-notif-settings-item--disabled">
                     <div className="topnav-notif-settings-item-left topnav-notif-settings-item-left--inline">
@@ -808,6 +833,7 @@ export default function TopNav() {
                       role="switch"
                       aria-checked={notifSettings.email}
                       aria-label={lang === 'zh' ? '電子郵件通知' : 'Email notifications'}
+                      disabled={notifSettingsLoading}
                     >
                       <div className="topnav-notif-toggle-thumb" />
                     </button>
@@ -826,6 +852,7 @@ export default function TopNav() {
                       role="switch"
                       aria-checked={notifSettings.eventBooking}
                       aria-label={lang === 'zh' ? '在 Outlook 中建立活動' : 'Event Booking in Outlook'}
+                      disabled={notifSettingsLoading}
                     >
                       <div className="topnav-notif-toggle-thumb" />
                     </button>
