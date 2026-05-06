@@ -1121,7 +1121,10 @@ const crawledNewsItems: CrawledNewsItem[] = (() => {
   try {
     const items = extractJson<CrawledNewsItem[]>(rawMarketNewsContent);
     return Array.isArray(items) ? items : [];
-  } catch {
+  } catch (err) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('[news.ts] Failed to parse market-news.md:', err);
+    }
     return [];
   }
 })();

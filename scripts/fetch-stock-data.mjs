@@ -251,7 +251,7 @@ function parseRssItems(xml) {
     const block = m[1];
     // Strip trailing " - Source Name" suffix only when it's a short recognisable source label
     const rawTitle = extractXmlText(block, 'title');
-    const titleSuffixRe = /\s+-\s+[\w][^-]{1,40}$/;  // " - Short Source Name" at end
+    const titleSuffixRe = /\s+-\s+[^-]{2,40}$/;  // " - Short Source Name" at end
     const title = rawTitle.replace(titleSuffixRe, '').trim() || rawTitle.trim();
     // Prefer the <link> text content; Google News RSS 2.0 puts the URL there directly
     const link = extractXmlText(block, 'link');
@@ -412,9 +412,10 @@ function fmtDateKey(date) {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-/** Template for projected earnings event descriptions (filled at runtime) */
-const PROJECTED_EARNINGS_DESC_TEMPLATE = (companyName) =>
-  `${companyName} projected earnings release. Analyst estimates and guidance details will be available closer to the date. Key metrics to watch: revenue growth, margin trends, and forward guidance.`;
+/** Builds the description string for a projected earnings calendar event */
+function buildProjectedEarningsDesc(companyName) {
+  return `${companyName} projected earnings release. Analyst estimates and guidance details will be available closer to the date. Key metrics to watch: revenue growth, margin trends, and forward guidance.`;
+}
 
 async function fetchCorpEarningsEvents(count = DAILY_EVENT_COUNT) {
   console.log('\n📅 Fetching upcoming earnings events via Yahoo Finance...');
@@ -453,7 +454,7 @@ async function fetchCorpEarningsEvents(count = DAILY_EVENT_COUNT) {
     grouped[key].push({
       cellLabel: company.symbol,
       company: company.name,
-      description: PROJECTED_EARNINGS_DESC_TEMPLATE(company.name),
+      description: buildProjectedEarningsDesc(company.name),
       eventDate: fmtEventDate(date),
       eventType: 'Projected Earnings Release',
       webcastLink: `https://finance.yahoo.com/quote/${company.symbol}`,
@@ -628,9 +629,9 @@ function prependPressReleasesMd(newItems) {
     return;
   }
   const existing = readPressReleasesMd();
-  // De-duplicate by title
-  const existingTitles = new Set(existing.map((r) => r.title));
-  const dedupedNew = newItems.filter((r) => !existingTitles.has(r.title));
+  // De-duplicate by title + URL
+  const existingKeys = new Set(existing.map((r) => `${r.title}|${r.url}`));
+  const dedupedNew = newItems.filter((r) => !existingKeys.has(`${r.title}|${r.url}`));
   writePressReleasesMd([...dedupedNew, ...existing]);
   console.log(`  ✅ Prepended ${dedupedNew.length} new press release(s) (${newItems.length - dedupedNew.length} duplicate(s) skipped)`);
 }
@@ -662,10 +663,10 @@ function updateCorpEventsMd(newEventGroups) {
       } else {
         // Append only if not already present (same cellLabel + eventDate)
         for (const entry of entries) {
-          const already = existing[dateKey].some(
+          const isDuplicate = existing[dateKey].some(
             (e) => e.cellLabel === entry.cellLabel && e.eventDate === entry.eventDate,
           );
-          if (!already) existing[dateKey].push(entry);
+          if (!isDuplicate) existing[dateKey].push(entry);
         }
       }
     }
