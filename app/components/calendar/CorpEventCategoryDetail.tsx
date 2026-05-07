@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import type { EventCalendarDetailItem } from '@/app/lib/eventCalendarApi';
 import { formatDateLabelFull, formatEventDatetime } from '@/app/lib/formatters';
 
@@ -64,7 +65,20 @@ export default function CorpEventCategoryDetail({
             <tbody>
               {sortedEvents.map((e, i) => (
                   <tr key={e.EVENT_ID || i}>
-                    <td className="td-symbol corp-event-company">{e.COMPANY_NAME}</td>
+                    <td className="td-symbol corp-event-company">
+                      {e.TICKER ? (
+                        <Link
+                          href={`/company-profile/${encodeURIComponent(e.TICKER.trim().toUpperCase())}/`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="corp-event-company-link"
+                        >
+                          {e.COMPANY_NAME}
+                        </Link>
+                      ) : (
+                        e.COMPANY_NAME
+                      )}
+                    </td>
                     <td className="corp-event-desc">{e.DESCRIPTION}</td>
                     <td className="corp-event-date">{formatEventDatetime(e.EVENT_DATETIME)}</td>
                     <td>
