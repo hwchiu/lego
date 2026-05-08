@@ -147,6 +147,7 @@ const TABS = [
   'Acquisition',
   'Funding',
 ] as const;
+const DEFAULT_TAB = 'FIN. Summary';
 
 const NEWS_CATEGORY_LABEL_MAP: Record<string, string> = Object.fromEntries(
   newsCategoryOptions.map((category) => [category.key, category.label]),
@@ -600,7 +601,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const [activeTab, setActiveTab] = useState<Tab>(() => {
     const param = searchParams.get('tab');
     if (param && (TABS as readonly string[]).includes(param)) return param as Tab;
-    return 'FIN. Summary';
+    return DEFAULT_TAB;
   });
   const [activeFinIndex, setActiveFinIndex] = useState<string>('Revenue');
   const [isFavorite, setIsFavorite] = useState(false);
@@ -667,12 +668,12 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
 
   const updateTabQuery = useCallback((nextTab: Tab) => {
     const currentTab = searchParams.get('tab');
-    if (currentTab === nextTab || (nextTab === 'FIN. Summary' && !currentTab)) {
+    if (currentTab === nextTab || (nextTab === DEFAULT_TAB && !currentTab)) {
       return;
     }
 
     const nextSearchParams = new URLSearchParams(searchParams.toString());
-    if (nextTab === 'FIN. Summary') {
+    if (nextTab === DEFAULT_TAB) {
       nextSearchParams.delete('tab');
     } else {
       nextSearchParams.set('tab', nextTab);
@@ -693,7 +694,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     if (param && (TABS as readonly string[]).includes(param)) {
       setActiveTab(param as Tab);
     } else if (!param) {
-      setActiveTab('FIN. Summary');
+      setActiveTab(DEFAULT_TAB);
     }
   }, [searchParams]);
 
@@ -1274,7 +1275,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
             </div>
 
             {/* ── Data cards (FIN. Summary tab) ── */}
-            {activeTab === 'FIN. Summary' && (
+            {activeTab === DEFAULT_TAB && (
               finData ? (() => {
                 // Merge derived API data over static finData for Current Qtr Financial card
                 const cq = derivedCurrentQtr
