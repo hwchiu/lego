@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import DatePickerInput from '@/app/components/shared/DatePickerInput';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -594,6 +594,8 @@ interface CompanyProfileContentProps {
 }
 
 export default function CompanyProfileContent({ symbol }: CompanyProfileContentProps) {
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<Tab>(() => {
     const param = searchParams.get('tab');
@@ -662,6 +664,28 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   const scrollTabs = useCallback((dir: 'left' | 'right') => {
     tabsScrollRef.current?.scrollBy({ left: dir === 'left' ? -150 : 150, behavior: 'smooth' });
   }, []);
+
+  const updateTabQuery = useCallback((nextTab: Tab) => {
+    const currentTab = searchParams.get('tab');
+    if (currentTab === nextTab || (nextTab === 'FIN. Summary' && !currentTab)) {
+      return;
+    }
+
+    const nextSearchParams = new URLSearchParams(searchParams.toString());
+    if (nextTab === 'FIN. Summary') {
+      nextSearchParams.delete('tab');
+    } else {
+      nextSearchParams.set('tab', nextTab);
+    }
+
+    const nextQuery = nextSearchParams.toString();
+    router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, { scroll: false });
+  }, [pathname, router, searchParams]);
+
+  const handleTabChange = useCallback((nextTab: Tab) => {
+    setActiveTab(nextTab);
+    updateTabQuery(nextTab);
+  }, [updateTabQuery]);
 
   // Sync activeTab when the URL search params change (e.g. client-side navigation with ?tab=)
   useEffect(() => {
@@ -900,9 +924,11 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   // If the active tab is removed from visibleTabs (e.g. Funding with no data), fall back to the first visible tab
   useEffect(() => {
     if (visibleTabs.length > 0 && !visibleTabs.includes(activeTab)) {
-      setActiveTab(visibleTabs[0] as Tab);
+      const fallbackTab = visibleTabs[0] as Tab;
+      setActiveTab(fallbackTab);
+      updateTabQuery(fallbackTab);
     }
-  }, [visibleTabs, activeTab]);
+  }, [visibleTabs, activeTab, updateTabQuery]);
 
   // Load favorites using API on mount / symbol change
   useEffect(() => {
@@ -1230,7 +1256,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                   <button
                     key={tab}
                     className={`cp-nav-tab${activeTab === tab ? ' active' : ''}`}
-                    onClick={() => setActiveTab(tab)}
+                    onClick={() => handleTabChange(tab)}
                   >
                     {tab}
                   </button>
