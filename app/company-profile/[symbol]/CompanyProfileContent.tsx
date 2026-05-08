@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import DatePickerInput from '@/app/components/shared/DatePickerInput';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -147,6 +147,7 @@ const TABS = [
   'Acquisition',
   'Funding',
 ] as const;
+const DEFAULT_TAB = 'FIN. Summary';
 
 const NEWS_CATEGORY_LABEL_MAP: Record<string, string> = Object.fromEntries(
   newsCategoryOptions.map((category) => [category.key, category.label]),
@@ -594,11 +595,13 @@ interface CompanyProfileContentProps {
 }
 
 export default function CompanyProfileContent({ symbol }: CompanyProfileContentProps) {
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<Tab>(() => {
     const param = searchParams.get('tab');
     if (param && (TABS as readonly string[]).includes(param)) return param as Tab;
-    return 'FIN. Summary';
+    return DEFAULT_TAB;
   });
   const [activeFinIndex, setActiveFinIndex] = useState<string>('Revenue');
   const [isFavorite, setIsFavorite] = useState(false);
@@ -663,13 +666,35 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     tabsScrollRef.current?.scrollBy({ left: dir === 'left' ? -150 : 150, behavior: 'smooth' });
   }, []);
 
+  const updateTabQuery = useCallback((nextTab: Tab) => {
+    const currentTab = searchParams.get('tab');
+    if (currentTab === nextTab || (nextTab === DEFAULT_TAB && !currentTab)) {
+      return;
+    }
+
+    const nextSearchParams = new URLSearchParams(searchParams.toString());
+    if (nextTab === DEFAULT_TAB) {
+      nextSearchParams.delete('tab');
+    } else {
+      nextSearchParams.set('tab', nextTab);
+    }
+
+    const nextQuery = nextSearchParams.toString();
+    router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, { scroll: false });
+  }, [pathname, router, searchParams]);
+
+  const handleTabChange = useCallback((nextTab: Tab) => {
+    setActiveTab(nextTab);
+    updateTabQuery(nextTab);
+  }, [updateTabQuery]);
+
   // Sync activeTab when the URL search params change (e.g. client-side navigation with ?tab=)
   useEffect(() => {
     const param = searchParams.get('tab');
     if (param && (TABS as readonly string[]).includes(param)) {
       setActiveTab(param as Tab);
     } else if (!param) {
-      setActiveTab('FIN. Summary');
+      setActiveTab(DEFAULT_TAB);
     }
   }, [searchParams]);
 
@@ -900,9 +925,11 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   // If the active tab is removed from visibleTabs (e.g. Funding with no data), fall back to the first visible tab
   useEffect(() => {
     if (visibleTabs.length > 0 && !visibleTabs.includes(activeTab)) {
-      setActiveTab(visibleTabs[0] as Tab);
+      const fallbackTab = visibleTabs[0] as Tab;
+      setActiveTab(fallbackTab);
+      updateTabQuery(fallbackTab);
     }
-  }, [visibleTabs, activeTab]);
+  }, [visibleTabs, activeTab, updateTabQuery]);
 
   // Load favorites using API on mount / symbol change
   useEffect(() => {
@@ -1230,7 +1257,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                   <button
                     key={tab}
                     className={`cp-nav-tab${activeTab === tab ? ' active' : ''}`}
-                    onClick={() => setActiveTab(tab)}
+                    onClick={() => handleTabChange(tab)}
                   >
                     {tab}
                   </button>
@@ -1248,7 +1275,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
             </div>
 
             {/* ── Data cards (FIN. Summary tab) ── */}
-            {activeTab === 'FIN. Summary' && (
+            {activeTab === DEFAULT_TAB && (
               finData ? (() => {
                 // Merge derived API data over static finData for Current Qtr Financial card
                 const cq = derivedCurrentQtr
