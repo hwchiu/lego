@@ -50,6 +50,7 @@ content/                 # Markdown files with embedded JSON data blocks
 |-------|------|
 | `mic-development` | 元件結構、CSS 規範、Data layer、路由、RWD |
 | `mic-ui-style` | 設計令牌、色彩、字體、陰影、動畫系統 |
+| `mic-page-interactions` | 標準 UI 互動模式：展開收合、下載、收藏、複製連結、搜尋、篩選、Tabs、Modal、Loading、Empty State |
 | `using-superpowers` | 如何使用 Skill tool 的總入口 |
 | `brainstorming` | 實作前的需求探索與規格確認 |
 | `writing-plans` | 多步驟任務的計畫撰寫 |
