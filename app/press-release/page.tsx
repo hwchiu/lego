@@ -8,12 +8,7 @@ import { useLanguage } from '@/app/contexts/LanguageContext';
 import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 import type { PressRelease } from '@/app/data/pressReleases';
 import { getPressReleaseArchiveGroups, type PRArchiveGroup } from '@/app/data/pressReleases';
-import {
-  getPressReleaseNews,
-  todayStr,
-  subtractDays,
-  subtractMonths,
-} from '@/app/lib/pressReleaseNewsApi';
+import { getPressReleases } from '@/app/lib/pressReleaseApi';
 
 // ─── Company color palette ────────────────────────────────────────────────────
 
@@ -227,10 +222,6 @@ function ArchiveGroup({ group, isExpanded, onToggle, lang }: ArchiveGroupProps) 
 // ─── Company Multi-Select ─────────────────────────────────────────────────────
 
 const MAX_COMPANY_FILTER = 10;
-/** Days of history to load when no company filter is active. */
-const DEFAULT_DAYS_WINDOW = 7;
-/** Months of history to load when a company filter is active. */
-const FILTERED_MONTHS_WINDOW = 3;
 
 interface CompanyFilterProps {
   selectedCodes: string[];
@@ -472,18 +463,7 @@ export default function PressReleasePage() {
     setError(null);
 
     try {
-      const today = todayStr();
-      // No filter → last N days; with filter → last M months
-      const from = tickers.length > 0
-        ? subtractMonths(today, FILTERED_MONTHS_WINDOW)
-        : subtractDays(today, DEFAULT_DAYS_WINDOW);
-
-      const items = await getPressReleaseNews({
-        co_cd: tickers,
-        from,
-        to: today,
-        signal: ctrl.signal,
-      });
+      const { items } = await getPressReleases(0, Number.MAX_SAFE_INTEGER, tickers, ctrl.signal);
 
       if (ctrl.signal.aborted) return;
       setAllItems(items);
