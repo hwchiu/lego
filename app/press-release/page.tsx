@@ -6,12 +6,14 @@ import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
-import {
-  getPressReleases,
-  PAGE_SIZE,
-  type PressRelease,
-} from '@/app/lib/pressReleaseApi';
+import type { PressRelease } from '@/app/data/pressReleases';
 import { getPressReleaseArchiveGroups, type PRArchiveGroup } from '@/app/data/pressReleases';
+import {
+  getPressReleaseNews,
+  todayStr,
+  subtractDays,
+  subtractMonths,
+} from '@/app/lib/pressReleaseNewsApi';
 
 // ─── Company color palette ────────────────────────────────────────────────────
 
@@ -73,15 +75,6 @@ function CollapseAllIcon() {
       <path d="M2 4H12M2 7H12M2 10H12" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
       <path d="M5 8.5L7 6.5L9 8.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M5 5.5L7 3.5L9 5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function TagIcon() {
-  return (
-    <svg viewBox="0 0 14 14" width="10" height="10" fill="none" aria-hidden="true">
-      <path d="M1.5 1.5H7.5L12.5 6.5L7.5 11.5L1.5 6.5V1.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
-      <circle cx="4.5" cy="4.5" r="1" fill="currentColor" />
     </svg>
   );
 }
@@ -150,28 +143,38 @@ function ArchiveTile({ pr, lang }: ArchiveTileProps) {
   const initials = getTileInitials(pr.ticker);
 
   return (
-    <a
+    <div
       className="pr-archive-tile"
-      href={pr.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={`${pr.title} — ${pr.company} (${pr.relationship})`}
+      aria-label={`${pr.title} — ${pr.company}`}
     >
       <div className="pr-archive-tile-media" style={{ background: color }}>
         <span className="pr-archive-tile-ticker">{initials}</span>
       </div>
       <div className="pr-archive-tile-info">
-        <h3 className="pr-archive-tile-title">{pr.title}</h3>
+        <h3 className="pr-archive-tile-title">
+          <a
+            className="pr-archive-tile-title-link"
+            href={pr.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {pr.title}
+          </a>
+        </h3>
         <p className="pr-archive-tile-desc">{pr.summary}</p>
         <div className="pr-archive-tile-footer">
-          <span className={`pr-archive-tile-tag pr-archive-tile-tag--${pr.relationship}`}>
-            <TagIcon />
+          <a
+            className="news-tag"
+            href={`/lego/company-profile/${pr.ticker}/`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             {pr.company}
-          </span>
+          </a>
           <time className="pr-archive-tile-date" dateTime={pr.publishedAt}>{dateStr}</time>
         </div>
       </div>
-    </a>
+    </div>
   );
 }
 
@@ -223,6 +226,12 @@ function ArchiveGroup({ group, isExpanded, onToggle, lang }: ArchiveGroupProps) 
 
 // ─── Company Multi-Select ─────────────────────────────────────────────────────
 
+const MAX_COMPANY_FILTER = 10;
+/** Days of history to load when no company filter is active. */
+const DEFAULT_DAYS_WINDOW = 7;
+/** Months of history to load when a company filter is active. */
+const FILTERED_MONTHS_WINDOW = 3;
+
 interface CompanyFilterProps {
   selectedCodes: string[];
   onSelectionChange: (codes: string[]) => void;
@@ -234,6 +243,7 @@ interface CompanyFilterProps {
 function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, lang }: CompanyFilterProps) {
   const [query, setQuery] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [showMaxWarning, setShowMaxWarning] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   const filtered = useMemo(() => {
@@ -245,6 +255,11 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
   }, [query]);
 
   function handleToggle(symbol: string) {
+    if (!selectedCodes.includes(symbol) && selectedCodes.length >= MAX_COMPANY_FILTER) {
+      setShowMaxWarning(true);
+      return;
+    }
+    setShowMaxWarning(false);
     const next = selectedCodes.includes(symbol)
       ? selectedCodes.filter((s) => s !== symbol)
       : [...selectedCodes, symbol];
@@ -252,10 +267,12 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
   }
 
   function handleRemove(symbol: string) {
+    setShowMaxWarning(false);
     onSelectionChange(selectedCodes.filter((s) => s !== symbol));
   }
 
   function handleClearAll() {
+    setShowMaxWarning(false);
     onSelectionChange([]);
     setQuery('');
   }
@@ -316,6 +333,14 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
           <span>{labels.search[lang]}</span>
         </button>
       </div>
+
+      {showMaxWarning && (
+        <div className="pr-co-filter-max-warning" role="alert">
+          {lang === 'zh'
+            ? `最多可選擇 ${MAX_COMPANY_FILTER} 家公司。`
+            : `You can select a maximum of ${MAX_COMPANY_FILTER} companies.`}
+        </div>
+      )}
 
       {dropdownOpen && (
         <div className="pr-co-filter-dropdown">
@@ -405,49 +430,16 @@ function ErrorBanner({ message, onRetry, lang }: ErrorBannerProps) {
   );
 }
 
-// ─── Load-more sentinel ───────────────────────────────────────────────────────
-
-interface LoadMoreSentinelProps {
-  isLoading: boolean;
-  hasMore: boolean;
-  lang: 'zh' | 'en';
-  sentinelRef: React.RefObject<HTMLDivElement | null>;
-}
-
-function LoadMoreSentinel({ isLoading, hasMore, lang, sentinelRef }: LoadMoreSentinelProps) {
-  if (!hasMore && !isLoading) {
-    return (
-      <div className="pr-end-marker">
-        {lang === 'zh' ? '— 已顯示全部 —' : '— End of results —'}
-      </div>
-    );
-  }
-  return (
-    <div ref={sentinelRef} className="pr-load-more-sentinel">
-      {isLoading && (
-        <div className="pr-load-more-spinner">
-          <SpinnerIcon size={16} />
-          <span>{lang === 'zh' ? '載入更多...' : 'Loading more…'}</span>
-        </div>
-      )}
-    </div>
-  );
-}
-
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function PressReleasePage() {
   const { lang } = useLanguage();
 
   // ── Data state ──
-  const [loadedItems, setLoadedItems] = useState<PressRelease[]>([]);
-  const [total, setTotal] = useState(0);
-  const [offset, setOffset] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
+  const [allItems, setAllItems] = useState<PressRelease[]>([]);
 
   // ── UI state ──
   const [isInitialLoading, setIsInitialLoading] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // ── Company filter state ──
@@ -456,8 +448,8 @@ export default function PressReleasePage() {
 
   // ── Archive group state ──
   const groups = useMemo(
-    () => getPressReleaseArchiveGroups(loadedItems, lang),
-    [loadedItems, lang],
+    () => getPressReleaseArchiveGroups(allItems, lang),
+    [allItems, lang],
   );
   const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
 
@@ -471,27 +463,30 @@ export default function PressReleasePage() {
   // ── Fetch logic ──
   const abortRef = useRef<AbortController | null>(null);
 
-  const fetchPage = useCallback(async (nextOffset: number, tickers: string[], isFirstPage: boolean) => {
+  const fetchAll = useCallback(async (tickers: string[]) => {
     abortRef.current?.abort();
     const ctrl = new AbortController();
     abortRef.current = ctrl;
 
-    if (isFirstPage) {
-      setIsInitialLoading(true);
-      setError(null);
-    } else {
-      setIsLoadingMore(true);
-    }
+    setIsInitialLoading(true);
+    setError(null);
 
     try {
-      const page = await getPressReleases(nextOffset, PAGE_SIZE, tickers, ctrl.signal);
+      const today = todayStr();
+      // No filter → last N days; with filter → last M months
+      const from = tickers.length > 0
+        ? subtractMonths(today, FILTERED_MONTHS_WINDOW)
+        : subtractDays(today, DEFAULT_DAYS_WINDOW);
+
+      const items = await getPressReleaseNews({
+        co_cd: tickers,
+        from,
+        to: today,
+        signal: ctrl.signal,
+      });
 
       if (ctrl.signal.aborted) return;
-
-      setLoadedItems((prev) => isFirstPage ? page.items : [...prev, ...page.items]);
-      setTotal(page.total);
-      setOffset(nextOffset + page.items.length);
-      setHasMore(page.hasMore);
+      setAllItems(items);
     } catch (err) {
       if (ctrl.signal.aborted) return;
       const msg = err instanceof Error ? err.message : String(err);
@@ -499,33 +494,15 @@ export default function PressReleasePage() {
     } finally {
       if (!ctrl.signal.aborted) {
         setIsInitialLoading(false);
-        setIsLoadingMore(false);
       }
     }
   }, [lang]);
 
   // ── Initial load and filter change ──
   useEffect(() => {
-    fetchPage(0, activeFilter, true);
+    fetchAll(activeFilter);
     return () => { abortRef.current?.abort(); };
-  }, [activeFilter, fetchPage]);
-
-  // ── Infinite scroll sentinel ──
-  const sentinelRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!sentinelRef.current) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !isLoadingMore && !isInitialLoading && !error) {
-          fetchPage(offset, activeFilter, false);
-        }
-      },
-      { rootMargin: '200px' },
-    );
-    observer.observe(sentinelRef.current);
-    return () => observer.disconnect();
-  }, [hasMore, isLoadingMore, isInitialLoading, error, offset, activeFilter, fetchPage]);
+  }, [activeFilter, fetchAll]);
 
   // ── Handlers ──
   function handleToggleGroup(key: string) {
@@ -547,9 +524,7 @@ export default function PressReleasePage() {
 
   function handleSearch(codes: string[]) {
     setActiveFilter(codes);
-    setLoadedItems([]);
-    setOffset(0);
-    setHasMore(true);
+    setAllItems([]);
   }
 
   function handleSelectionChange(codes: string[]) {
@@ -560,16 +535,19 @@ export default function PressReleasePage() {
   }
 
   function handleRetry() {
-    fetchPage(offset, activeFilter, offset === 0);
+    fetchAll(activeFilter);
   }
 
   // ── Labels ──
   const labels = {
     eyebrow:      { zh: 'Press Release', en: 'Press Release' },
-    loaded:       { zh: `已載入 ${loadedItems.length} / ${total} 篇`, en: `Showing ${loadedItems.length} of ${total}` },
     expandAll:    { zh: '展開全部', en: 'Expand All' },
     collapseAll:  { zh: '收合全部', en: 'Collapse All' },
     filterResult: { zh: '篩選結果', en: 'Filtered results' },
+    desc: {
+      zh: `預設提供近${DEFAULT_DAYS_WINDOW}天Press Release資料，當有篩選公司(上限${MAX_COMPANY_FILTER}家)，則提供近${FILTERED_MONTHS_WINDOW}個月該公司資料；若需更久遠資料可至News頁面中"Official Press Release"類別查詢`,
+      en: `Access recent Press Releases covering the past ${DEFAULT_DAYS_WINDOW} days. For filtered companies (up to ${MAX_COMPANY_FILTER} selections), a ${FILTERED_MONTHS_WINDOW}-month historical record will be provided. For more historical data, please navigate to the "News" page and select the "Official Press Release" category.`,
+    },
   };
 
   return (
@@ -594,7 +572,7 @@ export default function PressReleasePage() {
               {activeFilter.length > 0 && (
                 <div className="pr-archive-api-badge">
                   <SearchIcon />
-                  {labels.filterResult[lang]} · {activeFilter.join(', ')} · {total} {lang === 'en' ? 'results' : '筆'}
+                  {labels.filterResult[lang]} · {activeFilter.join(', ')} · {allItems.length} {lang === 'en' ? 'results' : '筆'}
                   <button
                     className="pr-archive-api-badge-clear"
                     onClick={() => { setSelectedCodes([]); handleSearch([]); }}
@@ -620,7 +598,6 @@ export default function PressReleasePage() {
                   <div className="pr-archive-header">
                     <div className="pr-archive-header-left">
                       <span className="section-eyebrow">{labels.eyebrow[lang]}</span>
-                      <span className="pr-archive-total">{labels.loaded[lang]}</span>
                     </div>
                     <div className="pr-archive-header-right">
                       <button
@@ -633,6 +610,7 @@ export default function PressReleasePage() {
                       </button>
                     </div>
                   </div>
+                  <p className="pr-archive-desc">{labels.desc[lang]}</p>
 
                   {/* Archive groups */}
                   <div className="pr-archive-groups">
@@ -646,14 +624,6 @@ export default function PressReleasePage() {
                       />
                     ))}
                   </div>
-
-                  {/* Infinite scroll sentinel + load-more indicator */}
-                  <LoadMoreSentinel
-                    isLoading={isLoadingMore}
-                    hasMore={hasMore}
-                    lang={lang}
-                    sentinelRef={sentinelRef}
-                  />
                 </>
               )}
             </div>

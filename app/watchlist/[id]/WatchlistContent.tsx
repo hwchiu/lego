@@ -2278,7 +2278,7 @@ export function WatchlistContent({
 
               {/* Feed tabs */}
               <div className="wl-feed-tabs">
-                {(['Latest', 'News', 'Event'] as const).map((t) => (
+                {(['Latest', 'News', 'Press Release', 'Event'] as const).map((t) => (
                   <button
                     key={t}
                     className={`wl-feed-tab${feedTab === t ? ' active' : ''}`}
@@ -2287,35 +2287,11 @@ export function WatchlistContent({
                     {t}
                   </button>
                 ))}
-                <button
-                  className="wl-feed-tab wl-feed-tab--coming-soon"
-                  aria-disabled="true"
-                  tabIndex={-1}
-                >
-                  Press Release
-                  <span className="wl-feed-tab-cs-overlay" aria-hidden="true">
-                    <span className="wl-feed-tab-cs-inner" aria-hidden="true" />
-                    <svg className="wl-feed-tab-cs-lock" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                      <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                      <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <circle cx="12" cy="16" r="1.2" fill="currentColor" />
-                    </svg>
-                  </span>
-                </button>
               </div>
 
               {/* Feed list */}
               <div className="wl-feed-list">
-                {feedTab === 'Press Release' ? (
-                  <div className="wl-feed-coming-soon">
-                    <svg viewBox="0 0 24 24" fill="none" width="32" height="32" aria-hidden="true">
-                      <circle cx="12" cy="12" r="10" stroke="#9ca3af" strokeWidth="1.5" fill="none" />
-                      <path d="M12 7v5l3 3" stroke="#9ca3af" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    <span className="wl-feed-coming-soon-title">Coming Soon</span>
-                    <span className="wl-feed-coming-soon-desc">Press Release content is under development and will be available soon.</span>
-                  </div>
-                ) : feedTab === 'News' ? (
+                {feedTab === 'News' ? (
                   filteredNewsItems.length === 0 ? (
                     <div className="wl-feed-empty">No news found for your watchlist companies.</div>
                   ) : (
