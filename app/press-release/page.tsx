@@ -56,20 +56,18 @@ function ChevronUpIcon() {
 
 function ExpandAllIcon() {
   return (
-    <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
-      <path d="M2 4H12M2 7H12M2 10H12" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-      <path d="M5 5.5L7 7.5L9 5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M5 8.5L7 10.5L9 8.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+      <path d="M3 5L7 1L11 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3 9L7 13L11 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
 function CollapseAllIcon() {
   return (
-    <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
-      <path d="M2 4H12M2 7H12M2 10H12" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-      <path d="M5 8.5L7 6.5L9 8.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M5 5.5L7 3.5L9 5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+      <path d="M3 1L7 5L11 1" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3 13L7 9L11 13" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -128,7 +126,7 @@ function RefreshIcon() {
 
 function InfoIcon() {
   return (
-    <svg viewBox="0 0 14 14" width="12" height="12" fill="none" aria-hidden="true">
+    <svg viewBox="0 0 14 14" width="14" height="14" fill="none" aria-hidden="true">
       <circle cx="7" cy="7" r="5.3" stroke="currentColor" strokeWidth="1.3" />
       <path d="M7 6V9.6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
       <circle cx="7" cy="4.15" r="0.65" fill="currentColor" />
