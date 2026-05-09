@@ -526,7 +526,7 @@ export default function PressReleasePage() {
     collapseAll:  { zh: '收合全部', en: 'Collapse All' },
     filterResult: { zh: '篩選結果', en: 'Filtered results' },
     desc: {
-      zh: `瀏覽完整已部署的 Press Release archive 靜態資料，並可依公司篩選（上限 ${MAX_COMPANY_FILTER} 家）快速查看對應公告。`,
+      zh: `瀏覽完整已部署的新聞稿檔案靜態資料，並可依公司篩選（上限 ${MAX_COMPANY_FILTER} 家）快速查看對應公告。`,
       en: `Browse the full deployed Press Release archive and filter by company (up to ${MAX_COMPANY_FILTER} selections) to quickly review matching announcements.`,
     },
   };
