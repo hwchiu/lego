@@ -638,12 +638,12 @@ export default function PressReleasePage() {
                     </div>
                     <div className="pr-archive-header-right">
                       <button
-                        className="pr-archive-expand-btn"
+                        className="cp-pec-card-action-btn"
                         onClick={handleToggleAll}
                         title={allExpanded ? labels.collapseAll[lang] : labels.expandAll[lang]}
+                        aria-label={allExpanded ? labels.collapseAll[lang] : labels.expandAll[lang]}
                       >
                         {allExpanded ? <CollapseAllIcon /> : <ExpandAllIcon />}
-                        <span>{allExpanded ? labels.collapseAll[lang] : labels.expandAll[lang]}</span>
                       </button>
                     </div>
                   </div>
