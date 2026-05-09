@@ -26966,3 +26966,51 @@ html.dark .unfav-alert-close:hover {
     font-size: 12px;
   }
 }
+
+/* ===== PRESS RELEASE — ADDITIONAL STYLES ===== */
+
+/* Title link inside archive tile */
+.pr-archive-tile-title-link {
+  color: inherit;
+  text-decoration: none;
+}
+.pr-archive-tile-title-link:hover,
+.pr-archive-tile:hover .pr-archive-tile-title-link {
+  color: #0284c7;
+}
+
+/* Page description below the Press Release eyebrow */
+.pr-archive-desc {
+  font-size: 12.5px;
+  color: var(--c-text-3);
+  line-height: 1.65;
+  margin: 0 0 18px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border-left: 3px solid var(--c-accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* Max companies selection warning */
+.pr-co-filter-max-warning {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: #92400e;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  margin-top: 8px;
+}
+
+html.dark .pr-archive-desc {
+  background: #1e2d42;
+  color: var(--c-text-3);
+}
+
+html.dark .pr-archive-tile-title-link:hover,
+html.dark .pr-archive-tile:hover .pr-archive-tile-title-link {
+  color: var(--c-accent);
+}
