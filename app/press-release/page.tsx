@@ -7,13 +7,8 @@ import Sidebar from '@/app/components/layout/Sidebar';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 import type { PressRelease } from '@/app/data/pressReleases';
-import { getPressReleaseArchiveGroups, type PRArchiveGroup } from '@/app/data/pressReleases';
-import {
-  getPressReleaseNews,
-  todayStr,
-  subtractDays,
-  subtractMonths,
-} from '@/app/lib/pressReleaseNewsApi';
+import { getPressReleaseArchiveGroups, pressReleases, type PRArchiveGroup } from '@/app/data/pressReleases';
+import { getPressReleases } from '@/app/lib/pressReleaseApi';
 
 // ─── Company color palette ────────────────────────────────────────────────────
 
@@ -227,10 +222,7 @@ function ArchiveGroup({ group, isExpanded, onToggle, lang }: ArchiveGroupProps) 
 // ─── Company Multi-Select ─────────────────────────────────────────────────────
 
 const MAX_COMPANY_FILTER = 10;
-/** Days of history to load when no company filter is active. */
-const DEFAULT_DAYS_WINDOW = 7;
-/** Months of history to load when a company filter is active. */
-const FILTERED_MONTHS_WINDOW = 3;
+const PRESS_RELEASE_ARCHIVE_LIMIT = pressReleases.length;
 
 interface CompanyFilterProps {
   selectedCodes: string[];
@@ -472,18 +464,7 @@ export default function PressReleasePage() {
     setError(null);
 
     try {
-      const today = todayStr();
-      // No filter → last N days; with filter → last M months
-      const from = tickers.length > 0
-        ? subtractMonths(today, FILTERED_MONTHS_WINDOW)
-        : subtractDays(today, DEFAULT_DAYS_WINDOW);
-
-      const items = await getPressReleaseNews({
-        co_cd: tickers,
-        from,
-        to: today,
-        signal: ctrl.signal,
-      });
+      const { items } = await getPressReleases(0, PRESS_RELEASE_ARCHIVE_LIMIT, tickers, ctrl.signal);
 
       if (ctrl.signal.aborted) return;
       setAllItems(items);
@@ -545,8 +526,8 @@ export default function PressReleasePage() {
     collapseAll:  { zh: '收合全部', en: 'Collapse All' },
     filterResult: { zh: '篩選結果', en: 'Filtered results' },
     desc: {
-      zh: `預設提供近${DEFAULT_DAYS_WINDOW}天Press Release資料，當有篩選公司(上限${MAX_COMPANY_FILTER}家)，則提供近${FILTERED_MONTHS_WINDOW}個月該公司資料；若需更久遠資料可至News頁面中"Official Press Release"類別查詢`,
-      en: `Access recent Press Releases covering the past ${DEFAULT_DAYS_WINDOW} days. For filtered companies (up to ${MAX_COMPANY_FILTER} selections), a ${FILTERED_MONTHS_WINDOW}-month historical record will be provided. For more historical data, please navigate to the "News" page and select the "Official Press Release" category.`,
+      zh: `瀏覽完整已部署的新聞稿檔案靜態資料，並可依公司篩選（上限 ${MAX_COMPANY_FILTER} 家）快速查看對應公告。`,
+      en: `Browse the full deployed Press Release archive and filter by company (up to ${MAX_COMPANY_FILTER} selections) to quickly review matching announcements.`,
     },
   };
 
