@@ -91,6 +91,14 @@ function CloseIcon() {
   );
 }
 
+function CheckLineIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="12" height="12" fill="none" aria-hidden="true">
+      <path d="M2 7l3.5 3.5L12 3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function SpinnerIcon({ size = 14 }: { size?: number }) {
   return (
     <svg viewBox="0 0 14 14" width={size} height={size} fill="none" aria-hidden="true" className="pr-spin">
@@ -114,6 +122,16 @@ function RefreshIcon() {
     <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
       <path d="M2 7a5 5 0 1 0 1.3-3.3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M2 3.5V7H5.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function InfoIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="12" height="12" fill="none" aria-hidden="true">
+      <circle cx="7" cy="7" r="5.3" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M7 6V9.6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <circle cx="7" cy="4.15" r="0.65" fill="currentColor" />
     </svg>
   );
 }
@@ -348,7 +366,7 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
                   onMouseDown={(e) => { e.preventDefault(); handleToggle(c.symbol); }}
                 >
                   <span className="pr-co-filter-option-check" aria-hidden="true">
-                    {active ? '✓' : ''}
+                    {active ? <CheckLineIcon /> : null}
                   </span>
                   <span className="pr-co-filter-option-symbol">{c.symbol}</span>
                   <span className="pr-co-filter-option-name">{c.name}</span>
@@ -444,6 +462,8 @@ export default function PressReleasePage() {
     [allItems, lang],
   );
   const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
+  const infoWrapRef = useRef<HTMLDivElement | null>(null);
 
   // Expand all new groups when groups change
   useEffect(() => {
@@ -485,6 +505,16 @@ export default function PressReleasePage() {
     return () => { abortRef.current?.abort(); };
   }, [activeFilter, fetchAll]);
 
+  useEffect(() => {
+    function handleOutsideClick(e: MouseEvent) {
+      if (infoWrapRef.current && !infoWrapRef.current.contains(e.target as Node)) {
+        setIsInfoOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
+
   // ── Handlers ──
   function handleToggleGroup(key: string) {
     setExpandedKeys((prev) => {
@@ -525,9 +555,11 @@ export default function PressReleasePage() {
     expandAll:    { zh: '展開全部', en: 'Expand All' },
     collapseAll:  { zh: '收合全部', en: 'Collapse All' },
     filterResult: { zh: '篩選結果', en: 'Filtered results' },
+    info:         { zh: '說明', en: 'Information' },
+    close:        { zh: '關閉', en: 'Close' },
     desc: {
-      zh: `瀏覽完整已部署的新聞稿檔案靜態資料，並可依公司篩選（上限 ${MAX_COMPANY_FILTER} 家）快速查看對應公告。`,
-      en: `Browse the full deployed Press Release archive and filter by company (up to ${MAX_COMPANY_FILTER} selections) to quickly review matching announcements.`,
+      zh: '預設提供近七天Press Release資料，當有篩選公司(上限十家)，則提供近三個月該公司資料；若需更久遠資料可至News頁面中"Officail Press Release"類別查詢',
+      en: 'Access recent Press Releases covering the past seven days. For filtered companies (up to ten selections), a three-month historical record will be provided. For more historical data, please navigate to the "News" page and select the "Official Press Release" category.',
     },
   };
 
@@ -579,19 +611,42 @@ export default function PressReleasePage() {
                   <div className="pr-archive-header">
                     <div className="pr-archive-header-left">
                       <span className="section-eyebrow">{labels.eyebrow[lang]}</span>
+                      <div className="pr-archive-info-wrap" ref={infoWrapRef}>
+                        <button
+                          type="button"
+                          className={`pr-archive-info-btn${isInfoOpen ? ' active' : ''}`}
+                          onClick={() => setIsInfoOpen((prev) => !prev)}
+                          aria-label={labels.info[lang]}
+                          title={labels.info[lang]}
+                        >
+                          <InfoIcon />
+                        </button>
+                        {isInfoOpen && (
+                          <div className="pr-archive-info-pop" role="dialog" aria-label={labels.info[lang]}>
+                            <button
+                              type="button"
+                              className="pr-archive-info-close"
+                              onClick={() => setIsInfoOpen(false)}
+                              aria-label={labels.close[lang]}
+                            >
+                              <CloseIcon />
+                            </button>
+                            <p className="pr-archive-info-text">{labels.desc[lang]}</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <div className="pr-archive-header-right">
                       <button
-                        className="pr-archive-expand-btn"
+                        className="cp-pec-card-action-btn"
                         onClick={handleToggleAll}
                         title={allExpanded ? labels.collapseAll[lang] : labels.expandAll[lang]}
+                        aria-label={allExpanded ? labels.collapseAll[lang] : labels.expandAll[lang]}
                       >
                         {allExpanded ? <CollapseAllIcon /> : <ExpandAllIcon />}
-                        <span>{allExpanded ? labels.collapseAll[lang] : labels.expandAll[lang]}</span>
                       </button>
                     </div>
                   </div>
-                  <p className="pr-archive-desc">{labels.desc[lang]}</p>
 
                   {/* Archive groups */}
                   <div className="pr-archive-groups">
