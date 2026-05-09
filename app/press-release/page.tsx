@@ -525,8 +525,8 @@ export default function PressReleasePage() {
     collapseAll:  { zh: '收合全部', en: 'Collapse All' },
     filterResult: { zh: '篩選結果', en: 'Filtered results' },
     desc: {
-      zh: `預設提供近${DEFAULT_DAYS_WINDOW}天Press Release資料，當有篩選公司(上限${MAX_COMPANY_FILTER}家)，則提供近${FILTERED_MONTHS_WINDOW}個月該公司資料；若需更久遠資料可至News頁面中"Official Press Release"類別查詢`,
-      en: `Access recent Press Releases covering the past ${DEFAULT_DAYS_WINDOW} days. For filtered companies (up to ${MAX_COMPANY_FILTER} selections), a ${FILTERED_MONTHS_WINDOW}-month historical record will be provided. For more historical data, please navigate to the "News" page and select the "Official Press Release" category.`,
+      zh: `瀏覽已部署的 Press Release 靜態資料檔，並可依公司篩選（上限 ${MAX_COMPANY_FILTER} 家）快速查看對應公告。`,
+      en: `Browse the deployed Press Release archive and filter by company (up to ${MAX_COMPANY_FILTER} selections) to quickly review matching announcements.`,
     },
   };
 
