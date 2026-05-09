@@ -26281,11 +26281,12 @@ html.dark .pr-archive-api-badge-clear:hover {
 
 .pr-co-filter-option-check {
   width: 16px;
-  font-size: 11px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--c-accent);
-  font-weight: 700;
   flex-shrink: 0;
-  text-align: center;
 }
 
 .pr-co-filter-option-symbol {

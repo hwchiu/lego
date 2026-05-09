@@ -91,6 +91,14 @@ function CloseIcon() {
   );
 }
 
+function CheckLineIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="12" height="12" fill="none" aria-hidden="true">
+      <path d="M2 7l3.5 3.5L12 3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function SpinnerIcon({ size = 14 }: { size?: number }) {
   return (
     <svg viewBox="0 0 14 14" width={size} height={size} fill="none" aria-hidden="true" className="pr-spin">
@@ -348,7 +356,7 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
                   onMouseDown={(e) => { e.preventDefault(); handleToggle(c.symbol); }}
                 >
                   <span className="pr-co-filter-option-check" aria-hidden="true">
-                    {active ? '✓' : ''}
+                    {active ? <CheckLineIcon /> : null}
                   </span>
                   <span className="pr-co-filter-option-symbol">{c.symbol}</span>
                   <span className="pr-co-filter-option-name">{c.name}</span>
@@ -526,8 +534,8 @@ export default function PressReleasePage() {
     collapseAll:  { zh: '收合全部', en: 'Collapse All' },
     filterResult: { zh: '篩選結果', en: 'Filtered results' },
     desc: {
-      zh: `瀏覽完整已部署的新聞稿檔案靜態資料，並可依公司篩選（上限 ${MAX_COMPANY_FILTER} 家）快速查看對應公告。`,
-      en: `Browse the full deployed Press Release archive and filter by company (up to ${MAX_COMPANY_FILTER} selections) to quickly review matching announcements.`,
+      zh: '預設提供近七天Press Release資料，當有篩選公司(上限十家)，則提供近三個月該公司資料；若需更久遠資料可至News頁面中"Officail Press Release"類別查詢',
+      en: 'Access recent Press Releases covering the past seven days. For filtered companies (up to ten selections), a three-month historical record will be provided. For more historical data, please navigate to the "News" page and select the "Official Press Release" category.',
     },
   };
 
