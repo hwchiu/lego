@@ -25801,6 +25801,78 @@ html.dark .pr-archive-api-badge-clear:hover {
   gap: 12px;
 }
 
+.pr-archive-info-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.pr-archive-info-btn {
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--c-border);
+  border-radius: 50%;
+  background: var(--c-white);
+  color: var(--c-text-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.pr-archive-info-btn:hover,
+.pr-archive-info-btn.active {
+  border-color: var(--c-accent);
+  color: #0284c7;
+  background: #f0f9ff;
+}
+
+.pr-archive-info-pop {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 9px);
+  width: min(460px, calc(100vw - 44px));
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1px solid var(--c-border);
+  border-left: 3px solid var(--c-accent);
+  border-radius: var(--radius);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.1);
+  z-index: 520;
+}
+
+.pr-archive-info-close {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 20px;
+  height: 20px;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--c-text-4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.pr-archive-info-close:hover {
+  background: rgba(79, 195, 247, 0.12);
+  border-color: var(--c-accent);
+  color: var(--c-text-2);
+}
+
+.pr-archive-info-text {
+  margin: 0;
+  padding-right: 18px;
+  font-size: 12.5px;
+  color: var(--c-text-3);
+  line-height: 1.65;
+}
+
 .pr-archive-total {
   font-size: 11.5px;
   color: var(--c-text-4);
@@ -26079,6 +26151,12 @@ html.dark .pr-archive-api-badge-clear:hover {
   .pr-archive-header {
     flex-wrap: wrap;
     gap: 10px;
+  }
+
+  .pr-archive-info-pop {
+    right: auto;
+    left: 0;
+    width: min(420px, calc(100vw - 32px));
   }
 
   .pr-archive-expand-btn {
@@ -27009,6 +27087,34 @@ html.dark .unfav-alert-close:hover {
 html.dark .pr-archive-desc {
   background: #1e2d42;
   color: var(--c-text-3);
+}
+
+html.dark .pr-archive-info-btn {
+  background: #0f172a;
+  border-color: #334155;
+  color: #94a3b8;
+}
+
+html.dark .pr-archive-info-btn:hover,
+html.dark .pr-archive-info-btn.active {
+  border-color: var(--c-accent);
+  background: rgba(79, 195, 247, 0.14);
+  color: var(--c-accent);
+}
+
+html.dark .pr-archive-info-pop {
+  background: #1e2d42;
+  border-color: #334155;
+}
+
+html.dark .pr-archive-info-close {
+  color: #94a3b8;
+}
+
+html.dark .pr-archive-info-close:hover {
+  background: rgba(79, 195, 247, 0.2);
+  border-color: rgba(79, 195, 247, 0.55);
+  color: #cbd5e1;
 }
 
 html.dark .pr-archive-tile-title-link:hover,
