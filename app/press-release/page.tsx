@@ -7,7 +7,7 @@ import Sidebar from '@/app/components/layout/Sidebar';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
 import type { PressRelease } from '@/app/data/pressReleases';
-import { getPressReleaseArchiveGroups, type PRArchiveGroup } from '@/app/data/pressReleases';
+import { getPressReleaseArchiveGroups, pressReleases, type PRArchiveGroup } from '@/app/data/pressReleases';
 import { getPressReleases } from '@/app/lib/pressReleaseApi';
 
 // ─── Company color palette ────────────────────────────────────────────────────
@@ -222,6 +222,7 @@ function ArchiveGroup({ group, isExpanded, onToggle, lang }: ArchiveGroupProps) 
 // ─── Company Multi-Select ─────────────────────────────────────────────────────
 
 const MAX_COMPANY_FILTER = 10;
+const PRESS_RELEASE_ARCHIVE_LIMIT = pressReleases.length;
 
 interface CompanyFilterProps {
   selectedCodes: string[];
@@ -463,7 +464,7 @@ export default function PressReleasePage() {
     setError(null);
 
     try {
-      const { items } = await getPressReleases(0, Number.MAX_SAFE_INTEGER, tickers, ctrl.signal);
+      const { items } = await getPressReleases(0, PRESS_RELEASE_ARCHIVE_LIMIT, tickers, ctrl.signal);
 
       if (ctrl.signal.aborted) return;
       setAllItems(items);
@@ -525,8 +526,8 @@ export default function PressReleasePage() {
     collapseAll:  { zh: '收合全部', en: 'Collapse All' },
     filterResult: { zh: '篩選結果', en: 'Filtered results' },
     desc: {
-      zh: `瀏覽已部署的 Press Release 靜態資料檔，並可依公司篩選（上限 ${MAX_COMPANY_FILTER} 家）快速查看對應公告。`,
-      en: `Browse the deployed Press Release archive and filter by company (up to ${MAX_COMPANY_FILTER} selections) to quickly review matching announcements.`,
+      zh: `瀏覽完整已部署的 Press Release archive 靜態資料，並可依公司篩選（上限 ${MAX_COMPANY_FILTER} 家）快速查看對應公告。`,
+      en: `Browse the full deployed Press Release archive and filter by company (up to ${MAX_COMPANY_FILTER} selections) to quickly review matching announcements.`,
     },
   };
 
