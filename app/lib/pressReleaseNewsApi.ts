@@ -70,37 +70,43 @@ function mapToPressRelease(record: NewsSummaryRecord, index: number): PressRelea
 
 // ─── Date helpers ─────────────────────────────────────────────────────────────
 
-/** Returns today's date as 'YYYY-MM-DD'. */
+/**
+ * Returns today's date as 'YYYY-MM-DD' based on UTC time.
+ * Note: the returned date is the current UTC date, which may differ from the
+ * user's local date when their timezone offset places them past midnight UTC.
+ */
 export function todayStr(): string {
-  const d = new Date();
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  return `${d.getFullYear()}-${mm}-${dd}`;
+  return new Date().toISOString().split('T')[0];
 }
 
-/** Subtracts `days` from a 'YYYY-MM-DD' string, returns 'YYYY-MM-DD'. */
+/** Subtracts `days` from a 'YYYY-MM-DD' string, returns 'YYYY-MM-DD' (UTC). */
 export function subtractDays(dateStr: string, days: number): string {
-  const d = new Date(dateStr + 'T00:00:00');
-  d.setDate(d.getDate() - days);
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  return `${d.getFullYear()}-${mm}-${dd}`;
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const date = new Date(Date.UTC(y, m - 1, d));
+  date.setUTCDate(date.getUTCDate() - days);
+  const mm = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(date.getUTCDate()).padStart(2, '0');
+  return `${date.getUTCFullYear()}-${mm}-${dd}`;
 }
 
-/** Subtracts `months` from a 'YYYY-MM-DD' string, returns 'YYYY-MM-DD'.
- *  Clamps day to end of target month to avoid overflow (e.g. Oct 31 − 1mo → Sep 30). */
+/**
+ * Subtracts `months` from a 'YYYY-MM-DD' string, returns 'YYYY-MM-DD'.
+ * Uses pure arithmetic on year/month components (no Date object) to avoid
+ * timezone issues. Clamps day to end of target month to avoid overflow
+ * (e.g. Oct 31 − 1mo → Sep 30).
+ */
 export function subtractMonths(dateStr: string, months: number): string {
-  const d = new Date(dateStr + 'T00:00:00');
-  const origDay = d.getDate();
-  const targetMonth = d.getMonth() - months;
-  const targetYear = d.getFullYear() + Math.floor(targetMonth / 12);
-  const normMonth = ((targetMonth % 12) + 12) % 12;
-  const lastDay = new Date(targetYear, normMonth + 1, 0).getDate();
-  const clampedDay = Math.min(origDay, lastDay);
-  const result = new Date(targetYear, normMonth, clampedDay);
-  const mm = String(result.getMonth() + 1).padStart(2, '0');
-  const dd = String(result.getDate()).padStart(2, '0');
-  return `${result.getFullYear()}-${mm}-${dd}`;
+  const [origY, origM, origD] = dateStr.split('-').map(Number);
+  // Convert to 0-indexed total months since year 0, subtract, then decompose
+  const totalMonths = origY * 12 + (origM - 1) - months;
+  const targetYear = Math.floor(totalMonths / 12);
+  const normMonthIdx = totalMonths - targetYear * 12; // 0–11
+  // Last day of target month in UTC
+  const lastDay = new Date(Date.UTC(targetYear, normMonthIdx + 1, 0)).getUTCDate();
+  const clampedDay = Math.min(origD, lastDay);
+  const mm = String(normMonthIdx + 1).padStart(2, '0');
+  const dd = String(clampedDay).padStart(2, '0');
+  return `${targetYear}-${mm}-${dd}`;
 }
 
 /** Formats 'YYYY-MM-DD' → 'YYYY-MM-DD HH:mm:ss' for the API. */

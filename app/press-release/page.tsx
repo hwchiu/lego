@@ -168,7 +168,6 @@ function ArchiveTile({ pr, lang }: ArchiveTileProps) {
             href={`/lego/company-profile/${pr.ticker}/`}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
           >
             {pr.company}
           </a>
@@ -228,6 +227,10 @@ function ArchiveGroup({ group, isExpanded, onToggle, lang }: ArchiveGroupProps) 
 // ─── Company Multi-Select ─────────────────────────────────────────────────────
 
 const MAX_COMPANY_FILTER = 10;
+/** Days of history to load when no company filter is active. */
+const DEFAULT_DAYS_WINDOW = 7;
+/** Months of history to load when a company filter is active. */
+const FILTERED_MONTHS_WINDOW = 3;
 
 interface CompanyFilterProps {
   selectedCodes: string[];
@@ -333,7 +336,9 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
 
       {showMaxWarning && (
         <div className="pr-co-filter-max-warning" role="alert">
-          You can select a maximum of {MAX_COMPANY_FILTER} companies.
+          {lang === 'zh'
+            ? `最多可選擇 ${MAX_COMPANY_FILTER} 家公司。`
+            : `You can select a maximum of ${MAX_COMPANY_FILTER} companies.`}
         </div>
       )}
 
@@ -468,8 +473,10 @@ export default function PressReleasePage() {
 
     try {
       const today = todayStr();
-      // No filter → last 7 days; with filter → last 3 months
-      const from = tickers.length > 0 ? subtractMonths(today, 3) : subtractDays(today, 7);
+      // No filter → last N days; with filter → last M months
+      const from = tickers.length > 0
+        ? subtractMonths(today, FILTERED_MONTHS_WINDOW)
+        : subtractDays(today, DEFAULT_DAYS_WINDOW);
 
       const items = await getPressReleaseNews({
         co_cd: tickers,
@@ -538,8 +545,8 @@ export default function PressReleasePage() {
     collapseAll:  { zh: '收合全部', en: 'Collapse All' },
     filterResult: { zh: '篩選結果', en: 'Filtered results' },
     desc: {
-      zh: '設提供近七天Press Release資料，當有篩選公司(上限十家)，則提供近三個月該公司資料；若需更久遠資料可至News頁面中"Official Press Release"類別查詢',
-      en: 'Access recent Press Releases covering the past seven days. For filtered companies (up to ten selections), a three-month historical record will be provided. For more historical data, please navigate to the "News" page and select the "Official Press Release" category.',
+      zh: `預設提供近${DEFAULT_DAYS_WINDOW}天Press Release資料，當有篩選公司(上限${MAX_COMPANY_FILTER}家)，則提供近${FILTERED_MONTHS_WINDOW}個月該公司資料；若需更久遠資料可至News頁面中"Official Press Release"類別查詢`,
+      en: `Access recent Press Releases covering the past ${DEFAULT_DAYS_WINDOW} days. For filtered companies (up to ${MAX_COMPANY_FILTER} selections), a ${FILTERED_MONTHS_WINDOW}-month historical record will be provided. For more historical data, please navigate to the "News" page and select the "Official Press Release" category.`,
     },
   };
 
