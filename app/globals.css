@@ -26932,6 +26932,44 @@ html.dark .pr-archive-api-badge-clear:hover {
   }
 }
 
+/* ── Subscribe modal dark mode fixes ── */
+html.dark .wl-sub-save-btn {
+  background: #4fc3f7;
+  color: #0f172a;
+}
+
+html.dark .wl-sub-save-btn:hover:not(:disabled) {
+  background: #29b6f6;
+}
+
+html.dark .wl-sub-company-item.active,
+html.dark .wl-sub-company-item--all.active {
+  background: rgba(56, 189, 248, 0.12);
+  color: #7dd3fc;
+}
+
+html.dark .wl-sub-badge {
+  background: rgba(56, 189, 248, 0.15);
+  color: #7dd3fc;
+}
+
+html.dark .wl-sub-badge--muted {
+  background: #1e293b;
+  color: var(--c-text-3);
+}
+
+html.dark .wl-sub-apply-all-btn {
+  background: #1e293b;
+  border-color: var(--c-border-2);
+  color: var(--c-text-2);
+}
+
+html.dark .wl-sub-apply-all-btn:hover {
+  background: #334155;
+  border-color: var(--c-text-3);
+  color: var(--c-text);
+}
+
 
 /* ===== UNFAVORITE ALERT ===== */
 
