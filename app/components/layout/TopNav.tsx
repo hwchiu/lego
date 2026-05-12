@@ -504,7 +504,7 @@ export default function TopNav() {
     setExpandedFinIdxSymbol((prev) => (prev === symbol ? null : symbol));
   }, []);
 
-  // Mock Elasticsearch results (Event + News) from mock data
+  // Mock Elasticsearch results (Company, Event, News) from mock data
   const mockResults = useMemo(() => (q.length > 0 ? filterMockResults(q) : []), [q]);
   const mockEvents = useMemo(
     () =>
