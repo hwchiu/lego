@@ -18,7 +18,7 @@ import {
   updateNotificationSettings,
 } from '@/app/lib/notificationApi';
 import type { NotificationSettings } from '@/app/lib/notificationApi';
-import { filterMockResults, type SearchResultItem } from '@/app/data/searchMockData';
+import { getElshResult, type SearchResultItem } from '@/app/data/searchMockData';
 
 const SearchFinancialIndicesChart = dynamic(
   () => import('@/app/company-profile/[symbol]/InvestmentNivoCharts').then((m) => m.FinancialIndicesNivoChart),
@@ -504,8 +504,29 @@ export default function TopNav() {
     setExpandedFinIdxSymbol((prev) => (prev === symbol ? null : symbol));
   }, []);
 
-  // Mock Elasticsearch results (Company, Event, News) from mock data
-  const mockResults = useMemo(() => (q.length > 0 ? filterMockResults(q) : []), [q]);
+  const [mockResults, setMockResults] = useState<SearchResultItem[]>([]);
+  useEffect(() => {
+    let cancelled = false;
+
+    if (q.length === 0) {
+      setMockResults([]);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    getElshResult(query)
+      .then((results) => {
+        if (!cancelled) setMockResults(results);
+      })
+      .catch(() => {
+        if (!cancelled) setMockResults([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [q, query]);
   const mockEvents = useMemo(
     () =>
       mockResults

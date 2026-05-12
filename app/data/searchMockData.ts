@@ -256,8 +256,7 @@ export const MOCK_SEARCH_RESULTS: SearchResultItem[] = [
   },
 ];
 
-/** Filter mock results by a search query string (case-insensitive). */
-export function filterMockResults(query: string): SearchResultItem[] {
+function filterMockResults(query: string): SearchResultItem[] {
   const q = query.trim().toLowerCase();
   if (!q) return [];
   return MOCK_SEARCH_RESULTS.filter((item) => {
@@ -271,4 +270,39 @@ export function filterMockResults(query: string): SearchResultItem[] {
     ];
     return fields.some((f) => f.toLowerCase().includes(q));
   });
+}
+
+/**
+ * Get Elasticsearch results.
+ * - When `NEXT_PUBLIC_ELSH_SEARCH_API` exists, request backend API.
+ * - Otherwise fallback to local mock data.
+ */
+export async function getElshResult(query: string): Promise<SearchResultItem[]> {
+  const q = query.trim();
+  if (!q) return [];
+
+  const apiUrl = process.env.NEXT_PUBLIC_ELSH_SEARCH_API?.trim();
+  if (!apiUrl) {
+    return filterMockResults(query);
+  }
+
+  try {
+    const hasQueryString = apiUrl.includes('?');
+    const url = `${apiUrl}${hasQueryString ? '&' : '?'}q=${encodeURIComponent(q)}`;
+    const res = await fetch(url, { method: 'GET', cache: 'no-store' });
+    if (!res.ok) return filterMockResults(query);
+
+    const data = await res.json();
+    if (Array.isArray(data)) return data as SearchResultItem[];
+    if (Array.isArray((data as { results?: unknown[] }).results)) {
+      return (data as { results: SearchResultItem[] }).results;
+    }
+    if (Array.isArray((data as { data?: unknown[] }).data)) {
+      return (data as { data: SearchResultItem[] }).data;
+    }
+
+    return filterMockResults(query);
+  } catch {
+    return filterMockResults(query);
+  }
 }
