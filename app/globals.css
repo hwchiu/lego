@@ -573,8 +573,8 @@ select {
   border-radius: 4px;
 }
 .search-result-cards {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 8px;
   padding: 4px 0;
 }
