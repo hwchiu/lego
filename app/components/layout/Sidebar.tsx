@@ -128,6 +128,7 @@ function SubMenu({
           </div>
 
           {/* API-sourced user watchlists, sorted by watchlistId ascending */}
+          <div className="sidebar-submenu-watchlist-scroll">
           {[...apiWatchlists]
             .sort((a, b) => a.watchlistId - b.watchlistId)
             .map((wl) => {
@@ -142,6 +143,7 @@ function SubMenu({
                 </div>
               );
             })}
+          </div>
 
           {/* Divider before Create Watchlist */}
           <div className="sidebar-submenu-divider" />
