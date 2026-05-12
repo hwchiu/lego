@@ -551,8 +551,8 @@ export default function TopNav() {
 
   // Reset search tab when query is cleared
   useEffect(() => {
-    if (!q) setSearchTab('all');
-  }, [q]);
+    if (!query.trim()) setSearchTab('all');
+  }, [query]);
 
   // Navigate to company profile page
   function navigateToCompany(symbol: string) {
@@ -928,6 +928,7 @@ export default function TopNav() {
                   <button className="search-see-all-btn" disabled aria-disabled="true">
                     <span>
                       {lang === 'zh' ? '查看所有結果：' : 'See all results for '}
+                      {/* fallback keeps current input visible during debounce delay */}
                       <span className="search-see-all-query">&ldquo;{debouncedQuery || query.trim()}&rdquo;</span>
                     </span>
                     <span className="search-see-all-coming-soon">
