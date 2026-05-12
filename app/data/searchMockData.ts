@@ -277,6 +277,34 @@ function filterMockResults(query: string): SearchResultItem[] {
  * - When `NEXT_PUBLIC_ELSH_SEARCH_API` exists, request backend API.
  * - Otherwise fallback to local mock data.
  */
+// Raw shape returned by the Spring Boot /api/v1/search endpoint
+interface EsApiItem {
+  id: string;
+  coCd: string;
+  companyName: string;
+  companyShortName: string;
+  title: string;
+  content: string;
+  date: string;       // "YYYY-MM-DD"
+  category: string;
+}
+
+function mapEsApiItem(item: EsApiItem): SearchResultItem {
+  return {
+    id: item.id,
+    doc_type: 'news',
+    co_cd: item.coCd ?? '',
+    company_name: item.companyName ?? '',
+    company_short_name: item.companyShortName ?? '',
+    title: item.title ?? '',
+    content: item.content ?? '',
+    datetime: item.date ? `${item.date}T00:00:00` : '',
+    category: item.category ?? '',
+    url: '',
+    source: 'elasticsearch',
+  };
+}
+
 export async function getElshResult(query: string): Promise<SearchResultItem[]> {
   const q = query.trim();
   if (!q) return [];
@@ -294,13 +322,15 @@ export async function getElshResult(query: string): Promise<SearchResultItem[]> 
     if (!res.ok) return filterMockResults(query);
 
     const data = await res.json();
-    if (Array.isArray(data)) return data as SearchResultItem[];
-    if (Array.isArray((data as { results?: unknown[] }).results)) {
-      return (data as { results: SearchResultItem[] }).results;
-    }
-    if (Array.isArray((data as { data?: unknown[] }).data)) {
-      return (data as { data: SearchResultItem[] }).data;
-    }
+
+    // Spring Boot backend returns { results: EsApiItem[], total: number }
+    const rawItems: EsApiItem[] | null =
+      Array.isArray(data) ? data as EsApiItem[] :
+      Array.isArray((data as { results?: unknown[] }).results) ? (data as { results: EsApiItem[] }).results :
+      Array.isArray((data as { data?: unknown[] }).data) ? (data as { data: EsApiItem[] }).data :
+      null;
+
+    if (rawItems) return rawItems.map(mapEsApiItem);
 
     return filterMockResults(query);
   } catch {
