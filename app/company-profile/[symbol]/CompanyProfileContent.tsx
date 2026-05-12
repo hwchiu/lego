@@ -886,7 +886,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     return groups;
   }, [segmentRecords, segInfo]);
 
-  const derivedRevenueBreakdownYearQtr = useMemo<string | null>(() => {
+  const revenueBreakdownYearQtr = useMemo<string | null>(() => {
     if (!segmentRecords.length) return null;
 
     const segType = segInfo?.SEG_TYPE ?? REVENUE_SALE_TYPE;
@@ -1390,8 +1390,8 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                       <div className="cp-card-title cp-breakdown-title">
                         Revenue Breakdown
                       </div>
-                      {derivedRevenueBreakdownYearQtr && (
-                        <div className="cp-breakdown-yearqtr">{derivedRevenueBreakdownYearQtr}</div>
+                      {revenueBreakdownYearQtr && (
+                        <div className="cp-breakdown-yearqtr">{revenueBreakdownYearQtr}</div>
                       )}
                       <div className="cp-card-divider" />
                       {(() => {
