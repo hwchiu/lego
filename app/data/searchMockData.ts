@@ -278,6 +278,7 @@ function filterMockResults(query: string): SearchResultItem[] {
  * - Otherwise fallback to local mock data.
  */
 export async function getElshResult(query: string): Promise<SearchResultItem[]> {
+  const ELSH_ENDPOINT_PATH = '/getElshResult';
   const q = query.trim();
   if (!q) return [];
 
@@ -288,9 +289,25 @@ export async function getElshResult(query: string): Promise<SearchResultItem[]> 
   }
 
   try {
-    const hasQueryString = apiUrl.includes('?');
-    const url = `${apiUrl}${hasQueryString ? '&' : '?'}q=${encodeURIComponent(q)}`;
-    const res = await fetch(url, { method: 'GET', cache: 'no-store' });
+    let requestUrl: string;
+    try {
+      const parsedUrl = new URL(apiUrl);
+      if (!parsedUrl.pathname.endsWith(ELSH_ENDPOINT_PATH)) {
+        const basePath = parsedUrl.pathname.replace(/\/+$/, '');
+        parsedUrl.pathname = basePath ? `${basePath}${ELSH_ENDPOINT_PATH}` : ELSH_ENDPOINT_PATH;
+      }
+      parsedUrl.searchParams.set('q', q);
+      requestUrl = parsedUrl.toString();
+    } catch {
+      const normalizedApiUrl = apiUrl.replace(/\/+$/, '');
+      const endpointUrl = normalizedApiUrl.endsWith(ELSH_ENDPOINT_PATH)
+        ? normalizedApiUrl
+        : `${normalizedApiUrl}${ELSH_ENDPOINT_PATH}`;
+      const hasQueryString = endpointUrl.includes('?');
+      requestUrl = `${endpointUrl}${hasQueryString ? '&' : '?'}q=${encodeURIComponent(q)}`;
+    }
+
+    const res = await fetch(requestUrl, { method: 'GET', cache: 'no-store' });
     if (!res.ok) return filterMockResults(query);
 
     const data = await res.json();
