@@ -886,6 +886,27 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     return groups;
   }, [segmentRecords, segInfo]);
 
+  const derivedRevenueBreakdownYearQtr = useMemo<string | null>(() => {
+    if (!segmentRecords.length) return null;
+
+    const segType = segInfo?.SEG_TYPE ?? REVENUE_SALE_TYPE;
+    let latestSortKey = -1;
+    let latestYearQtr: string | null = null;
+
+    for (const rec of segmentRecords) {
+      if (rec.sale_type !== segType || rec.calendar_quarter === ANNUAL_QUARTER_VALUE) continue;
+      const m = rec.calendar_quarter.match(/^Q([1-4])$/);
+      if (!m) continue;
+      const sortKey = rec.calendar_year * 10 + parseInt(m[1], 10);
+      if (sortKey > latestSortKey) {
+        latestSortKey = sortKey;
+        latestYearQtr = `${String(rec.calendar_year).slice(2)}${rec.calendar_quarter}`;
+      }
+    }
+
+    return latestYearQtr;
+  }, [segmentRecords, segInfo]);
+
   // Parse markdown data
   const profileData = getProfileData();
 
@@ -1366,9 +1387,12 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                     </div>
 
                     <div className="cp-data-card">
-                      <div className="cp-card-title">
+                      <div className="cp-card-title cp-breakdown-title">
                         Revenue Breakdown
                       </div>
+                      {derivedRevenueBreakdownYearQtr && (
+                        <div className="cp-breakdown-yearqtr">{derivedRevenueBreakdownYearQtr}</div>
+                      )}
                       <div className="cp-card-divider" />
                       {(() => {
                         const groups = derivedRevenueBreakdown;

@@ -5411,6 +5411,19 @@ html:not(.dark) .sidebar-submenu-icon-left {
   overflow-y: auto;
 }
 
+.cp-breakdown-title {
+  margin-bottom: 2px;
+}
+
+.cp-breakdown-yearqtr {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--c-text-3);
+  text-align: center;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
 .cp-breakdown-group {
   display: flex;
   flex-direction: column;
