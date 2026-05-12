@@ -2,6 +2,7 @@ package com.mic.search.application.service;
 
 import com.mic.search.domain.model.SearchDocument;
 import com.mic.search.domain.repository.SearchDocumentRepository;
+import com.mic.search.infrastructure.elasticsearch.initializer.DataInitializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +31,7 @@ class SearchIndexServiceTest {
         int count = service.bulkInsertMockData();
 
         verify(repository, times(1)).saveAll(anyList());
-        assertThat(count).isEqualTo(10);
+        assertThat(count).isEqualTo(DataInitializer.getMockData().size());
     }
 
     @Test
@@ -44,12 +45,14 @@ class SearchIndexServiceTest {
 
         List<SearchDocument> results = service.search("台積電");
 
-        assertThat(results).hasSize(2);
-        assertThat(results).allSatisfy(item -> assertThat(item).isInstanceOf(SearchDocument.class));
+        assertThat(results).containsExactlyInAnyOrder(doc1, doc2);
     }
 
     @Test
     void search_blankKeyword_throwsException() {
+        assertThatThrownBy(() -> service.search(null))
+                .isInstanceOf(IllegalArgumentException.class);
+
         assertThatThrownBy(() -> service.search(""))
                 .isInstanceOf(IllegalArgumentException.class);
 
