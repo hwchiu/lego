@@ -507,15 +507,16 @@ export default function TopNav() {
   const [mockResults, setMockResults] = useState<SearchResultItem[]>([]);
   useEffect(() => {
     let cancelled = false;
+    const trimmedQuery = query.trim();
 
-    if (q.length === 0) {
+    if (!trimmedQuery) {
       setMockResults([]);
       return () => {
         cancelled = true;
       };
     }
 
-    getElshResult(query)
+    getElshResult(trimmedQuery)
       .then((results) => {
         if (!cancelled) setMockResults(results);
       })
@@ -526,19 +527,19 @@ export default function TopNav() {
     return () => {
       cancelled = true;
     };
-  }, [q, query]);
+  }, [query]);
   const mockEvents = useMemo(
     () =>
       mockResults
         .filter((r) => r.doc_type === 'event')
-        .sort((a, b) => (b.datetime > a.datetime ? 1 : -1)),
+        .sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime()),
     [mockResults],
   );
   const mockNews = useMemo(
     () =>
       mockResults
         .filter((r) => r.doc_type === 'news')
-        .sort((a, b) => (b.datetime > a.datetime ? 1 : -1)),
+        .sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime()),
     [mockResults],
   );
 

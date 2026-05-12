@@ -281,6 +281,7 @@ export async function getElshResult(query: string): Promise<SearchResultItem[]> 
   const q = query.trim();
   if (!q) return [];
 
+  // Note: NEXT_PUBLIC_* vars are injected at build time in Next.js.
   const apiUrl = process.env.NEXT_PUBLIC_ELSH_SEARCH_API?.trim();
   if (!apiUrl) {
     return filterMockResults(query);
