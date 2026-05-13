@@ -3521,6 +3521,30 @@ html:not(.dark) .sidebar-submenu-icon-left {
 .wl-feed-ticker:hover {
   text-decoration: underline;
 }
+.wl-feed-company-tags {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.wl-feed-company-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-decoration: none;
+}
+.wl-feed-company-tag:hover {
+  border-color: #93c5fd;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
 .wl-feed-dot {
   color: var(--c-border-2);
 }
@@ -3555,6 +3579,18 @@ html:not(.dark) .sidebar-submenu-icon-left {
   border-radius: 10px;
   background: var(--c-bg);
   color: var(--c-text-3);
+}
+.wl-feed-kind-badge--news {
+  background: #dcfce7;
+  color: #166534;
+}
+.wl-feed-kind-badge--press-release {
+  background: #f3e8ff;
+  color: #6d28d9;
+}
+.wl-feed-kind-badge--event {
+  background: #fef3c7;
+  color: #92400e;
 }
 .wl-feed-comments,
 .wl-feed-save {
@@ -25855,6 +25891,16 @@ html.dark .wl-feed-list::-webkit-scrollbar-thumb {
 }
 html.dark .wl-feed-list::-webkit-scrollbar-thumb:hover {
   background: #64748b;
+}
+html.dark .wl-feed-company-tag {
+  border-color: #334155;
+  background: #1e293b;
+  color: #e2e8f0;
+}
+html.dark .wl-feed-company-tag:hover {
+  border-color: #38bdf8;
+  background: #0f172a;
+  color: #7dd3fc;
 }
 
 /* ── Dark mode: Revenue Breakdown scrollbar ── */

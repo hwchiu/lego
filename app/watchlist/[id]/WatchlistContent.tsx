@@ -1119,8 +1119,9 @@ function ManageViewModal({
 // ── Main page ─────────────────────────────────────────────────────────────────
 type FeedTab = 'Latest' | 'News' | 'Press Release' | 'Event';
 
-/** Number of days used as the look-back window for news and look-ahead window for events in the Latest tab. */
-const LATEST_TAB_DAYS_WINDOW = 3;
+/** Number of days used as the look-back window for news/press-release and look-ahead window for events in the Latest tab. */
+const LATEST_TAB_DAYS_WINDOW = 7;
+const OFFICIAL_PRESS_RELEASE_CATEGORY = 'official press release';
 
 // ── Unified Updates feed item ─────────────────────────────────────────────────
 interface UpdateFeedItem {
@@ -1128,6 +1129,7 @@ interface UpdateFeedItem {
   kind: 'news' | 'press-release' | 'event';
   title: string;
   source: string;
+  newsCategory?: string;
   displaySymbols: string[];
   dateLabel: string;
   dateMs: number;
@@ -1822,6 +1824,7 @@ export function WatchlistContent({
       kind: 'news' as const,
       title: item.title,
       source: item.source,
+      newsCategory: item.category,
       displaySymbols: item.tags.filter((t) => watchlistSymbolSet.has(t.symbol)).map((t) => t.symbol),
       dateLabel: item.publishedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       dateMs: item.publishedAt.getTime(),
@@ -1876,18 +1879,26 @@ export function WatchlistContent({
     const windowMs = LATEST_TAB_DAYS_WINDOW * 24 * 60 * 60 * 1000;
 
     // News: only items published within the last LATEST_TAB_DAYS_WINDOW days
+    // and exclude Official Press Release to avoid duplication with Press Release feed.
     const recentNews = newsUpdateItems.filter(
+      (item) =>
+        item.dateMs >= nowMs - windowMs &&
+        item.dateMs <= nowMs &&
+        item.newsCategory?.trim().toLowerCase() !== OFFICIAL_PRESS_RELEASE_CATEGORY,
+    );
+
+    // Press Release: only items published within the last LATEST_TAB_DAYS_WINDOW days.
+    const recentPressReleases = prUpdateItems.filter(
       (item) => item.dateMs >= nowMs - windowMs && item.dateMs <= nowMs,
     );
 
     // Events: only items occurring from now through the next LATEST_TAB_DAYS_WINDOW days.
-    // Press Release items are excluded here — they are shown in their own dedicated "Coming Soon" tab.
     const upcomingEvents = eventUpdateItems.filter(
       (item) => item.dateMs >= nowMs && item.dateMs <= nowMs + windowMs,
     );
 
-    return [...recentNews, ...upcomingEvents].sort((a, b) => b.dateMs - a.dateMs);
-  }, [newsUpdateItems, eventUpdateItems]);
+    return [...recentNews, ...recentPressReleases, ...upcomingEvents].sort((a, b) => b.dateMs - a.dateMs);
+  }, [newsUpdateItems, prUpdateItems, eventUpdateItems]);
 
   const currentUpdateItems: UpdateFeedItem[] =
     feedTab === 'Latest' ? latestUpdateItems
@@ -2344,9 +2355,10 @@ export function WatchlistContent({
                       {item.kind === 'news' ? <NewsAvatar /> : item.kind === 'press-release' ? (
                         <div className="wl-feed-avatar wl-feed-avatar--pr">
                           <svg viewBox="0 0 28 28" fill="none" width="28" height="28" aria-hidden="true">
-                            <circle cx="14" cy="14" r="14" fill="#dbeafe" />
-                            <rect x="8" y="8" width="12" height="12" rx="2" stroke="#2563eb" strokeWidth="1.4" fill="none" />
-                            <path d="M10 12h8M10 15h6" stroke="#2563eb" strokeWidth="1.3" strokeLinecap="round" />
+                            <circle cx="14" cy="14" r="14" fill="#f3e8ff" />
+                            <path d="M8 14.2V10.1c0-.7.57-1.2 1.2-1.2h1.4l5.4-2.4c.8-.35 1.7.23 1.7 1.1v9.2c0 .87-.9 1.45-1.7 1.1l-5.4-2.4H9.2c-.63 0-1.2-.5-1.2-1.2Z" stroke="#7c3aed" strokeWidth="1.3" strokeLinejoin="round" />
+                            <path d="M10.6 15.5L11.9 19c.18.48.72.72 1.2.54l1.05-.39" stroke="#7c3aed" strokeWidth="1.2" strokeLinecap="round" />
+                            <path d="M19 10.2a2.8 2.8 0 0 1 0 5.6" stroke="#7c3aed" strokeWidth="1.2" strokeLinecap="round" />
                           </svg>
                         </div>
                       ) : (
@@ -2367,8 +2379,20 @@ export function WatchlistContent({
                             ) : item.title}
                           </div>
                           <div className="wl-feed-meta">
-                            <span className="wl-event-contact-name">{item.contactName}</span>
-                            <span className="wl-feed-dot">•</span>
+                            <span className="wl-feed-company-tags">
+                              {item.displaySymbols.map((sym) => (
+                                <a
+                                  key={`${item.id}-company-${sym}`}
+                                  href={`/lego/company-profile/${sym}/`}
+                                  className="wl-feed-company-tag"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  {companyNameMap.get(sym) ?? item.contactName ?? sym}
+                                </a>
+                              ))}
+                            </span>
+                            {item.source && <span className="wl-feed-dot">•</span>}
                             <span className="wl-event-event-type">{item.source}</span>
                             <span className="wl-feed-dot">•</span>
                             <span className="wl-event-event-datetime">{item.dateLabel}</span>
@@ -2400,6 +2424,24 @@ export function WatchlistContent({
                                 </span>
                               ))}
                             </span>
+                            {item.displaySymbols.length > 0 && (
+                              <>
+                                <span className="wl-feed-dot">•</span>
+                                <span className="wl-feed-company-tags">
+                                  {item.displaySymbols.map((sym) => (
+                                    <a
+                                      key={`${item.id}-company-${sym}`}
+                                      href={`/lego/company-profile/${sym}/`}
+                                      className="wl-feed-company-tag"
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      {companyNameMap.get(sym) ?? sym}
+                                    </a>
+                                  ))}
+                                </span>
+                              </>
+                            )}
                             <span className="wl-feed-dot">•</span>
                             <span className="wl-feed-source">{item.source}</span>
                             <span className="wl-feed-dot">•</span>
