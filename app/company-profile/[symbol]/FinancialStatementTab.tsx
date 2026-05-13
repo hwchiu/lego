@@ -70,7 +70,7 @@ function FinDataTable({
         row1Cells.push({ type: 'qgroup', yearLabel, count: 1 });
       }
     } else {
-      row1Cells.push({ type: 'annual', label: p });
+      row1Cells.push({ type: 'annual', label: formatAnnualHeaderLabel(p) });
     }
   }
 
@@ -187,6 +187,10 @@ function parseColQuarter(col: string): string {
   return m ? m[1] : col;
 }
 
+function formatAnnualHeaderLabel(label: string): string {
+  return label.replace(/^FY/, 'CY');
+}
+
 function SimpleStatementTable({ data, viewMode, yearWindowStart, allYears }: SimpleStatementTableProps) {
   const periodData = viewMode === 'annual' ? data.annualData : data.quarterlyData;
 
@@ -252,7 +256,7 @@ function SimpleStatementTable({ data, viewMode, yearWindowStart, allYears }: Sim
                   </div>
                 </th>
                 {visibleCols.map((col) => (
-                  <th key={col} className="fin-stmt-simple-col-hdr">{col}</th>
+                  <th key={col} className="fin-stmt-simple-col-hdr">{formatAnnualHeaderLabel(col)}</th>
                 ))}
               </tr>
             )}
@@ -644,7 +648,7 @@ function buildPeriodHeaderCells(periods: string[]): {
         row1Cells.push({ type: 'qgroup', yearLabel, count: 1 });
       }
     } else {
-      row1Cells.push({ type: 'annual', label: p });
+      row1Cells.push({ type: 'annual', label: formatAnnualHeaderLabel(p) });
     }
   }
   return { row1Cells, row2Quarters, hasQuarterly: row2Quarters.length > 0 };
