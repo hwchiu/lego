@@ -60,7 +60,7 @@ function FinDataTable({
   for (const p of periods) {
     if (isQuarterlyPeriod(p)) {
       const yr = parseColYear(p);
-      const yearLabel = `FY${yr}`;
+      const yearLabel = `CY${yr}`;
       const qLabel = parseColQuarter(p);
       row2Quarters.push(qLabel);
       const last = row1Cells[row1Cells.length - 1];
@@ -230,7 +230,7 @@ function SimpleStatementTable({ data, viewMode, yearWindowStart, allYears }: Sim
                   </th>
                   {yearGroups.map(({ year, cols }) => (
                     <th key={year} colSpan={cols.length} className="th-group">
-                      FY{year}
+                      CY{year}
                     </th>
                   ))}
                 </tr>
@@ -325,7 +325,7 @@ export function sortCategories(cats: string[]): void {
 
 /** Build a period label for a SegmentRecord. */
 function segPLabel(calYear: number, calQ: string): string {
-  return calQ === SEGMENT_ANNUAL_Q ? `FY${calYear}` : `${calQ} ${calYear}`;
+  return calQ === SEGMENT_ANNUAL_Q ? `CY${calYear}` : `${calQ} ${calYear}`;
 }
 
 /** Build a sort key for a segment period. */
@@ -634,7 +634,7 @@ function buildPeriodHeaderCells(periods: string[]): {
   for (const p of periods) {
     if (/^Q\d/.test(p)) {
       const yr = p.match(/\d{4}$/)?.[0] ?? '';
-      const yearLabel = `FY${yr}`;
+      const yearLabel = `CY${yr}`;
       const qLabel = p.match(/^Q\d/)?.[0] ?? p;
       row2Quarters.push(qLabel);
       const last = row1Cells[row1Cells.length - 1];
@@ -1003,7 +1003,7 @@ export default function FinancialStatementTab({ symbol, companyStatements: propS
                     </svg>
                   </button>
                   <span className="wl-quarter-label fin-stmt-year-label">
-                    FY{simpleYearWindowStart}–FY{simpleYearWindowStart + 1}
+                    CY{simpleYearWindowStart}–CY{simpleYearWindowStart + 1}
                   </span>
                   <button
                     className="wl-quarter-btn"
