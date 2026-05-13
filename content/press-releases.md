@@ -2005,6 +2005,138 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "summary": "NVIDIA confirmed that the Rubin Ultra GPU has completed tape-out on TSMC's A14 (1.4nm-class) angstrom-era process node, targeting risk production in Q1 2027 and volume production in H2 2027. The Rubin Ultra integrates 1.4 trillion transistors using TSMC's backside power delivery network (BSPDN) and features 12-stack HBM4 with 16 TB/s aggregate bandwidth per module.",
     "viewCount": 231400,
     "url": "https://nvidianews.nvidia.com/news/"
+  },
+  {
+    "id": "pr-092",
+    "title": "NVIDIA Reports Q1 FY2027 Revenue of $52.0 Billion, Raises Full-Year Guidance",
+    "company": "NVIDIA Corporation",
+    "ticker": "NVDA",
+    "relationship": "customer",
+    "industry": "Semiconductors",
+    "topics": [
+      "Financial Results",
+      "AI & Computing",
+      "Cloud & Data Center"
+    ],
+    "trendingTopics": [
+      "#NVDA",
+      "#BlackwellGPU",
+      "#AIRevenue"
+    ],
+    "publishedAt": "2026-05-10",
+    "summary": "NVIDIA delivered record Q1 FY2027 revenue of $52.0B, up 18% sequentially and surpassing consensus by 12%. Data Center revenue reached $47.5B driven by Blackwell GPU demand from hyperscalers and sovereign AI programs. NVIDIA raised full-year FY2027 guidance to $210B+ as Blackwell Ultra ramp accelerates in H2 2026.",
+    "viewCount": 245700,
+    "url": "https://nvidianews.nvidia.com/news/"
+  },
+  {
+    "id": "pr-093",
+    "title": "Apple Reports Q2 FY2026 Results: Record Services Revenue of $27.3 Billion",
+    "company": "Apple Inc.",
+    "ticker": "AAPL",
+    "relationship": "customer",
+    "industry": "Consumer Electronics",
+    "topics": [
+      "Financial Results",
+      "AI & Computing",
+      "Consumer Electronics"
+    ],
+    "trendingTopics": [
+      "#Apple",
+      "#AppleIntelligence",
+      "#ServicesRevenue"
+    ],
+    "publishedAt": "2026-05-08",
+    "summary": "Apple reported Q2 FY2026 revenue of $100.4B with Services reaching a new record of $27.3B (+16% YoY). iPhone revenue of $52.4B exceeded analyst expectations, supported by continued iPhone 17 demand and Apple Intelligence adoption across the installed base. The company announced a $110B share repurchase authorization.",
+    "viewCount": 189300,
+    "url": "https://www.apple.com/newsroom/"
+  },
+  {
+    "id": "pr-094",
+    "title": "Tesla Reports Q1 2026 Financial Results: Auto Gross Margin Recovery and Record Energy Revenue",
+    "company": "Tesla, Inc.",
+    "ticker": "TSLA",
+    "relationship": "customer",
+    "industry": "Electric Vehicles",
+    "topics": [
+      "Financial Results",
+      "Automotive",
+      "AI & Computing"
+    ],
+    "trendingTopics": [
+      "#Tesla",
+      "#FSD",
+      "#EnergyStorage"
+    ],
+    "publishedAt": "2026-05-07",
+    "summary": "Tesla Q1 2026 total revenue reached $26.8B with automotive gross margin recovering to 20.1%, ending two quarters of compression. Energy generation and storage revenue of $7.2B grew 65% YoY, now representing over 27% of total revenue. FSD subscription revenue grew to $2.4B annualized as unsupervised driving expanded to 50 U.S. cities.",
+    "viewCount": 162800,
+    "url": "https://ir.tesla.com/sec-filings/"
+  },
+  {
+    "id": "pr-095",
+    "title": "Alphabet Announces Q1 2026 Results: $115 Billion Revenue with Google Cloud at 38% Growth",
+    "company": "Alphabet Inc.",
+    "ticker": "GOOGL",
+    "relationship": "customer",
+    "industry": "Technology",
+    "topics": [
+      "Financial Results",
+      "AI & Computing",
+      "Cloud & Data Center"
+    ],
+    "trendingTopics": [
+      "#Alphabet",
+      "#GoogleCloud",
+      "#GeminiAI"
+    ],
+    "publishedAt": "2026-05-09",
+    "summary": "Alphabet reported Q1 2026 consolidated revenue of $115.0B, up 14% YoY, beating analyst consensus of $112.0B. Google Cloud revenue reached $14.3B (+38% YoY) powered by Gemini AI workloads. YouTube advertising revenue grew to $11.5B (+24% YoY). Operating margin expanded 230 basis points to 34.2%. Alphabet announced a new $90B share buyback program.",
+    "viewCount": 198500,
+    "url": "https://abc.xyz/investor/"
+  },
+  {
+    "id": "pr-096",
+    "title": "NVIDIA Launches Blackwell Ultra B300 Architecture at GTC 2026 for Next-Gen AI Infrastructure",
+    "company": "NVIDIA Corporation",
+    "ticker": "NVDA",
+    "relationship": "customer",
+    "industry": "Semiconductors",
+    "topics": [
+      "AI & Computing",
+      "Innovation & R&D",
+      "Cloud & Data Center"
+    ],
+    "trendingTopics": [
+      "#BlackwellUltra",
+      "#B300",
+      "#GTC2026"
+    ],
+    "publishedAt": "2026-05-13",
+    "summary": "NVIDIA formally announced the Blackwell Ultra B300 GPU at GTC 2026, delivering 2.5× the inference performance of the B200 through architectural improvements including a redesigned Transformer Engine and 320GB HBM4 memory. Manufactured on TSMC's N3P process, the B300 targets hyperscaler AI inference clusters. Volume production is expected Q4 2026 with AWS, Google Cloud, and Azure as launch partners.",
+    "viewCount": 312000,
+    "url": "https://nvidianews.nvidia.com/news/"
+  },
+  {
+    "id": "pr-097",
+    "title": "Apple Previews iOS 20 and Apple Intelligence 2.0 at WWDC 2026",
+    "company": "Apple Inc.",
+    "ticker": "AAPL",
+    "relationship": "customer",
+    "industry": "Consumer Electronics",
+    "topics": [
+      "AI & Computing",
+      "Consumer Electronics",
+      "Innovation & R&D"
+    ],
+    "trendingTopics": [
+      "#iOS20",
+      "#AppleIntelligence2",
+      "#WWDC2026"
+    ],
+    "publishedAt": "2026-05-12",
+    "summary": "Apple unveiled iOS 20 at WWDC 2026, featuring Apple Intelligence 2.0 powered by an on-device large language model running exclusively on the A20 chip. New AI features include real-time language translation in any app, predictive calendar management, and a fully conversational Siri capable of multi-step device actions. Privacy-first architecture ensures all processing remains on device with no data sent to servers.",
+    "viewCount": 278600,
+    "url": "https://www.apple.com/newsroom/"
   }
 ]
 ```
