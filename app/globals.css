@@ -19,6 +19,18 @@
   --c-pos: #16a34a;
   --c-neg: #dc2626;
   --c-accent: #4fc3f7;
+  --c-badge-news-bg: #dcfce7;
+  --c-badge-news-text: #166534;
+  --c-badge-pr-bg: #f3e8ff;
+  --c-badge-pr-text: #6d28d9;
+  --c-badge-event-bg: #fef3c7;
+  --c-badge-event-text: #92400e;
+  --c-company-tag-border: #cbd5e1;
+  --c-company-tag-bg: #f8fafc;
+  --c-company-tag-text: #334155;
+  --c-company-tag-hover-border: #93c5fd;
+  --c-company-tag-hover-bg: #eff6ff;
+  --c-company-tag-hover-text: #1d4ed8;
   --font:
     -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
   --radius-sm: 4px;
@@ -3521,6 +3533,30 @@ html:not(.dark) .sidebar-submenu-icon-left {
 .wl-feed-ticker:hover {
   text-decoration: underline;
 }
+.wl-feed-company-tags {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.wl-feed-company-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--c-company-tag-border);
+  background: var(--c-company-tag-bg);
+  color: var(--c-company-tag-text);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-decoration: none;
+}
+.wl-feed-company-tag:hover {
+  border-color: var(--c-company-tag-hover-border);
+  background: var(--c-company-tag-hover-bg);
+  color: var(--c-company-tag-hover-text);
+}
 .wl-feed-dot {
   color: var(--c-border-2);
 }
@@ -3555,6 +3591,18 @@ html:not(.dark) .sidebar-submenu-icon-left {
   border-radius: 10px;
   background: var(--c-bg);
   color: var(--c-text-3);
+}
+.wl-feed-kind-badge--news {
+  background: var(--c-badge-news-bg);
+  color: var(--c-badge-news-text);
+}
+.wl-feed-kind-badge--press-release {
+  background: var(--c-badge-pr-bg);
+  color: var(--c-badge-pr-text);
+}
+.wl-feed-kind-badge--event {
+  background: var(--c-badge-event-bg);
+  color: var(--c-badge-event-text);
 }
 .wl-feed-comments,
 .wl-feed-save {
@@ -25855,6 +25903,14 @@ html.dark .wl-feed-list::-webkit-scrollbar-thumb {
 }
 html.dark .wl-feed-list::-webkit-scrollbar-thumb:hover {
   background: #64748b;
+}
+html.dark {
+  --c-company-tag-border: #334155;
+  --c-company-tag-bg: #1e293b;
+  --c-company-tag-text: #e2e8f0;
+  --c-company-tag-hover-border: #38bdf8;
+  --c-company-tag-hover-bg: #0f172a;
+  --c-company-tag-hover-text: #7dd3fc;
 }
 
 /* ── Dark mode: Revenue Breakdown scrollbar ── */
