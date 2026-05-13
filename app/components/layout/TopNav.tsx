@@ -314,6 +314,19 @@ interface EventNewsCardProps {
   lang: 'zh' | 'en';
 }
 
+// Matches protocol-less domain strings that start with dot-separated host labels
+// (e.g. "example.com", "investor.apple.com/path", "a.b.co?x=1", "foo.bar#section").
+const DOMAIN_LIKE_URL_PATTERN = /^[^/\s?#]+\.[^/\s?#]+(?:[/?#]|$)/;
+
+function normalizeSearchResultUrl(url: string): string {
+  const value = url.trim();
+  if (!value) return '#';
+  if (/^https?:\/\//i.test(value)) return value;
+  if (value.startsWith('//')) return `https:${value}`;
+  if (DOMAIN_LIKE_URL_PATTERN.test(value)) return `https://${value}`;
+  return value;
+}
+
 function EventNewsCard({ item, lang }: EventNewsCardProps) {
   const dateStr = item.datetime
     ? new Date(item.datetime).toLocaleDateString(
@@ -325,7 +338,7 @@ function EventNewsCard({ item, lang }: EventNewsCardProps) {
   return (
     <a
       className="search-result-card"
-      href={item.url || '#'}
+      href={normalizeSearchResultUrl(item.url)}
       target="_blank"
       rel="noopener noreferrer"
       onMouseDown={(e) => e.stopPropagation()}

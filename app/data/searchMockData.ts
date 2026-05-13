@@ -162,6 +162,19 @@ export const MOCK_SEARCH_RESULTS: SearchResultItem[] = [
     source: 'Apple Investor Relations',
     id: 'event_aapl_20240201_006',
   },
+  {
+    doc_type: 'event',
+    co_cd: 'AAPL',
+    company_name: 'Apple Inc.',
+    company_short_name: 'Apple',
+    title: 'Apple Investor Relations 活動專區',
+    content: 'Apple 投資人關係活動與公告頁面，包含財報說明會與活動資訊。',
+    datetime: '2024-05-20T09:00:00Z',
+    category: '投資人活動',
+    url: 'investor.apple.com/investor-relations/default.aspx',
+    source: 'Apple Investor Relations',
+    id: 'event_aapl_20240520_007',
+  },
   // ── News ───────────────────────────────────────────────────────────────────
   {
     doc_type: 'news',
