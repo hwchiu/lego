@@ -104,7 +104,7 @@ export function groupByTimeline(
 
 // ─── Archive grouping (Apple Newsroom–style) ───────────────────────────────────
 
-export type PRArchiveGroupType = 'day' | 'week' | 'month';
+export type PRArchiveGroupType = 'day' | 'week' | 'biweek' | 'month';
 
 export interface PRArchiveGroup {
   key: string;
@@ -154,6 +154,36 @@ function formatWeekLabel(weekStartStr: string, lang: 'zh' | 'en'): string {
   return lang === 'zh' ? `${startStr} – ${endStr}` : `${startStr} – ${endStr}`;
 }
 
+/**
+ * Returns the start Monday of the 2-week block containing the given UTC date.
+ * Uses Monday 3 Jan 2000 as epoch anchor.
+ */
+function getBiWeeklyStartUTC(date: Date): Date {
+  const monday = getMondayUTC(date);
+  const epochMonday = new Date(Date.UTC(2000, 0, 3)); // 2000-01-03 is a Monday
+  const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+  const weeksSinceEpoch = Math.floor(
+    (monday.getTime() - epochMonday.getTime()) / msPerWeek,
+  );
+  const biWeekIndex = Math.floor(weeksSinceEpoch / 2);
+  return new Date(epochMonday.getTime() + biWeekIndex * 2 * msPerWeek);
+}
+
+function formatBiWeekLabel(biWeekStartStr: string, lang: 'zh' | 'en'): string {
+  const [y, m, d] = biWeekStartStr.split('-').map(Number);
+  const start = new Date(Date.UTC(y, m - 1, d));
+  const end = new Date(start);
+  end.setUTCDate(start.getUTCDate() + 13); // 2 weeks = 14 days, last day is +13
+
+  const locale = lang === 'en' ? 'en-US' : 'zh-TW';
+  const shortOpts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', timeZone: 'UTC' };
+  const endOpts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' };
+
+  const startStr = start.toLocaleDateString(locale, shortOpts);
+  const endStr = end.toLocaleDateString(locale, endOpts);
+  return `${startStr} – ${endStr}`;
+}
+
 function formatMonthLabel(year: number, month: number, lang: 'zh' | 'en'): string {
   if (lang === 'zh') {
     const zhMonths = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
@@ -199,18 +229,35 @@ export function getPressReleaseArchiveGroups(
     let sortKey: string;
 
     if (diffDays < 7) {
+      // Within last 7 days → daily bucket
       type = 'day';
       key = `day-${pr.publishedAt}`;
       label = formatDayLabel(pr.publishedAt, lang);
       sortKey = pr.publishedAt;
     } else if (diffDays < 30) {
+      // 7 days – 1 month ago → weekly bucket
       type = 'week';
       const monday = getMondayUTC(dateUTC);
       const mondayStr = toUTCDateString(monday);
       key = `week-${mondayStr}`;
       label = formatWeekLabel(mondayStr, lang);
       sortKey = mondayStr;
+    } else if (diffDays < 60) {
+      // 1 month – 2 months ago → bi-weekly bucket
+      type = 'biweek';
+      const biWeekStart = getBiWeeklyStartUTC(dateUTC);
+      const biWeekStartStr = toUTCDateString(biWeekStart);
+      key = `biweek-${biWeekStartStr}`;
+      label = formatBiWeekLabel(biWeekStartStr, lang);
+      sortKey = biWeekStartStr;
+    } else if (diffDays < 90) {
+      // 2 months – 3 months ago → monthly bucket
+      type = 'month';
+      key = `month-${y}-${String(m).padStart(2, '0')}`;
+      label = formatMonthLabel(y, m, lang);
+      sortKey = `${y}-${String(m).padStart(2, '0')}`;
     } else {
+      // Beyond 3 months → monthly bucket (fallback)
       type = 'month';
       key = `month-${y}-${String(m).padStart(2, '0')}`;
       label = formatMonthLabel(y, m, lang);
