@@ -530,6 +530,66 @@ display purposes.
       "webcastLink": "https://investor.apple.com/earnings",
       "irLink": "https://investor.apple.com"
     }
+  ],
+  "May 14": [
+    {
+      "cellLabel": "NVDA",
+      "company": "NVIDIA Corporation",
+      "description": "NVIDIA presents at J.P. Morgan Global Technology, Media and Communications Conference 2026. CFO Colette Kress to discuss Blackwell Ultra B300 GPU roadmap, data center revenue trajectory, and software monetization through the CUDA and NIM ecosystem.",
+      "eventDate": "May 14, 2026",
+      "eventType": "Conference",
+      "webcastLink": "https://investor.nvidia.com/events",
+      "irLink": "https://investor.nvidia.com"
+    },
+    {
+      "cellLabel": "TSLA",
+      "company": "Tesla Inc.",
+      "description": "Tesla presents at Bernstein Strategic Decisions Conference 2026. Management to discuss FSD unsupervised expansion roadmap, Optimus robot volume ramp towards 100,000 units in FY2026, and Megapack energy storage demand from utility customers.",
+      "eventDate": "May 14, 2026",
+      "eventType": "Conference",
+      "webcastLink": "https://ir.tesla.com/events",
+      "irLink": "https://ir.tesla.com"
+    }
+  ],
+  "May 15": [
+    {
+      "cellLabel": "AAPL",
+      "company": "Apple Inc.",
+      "description": "Apple presents at Bank of America Global Technology Conference 2026. Discussion on iOS 20 and Apple Intelligence 2.0 monetization strategy, emerging market iPhone growth, App Store developer ecosystem expansion, and Vision Pro 2 launch timeline.",
+      "eventDate": "May 15, 2026",
+      "eventType": "Conference",
+      "webcastLink": "https://investor.apple.com/events",
+      "irLink": "https://investor.apple.com"
+    },
+    {
+      "cellLabel": "GOOGL",
+      "company": "Alphabet Inc.",
+      "description": "Alphabet presents at Morgan Stanley Technology Conference 2026. Topics include Gemini 3.0 enterprise adoption, Google Cloud AI infrastructure investment returns, YouTube Shorts monetization trajectory, and DeepMind commercialization of AlphaFold and related research.",
+      "eventDate": "May 15, 2026",
+      "eventType": "Conference",
+      "webcastLink": "https://abc.xyz/investor/events",
+      "irLink": "https://abc.xyz/investor"
+    }
+  ],
+  "May 19": [
+    {
+      "cellLabel": "NVDA",
+      "company": "NVIDIA Corporation",
+      "description": "NVIDIA Developer Summit 2026 Keynote — Jen-Hsun Huang to present Blackwell Ultra architecture deep dive, CUDA 13 developer tools, NIM microservices expansion to 5,000+ models, and preview of Project Rubin next-generation GPU architecture.",
+      "eventDate": "May 19, 2026",
+      "eventType": "Conference",
+      "webcastLink": "https://developer.nvidia.com/events",
+      "irLink": "https://investor.nvidia.com"
+    },
+    {
+      "cellLabel": "GOOGL",
+      "company": "Alphabet Inc.",
+      "description": "Google I/O 2026 Extended — Alphabet investor briefing following developer keynote. Sundar Pichai to discuss Gemini 3.0 commercial API launch, AI Studio enterprise pricing, Google Cloud Next AI infrastructure announcements, and Search AI Overviews global rollout metrics.",
+      "eventDate": "May 19, 2026",
+      "eventType": "Conference",
+      "webcastLink": "https://io.google/2026/",
+      "irLink": "https://abc.xyz/investor"
+    }
   ]
 }
 ```
