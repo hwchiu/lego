@@ -70,7 +70,7 @@ function FinDataTable({
         row1Cells.push({ type: 'qgroup', yearLabel, count: 1 });
       }
     } else {
-      row1Cells.push({ type: 'annual', label: formatAnnualHeaderLabel(p) });
+      row1Cells.push({ type: 'annual', label: p });
     }
   }
 
@@ -165,12 +165,14 @@ function twoDigitToFullYear(yr: number): number {
 }
 
 /** Parse a column label → full 4-digit year.
- *  Handles formats: "FY2024", "FY24 Q1", "FY24", "Q1 2025"
+ *  Handles formats: "CY2024", "FY2024", "FY24 Q1", "FY24", "Q1 2025"
  */
 function parseColYear(col: string): number {
   // New flat-format quarterly: "Q1 2025"
   const mq = col.match(/^Q\d\s+(\d{4})$/);
   if (mq) return parseInt(mq[1], 10);
+  const mc = col.match(/CY(\d{4})/);
+  if (mc) return parseInt(mc[1], 10);
   // Legacy formats: "FY2024", "FY24 Q1", "FY24"
   const m2 = col.match(/FY(\d{4})/);
   if (m2) return parseInt(m2[1], 10);
@@ -185,10 +187,6 @@ function parseColYear(col: string): number {
 function parseColQuarter(col: string): string {
   const m = col.match(/(Q\d)/);
   return m ? m[1] : col;
-}
-
-function formatAnnualHeaderLabel(label: string): string {
-  return label.replace(/^FY/, 'CY');
 }
 
 function SimpleStatementTable({ data, viewMode, yearWindowStart, allYears }: SimpleStatementTableProps) {
@@ -256,7 +254,7 @@ function SimpleStatementTable({ data, viewMode, yearWindowStart, allYears }: Sim
                   </div>
                 </th>
                 {visibleCols.map((col) => (
-                  <th key={col} className="fin-stmt-simple-col-hdr">{formatAnnualHeaderLabel(col)}</th>
+                  <th key={col} className="fin-stmt-simple-col-hdr">{col}</th>
                 ))}
               </tr>
             )}
@@ -648,7 +646,7 @@ function buildPeriodHeaderCells(periods: string[]): {
         row1Cells.push({ type: 'qgroup', yearLabel, count: 1 });
       }
     } else {
-      row1Cells.push({ type: 'annual', label: formatAnnualHeaderLabel(p) });
+      row1Cells.push({ type: 'annual', label: p });
     }
   }
   return { row1Cells, row2Quarters, hasQuarterly: row2Quarters.length > 0 };
