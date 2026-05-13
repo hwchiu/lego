@@ -165,7 +165,8 @@ function twoDigitToFullYear(yr: number): number {
 }
 
 /** Parse a column label → full 4-digit year.
- *  Handles formats: "CY2024", "FY2024", "FY24 Q1", "FY24", "Q1 2025"
+ *  Handles current annual format "CY2024", backward-compatible legacy FY formats
+ *  like "FY2024", "FY24 Q1", "FY24", and quarterly labels like "Q1 2025".
  */
 function parseColYear(col: string): number {
   // New flat-format quarterly: "Q1 2025"
@@ -173,7 +174,7 @@ function parseColYear(col: string): number {
   if (mq) return parseInt(mq[1], 10);
   const mc = col.match(/CY(\d{4})/);
   if (mc) return parseInt(mc[1], 10);
-  // Legacy formats: "FY2024", "FY24 Q1", "FY24"
+  // Backward-compatible legacy FY formats: "FY2024", "FY24 Q1", "FY24"
   const m2 = col.match(/FY(\d{4})/);
   if (m2) return parseInt(m2[1], 10);
   const m1 = col.match(/FY(\d{2})\s/);
