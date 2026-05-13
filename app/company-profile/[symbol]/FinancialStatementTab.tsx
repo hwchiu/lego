@@ -172,7 +172,7 @@ function parseColYear(col: string): number {
   // New flat-format quarterly: "Q1 2025"
   const mq = col.match(/^Q\d\s+(\d{4})$/);
   if (mq) return parseInt(mq[1], 10);
-  const mc = col.match(/CY(\d{4})/);
+  const mc = col.match(/^CY(\d{4})$/);
   if (mc) return parseInt(mc[1], 10);
   // Backward-compatible legacy FY formats: "FY2024", "FY24 Q1", "FY24"
   const m2 = col.match(/FY(\d{4})/);
