@@ -1845,6 +1845,7 @@ export function WatchlistContent({
         dateLabel: pr.publishedAt,
         dateMs: new Date(pr.publishedAt).getTime(),
         description: pr.summary,
+        url: pr.url,
       })),
     [watchlistSymbolSet],
   );
