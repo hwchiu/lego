@@ -314,13 +314,15 @@ interface EventNewsCardProps {
   lang: 'zh' | 'en';
 }
 
+// Matches host-like URLs without protocol, such as "example.com" or "investor.apple.com/path".
+const DOMAIN_LIKE_URL_PATTERN = /^[^/\s?#]+\.[^/\s?#]+(?:[/?#]|$)/;
+
 function normalizeSearchResultUrl(url: string): string {
   const value = url.trim();
   if (!value) return '#';
   if (/^https?:\/\//i.test(value)) return value;
   if (value.startsWith('//')) return `https:${value}`;
-  // Domain-like strings without protocol (e.g. investor.apple.com/path) should open as HTTPS.
-  if (/^[^/\s?#]+\.[^/\s?#]+(?:[/?#]|$)/.test(value)) return `https://${value}`;
+  if (DOMAIN_LIKE_URL_PATTERN.test(value)) return `https://${value}`;
   return value;
 }
 
