@@ -575,7 +575,7 @@ display purposes.
     {
       "cellLabel": "NVDA",
       "company": "NVIDIA Corporation",
-      "description": "NVIDIA Developer Summit 2026 Keynote — Jen-Hsun Huang to present Blackwell Ultra architecture deep dive, CUDA 13 developer tools, NIM microservices expansion to 5,000+ models, and preview of Project Rubin next-generation GPU architecture.",
+      "description": "NVIDIA Developer Summit 2026 Keynote — Jensen Huang to present Blackwell Ultra architecture deep dive, CUDA 13 developer tools, NIM microservices expansion to 5,000+ models, and preview of Project Rubin next-generation GPU architecture.",
       "eventDate": "May 19, 2026",
       "eventType": "Conference",
       "webcastLink": "https://developer.nvidia.com/events",
