@@ -314,7 +314,8 @@ interface EventNewsCardProps {
   lang: 'zh' | 'en';
 }
 
-// Matches host-like URLs without protocol, such as "example.com" or "investor.apple.com/path".
+// Matches protocol-less domain strings that start with dot-separated host labels
+// (e.g. "example.com", "investor.apple.com/path", "a.b.co?x=1", "foo.bar#section").
 const DOMAIN_LIKE_URL_PATTERN = /^[^/\s?#]+\.[^/\s?#]+(?:[/?#]|$)/;
 
 function normalizeSearchResultUrl(url: string): string {
