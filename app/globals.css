@@ -19,6 +19,12 @@
   --c-pos: #16a34a;
   --c-neg: #dc2626;
   --c-accent: #4fc3f7;
+  --c-badge-news-bg: #dcfce7;
+  --c-badge-news-text: #166534;
+  --c-badge-pr-bg: #f3e8ff;
+  --c-badge-pr-text: #6d28d9;
+  --c-badge-event-bg: #fef3c7;
+  --c-badge-event-text: #92400e;
   --font:
     -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
   --radius-sm: 4px;
@@ -3581,16 +3587,16 @@ html:not(.dark) .sidebar-submenu-icon-left {
   color: var(--c-text-3);
 }
 .wl-feed-kind-badge--news {
-  background: #dcfce7;
-  color: #166534;
+  background: var(--c-badge-news-bg);
+  color: var(--c-badge-news-text);
 }
 .wl-feed-kind-badge--press-release {
-  background: #f3e8ff;
-  color: #6d28d9;
+  background: var(--c-badge-pr-bg);
+  color: var(--c-badge-pr-text);
 }
 .wl-feed-kind-badge--event {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--c-badge-event-bg);
+  color: var(--c-badge-event-text);
 }
 .wl-feed-comments,
 .wl-feed-save {

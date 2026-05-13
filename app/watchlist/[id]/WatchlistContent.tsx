@@ -1129,7 +1129,7 @@ interface UpdateFeedItem {
   kind: 'news' | 'press-release' | 'event';
   title: string;
   source: string;
-  newsCategory?: string;
+  category?: string;
   displaySymbols: string[];
   dateLabel: string;
   dateMs: number;
@@ -1824,7 +1824,7 @@ export function WatchlistContent({
       kind: 'news' as const,
       title: item.title,
       source: item.source,
-      newsCategory: item.category,
+      category: item.category.trim().toLowerCase(),
       displaySymbols: item.tags.filter((t) => watchlistSymbolSet.has(t.symbol)).map((t) => t.symbol),
       dateLabel: item.publishedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       dateMs: item.publishedAt.getTime(),
@@ -1884,7 +1884,7 @@ export function WatchlistContent({
       (item) =>
         item.dateMs >= nowMs - windowMs &&
         item.dateMs <= nowMs &&
-        item.newsCategory?.trim().toLowerCase() !== OFFICIAL_PRESS_RELEASE_CATEGORY,
+        item.category !== OFFICIAL_PRESS_RELEASE_CATEGORY,
     );
 
     // Press Release: only items published within the last LATEST_TAB_DAYS_WINDOW days.
@@ -2385,10 +2385,10 @@ export function WatchlistContent({
                                   key={`${item.id}-company-${sym}`}
                                   href={`/lego/company-profile/${sym}/`}
                                   className="wl-feed-company-tag"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  {companyNameMap.get(sym) ?? item.contactName ?? sym}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                  {companyNameMap.get(sym) ?? sym}
                                 </a>
                               ))}
                             </span>
