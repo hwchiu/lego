@@ -314,6 +314,15 @@ interface EventNewsCardProps {
   lang: 'zh' | 'en';
 }
 
+function normalizeSearchResultUrl(url: string): string {
+  const value = url.trim();
+  if (!value) return '#';
+  if (/^https?:\/\//i.test(value)) return value;
+  if (value.startsWith('//')) return `https:${value}`;
+  if (/^[^/\s?#]+\.[^/\s?#]+(?:[/?#]|$)/.test(value)) return `https://${value}`;
+  return value;
+}
+
 function EventNewsCard({ item, lang }: EventNewsCardProps) {
   const dateStr = item.datetime
     ? new Date(item.datetime).toLocaleDateString(
@@ -325,7 +334,7 @@ function EventNewsCard({ item, lang }: EventNewsCardProps) {
   return (
     <a
       className="search-result-card"
-      href={item.url || '#'}
+      href={normalizeSearchResultUrl(item.url)}
       target="_blank"
       rel="noopener noreferrer"
       onMouseDown={(e) => e.stopPropagation()}
