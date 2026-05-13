@@ -2385,14 +2385,14 @@ export function WatchlistContent({
                                   key={`${item.id}-company-${sym}`}
                                   href={`/lego/company-profile/${sym}/`}
                                   className="wl-feed-company-tag"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
                                   {companyNameMap.get(sym) ?? sym}
                                 </a>
                               ))}
                             </span>
-                            {item.source && <span className="wl-feed-dot">•</span>}
+                            <span className="wl-feed-dot">•</span>
                             <span className="wl-event-event-type">{item.source}</span>
                             <span className="wl-feed-dot">•</span>
                             <span className="wl-event-event-datetime">{item.dateLabel}</span>
