@@ -155,10 +155,10 @@ function deriveSearchFinIndicesData(
   type AnnualVals = { rev: number; gp: number; gm: number; om: number; ni: number; nm: number; cash: number };
   const annualMap = new Map<number, AnnualVals>();
   for (const period of incomeStmt.periods) {
-    const ma = period.match(/^FY(\d{4})$/);
+    const ma = period.match(/^CY(\d{4})$/);
     if (!ma) continue;
     const year = parseInt(ma[1]);
-    const bPeriod = `FY${year}`; // balance sheet uses the same label
+    const bPeriod = `CY${year}`; // balance sheet uses the same label
     annualMap.set(year, {
       rev:  getVal(incomeItems, incomeStmt.periods, revKey, period),
       gp:   getVal(incomeItems, incomeStmt.periods, gpKey,  period),
