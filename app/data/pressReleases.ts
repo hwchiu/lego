@@ -181,7 +181,7 @@ function formatBiWeekLabel(biWeekStartStr: string, lang: 'zh' | 'en'): string {
 
   const startStr = start.toLocaleDateString(locale, shortOpts);
   const endStr = end.toLocaleDateString(locale, endOpts);
-  return `${startStr} – ${endStr}`;
+  return lang === 'zh' ? `${startStr} – ${endStr}` : `${startStr} – ${endStr}`;
 }
 
 function formatMonthLabel(year: number, month: number, lang: 'zh' | 'en'): string {
