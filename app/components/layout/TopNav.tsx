@@ -319,6 +319,7 @@ function normalizeSearchResultUrl(url: string): string {
   if (!value) return '#';
   if (/^https?:\/\//i.test(value)) return value;
   if (value.startsWith('//')) return `https:${value}`;
+  // Domain-like strings without protocol (e.g. investor.apple.com/path) should open as HTTPS.
   if (/^[^/\s?#]+\.[^/\s?#]+(?:[/?#]|$)/.test(value)) return `https://${value}`;
   return value;
 }
