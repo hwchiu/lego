@@ -25,6 +25,12 @@
   --c-badge-pr-text: #6d28d9;
   --c-badge-event-bg: #fef3c7;
   --c-badge-event-text: #92400e;
+  --c-company-tag-border: #cbd5e1;
+  --c-company-tag-bg: #f8fafc;
+  --c-company-tag-text: #334155;
+  --c-company-tag-hover-border: #93c5fd;
+  --c-company-tag-hover-bg: #eff6ff;
+  --c-company-tag-hover-text: #1d4ed8;
   --font:
     -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
   --radius-sm: 4px;
@@ -3538,18 +3544,18 @@ html:not(.dark) .sidebar-submenu-icon-left {
   align-items: center;
   padding: 1px 7px;
   border-radius: 999px;
-  border: 1px solid #cbd5e1;
-  background: #f8fafc;
-  color: #334155;
+  border: 1px solid var(--c-company-tag-border);
+  background: var(--c-company-tag-bg);
+  color: var(--c-company-tag-text);
   font-size: 11px;
   font-weight: 600;
   line-height: 1.3;
   text-decoration: none;
 }
 .wl-feed-company-tag:hover {
-  border-color: #93c5fd;
-  background: #eff6ff;
-  color: #1d4ed8;
+  border-color: var(--c-company-tag-hover-border);
+  background: var(--c-company-tag-hover-bg);
+  color: var(--c-company-tag-hover-text);
 }
 .wl-feed-dot {
   color: var(--c-border-2);
@@ -25898,15 +25904,13 @@ html.dark .wl-feed-list::-webkit-scrollbar-thumb {
 html.dark .wl-feed-list::-webkit-scrollbar-thumb:hover {
   background: #64748b;
 }
-html.dark .wl-feed-company-tag {
-  border-color: #334155;
-  background: #1e293b;
-  color: #e2e8f0;
-}
-html.dark .wl-feed-company-tag:hover {
-  border-color: #38bdf8;
-  background: #0f172a;
-  color: #7dd3fc;
+html.dark {
+  --c-company-tag-border: #334155;
+  --c-company-tag-bg: #1e293b;
+  --c-company-tag-text: #e2e8f0;
+  --c-company-tag-hover-border: #38bdf8;
+  --c-company-tag-hover-bg: #0f172a;
+  --c-company-tag-hover-text: #7dd3fc;
 }
 
 /* ── Dark mode: Revenue Breakdown scrollbar ── */

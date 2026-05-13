@@ -1824,7 +1824,7 @@ export function WatchlistContent({
       kind: 'news' as const,
       title: item.title,
       source: item.source,
-      category: item.category.trim().toLowerCase(),
+      category: item.category?.trim().toLowerCase() ?? '',
       displaySymbols: item.tags.filter((t) => watchlistSymbolSet.has(t.symbol)).map((t) => t.symbol),
       dateLabel: item.publishedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       dateMs: item.publishedAt.getTime(),
