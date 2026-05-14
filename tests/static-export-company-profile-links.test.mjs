@@ -5,6 +5,7 @@ import path from 'node:path';
 
 const repoRoot = path.resolve(import.meta.dirname, '..');
 const outDir = path.join(repoRoot, 'out');
+const extraCompanyProfileSymbols = ['BRK-B', 'MCD', 'SMH', 'TC'];
 
 function collectHtmlFiles(dir) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -45,8 +46,35 @@ function findMissingCompanyProfilePages() {
   return [...missing].sort();
 }
 
+function findUnreferencedExtraSymbols() {
+  if (!fs.existsSync(outDir)) {
+    throw new Error('Static export not found. Run `npm run build` before running this test.');
+  }
+
+  const htmlFiles = collectHtmlFiles(outDir);
+  const referencedSymbols = new Set();
+
+  for (const htmlFile of htmlFiles) {
+    const html = fs.readFileSync(htmlFile, 'utf8');
+
+    for (const symbol of extraCompanyProfileSymbols) {
+      if (html.includes(`/lego/company-profile/${symbol}/`)) {
+        referencedSymbols.add(symbol);
+      }
+    }
+  }
+
+  return extraCompanyProfileSymbols.filter((symbol) => !referencedSymbols.has(symbol));
+}
+
 test('static export includes every linked company profile page', () => {
   const missingPages = findMissingCompanyProfilePages();
 
   assert.deepEqual(missingPages, []);
+});
+
+test('extra exported company profile symbols are still referenced by the app', () => {
+  const unreferencedSymbols = findUnreferencedExtraSymbols();
+
+  assert.deepEqual(unreferencedSymbols, []);
 });
