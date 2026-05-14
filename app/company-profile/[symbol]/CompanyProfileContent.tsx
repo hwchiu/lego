@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import DatePickerInput from '@/app/components/shared/DatePickerInput';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -33,6 +33,8 @@ import { getFundingByCoCd, type FundingRecord } from '@/app/lib/getFundingByCoCd
 import type { StatementData } from '@/app/data/financialData';
 import tvConfigMd from '@/content/tradingview.md';
 import finSummaryConfig from '@/app/data/fin-summary-config.json';
+import { formatNumber, formatSignedPct, formatPct } from '@/app/lib/formatters';
+import UnfavoriteAlert from '@/app/components/shared/UnfavoriteAlert';
 
 const FinancialIndicesNivoChart = dynamic(
   () => import('./InvestmentNivoCharts').then((m) => m.FinancialIndicesNivoChart),
@@ -145,6 +147,7 @@ const TABS = [
   'Acquisition',
   'Funding',
 ] as const;
+const DEFAULT_TAB = 'FIN. Summary';
 
 const NEWS_CATEGORY_LABEL_MAP: Record<string, string> = Object.fromEntries(
   newsCategoryOptions.map((category) => [category.key, category.label]),
@@ -214,6 +217,14 @@ function mapSummaryToNewsItem(record: NewsSummaryRecord, index: number): NewsIte
     publishedAt: new Date(record.news_date),
     url: record.news_url,
   };
+}
+
+/** Returns today's date as 'YYYY-MM-DD' in the browser's local timezone. */
+function todayStr(): string {
+  const d = new Date();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${mm}-${dd}`;
 }
 
 /** Adds (or subtracts) `months` to a 'YYYY-MM-DD' string, returns 'YYYY-MM-DD'.
@@ -584,14 +595,17 @@ interface CompanyProfileContentProps {
 }
 
 export default function CompanyProfileContent({ symbol }: CompanyProfileContentProps) {
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<Tab>(() => {
     const param = searchParams.get('tab');
     if (param && (TABS as readonly string[]).includes(param)) return param as Tab;
-    return 'FIN. Summary';
+    return DEFAULT_TAB;
   });
   const [activeFinIndex, setActiveFinIndex] = useState<string>('Revenue');
   const [isFavorite, setIsFavorite] = useState(false);
+  const [unfavAlertVisible, setUnfavAlertVisible] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   const [newsPage, setNewsPage] = useState(1);
   const stockContainerRef = useRef<HTMLDivElement>(null);
@@ -652,13 +666,35 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     tabsScrollRef.current?.scrollBy({ left: dir === 'left' ? -150 : 150, behavior: 'smooth' });
   }, []);
 
+  const updateTabQuery = useCallback((nextTab: Tab) => {
+    const currentTab = searchParams.get('tab');
+    if (currentTab === nextTab || (nextTab === DEFAULT_TAB && !currentTab)) {
+      return;
+    }
+
+    const nextSearchParams = new URLSearchParams(searchParams.toString());
+    if (nextTab === DEFAULT_TAB) {
+      nextSearchParams.delete('tab');
+    } else {
+      nextSearchParams.set('tab', nextTab);
+    }
+
+    const nextQuery = nextSearchParams.toString();
+    router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, { scroll: false });
+  }, [pathname, router, searchParams]);
+
+  const handleTabChange = useCallback((nextTab: Tab) => {
+    setActiveTab(nextTab);
+    updateTabQuery(nextTab);
+  }, [updateTabQuery]);
+
   // Sync activeTab when the URL search params change (e.g. client-side navigation with ?tab=)
   useEffect(() => {
     const param = searchParams.get('tab');
     if (param && (TABS as readonly string[]).includes(param)) {
       setActiveTab(param as Tab);
     } else if (!param) {
-      setActiveTab('FIN. Summary');
+      setActiveTab(DEFAULT_TAB);
     }
   }, [searchParams]);
 
@@ -834,10 +870,13 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
       }
 
       if (nodes.length === 0) continue;
-      const total = nodes.reduce((sum, n) => sum + n.value, 0);
+      // Exclude items with negative values from ratio calculation
+      const positiveNodes = nodes.filter((n) => n.value > 0);
+      if (positiveNodes.length === 0) continue;
+      const total = positiveNodes.reduce((sum, n) => sum + n.value, 0);
       if (total === 0) continue;
 
-      const items = nodes
+      const items = positiveNodes
         .map((n) => ({ name: n.name, pct: Math.round((n.value / total) * 1000) / 10 }))
         .sort((a, b) => b.pct - a.pct);
 
@@ -845,6 +884,27 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     }
 
     return groups;
+  }, [segmentRecords, segInfo]);
+
+  const revenueBreakdownYearQtr = useMemo<string | null>(() => {
+    if (!segmentRecords.length) return null;
+
+    const segType = segInfo?.SEG_TYPE ?? REVENUE_SALE_TYPE;
+    let latestSortKey = -1;
+    let latestYearQtr: string | null = null;
+
+    for (const rec of segmentRecords) {
+      if (rec.sale_type !== segType || rec.calendar_quarter === ANNUAL_QUARTER_VALUE) continue;
+      const m = rec.calendar_quarter.match(/^Q([1-4])$/);
+      if (!m) continue;
+      const sortKey = rec.calendar_year * 10 + parseInt(m[1], 10);
+      if (sortKey > latestSortKey) {
+        latestSortKey = sortKey;
+        latestYearQtr = `${String(rec.calendar_year).slice(2)}${rec.calendar_quarter}`;
+      }
+    }
+
+    return latestYearQtr;
   }, [segmentRecords, segInfo]);
 
   // Parse markdown data
@@ -886,9 +946,11 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
   // If the active tab is removed from visibleTabs (e.g. Funding with no data), fall back to the first visible tab
   useEffect(() => {
     if (visibleTabs.length > 0 && !visibleTabs.includes(activeTab)) {
-      setActiveTab(visibleTabs[0] as Tab);
+      const fallbackTab = visibleTabs[0] as Tab;
+      setActiveTab(fallbackTab);
+      updateTabQuery(fallbackTab);
     }
-  }, [visibleTabs, activeTab]);
+  }, [visibleTabs, activeTab, updateTabQuery]);
 
   // Load favorites using API on mount / symbol change
   useEffect(() => {
@@ -901,6 +963,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
 
   async function toggleFavorite() {
     try {
+      const wasAlreadyFavorite = isFavorite;
       if (isFavorite) {
         await removeCompanyFromFavorite(symbol);
       } else {
@@ -908,6 +971,9 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
       }
       const res = await getAllCoFavoriteList(USER_ACCT);
       setIsFavorite(res.co_cd.includes(symbol));
+      if (wasAlreadyFavorite) {
+        setUnfavAlertVisible(true);
+      }
     } catch {
       // ignore
     }
@@ -1106,6 +1172,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
     <>
       <TopNav />
       <Banner />
+      <UnfavoriteAlert visible={unfavAlertVisible} onClose={() => setUnfavAlertVisible(false)} />
       <div className="app-body">
         <Sidebar />
         <main className="main-content">
@@ -1211,7 +1278,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                   <button
                     key={tab}
                     className={`cp-nav-tab${activeTab === tab ? ' active' : ''}`}
-                    onClick={() => setActiveTab(tab)}
+                    onClick={() => handleTabChange(tab)}
                   >
                     {tab}
                   </button>
@@ -1229,7 +1296,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
             </div>
 
             {/* ── Data cards (FIN. Summary tab) ── */}
-            {activeTab === 'FIN. Summary' && (
+            {activeTab === DEFAULT_TAB && (
               finData ? (() => {
                 // Merge derived API data over static finData for Current Qtr Financial card
                 const cq = derivedCurrentQtr
@@ -1262,21 +1329,21 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                     <div className="cp-fin-metrics">
                       <div className="cp-fin-metric">
                         <div className="cp-fin-metric-label">Revenue ({cq.revenueUnit})</div>
-                        <div className="cp-fin-metric-value">{cq.revenue.toLocaleString()}</div>
-                        <div className="cp-fin-metric-note">Last Quarter: {cq.lastQuarterRevenue.toLocaleString()}</div>
+                        <div className="cp-fin-metric-value">{formatNumber(cq.revenue)}</div>
+                        <div className="cp-fin-metric-note">Last Quarter: {formatNumber(cq.lastQuarterRevenue)}</div>
                       </div>
                       <div className="cp-fin-metric-sep" />
                       <div className="cp-fin-metric">
                         <div className="cp-fin-metric-label">Revenue QoQ</div>
                         <div className={`cp-fin-metric-value ${cq.revenueQoQ >= 0 ? 'pos' : 'neg'}`}>
-                          {cq.revenueQoQ >= 0 ? '+' : ''}{cq.revenueQoQ}%
+                          {formatSignedPct(cq.revenueQoQ, 1)}
                         </div>
                       </div>
                       <div className="cp-fin-metric-sep" />
                       <div className="cp-fin-metric">
                         <div className="cp-fin-metric-label">Gross Margin</div>
                         <div className="cp-fin-metric-value">
-                          {cq.grossMargin}%
+                          {formatPct(cq.grossMargin)}
                         </div>
                         <div className="cp-fin-metric-note">Last Quarter: {cq.lastQuarterGrossMarginNote}</div>
                       </div>
@@ -1298,8 +1365,8 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                           <div className="cp-fin-metric-label">Revenue Midpoint Guidance</div>
                           <div className="cp-fin-metric-value">
                             {derivedNextQtr.revenueMidpointGuidance != null
-                              ? derivedNextQtr.revenueMidpointGuidance.toLocaleString()
-                              : finData.nextQtr.revenueMidpointGuidance.toLocaleString()}
+                              ? formatNumber(derivedNextQtr.revenueMidpointGuidance)
+                              : formatNumber(finData.nextQtr.revenueMidpointGuidance)}
                           </div>
                         </div>
                         <div className="cp-fin-metric-sep" />
@@ -1311,7 +1378,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                               : finData.nextQtr.revenueQoQ;
                             return (
                               <div className={`cp-fin-metric-value ${qoq >= 0 ? 'pos' : 'neg'}`}>
-                                {qoq >= 0 ? '+' : ''}{qoq}%
+                                {formatSignedPct(qoq, 1)}
                               </div>
                             );
                           })()}
@@ -1320,9 +1387,12 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                     </div>
 
                     <div className="cp-data-card">
-                      <div className="cp-card-title">
+                      <div className="cp-card-title cp-breakdown-title">
                         Revenue Breakdown
                       </div>
+                      {revenueBreakdownYearQtr && (
+                        <div className="cp-breakdown-yearqtr">{revenueBreakdownYearQtr}</div>
+                      )}
                       <div className="cp-card-divider" />
                       {(() => {
                         const groups = derivedRevenueBreakdown;
@@ -1347,7 +1417,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                                     <div key={item.name} className="cp-breakdown-item">
                                       <div className="cp-breakdown-row">
                                         <span className="cp-breakdown-name">{item.name}</span>
-                                        <span className="cp-breakdown-pct">{item.pct}%</span>
+                                        <span className="cp-breakdown-pct">{formatPct(item.pct)}</span>
                                       </div>
                                       <div className="cp-breakdown-bar-wrap">
                                         <div className="cp-breakdown-bar" style={{ width: `${Math.min(100, item.pct)}%` }} />
@@ -1560,7 +1630,7 @@ export default function CompanyProfileContent({ symbol }: CompanyProfileContentP
                             placeholder="End date"
                             error={newsPeriodEndError}
                             minDate={newsPeriodStart || undefined}
-                            maxDate={newsPeriodStart ? addMonths(newsPeriodStart, 3) : undefined}
+                            maxDate={newsPeriodStart ? (addMonths(newsPeriodStart, 3) < todayStr() ? addMonths(newsPeriodStart, 3) : todayStr()) : todayStr()}
                           />
                         </div>
                       </div>

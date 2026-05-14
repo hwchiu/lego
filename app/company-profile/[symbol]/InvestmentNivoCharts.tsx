@@ -3,12 +3,67 @@
 import { ResponsiveBar } from '@nivo/bar';
 import { ResponsiveLine } from '@nivo/line';
 import { useTheme } from '@/app/contexts/ThemeContext';
+import { formatUsdM, usdToM } from '@/app/lib/formatters';
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+/**
+ * Format a value already in millions for consistent display (no B-conversion).
+ * Produces e.g. "3,030.00" matching the "Value (USD $M)" table column format.
+ */
+function formatMValue(valueM: number, fractionDigits = 2): string {
+  return valueM.toLocaleString('en-US', {
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
+  });
+}
+
+/**
+ * Compute explicit tick positions for Nivo's secondary right axis that maps
+ * from the count scale to the value-in-millions scale.
+ * Returns count-axis tick positions and a format function that produces
+ * "nice" round million-value labels (e.g. 0, 1,000, 2,000, 3,000).
+ */
+function computeValueAxisTicks(
+  countMax: number,
+  valueMax: number,
+): { tickValues: number[]; format: (v: number) => string } {
+  // Find a nice step size targeting ~5 tick intervals
+  const roughStep = valueMax / 4;
+  const mag = Math.pow(10, Math.floor(Math.log10(roughStep)));
+  const r = roughStep / mag;
+  let step: number;
+  if (r <= 1) step = mag;
+  else if (r <= 2) step = 2 * mag;
+  else if (r <= 5) step = 5 * mag;
+  else step = 10 * mag;
+
+  // Build nice value labels
+  const valueLabels: number[] = [];
+  for (let v = 0; v <= valueMax + step * 0.001; v += step) {
+    valueLabels.push(Math.round(v));
+  }
+  // Append valueMax itself if the last nice step doesn't reach it
+  if (valueLabels[valueLabels.length - 1] < valueMax) {
+    valueLabels.push(valueMax);
+  }
+
+  // Map each value label to its position on the count axis
+  const tickValues = valueLabels.map((vl) => (vl / valueMax) * countMax);
+
+  const format = (v: number) => {
+    const val = Math.round((v / countMax) * valueMax);
+    return val.toLocaleString('en-US');
+  };
+
+  return { tickValues, format };
+}
 
 // ── Shared types ──────────────────────────────────────────────────────────────
 
 interface InvestmentDeal {
   date: string;
-  valueM: number | null;
+  valueUsd: number | null;
 }
 
 // ── InvestmentBarLineChartNivo props ──────────────────────────────────────────
@@ -42,9 +97,9 @@ function buildYearData(deals: InvestmentDeal[]): YearChartData[] {
     const yr = parseInt(d.date.slice(0, 4), 10);
     const entry = map.get(yr);
     if (!entry) continue;
-    if (d.valueM != null) {
+    if (d.valueUsd != null) {
       entry.disclosedCount += 1;
-      entry.disclosedValueM += d.valueM;
+      entry.disclosedValueM += usdToM(d.valueUsd);
     } else {
       entry.undisclosedCount += 1;
     }
@@ -64,6 +119,7 @@ export function InvestmentBarLineChartNivo({ deals, selectedYear, onYearClick }:
   const countMax = Math.ceil(maxCount / 2) * 2 || 2;
   const maxValue = Math.max(...yearData.map((d) => d.disclosedValueM), 1);
   const valueMax = Math.ceil(maxValue / 500) * 500 || 500;
+  const { tickValues: rightAxisTickValues, format: rightAxisFormat } = computeValueAxisTicks(countMax, valueMax);
 
   const barData = yearData.map((d) => ({
     year: String(d.year),
@@ -182,14 +238,14 @@ export function InvestmentBarLineChartNivo({ deals, selectedYear, onYearClick }:
           legendOffset: -44,
         }}
         axisRight={{
-          tickValues: 5,
+          tickValues: rightAxisTickValues,
           tickSize: 0,
-          format: (v) => `${Math.round((Number(v) / countMax) * valueMax)}`,
+          format: rightAxisFormat,
           legend: 'Value (USD $M)',
           legendPosition: 'middle',
           legendOffset: 62,
         }}
-        gridYValues={5}
+        gridYValues={rightAxisTickValues}
         onClick={(datum) => {
           const yr = String(datum.indexValue);
           onYearClick?.(yr === selectedYear ? null : yr);
@@ -219,11 +275,7 @@ export function InvestmentBarLineChartNivo({ deals, selectedYear, onYearClick }:
               </div>
               {d.disclosedValueM > 0 && (
                 <div>
-                  Value: $
-                  {d.disclosedValueM >= 1000
-                    ? `${(d.disclosedValueM / 1000).toFixed(1)}B`
-                    : d.disclosedValueM.toLocaleString()}
-                  M
+                  Value: {formatMValue(d.disclosedValueM)} M
                 </div>
               )}
             </div>
@@ -303,7 +355,7 @@ export function MABarChartSmallNivo({
           tickValues: 3,
           tickSize: 0,
           format: (v) =>
-            `$${Math.round((Number(v) / sharedMax) * valueMax)}B`,
+            `$${Math.round((Number(v) / sharedMax) * valueMax)}`,
         }}
         theme={{
           grid: { line: { stroke: '#f0f0f0', strokeWidth: 1 } },
@@ -351,9 +403,9 @@ function buildAcqYearData(deals: InvestmentDeal[]): YearChartData[] {
     const yr = parseInt(d.date.slice(0, 4), 10);
     const entry = map.get(yr);
     if (!entry) continue;
-    if (d.valueM != null) {
+    if (d.valueUsd != null) {
       entry.disclosedCount += 1;
-      entry.disclosedValueM += d.valueM;
+      entry.disclosedValueM += usdToM(d.valueUsd);
     } else {
       entry.undisclosedCount += 1;
     }
@@ -370,6 +422,7 @@ export function AcquisitionBarLineChartNivo({ deals, selectedYear, onYearClick }
   const countMax = Math.ceil(maxCount / 2) * 2 || 2;
   const maxValue = Math.max(...yearData.map((d) => d.disclosedValueM), 1);
   const valueMax = Math.ceil(maxValue / 500) * 500 || 500;
+  const { tickValues: rightAxisTickValues, format: rightAxisFormat } = computeValueAxisTicks(countMax, valueMax);
 
   const barData = yearData.map((d) => ({
     year: String(d.year),
@@ -487,14 +540,14 @@ export function AcquisitionBarLineChartNivo({ deals, selectedYear, onYearClick }
           legendOffset: -44,
         }}
         axisRight={{
-          tickValues: 5,
+          tickValues: rightAxisTickValues,
           tickSize: 0,
-          format: (v) => `${Math.round((Number(v) / countMax) * valueMax)}`,
+          format: rightAxisFormat,
           legend: 'Value (USD $M)',
           legendPosition: 'middle',
           legendOffset: 62,
         }}
-        gridYValues={5}
+        gridYValues={rightAxisTickValues}
         onClick={(datum) => {
           const yr = String(datum.indexValue);
           onYearClick?.(yr === selectedYear ? null : yr);
@@ -520,11 +573,7 @@ export function AcquisitionBarLineChartNivo({ deals, selectedYear, onYearClick }
               <div>Undisclosed: {d.undisclosedCount} deal{d.undisclosedCount !== 1 ? 's' : ''}</div>
               {d.disclosedValueM > 0 && (
                 <div>
-                  Value: $
-                  {d.disclosedValueM >= 1000
-                    ? `${(d.disclosedValueM / 1000).toFixed(1)}B`
-                    : d.disclosedValueM.toLocaleString()}
-                  M
+                  Value: {formatMValue(d.disclosedValueM)} M
                 </div>
               )}
             </div>
@@ -588,11 +637,9 @@ function buildFundingYearData(deals: FundingDealMinimal[]) {
   return years.map((y) => ({ year: y, totalValueM: yearMap.get(y)! }));
 }
 
-/** Format a value in millions with $ prefix for chart labels */
+/** Format a value in millions for chart labels (consistent with table, no B-conversion) */
 function formatChartLabel(valueM: number): string {
-  if (valueM >= 1000) return `$${(valueM / 1000).toFixed(1)}B`;
-  if (valueM >= 1) return `$${Math.round(valueM).toLocaleString()}M`;
-  return `$${valueM.toFixed(2)}M`;
+  return formatMValue(valueM, 0);
 }
 
 export function FundingLineChartNivo({ deals, selectedYear, onYearClick }: FundingLineChartProps) {
@@ -698,10 +745,7 @@ export function FundingLineChartNivo({ deals, selectedYear, onYearClick }: Fundi
         axisLeft={{
           tickValues: 5,
           tickSize: 0,
-          format: (v) =>
-            Number(v) >= 1000
-              ? `$${(Number(v) / 1000).toFixed(0)}B`
-              : `$${Math.round(Number(v))}M`,
+          format: (v) => formatMValue(Number(v), 0),
           legend: 'USD $M',
           legendPosition: 'middle',
           legendOffset: -68,
@@ -720,9 +764,7 @@ export function FundingLineChartNivo({ deals, selectedYear, onYearClick }: Fundi
           >
             <strong>{point.data.xFormatted}</strong>
             <div>
-              {Number(point.data.y) >= 1000
-                ? `$${(Number(point.data.y) / 1000).toFixed(1)}B`
-                : `$${Number(point.data.y).toLocaleString()}M`}
+              {formatMValue(Number(point.data.y))} M
             </div>
           </div>
         )}
@@ -873,7 +915,7 @@ export function FinancialIndicesNivoChart({ data, activeMetric }: FinIndicesChar
           const label = seriesLabel[String(id)] ?? cfg.label;
           const formattedValue = cfg.isPercent
             ? `${Number(value).toFixed(1)}%`
-            : `$${Number(value).toLocaleString()}M`;
+            : formatUsdM(Number(value));
           return (
             <div
               style={{
@@ -1078,9 +1120,7 @@ export function DoiRevenueNivoChart({ data }: DoiRevNivoChartProps) {
               {qtrEntry && (
                 <div>
                   Revenue:{' '}
-                  {qtrEntry.revenue >= 1000
-                    ? `$${(qtrEntry.revenue / 1000).toFixed(1)}B`
-                    : `$${qtrEntry.revenue.toLocaleString()}M`}
+                  {formatUsdM(qtrEntry.revenue)}
                 </div>
               )}
             </div>

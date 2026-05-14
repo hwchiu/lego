@@ -11,17 +11,9 @@ import type {
   DividendEvent,
   DetailLayout,
 } from '@/app/data/eventCategories';
-import { monthShortToFull } from '@/app/lib/calendarUtils';
+import { formatDateLabelFull, formatNumber } from '@/app/lib/formatters';
 
 // ─── Shared helpers ──────────────────────────────────────────────────────────
-
-function formatDateLabel(dateLabel: string | undefined): string {
-  if (!dateLabel) return '—';
-  const parts = dateLabel.split(' ');
-  const day = parts[1]?.padStart(2, '0') ?? '';
-  const month = monthShortToFull(parts[0]);
-  return `${day} ${month}`;
-}
 
 function ImpactBadge({ impact }: { impact: 'High' | 'Medium' | 'Low' }) {
   const cls =
@@ -192,7 +184,7 @@ function CryptoTable({ events }: { events: CryptoEvent[] }) {
             <tr key={i}>
               <td className="td-symbol">{e.cryptoSymbol}</td>
               <td className="td-company">{e.name}</td>
-              <td className="td-num">${Number(e.price).toLocaleString()}</td>
+              <td className="td-num">${formatNumber(Number(e.price))}</td>
               <td className="td-num">
                 <ChangePill value={e.change} />
               </td>
@@ -348,7 +340,7 @@ export default function EventCategoryDetail({
   selectedDateLabel,
   eventCount,
 }: EventCategoryDetailProps) {
-  const displayDate = formatDateLabel(selectedDateLabel);
+  const displayDate = formatDateLabelFull(selectedDateLabel);
   const count = eventCount ?? events.length;
 
   function renderContent() {

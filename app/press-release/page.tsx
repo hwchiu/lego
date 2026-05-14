@@ -6,12 +6,9 @@ import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
-import {
-  pressReleases,
-  getPressReleaseArchiveGroups,
-  type PressRelease,
-  type PRArchiveGroup,
-} from '@/app/data/pressReleases';
+import type { PressRelease } from '@/app/data/pressReleases';
+import { getPressReleaseArchiveGroups, pressReleases, type PRArchiveGroup } from '@/app/data/pressReleases';
+import { getPressReleases } from '@/app/lib/pressReleaseApi';
 
 // ─── Company color palette ────────────────────────────────────────────────────
 
@@ -59,29 +56,18 @@ function ChevronUpIcon() {
 
 function ExpandAllIcon() {
   return (
-    <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
-      <path d="M2 4H12M2 7H12M2 10H12" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-      <path d="M5 5.5L7 7.5L9 5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M5 8.5L7 10.5L9 8.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+      <path d="M3 5L7 1L11 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3 9L7 13L11 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
 function CollapseAllIcon() {
   return (
-    <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
-      <path d="M2 4H12M2 7H12M2 10H12" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-      <path d="M5 8.5L7 6.5L9 8.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M5 5.5L7 3.5L9 5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function TagIcon() {
-  return (
-    <svg viewBox="0 0 14 14" width="10" height="10" fill="none" aria-hidden="true">
-      <path d="M1.5 1.5H7.5L12.5 6.5L7.5 11.5L1.5 6.5V1.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
-      <circle cx="4.5" cy="4.5" r="1" fill="currentColor" />
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+      <path d="M3 1L7 5L11 1" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3 13L7 9L11 13" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -103,10 +89,47 @@ function CloseIcon() {
   );
 }
 
-function LoadingIcon() {
+function CheckLineIcon() {
   return (
-    <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true" className="pr-spin">
+    <svg viewBox="0 0 14 14" width="12" height="12" fill="none" aria-hidden="true">
+      <path d="M2 7l3.5 3.5L12 3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function SpinnerIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg viewBox="0 0 14 14" width={size} height={size} fill="none" aria-hidden="true" className="pr-spin">
       <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.4" strokeDasharray="12 22" />
+    </svg>
+  );
+}
+
+function AlertIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="14" height="14" fill="none" aria-hidden="true">
+      <path d="M7 1.5L12.5 11.5H1.5L7 1.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+      <path d="M7 5.5V8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <circle cx="7" cy="10" r="0.6" fill="currentColor" />
+    </svg>
+  );
+}
+
+function RefreshIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
+      <path d="M2 7a5 5 0 1 0 1.3-3.3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2 3.5V7H5.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function InfoIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="14" height="14" fill="none" aria-hidden="true">
+      <circle cx="7" cy="7" r="5.3" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M7 6V9.6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <circle cx="7" cy="4.15" r="0.65" fill="currentColor" />
     </svg>
   );
 }
@@ -131,28 +154,38 @@ function ArchiveTile({ pr, lang }: ArchiveTileProps) {
   const initials = getTileInitials(pr.ticker);
 
   return (
-    <a
+    <div
       className="pr-archive-tile"
-      href={pr.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={`${pr.title} — ${pr.company} (${pr.relationship})`}
+      aria-label={`${pr.title} — ${pr.company}`}
     >
       <div className="pr-archive-tile-media" style={{ background: color }}>
         <span className="pr-archive-tile-ticker">{initials}</span>
       </div>
       <div className="pr-archive-tile-info">
-        <h3 className="pr-archive-tile-title">{pr.title}</h3>
+        <h3 className="pr-archive-tile-title">
+          <a
+            className="pr-archive-tile-title-link"
+            href={pr.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {pr.title}
+          </a>
+        </h3>
         <p className="pr-archive-tile-desc">{pr.summary}</p>
         <div className="pr-archive-tile-footer">
-          <span className={`pr-archive-tile-tag pr-archive-tile-tag--${pr.relationship}`}>
-            <TagIcon />
+          <a
+            className="news-tag"
+            href={`/lego/company-profile/${pr.ticker}/`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             {pr.company}
-          </span>
+          </a>
           <time className="pr-archive-tile-date" dateTime={pr.publishedAt}>{dateStr}</time>
         </div>
       </div>
-    </a>
+    </div>
   );
 }
 
@@ -204,6 +237,9 @@ function ArchiveGroup({ group, isExpanded, onToggle, lang }: ArchiveGroupProps) 
 
 // ─── Company Multi-Select ─────────────────────────────────────────────────────
 
+const MAX_COMPANY_FILTER = 10;
+const PRESS_RELEASE_ARCHIVE_LIMIT = pressReleases.length;
+
 interface CompanyFilterProps {
   selectedCodes: string[];
   onSelectionChange: (codes: string[]) => void;
@@ -215,8 +251,8 @@ interface CompanyFilterProps {
 function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, lang }: CompanyFilterProps) {
   const [query, setQuery] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [showMaxWarning, setShowMaxWarning] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const filtered = useMemo(() => {
     if (!query.trim()) return COMPANY_MASTER_LIST.slice(0, 50);
@@ -227,6 +263,11 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
   }, [query]);
 
   function handleToggle(symbol: string) {
+    if (!selectedCodes.includes(symbol) && selectedCodes.length >= MAX_COMPANY_FILTER) {
+      setShowMaxWarning(true);
+      return;
+    }
+    setShowMaxWarning(false);
     const next = selectedCodes.includes(symbol)
       ? selectedCodes.filter((s) => s !== symbol)
       : [...selectedCodes, symbol];
@@ -234,10 +275,12 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
   }
 
   function handleRemove(symbol: string) {
+    setShowMaxWarning(false);
     onSelectionChange(selectedCodes.filter((s) => s !== symbol));
   }
 
   function handleClearAll() {
+    setShowMaxWarning(false);
     onSelectionChange([]);
     setQuery('');
   }
@@ -246,7 +289,6 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
     onSearch(selectedCodes);
   }
 
-  // Close dropdown on outside click
   useEffect(() => {
     function onOutside(e: MouseEvent) {
       if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
@@ -271,12 +313,10 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
     <div className="pr-co-filter" ref={wrapRef}>
       <div className="pr-co-filter-label">{labels.filterByComp[lang]}</div>
 
-      {/* Input + dropdown trigger */}
       <div className="pr-co-filter-input-row">
         <div className={`pr-co-filter-input-wrap${dropdownOpen ? ' open' : ''}`}>
           <SearchIcon />
           <input
-            ref={inputRef}
             className="pr-co-filter-input"
             type="text"
             placeholder={labels.placeholder[lang]}
@@ -297,12 +337,19 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
           disabled={selectedCodes.length === 0 || isLoading}
           title={labels.search[lang]}
         >
-          {isLoading ? <LoadingIcon /> : <SearchIcon />}
+          {isLoading ? <SpinnerIcon size={13} /> : <SearchIcon />}
           <span>{labels.search[lang]}</span>
         </button>
       </div>
 
-      {/* Dropdown */}
+      {showMaxWarning && (
+        <div className="pr-co-filter-max-warning" role="alert">
+          {lang === 'zh'
+            ? `最多可選擇 ${MAX_COMPANY_FILTER} 家公司。`
+            : `You can select a maximum of ${MAX_COMPANY_FILTER} companies.`}
+        </div>
+      )}
+
       {dropdownOpen && (
         <div className="pr-co-filter-dropdown">
           {filtered.length === 0 ? (
@@ -317,7 +364,7 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
                   onMouseDown={(e) => { e.preventDefault(); handleToggle(c.symbol); }}
                 >
                   <span className="pr-co-filter-option-check" aria-hidden="true">
-                    {active ? '✓' : ''}
+                    {active ? <CheckLineIcon /> : null}
                   </span>
                   <span className="pr-co-filter-option-symbol">{c.symbol}</span>
                   <span className="pr-co-filter-option-name">{c.name}</span>
@@ -328,7 +375,6 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
         </div>
       )}
 
-      {/* Selected chips */}
       {selectedCodes.length > 0 && (
         <div className="pr-co-filter-chips">
           <span className="pr-co-filter-chips-label">
@@ -357,35 +403,117 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
   );
 }
 
+// ─── Loading Skeleton ─────────────────────────────────────────────────────────
+
+function LoadingSkeleton() {
+  return (
+    <div className="pr-loading-wrap" role="status" aria-label="Loading press releases">
+      <div className="pr-loading-inner">
+        <SpinnerIcon size={24} />
+        <span className="pr-loading-text">Loading press releases…</span>
+      </div>
+    </div>
+  );
+}
+
+// ─── Error Banner ─────────────────────────────────────────────────────────────
+
+interface ErrorBannerProps {
+  message: string;
+  onRetry: () => void;
+  lang: 'zh' | 'en';
+}
+
+function ErrorBanner({ message, onRetry, lang }: ErrorBannerProps) {
+  const retryLabel = lang === 'zh' ? '重試' : 'Retry';
+  return (
+    <div className="pr-error-banner" role="alert">
+      <span className="pr-error-icon"><AlertIcon /></span>
+      <span className="pr-error-message">{message}</span>
+      <button className="pr-error-retry" onClick={onRetry}>
+        <RefreshIcon />
+        {retryLabel}
+      </button>
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function PressReleasePage() {
   const { lang } = useLanguage();
 
-  // Company filter state
+  // ── Data state ──
+  const [allItems, setAllItems] = useState<PressRelease[]>([]);
+
+  // ── UI state ──
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // ── Company filter state ──
   const [selectedCodes, setSelectedCodes] = useState<string[]>([]);
-  const [apiItems, setApiItems] = useState<PressRelease[] | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState<string[]>([]);
 
-  // Displayed items: API results when available, otherwise all local data
-  const displayedItems = apiItems ?? pressReleases;
-
+  // ── Archive group state ──
   const groups = useMemo(
-    () => getPressReleaseArchiveGroups(displayedItems, lang),
-    [displayedItems, lang],
+    () => getPressReleaseArchiveGroups(allItems, lang),
+    [allItems, lang],
   );
-
-  // Expand ALL groups by default
   const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
+  const infoWrapRef = useRef<HTMLDivElement | null>(null);
 
-  // When groups change, expand all
+  // Expand all new groups when groups change
   useEffect(() => {
     setExpandedKeys(new Set(groups.map((g) => g.key)));
   }, [groups]);
 
   const allExpanded = groups.length > 0 && expandedKeys.size >= groups.length;
 
+  // ── Fetch logic ──
+  const abortRef = useRef<AbortController | null>(null);
+
+  const fetchAll = useCallback(async (tickers: string[]) => {
+    abortRef.current?.abort();
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
+
+    setIsInitialLoading(true);
+    setError(null);
+
+    try {
+      const { items } = await getPressReleases(0, PRESS_RELEASE_ARCHIVE_LIMIT, tickers, ctrl.signal);
+
+      if (ctrl.signal.aborted) return;
+      setAllItems(items);
+    } catch (err) {
+      if (ctrl.signal.aborted) return;
+      const msg = err instanceof Error ? err.message : String(err);
+      setError(lang === 'zh' ? `載入失敗：${msg}` : `Failed to load: ${msg}`);
+    } finally {
+      if (!ctrl.signal.aborted) {
+        setIsInitialLoading(false);
+      }
+    }
+  }, [lang]);
+
+  // ── Initial load and filter change ──
+  useEffect(() => {
+    fetchAll(activeFilter);
+    return () => { abortRef.current?.abort(); };
+  }, [activeFilter, fetchAll]);
+
+  useEffect(() => {
+    function handleOutsideClick(e: MouseEvent) {
+      if (infoWrapRef.current && !infoWrapRef.current.contains(e.target as Node)) {
+        setIsInfoOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
+
+  // ── Handlers ──
   function handleToggleGroup(key: string) {
     setExpandedKeys((prev) => {
       const next = new Set(prev);
@@ -403,46 +531,34 @@ export default function PressReleasePage() {
     }
   }
 
-  const handleSearch = useCallback(async (codes: string[]) => {
-    if (codes.length === 0) {
-      setApiItems(null);
-      setApiError(null);
-      return;
-    }
-    setIsLoading(true);
-    setApiError(null);
-    try {
-      const res = await fetch('/getPressReleaseByCoCd', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ co_cd: codes }),
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data: PressRelease[] = await res.json();
-      setApiItems(data);
-    } catch (err) {
-      setApiError(lang === 'zh' ? '搜尋失敗，顯示本地資料' : 'Search failed — showing local data');
-      setApiItems(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [lang]);
+  function handleSearch(codes: string[]) {
+    setActiveFilter(codes);
+    setAllItems([]);
+  }
 
   function handleSelectionChange(codes: string[]) {
     setSelectedCodes(codes);
-    // Clear API results when selection changes so user must click Search
     if (codes.length === 0) {
-      setApiItems(null);
-      setApiError(null);
+      handleSearch([]);
     }
   }
 
+  function handleRetry() {
+    fetchAll(activeFilter);
+  }
+
+  // ── Labels ──
   const labels = {
-    eyebrow:     { zh: 'Press Release', en: 'Press Release' },
-    total:       { zh: `共 ${displayedItems.length} 篇`, en: `${displayedItems.length} articles` },
-    expandAll:   { zh: '展開全部', en: 'Expand All' },
-    collapseAll: { zh: '收合全部', en: 'Collapse All' },
-    apiResult:   { zh: 'API 搜尋結果', en: 'API search results' },
+    eyebrow:      { zh: 'Press Release', en: 'Press Release' },
+    expandAll:    { zh: '展開全部', en: 'Expand All' },
+    collapseAll:  { zh: '收合全部', en: 'Collapse All' },
+    filterResult: { zh: '篩選結果', en: 'Filtered results' },
+    info:         { zh: '說明', en: 'Information' },
+    close:        { zh: '關閉', en: 'Close' },
+    desc: {
+      zh: '預設提供近七天Press Release資料，當有篩選公司(上限十家)，則提供近三個月該公司資料；若需更久遠資料可至News頁面中"Officail Press Release"類別查詢',
+      en: 'Access recent Press Releases covering the past seven days. For filtered companies (up to ten selections), a three-month historical record will be provided. For more historical data, please navigate to the "News" page and select the "Official Press Release" category.',
+    },
   };
 
   return (
@@ -459,56 +575,91 @@ export default function PressReleasePage() {
                 selectedCodes={selectedCodes}
                 onSelectionChange={handleSelectionChange}
                 onSearch={handleSearch}
-                isLoading={isLoading}
+                isLoading={isInitialLoading}
                 lang={lang}
               />
 
-              {/* API error notice */}
-              {apiError && (
-                <div className="pr-archive-api-error">{apiError}</div>
-              )}
-
-              {/* API result badge */}
-              {apiItems !== null && (
+              {/* Active filter badge */}
+              {activeFilter.length > 0 && (
                 <div className="pr-archive-api-badge">
                   <SearchIcon />
-                  {labels.apiResult[lang]} · {apiItems.length} {lang === 'en' ? 'results' : '筆'}
-                  <button className="pr-archive-api-badge-clear" onClick={() => { setApiItems(null); setSelectedCodes([]); }}>
+                  {labels.filterResult[lang]} · {activeFilter.join(', ')} · {allItems.length} {lang === 'en' ? 'results' : '筆'}
+                  <button
+                    className="pr-archive-api-badge-clear"
+                    onClick={() => { setSelectedCodes([]); handleSearch([]); }}
+                    aria-label="Clear filter"
+                  >
                     <CloseIcon />
                   </button>
                 </div>
               )}
 
-              {/* Page header */}
-              <div className="pr-archive-header">
-                <div className="pr-archive-header-left">
-                  <span className="section-eyebrow">{labels.eyebrow[lang]}</span>
-                  <span className="pr-archive-total">{labels.total[lang]}</span>
-                </div>
-                <div className="pr-archive-header-right">
-                  <button
-                    className="pr-archive-expand-btn"
-                    onClick={handleToggleAll}
-                    title={allExpanded ? labels.collapseAll[lang] : labels.expandAll[lang]}
-                  >
-                    {allExpanded ? <CollapseAllIcon /> : <ExpandAllIcon />}
-                    <span>{allExpanded ? labels.collapseAll[lang] : labels.expandAll[lang]}</span>
-                  </button>
-                </div>
-              </div>
+              {/* Initial loading */}
+              {isInitialLoading && <LoadingSkeleton />}
 
-              {/* Archive groups */}
-              <div className="pr-archive-groups">
-                {groups.map((group) => (
-                  <ArchiveGroup
-                    key={group.key}
-                    group={group}
-                    isExpanded={expandedKeys.has(group.key)}
-                    onToggle={() => handleToggleGroup(group.key)}
-                    lang={lang}
-                  />
-                ))}
-              </div>
+              {/* Error state */}
+              {!isInitialLoading && error && (
+                <ErrorBanner message={error} onRetry={handleRetry} lang={lang} />
+              )}
+
+              {/* Content */}
+              {!isInitialLoading && !error && (
+                <>
+                  {/* Page header */}
+                  <div className="pr-archive-header">
+                    <div className="pr-archive-header-left">
+                      <span className="section-eyebrow">{labels.eyebrow[lang]}</span>
+                      <div className="pr-archive-info-wrap" ref={infoWrapRef}>
+                        <button
+                          type="button"
+                          className={`pr-archive-info-btn${isInfoOpen ? ' active' : ''}`}
+                          onClick={() => setIsInfoOpen((prev) => !prev)}
+                          aria-label={labels.info[lang]}
+                          title={labels.info[lang]}
+                        >
+                          <InfoIcon />
+                        </button>
+                        {isInfoOpen && (
+                          <div className="pr-archive-info-pop" role="dialog" aria-label={labels.info[lang]}>
+                            <button
+                              type="button"
+                              className="pr-archive-info-close"
+                              onClick={() => setIsInfoOpen(false)}
+                              aria-label={labels.close[lang]}
+                            >
+                              <CloseIcon />
+                            </button>
+                            <p className="pr-archive-info-text">{labels.desc[lang]}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="pr-archive-header-right">
+                      <button
+                        className="cp-pec-card-action-btn"
+                        onClick={handleToggleAll}
+                        title={allExpanded ? labels.collapseAll[lang] : labels.expandAll[lang]}
+                        aria-label={allExpanded ? labels.collapseAll[lang] : labels.expandAll[lang]}
+                      >
+                        {allExpanded ? <CollapseAllIcon /> : <ExpandAllIcon />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Archive groups */}
+                  <div className="pr-archive-groups">
+                    {groups.map((group) => (
+                      <ArchiveGroup
+                        key={group.key}
+                        group={group}
+                        isExpanded={expandedKeys.has(group.key)}
+                        onToggle={() => handleToggleGroup(group.key)}
+                        lang={lang}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </main>

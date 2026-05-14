@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { Fragment, useState, useRef, useEffect, useCallback, useMemo, type ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
+import { COMPANY_MASTER_LIST, getCompanyByCode } from '@/app/data/companyMaster';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { useMobileSidebar, MOBILE_BREAKPOINT } from '@/app/contexts/MobileSidebarContext';
 import { BASE_PATH } from '@/app/lib/basePath';
@@ -13,6 +13,12 @@ import { getStatement } from '@/app/data/financialData';
 import finSummaryConfig from '@/app/data/fin-summary-config.json';
 import { getFinIdxCardData } from '@/app/lib/watchlistApi';
 import type { WatchlistDataItem } from '@/app/lib/watchlistApi';
+import {
+  getNotificationSettings,
+  updateNotificationSettings,
+} from '@/app/lib/notificationApi';
+import type { NotificationSettings } from '@/app/lib/notificationApi';
+import { getElshResult, type SearchResultItem } from '@/app/data/searchMockData';
 
 const SearchFinancialIndicesChart = dynamic(
   () => import('@/app/company-profile/[symbol]/InvestmentNivoCharts').then((m) => m.FinancialIndicesNivoChart),
@@ -26,7 +32,14 @@ const COMPANY_MASTER_LC = COMPANY_MASTER_LIST.map((c) => ({
   ...c,
   symbolLc: c.symbol.toLowerCase(),
   nameLc: c.name.toLowerCase(),
+  isFinAlive: getCompanyByCode(c.symbol)?.IS_FIN_ALIVE === 'Y',
 }));
+
+interface SearchCompanyOption {
+  symbol: string;
+  name: string;
+  isFinAlive: boolean;
+}
 
 // ── Financial Indices chart helpers ─────────────────────────────────────────
 
@@ -148,10 +161,10 @@ function deriveSearchFinIndicesData(
   type AnnualVals = { rev: number; gp: number; gm: number; om: number; ni: number; nm: number; cash: number };
   const annualMap = new Map<number, AnnualVals>();
   for (const period of incomeStmt.periods) {
-    const ma = period.match(/^FY(\d{4})$/);
+    const ma = period.match(/^CY(\d{4})$/);
     if (!ma) continue;
     const year = parseInt(ma[1]);
-    const bPeriod = `FY${year}`; // balance sheet uses the same label
+    const bPeriod = `CY${year}`; // balance sheet uses the same label
     annualMap.set(year, {
       rev:  getVal(incomeItems, incomeStmt.periods, revKey, period),
       gp:   getVal(incomeItems, incomeStmt.periods, gpKey,  period),
@@ -298,6 +311,105 @@ function FinCardItem({ card, pinned, onPin, onUnpin, onNavigate }: FinCardItemPr
   );
 }
 
+// ── EventNewsCard ────────────────────────────────────────────────────────────
+
+type SearchTabType = 'all' | 'company' | 'event' | 'news';
+
+interface EventNewsCardProps {
+  item: SearchResultItem;
+  lang: 'zh' | 'en';
+  highlightQuery: HighlightQuery;
+}
+
+// Matches protocol-less domain strings that start with dot-separated host labels
+// (e.g. "example.com", "investor.apple.com/path", "a.b.co?x=1", "foo.bar#section").
+const DOMAIN_LIKE_URL_PATTERN = /^[^/\s?#]+\.[^/\s?#]+(?:[/?#]|$)/;
+
+function normalizeSearchResultUrl(url: string): string {
+  const value = url.trim();
+  if (!value) return '#';
+  if (/^https?:\/\//i.test(value)) return value;
+  if (value.startsWith('//')) return `https:${value}`;
+  if (DOMAIN_LIKE_URL_PATTERN.test(value)) return `https://${value}`;
+  return value;
+}
+
+function escapeRegExpSpecialChars(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+interface HighlightQuery {
+  regex: RegExp | null;
+  terms: Set<string>;
+}
+
+function buildHighlightQuery(query: string): HighlightQuery {
+  const terms = query
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((term) => term.toLowerCase());
+
+  if (terms.length === 0) {
+    return { regex: null, terms: new Set() };
+  }
+
+  const uniqueTerms = Array.from(new Set(terms)).sort((a, b) => b.length - a.length);
+  return {
+    regex: new RegExp(`(${uniqueTerms.map(escapeRegExpSpecialChars).join('|')})`, 'gi'),
+    terms: new Set(uniqueTerms),
+  };
+}
+
+function renderHighlightedText(text: string, highlightQuery: HighlightQuery): ReactNode {
+  if (!highlightQuery.regex || highlightQuery.terms.size === 0) return text;
+  const parts = text.split(highlightQuery.regex);
+  if (parts.length === 1) return text;
+
+  return parts.map((part, index) => {
+    const isMatch = highlightQuery.terms.has(part.toLowerCase());
+    return isMatch
+      ? <mark key={index} className="search-result-highlight">{part}</mark>
+      : <Fragment key={index}>{part}</Fragment>;
+  });
+}
+
+function EventNewsCard({ item, lang, highlightQuery }: EventNewsCardProps) {
+  const dateStr = item.datetime
+    ? new Date(item.datetime).toLocaleDateString(
+        lang === 'en' ? 'en-US' : 'zh-TW',
+        { year: 'numeric', month: 'short', day: 'numeric' },
+      )
+    : '';
+
+  return (
+    <a
+      className="search-result-card"
+      href={normalizeSearchResultUrl(item.url)}
+      target="_blank"
+      rel="noopener noreferrer"
+      onMouseDown={(e) => e.stopPropagation()}
+    >
+      <div className="search-result-card-title">{renderHighlightedText(item.title, highlightQuery)}</div>
+      <div className="search-result-card-meta">
+        {item.company_short_name && (
+          <span className="news-tag search-result-card-tag">
+            {renderHighlightedText(item.company_short_name, highlightQuery)}
+          </span>
+        )}
+        {item.category && (
+          <span className="search-result-card-category">
+            {renderHighlightedText(item.category, highlightQuery)}
+          </span>
+        )}
+        {dateStr && (
+          <span className="search-result-card-date">{dateStr}</span>
+        )}
+      </div>
+    </a>
+  );
+}
+
 interface UserInfo {
   name: string;
   avatar: string;
@@ -330,6 +442,8 @@ export default function TopNav() {
   };
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
+  const [searchTab, setSearchTab] = useState<SearchTabType>('all');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const wrapRef = useRef<HTMLDivElement>(null);
 
   // Pinned financial cards — persisted in localStorage
@@ -361,20 +475,99 @@ export default function TopNav() {
 
   // Notification panel state
   const [notifOpen, setNotifOpen] = useState(false);
+  const [notifSettingsView, setNotifSettingsView] = useState(false);
+  const [notifSettings, setNotifSettings] = useState<NotificationSettings>({
+    notification: false,
+    email: true,
+    eventBooking: true,
+  });
+  const [notifSettingsLoading, setNotifSettingsLoading] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
 
   const handleNotifToggle = useCallback(() => {
-    setNotifOpen((prev) => !prev);
+    setNotifOpen((prev) => {
+      if (prev) {
+        setNotifSettingsView(false);
+        return false;
+      }
+      // Fetch current settings from API when opening the panel
+      setNotifSettingsLoading(true);
+      getNotificationSettings()
+        .then((settings) => setNotifSettings(settings))
+        .catch((err) => { console.error('Failed to fetch notification settings:', err); })
+        .finally(() => setNotifSettingsLoading(false));
+      return true;
+    });
   }, []);
+
+  const handleNotifSettingToggle = useCallback((key: keyof NotificationSettings) => {
+    setNotifSettings((prev) => {
+      const next = { ...prev, [key]: !prev[key] };
+      updateNotificationSettings(next).catch((err) => { console.error('Failed to update notification settings:', err); });
+      return next;
+    });
+  }, []);
+
+  const [mockResults, setMockResults] = useState<SearchResultItem[]>([]);
+  useEffect(() => {
+    let cancelled = false;
+    const trimmedQuery = query.trim();
+
+    if (!trimmedQuery) {
+      setMockResults([]);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    getElshResult(trimmedQuery)
+      .then((results) => {
+        if (!cancelled) setMockResults(results);
+      })
+      .catch(() => {
+        if (!cancelled) setMockResults([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [query]);
 
   const q = query.trim().toLowerCase();
   const showDropdown = focused && (q.length > 0 || pinnedCards.length > 0);
 
-  // Filter companies by query (company search only)
-  const filteredCompanies =
+  // Filter company master by query (fallback when API has no company docs)
+  const filteredMasterCompanies: SearchCompanyOption[] =
     q.length > 0
-      ? COMPANY_MASTER_LC.filter((c) => c.symbolLc.includes(q) || c.nameLc.includes(q)).slice(0, 8)
+      ? COMPANY_MASTER_LC.filter((c) => c.symbolLc.includes(q) || c.nameLc.includes(q))
+          .slice(0, 8)
+          .map((c) => ({
+            symbol: c.symbol,
+            name: c.name,
+            isFinAlive: c.isFinAlive,
+          }))
       : [];
+
+  const apiCompanies = useMemo<SearchCompanyOption[]>(() => {
+    if (q.length === 0) return [];
+    const unique = new Map<string, SearchCompanyOption>();
+
+    mockResults
+      .filter((r) => r.doc_type === 'company')
+      .forEach((r) => {
+        const symbol = (r.co_cd ?? '').trim().toUpperCase();
+        if (!symbol) return;
+        if (unique.has(symbol)) return;
+        const name = (r.company_name || r.company_short_name || symbol).trim();
+        const isFinAlive = getCompanyByCode(symbol)?.IS_FIN_ALIVE === 'Y';
+        unique.set(symbol, { symbol, name, isFinAlive });
+      });
+
+    return Array.from(unique.values()).slice(0, 8);
+  }, [mockResults, q]);
+
+  // Prefer API "company" docs; fallback to company master only when API has no company results.
+  const filteredCompanies = apiCompanies.length > 0 ? apiCompanies : filteredMasterCompanies;
 
   // Financial Indices chart result — shown when query contains company name/symbol + year range
   const finIndicesResult = useMemo(() => {
@@ -427,6 +620,33 @@ export default function TopNav() {
     setExpandedFinIdxSymbol((prev) => (prev === symbol ? null : symbol));
   }, []);
 
+  const mockEvents = useMemo(
+    () =>
+      mockResults
+        .filter((r) => r.doc_type === 'event')
+        .sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime()),
+    [mockResults],
+  );
+  const mockNews = useMemo(
+    () =>
+      mockResults
+        .filter((r) => r.doc_type === 'news')
+        .sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime()),
+    [mockResults],
+  );
+  const highlightQuery = useMemo(() => buildHighlightQuery(query), [query]);
+
+  // Debounce query for "See all results" button
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(query.trim()), 400);
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  // Reset search tab when query is cleared
+  useEffect(() => {
+    if (!query.trim()) setSearchTab('all');
+  }, [query]);
+
   // Navigate to company profile page
   function navigateToCompany(symbol: string) {
     setFocused(false);
@@ -457,6 +677,98 @@ export default function TopNav() {
     }
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [notifOpen]);
+
+  // Tab labels
+  const tabLabels: Record<SearchTabType, { zh: string; en: string }> = {
+    all:     { zh: '全部',  en: 'All'     },
+    company: { zh: '公司',  en: 'Company' },
+    event:   { zh: '活動',  en: 'Event'   },
+    news:    { zh: '新聞',  en: 'News'    },
+  };
+
+  // Reusable company list JSX — used in both "Company" tab and "All" tab
+  function renderCompanyList(companies: SearchCompanyOption[]) {
+    if (companies.length === 0) return null;
+    return (
+      <ul className="search-popular-list">
+        {companies.map((company) => (
+          <li key={company.symbol}>
+            <div className="search-popular-item-wrap">
+              <button
+                className="search-popular-item"
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  navigateToCompany(company.symbol);
+                }}
+              >
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                  <rect x="1.5" y="2" width="10" height="9" rx="1" stroke="currentColor" strokeWidth="1.2" />
+                  <path d="M4 5h5M4 7.5h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+                </svg>
+                <strong>{renderHighlightedText(company.symbol, highlightQuery)}</strong>
+                &nbsp;{renderHighlightedText(company.name, highlightQuery)}
+              </button>
+              {company.isFinAlive && (
+                <button
+                  className={`search-fin-idx-btn${expandedFinIdxSymbol === company.symbol ? ' active' : ''}`}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    handleFinIdxToggle(company.symbol);
+                  }}
+                  title={lang === 'zh' ? '財務指標' : 'Financial Index'}
+                  aria-label={lang === 'zh' ? '展開財務指標' : 'Expand financial index'}
+                >
+                  <FinIdxIcon />
+                </button>
+              )}
+            </div>
+            {/* Expandable fin-idx card panel */}
+            {company.isFinAlive && expandedFinIdxSymbol === company.symbol && (
+              <div className="search-fin-idx-panel">
+                <div className="search-fin-idx-cards">
+                  {(finIdxDataMap[company.symbol] ?? []).map((item) => {
+                    const rawVal = String(item.fld_val ?? '—');
+                    const yrQtr = item.calendar_year && item.fiscal_quarter
+                      ? `${item.calendar_year} ${item.fiscal_quarter}`
+                      : null;
+                    return (
+                      <div key={item.rpt_fin_item} className="search-fin-card">
+                        <div className="search-fin-card-body search-fin-card-body--no-pin" style={{ cursor: 'default' }}>
+                          <div className="search-fin-card-item">{item.rpt_fin_item}</div>
+                          <div className={getFinValueClass(rawVal)}>{rawVal}</div>
+                          {yrQtr && (
+                            <div className="search-fin-idx-yr-tag">{yrQtr}</div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="search-fin-idx-panel-footer">
+                  <a
+                    className="search-fin-idx-more-btn"
+                    href={`/lego/company-profile/${company.symbol}/?tab=FIN.+Statement`}
+                    onMouseDown={(e) => { e.stopPropagation(); }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setFocused(false);
+                      setQuery('');
+                      router.push(`/company-profile/${company.symbol}/?tab=FIN.+Statement`);
+                    }}
+                  >
+                    {lang === 'zh' ? '更多資訊' : 'More Information'}
+                    <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
+                      <path d="M2.5 5.5h6M6 3l2.5 2.5L6 8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+    );
+  }
 
   return (
     <header className="topnav">
@@ -498,8 +810,8 @@ export default function TopNav() {
 
         {showDropdown && (
           <div className="search-dropdown">
-            {/* Pinned financial cards — always visible while dropdown is open */}
-            {pinnedCards.length > 0 && (
+            {/* Pinned financial cards — shown only when no query */}
+            {pinnedCards.length > 0 && q.length === 0 && (
               <div className="search-dropdown-section search-dropdown-section--pinned">
                 <div className="search-dropdown-section-label">
                   <PinIcon pinned={true} />
@@ -520,129 +832,206 @@ export default function TopNav() {
               </div>
             )}
 
-            {/* Company search results — shown when user has typed */}
-            {q.length > 0 && filteredCompanies.length > 0 && (
-              <div className="search-dropdown-section">
-                <div className="search-dropdown-section-label">Companies</div>
-                <ul className="search-popular-list">
-                  {filteredCompanies.map((company) => (
-                    <li key={company.symbol}>
-                      <div className="search-popular-item-wrap">
-                        <button
-                          className="search-popular-item"
-                          onMouseDown={(e) => {
-                            e.preventDefault();
-                            navigateToCompany(company.symbol);
-                          }}
-                        >
-                          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
-                            <rect x="1.5" y="2" width="10" height="9" rx="1" stroke="currentColor" strokeWidth="1.2" />
-                            <path d="M4 5h5M4 7.5h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
-                          </svg>
-                          <strong>{company.symbol}</strong>&nbsp;{company.name}
-                        </button>
-                        <button
-                          className={`search-fin-idx-btn${expandedFinIdxSymbol === company.symbol ? ' active' : ''}`}
-                          onMouseDown={(e) => {
-                            e.preventDefault();
-                            handleFinIdxToggle(company.symbol);
-                          }}
-                          title={lang === 'zh' ? '財務指標' : 'Financial Index'}
-                          aria-label={lang === 'zh' ? '展開財務指標' : 'Expand financial index'}
-                        >
-                          <FinIdxIcon />
-                        </button>
-                      </div>
-                      {/* Expandable fin-idx card panel */}
-                      {expandedFinIdxSymbol === company.symbol && (
-                        <div className="search-fin-idx-panel">
-                          <div className="search-fin-idx-cards">
-                            {(finIdxDataMap[company.symbol] ?? []).map((item) => {
-                              const rawVal = String(item.fld_val ?? '—');
-                              const yrQtr = item.calendar_year && item.fiscal_quarter
-                                ? `${item.calendar_year} ${item.fiscal_quarter}`
-                                : null;
-                              return (
-                                <div key={item.rpt_fin_item} className="search-fin-card">
-                                  <div className="search-fin-card-body search-fin-card-body--no-pin" style={{ cursor: 'default' }}>
-                                    <div className="search-fin-card-item">{item.rpt_fin_item}</div>
-                                    <div className={getFinValueClass(rawVal)}>{rawVal}</div>
-                                    {yrQtr && (
-                                      <div className="search-fin-idx-yr-tag">{yrQtr}</div>
-                                    )}
-                                  </div>
-                                </div>
-                              );
-                            })}
+            {/* Tabbed search results — shown when user has typed a query */}
+            {q.length > 0 && (
+              <>
+                {/* Tab navigation */}
+                <div className="search-tabs">
+                  {(['all', 'company', 'event', 'news'] as SearchTabType[]).map((tab) => (
+                    <button
+                      key={tab}
+                      className={`search-tab${searchTab === tab ? ' active' : ''}`}
+                      onMouseDown={(e) => { e.preventDefault(); setSearchTab(tab); }}
+                    >
+                      {tabLabels[tab][lang]}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Tab content */}
+                <div className="search-tab-content">
+
+                  {/* ── ALL TAB ── */}
+                  {searchTab === 'all' && (
+                    <>
+                      {/* Company section */}
+                      {filteredCompanies.length > 0 && (
+                        <div className="search-dropdown-section">
+                          <div className="search-dropdown-section-label">
+                            {tabLabels.company[lang]}
                           </div>
-                          <div className="search-fin-idx-panel-footer">
-                            <a
-                              className="search-fin-idx-more-btn"
-                              href={`/lego/company-profile/${company.symbol}/?tab=FIN.+Statement`}
-                              onMouseDown={(e) => { e.stopPropagation(); }}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setFocused(false);
-                                setQuery('');
-                                router.push(`/company-profile/${company.symbol}/?tab=FIN.+Statement`);
-                              }}
-                            >
-                              {lang === 'zh' ? '更多資訊' : 'More Information'}
-                              <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
-                                <path d="M2.5 5.5h6M6 3l2.5 2.5L6 8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-                              </svg>
-                            </a>
+                          {renderCompanyList(filteredCompanies.slice(0, 3))}
+                        </div>
+                      )}
+
+                      {/* Event section */}
+                      {mockEvents.length > 0 && (
+                        <div className="search-dropdown-section">
+                          <div className="search-dropdown-section-label">
+                            {tabLabels.event[lang]}
+                          </div>
+                          <div className="search-result-cards">
+                            {mockEvents.slice(0, 3).map((item) => (
+                              <EventNewsCard key={item.id} item={item} lang={lang} highlightQuery={highlightQuery} />
+                            ))}
                           </div>
                         </div>
                       )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
 
-            {/* Financial Indices chart — shown when query matches company + FIN metric + year range */}
-            {finIndicesResult && (
-              <div className="search-dropdown-section">
-                <div className="search-dropdown-section-label">Financial Indices</div>
-                <div className="search-indices-card">
-                  <div className="search-indices-card-header">
-                    <span className="news-tag search-fin-card-symbol">{finIndicesResult.symbol}</span>
-                    <span className="search-indices-card-range">
-                      {finIndicesResult.yearRange.startYear}–{finIndicesResult.yearRange.endYear}
+                      {/* News section */}
+                      {mockNews.length > 0 && (
+                        <div className="search-dropdown-section">
+                          <div className="search-dropdown-section-label">
+                            {tabLabels.news[lang]}
+                          </div>
+                          <div className="search-result-cards">
+                            {mockNews.slice(0, 3).map((item) => (
+                              <EventNewsCard key={item.id} item={item} lang={lang} highlightQuery={highlightQuery} />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Financial Indices chart */}
+                      {finIndicesResult && (
+                        <div className="search-dropdown-section">
+                          <div className="search-dropdown-section-label">Financial Indices</div>
+                          <div className="search-indices-card">
+                            <div className="search-indices-card-header">
+                              <span className="news-tag search-fin-card-symbol">{finIndicesResult.symbol}</span>
+                              <span className="search-indices-card-range">
+                                {finIndicesResult.yearRange.startYear}–{finIndicesResult.yearRange.endYear}
+                              </span>
+                            </div>
+                            <div className="cp-fin-index-tabs">
+                              {FIN_INDICES.map((idx) => (
+                                <button
+                                  key={idx}
+                                  className={`cp-fin-index-tab${searchFinIndexTab === idx ? ' active' : ''}`}
+                                  onMouseDown={(e) => { e.preventDefault(); setSearchFinIndexTab(idx); }}
+                                >
+                                  {idx}
+                                </button>
+                              ))}
+                            </div>
+                            <SearchFinancialIndicesChart
+                              data={finIndicesResult.data}
+                              activeMetric={searchFinIndexTab}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* No results */}
+                      {filteredCompanies.length === 0 && mockEvents.length === 0 && mockNews.length === 0 && !finIndicesResult && (
+                        <div className="search-dropdown-section">
+                          <div className="search-result-empty">
+                            {lang === 'zh' ? '找不到相關結果' : 'No results found'}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
+
+                  {/* ── COMPANY TAB ── */}
+                  {searchTab === 'company' && (
+                    <div className="search-dropdown-section">
+                      {filteredCompanies.length > 0
+                        ? renderCompanyList(filteredCompanies)
+                        : (
+                          <div className="search-result-empty">
+                            {lang === 'zh' ? '找不到相關公司' : 'No companies found'}
+                          </div>
+                        )}
+                      {/* Financial Indices chart in Company tab */}
+                      {finIndicesResult && (
+                        <div style={{ marginTop: 10 }}>
+                          <div className="search-dropdown-section-label" style={{ marginBottom: 8 }}>
+                            Financial Indices
+                          </div>
+                          <div className="search-indices-card">
+                            <div className="search-indices-card-header">
+                              <span className="news-tag search-fin-card-symbol">{finIndicesResult.symbol}</span>
+                              <span className="search-indices-card-range">
+                                {finIndicesResult.yearRange.startYear}–{finIndicesResult.yearRange.endYear}
+                              </span>
+                            </div>
+                            <div className="cp-fin-index-tabs">
+                              {FIN_INDICES.map((idx) => (
+                                <button
+                                  key={idx}
+                                  className={`cp-fin-index-tab${searchFinIndexTab === idx ? ' active' : ''}`}
+                                  onMouseDown={(e) => { e.preventDefault(); setSearchFinIndexTab(idx); }}
+                                >
+                                  {idx}
+                                </button>
+                              ))}
+                            </div>
+                            <SearchFinancialIndicesChart
+                              data={finIndicesResult.data}
+                              activeMetric={searchFinIndexTab}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* ── EVENT TAB ── */}
+                  {searchTab === 'event' && (
+                    <div className="search-dropdown-section">
+                      {mockEvents.length > 0
+                        ? (
+                          <div className="search-result-cards">
+                            {mockEvents.map((item) => (
+                              <EventNewsCard key={item.id} item={item} lang={lang} highlightQuery={highlightQuery} />
+                            ))}
+                          </div>
+                        )
+                        : (
+                          <div className="search-result-empty">
+                            {lang === 'zh' ? '找不到相關活動' : 'No events found'}
+                          </div>
+                        )}
+                    </div>
+                  )}
+
+                  {/* ── NEWS TAB ── */}
+                  {searchTab === 'news' && (
+                    <div className="search-dropdown-section">
+                      {mockNews.length > 0
+                        ? (
+                          <div className="search-result-cards">
+                            {mockNews.map((item) => (
+                              <EventNewsCard key={item.id} item={item} lang={lang} highlightQuery={highlightQuery} />
+                            ))}
+                          </div>
+                        )
+                        : (
+                          <div className="search-result-empty">
+                            {lang === 'zh' ? '找不到相關新聞' : 'No news found'}
+                          </div>
+                        )}
+                    </div>
+                  )}
+
+                </div>
+
+                {/* See all results button — Coming Soon */}
+                <div className="search-see-all-wrap">
+                  <button className="search-see-all-btn" disabled aria-disabled="true">
+                    <span>
+                      {lang === 'zh' ? '查看所有結果：' : 'See all results for '}
+                      {/* fallback keeps current input visible during debounce delay */}
+                      <span className="search-see-all-query">&ldquo;{debouncedQuery || query.trim()}&rdquo;</span>
                     </span>
-                  </div>
-                  <div className="cp-fin-index-tabs">
-                    {FIN_INDICES.map((idx) => (
-                      <button
-                        key={idx}
-                        className={`cp-fin-index-tab${searchFinIndexTab === idx ? ' active' : ''}`}
-                        onMouseDown={(e) => { e.preventDefault(); setSearchFinIndexTab(idx); }}
-                      >
-                        {idx}
-                      </button>
-                    ))}
-                  </div>
-                  <SearchFinancialIndicesChart
-                    data={finIndicesResult.data}
-                    activeMetric={searchFinIndexTab}
-                  />
+                    <span className="search-see-all-coming-soon">
+                      {lang === 'zh' ? '即將上線' : 'Coming Soon'}
+                    </span>
+                  </button>
                 </div>
-              </div>
+              </>
             )}
-
-            {/* No results */}
-            {q.length > 0 && filteredCompanies.length === 0 && !finIndicesResult && (
-              <div className="search-dropdown-section">
-                <div
-                  className="search-dropdown-section-label"
-                  style={{ color: 'var(--c-text-3)', fontStyle: 'italic', padding: '8px 0' }}
-                >
-                  No results found
-                </div>
-              </div>
-            )}
-
 
           </div>
         )}
@@ -716,26 +1105,132 @@ export default function TopNav() {
             <div className="topnav-notif-panel">
               {/* Panel header */}
               <div className="topnav-notif-panel-header">
-                <span className="topnav-notif-panel-title">{lang === 'zh' ? '通知' : 'Notifications'}</span>
+                {notifSettingsView ? (
+                  <button
+                    className="topnav-notif-settings-back"
+                    onClick={() => setNotifSettingsView(false)}
+                    aria-label={lang === 'zh' ? '返回通知' : 'Back to notifications'}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                      <path d="M9 2L4 7L9 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                ) : null}
+                <span className="topnav-notif-panel-title">
+                  {notifSettingsView
+                    ? (lang === 'zh' ? '通知設定' : 'Notification Settings')
+                    : (lang === 'zh' ? '通知' : 'Notifications')}
+                </span>
+                {!notifSettingsView && (
+                  <button
+                    className="topnav-notif-settings-btn"
+                    onClick={() => setNotifSettingsView(true)}
+                    aria-label={lang === 'zh' ? '通知設定' : 'Notification Settings'}
+                    title={lang === 'zh' ? '通知設定' : 'Settings'}
+                  >
+                    {/* Settings icon (cog with gear teeth) */}
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                      <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                )}
               </div>
 
-              {/* Coming soon placeholder */}
-              <div className="topnav-notif-list">
-                <div className="topnav-notif-empty" style={{ padding: '24px 16px', textAlign: 'center' }}>
-                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true" style={{ margin: '0 auto 10px', display: 'block', opacity: 0.35 }}>
-                    <path d="M16 4a9 9 0 0 1 9 9v5.6l2.2 3.4H4.8L7 18.6V13A9 9 0 0 1 16 4Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
-                    <path d="M12.4 26a3.6 3.6 0 0 0 7.2 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-                  </svg>
-                  <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: 4 }}>
-                    {lang === 'zh' ? '即將上線' : 'Coming Soon'}
+              {notifSettingsView ? (
+                /* Settings view */
+                <div className="topnav-notif-settings-list">
+                  {notifSettingsLoading && (
+                    <div className="topnav-notif-settings-loading">
+                      {lang === 'zh' ? '載入中…' : 'Loading…'}
+                    </div>
+                  )}
+
+                  {/* Notification toggle — Coming Soon (disabled) */}
+                  <div className="topnav-notif-settings-item topnav-notif-settings-item--disabled">
+                    <div className="topnav-notif-settings-item-left topnav-notif-settings-item-left--inline">
+                      <span className="topnav-notif-settings-label">
+                        {lang === 'zh' ? '通知' : 'Notification'}
+                      </span>
+                      <span className="topnav-notif-settings-coming-soon">
+                        {lang === 'zh' ? '即將上線' : 'Coming Soon'}
+                      </span>
+                    </div>
+                    <button
+                      className="topnav-notif-toggle topnav-notif-toggle--disabled"
+                      disabled
+                      aria-disabled="true"
+                      role="switch"
+                      aria-checked={false}
+                      aria-label={lang === 'zh' ? '通知（即將上線）' : 'Notification (Coming Soon)'}
+                    >
+                      <div className="topnav-notif-toggle-thumb" />
+                    </button>
                   </div>
-                  <div style={{ fontSize: '11.5px', color: 'var(--c-text-3)' }}>
-                    {lang === 'zh'
-                      ? '通知功能尚未上線，敬請期待。'
-                      : 'The notifications feature is not yet available. Stay tuned!'}
+
+                  {/* Email toggle */}
+                  <div className="topnav-notif-settings-item">
+                    <div className="topnav-notif-settings-item-left">
+                      <span className="topnav-notif-settings-label">
+                        {lang === 'zh' ? 'Email' : 'Email'}
+                      </span>
+                    </div>
+                    <button
+                      className={`topnav-notif-toggle${notifSettings.email ? ' topnav-notif-toggle--on' : ''}`}
+                      onClick={() => handleNotifSettingToggle('email')}
+                      role="switch"
+                      aria-checked={notifSettings.email}
+                      aria-label={lang === 'zh' ? '電子郵件通知' : 'Email notifications'}
+                      disabled={notifSettingsLoading}
+                    >
+                      <div className="topnav-notif-toggle-thumb" />
+                    </button>
+                  </div>
+
+                  {/* Event Booking in Outlook toggle */}
+                  <div className="topnav-notif-settings-item">
+                    <div className="topnav-notif-settings-item-left">
+                      <span className="topnav-notif-settings-label">
+                        {lang === 'zh' ? '在 Outlook 中建立活動' : 'Event Booking in Outlook'}
+                      </span>
+                    </div>
+                    <button
+                      className={`topnav-notif-toggle${notifSettings.eventBooking ? ' topnav-notif-toggle--on' : ''}`}
+                      onClick={() => handleNotifSettingToggle('eventBooking')}
+                      role="switch"
+                      aria-checked={notifSettings.eventBooking}
+                      aria-label={lang === 'zh' ? '在 Outlook 中建立活動' : 'Event Booking in Outlook'}
+                      disabled={notifSettingsLoading}
+                    >
+                      <div className="topnav-notif-toggle-thumb" />
+                    </button>
                   </div>
                 </div>
-              </div>
+              ) : (
+                /* Coming soon placeholder */
+                <div className="topnav-notif-list">
+                  <div className="topnav-notif-empty">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true" className="topnav-notif-empty-icon">
+                      <path d="M16 4a9 9 0 0 1 9 9v5.6l2.2 3.4H4.8L7 18.6V13A9 9 0 0 1 16 4Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+                      <path d="M12.4 26a3.6 3.6 0 0 0 7.2 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                    </svg>
+                    <div className="topnav-notif-empty-title">
+                      {lang === 'zh' ? '即將上線' : 'Coming Soon'}
+                    </div>
+                    <div className="topnav-notif-empty-desc">
+                      {lang === 'zh'
+                        ? '通知功能尚未上線，敬請期待。'
+                        : 'The notifications feature is not yet available. Stay tuned!'}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -753,4 +1248,3 @@ export default function TopNav() {
     </header>
   );
 }
-

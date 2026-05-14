@@ -6,6 +6,7 @@ import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { extractJson } from '@/app/lib/parseContent';
 import semiconductorMaMd from '@/content/semiconductor-ma.md';
+import { formatUsdM } from '@/app/lib/formatters';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -363,7 +364,7 @@ function NumberValueTab({ region }: { region: Region }) {
         </div>
         <div className="ma-kpi-card">
           <div className="ma-kpi-label">2024 Deal Value</div>
-          <div className="ma-kpi-value">${latest.value}B</div>
+          <div className="ma-kpi-value">${latest.value}</div>
           <div className={`ma-kpi-delta ${parseFloat(valueDelta) >= 0 ? 'pos' : 'neg'}`}>
             {parseFloat(valueDelta) >= 0 ? '+' : ''}{valueDelta}% vs 2023
           </div>
@@ -371,7 +372,7 @@ function NumberValueTab({ region }: { region: Region }) {
         <div className="ma-kpi-card">
           <div className="ma-kpi-label">Avg Deal Size</div>
           <div className="ma-kpi-value">
-            {latest.deals > 0 ? `$${(latest.value / latest.deals * 1000).toFixed(0)}M` : '—'}
+            {latest.deals > 0 ? `$${(latest.value / latest.deals * 1000).toFixed(0)}` : '—'}
           </div>
           <div className="ma-kpi-delta" style={{ color: '#6b7280' }}>per transaction</div>
         </div>
@@ -412,8 +413,8 @@ function NumberValueTab({ region }: { region: Region }) {
                 <tr key={row.year} className="ma-table-row">
                   <td className="ma-table-year">{row.year}</td>
                   <td className="text-right">{row.deals.toLocaleString()}</td>
-                  <td className="text-right">${row.value.toLocaleString()}B</td>
-                  <td className="text-right">{row.deals > 0 ? `$${(row.value / row.deals * 1000).toFixed(0)}M` : '—'}</td>
+                  <td className="text-right">${row.value.toLocaleString()}</td>
+                  <td className="text-right">{row.deals > 0 ? `$${(row.value / row.deals * 1000).toFixed(0)}` : '—'}</td>
                   <td className={`text-right ${dDelta !== null ? (parseFloat(dDelta) >= 0 ? 'pos' : 'neg') : ''}`}>
                     {dDelta !== null ? `${parseFloat(dDelta) >= 0 ? '+' : ''}${dDelta}%` : '—'}
                   </td>
@@ -521,7 +522,7 @@ const CHART_START_YEAR = 1988;
 const CHART_END_YEAR = 2026;
 
 function formatDealValue(valueM: number): string {
-  return valueM >= 1000 ? `$${(valueM / 1000).toFixed(2)}B` : `$${valueM.toLocaleString()}M`;
+  return formatUsdM(valueM, 2);
 }
 
 function MAListBarChart({ deals }: { deals: SemiconductorDeal[] }) {
@@ -568,7 +569,7 @@ function MAListBarChart({ deals }: { deals: SemiconductorDeal[] }) {
           <g key={t}>
             <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y} stroke="#f0f0f0" strokeWidth="1" />
             <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize="9" fill="#9ca3af">
-              {val >= 1000 ? `$${(val / 1000).toFixed(0)}B` : val > 0 ? `$${Math.round(val)}M` : '$0'}
+              {val >= 1000 ? `$${(val / 1000).toFixed(0)}` : val > 0 ? `$${Math.round(val)}` : '$0'}
             </text>
           </g>
         ))}

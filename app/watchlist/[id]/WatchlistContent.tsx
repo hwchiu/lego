@@ -19,7 +19,6 @@ import NewsCard from '@/app/components/news/NewsCard';
 import { pressReleases } from '@/app/data/pressReleases';
 import { CORP_EVENT_CATEGORY_MAP } from '@/app/data/corpEvents';
 import type { CorpEvent } from '@/app/data/corpEvents';
-import { EVENT_CATEGORIES_LIST } from '@/app/data/corpEvents';
 import {
   buildRecentQuarters,
   getViewCatgNColInfo,
@@ -38,11 +37,14 @@ import {
   getWatchlistData,
   getUserAllWatchlists,
   updateSubscribeInfo,
+  querySubInfoByWatchlistId,
+  getSubItem,
   WATCHLIST_MAX_COMPANIES,
 } from '@/app/lib/watchlistApi';
-import type { GetWatchlistDataParams, WatchlistDataItem, UpdateSubscribeInfoPayload } from '@/app/lib/watchlistApi';
+import type { GetWatchlistDataParams, WatchlistDataItem, UpdateSubscribeInfoPayload, SubEventItem } from '@/app/lib/watchlistApi';
 import { setFavoritesInPersonality } from '@/app/lib/getFavoritesByUserAcct';
 import { getPaginationRange } from '@/app/lib/paginationUtils';
+import { formatPrice, formatSigned, formatSignedPct, formatNumber, inferColorClass, inferColorArgb } from '@/app/lib/formatters';
 
 // ── Custom View types ─────────────────────────────────────────────────────────
 interface CustomView {
@@ -75,9 +77,9 @@ const CATALOG_STRING_ID_TO_NUM: Record<string, number> = Object.fromEntries(
 
 const ALL_COLUMNS: Record<string, ColDef> = {
   ...CATALOG_COL_STUBS,
-  price:             { label: 'Price',              getValue: h => h.price.toFixed(2) },
-  change:            { label: 'Change',             getValue: h => `${h.change >= 0 ? '+' : ''}${h.change.toFixed(2)}`, getClass: h => h.change >= 0 ? 'pos' : 'neg' },
-  changePct:         { label: 'Change %',           getValue: h => `${h.changePct >= 0 ? '+' : ''}${h.changePct.toFixed(2)}%`, getClass: h => h.changePct >= 0 ? 'pos' : 'neg' },
+  price:             { label: 'Price',              getValue: h => formatPrice(h.price) },
+  change:            { label: 'Change',             getValue: h => formatSigned(h.change), getClass: h => h.change < 0 ? 'neg' : '' },
+  changePct:         { label: 'Change %',           getValue: h => formatSignedPct(h.changePct), getClass: h => h.changePct < 0 ? 'neg' : '' },
   volume:            { label: 'Volume',             getValue: () => '-' },
   avgVolume:         { label: 'Avg Volume (30D)',   getValue: () => '-' },
   '52wHigh':         { label: '52W High',           getValue: () => '-' },
@@ -85,8 +87,8 @@ const ALL_COLUMNS: Record<string, ColDef> = {
   beta:              { label: 'Beta',               getValue: () => '-' },
   marketCap:         { label: 'Market Cap',         getValue: () => '-' },
   nextEarning:       { label: 'Next Earning Release', getValue: h => h.nextEarning },
-  revenueQoQ:        { label: 'Revenue QoQ',        getValue: h => h.revenueQoQ, getClass: h => (h.revenueQoQ !== 'N/A' && h.revenueQoQ.startsWith('+')) ? 'pos' : (h.revenueQoQ !== 'N/A' ? 'neg' : '') },
-  revenueYoY:        { label: 'Revenue YoY',        getValue: h => h.revenueYoY, getClass: h => (h.revenueYoY !== 'N/A' && h.revenueYoY.startsWith('+')) ? 'pos' : (h.revenueYoY !== 'N/A' ? 'neg' : '') },
+  revenueQoQ:        { label: 'Revenue QoQ',        getValue: h => h.revenueQoQ, getClass: h => inferColorClass(h.revenueQoQ) },
+  revenueYoY:        { label: 'Revenue YoY',        getValue: h => h.revenueYoY, getClass: h => inferColorClass(h.revenueYoY) },
   lastQtrRevenue:    { label: 'Last Qtr Revenue',   getValue: h => h.lastQtrRevenue },
   epsGrowthYoY:      { label: 'EPS Growth YoY',     getValue: () => '-' },
   peRatio:           { label: 'P/E Ratio',          getValue: () => '-' },
@@ -96,8 +98,8 @@ const ALL_COLUMNS: Record<string, ColDef> = {
   evEbitda:          { label: 'EV/EBITDA',          getValue: () => '-' },
   dividendYield:     { label: 'Dividend Yield',     getValue: () => '-' },
   revCagr3y:         { label: 'Revenue CAGR (3Y)',  getValue: () => '-' },
-  todayGain:         { label: "Today's Gain",       getValue: h => `${h.todayGain >= 0 ? '+' : ''}${h.todayGain.toFixed(2)}`, getClass: h => h.todayGain >= 0 ? 'pos' : 'neg' },
-  todayGainPct:      { label: "Today's % Gain",     getValue: h => `${h.todayGainPct >= 0 ? '+' : ''}${h.todayGainPct.toFixed(2)}%`, getClass: h => h.todayGainPct >= 0 ? 'pos' : 'neg' },
+  todayGain:         { label: "Today's Gain",       getValue: h => formatSigned(h.todayGain), getClass: h => h.todayGain < 0 ? 'neg' : '' },
+  todayGainPct:      { label: "Today's % Gain",     getValue: h => formatSignedPct(h.todayGainPct), getClass: h => h.todayGainPct < 0 ? 'neg' : '' },
   return1m:          { label: '1M Return',          getValue: () => '-' },
   return3m:          { label: '3M Return',          getValue: () => '-' },
   return1y:          { label: '1Y Return',          getValue: () => '-' },
@@ -112,11 +114,11 @@ const ALL_COLUMNS: Record<string, ColDef> = {
   roic:              { label: 'ROIC',               getValue: () => '-' },
   lastQtrGrossMargin:{ label: 'Last Qtr Gross Margin', getValue: h => h.lastQtrGrossMargin },
   shares:            { label: 'Shares',             getValue: h => h.shares },
-  cost:              { label: 'Cost',               getValue: h => h.cost.toFixed(2) },
+  cost:              { label: 'Cost',               getValue: h => formatPrice(h.cost) },
   revenue:           { label: 'Revenue',            getValue: h => h.revenue },
-  marketValue:       { label: 'Market Value',       getValue: h => (h.price * h.shares).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
-  unrealizedPL:      { label: 'Unrealized P&L',     getValue: h => { const v = (h.price - h.cost) * h.shares; return `${v >= 0 ? '+' : ''}${v.toFixed(2)}`; }, getClass: h => (h.price - h.cost) >= 0 ? 'pos' : 'neg' },
-  unrealizedPct:     { label: 'Unrealized %',       getValue: h => { const pct = ((h.price - h.cost) / h.cost) * 100; return `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%`; }, getClass: h => h.price >= h.cost ? 'pos' : 'neg' },
+  marketValue:       { label: 'Market Value',       getValue: h => formatNumber(h.price * h.shares, 2) },
+  unrealizedPL:      { label: 'Unrealized P&L',     getValue: h => { const v = (h.price - h.cost) * h.shares; return formatSigned(v); }, getClass: h => (h.price - h.cost) < 0 ? 'neg' : '' },
+  unrealizedPct:     { label: 'Unrealized %',       getValue: h => { const pct = ((h.price - h.cost) / h.cost) * 100; return formatSignedPct(pct); }, getClass: h => h.price < h.cost ? 'neg' : '' },
   debtEquity:        { label: 'Debt/Equity',        getValue: () => '-' },
   currentRatio:      { label: 'Current Ratio',      getValue: () => '-' },
   netDebt:           { label: 'Net Debt',           getValue: () => '-' },
@@ -292,11 +294,10 @@ const HEADERS = [
   'Last Qtr Revenue', 'Last Qtr Gross Margin', 'Last Qtr DOI',
 ];
 
-// Determine the text color ARGB for a cell value based on how the table renders it.
+// Determine the text color ARGB for a cell value based on its content/type.
+// No column-name hard-coding: color is inferred from the actual value.
 function getCellColor(h: Holding, col: string): string | null {
-  if (col === 'Revenue QoQ') return h.revenueQoQ.startsWith('+') ? 'FF16A34A' : 'FFDC2626';
-  if (col === 'Revenue YoY') return h.revenueYoY.startsWith('+') ? 'FF16A34A' : 'FFDC2626';
-  return null;
+  return inferColorArgb(getCellValue(h, col));
 }
 
 function getCellValue(h: Holding, col: string): string | number {
@@ -372,14 +373,15 @@ async function downloadHoldingsExcel(watchlistName: string, holdings: Holding[])
 
 // ── Subscribe Modal ───────────────────────────────────────────────────────────
 
-const LS_SUBSCRIBE_KEY = 'wl-favorites-subscribe';
-
 interface SubscribeModalProps {
   companies: string[];
+  watchlistId: number;
+  initialSubscriptions: UpdateSubscribeInfoPayload;
+  availableEvents: SubEventItem[];
   onClose: () => void;
 }
 
-function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
+function SubscribeModal({ companies, watchlistId, initialSubscriptions, availableEvents, onClose }: SubscribeModalProps) {
   const { lang } = useLanguage();
 
   const labels = {
@@ -393,7 +395,6 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
     applyToAll:      { zh: '套用至所有公司',         en: 'Apply to All Companies'      },
     save:            { zh: '儲存',                   en: 'Save'                        },
     saving:          { zh: '儲存中...',              en: 'Saving...'                   },
-    saved:           { zh: '✓ 已儲存',              en: '✓ Saved'                     },
     close:           { zh: '關閉',                   en: 'Close'                       },
     noCompanies:     { zh: '目前沒有 Favorite 公司', en: 'No favorite companies yet.'  },
     comingSoon:      { zh: '即將推出',               en: 'Coming Soon'                 },
@@ -402,6 +403,12 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
     allHint:         { zh: '在此選擇的事件將套用至所有公司',
                        en: 'Events selected here apply to all companies'              },
   };
+
+  // Sort available events by event_id ascending
+  const sortedAvailableEvents = useMemo(
+    () => [...availableEvents].sort((a, b) => a.event_id - b.event_id),
+    [availableEvents],
+  );
 
   const [subTab, setSubTab] = useState<'event' | 'view'>('event');
   // Working copy: maps coCd → set of subscribed event IDs
@@ -419,25 +426,19 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
     };
   }, []);
 
-  // Load existing subscriptions from localStorage on mount.
+  // Initialize company event map from the pre-fetched initialSubscriptions prop.
   // All companies are pre-initialized with empty Sets so they always appear
   // in the left panel regardless of whether they have stored subscriptions.
   useEffect(() => {
     const init: Record<string, Set<number>> = {};
     companies.forEach((co) => { init[co] = new Set(); });
-    try {
-      const stored = localStorage.getItem(LS_SUBSCRIBE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored) as UpdateSubscribeInfoPayload;
-        for (const entry of parsed.subscribe) {
-          if (companies.includes(entry.co_cd)) {
-            init[entry.co_cd] = new Set(entry.event);
-          }
-        }
+    for (const entry of initialSubscriptions.subscribe) {
+      if (companies.includes(entry.co_cd)) {
+        init[entry.co_cd] = new Set(entry.event);
       }
-    } catch { /* silent */ }
+    }
     setCompanyEventMap(init);
-  }, [companies]);
+  }, [companies, initialSubscriptions]);
 
   // Events visible in the right panel for the current selection
   const rightPanelEvents = useMemo<Set<number>>(() => {
@@ -459,8 +460,8 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
     return companyEventMap[selectedCo] ?? new Set<number>();
   }, [selectedCo, companyEventMap, companies]);
 
-  const allEventsSelected = EVENT_CATEGORIES_LIST.every((e) => rightPanelEvents.has(e.id));
-  const someEventsSelected = EVENT_CATEGORIES_LIST.some((e) => rightPanelEvents.has(e.id));
+  const allEventsSelected = sortedAvailableEvents.every((e) => rightPanelEvents.has(e.event_id));
+  const someEventsSelected = sortedAvailableEvents.some((e) => rightPanelEvents.has(e.event_id));
 
   // Drive the indeterminate state of the Select All checkbox via a ref + effect
   const selectAllCheckboxRef = useRef<HTMLInputElement | null>(null);
@@ -491,11 +492,11 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
       // Shallow-copy the map and only replace Sets for target companies
       const next: Record<string, Set<number>> = { ...prev };
       for (const co of targets) {
-        next[co] = checked ? new Set(EVENT_CATEGORIES_LIST.map((e) => e.id)) : new Set<number>();
+        next[co] = checked ? new Set(sortedAvailableEvents.map((e) => e.event_id)) : new Set<number>();
       }
       return next;
     });
-  }, [selectedCo, companies]);
+  }, [selectedCo, companies, sortedAvailableEvents]);
 
   // Copy the current right-panel event selection to every company
   const handleApplyToAll = useCallback(() => {
@@ -516,7 +517,7 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
           event: Array.from(companyEventMap[co] ?? []).sort((a, b) => a - b),
         }));
       const payload: UpdateSubscribeInfoPayload = { subscribe: subscribeList };
-      await updateSubscribeInfo(payload);
+      await updateSubscribeInfo(watchlistId, payload);
       setSaveSuccess(true);
       if (saveSuccessTimerRef.current !== null) clearTimeout(saveSuccessTimerRef.current);
       saveSuccessTimerRef.current = setTimeout(() => {
@@ -526,7 +527,7 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
     } finally {
       setSaving(false);
     }
-  }, [companies, companyEventMap, onClose]);
+  }, [watchlistId, companies, companyEventMap, onClose]);
 
   const getCompanyCount = (co: string) => companyEventMap[co]?.size ?? 0;
   const subscribedCoCount = companies.filter((co) => getCompanyCount(co) > 0).length;
@@ -652,14 +653,14 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
                     {selectedCo === 'all' && (
                       <div className="wl-sub-all-hint">{labels.allHint[lang]}</div>
                     )}
-                    {EVENT_CATEGORIES_LIST.map((ec) => (
-                      <label key={ec.id} className="wl-sub-event-item">
+                    {sortedAvailableEvents.map((ec) => (
+                      <label key={ec.event_id} className="wl-sub-event-item">
                         <input
                           type="checkbox"
-                          checked={rightPanelEvents.has(ec.id)}
-                          onChange={() => handleToggleEvent(ec.id)}
+                          checked={rightPanelEvents.has(ec.event_id)}
+                          onChange={() => handleToggleEvent(ec.event_id)}
                         />
-                        <span className="wl-sub-event-name">{ec.name}</span>
+                        <span className="wl-sub-event-name">{ec.event_type}</span>
                       </label>
                     ))}
                   </div>
@@ -688,7 +689,18 @@ function SubscribeModal({ companies, onClose }: SubscribeModalProps) {
               onClick={handleSave}
               disabled={saving || saveSuccess}
             >
-              {saveSuccess ? labels.saved[lang] : saving ? labels.saving[lang] : labels.save[lang]}
+              {saveSuccess ? (
+                <>
+                  <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+                    <path d="M2 7l3.5 3.5L12 3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  {lang === 'zh' ? '已儲存' : 'Saved'}
+                </>
+              ) : saving ? (
+                labels.saving[lang]
+              ) : (
+                labels.save[lang]
+              )}
             </button>
           </div>
         )}
@@ -1107,12 +1119,17 @@ function ManageViewModal({
 // ── Main page ─────────────────────────────────────────────────────────────────
 type FeedTab = 'Latest' | 'News' | 'Press Release' | 'Event';
 
+/** Number of days used as the look-back window for news/press-release and look-ahead window for events in the Latest tab. */
+const LATEST_TAB_DAYS_WINDOW = 7;
+const OFFICIAL_PRESS_RELEASE_CATEGORY = 'official press release';
+
 // ── Unified Updates feed item ─────────────────────────────────────────────────
 interface UpdateFeedItem {
   id: string;
   kind: 'news' | 'press-release' | 'event';
   title: string;
   source: string;
+  category?: string;
   displaySymbols: string[];
   dateLabel: string;
   dateMs: number;
@@ -1184,6 +1201,9 @@ export function WatchlistContent({
   showSubscribeButton = false,
 }: WatchlistContentProps) {
   const watchlistId = params.id;
+  // Numeric watchlist ID used for API calls (e.g. querySubInfoByWatchlistId, updateSubscribeInfo).
+  // For string IDs like 'favorites', defaults to 0 to match the mock watchlistId in stubs.
+  const numericWatchlistId: number = Number.isInteger(Number(watchlistId)) ? Number(watchlistId) : 0;
   const { watchlistNames, setWatchlistName, symbolOrders, setSymbolOrder, favorites, toggleFavorite, dynamicWatchlists, deletedWatchlists, deleteWatchlist: contextDeleteWatchlist, refreshApiWatchlists } = useWatchlist();
   const router = useRouter();
   const { lang } = useLanguage();
@@ -1246,6 +1266,11 @@ export function WatchlistContent({
   const [showManageView, setShowManageView] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showSubscribe, setShowSubscribe] = useState(false);
+  // Subscribe modal data — loaded by calling APIs when the button is clicked
+  const [subscribeLoading, setSubscribeLoading] = useState(false);
+  const [subscribeError, setSubscribeError] = useState(false);
+  const [subscribeInitialData, setSubscribeInitialData] = useState<UpdateSubscribeInfoPayload>({ subscribe: [] });
+  const [subscribeAvailableEvents, setSubscribeAvailableEvents] = useState<SubEventItem[]>([]);
 
   // Manage Alerts toggles
   const [newsAlert, setNewsAlert] = useState(true);
@@ -1799,6 +1824,7 @@ export function WatchlistContent({
       kind: 'news' as const,
       title: item.title,
       source: item.source,
+      category: item.category?.trim().toLowerCase() ?? '',
       displaySymbols: item.tags.filter((t) => watchlistSymbolSet.has(t.symbol)).map((t) => t.symbol),
       dateLabel: item.publishedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       dateMs: item.publishedAt.getTime(),
@@ -1819,6 +1845,7 @@ export function WatchlistContent({
         dateLabel: pr.publishedAt,
         dateMs: new Date(pr.publishedAt).getTime(),
         description: pr.summary,
+        url: pr.url,
       })),
     [watchlistSymbolSet],
   );
@@ -1848,11 +1875,31 @@ export function WatchlistContent({
     return items.sort((a, b) => b.dateMs - a.dateMs);
   }, [watchlistSymbolSet]);
 
-  const latestUpdateItems = useMemo(
-    (): UpdateFeedItem[] =>
-      [...newsUpdateItems, ...prUpdateItems, ...eventUpdateItems].sort((a, b) => b.dateMs - a.dateMs),
-    [newsUpdateItems, prUpdateItems, eventUpdateItems],
-  );
+  const latestUpdateItems = useMemo((): UpdateFeedItem[] => {
+    const nowMs = Date.now();
+    const windowMs = LATEST_TAB_DAYS_WINDOW * 24 * 60 * 60 * 1000;
+
+    // News: only items published within the last LATEST_TAB_DAYS_WINDOW days
+    // and exclude Official Press Release to avoid duplication with Press Release feed.
+    const recentNews = newsUpdateItems.filter(
+      (item) =>
+        item.dateMs >= nowMs - windowMs &&
+        item.dateMs <= nowMs &&
+        item.category !== OFFICIAL_PRESS_RELEASE_CATEGORY,
+    );
+
+    // Press Release: only items published within the last LATEST_TAB_DAYS_WINDOW days.
+    const recentPressReleases = prUpdateItems.filter(
+      (item) => item.dateMs >= nowMs - windowMs && item.dateMs <= nowMs,
+    );
+
+    // Events: only items occurring from now through the next LATEST_TAB_DAYS_WINDOW days.
+    const upcomingEvents = eventUpdateItems.filter(
+      (item) => item.dateMs >= nowMs && item.dateMs <= nowMs + windowMs,
+    );
+
+    return [...recentNews, ...recentPressReleases, ...upcomingEvents].sort((a, b) => b.dateMs - a.dateMs);
+  }, [newsUpdateItems, prUpdateItems, eventUpdateItems]);
 
   const currentUpdateItems: UpdateFeedItem[] =
     feedTab === 'Latest' ? latestUpdateItems
@@ -1961,13 +2008,48 @@ export function WatchlistContent({
               <div className="wl-action-btns">
                 {/* Subscribe button — Favorites page only */}
                 {showSubscribeButton && (
-                  <button className="wl-action-btn" onClick={() => setShowSubscribe(true)}>
-                    <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
-                      <path d="M7 1.5a4 4 0 0 0-4 4v2.5L2 9.5h10l-1-1.5V5.5a4 4 0 0 0-4-4Z"
-                        stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M5.5 9.5a1.5 1.5 0 0 0 3 0" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-                    </svg>
-                    <span className="wl-action-btn-label">{lang === 'zh' ? '訂閱' : 'Subscribe'}</span>
+                  <button
+                    className="wl-action-btn"
+                    disabled={subscribeLoading}
+                    onClick={async () => {
+                      setSubscribeLoading(true);
+                      setSubscribeError(false);
+                      try {
+                        const [subInfo, subItems] = await Promise.all([
+                          querySubInfoByWatchlistId({ watchlistId: numericWatchlistId }),
+                          getSubItem(),
+                        ]);
+                        setSubscribeInitialData(subInfo);
+                        setSubscribeAvailableEvents(subItems.event);
+                        setShowSubscribe(true);
+                      } catch {
+                        setSubscribeError(true);
+                      } finally {
+                        setSubscribeLoading(false);
+                      }
+                    }}
+                  >
+                    {subscribeLoading ? (
+                      <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true" className="wl-action-btn-spinner">
+                        <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.4" strokeDasharray="20 12" strokeLinecap="round" />
+                      </svg>
+                    ) : subscribeError ? (
+                      <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+                        <path d="M7 2v5M7 10v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                        <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.3" />
+                      </svg>
+                    ) : (
+                      <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+                        <path d="M7 1.5a4 4 0 0 0-4 4v2.5L2 9.5h10l-1-1.5V5.5a4 4 0 0 0-4-4Z"
+                          stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M5.5 9.5a1.5 1.5 0 0 0 3 0" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                      </svg>
+                    )}
+                    <span className="wl-action-btn-label">
+                      {subscribeError
+                        ? (lang === 'zh' ? '載入失敗' : 'Load failed')
+                        : (lang === 'zh' ? '訂閱' : 'Subscribe')}
+                    </span>
                   </button>
                 )}
                 <button className="wl-action-btn" onClick={() => setShowAddSymbol(true)}>
@@ -2208,7 +2290,7 @@ export function WatchlistContent({
 
               {/* Feed tabs */}
               <div className="wl-feed-tabs">
-                {(['Latest', 'News', 'Event'] as const).map((t) => (
+                {(['Latest', 'News', 'Press Release', 'Event'] as const).map((t) => (
                   <button
                     key={t}
                     className={`wl-feed-tab${feedTab === t ? ' active' : ''}`}
@@ -2217,35 +2299,11 @@ export function WatchlistContent({
                     {t}
                   </button>
                 ))}
-                <button
-                  className="wl-feed-tab wl-feed-tab--coming-soon"
-                  aria-disabled="true"
-                  tabIndex={-1}
-                >
-                  Press Release
-                  <span className="wl-feed-tab-cs-overlay" aria-hidden="true">
-                    <span className="wl-feed-tab-cs-inner" aria-hidden="true" />
-                    <svg className="wl-feed-tab-cs-lock" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                      <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                      <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <circle cx="12" cy="16" r="1.2" fill="currentColor" />
-                    </svg>
-                  </span>
-                </button>
               </div>
 
               {/* Feed list */}
               <div className="wl-feed-list">
-                {feedTab === 'Press Release' ? (
-                  <div className="wl-feed-coming-soon">
-                    <svg viewBox="0 0 24 24" fill="none" width="32" height="32" aria-hidden="true">
-                      <circle cx="12" cy="12" r="10" stroke="#9ca3af" strokeWidth="1.5" fill="none" />
-                      <path d="M12 7v5l3 3" stroke="#9ca3af" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    <span className="wl-feed-coming-soon-title">Coming Soon</span>
-                    <span className="wl-feed-coming-soon-desc">Press Release content is under development and will be available soon.</span>
-                  </div>
-                ) : feedTab === 'News' ? (
+                {feedTab === 'News' ? (
                   filteredNewsItems.length === 0 ? (
                     <div className="wl-feed-empty">No news found for your watchlist companies.</div>
                   ) : (
@@ -2298,9 +2356,10 @@ export function WatchlistContent({
                       {item.kind === 'news' ? <NewsAvatar /> : item.kind === 'press-release' ? (
                         <div className="wl-feed-avatar wl-feed-avatar--pr">
                           <svg viewBox="0 0 28 28" fill="none" width="28" height="28" aria-hidden="true">
-                            <circle cx="14" cy="14" r="14" fill="#dbeafe" />
-                            <rect x="8" y="8" width="12" height="12" rx="2" stroke="#2563eb" strokeWidth="1.4" fill="none" />
-                            <path d="M10 12h8M10 15h6" stroke="#2563eb" strokeWidth="1.3" strokeLinecap="round" />
+                            <circle cx="14" cy="14" r="14" fill="#f3e8ff" />
+                            <path d="M8 14.2V10.1c0-.7.57-1.2 1.2-1.2h1.4l5.4-2.4c.8-.35 1.7.23 1.7 1.1v9.2c0 .87-.9 1.45-1.7 1.1l-5.4-2.4H9.2c-.63 0-1.2-.5-1.2-1.2Z" stroke="#7c3aed" strokeWidth="1.3" strokeLinejoin="round" />
+                            <path d="M10.6 15.5L11.9 19c.18.48.72.72 1.2.54l1.05-.39" stroke="#7c3aed" strokeWidth="1.2" strokeLinecap="round" />
+                            <path d="M19 10.2a2.8 2.8 0 0 1 0 5.6" stroke="#7c3aed" strokeWidth="1.2" strokeLinecap="round" />
                           </svg>
                         </div>
                       ) : (
@@ -2321,7 +2380,19 @@ export function WatchlistContent({
                             ) : item.title}
                           </div>
                           <div className="wl-feed-meta">
-                            <span className="wl-event-contact-name">{item.contactName}</span>
+                            <span className="wl-feed-company-tags">
+                              {item.displaySymbols.map((sym) => (
+                                <a
+                                  key={`${item.id}-company-${sym}`}
+                                  href={`/lego/company-profile/${sym}/`}
+                                  className="wl-feed-company-tag"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  {companyNameMap.get(sym) ?? sym}
+                                </a>
+                              ))}
+                            </span>
                             <span className="wl-feed-dot">•</span>
                             <span className="wl-event-event-type">{item.source}</span>
                             <span className="wl-feed-dot">•</span>
@@ -2354,6 +2425,24 @@ export function WatchlistContent({
                                 </span>
                               ))}
                             </span>
+                            {item.displaySymbols.length > 0 && (
+                              <>
+                                <span className="wl-feed-dot">•</span>
+                                <span className="wl-feed-company-tags">
+                                  {item.displaySymbols.map((sym) => (
+                                    <a
+                                      key={`${item.id}-company-${sym}`}
+                                      href={`/lego/company-profile/${sym}/`}
+                                      className="wl-feed-company-tag"
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      {companyNameMap.get(sym) ?? sym}
+                                    </a>
+                                  ))}
+                                </span>
+                              </>
+                            )}
                             <span className="wl-feed-dot">•</span>
                             <span className="wl-feed-source">{item.source}</span>
                             <span className="wl-feed-dot">•</span>
@@ -2576,6 +2665,9 @@ export function WatchlistContent({
       {showSubscribeButton && showSubscribe && (
         <SubscribeModal
           companies={sortedHoldings.map((h) => h.symbol)}
+          watchlistId={numericWatchlistId}
+          initialSubscriptions={subscribeInitialData}
+          availableEvents={subscribeAvailableEvents}
           onClose={() => setShowSubscribe(false)}
         />
       )}

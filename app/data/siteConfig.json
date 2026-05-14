@@ -1,0 +1,4 @@
+{
+  "SITE_BASE_PATH": "/lego",
+  "EXTRA_COMPANY_PROFILE_SYMBOLS": ["BRK-B", "MCD", "SMH", "TC"]
+}
