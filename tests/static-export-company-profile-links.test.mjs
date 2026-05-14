@@ -34,7 +34,7 @@ function findMissingCompanyProfilePages() {
 
     for (const match of html.matchAll(hrefPattern)) {
       const href = match[1];
-      const routePath = href.slice('/lego/'.length);
+      const routePath = href.slice(SITE_BASE_PATH.length + 1);
       const targetPath = path.join(outDir, routePath, 'index.html');
 
       if (!fs.existsSync(targetPath)) {
