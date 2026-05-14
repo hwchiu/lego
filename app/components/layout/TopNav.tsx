@@ -35,6 +35,12 @@ const COMPANY_MASTER_LC = COMPANY_MASTER_LIST.map((c) => ({
   isFinAlive: getCompanyByCode(c.symbol)?.IS_FIN_ALIVE === 'Y',
 }));
 
+interface SearchCompanyOption {
+  symbol: string;
+  name: string;
+  isFinAlive: boolean;
+}
+
 // ── Financial Indices chart helpers ─────────────────────────────────────────
 
 const FIN_INDICES = [
@@ -457,14 +463,66 @@ export default function TopNav() {
     });
   }, []);
 
+  const [mockResults, setMockResults] = useState<SearchResultItem[]>([]);
+  useEffect(() => {
+    let cancelled = false;
+    const trimmedQuery = query.trim();
+
+    if (!trimmedQuery) {
+      setMockResults([]);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    getElshResult(trimmedQuery)
+      .then((results) => {
+        if (!cancelled) setMockResults(results);
+      })
+      .catch(() => {
+        if (!cancelled) setMockResults([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [query]);
+
   const q = query.trim().toLowerCase();
   const showDropdown = focused && (q.length > 0 || pinnedCards.length > 0);
 
-  // Filter companies by query (company search only)
-  const filteredCompanies =
+  // Filter company master by query (fallback when API has no company docs)
+  const filteredMasterCompanies: SearchCompanyOption[] =
     q.length > 0
-      ? COMPANY_MASTER_LC.filter((c) => c.symbolLc.includes(q) || c.nameLc.includes(q)).slice(0, 8)
+      ? COMPANY_MASTER_LC.filter((c) => c.symbolLc.includes(q) || c.nameLc.includes(q))
+          .slice(0, 8)
+          .map((c) => ({
+            symbol: c.symbol,
+            name: c.name,
+            isFinAlive: c.isFinAlive,
+          }))
       : [];
+
+  const apiCompanies = useMemo<SearchCompanyOption[]>(() => {
+    if (q.length === 0) return [];
+    const unique = new Map<string, SearchCompanyOption>();
+
+    mockResults
+      .filter((r) => r.doc_type === 'company')
+      .forEach((r) => {
+        const symbol = (r.co_cd ?? '').trim().toUpperCase();
+        if (!symbol) return;
+        if (unique.has(symbol)) return;
+        const name = (r.company_name || r.company_short_name || symbol).trim();
+        const isFinAlive = getCompanyByCode(symbol)?.IS_FIN_ALIVE === 'Y';
+        unique.set(symbol, { symbol, name, isFinAlive });
+      });
+
+    return Array.from(unique.values()).slice(0, 8);
+  }, [mockResults, q]);
+
+  // Prefer API "company" docs; fallback to company master only when API has no company results.
+  const filteredCompanies = apiCompanies.length > 0 ? apiCompanies : filteredMasterCompanies;
 
   // Financial Indices chart result — shown when query contains company name/symbol + year range
   const finIndicesResult = useMemo(() => {
@@ -517,30 +575,6 @@ export default function TopNav() {
     setExpandedFinIdxSymbol((prev) => (prev === symbol ? null : symbol));
   }, []);
 
-  const [mockResults, setMockResults] = useState<SearchResultItem[]>([]);
-  useEffect(() => {
-    let cancelled = false;
-    const trimmedQuery = query.trim();
-
-    if (!trimmedQuery) {
-      setMockResults([]);
-      return () => {
-        cancelled = true;
-      };
-    }
-
-    getElshResult(trimmedQuery)
-      .then((results) => {
-        if (!cancelled) setMockResults(results);
-      })
-      .catch(() => {
-        if (!cancelled) setMockResults([]);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [query]);
   const mockEvents = useMemo(
     () =>
       mockResults
@@ -607,7 +641,7 @@ export default function TopNav() {
   };
 
   // Reusable company list JSX — used in both "Company" tab and "All" tab
-  function renderCompanyList(companies: typeof filteredCompanies) {
+  function renderCompanyList(companies: SearchCompanyOption[]) {
     if (companies.length === 0) return null;
     return (
       <ul className="search-popular-list">
