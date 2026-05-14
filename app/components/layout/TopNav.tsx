@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback, useMemo, type ReactNode } from 'react';
+import { Fragment, useState, useRef, useEffect, useCallback, useMemo, type ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
@@ -355,8 +355,8 @@ function renderHighlightedText(text: string, query: string): ReactNode {
   return parts.map((part, index) => {
     const isMatch = uniqueTerms.includes(part.toLowerCase());
     return isMatch
-      ? <mark key={`${part}-${index}`} className="search-result-highlight">{part}</mark>
-      : part;
+      ? <mark key={index} className="search-result-highlight">{part}</mark>
+      : <Fragment key={index}>{part}</Fragment>;
   });
 }
 
