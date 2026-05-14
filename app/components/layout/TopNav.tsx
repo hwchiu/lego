@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo, type ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
@@ -318,6 +318,7 @@ type SearchTabType = 'all' | 'company' | 'event' | 'news';
 interface EventNewsCardProps {
   item: SearchResultItem;
   lang: 'zh' | 'en';
+  query: string;
 }
 
 // Matches protocol-less domain strings that start with dot-separated host labels
@@ -333,7 +334,33 @@ function normalizeSearchResultUrl(url: string): string {
   return value;
 }
 
-function EventNewsCard({ item, lang }: EventNewsCardProps) {
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function renderHighlightedText(text: string, query: string): ReactNode {
+  const terms = query
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((term) => term.toLowerCase());
+
+  if (terms.length === 0) return text;
+
+  const uniqueTerms = Array.from(new Set(terms)).sort((a, b) => b.length - a.length);
+  const regex = new RegExp(`(${uniqueTerms.map(escapeRegExp).join('|')})`, 'gi');
+  const parts = text.split(regex);
+  if (parts.length === 1) return text;
+
+  return parts.map((part, index) => {
+    const isMatch = uniqueTerms.includes(part.toLowerCase());
+    return isMatch
+      ? <mark key={`${part}-${index}`} className="search-result-highlight">{part}</mark>
+      : part;
+  });
+}
+
+function EventNewsCard({ item, lang, query }: EventNewsCardProps) {
   const dateStr = item.datetime
     ? new Date(item.datetime).toLocaleDateString(
         lang === 'en' ? 'en-US' : 'zh-TW',
@@ -349,13 +376,17 @@ function EventNewsCard({ item, lang }: EventNewsCardProps) {
       rel="noopener noreferrer"
       onMouseDown={(e) => e.stopPropagation()}
     >
-      <div className="search-result-card-title">{item.title}</div>
+      <div className="search-result-card-title">{renderHighlightedText(item.title, query)}</div>
       <div className="search-result-card-meta">
         {item.company_short_name && (
-          <span className="news-tag search-result-card-tag">{item.company_short_name}</span>
+          <span className="news-tag search-result-card-tag">
+            {renderHighlightedText(item.company_short_name, query)}
+          </span>
         )}
         {item.category && (
-          <span className="search-result-card-category">{item.category}</span>
+          <span className="search-result-card-category">
+            {renderHighlightedText(item.category, query)}
+          </span>
         )}
         {dateStr && (
           <span className="search-result-card-date">{dateStr}</span>
@@ -641,7 +672,7 @@ export default function TopNav() {
   };
 
   // Reusable company list JSX — used in both "Company" tab and "All" tab
-  function renderCompanyList(companies: SearchCompanyOption[]) {
+  function renderCompanyList(companies: SearchCompanyOption[], searchQuery: string) {
     if (companies.length === 0) return null;
     return (
       <ul className="search-popular-list">
@@ -659,7 +690,8 @@ export default function TopNav() {
                   <rect x="1.5" y="2" width="10" height="9" rx="1" stroke="currentColor" strokeWidth="1.2" />
                   <path d="M4 5h5M4 7.5h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
                 </svg>
-                <strong>{company.symbol}</strong>&nbsp;{company.name}
+                <strong>{renderHighlightedText(company.symbol, searchQuery)}</strong>
+                &nbsp;{renderHighlightedText(company.name, searchQuery)}
               </button>
               {company.isFinAlive && (
                 <button
@@ -813,7 +845,7 @@ export default function TopNav() {
                           <div className="search-dropdown-section-label">
                             {tabLabels.company[lang]}
                           </div>
-                          {renderCompanyList(filteredCompanies.slice(0, 3))}
+                          {renderCompanyList(filteredCompanies.slice(0, 3), query)}
                         </div>
                       )}
 
@@ -825,7 +857,7 @@ export default function TopNav() {
                           </div>
                           <div className="search-result-cards">
                             {mockEvents.slice(0, 3).map((item) => (
-                              <EventNewsCard key={item.id} item={item} lang={lang} />
+                              <EventNewsCard key={item.id} item={item} lang={lang} query={query} />
                             ))}
                           </div>
                         </div>
@@ -839,7 +871,7 @@ export default function TopNav() {
                           </div>
                           <div className="search-result-cards">
                             {mockNews.slice(0, 3).map((item) => (
-                              <EventNewsCard key={item.id} item={item} lang={lang} />
+                              <EventNewsCard key={item.id} item={item} lang={lang} query={query} />
                             ))}
                           </div>
                         </div>
@@ -890,7 +922,7 @@ export default function TopNav() {
                   {searchTab === 'company' && (
                     <div className="search-dropdown-section">
                       {filteredCompanies.length > 0
-                        ? renderCompanyList(filteredCompanies)
+                        ? renderCompanyList(filteredCompanies, query)
                         : (
                           <div className="search-result-empty">
                             {lang === 'zh' ? '找不到相關公司' : 'No companies found'}
@@ -937,7 +969,7 @@ export default function TopNav() {
                         ? (
                           <div className="search-result-cards">
                             {mockEvents.map((item) => (
-                              <EventNewsCard key={item.id} item={item} lang={lang} />
+                              <EventNewsCard key={item.id} item={item} lang={lang} query={query} />
                             ))}
                           </div>
                         )
@@ -956,7 +988,7 @@ export default function TopNav() {
                         ? (
                           <div className="search-result-cards">
                             {mockNews.map((item) => (
-                              <EventNewsCard key={item.id} item={item} lang={lang} />
+                              <EventNewsCard key={item.id} item={item} lang={lang} query={query} />
                             ))}
                           </div>
                         )

@@ -640,6 +640,12 @@ select {
   white-space: nowrap;
   margin-left: auto;
 }
+.search-result-highlight {
+  background: #fef08a;
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 1px;
+}
 .search-result-empty {
   padding: 12px 0;
   font-size: 13px;
