@@ -25,6 +25,7 @@
   --c-badge-pr-text: #6d28d9;
   --c-badge-event-bg: #fef3c7;
   --c-badge-event-text: #92400e;
+  --c-highlight: #fef08a;
   --c-company-tag-border: #cbd5e1;
   --c-company-tag-bg: #f8fafc;
   --c-company-tag-text: #334155;
@@ -641,7 +642,7 @@ select {
   margin-left: auto;
 }
 .search-result-highlight {
-  background: #fef08a;
+  background: var(--c-highlight);
   color: inherit;
   border-radius: 2px;
   padding: 0 1px;
