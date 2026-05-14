@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: search-backend
+  elasticsearch:
+    uris: http://localhost:9200
+    connection-timeout: 5s
+    socket-timeout: 30s
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.mic.search: DEBUG
+    org.springframework.data.elasticsearch: INFO

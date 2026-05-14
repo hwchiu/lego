@@ -1,0 +1,37 @@
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "ngram_analyzer": {
+          "type": "custom",
+          "tokenizer": "ngram_tokenizer",
+          "filter": ["lowercase"]
+        }
+      },
+      "tokenizer": {
+        "ngram_tokenizer": {
+          "type": "ngram",
+          "min_gram": 2,
+          "max_gram": 3,
+          "token_chars": ["letter", "digit"]
+        }
+      }
+    },
+    "index": {
+      "max_ngram_diff": 2
+    }
+  },
+  "mappings": {
+    "properties": {
+      "id":                 { "type": "keyword" },
+      "co_cd":              { "type": "text", "analyzer": "ngram_analyzer", "search_analyzer": "standard",
+                              "fields": { "keyword": { "type": "keyword" } } },
+      "company_name":       { "type": "text", "analyzer": "ngram_analyzer", "search_analyzer": "standard" },
+      "company_short_name": { "type": "text", "analyzer": "ngram_analyzer", "search_analyzer": "standard" },
+      "title":              { "type": "text", "analyzer": "ngram_analyzer", "search_analyzer": "standard" },
+      "content":            { "type": "text", "analyzer": "ngram_analyzer", "search_analyzer": "standard" },
+      "date":               { "type": "keyword" },
+      "category":           { "type": "keyword" }
+    }
+  }
+}
