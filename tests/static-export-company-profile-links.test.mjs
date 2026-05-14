@@ -1,0 +1,88 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import siteConfig from '../app/data/siteConfig.json' with { type: 'json' };
+
+const repoRoot = path.resolve(import.meta.dirname, '..');
+const outDir = path.join(repoRoot, 'out');
+const { EXTRA_COMPANY_PROFILE_SYMBOLS, SITE_BASE_PATH } = siteConfig;
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function collectHtmlFiles(dir) {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+  return entries.flatMap((entry) => {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      return collectHtmlFiles(fullPath);
+    }
+
+    return entry.isFile() && entry.name.endsWith('.html') ? [fullPath] : [];
+  });
+}
+
+function findMissingCompanyProfilePages() {
+  if (!fs.existsSync(outDir)) {
+    throw new Error('Static export not found. Run `npm run build` before running this test.');
+  }
+
+  const htmlFiles = collectHtmlFiles(outDir);
+  const missing = new Set();
+  const hrefPattern = new RegExp(`href="(${escapeRegExp(SITE_BASE_PATH)}/company-profile/[A-Z0-9-]+/)"`, 'g');
+
+  for (const htmlFile of htmlFiles) {
+    const html = fs.readFileSync(htmlFile, 'utf8');
+
+    for (const match of html.matchAll(hrefPattern)) {
+      const href = match[1];
+      if (!href.startsWith(SITE_BASE_PATH)) {
+        continue;
+      }
+      const routePath = href.slice(SITE_BASE_PATH.length + 1);
+      const targetPath = path.join(outDir, routePath, 'index.html');
+
+      if (!fs.existsSync(targetPath)) {
+        missing.add(href);
+      }
+    }
+  }
+
+  return [...missing].sort();
+}
+
+function findUnreferencedExtraSymbols() {
+  if (!fs.existsSync(outDir)) {
+    throw new Error('Static export not found. Run `npm run build` before running this test.');
+  }
+
+  const htmlFiles = collectHtmlFiles(outDir);
+  const referencedSymbols = new Set();
+
+  for (const htmlFile of htmlFiles) {
+    const html = fs.readFileSync(htmlFile, 'utf8');
+
+    for (const symbol of EXTRA_COMPANY_PROFILE_SYMBOLS) {
+      if (html.includes(`${SITE_BASE_PATH}/company-profile/${symbol}/`)) {
+        referencedSymbols.add(symbol);
+      }
+    }
+  }
+
+  return EXTRA_COMPANY_PROFILE_SYMBOLS.filter((symbol) => !referencedSymbols.has(symbol));
+}
+
+test('static export includes every linked company profile page', () => {
+  const missingPages = findMissingCompanyProfilePages();
+
+  assert.deepEqual(missingPages, []);
+});
+
+test('extra exported company profile symbols are still referenced by the app', () => {
+  const unreferencedSymbols = findUnreferencedExtraSymbols();
+
+  assert.deepEqual(unreferencedSymbols, []);
+});
