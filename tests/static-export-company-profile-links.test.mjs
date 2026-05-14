@@ -2,10 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import { EXTRA_COMPANY_PROFILE_SYMBOLS, SITE_BASE_PATH } from '../app/data/siteConfig.mjs';
 
 const repoRoot = path.resolve(import.meta.dirname, '..');
 const outDir = path.join(repoRoot, 'out');
-const extraCompanyProfileSymbols = ['BRK-B', 'MCD', 'SMH', 'TC'];
 
 function collectHtmlFiles(dir) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -27,7 +27,7 @@ function findMissingCompanyProfilePages() {
 
   const htmlFiles = collectHtmlFiles(outDir);
   const missing = new Set();
-  const hrefPattern = /href="(\/lego\/company-profile\/[^"?#]+\/)"/g;
+  const hrefPattern = new RegExp(`href="(${SITE_BASE_PATH}/company-profile/[^"?#]+/)"`, 'g');
 
   for (const htmlFile of htmlFiles) {
     const html = fs.readFileSync(htmlFile, 'utf8');
@@ -57,14 +57,14 @@ function findUnreferencedExtraSymbols() {
   for (const htmlFile of htmlFiles) {
     const html = fs.readFileSync(htmlFile, 'utf8');
 
-    for (const symbol of extraCompanyProfileSymbols) {
-      if (html.includes(`/lego/company-profile/${symbol}/`)) {
+    for (const symbol of EXTRA_COMPANY_PROFILE_SYMBOLS) {
+      if (html.includes(`${SITE_BASE_PATH}/company-profile/${symbol}/`)) {
         referencedSymbols.add(symbol);
       }
     }
   }
 
-  return extraCompanyProfileSymbols.filter((symbol) => !referencedSymbols.has(symbol));
+  return EXTRA_COMPANY_PROFILE_SYMBOLS.filter((symbol) => !referencedSymbols.has(symbol));
 }
 
 test('static export includes every linked company profile page', () => {
