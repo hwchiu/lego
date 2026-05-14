@@ -2,10 +2,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { EXTRA_COMPANY_PROFILE_SYMBOLS, SITE_BASE_PATH } from '../app/data/siteConfig.mjs';
+import siteConfig from '../app/data/siteConfig.json' with { type: 'json' };
 
 const repoRoot = path.resolve(import.meta.dirname, '..');
 const outDir = path.join(repoRoot, 'out');
+const { EXTRA_COMPANY_PROFILE_SYMBOLS, SITE_BASE_PATH } = siteConfig;
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 function collectHtmlFiles(dir) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -27,7 +32,7 @@ function findMissingCompanyProfilePages() {
 
   const htmlFiles = collectHtmlFiles(outDir);
   const missing = new Set();
-  const hrefPattern = new RegExp(`href="(${SITE_BASE_PATH}/company-profile/[A-Z0-9-]+/)"`, 'g');
+  const hrefPattern = new RegExp(`href="(${escapeRegExp(SITE_BASE_PATH)}/company-profile/[A-Z0-9-]+/)"`, 'g');
 
   for (const htmlFile of htmlFiles) {
     const html = fs.readFileSync(htmlFile, 'utf8');

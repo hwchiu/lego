@@ -1,7 +1,10 @@
 import { Suspense } from 'react';
 import CompanyProfileContent from './CompanyProfileContent';
 import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
-import { EXTRA_COMPANY_PROFILE_SYMBOLS } from '@/app/data/siteConfig.mjs';
+import siteConfig from '@/app/data/siteConfig.json';
+
+// These overrides keep already-linked preview/non-master symbols exported until company_master.md includes them.
+const { EXTRA_COMPANY_PROFILE_SYMBOLS } = siteConfig;
 
 // Pre-render all known company symbols for static export
 export function generateStaticParams() {
