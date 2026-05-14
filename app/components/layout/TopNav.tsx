@@ -318,7 +318,7 @@ type SearchTabType = 'all' | 'company' | 'event' | 'news';
 interface EventNewsCardProps {
   item: SearchResultItem;
   lang: 'zh' | 'en';
-  query: string;
+  highlightQuery: HighlightQuery;
 }
 
 // Matches protocol-less domain strings that start with dot-separated host labels
@@ -334,33 +334,47 @@ function normalizeSearchResultUrl(url: string): string {
   return value;
 }
 
-function escapeRegExp(value: string): string {
+function escapeRegExpSpecialChars(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-function renderHighlightedText(text: string, query: string): ReactNode {
+interface HighlightQuery {
+  regex: RegExp | null;
+  terms: Set<string>;
+}
+
+function buildHighlightQuery(query: string): HighlightQuery {
   const terms = query
     .trim()
     .split(/\s+/)
     .filter(Boolean)
     .map((term) => term.toLowerCase());
 
-  if (terms.length === 0) return text;
+  if (terms.length === 0) {
+    return { regex: null, terms: new Set() };
+  }
 
   const uniqueTerms = Array.from(new Set(terms)).sort((a, b) => b.length - a.length);
-  const regex = new RegExp(`(${uniqueTerms.map(escapeRegExp).join('|')})`, 'gi');
-  const parts = text.split(regex);
+  return {
+    regex: new RegExp(`(${uniqueTerms.map(escapeRegExpSpecialChars).join('|')})`, 'gi'),
+    terms: new Set(uniqueTerms),
+  };
+}
+
+function renderHighlightedText(text: string, highlightQuery: HighlightQuery): ReactNode {
+  if (!highlightQuery.regex || highlightQuery.terms.size === 0) return text;
+  const parts = text.split(highlightQuery.regex);
   if (parts.length === 1) return text;
 
   return parts.map((part, index) => {
-    const isMatch = uniqueTerms.includes(part.toLowerCase());
+    const isMatch = highlightQuery.terms.has(part.toLowerCase());
     return isMatch
       ? <mark key={index} className="search-result-highlight">{part}</mark>
       : <Fragment key={index}>{part}</Fragment>;
   });
 }
 
-function EventNewsCard({ item, lang, query }: EventNewsCardProps) {
+function EventNewsCard({ item, lang, highlightQuery }: EventNewsCardProps) {
   const dateStr = item.datetime
     ? new Date(item.datetime).toLocaleDateString(
         lang === 'en' ? 'en-US' : 'zh-TW',
@@ -376,16 +390,16 @@ function EventNewsCard({ item, lang, query }: EventNewsCardProps) {
       rel="noopener noreferrer"
       onMouseDown={(e) => e.stopPropagation()}
     >
-      <div className="search-result-card-title">{renderHighlightedText(item.title, query)}</div>
+      <div className="search-result-card-title">{renderHighlightedText(item.title, highlightQuery)}</div>
       <div className="search-result-card-meta">
         {item.company_short_name && (
           <span className="news-tag search-result-card-tag">
-            {renderHighlightedText(item.company_short_name, query)}
+            {renderHighlightedText(item.company_short_name, highlightQuery)}
           </span>
         )}
         {item.category && (
           <span className="search-result-card-category">
-            {renderHighlightedText(item.category, query)}
+            {renderHighlightedText(item.category, highlightQuery)}
           </span>
         )}
         {dateStr && (
@@ -620,6 +634,7 @@ export default function TopNav() {
         .sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime()),
     [mockResults],
   );
+  const highlightQuery = useMemo(() => buildHighlightQuery(query), [query]);
 
   // Debounce query for "See all results" button
   useEffect(() => {
@@ -672,7 +687,7 @@ export default function TopNav() {
   };
 
   // Reusable company list JSX — used in both "Company" tab and "All" tab
-  function renderCompanyList(companies: SearchCompanyOption[], searchQuery: string) {
+  function renderCompanyList(companies: SearchCompanyOption[]) {
     if (companies.length === 0) return null;
     return (
       <ul className="search-popular-list">
@@ -690,8 +705,8 @@ export default function TopNav() {
                   <rect x="1.5" y="2" width="10" height="9" rx="1" stroke="currentColor" strokeWidth="1.2" />
                   <path d="M4 5h5M4 7.5h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
                 </svg>
-                <strong>{renderHighlightedText(company.symbol, searchQuery)}</strong>
-                &nbsp;{renderHighlightedText(company.name, searchQuery)}
+                <strong>{renderHighlightedText(company.symbol, highlightQuery)}</strong>
+                &nbsp;{renderHighlightedText(company.name, highlightQuery)}
               </button>
               {company.isFinAlive && (
                 <button
@@ -845,7 +860,7 @@ export default function TopNav() {
                           <div className="search-dropdown-section-label">
                             {tabLabels.company[lang]}
                           </div>
-                          {renderCompanyList(filteredCompanies.slice(0, 3), query)}
+                          {renderCompanyList(filteredCompanies.slice(0, 3))}
                         </div>
                       )}
 
@@ -857,7 +872,7 @@ export default function TopNav() {
                           </div>
                           <div className="search-result-cards">
                             {mockEvents.slice(0, 3).map((item) => (
-                              <EventNewsCard key={item.id} item={item} lang={lang} query={query} />
+                              <EventNewsCard key={item.id} item={item} lang={lang} highlightQuery={highlightQuery} />
                             ))}
                           </div>
                         </div>
@@ -871,7 +886,7 @@ export default function TopNav() {
                           </div>
                           <div className="search-result-cards">
                             {mockNews.slice(0, 3).map((item) => (
-                              <EventNewsCard key={item.id} item={item} lang={lang} query={query} />
+                              <EventNewsCard key={item.id} item={item} lang={lang} highlightQuery={highlightQuery} />
                             ))}
                           </div>
                         </div>
@@ -922,7 +937,7 @@ export default function TopNav() {
                   {searchTab === 'company' && (
                     <div className="search-dropdown-section">
                       {filteredCompanies.length > 0
-                        ? renderCompanyList(filteredCompanies, query)
+                        ? renderCompanyList(filteredCompanies)
                         : (
                           <div className="search-result-empty">
                             {lang === 'zh' ? '找不到相關公司' : 'No companies found'}
@@ -969,7 +984,7 @@ export default function TopNav() {
                         ? (
                           <div className="search-result-cards">
                             {mockEvents.map((item) => (
-                              <EventNewsCard key={item.id} item={item} lang={lang} query={query} />
+                              <EventNewsCard key={item.id} item={item} lang={lang} highlightQuery={highlightQuery} />
                             ))}
                           </div>
                         )
@@ -988,7 +1003,7 @@ export default function TopNav() {
                         ? (
                           <div className="search-result-cards">
                             {mockNews.map((item) => (
-                              <EventNewsCard key={item.id} item={item} lang={lang} query={query} />
+                              <EventNewsCard key={item.id} item={item} lang={lang} highlightQuery={highlightQuery} />
                             ))}
                           </div>
                         )
