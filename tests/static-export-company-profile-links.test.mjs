@@ -27,13 +27,16 @@ function findMissingCompanyProfilePages() {
 
   const htmlFiles = collectHtmlFiles(outDir);
   const missing = new Set();
-  const hrefPattern = new RegExp(`href="(${SITE_BASE_PATH}/company-profile/[^"?#]+/)"`, 'g');
+  const hrefPattern = new RegExp(`href="(${SITE_BASE_PATH}/company-profile/[A-Z0-9-]+/)"`, 'g');
 
   for (const htmlFile of htmlFiles) {
     const html = fs.readFileSync(htmlFile, 'utf8');
 
     for (const match of html.matchAll(hrefPattern)) {
       const href = match[1];
+      if (!href.startsWith(SITE_BASE_PATH)) {
+        continue;
+      }
       const routePath = href.slice(SITE_BASE_PATH.length + 1);
       const targetPath = path.join(outDir, routePath, 'index.html');
 
