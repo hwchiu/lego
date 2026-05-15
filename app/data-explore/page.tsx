@@ -128,7 +128,7 @@ export default function DataExplorePage() {
                       icon={cat.icon}
                       color={cat.color}
                       description={cat.description}
-                      released={cat.slug === 'news-summary'}
+                      released={['news-summary', 'capital-markets', 'government-regulations'].includes(cat.slug)}
                     />
                   ))}
                 </div>
