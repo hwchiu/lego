@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect, type ReactNode } from 'react';
+import { useState, useMemo, useEffect, useRef, type ReactNode } from 'react';
 import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
@@ -62,6 +62,130 @@ function DownloadIcon() {
       <path d="M8 2v8M5 7l3 3 3-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M2 12h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
     </svg>
+  );
+}
+
+function InfoIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
+      <circle cx="7" cy="7" r="5.3" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M7 6V9.6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <circle cx="7" cy="4.15" r="0.65" fill="currentColor" />
+    </svg>
+  );
+}
+
+function CloseSmIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="10" height="10" fill="none" aria-hidden="true">
+      <path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// ── CSV download utility ──────────────────────────────────────────────────────
+
+function downloadCSV(filename: string, headers: string[], dataRows: string[][]): void {
+  const escape = (v: string) => `"${String(v).replace(/"/g, '""')}"`;
+  const lines = [
+    headers.map(escape).join(','),
+    ...dataRows.map((row) => row.map(escape).join(',')),
+  ];
+  const blob = new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ── Gov data-source disclosure popup ─────────────────────────────────────────
+
+interface GovUpdateDateItem {
+  id: string;
+  year: string;
+  date: string;
+}
+
+function GovInfoWrap() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [updateDates, setUpdateDates] = useState<GovUpdateDateItem[]>([]);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    fetchGovRows<GovUpdateDateItem>('getUpdateDate')
+      .then((items) => setUpdateDates(items))
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    function handleOutside(e: MouseEvent) {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, []);
+
+  function getItem(id: string): GovUpdateDateItem {
+    return updateDates.find((d) => d.id === id) ?? { id, year: '2025', date: '2025/06/09' };
+  }
+
+  const dv = getItem('disqualified-vendors');
+  const ps = getItem('pollution-sources');
+  const lb = getItem('labor-basic');
+  const lg = getItem('labor-gender');
+  const ls = getItem('labor-safety');
+  const lm = getItem('labor-min-wage');
+
+  return (
+    <div className="de-gov-info-wrap" ref={wrapRef}>
+      <button
+        type="button"
+        className={`de-gov-info-btn${isOpen ? ' active' : ''}`}
+        onClick={() => setIsOpen((v) => !v)}
+      >
+        <InfoIcon />
+        <span>顯名聲明</span>
+      </button>
+      {isOpen && (
+        <div className="de-gov-info-pop" role="dialog" aria-label="顯名聲明">
+          <button
+            type="button"
+            className="de-gov-info-close"
+            onClick={() => setIsOpen(false)}
+            aria-label="關閉"
+          >
+            <CloseSmIcon />
+          </button>
+          <div className="de-gov-info-title">外部資料來源說明</div>
+          <p className="de-gov-info-text">
+            本網站使用部分內容來自臺灣政府資料開放平臺（https://data.gov.tw）．依據《政府資料開放授權條款》使用。原始資料版權歸資料提供單位所有．若有疑問請參考官方授權條款。
+            <br /><br />
+            [顯名聲明]<br />
+            提供機關/行政院公共工程委員會 [{dv.year}] 招租組來廠商公告 {dv.date}<br />
+            提供機關/環境部環境管理署 [{ps.year}] 列管事業汙染源裁處資料 {ps.date}<br />
+            提供機關/勞動部 [{lb.year}] 違反勞動法令事業單位-勞動基準法 {lb.date}<br />
+            提供機關/勞動部 [{lg.year}] 違反勞動法令事業單位-性別平等法 {lg.date}<br />
+            提供機關/勞動部 [{ls.year}] 違反勞動法令事業單位-職業安全衛生法 {ls.date}<br />
+            提供機關/勞動部 [{lm.year}] 違反勞動法令事業單位-最低工資法 {lm.date}<br /><br />
+            此開放資料依政府資料開放授權條款 (Open Government Data License) 進行公眾釋出．使用者於遵守本條款各項規定之前提下，得利用之。政府資料開放授權條款：{' '}
+            <a
+              href="http://data.gov.tw/?q=principle"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="de-gov-info-link"
+            >
+              http://data.gov.tw/?q=principle
+            </a>
+          </p>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -608,6 +732,57 @@ function useSortableData<T>(data: T[], getters: ((row: T) => string | number)[])
   return { rows: processed, search, setSearch, sortCol, sortDir, handleSort };
 }
 
+// ── Sortable data hook with per-column filter (for GOV tabs) ─────────────────
+
+function useGovSortableData<T>(data: T[], getters: ((row: T) => string | number)[]) {
+  const [sortCol, setSortCol] = useState<number | null>(null);
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+  const [colFilters, setColFilters] = useState<string[]>(() => Array(getters.length).fill(''));
+
+  function handleSort(colIndex: number) {
+    if (sortCol === colIndex) {
+      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortCol(colIndex);
+      setSortDir('asc');
+    }
+  }
+
+  function handleColFilter(colIndex: number, value: string) {
+    setColFilters((prev) => {
+      const next = [...prev];
+      next[colIndex] = value;
+      return next;
+    });
+  }
+
+  const processed = useMemo(() => {
+    let rows = [...data];
+    colFilters.forEach((filter, colIdx) => {
+      if (filter.trim()) {
+        const q = filter.toLowerCase();
+        rows = rows.filter((row) => String(getters[colIdx](row)).toLowerCase().includes(q));
+      }
+    });
+    if (sortCol !== null) {
+      const getter = getters[sortCol];
+      rows.sort((a, b) => {
+        const av = getter(a);
+        const bv = getter(b);
+        const an = typeof av === 'number' ? av : Number(String(av).replace(/,/g, ''));
+        const bn = typeof bv === 'number' ? bv : Number(String(bv).replace(/,/g, ''));
+        const isNum = !isNaN(an) && !isNaN(bn) && String(av) !== '' && String(bv) !== '';
+        const cmp = isNum ? an - bn : String(av).localeCompare(String(bv));
+        return sortDir === 'asc' ? cmp : -cmp;
+      });
+    }
+    return rows;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, colFilters, sortCol, sortDir]);
+
+  return { rows: processed, colFilters, handleColFilter, sortCol, sortDir, handleSort };
+}
+
 interface ThSortProps {
   label: string;
   colIndex: number;
@@ -626,6 +801,41 @@ function ThSort({ label, colIndex, sortCol, sortDir, onSort, className }: ThSort
         {label}
         <span className={`de-th-sort-icon${isActive ? ' de-th-sort-icon--active' : ''}`}>{icon}</span>
       </button>
+    </th>
+  );
+}
+
+interface ThSortFilterProps {
+  label: string;
+  colIndex: number;
+  sortCol: number | null;
+  sortDir: 'asc' | 'desc';
+  onSort: (i: number) => void;
+  onFilter: (i: number, v: string) => void;
+  filterValue: string;
+  className?: string;
+}
+
+function ThSortFilter({ label, colIndex, sortCol, sortDir, onSort, onFilter, filterValue, className }: ThSortFilterProps) {
+  const isActive = sortCol === colIndex;
+  const icon = isActive ? (sortDir === 'asc' ? '▲' : '▼') : '⇅';
+  return (
+    <th className={className}>
+      <div className="de-th-filter-wrap">
+        <button className="de-th-sort-btn" onClick={() => onSort(colIndex)}>
+          {label}
+          <span className={`de-th-sort-icon${isActive ? ' de-th-sort-icon--active' : ''}`}>{icon}</span>
+        </button>
+        <input
+          className="de-th-filter-input"
+          type="text"
+          value={filterValue}
+          onChange={(e) => onFilter(colIndex, e.target.value)}
+          placeholder="filter..."
+          onClick={(e) => e.stopPropagation()}
+          aria-label={`Filter ${label}`}
+        />
+      </div>
     </th>
   );
 }
@@ -1059,7 +1269,7 @@ function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
   const { sourceRows, loading, error } = useGovApiRows<GovDisqualifiedRow>('getDisqualifiedVendors');
 
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     sourceRows,
     [(r) => r.name, (r) => r.id, (r) => r.period, (r) => r.reason, (r) => r.agency],
   );
@@ -1067,26 +1277,38 @@ function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
   if (loading) return <div className="de-esg-loading">{zh ? '載入中…' : 'Loading…'}</div>;
   if (error) return <div className="de-esg-empty">{zh ? '載入失敗，請稍後再試。' : 'Failed to load. Please try again later.'}</div>;
 
+  function handleDownloadCSV() {
+    const headers = zh
+      ? ['廠商名稱', '統一編號', '禁止往來期間', '違法事由', '主管機關']
+      : ['Vendor Name', 'Tax ID', 'Banned Period', 'Violation Reason', 'Authority'];
+    downloadCSV(
+      zh ? '拒絕往來廠商公告.csv' : 'disqualified-vendors.csv',
+      headers,
+      sourceRows.map((r) => [r.name, r.id, r.period, r.reason, r.agency]),
+    );
+  }
+
   return (
     <div className="de-data-section">
       <div className="de-data-section-header">
         <span className="de-data-section-title">
           {zh ? '拒絕往來廠商公告' : 'Announcement of Disqualified Vendors'}
         </span>
-        <span className="de-data-section-date">Source: 行政院公共工程委員會</span>
+        <GovInfoWrap />
+        <button className="de-news-download-btn de-gov-csv-btn" onClick={handleDownloadCSV}>
+          <DownloadIcon />
+          <span>{zh ? '下載 CSV' : 'Download CSV'}</span>
+        </button>
       </div>
       <div className="de-data-table-wrap">
-        <div style={{ padding: '8px 12px 0' }}>
-          <SortSearchBar search={search} onSearch={setSearch} total={sourceRows.length} filtered={rows.length} />
-        </div>
         <table className="de-data-table">
           <thead>
             <tr>
-              <ThSort label={zh ? '廠商名稱' : 'Vendor Name'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '統一編號' : 'Tax ID'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '禁止往來期間' : 'Banned Period'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '違法事由' : 'Violation Reason'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '主管機關' : 'Authority'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+              <ThSortFilter label={zh ? '廠商名稱' : 'Vendor Name'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+              <ThSortFilter label={zh ? '統一編號' : 'Tax ID'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+              <ThSortFilter label={zh ? '禁止往來期間' : 'Banned Period'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} />
+              <ThSortFilter label={zh ? '違法事由' : 'Violation Reason'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} />
+              <ThSortFilter label={zh ? '主管機關' : 'Authority'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} />
             </tr>
           </thead>
           <tbody>
@@ -1110,7 +1332,7 @@ function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
   const { sourceRows, loading, error } = useGovApiRows<GovPollutionRow>('getPollutionSources');
 
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     sourceRows,
     [(r) => r.name, (r) => r.city, (r) => r.date, (r) => r.reason, (r) => r.fine, (r) => r.law],
   );
@@ -1118,27 +1340,39 @@ function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
   if (loading) return <div className="de-esg-loading">{zh ? '載入中…' : 'Loading…'}</div>;
   if (error) return <div className="de-esg-empty">{zh ? '載入失敗，請稍後再試。' : 'Failed to load. Please try again later.'}</div>;
 
+  function handleDownloadCSV() {
+    const headers = zh
+      ? ['事業名稱', '所在縣市', '裁處日期', '違規事由', '裁處金額(元)', '法規依據']
+      : ['Company Name', 'City/County', 'Penalty Date', 'Violation', 'Fine (NT$)', 'Regulation'];
+    downloadCSV(
+      zh ? '列管事業污染源裁處資料.csv' : 'pollution-sources.csv',
+      headers,
+      sourceRows.map((r) => [r.name, r.city, r.date, r.reason, r.fine, r.law]),
+    );
+  }
+
   return (
     <div className="de-data-section">
       <div className="de-data-section-header">
         <span className="de-data-section-title">
           {zh ? '列管事業污染源裁處資料' : 'Regulatory data on industrial pollution sources'}
         </span>
-        <span className="de-data-section-date">Source: 環境部</span>
+        <GovInfoWrap />
+        <button className="de-news-download-btn de-gov-csv-btn" onClick={handleDownloadCSV}>
+          <DownloadIcon />
+          <span>{zh ? '下載 CSV' : 'Download CSV'}</span>
+        </button>
       </div>
       <div className="de-data-table-wrap">
-        <div style={{ padding: '8px 12px 0' }}>
-          <SortSearchBar search={search} onSearch={setSearch} total={sourceRows.length} filtered={rows.length} />
-        </div>
         <table className="de-data-table">
           <thead>
             <tr>
-              <ThSort label={zh ? '事業名稱' : 'Company Name'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '所在縣市' : 'City/County'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '裁處日期' : 'Penalty Date'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '違規事由' : 'Violation'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '裁處金額(元)' : 'Fine (NT$)'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-              <ThSort label={zh ? '法規依據' : 'Regulation'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+              <ThSortFilter label={zh ? '事業名稱' : 'Company Name'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+              <ThSortFilter label={zh ? '所在縣市' : 'City/County'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+              <ThSortFilter label={zh ? '裁處日期' : 'Penalty Date'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} />
+              <ThSortFilter label={zh ? '違規事由' : 'Violation'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} />
+              <ThSortFilter label={zh ? '裁處金額(元)' : 'Fine (NT$)'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
+              <ThSortFilter label={zh ? '法規依據' : 'Regulation'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} />
             </tr>
           </thead>
           <tbody>
@@ -1163,7 +1397,7 @@ function GovLaborTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
   const { sourceRows, loading, error } = useGovApiRows<GovLaborRow>('getLaborViolations');
 
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     sourceRows,
     [(r) => r.name, (r) => r.id, (r) => r.date, (r) => r.law, (r) => r.fine, (r) => r.detail],
   );
@@ -1171,27 +1405,39 @@ function GovLaborTab({ lang }: { lang: 'zh' | 'en' }) {
   if (loading) return <div className="de-esg-loading">{zh ? '載入中…' : 'Loading…'}</div>;
   if (error) return <div className="de-esg-empty">{zh ? '載入失敗，請稍後再試。' : 'Failed to load. Please try again later.'}</div>;
 
+  function handleDownloadCSV() {
+    const headers = zh
+      ? ['事業單位名稱', '統一編號', '違法日期', '違反法規', '裁罰金額(元)', '處分情形']
+      : ['Company Name', 'Tax ID', 'Violation Date', 'Regulation Violated', 'Fine (NT$)', 'Details'];
+    downloadCSV(
+      zh ? '違反勞動法令事業單位.csv' : 'labor-violations.csv',
+      headers,
+      sourceRows.map((r) => [r.name, r.id, r.date, r.law, r.fine, r.detail]),
+    );
+  }
+
   return (
     <div className="de-data-section">
       <div className="de-data-section-header">
         <span className="de-data-section-title">
           {zh ? '違反勞動法令事業單位' : 'Violations of Labor Laws'}
         </span>
-        <span className="de-data-section-date">Source: 勞動部</span>
+        <GovInfoWrap />
+        <button className="de-news-download-btn de-gov-csv-btn" onClick={handleDownloadCSV}>
+          <DownloadIcon />
+          <span>{zh ? '下載 CSV' : 'Download CSV'}</span>
+        </button>
       </div>
       <div className="de-data-table-wrap">
-        <div style={{ padding: '8px 12px 0' }}>
-          <SortSearchBar search={search} onSearch={setSearch} total={sourceRows.length} filtered={rows.length} />
-        </div>
         <table className="de-data-table">
           <thead>
             <tr>
-              <ThSort label={zh ? '事業單位名稱' : 'Company Name'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '統一編號' : 'Tax ID'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '違法日期' : 'Violation Date'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '違反法規' : 'Regulation Violated'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '裁罰金額(元)' : 'Fine (NT$)'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-              <ThSort label={zh ? '處分情形' : 'Details'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+              <ThSortFilter label={zh ? '事業單位名稱' : 'Company Name'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+              <ThSortFilter label={zh ? '統一編號' : 'Tax ID'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+              <ThSortFilter label={zh ? '違法日期' : 'Violation Date'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} />
+              <ThSortFilter label={zh ? '違反法規' : 'Regulation Violated'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} />
+              <ThSortFilter label={zh ? '裁罰金額(元)' : 'Fine (NT$)'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
+              <ThSortFilter label={zh ? '處分情形' : 'Details'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} />
             </tr>
           </thead>
           <tbody>

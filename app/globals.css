@@ -22165,12 +22165,12 @@ html.dark .cp-fin-index-tab:hover {
 }
 .de-data-section-header {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 10px;
   margin-bottom: 10px;
 }
 .de-data-section-title {
-  font-size: 13.5px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--c-text);
 }
@@ -22251,6 +22251,129 @@ html.dark .cp-fin-index-tab:hover {
 .de-table-search-count {
   font-size: 11.5px;
   color: var(--c-text-3);
+}
+
+/* ── GOV info (顯名聲明) button & popup ── */
+.de-gov-info-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.de-gov-info-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  height: 28px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  background: var(--c-white);
+  color: var(--c-text-3);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.de-gov-info-btn:hover,
+.de-gov-info-btn.active {
+  border-color: var(--c-accent);
+  color: #0284c7;
+  background: #f0f9ff;
+}
+
+.de-gov-info-pop {
+  position: absolute;
+  left: calc(100% + 8px);
+  top: 0;
+  width: min(480px, calc(100vw - 44px));
+  padding: 14px 16px 14px 20px;
+  background: #f8fafc;
+  border: 1px solid var(--c-border);
+  border-left: 4px solid var(--c-accent);
+  border-radius: var(--radius);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+  z-index: 520;
+}
+
+.de-gov-info-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-text);
+  margin: 0 0 8px;
+}
+
+.de-gov-info-text {
+  margin: 0;
+  padding-right: 18px;
+  font-size: 12px;
+  color: var(--c-text-3);
+  line-height: 1.75;
+}
+
+.de-gov-info-link {
+  color: var(--c-accent);
+  text-decoration: underline;
+  word-break: break-all;
+}
+
+.de-gov-info-close {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 20px;
+  height: 20px;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--c-text-4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.de-gov-info-close:hover {
+  background: rgba(79, 195, 247, 0.12);
+  border-color: var(--c-accent);
+  color: var(--c-text-2);
+}
+
+.de-gov-csv-btn {
+  margin-left: auto;
+}
+
+/* ── GOV table column filter inputs ── */
+.de-th-filter-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: stretch;
+}
+
+.de-th-filter-input {
+  width: 100%;
+  min-width: 56px;
+  height: 22px;
+  padding: 0 5px;
+  border: 1px solid var(--c-border-2);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  color: var(--c-text);
+  background: var(--c-white);
+  outline: none;
+  font-weight: 400;
+}
+
+.de-th-filter-input:focus {
+  border-color: #93c5fd;
+}
+
+.de-th-filter-input::placeholder {
+  color: var(--c-text-4);
 }
 
 /* ===== PRE-EARNING CALL TAB ===== */
