@@ -1007,15 +1007,11 @@ interface GovLaborRow {
   detail: string;
 }
 
-const GOV_BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? '/lego';
+const APP_BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? '/lego';
 const GOV_ERROR_TEXT_MAX_LENGTH = 200;
 
-function getGovApiBasePath(): string {
-  return GOV_BASE_PATH;
-}
-
 async function fetchGovRows<T>(endpoint: string): Promise<T[]> {
-  const res = await fetch(`${getGovApiBasePath()}/api/${endpoint}`);
+  const res = await fetch(`${APP_BASE_PATH}/api/${endpoint}`);
   if (!res.ok) {
     const rawErrorText = await res.text().catch(() => '');
     const errorText = rawErrorText.length > GOV_ERROR_TEXT_MAX_LENGTH
