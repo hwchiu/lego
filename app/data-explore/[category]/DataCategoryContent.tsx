@@ -981,53 +981,76 @@ function CmPeRatioTab({ lang }: { lang: 'zh' | 'en' }) {
 
 // ── Government Regulations — new tab data ───────────────────────────────────
 
-const GOV_REG_DISQUALIFIED = [
-  { name: '豐盛工程有限公司',       id: '12345678', period: '2024/03/01–2026/02/28', reason: '偽造文書、詐欺', agency: '行政院公共工程委員會' },
-  { name: '大成建設股份有限公司',   id: '23456789', period: '2024/05/15–2025/05/14', reason: '圍標', agency: '採購機關' },
-  { name: '信義科技股份有限公司',   id: '34567890', period: '2023/11/01–2024/10/31', reason: '履約品質不符', agency: '行政院公共工程委員會' },
-  { name: '華光電子工業股份有限公司', id: '45678901', period: '2024/01/20–2025/01/19', reason: '違反採購法', agency: '採購機關' },
-  { name: '東方資訊股份有限公司',   id: '56789012', period: '2024/07/01–2026/06/30', reason: '洗錢防制', agency: '法務部' },
-  { name: '新興企業股份有限公司',   id: '67890123', period: '2023/09/01–2024/08/31', reason: '偽造標單', agency: '行政院公共工程委員會' },
-  { name: '明德科技股份有限公司',   id: '78901234', period: '2024/04/10–2025/04/09', reason: '違反採購法', agency: '採購機關' },
-  { name: '長隆機械有限公司',       id: '89012345', period: '2024/08/01–2025/07/31', reason: '未依約交貨', agency: '採購機關' },
-  { name: '興業貿易股份有限公司',   id: '90123456', period: '2023/12/01–2024/11/30', reason: '圍標', agency: '行政院公共工程委員會' },
-  { name: '金鑫企業有限公司',       id: '01234567', period: '2024/06/01–2025/05/31', reason: '不實申報', agency: '採購機關' },
-];
+interface GovDisqualifiedRow {
+  name: string;
+  id: string;
+  period: string;
+  reason: string;
+  agency: string;
+}
 
-const GOV_REG_POLLUTION = [
-  { name: '南亞塑膠工業股份有限公司', city: '桃園市', date: '2024/10/15', reason: '廢水超標排放', fine: '200,000', law: '水污染防治法' },
-  { name: '台灣化學纖維股份有限公司', city: '彰化縣', date: '2024/09/20', reason: '空氣污染物超量', fine: '300,000', law: '空氣污染防制法' },
-  { name: '長春石油化學股份有限公司', city: '雲林縣', date: '2024/08/11', reason: '有毒物質洩漏', fine: '500,000', law: '毒性化學物質管理法' },
-  { name: '中鋼股份有限公司',         city: '高雄市', date: '2024/11/03', reason: '煙塵超標', fine: '150,000', law: '空氣污染防制法' },
-  { name: '永豐餘造紙股份有限公司',   city: '苗栗縣', date: '2024/07/22', reason: '廢水處理不當', fine: '120,000', law: '水污染防治法' },
-  { name: '台灣化成工業股份有限公司', city: '台南市', date: '2024/12/05', reason: '廢棄物非法棄置', fine: '400,000', law: '廢棄物清理法' },
-  { name: '大同股份有限公司',         city: '台北市', date: '2024/06/18', reason: '噪音超標', fine: '80,000',  law: '噪音管制法' },
-  { name: '義聯鋼鐵股份有限公司',     city: '高雄市', date: '2024/05/29', reason: '廢氣排放超標', fine: '250,000', law: '空氣污染防制法' },
-  { name: '東元電機股份有限公司',     city: '桃園市', date: '2024/03/14', reason: '廢水未達標', fine: '100,000', law: '水污染防治法' },
-  { name: '宏碁股份有限公司',         city: '新北市', date: '2024/04/08', reason: '有害事業廢棄物違規', fine: '180,000', law: '廢棄物清理法' },
-];
+interface GovPollutionRow {
+  name: string;
+  city: string;
+  date: string;
+  reason: string;
+  fine: string;
+  law: string;
+}
 
-const GOV_REG_LABOR = [
-  { name: '某某製造股份有限公司',   id: '11223344', date: '2024/11/15', law: '勞動基準法第24條', fine: '60,000',  detail: '未給付加班費' },
-  { name: '大統食品股份有限公司',   id: '22334455', date: '2024/10/08', law: '勞動基準法第38條', fine: '30,000',  detail: '特別休假未依規定' },
-  { name: '晶圓代工技術股份有限公司', id: '33445566', date: '2024/09/22', law: '職業安全衛生法第6條', fine: '90,000',  detail: '安全設備未符合規定' },
-  { name: '精密機械製造有限公司',   id: '44556677', date: '2024/08/14', law: '勞動基準法第30條', fine: '45,000',  detail: '工時超過法定上限' },
-  { name: '東南電子股份有限公司',   id: '55667788', date: '2024/07/30', law: '性別平等工作法第10條', fine: '100,000', detail: '同工不同酬' },
-  { name: '長發建設股份有限公司',   id: '66778899', date: '2024/06/19', law: '職業安全衛生法第17條', fine: '120,000', detail: '未提供安全防護' },
-  { name: '寶達通訊股份有限公司',   id: '77889900', date: '2024/05/07', law: '勞動基準法第14條', fine: '50,000',  detail: '未依法訂立勞動契約' },
-  { name: '金豐紡織股份有限公司',   id: '88990011', date: '2024/04/25', law: '勞工退休金條例第14條', fine: '75,000',  detail: '未足額提撥退休金' },
-  { name: '凱旋科技股份有限公司',   id: '99001122', date: '2024/03/13', law: '勞動基準法第59條', fine: '40,000',  detail: '職災未依規補償' },
-  { name: '和順物流股份有限公司',   id: '00112233', date: '2024/02/28', law: '勞動基準法第79條', fine: '30,000',  detail: '工資記錄不全' },
-];
+interface GovLaborRow {
+  name: string;
+  id: string;
+  date: string;
+  law: string;
+  fine: string;
+  detail: string;
+}
+
+const GOV_API_BASE = process.env.NODE_ENV === 'production' ? '/lego' : '';
+
+async function fetchGovRows<T>(endpoint: string): Promise<T[]> {
+  const res = await fetch(`${GOV_API_BASE}/api/${endpoint}`);
+  if (!res.ok) throw new Error(`Failed to fetch ${endpoint}: ${res.status}`);
+  const data = (await res.json()) as { items: T[] };
+  return data.items;
+}
 
 // ── Government Regulations new tab components ────────────────────────────────
 
 function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
+  const [sourceRows, setSourceRows] = useState<GovDisqualifiedRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    fetchGovRows<GovDisqualifiedRow>('getDisqualifiedVendors')
+      .then((items) => {
+        if (!cancelled) setSourceRows(items);
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Unknown error');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
-    GOV_REG_DISQUALIFIED,
+    sourceRows,
     [(r) => r.name, (r) => r.id, (r) => r.period, (r) => r.reason, (r) => r.agency],
   );
+
+  if (loading) return <div className="de-esg-loading">{zh ? '載入中…' : 'Loading…'}</div>;
+  if (error) return <div className="de-esg-empty">{zh ? `載入失敗：${error}` : `Failed to load: ${error}`}</div>;
+
   return (
     <div className="de-data-section">
       <div className="de-data-section-header">
@@ -1038,7 +1061,7 @@ function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
       </div>
       <div className="de-data-table-wrap">
         <div style={{ padding: '8px 12px 0' }}>
-          <SortSearchBar search={search} onSearch={setSearch} total={GOV_REG_DISQUALIFIED.length} filtered={rows.length} />
+          <SortSearchBar search={search} onSearch={setSearch} total={sourceRows.length} filtered={rows.length} />
         </div>
         <table className="de-data-table">
           <thead>
@@ -1069,10 +1092,37 @@ function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
+  const [sourceRows, setSourceRows] = useState<GovPollutionRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    fetchGovRows<GovPollutionRow>('getPollutionSources')
+      .then((items) => {
+        if (!cancelled) setSourceRows(items);
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Unknown error');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
-    GOV_REG_POLLUTION,
+    sourceRows,
     [(r) => r.name, (r) => r.city, (r) => r.date, (r) => r.reason, (r) => r.fine, (r) => r.law],
   );
+
+  if (loading) return <div className="de-esg-loading">{zh ? '載入中…' : 'Loading…'}</div>;
+  if (error) return <div className="de-esg-empty">{zh ? `載入失敗：${error}` : `Failed to load: ${error}`}</div>;
+
   return (
     <div className="de-data-section">
       <div className="de-data-section-header">
@@ -1083,7 +1133,7 @@ function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
       </div>
       <div className="de-data-table-wrap">
         <div style={{ padding: '8px 12px 0' }}>
-          <SortSearchBar search={search} onSearch={setSearch} total={GOV_REG_POLLUTION.length} filtered={rows.length} />
+          <SortSearchBar search={search} onSearch={setSearch} total={sourceRows.length} filtered={rows.length} />
         </div>
         <table className="de-data-table">
           <thead>
@@ -1116,10 +1166,37 @@ function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function GovLaborTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
+  const [sourceRows, setSourceRows] = useState<GovLaborRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    fetchGovRows<GovLaborRow>('getLaborViolations')
+      .then((items) => {
+        if (!cancelled) setSourceRows(items);
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Unknown error');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
-    GOV_REG_LABOR,
+    sourceRows,
     [(r) => r.name, (r) => r.id, (r) => r.date, (r) => r.law, (r) => r.fine, (r) => r.detail],
   );
+
+  if (loading) return <div className="de-esg-loading">{zh ? '載入中…' : 'Loading…'}</div>;
+  if (error) return <div className="de-esg-empty">{zh ? `載入失敗：${error}` : `Failed to load: ${error}`}</div>;
+
   return (
     <div className="de-data-section">
       <div className="de-data-section-header">
@@ -1130,7 +1207,7 @@ function GovLaborTab({ lang }: { lang: 'zh' | 'en' }) {
       </div>
       <div className="de-data-table-wrap">
         <div style={{ padding: '8px 12px 0' }}>
-          <SortSearchBar search={search} onSearch={setSearch} total={GOV_REG_LABOR.length} filtered={rows.length} />
+          <SortSearchBar search={search} onSearch={setSearch} total={sourceRows.length} filtered={rows.length} />
         </div>
         <table className="de-data-table">
           <thead>
@@ -1856,9 +1933,6 @@ export default function DataCategoryContent({ params }: { params: { category: st
   ];
 
   const GOV_TABS = [
-    { id: 'articles',             label: lang === 'zh' ? '相關法規' : 'Articles' },
-    { id: 'taiwan-tax',           label: lang === 'zh' ? '每週台灣稅務快訊' : 'Weekly Taiwan Tax News Summary' },
-    { id: 'intl-tax',             label: lang === 'zh' ? '每週國際稅務快訊' : 'Weekly International Tax News Summary' },
     { id: 'disqualified-vendors', label: lang === 'zh' ? '拒絕往來廠商公告' : 'Announcement of Disqualified Vendors' },
     { id: 'pollution-sources',    label: lang === 'zh' ? '列管事業污染源裁處資料' : 'Regulatory data on industrial pollution sources' },
     { id: 'labor-violations',     label: lang === 'zh' ? '違反勞動法令事業單位' : 'Violations of Labor Laws' },
@@ -1870,7 +1944,13 @@ export default function DataCategoryContent({ params }: { params: { category: st
     { id: 'intl-news',     label: lang === 'zh' ? '每週國際稅務快訊' : 'Weekly International Tax News Summary' },
   ];
 
-  const defaultTab = isCapital ? 'daily-quotes' : isNewsSummary ? 'biweekly-esg' : 'articles';
+  const defaultTab = isCapital
+    ? 'daily-quotes'
+    : isNewsSummary
+      ? 'biweekly-esg'
+      : isGov
+        ? 'disqualified-vendors'
+        : 'articles';
   const [activeSubTab, setActiveSubTab] = useState(defaultTab);
 
   const hasSubTabs = isEsg || isGov || isCapital || isNewsSummary;
@@ -1981,7 +2061,7 @@ export default function DataCategoryContent({ params }: { params: { category: st
               {isCapital && activeSubTab === 'pe-ratio'          && <CmPeRatioTab lang={lang} />}
 
               {/* ESG / Gov tabs that show articles */}
-              {!isCapital && activeSubTab === 'articles' && (
+              {!isCapital && !isGov && activeSubTab === 'articles' && (
                 <ArticlesTab
                   items={filteredItems}
                   accentColor={cat.color}
@@ -1995,8 +2075,6 @@ export default function DataCategoryContent({ params }: { params: { category: st
               )}
 
               {activeSubTab === 'reports'               && isEsg  && <EsgReportsTab />}
-              {activeSubTab === 'taiwan-tax'            && isGov  && <TaiwanTaxNewsTab />}
-              {activeSubTab === 'intl-tax'              && isGov  && <WorldMapTab />}
               {activeSubTab === 'disqualified-vendors'  && isGov  && <GovDisqualifiedTab lang={lang} />}
               {activeSubTab === 'pollution-sources'     && isGov  && <GovPollutionTab lang={lang} />}
               {activeSubTab === 'labor-violations'      && isGov  && <GovLaborTab lang={lang} />}
