@@ -1007,15 +1007,20 @@ interface GovLaborRow {
   detail: string;
 }
 
+const GOV_BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? '/lego';
+const GOV_ERROR_TEXT_MAX_LENGTH = 200;
+
 function getGovApiBasePath(): string {
-  return '/lego';
+  return GOV_BASE_PATH;
 }
 
 async function fetchGovRows<T>(endpoint: string): Promise<T[]> {
   const res = await fetch(`${getGovApiBasePath()}/api/${endpoint}`);
   if (!res.ok) {
     const rawErrorText = await res.text().catch(() => '');
-    const errorText = rawErrorText.length > 200 ? `${rawErrorText.slice(0, 200)}...` : rawErrorText;
+    const errorText = rawErrorText.length > GOV_ERROR_TEXT_MAX_LENGTH
+      ? `${rawErrorText.slice(0, GOV_ERROR_TEXT_MAX_LENGTH)}...`
+      : rawErrorText;
     throw new Error(`Failed to fetch ${endpoint}: ${res.status} ${res.statusText}${errorText ? ` - ${errorText}` : ''}`);
   }
   const data = (await res.json()) as { items: T[] };
@@ -1915,9 +1920,9 @@ export default function DataCategoryContent({ params }: { params: { category: st
   ];
 
   let defaultTab = 'articles';
-  if (isCapital) defaultTab = 'daily-quotes';
+  if (isGov) defaultTab = 'disqualified-vendors';
+  else if (isCapital) defaultTab = 'daily-quotes';
   else if (isNewsSummary) defaultTab = 'biweekly-esg';
-  else if (isGov) defaultTab = 'disqualified-vendors';
   const [activeSubTab, setActiveSubTab] = useState(defaultTab);
 
   const hasSubTabs = isEsg || isGov || isCapital || isNewsSummary;
