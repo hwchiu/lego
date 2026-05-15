@@ -1017,7 +1017,7 @@ async function fetchGovRows<T>(endpoint: string): Promise<T[]> {
     const errorText = rawErrorText.length > GOV_ERROR_TEXT_MAX_LENGTH
       ? `${rawErrorText.slice(0, GOV_ERROR_TEXT_MAX_LENGTH)}...`
       : rawErrorText;
-    throw new Error(`Failed to fetch ${endpoint}: ${res.status} ${res.statusText}${errorText ? ` - ${errorText}` : ''}`);
+    throw new Error(`Failed to fetch ${endpoint} (${res.status} ${res.statusText})${errorText ? `: ${errorText}` : ''}`);
   }
   const data = (await res.json()) as { items: T[] };
   return data.items;
@@ -1037,7 +1037,10 @@ function useGovApiRows<T>(endpoint: string) {
         if (!cancelled) setSourceRows(items);
       })
       .catch((err: unknown) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : String(err));
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : String(err));
+          console.error('Government regulations API request failed:', err);
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -1062,7 +1065,7 @@ function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
   );
 
   if (loading) return <div className="de-esg-loading">{zh ? '載入中…' : 'Loading…'}</div>;
-  if (error) return <div className="de-esg-empty">{zh ? `載入失敗：${error}` : `Failed to load: ${error}`}</div>;
+  if (error) return <div className="de-esg-empty">{zh ? '載入失敗，請稍後再試。' : 'Failed to load. Please try again later.'}</div>;
 
   return (
     <div className="de-data-section">
@@ -1113,7 +1116,7 @@ function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
   );
 
   if (loading) return <div className="de-esg-loading">{zh ? '載入中…' : 'Loading…'}</div>;
-  if (error) return <div className="de-esg-empty">{zh ? `載入失敗：${error}` : `Failed to load: ${error}`}</div>;
+  if (error) return <div className="de-esg-empty">{zh ? '載入失敗，請稍後再試。' : 'Failed to load. Please try again later.'}</div>;
 
   return (
     <div className="de-data-section">
@@ -1166,7 +1169,7 @@ function GovLaborTab({ lang }: { lang: 'zh' | 'en' }) {
   );
 
   if (loading) return <div className="de-esg-loading">{zh ? '載入中…' : 'Loading…'}</div>;
-  if (error) return <div className="de-esg-empty">{zh ? `載入失敗：${error}` : `Failed to load: ${error}`}</div>;
+  if (error) return <div className="de-esg-empty">{zh ? '載入失敗，請稍後再試。' : 'Failed to load. Please try again later.'}</div>;
 
   return (
     <div className="de-data-section">
@@ -1915,10 +1918,7 @@ export default function DataCategoryContent({ params }: { params: { category: st
     { id: 'intl-news',     label: lang === 'zh' ? '每週國際稅務快訊' : 'Weekly International Tax News Summary' },
   ];
 
-  let defaultTab = 'articles';
-  if (isGov) defaultTab = 'disqualified-vendors';
-  else if (isCapital) defaultTab = 'daily-quotes';
-  else if (isNewsSummary) defaultTab = 'biweekly-esg';
+  const defaultTab = isGov ? 'disqualified-vendors' : isCapital ? 'daily-quotes' : isNewsSummary ? 'biweekly-esg' : 'articles';
   const [activeSubTab, setActiveSubTab] = useState(defaultTab);
 
   const hasSubTabs = isEsg || isGov || isCapital || isNewsSummary;
