@@ -1008,14 +1008,14 @@ interface GovLaborRow {
 }
 
 function getGovApiBasePath(): string {
-  if (typeof window !== 'undefined' && window.location.pathname.startsWith('/lego')) return '/lego';
-  return process.env.NODE_ENV === 'production' ? '/lego' : '';
+  return '/lego';
 }
 
 async function fetchGovRows<T>(endpoint: string): Promise<T[]> {
   const res = await fetch(`${getGovApiBasePath()}/api/${endpoint}`);
   if (!res.ok) {
-    const errorText = await res.text().catch(() => '');
+    const rawErrorText = await res.text().catch(() => '');
+    const errorText = rawErrorText.length > 200 ? `${rawErrorText.slice(0, 200)}...` : rawErrorText;
     throw new Error(`Failed to fetch ${endpoint}: ${res.status} ${res.statusText}${errorText ? ` - ${errorText}` : ''}`);
   }
   const data = (await res.json()) as { items: T[] };
@@ -1914,13 +1914,10 @@ export default function DataCategoryContent({ params }: { params: { category: st
     { id: 'intl-news',     label: lang === 'zh' ? '每週國際稅務快訊' : 'Weekly International Tax News Summary' },
   ];
 
-  const defaultTab = isCapital
-    ? 'daily-quotes'
-    : isNewsSummary
-      ? 'biweekly-esg'
-      : isGov
-        ? 'disqualified-vendors'
-        : 'articles';
+  let defaultTab = 'articles';
+  if (isCapital) defaultTab = 'daily-quotes';
+  else if (isNewsSummary) defaultTab = 'biweekly-esg';
+  else if (isGov) defaultTab = 'disqualified-vendors';
   const [activeSubTab, setActiveSubTab] = useState(defaultTab);
 
   const hasSubTabs = isEsg || isGov || isCapital || isNewsSummary;
