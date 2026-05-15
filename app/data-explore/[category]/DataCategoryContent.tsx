@@ -1007,20 +1007,23 @@ interface GovLaborRow {
   detail: string;
 }
 
-const GOV_API_BASE = process.env.NODE_ENV === 'production' ? '/lego' : '';
+function getGovApiBasePath(): string {
+  if (typeof window !== 'undefined' && window.location.pathname.startsWith('/lego')) return '/lego';
+  return process.env.NODE_ENV === 'production' ? '/lego' : '';
+}
 
 async function fetchGovRows<T>(endpoint: string): Promise<T[]> {
-  const res = await fetch(`${GOV_API_BASE}/api/${endpoint}`);
-  if (!res.ok) throw new Error(`Failed to fetch ${endpoint}: ${res.status}`);
+  const res = await fetch(`${getGovApiBasePath()}/api/${endpoint}`);
+  if (!res.ok) {
+    const errorText = await res.text().catch(() => '');
+    throw new Error(`Failed to fetch ${endpoint}: ${res.status} ${res.statusText}${errorText ? ` - ${errorText}` : ''}`);
+  }
   const data = (await res.json()) as { items: T[] };
   return data.items;
 }
 
-// ── Government Regulations new tab components ────────────────────────────────
-
-function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
-  const zh = lang === 'zh';
-  const [sourceRows, setSourceRows] = useState<GovDisqualifiedRow[]>([]);
+function useGovApiRows<T>(endpoint: string) {
+  const [sourceRows, setSourceRows] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -1028,12 +1031,12 @@ function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    fetchGovRows<GovDisqualifiedRow>('getDisqualifiedVendors')
+    fetchGovRows<T>(endpoint)
       .then((items) => {
         if (!cancelled) setSourceRows(items);
       })
       .catch((err: unknown) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : 'Unknown error');
+        if (!cancelled) setError(err instanceof Error ? err.message : String(err));
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -1041,7 +1044,16 @@ function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [endpoint]);
+
+  return { sourceRows, loading, error };
+}
+
+// ── Government Regulations new tab components ────────────────────────────────
+
+function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
+  const zh = lang === 'zh';
+  const { sourceRows, loading, error } = useGovApiRows<GovDisqualifiedRow>('getDisqualifiedVendors');
 
   const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
     sourceRows,
@@ -1092,28 +1104,7 @@ function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
-  const [sourceRows, setSourceRows] = useState<GovPollutionRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
-    fetchGovRows<GovPollutionRow>('getPollutionSources')
-      .then((items) => {
-        if (!cancelled) setSourceRows(items);
-      })
-      .catch((err: unknown) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : 'Unknown error');
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const { sourceRows, loading, error } = useGovApiRows<GovPollutionRow>('getPollutionSources');
 
   const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
     sourceRows,
@@ -1166,28 +1157,7 @@ function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function GovLaborTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
-  const [sourceRows, setSourceRows] = useState<GovLaborRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
-    fetchGovRows<GovLaborRow>('getLaborViolations')
-      .then((items) => {
-        if (!cancelled) setSourceRows(items);
-      })
-      .catch((err: unknown) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : 'Unknown error');
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const { sourceRows, loading, error } = useGovApiRows<GovLaborRow>('getLaborViolations');
 
   const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
     sourceRows,
