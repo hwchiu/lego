@@ -25130,6 +25130,69 @@ html.dark .de-intl-tax-sidebar-item.active .de-intl-tax-sidebar-item-count {
   color: #93c5fd;
 }
 
+/* Data Explore — Government Regulations dark mode */
+html.dark .de-gov-info-btn {
+  background: #0f172a;
+  border-color: #334155;
+  color: #94a3b8;
+}
+
+html.dark .de-gov-info-btn:hover,
+html.dark .de-gov-info-btn.active {
+  border-color: var(--c-accent);
+  background: rgba(56, 189, 248, 0.14);
+  color: var(--c-accent);
+}
+
+html.dark .de-gov-info-pop {
+  background: #1e2d42;
+  border-color: #334155;
+  border-left-color: var(--c-accent);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+
+html.dark .de-gov-info-title {
+  color: var(--c-text);
+}
+
+html.dark .de-gov-info-text {
+  color: #94a3b8;
+}
+
+html.dark .de-gov-info-close {
+  color: #94a3b8;
+}
+
+html.dark .de-gov-info-close:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: rgba(56, 189, 248, 0.55);
+  color: #cbd5e1;
+}
+
+html.dark .de-table-search-input {
+  background: #0f172a;
+  border-color: #334155;
+  color: var(--c-text);
+}
+
+html.dark .de-table-search-input:focus {
+  border-color: var(--c-accent);
+}
+
+html.dark .de-table-search-input::placeholder {
+  color: var(--c-text-4);
+}
+
+html.dark .de-th-filter-input {
+  background: #0f172a;
+  border-color: #334155;
+  color: var(--c-text);
+}
+
+html.dark .de-th-filter-input:focus {
+  border-color: var(--c-accent);
+}
+
 /* Amber / orange badges */
 html.dark .cp-ir-category-badge--corporate {
   background: #451a03;
