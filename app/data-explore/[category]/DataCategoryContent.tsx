@@ -1308,7 +1308,7 @@ function useRegulatoryApiRows() {
 
 // ── Government Regulations new tab components ────────────────────────────────
 
-function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
+function GovDisqualifiedTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentColor: string }) {
   const zh = lang === 'zh';
   const { sourceRows, loading, error } = useGovApiRows<GovDisqualifiedRow>('getDisqualifiedVendors');
 
@@ -1334,8 +1334,8 @@ function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
   return (
     <div className="de-data-section">
       <div className="de-data-section-header">
-        <span className="de-data-section-title">
-          {zh ? '拒絕往來廠商公告' : 'Announcement of Disqualified Vendors'}
+        <span className="de-data-section-title" style={{ color: accentColor }}>
+          {zh ? '拒絕往來廠商公告' : 'Disqualified Vendors'}
         </span>
         <GovInfoWrap />
         <button className="de-news-download-btn de-gov-csv-btn" onClick={handleDownloadCSV}>
@@ -1371,7 +1371,7 @@ function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
   );
 }
 
-function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
+function GovPollutionTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentColor: string }) {
   const zh = lang === 'zh';
   const { sourceRows, loading, error } = useRegulatoryApiRows();
 
@@ -1397,7 +1397,7 @@ function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
       ? ['廠商代碼', '標案案號', '廠商名稱', '刊登機關代碼', '刊登機關名稱', '標案名稱', '拒絕往來截止日', '台積此筆更新的時間']
       : ['Corporation Number', 'Case No', 'Corporation Name', 'Announce Agency No', 'Announce Agency Name', 'Case Name', 'Expire Date', 'Update Date'];
     downloadCSV(
-      zh ? '拒絕往來廠商公告.csv' : 'regulatory-on-pollution-sources.csv',
+      zh ? '列管事業污染源裁處資.csv' : 'regulatory-on-pollution-sources.csv',
       headers,
       sourceRows.map((r) => [
         String(r.Corporation_Number),
@@ -1415,8 +1415,8 @@ function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
   return (
     <div className="de-data-section">
       <div className="de-data-section-header">
-        <span className="de-data-section-title">
-          {zh ? '拒絕往來廠商公告' : 'Regulatory on Pollution Sources'}
+        <span className="de-data-section-title" style={{ color: accentColor }}>
+          {zh ? '列管事業污染源裁處資' : 'Regulatory on pollution sources'}
         </span>
         <GovInfoWrap />
         <button className="de-news-download-btn de-gov-csv-btn" onClick={handleDownloadCSV}>
@@ -1458,7 +1458,7 @@ function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
   );
 }
 
-function GovLaborTab({ lang }: { lang: 'zh' | 'en' }) {
+function GovLaborTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentColor: string }) {
   const zh = lang === 'zh';
   const { sourceRows, loading, error } = useGovApiRows<GovLaborRow>('getLaborViolations');
 
@@ -1484,7 +1484,7 @@ function GovLaborTab({ lang }: { lang: 'zh' | 'en' }) {
   return (
     <div className="de-data-section">
       <div className="de-data-section-header">
-        <span className="de-data-section-title">
+        <span className="de-data-section-title" style={{ color: accentColor }}>
           {zh ? '違反勞動法令事業單位' : 'Violations of Labor Laws'}
         </span>
         <GovInfoWrap />
@@ -2218,8 +2218,8 @@ export default function DataCategoryContent({ params }: { params: { category: st
   ];
 
   const GOV_TABS = [
-    { id: 'pollution-sources',    label: lang === 'zh' ? '列管事業污染源裁處資料' : 'Regulatory on pollution sources' },
     { id: 'disqualified-vendors', label: lang === 'zh' ? '拒絕往來廠商公告' : 'Disqualified Vendors' },
+    { id: 'pollution-sources',    label: lang === 'zh' ? '列管事業污染源裁處資' : 'Regulatory on pollution sources' },
     { id: 'labor-violations',     label: lang === 'zh' ? '違反勞動法令事業單位' : 'Violations of Labor Laws' },
   ];
 
@@ -2229,7 +2229,7 @@ export default function DataCategoryContent({ params }: { params: { category: st
     { id: 'intl-news',     label: lang === 'zh' ? '每週國際稅務快訊' : 'Weekly International Tax News Summary' },
   ];
 
-  const defaultTab = isGov ? 'pollution-sources' : isCapital ? 'daily-quotes' : isNewsSummary ? 'biweekly-esg' : 'articles';
+  const defaultTab = isGov ? 'disqualified-vendors' : isCapital ? 'daily-quotes' : isNewsSummary ? 'biweekly-esg' : 'articles';
   const [activeSubTab, setActiveSubTab] = useState(defaultTab);
 
   const hasSubTabs = isEsg || isGov || isCapital || isNewsSummary;
@@ -2354,9 +2354,9 @@ export default function DataCategoryContent({ params }: { params: { category: st
               )}
 
               {activeSubTab === 'reports'               && isEsg  && <EsgReportsTab />}
-              {activeSubTab === 'disqualified-vendors'  && isGov  && <GovDisqualifiedTab lang={lang} />}
-              {activeSubTab === 'pollution-sources'     && isGov  && <GovPollutionTab lang={lang} />}
-              {activeSubTab === 'labor-violations'      && isGov  && <GovLaborTab lang={lang} />}
+              {activeSubTab === 'disqualified-vendors'  && isGov  && <GovDisqualifiedTab lang={lang} accentColor={cat.color} />}
+              {activeSubTab === 'pollution-sources'     && isGov  && <GovPollutionTab lang={lang} accentColor={cat.color} />}
+              {activeSubTab === 'labor-violations'      && isGov  && <GovLaborTab lang={lang} accentColor={cat.color} />}
 
               {/* News Summary tabs */}
               {activeSubTab === 'biweekly-esg' && isNewsSummary && (

@@ -389,6 +389,25 @@
 }
 ```
 
+## Data Explore SubTab + Section Title Accent Color 規範
+
+**適用頁面：** 所有 Data Explore 子頁面（`/data-explore/[category]`）中使用 SubTab 的版面（News Summary、Government Regulations、Capital Markets、ESG 等）。
+
+**設計規範：**
+- `.de-subtab-btn.active` 的文字顏色與底線顏色由 `cat.color`（分類的 accent color）決定，透過 inline style 注入：
+  ```tsx
+  style={active === tab.id ? { borderBottomColor: color, color } : {}}
+  ```
+- 各 Tab 內容區塊的**主標題**（`.de-data-section-title` 或 `.de-tax-news-title`）**必須**套用相同的 accent color，使標題顏色與 active subtab button 一致：
+  ```tsx
+  <span className="de-data-section-title" style={{ color: accentColor }}>...</span>
+  // 或
+  <div className="de-tax-news-title" style={{ color: accentColor }}>...</div>
+  ```
+- Tab 元件應接收 `accentColor: string` prop，由父層傳入 `cat.color`（或 `NEWS_ACCENT`）。
+- 此規範已在 News Summary 頁面（`NewsDigestSummaryTab`、`BiweeklyEsgTab`）及 Government Regulations 頁面（`GovDisqualifiedTab`、`GovPollutionTab`、`GovLaborTab`）實作。
+- **新增任何 Data Explore SubTab 頁面時，請遵循此規範確保視覺一致性。**
+
 ## Sidebar Active Nav Item
 
 ```css
