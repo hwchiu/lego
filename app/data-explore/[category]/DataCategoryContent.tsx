@@ -940,7 +940,7 @@ function CmDailyQuotesTab({ lang }: { lang: 'zh' | 'en' }) {
               <td className="num">{fmtNum(r.high)}</td>
               <td className="num">{fmtNum(r.low)}</td>
               <td className="num">{fmtNum(r.close)}</td>
-              <td className={`num ${r.change.startsWith('+') ? 'pos' : r.change.startsWith('-') ? 'neg' : ''}`}>{fmtNum(r.change)}</td>
+              <td className="num">{fmtNum(r.change)}</td>
               <td className="num">{fmtNum(r.txn)}</td>
             </tr>
           ))}
@@ -977,7 +977,7 @@ function CmDayTradingTab({ lang }: { lang: 'zh' | 'en' }) {
               <td className="num">{fmtNum(r.buy)}</td>
               <td className="num">{fmtNum(r.sell)}</td>
               <td className="num">{fmtNum(r.net)}</td>
-              <td className="num">{fmtPct(r.ratio)}</td>
+              <td className={`num${r.ratio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.ratio)}</td>
             </tr>
           ))}
         </tbody>
@@ -1054,10 +1054,10 @@ function CmShortSaleTab({ lang }: { lang: 'zh' | 'en' }) {
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
               <td className="num">{fmtNum(r.finLimit)}</td>
               <td className="num">{fmtNum(r.finUsed)}</td>
-              <td className="num">{fmtPct(r.finRatio)}</td>
+              <td className={`num${r.finRatio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.finRatio)}</td>
               <td className="num">{fmtNum(r.shoLimit)}</td>
               <td className="num">{fmtNum(r.shoUsed)}</td>
-              <td className="num">{fmtPct(r.shoRatio)}</td>
+              <td className={`num${r.shoRatio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.shoRatio)}</td>
             </tr>
           ))}
         </tbody>
@@ -1131,7 +1131,7 @@ function CmForeignTab({ lang }: { lang: 'zh' | 'en' }) {
               <td className="num">{fmtNum(r.buy)}</td>
               <td className="num">{fmtNum(r.sell)}</td>
               <td className="num">{fmtNum(r.shares)}</td>
-              <td className="num">{fmtPct(r.ratio)}</td>
+              <td className={`num${r.ratio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.ratio)}</td>
             </tr>
           ))}
         </tbody>
@@ -1165,9 +1165,9 @@ function CmPriceLimitTab({ lang }: { lang: 'zh' | 'en' }) {
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
               <td className="num">{fmtNum(r.refPrice)}</td>
-              <td className="num pos">{fmtNum(r.ceiling)}</td>
-              <td className="num neg">{fmtNum(r.floor)}</td>
-              <td className="num">{fmtPct(r.pct)}</td>
+              <td className="num">{fmtNum(r.ceiling)}</td>
+              <td className="num">{fmtNum(r.floor)}</td>
+              <td className={`num${r.pct.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.pct)}</td>
             </tr>
           ))}
         </tbody>
@@ -1199,7 +1199,7 @@ function CmPeRatioTab({ lang }: { lang: 'zh' | 'en' }) {
           {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{fmtPct(r.yield)}</td>
+              <td className={`num${r.yield.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.yield)}</td>
               <td className="num">{fmtNum(r.pe)}</td>
               <td className="num">{fmtNum(r.pb)}</td>
             </tr>
