@@ -1192,11 +1192,17 @@ function CmPeRatioTab({ lang }: { lang: 'zh' | 'en' }) {
 // ── Government Regulations — new tab data ───────────────────────────────────
 
 interface GovDisqualifiedRow {
-  name: string;
-  id: string;
-  period: string;
-  reason: string;
-  agency: string;
+  ban: string;
+  transgress_control_id: string;
+  fac_city_code: string;
+  county_name: string;
+  ems_no: string;
+  fac_name: string;
+  document_no: string;
+  transgress_date: string;
+  transgress_type: string;
+  transgress_name: string;
+  update_date: string;
 }
 
 interface GovRegulatoryRow {
@@ -1314,7 +1320,19 @@ function GovDisqualifiedTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentCo
 
   const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     sourceRows,
-    [(r) => r.name, (r) => r.id, (r) => r.period, (r) => r.reason, (r) => r.agency],
+    [
+      (r) => r.ban,
+      (r) => r.transgress_control_id,
+      (r) => r.fac_city_code,
+      (r) => r.county_name,
+      (r) => r.ems_no,
+      (r) => r.fac_name,
+      (r) => r.document_no,
+      (r) => r.transgress_date,
+      (r) => r.transgress_type,
+      (r) => r.transgress_name,
+      (r) => r.update_date,
+    ],
   );
 
   if (loading) return <div className="de-esg-loading">{zh ? '載入中…' : 'Loading…'}</div>;
@@ -1322,12 +1340,24 @@ function GovDisqualifiedTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentCo
 
   function handleDownloadCSV() {
     const headers = zh
-      ? ['廠商名稱', '統一編號', '禁止往來期間', '違法事由', '主管機關']
-      : ['Vendor Name', 'Tax ID', 'Banned Period', 'Violation Reason', 'Authority'];
+      ? ['統一編號', '違規人管制編號', '公司（工廠）地址縣市別代碼', '裁處機關', '管制事業編號', '事業名稱', '裁處書字號', '違反時間', '污染類別', '違規人名稱', '台積更新此筆紀錄的時間']
+      : ['UBN', 'Transgress Control ID', 'Fac. City Code', 'County Name', 'EMS No', 'Fac. Name', 'Document No', 'Transgress Date', 'Transgress Type', 'Transgress Name', 'Update Date'];
     downloadCSV(
       zh ? '拒絕往來廠商公告.csv' : 'disqualified-vendors.csv',
       headers,
-      sourceRows.map((r) => [r.name, r.id, r.period, r.reason, r.agency]),
+      sourceRows.map((r) => [
+        r.ban,
+        r.transgress_control_id,
+        r.fac_city_code,
+        r.county_name,
+        r.ems_no,
+        r.fac_name,
+        r.document_no,
+        r.transgress_date,
+        r.transgress_type,
+        r.transgress_name,
+        r.update_date,
+      ]),
     );
   }
 
@@ -1347,21 +1377,33 @@ function GovDisqualifiedTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentCo
         <table className="de-data-table">
           <thead>
             <tr>
-              <ThSortFilter label={zh ? '廠商名稱' : 'Vendor Name'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
-              <ThSortFilter label={zh ? '統一編號' : 'Tax ID'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
-              <ThSortFilter label={zh ? '禁止往來期間' : 'Banned Period'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} />
-              <ThSortFilter label={zh ? '違法事由' : 'Violation Reason'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} />
-              <ThSortFilter label={zh ? '主管機關' : 'Authority'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} />
+              <ThSortFilter label={zh ? '統一編號' : 'UBN'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+              <ThSortFilter label={zh ? '違規人管制編號' : 'Transgress Control ID'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+              <ThSortFilter label={zh ? '公司（工廠）地址縣市別代碼' : 'Fac. City Code'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} />
+              <ThSortFilter label={zh ? '裁處機關' : 'County Name'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} />
+              <ThSortFilter label={zh ? '管制事業編號' : 'EMS No'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} />
+              <ThSortFilter label={zh ? '事業名稱' : 'Fac. Name'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} />
+              <ThSortFilter label={zh ? '裁處書字號' : 'Document No'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} />
+              <ThSortFilter label={zh ? '違反時間' : 'Transgress Date'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} />
+              <ThSortFilter label={zh ? '污染類別' : 'Transgress Type'} colIndex={8} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[8] ?? ''} />
+              <ThSortFilter label={zh ? '違規人名稱' : 'Transgress Name'} colIndex={9} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[9] ?? ''} />
+              <ThSortFilter label={zh ? '台積更新此筆紀錄的時間' : 'Update Date'} colIndex={10} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[10] ?? ''} />
             </tr>
           </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.id}>
-                <td>{r.name}</td>
-                <td className="code">{r.id}</td>
-                <td className="muted">{r.period}</td>
-                <td>{r.reason}</td>
-                <td className="muted">{r.agency}</td>
+              <tr key={r.ban}>
+                <td className="code">{r.ban}</td>
+                <td className="code">{r.transgress_control_id}</td>
+                <td className="muted">{r.fac_city_code}</td>
+                <td>{r.county_name}</td>
+                <td className="code">{r.ems_no}</td>
+                <td>{r.fac_name}</td>
+                <td className="muted">{r.document_no}</td>
+                <td className="muted">{r.transgress_date}</td>
+                <td>{r.transgress_type}</td>
+                <td>{r.transgress_name}</td>
+                <td className="muted">{r.update_date}</td>
               </tr>
             ))}
           </tbody>
