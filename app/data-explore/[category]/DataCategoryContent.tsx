@@ -1391,8 +1391,8 @@ function GovDisqualifiedTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentCo
             </tr>
           </thead>
           <tbody>
-            {rows.map((r, i) => (
-              <tr key={i}>
+            {rows.map((r) => (
+              <tr key={r.ban}>
                 <td className="code">{r.ban}</td>
                 <td className="code">{r.transgress_control_id}</td>
                 <td className="muted">{r.fac_city_code}</td>
