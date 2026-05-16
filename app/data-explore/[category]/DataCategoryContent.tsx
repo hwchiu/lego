@@ -13,6 +13,7 @@ import { useLanguage } from '@/app/contexts/LanguageContext';
 import { queryCatgDetail, type CatgDetailType } from '@/app/lib/queryCatgDetail';
 import { queryDataItemContent } from '@/app/lib/queryDataItemContent';
 import { type NewsSummaryItem } from '@/app/data/newsSummaryData';
+import { formatNumber } from '@/app/lib/formatters';
 
 const TAGS_VISIBLE_COUNT = 6;
 
@@ -100,6 +101,26 @@ function downloadCSV(filename: string, headers: string[], dataRows: string[][]):
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+// ── Capital Markets numeric formatting helpers ────────────────────────────────
+
+/** Format a numeric string (with optional commas/sign) to 2 d.p. with thousands separator. */
+function fmtNum(v: string): string {
+  if (v === '—' || v === '') return v;
+  const isPos = v.startsWith('+');
+  const num = parseFloat(v.replace(/,/g, ''));
+  if (isNaN(num)) return v;
+  return (isPos ? '+' : '') + formatNumber(Math.abs(num));
+}
+
+/** Format a percentage string (e.g. '22.53%' or '10%') to 2 d.p. with '%' suffix. */
+function fmtPct(v: string): string {
+  if (v === '—' || v === '') return v;
+  const stripped = v.replace('%', '');
+  const num = parseFloat(stripped.replace(/,/g, ''));
+  if (isNaN(num)) return v;
+  return formatNumber(num) + '%';
 }
 
 // ── Gov data-source disclosure popup ─────────────────────────────────────────
@@ -913,14 +934,14 @@ function CmDailyQuotesTab({ lang }: { lang: 'zh' | 'en' }) {
           {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{r.vol}</td>
-              <td className="num">{r.amount}</td>
-              <td className="num">{r.open}</td>
-              <td className="num">{r.high}</td>
-              <td className="num">{r.low}</td>
-              <td className="num">{r.close}</td>
-              <td className={`num ${r.change.startsWith('+') ? 'pos' : r.change.startsWith('-') ? 'neg' : ''}`}>{r.change}</td>
-              <td className="num">{r.txn}</td>
+              <td className="num">{fmtNum(r.vol)}</td>
+              <td className="num">{fmtNum(r.amount)}</td>
+              <td className="num">{fmtNum(r.open)}</td>
+              <td className="num">{fmtNum(r.high)}</td>
+              <td className="num">{fmtNum(r.low)}</td>
+              <td className="num">{fmtNum(r.close)}</td>
+              <td className="num">{fmtNum(r.change)}</td>
+              <td className="num">{fmtNum(r.txn)}</td>
             </tr>
           ))}
         </tbody>
@@ -953,10 +974,10 @@ function CmDayTradingTab({ lang }: { lang: 'zh' | 'en' }) {
           {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{r.buy}</td>
-              <td className="num">{r.sell}</td>
-              <td className="num">{r.net}</td>
-              <td className="num">{r.ratio}</td>
+              <td className="num">{fmtNum(r.buy)}</td>
+              <td className="num">{fmtNum(r.sell)}</td>
+              <td className="num">{fmtNum(r.net)}</td>
+              <td className={`num${r.ratio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.ratio)}</td>
             </tr>
           ))}
         </tbody>
@@ -991,12 +1012,12 @@ function CmMarginTab({ lang }: { lang: 'zh' | 'en' }) {
           {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{r.finBuy}</td>
-              <td className="num">{r.finSell}</td>
-              <td className="num">{r.finBal}</td>
-              <td className="num">{r.shoBuy}</td>
-              <td className="num">{r.shoSell}</td>
-              <td className="num">{r.shoBal}</td>
+              <td className="num">{fmtNum(r.finBuy)}</td>
+              <td className="num">{fmtNum(r.finSell)}</td>
+              <td className="num">{fmtNum(r.finBal)}</td>
+              <td className="num">{fmtNum(r.shoBuy)}</td>
+              <td className="num">{fmtNum(r.shoSell)}</td>
+              <td className="num">{fmtNum(r.shoBal)}</td>
             </tr>
           ))}
         </tbody>
@@ -1031,12 +1052,12 @@ function CmShortSaleTab({ lang }: { lang: 'zh' | 'en' }) {
           {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{r.finLimit}</td>
-              <td className="num">{r.finUsed}</td>
-              <td className="num">{r.finRatio}</td>
-              <td className="num">{r.shoLimit}</td>
-              <td className="num">{r.shoUsed}</td>
-              <td className="num">{r.shoRatio}</td>
+              <td className="num">{fmtNum(r.finLimit)}</td>
+              <td className="num">{fmtNum(r.finUsed)}</td>
+              <td className={`num${r.finRatio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.finRatio)}</td>
+              <td className="num">{fmtNum(r.shoLimit)}</td>
+              <td className="num">{fmtNum(r.shoUsed)}</td>
+              <td className={`num${r.shoRatio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.shoRatio)}</td>
             </tr>
           ))}
         </tbody>
@@ -1071,7 +1092,7 @@ function CmExDividendTab({ lang }: { lang: 'zh' | 'en' }) {
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
               <td>{r.exDivDate}</td>
-              <td className="num">{r.divVal}</td>
+              <td className="num">{fmtNum(r.divVal)}</td>
               <td className="muted">{r.exRightDate}</td>
               <td className="num muted">{r.rightVal}</td>
               <td className="muted">{r.listDate}</td>
@@ -1107,10 +1128,10 @@ function CmForeignTab({ lang }: { lang: 'zh' | 'en' }) {
           {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{r.buy}</td>
-              <td className="num">{r.sell}</td>
-              <td className="num">{r.shares}</td>
-              <td className="num">{r.ratio}</td>
+              <td className="num">{fmtNum(r.buy)}</td>
+              <td className="num">{fmtNum(r.sell)}</td>
+              <td className="num">{fmtNum(r.shares)}</td>
+              <td className={`num${r.ratio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.ratio)}</td>
             </tr>
           ))}
         </tbody>
@@ -1143,10 +1164,10 @@ function CmPriceLimitTab({ lang }: { lang: 'zh' | 'en' }) {
           {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{r.refPrice}</td>
-              <td className="num pos">{r.ceiling}</td>
-              <td className="num neg">{r.floor}</td>
-              <td className="num">{r.pct}</td>
+              <td className="num">{fmtNum(r.refPrice)}</td>
+              <td className="num">{fmtNum(r.ceiling)}</td>
+              <td className="num">{fmtNum(r.floor)}</td>
+              <td className={`num${r.pct.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.pct)}</td>
             </tr>
           ))}
         </tbody>
@@ -1178,9 +1199,9 @@ function CmPeRatioTab({ lang }: { lang: 'zh' | 'en' }) {
           {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{r.yield}</td>
-              <td className="num">{r.pe}</td>
-              <td className="num">{r.pb}</td>
+              <td className={`num${r.yield.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.yield)}</td>
+              <td className="num">{fmtNum(r.pe)}</td>
+              <td className="num">{fmtNum(r.pb)}</td>
             </tr>
           ))}
         </tbody>
@@ -2250,13 +2271,13 @@ export default function DataCategoryContent({ params }: { params: { category: st
 
   const CAPITAL_TABS = [
     { id: 'daily-quotes',      label: lang === 'zh' ? '每日收盤行情' : 'Daily Quotes' },
-    { id: 'day-trading',       label: lang === 'zh' ? '每日沖銷交易標記及統計' : 'Objects and Statistics for Day Trading' },
-    { id: 'margin',            label: lang === 'zh' ? '融資融券餘額' : 'Margin Transaction Summary' },
+    { id: 'day-trading',       label: lang === 'zh' ? '每日沖銷交易標記及統計' : 'Statistics for Day Trading' },
+    { id: 'margin',            label: lang === 'zh' ? '融資融券餘額' : 'Margin Transaction' },
     { id: 'short-sale',        label: lang === 'zh' ? '信用額度總量管制餘額檔' : 'Daily Short Sale Balances' },
-    { id: 'ex-dividend',       label: lang === 'zh' ? '除權息及上下市資訊檔' : 'Ex-Right/Dividend and List/Delist Data' },
-    { id: 'foreign-investors', label: lang === 'zh' ? '外資投資持股統計' : 'Summary of Invested Amount of Foreign Investors' },
+    { id: 'ex-dividend',       label: lang === 'zh' ? '除權息及上下市資訊檔' : 'Ex-Right/Dividend & List/Delist' },
+    { id: 'foreign-investors', label: lang === 'zh' ? '外資投資持股統計' : 'Invested Amt of Foreign' },
     { id: 'price-limit',       label: lang === 'zh' ? '漲跌幅度表檔' : 'Price Variation Limit' },
-    { id: 'pe-ratio',          label: lang === 'zh' ? '個股日本益比、殖利率及股價淨值比' : 'Individual Stock P/E Ratio, Dividend Yield, and P/B Ratio' },
+    { id: 'pe-ratio',          label: lang === 'zh' ? '個股日本益比、殖利率及股價淨值比' : 'P/E Ratio, Dividend Yield, P/B Ratio' },
   ];
 
   const GOV_TABS = [
