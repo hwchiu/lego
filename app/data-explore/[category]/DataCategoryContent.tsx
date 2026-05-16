@@ -1199,13 +1199,15 @@ interface GovDisqualifiedRow {
   agency: string;
 }
 
-interface GovPollutionRow {
-  name: string;
-  city: string;
-  date: string;
-  reason: string;
-  fine: string;
-  law: string;
+interface GovRegulatoryRow {
+  Corporation_Number: number;
+  Case_no: string;
+  Corporation_Name: string;
+  Announce_Agency_No: string;
+  Announce_Agency_Name: string;
+  Case_Name: string;
+  Expire_Date: string;
+  update_date: string;
 }
 
 interface GovLaborRow {
@@ -1259,6 +1261,47 @@ function useGovApiRows<T>(endpoint: string) {
       cancelled = true;
     };
   }, [endpoint]);
+
+  return { sourceRows, loading, error };
+}
+
+function useRegulatoryApiRows() {
+  const [sourceRows, setSourceRows] = useState<GovRegulatoryRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    fetch(`${APP_BASE_PATH}/api/getRegulatoryOnPollutionSources`)
+      .then(async (res) => {
+        if (!res.ok) {
+          const rawText = await res.text().catch(() => '');
+          const errText = rawText.length > GOV_ERROR_TEXT_MAX_LENGTH
+            ? `${rawText.slice(0, GOV_ERROR_TEXT_MAX_LENGTH)}...`
+            : rawText;
+          throw new Error(`Failed to fetch getRegulatoryOnPollutionSources (${res.status} ${res.statusText})${errText ? `: ${errText}` : ''}`);
+        }
+        const data = (await res.json()) as { Rvlmd_List: { Rvlmd: GovRegulatoryRow[] } };
+        return data.Rvlmd_List.Rvlmd;
+      })
+      .then((items) => {
+        if (!cancelled) setSourceRows(items);
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : String(err));
+          console.error('Government regulations API request failed:', err);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return { sourceRows, loading, error };
 }
@@ -1330,11 +1373,20 @@ function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
-  const { sourceRows, loading, error } = useGovApiRows<GovPollutionRow>('getPollutionSources');
+  const { sourceRows, loading, error } = useRegulatoryApiRows();
 
   const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     sourceRows,
-    [(r) => r.name, (r) => r.city, (r) => r.date, (r) => r.reason, (r) => r.fine, (r) => r.law],
+    [
+      (r) => String(r.Corporation_Number),
+      (r) => r.Case_no,
+      (r) => r.Corporation_Name,
+      (r) => r.Announce_Agency_No,
+      (r) => r.Announce_Agency_Name,
+      (r) => r.Case_Name,
+      (r) => r.Expire_Date,
+      (r) => r.update_date,
+    ],
   );
 
   if (loading) return <div className="de-esg-loading">{zh ? '載入中…' : 'Loading…'}</div>;
@@ -1342,12 +1394,21 @@ function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
 
   function handleDownloadCSV() {
     const headers = zh
-      ? ['事業名稱', '所在縣市', '裁處日期', '違規事由', '裁處金額(元)', '法規依據']
-      : ['Company Name', 'City/County', 'Penalty Date', 'Violation', 'Fine (NT$)', 'Regulation'];
+      ? ['廠商代碼', '標案案號', '廠商名稱', '刊登機關代碼', '刊登機關名稱', '標案名稱', '拒絕往來截止日', '台積此筆更新的時間']
+      : ['Corporation Number', 'Case No', 'Corporation Name', 'Announce Agency No', 'Announce Agency Name', 'Case Name', 'Expire Date', 'Update Date'];
     downloadCSV(
-      zh ? '列管事業污染源裁處資料.csv' : 'pollution-sources.csv',
+      zh ? '拒絕往來廠商公告.csv' : 'regulatory-on-pollution-sources.csv',
       headers,
-      sourceRows.map((r) => [r.name, r.city, r.date, r.reason, r.fine, r.law]),
+      sourceRows.map((r) => [
+        String(r.Corporation_Number),
+        r.Case_no,
+        r.Corporation_Name,
+        r.Announce_Agency_No,
+        r.Announce_Agency_Name,
+        r.Case_Name,
+        r.Expire_Date,
+        r.update_date,
+      ]),
     );
   }
 
@@ -1355,7 +1416,7 @@ function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
     <div className="de-data-section">
       <div className="de-data-section-header">
         <span className="de-data-section-title">
-          {zh ? '列管事業污染源裁處資料' : 'Regulatory data on industrial pollution sources'}
+          {zh ? '拒絕往來廠商公告' : 'Regulatory on Pollution Sources'}
         </span>
         <GovInfoWrap />
         <button className="de-news-download-btn de-gov-csv-btn" onClick={handleDownloadCSV}>
@@ -1367,23 +1428,27 @@ function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
         <table className="de-data-table">
           <thead>
             <tr>
-              <ThSortFilter label={zh ? '事業名稱' : 'Company Name'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
-              <ThSortFilter label={zh ? '所在縣市' : 'City/County'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
-              <ThSortFilter label={zh ? '裁處日期' : 'Penalty Date'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} />
-              <ThSortFilter label={zh ? '違規事由' : 'Violation'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} />
-              <ThSortFilter label={zh ? '裁處金額(元)' : 'Fine (NT$)'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
-              <ThSortFilter label={zh ? '法規依據' : 'Regulation'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} />
+              <ThSortFilter label={zh ? '廠商代碼' : 'Corporation Number'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+              <ThSortFilter label={zh ? '標案案號' : 'Case No'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+              <ThSortFilter label={zh ? '廠商名稱' : 'Corporation Name'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} />
+              <ThSortFilter label={zh ? '刊登機關代碼' : 'Announce Agency No'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} />
+              <ThSortFilter label={zh ? '刊登機關名稱' : 'Announce Agency Name'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} />
+              <ThSortFilter label={zh ? '標案名稱' : 'Case Name'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} />
+              <ThSortFilter label={zh ? '拒絕往來截止日' : 'Expire Date'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} />
+              <ThSortFilter label={zh ? '台積此筆更新的時間' : 'Update Date'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} />
             </tr>
           </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.name}>
-                <td>{r.name}</td>
-                <td className="muted">{r.city}</td>
-                <td className="muted">{r.date}</td>
-                <td>{r.reason}</td>
-                <td className="num">{r.fine}</td>
-                <td className="muted">{r.law}</td>
+              <tr key={`${r.Corporation_Number}-${r.Case_no}`}>
+                <td className="code">{r.Corporation_Number}</td>
+                <td className="code">{r.Case_no}</td>
+                <td>{r.Corporation_Name}</td>
+                <td className="muted">{r.Announce_Agency_No}</td>
+                <td>{r.Announce_Agency_Name}</td>
+                <td>{r.Case_Name}</td>
+                <td className="muted">{r.Expire_Date}</td>
+                <td className="muted">{r.update_date}</td>
               </tr>
             ))}
           </tbody>
