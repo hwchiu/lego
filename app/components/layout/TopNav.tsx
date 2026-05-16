@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useState, useRef, useEffect, useCallback, useMemo, type ReactNode } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
@@ -318,7 +318,6 @@ type SearchTabType = 'all' | 'company' | 'event' | 'news';
 interface EventNewsCardProps {
   item: SearchResultItem;
   lang: 'zh' | 'en';
-  highlightQuery: HighlightQuery;
 }
 
 // Matches protocol-less domain strings that start with dot-separated host labels
@@ -334,47 +333,7 @@ function normalizeSearchResultUrl(url: string): string {
   return value;
 }
 
-function escapeRegExpSpecialChars(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-interface HighlightQuery {
-  regex: RegExp | null;
-  terms: Set<string>;
-}
-
-function buildHighlightQuery(query: string): HighlightQuery {
-  const terms = query
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((term) => term.toLowerCase());
-
-  if (terms.length === 0) {
-    return { regex: null, terms: new Set() };
-  }
-
-  const uniqueTerms = Array.from(new Set(terms)).sort((a, b) => b.length - a.length);
-  return {
-    regex: new RegExp(`(${uniqueTerms.map(escapeRegExpSpecialChars).join('|')})`, 'gi'),
-    terms: new Set(uniqueTerms),
-  };
-}
-
-function renderHighlightedText(text: string, highlightQuery: HighlightQuery): ReactNode {
-  if (!highlightQuery.regex || highlightQuery.terms.size === 0) return text;
-  const parts = text.split(highlightQuery.regex);
-  if (parts.length === 1) return text;
-
-  return parts.map((part, index) => {
-    const isMatch = highlightQuery.terms.has(part.toLowerCase());
-    return isMatch
-      ? <mark key={index} className="search-result-highlight">{part}</mark>
-      : <Fragment key={index}>{part}</Fragment>;
-  });
-}
-
-function EventNewsCard({ item, lang, highlightQuery }: EventNewsCardProps) {
+function EventNewsCard({ item, lang }: EventNewsCardProps) {
   const dateStr = item.datetime
     ? new Date(item.datetime).toLocaleDateString(
         lang === 'en' ? 'en-US' : 'zh-TW',
@@ -390,17 +349,13 @@ function EventNewsCard({ item, lang, highlightQuery }: EventNewsCardProps) {
       rel="noopener noreferrer"
       onMouseDown={(e) => e.stopPropagation()}
     >
-      <div className="search-result-card-title">{renderHighlightedText(item.title, highlightQuery)}</div>
+      <div className="search-result-card-title">{item.title}</div>
       <div className="search-result-card-meta">
         {item.company_short_name && (
-          <span className="news-tag search-result-card-tag">
-            {renderHighlightedText(item.company_short_name, highlightQuery)}
-          </span>
+          <span className="news-tag search-result-card-tag">{item.company_short_name}</span>
         )}
         {item.category && (
-          <span className="search-result-card-category">
-            {renderHighlightedText(item.category, highlightQuery)}
-          </span>
+          <span className="search-result-card-category">{item.category}</span>
         )}
         {dateStr && (
           <span className="search-result-card-date">{dateStr}</span>
@@ -634,8 +589,6 @@ export default function TopNav() {
         .sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime()),
     [mockResults],
   );
-  const highlightQuery = useMemo(() => buildHighlightQuery(query), [query]);
-
   // Debounce query for "See all results" button
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedQuery(query.trim()), 400);
@@ -705,8 +658,7 @@ export default function TopNav() {
                   <rect x="1.5" y="2" width="10" height="9" rx="1" stroke="currentColor" strokeWidth="1.2" />
                   <path d="M4 5h5M4 7.5h3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
                 </svg>
-                <strong>{renderHighlightedText(company.symbol, highlightQuery)}</strong>
-                &nbsp;{renderHighlightedText(company.name, highlightQuery)}
+                <strong>{company.symbol}</strong>&nbsp;{company.name}
               </button>
               {company.isFinAlive && (
                 <button
@@ -872,7 +824,7 @@ export default function TopNav() {
                           </div>
                           <div className="search-result-cards">
                             {mockEvents.slice(0, 3).map((item) => (
-                              <EventNewsCard key={item.id} item={item} lang={lang} highlightQuery={highlightQuery} />
+                              <EventNewsCard key={item.id} item={item} lang={lang} />
                             ))}
                           </div>
                         </div>
@@ -886,7 +838,7 @@ export default function TopNav() {
                           </div>
                           <div className="search-result-cards">
                             {mockNews.slice(0, 3).map((item) => (
-                              <EventNewsCard key={item.id} item={item} lang={lang} highlightQuery={highlightQuery} />
+                              <EventNewsCard key={item.id} item={item} lang={lang} />
                             ))}
                           </div>
                         </div>
@@ -984,7 +936,7 @@ export default function TopNav() {
                         ? (
                           <div className="search-result-cards">
                             {mockEvents.map((item) => (
-                              <EventNewsCard key={item.id} item={item} lang={lang} highlightQuery={highlightQuery} />
+                              <EventNewsCard key={item.id} item={item} lang={lang} />
                             ))}
                           </div>
                         )
@@ -1003,7 +955,7 @@ export default function TopNav() {
                         ? (
                           <div className="search-result-cards">
                             {mockNews.map((item) => (
-                              <EventNewsCard key={item.id} item={item} lang={lang} highlightQuery={highlightQuery} />
+                              <EventNewsCard key={item.id} item={item} lang={lang} />
                             ))}
                           </div>
                         )
