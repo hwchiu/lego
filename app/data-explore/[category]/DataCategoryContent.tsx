@@ -2218,8 +2218,8 @@ export default function DataCategoryContent({ params }: { params: { category: st
   ];
 
   const GOV_TABS = [
-    { id: 'pollution-sources',    label: lang === 'zh' ? '列管事業污染源裁處資料' : 'Regulatory data on industrial pollution sources' },
-    { id: 'disqualified-vendors', label: lang === 'zh' ? '拒絕往來廠商公告' : 'Announcement of Disqualified Vendors' },
+    { id: 'pollution-sources',    label: lang === 'zh' ? '列管事業污染源裁處資料' : 'Regulatory on pollution sources' },
+    { id: 'disqualified-vendors', label: lang === 'zh' ? '拒絕往來廠商公告' : 'Disqualified Vendors' },
     { id: 'labor-violations',     label: lang === 'zh' ? '違反勞動法令事業單位' : 'Violations of Labor Laws' },
   ];
 
