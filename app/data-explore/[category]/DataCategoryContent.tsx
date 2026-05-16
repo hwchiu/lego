@@ -1200,7 +1200,7 @@ interface GovDisqualifiedRow {
 }
 
 interface GovRegulatoryRow {
-  Corporation_Number: number | string;
+  Corporation_Number: number;
   Case_no: string;
   Corporation_Name: string;
   Announce_Agency_No: string;
@@ -1393,7 +1393,9 @@ function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
   if (error) return <div className="de-esg-empty">{zh ? '載入失敗，請稍後再試。' : 'Failed to load. Please try again later.'}</div>;
 
   function handleDownloadCSV() {
-    const headers = ['廠商代碼', '標案案號', '廠商名稱', '刊登機關代碼', '刊登機關名稱', '標案名稱', '拒絕往來截止日', '台積此筆更新的時間'];
+    const headers = zh
+      ? ['廠商代碼', '標案案號', '廠商名稱', '刊登機關代碼', '刊登機關名稱', '標案名稱', '拒絕往來截止日', '台積此筆更新的時間']
+      : ['Corporation Number', 'Case No', 'Corporation Name', 'Announce Agency No', 'Announce Agency Name', 'Case Name', 'Expire Date', 'Update Date'];
     downloadCSV(
       zh ? '拒絕往來廠商公告.csv' : 'regulatory-on-pollution-sources.csv',
       headers,
@@ -1414,7 +1416,7 @@ function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
     <div className="de-data-section">
       <div className="de-data-section-header">
         <span className="de-data-section-title">
-          {zh ? '列管事業污染源裁處資料' : 'Regulatory on Pollution Sources'}
+          {zh ? '拒絕往來廠商公告' : 'Regulatory on Pollution Sources'}
         </span>
         <GovInfoWrap />
         <button className="de-news-download-btn de-gov-csv-btn" onClick={handleDownloadCSV}>
@@ -1437,8 +1439,8 @@ function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
             </tr>
           </thead>
           <tbody>
-            {rows.map((r, i) => (
-              <tr key={`${r.Corporation_Number}-${r.Case_no}-${i}`}>
+            {rows.map((r) => (
+              <tr key={`${r.Corporation_Number}-${r.Case_no}`}>
                 <td className="code">{r.Corporation_Number}</td>
                 <td className="code">{r.Case_no}</td>
                 <td>{r.Corporation_Name}</td>
