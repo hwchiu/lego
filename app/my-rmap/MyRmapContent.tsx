@@ -5,6 +5,7 @@ import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
+import { BASE_PATH } from '@/app/lib/basePath';
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
 
@@ -207,7 +208,7 @@ export default function MyRmapContent() {
   function handleShare(e: React.MouseEvent, card: (typeof SCENARIO_CARDS)[number]) {
     e.preventDefault();
     e.stopPropagation();
-    const url = `${window.location.origin}/lego${card.href}/`;
+    const url = `${window.location.origin}${BASE_PATH}${card.href}/`;
     if (navigator.share) {
       navigator.share({ title: card.title, url }).catch(() => {});
     } else {
