@@ -205,7 +205,7 @@ export const CATEGORIES: Category[] = [
     icon: <CapitalMarketsIcon />,
     color: '#be123c',
     description:
-      'Investment analysis, analyst ratings, price targets, institutional ownership, and capital market events for TSMC (TC ADR) and associated semiconductor sector equities.',
+      'Taiwan Stock Exchange Trading Info/Data',
     items: extractJson<DataItem[]>(capitalRaw),
   },
   {
@@ -214,7 +214,7 @@ export const CATEGORIES: Category[] = [
     icon: <GovernmentIcon />,
     color: '#2563eb',
     description:
-      'Regulatory frameworks, export controls, semiconductor subsidies, and trade policies affecting TSMC and the broader semiconductor supply chain — including US CHIPS Act, BIS rules, and allied nation policies.',
+      '(TW) Government Penalty Records',
     items: extractJson<DataItem[]>(govRegsRaw),
   },
   {
