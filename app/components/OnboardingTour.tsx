@@ -9,6 +9,9 @@ const COOKIE_EXPIRY_DAYS = 365;
 const MS_PER_DAY = 864e5;
 const TOUR_INITIAL_DELAY_MS = 700;
 const ANIMATION_DURATION_MS = 400;
+const TOUR_STEP_STORAGE_KEY = 'mic-onboarding-step';
+const TOUR_ACTIVE_STORAGE_KEY = 'mic-onboarding-active';
+const FAVORITES_ROUTE_PATH = '/lego/watchlist/favorites/';
 const SPOTLIGHT_PADDING = 8;
 const CALLOUT_WIDTH = 360;
 const CALLOUT_MARGIN = 18;
@@ -246,7 +249,7 @@ const TOUR_STEPS: TourStep[] = [
       '<li>Receive email notifications.</li>' +
       '<li>Book an event directly into your Outlook calendar.</li>' +
       '</ol>',
-    calloutSide: 'bottom',
+    calloutSide: 'left',
     icon: <BellSettingsIcon />,
     preview: <Step3Preview />,
     accentColor: '#8b5cf6',
@@ -290,13 +293,28 @@ export default function OnboardingTour() {
   // ── Check cookie on mount ─────────────────────────────────────────────────
   useEffect(() => {
     const done = getCookie(COOKIE_NAME);
-    if (!done) {
-      const t = setTimeout(() => {
-        setEntering(true);
-        setVisible(true);
-      }, TOUR_INITIAL_DELAY_MS);
-      return () => clearTimeout(t);
+    if (done || typeof window === 'undefined') return;
+
+    const persistedActive = sessionStorage.getItem(TOUR_ACTIVE_STORAGE_KEY) === '1';
+    const persistedStepRaw = sessionStorage.getItem(TOUR_STEP_STORAGE_KEY);
+    const persistedStep = Number(persistedStepRaw);
+    if (
+      persistedActive &&
+      Number.isFinite(persistedStep) &&
+      persistedStep >= 0 &&
+      persistedStep < TOUR_STEPS.length
+    ) {
+      setStep(persistedStep);
+      setEntering(true);
+      setVisible(true);
+      return;
     }
+
+    const t = setTimeout(() => {
+      setEntering(true);
+      setVisible(true);
+    }, TOUR_INITIAL_DELAY_MS);
+    return () => clearTimeout(t);
   }, []);
 
   // Remove entering class after animation
@@ -381,6 +399,12 @@ export default function OnboardingTour() {
     };
   }, [visible, updatePosition]);
 
+  useEffect(() => {
+    if (!visible || typeof window === 'undefined') return;
+    sessionStorage.setItem(TOUR_ACTIVE_STORAGE_KEY, '1');
+    sessionStorage.setItem(TOUR_STEP_STORAGE_KEY, String(step));
+  }, [step, visible]);
+
   // ── Trigger step enter animation on step change ───────────────────────────
   useEffect(() => {
     if (!visible) return;
@@ -390,7 +414,20 @@ export default function OnboardingTour() {
   // ── Actions ───────────────────────────────────────────────────────────────
   const handleNext = () => {
     if (step < totalSteps - 1) {
-      setStep((s) => s + 1);
+      const nextStep = step + 1;
+      const nextStepDef = TOUR_STEPS[nextStep];
+      if (nextStepDef?.id === 3 && typeof window !== 'undefined') {
+        const pathname = window.location.pathname.endsWith('/')
+          ? window.location.pathname
+          : `${window.location.pathname}/`;
+        if (pathname !== FAVORITES_ROUTE_PATH) {
+          sessionStorage.setItem(TOUR_ACTIVE_STORAGE_KEY, '1');
+          sessionStorage.setItem(TOUR_STEP_STORAGE_KEY, String(nextStep));
+          window.location.href = FAVORITES_ROUTE_PATH;
+          return;
+        }
+      }
+      setStep(nextStep);
     } else {
       handleDone();
     }
@@ -398,6 +435,10 @@ export default function OnboardingTour() {
 
   const handleDone = () => {
     setCookie(COOKIE_NAME, 'done', COOKIE_EXPIRY_DAYS);
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem(TOUR_ACTIVE_STORAGE_KEY);
+      sessionStorage.removeItem(TOUR_STEP_STORAGE_KEY);
+    }
     setVisible(false);
   };
 
