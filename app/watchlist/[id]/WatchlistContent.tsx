@@ -1961,7 +1961,7 @@ export function WatchlistContent({
               <div className="wl-action-btns">
                 {/* Subscribe button — Favorites page only */}
                 {showSubscribeButton && (
-                  <button className="wl-action-btn" onClick={() => setShowSubscribe(true)}>
+                  <button className="wl-action-btn wl-action-btn--subscribe-tour" onClick={() => setShowSubscribe(true)}>
                     <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
                       <path d="M7 1.5a4 4 0 0 0-4 4v2.5L2 9.5h10l-1-1.5V5.5a4 4 0 0 0-4-4Z"
                         stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />

@@ -135,6 +135,40 @@ function Step2Preview() {
 
 function Step3Preview() {
   return (
+    <div className="tour-preview tour-preview--subscribe">
+      <div className="tour-preview-subscribe-header">
+        <span>Subscribe</span>
+      </div>
+      <div className="tour-preview-subscribe-layout">
+        <div className="tour-preview-subscribe-panel">
+          <div className="tour-preview-subscribe-panel-title">Companies</div>
+          <div className="tour-preview-subscribe-item tour-preview-subscribe-item--active">All Companies</div>
+          <div className="tour-preview-subscribe-item">AAPL</div>
+          <div className="tour-preview-subscribe-item">NVDA</div>
+          <div className="tour-preview-subscribe-item">TSM</div>
+        </div>
+        <div className="tour-preview-subscribe-panel">
+          <div className="tour-preview-subscribe-panel-title">Event Types</div>
+          <div className="tour-preview-subscribe-check">
+            <span className="tour-preview-subscribe-check-box tour-preview-subscribe-check-box--on" />
+            <span>Earnings Call</span>
+          </div>
+          <div className="tour-preview-subscribe-check">
+            <span className="tour-preview-subscribe-check-box tour-preview-subscribe-check-box--on" />
+            <span>Revenue Update</span>
+          </div>
+          <div className="tour-preview-subscribe-check">
+            <span className="tour-preview-subscribe-check-box" />
+            <span>Investor Day</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Step4Preview() {
+  return (
     <div className="tour-preview tour-preview--notif">
       <div className="tour-preview-notif-header">
         <span>Notifications</span>
@@ -204,6 +238,21 @@ const TOUR_STEPS: TourStep[] = [
   },
   {
     id: 3,
+    targetSelector: '.wl-action-btn--subscribe-tour',
+    title: 'Subscribe',
+    subtitle: 'NEW FEATURE',
+    description: '<p>Click the subscribe button to follow your favorite companies\' events in watchlist. Then, click the notification to customize your notification preferences for upcoming events. You can choose to:</p>' +
+      '<ol>' +
+      '<li>Receive email notifications.</li>' +
+      '<li>Book an event directly into your Outlook calendar.</li>' +
+      '</ol>',
+    calloutSide: 'bottom',
+    icon: <BellSettingsIcon />,
+    preview: <Step3Preview />,
+    accentColor: '#8b5cf6',
+  },
+  {
+    id: 4,
     targetSelector: '.topnav-notif-panel-wrap',
     title: 'Notification Settings',
     subtitle: 'NEW FEATURE',
@@ -213,7 +262,7 @@ const TOUR_STEPS: TourStep[] = [
       '— Email, Event Booking in Outlook, and more — tailored to your workflow.',
     calloutSide: 'left',
     icon: <BellSettingsIcon />,
-    preview: <Step3Preview />,
+    preview: <Step4Preview />,
     accentColor: '#f59e0b',
   },
 ];
@@ -272,6 +321,8 @@ export default function OnboardingTour() {
     const el = document.querySelector(currentStep.targetSelector) as HTMLElement | null;
     if (!el) {
       setSpotlightRect(null);
+      setCalloutPos({ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: CALLOUT_WIDTH });
+      setArrowClass('');
       return;
     }
 
