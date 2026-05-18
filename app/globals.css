@@ -4654,6 +4654,47 @@ html.dark .wl-modal-body--scroll::-webkit-scrollbar-thumb:hover {
 .wl-mv-delete-btn:hover {
   background: #fef2f2;
 }
+.wl-mv-edit-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  transition:
+    background 0.13s,
+    color 0.13s;
+  border: 1px solid #bae6fd;
+  background: transparent;
+  color: #0369a1;
+}
+.wl-mv-edit-btn:hover {
+  background: #f0f9ff;
+}
+.wl-mv-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 1px solid var(--c-border-2);
+  background: transparent;
+  color: var(--c-text-3);
+  align-self: flex-start;
+  margin-bottom: 4px;
+  transition:
+    background 0.13s,
+    color 0.13s;
+}
+.wl-mv-back-btn:hover {
+  background: var(--c-bg);
+  color: var(--c-text);
+}
 
 /* Validation error states for ManageViewModal */
 .wl-modal-field--error .wl-modal-field-label {

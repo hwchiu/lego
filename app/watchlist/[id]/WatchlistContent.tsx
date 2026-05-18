@@ -715,6 +715,7 @@ interface ManageViewModalProps {
   viewOrder: string[];
   hiddenViews: Set<string>;
   onSave: (name: string, columns: number[]) => void;
+  onEditSave: (oldId: string, name: string, columns: number[]) => void;
   onDelete: (id: string) => void;
   onToggleHide: (id: string) => void;
   onReorderViews: (order: string[]) => void;
@@ -726,12 +727,16 @@ function ManageViewModal({
   viewOrder,
   hiddenViews,
   onSave,
+  onEditSave,
   onDelete,
   onToggleHide,
   onReorderViews,
   onClose,
 }: ManageViewModalProps) {
   const [modalTab, setModalTab] = useState<'create' | 'edit'>('create');
+
+  // Track which custom view is currently being edited in the Edit Views tab (null = list mode)
+  const [editingViewId, setEditingViewId] = useState<string | null>(null);
 
   // Create New View state — category/column data from getViewAllColumns()
   // Sort categories by categoryId ascending (as required by API response contract)
@@ -837,7 +842,31 @@ function ManageViewModal({
       hasError = true;
     }
     if (hasError) return;
-    onSave(name, selectedColumns);
+    if (editingViewId !== null) {
+      onEditSave(editingViewId, name, selectedColumns);
+    } else {
+      onSave(name, selectedColumns);
+    }
+  }
+
+  function handleStartEditView(id: string) {
+    const view = customViews.find((v) => v.id === id);
+    if (!view) return;
+    setEditingViewId(id);
+    setViewName(view.name);
+    setSelectedColumns([...view.columns]);
+    setViewNameError(false);
+    setColumnsError(false);
+    setColumnLimitWarning(false);
+  }
+
+  function handleCancelEditView() {
+    setEditingViewId(null);
+    setViewName('');
+    setSelectedColumns([]);
+    setViewNameError(false);
+    setColumnsError(false);
+    setColumnLimitWarning(false);
   }
 
   return (
@@ -998,69 +1027,219 @@ function ManageViewModal({
             </>
           ) : (
             /* Edit Views tab */
-            <div className="wl-mv-edit-list">
-              {viewOrder.map((id, i) => {
-                const isSummary = id === 'Summary';
-                const isBuiltin = BUILTIN_VIEWS.includes(id as typeof BUILTIN_VIEWS[number]);
-                const label = isBuiltin
-                  ? id
-                  : (customViews.find((v) => v.id === id)?.name ?? id);
-                const isHidden = hiddenViews.has(id);
-                return (
-                  <div
-                    key={id}
-                    className="wl-mv-edit-item"
-                    draggable
-                    onDragStart={() => handleEditDragStart(i)}
-                    onDragEnter={() => handleEditDragEnter(i)}
-                    onDragEnd={handleEditDragEnd}
-                    onDragOver={(e) => e.preventDefault()}
-                  >
-                    <svg className="wl-drag-handle" viewBox="0 0 14 14" fill="none" width="14" height="14">
-                      <path d="M3 4h8M3 7h8M3 10h8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                    </svg>
-                    <span className={`wl-mv-edit-label${isHidden ? ' wl-mv-edit-label--hidden' : ''}`}>{label}</span>
-                    <div className="wl-mv-edit-actions">
-                      {/* Summary View cannot be hidden or deleted */}
-                      {!isSummary && (
+            editingViewId !== null ? (
+              /* ── Inline edit form (same layout as Create New View) ── */
+              <>
+                {/* Back button */}
+                <button className="wl-mv-back-btn" onClick={handleCancelEditView}>
+                  <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+                    <path d="M9 2L4 7L9 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  Back to List
+                </button>
+
+                {/* View Name */}
+                <div className={`wl-modal-field${viewNameError ? ' wl-modal-field--error' : ''}`}>
+                  <label className="wl-modal-field-label">View Name</label>
+                  <input
+                    className={`wl-modal-input${viewNameError ? ' wl-modal-input--error' : ''}`}
+                    type="text"
+                    placeholder="e.g. My Earnings View"
+                    value={viewName}
+                    onChange={(e) => { setViewName(e.target.value); setViewNameError(false); }}
+                    autoFocus
+                  />
+                  {viewNameError && (
+                    <span className="wl-modal-field-error-msg">View Name is required.</span>
+                  )}
+                </div>
+
+                {/* 3-column picker */}
+                <div className="wl-mv-picker">
+                  {/* Category */}
+                  <div className="wl-mv-panel">
+                    <div className="wl-mv-panel-title">Category</div>
+                    <div className="wl-mv-panel-body">
+                      {categoryLabels.map((cat) => (
                         <button
-                          className={`wl-mv-hide-btn${isHidden ? ' active' : ''}`}
-                          title={isHidden ? 'Show View' : 'Hide View'}
-                          onClick={() => onToggleHide(id)}
+                          key={cat}
+                          className={`wl-mv-cat-item${selectedCategory === cat ? ' active' : ''}`}
+                          onClick={() => setSelectedCategory(cat)}
                         >
-                          {isHidden ? (
-                            <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                              <path d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z" stroke="currentColor" strokeWidth="1.3" />
-                              <circle cx="7" cy="7" r="1.8" fill="currentColor" />
-                              <path d="M2 2L12 12" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-                            </svg>
-                          ) : (
-                            <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                              <path d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z" stroke="currentColor" strokeWidth="1.3" />
-                              <circle cx="7" cy="7" r="1.8" fill="currentColor" />
-                            </svg>
-                          )}
-                          <span>{isHidden ? 'Show' : 'Hide'}</span>
+                          {cat}
                         </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Available Columns */}
+                  <div className="wl-mv-panel">
+                    <div className="wl-mv-panel-title">Available Columns</div>
+                    <div className="wl-mv-panel-body">
+                      {availableColumns.map((col) => {
+                        const checked = selectedColumns.includes(col.column_id);
+                        return (
+                          <label key={col.column_id} className="wl-mv-col-item">
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={() => handleToggleColumn(col.column_id)}
+                            />
+                            <span>{col.column_name}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Selected Columns */}
+                  <div className="wl-mv-panel">
+                    <div className="wl-mv-panel-title">
+                      Selected Columns
+                      {selectedColumns.length > 0 && (
+                        <span className="wl-mv-badge">{selectedColumns.length}</span>
                       )}
-                      {!isSummary && (
-                        <button
-                          className="wl-mv-delete-btn"
-                          title="Delete View"
-                          onClick={() => setConfirmDeleteId(id)}
-                        >
-                          <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
-                            <path d="M2.5 4h9M5.5 4V2.5h3V4M5.5 6.5v4M8.5 6.5v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-                            <rect x="3" y="4" width="8" height="8" rx="1" stroke="currentColor" strokeWidth="1.3" />
-                          </svg>
-                          <span>Delete</span>
-                        </button>
+                    </div>
+                    <div className="wl-mv-panel-body">
+                      {selectedColumns.length === 0 ? (
+                        <div className={`wl-mv-empty${columnsError ? ' wl-mv-empty--error' : ''}`}>
+                          No columns selected yet.<br />Check columns on the left.
+                        </div>
+                      ) : (
+                        selectedColumns.map((colId, i) => {
+                          const label = columnIdToName[colId];
+                          if (!label) return null;
+                          return (
+                            <div
+                              key={colId}
+                              className="wl-mv-sel-item"
+                              draggable
+                              onDragStart={() => handleSelDragStart(i)}
+                              onDragEnter={() => handleSelDragEnter(i)}
+                              onDragEnd={handleSelDragEnd}
+                              onDragOver={(e) => e.preventDefault()}
+                            >
+                              <svg className="wl-drag-handle" viewBox="0 0 14 14" fill="none" width="12" height="12">
+                                <path d="M3 4h8M3 7h8M3 10h8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                              </svg>
+                              <span className="wl-mv-sel-label">{label}</span>
+                              <button
+                                className="wl-drag-delete"
+                                aria-label={`Remove ${label}`}
+                                onClick={() => handleRemoveSelectedColumn(colId)}
+                              >
+                                <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+                                  <path d="M3 3L11 11M11 3L3 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                                </svg>
+                              </button>
+                            </div>
+                          );
+                        })
                       )}
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+
+                {/* Columns error message */}
+                {columnsError && selectedColumns.length === 0 && (
+                  <span className="wl-modal-field-error-msg" style={{ alignSelf: 'flex-end' }}>
+                    Please select at least one column to save this view.
+                  </span>
+                )}
+
+                {/* Column limit warning */}
+                {columnLimitWarning && (
+                  <span className="wl-modal-field-error-msg" style={{ alignSelf: 'flex-end' }}>
+                    You can select a maximum of {MAX_SELECTED_COLUMNS} columns per view.
+                  </span>
+                )}
+
+                {/* Save button */}
+                <button
+                  className="wl-modal-done-btn"
+                  style={{ alignSelf: 'flex-end', marginTop: 4 }}
+                  onClick={handleCreateSave}
+                >
+                  Update View
+                </button>
+              </>
+            ) : (
+              <div className="wl-mv-edit-list">
+                {viewOrder.map((id, i) => {
+                  const isSummary = id === 'Summary';
+                  const isBuiltin = BUILTIN_VIEWS.includes(id as typeof BUILTIN_VIEWS[number]);
+                  const label = isBuiltin
+                    ? id
+                    : (customViews.find((v) => v.id === id)?.name ?? id);
+                  const isHidden = hiddenViews.has(id);
+                  return (
+                    <div
+                      key={id}
+                      className="wl-mv-edit-item"
+                      draggable
+                      onDragStart={() => handleEditDragStart(i)}
+                      onDragEnter={() => handleEditDragEnter(i)}
+                      onDragEnd={handleEditDragEnd}
+                      onDragOver={(e) => e.preventDefault()}
+                    >
+                      <svg className="wl-drag-handle" viewBox="0 0 14 14" fill="none" width="14" height="14">
+                        <path d="M3 4h8M3 7h8M3 10h8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                      </svg>
+                      <span className={`wl-mv-edit-label${isHidden ? ' wl-mv-edit-label--hidden' : ''}`}>{label}</span>
+                      <div className="wl-mv-edit-actions">
+                        {/* Summary View cannot be hidden or deleted */}
+                        {!isSummary && (
+                          <button
+                            className={`wl-mv-hide-btn${isHidden ? ' active' : ''}`}
+                            title={isHidden ? 'Show View' : 'Hide View'}
+                            onClick={() => onToggleHide(id)}
+                          >
+                            {isHidden ? (
+                              <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                                <path d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z" stroke="currentColor" strokeWidth="1.3" />
+                                <circle cx="7" cy="7" r="1.8" fill="currentColor" />
+                                <path d="M2 2L12 12" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                              </svg>
+                            ) : (
+                              <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                                <path d="M1.5 7C1.5 7 3.5 3 7 3C10.5 3 12.5 7 12.5 7C12.5 7 10.5 11 7 11C3.5 11 1.5 7 1.5 7Z" stroke="currentColor" strokeWidth="1.3" />
+                                <circle cx="7" cy="7" r="1.8" fill="currentColor" />
+                              </svg>
+                            )}
+                            <span>{isHidden ? 'Show' : 'Hide'}</span>
+                          </button>
+                        )}
+                        {!isBuiltin && (
+                          <button
+                            className="wl-mv-edit-btn"
+                            title="Edit View"
+                            onClick={() => handleStartEditView(id)}
+                          >
+                            <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                              <path d="M9.5 2.5L11.5 4.5L5 11H3V9L9.5 2.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+                            </svg>
+                            <span>Edit</span>
+                          </button>
+                        )}
+                        {!isSummary && (
+                          <button
+                            className="wl-mv-delete-btn"
+                            title="Delete View"
+                            onClick={() => setConfirmDeleteId(id)}
+                          >
+                            <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                              <path d="M2.5 4h9M5.5 4V2.5h3V4M5.5 6.5v4M8.5 6.5v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                              <rect x="3" y="4" width="8" height="8" rx="1" stroke="currentColor" strokeWidth="1.3" />
+                            </svg>
+                            <span>Delete</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )
           )}
         </div>
       </div>
@@ -1793,6 +1972,38 @@ export function WatchlistContent({
     if (!isNaN(numericId) && view?.apiViewId !== undefined) {
       await apiDeleteView({ watchlistId: numericId, viewId: view.apiViewId });
     }
+  }
+
+  async function handleEditCustomView(oldId: string, name: string, columnIds: number[]) {
+    const oldView = customViews.find((v) => v.id === oldId);
+    const numericId = parseInt(watchlistId);
+    let apiViewId: number | undefined;
+
+    if (!isNaN(numericId)) {
+      // Delete the old view entry on the server first
+      if (oldView?.apiViewId !== undefined) {
+        await apiDeleteView({ watchlistId: numericId, viewId: oldView.apiViewId });
+      }
+      // Create updated view via createViewWithColumn
+      const result = await createViewWithColumn({
+        watchlistId: numericId,
+        viewName: name,
+        selectedCategories: columnIds,
+      });
+      apiViewId = result.viewId;
+
+      // Refresh via getWatchlistDetail + getWatchlistData for the updated view
+      refreshFromDetail(numericId, apiViewId ?? 0);
+    }
+
+    // Update local state: replace old view with updated data
+    setCustomViews((prev) =>
+      prev.map((v) =>
+        v.id === oldId ? { ...v, name, columns: columnIds, apiViewId } : v,
+      ),
+    );
+    setShowManageView(false);
+    setActiveTab(oldId);
   }
 
   function handleToggleHideView(id: string) {
@@ -2679,6 +2890,7 @@ export function WatchlistContent({
           viewOrder={viewOrder}
           hiddenViews={hiddenViews}
           onSave={handleSaveCustomView}
+          onEditSave={handleEditCustomView}
           onDelete={handleDeleteCustomView}
           onToggleHide={handleToggleHideView}
           onReorderViews={setViewOrder}
