@@ -1979,24 +1979,32 @@ export function WatchlistContent({
     const numericId = parseInt(watchlistId);
     let apiViewId: number | undefined;
 
-    if (!isNaN(numericId)) {
-      // Delete the old view entry on the server first
-      if (oldView?.apiViewId !== undefined) {
-        await apiDeleteView({ watchlistId: numericId, viewId: oldView.apiViewId });
-      }
-      // Create updated view via createViewWithColumn
-      const result = await createViewWithColumn({
-        watchlistId: numericId,
-        viewName: name,
-        selectedCategories: columnIds,
-      });
-      apiViewId = result.viewId;
+    try {
+      if (!isNaN(numericId)) {
+        // Delete the old view entry on the server first
+        if (oldView?.apiViewId !== undefined) {
+          await apiDeleteView({ watchlistId: numericId, viewId: oldView.apiViewId });
+        }
+        // Create updated view via createViewWithColumn
+        const result = await createViewWithColumn({
+          watchlistId: numericId,
+          viewName: name,
+          selectedCategories: columnIds,
+        });
+        apiViewId = result.viewId;
 
-      // Refresh via getWatchlistDetail + getWatchlistData for the updated view
-      refreshFromDetail(numericId, apiViewId ?? 0);
+        // Refresh via getWatchlistDetail + getWatchlistData for the updated view
+        // Falls back to Summary (viewId 0) if the new API view ID is unavailable
+        refreshFromDetail(numericId, apiViewId ?? 0);
+      }
+    } catch (err) {
+      console.error('[handleEditCustomView] API error:', err);
+      return; // Abort: don't update local state or close modal on failure
     }
 
-    // Update local state: replace old view with updated data
+    // Update local state: replace old view with updated data.
+    // NOTE: `oldId` is the local UUID-based identifier stored in viewOrder and customViews;
+    //       it does NOT change during an edit — only the server-assigned apiViewId is refreshed.
     setCustomViews((prev) =>
       prev.map((v) =>
         v.id === oldId ? { ...v, name, columns: columnIds, apiViewId } : v,
