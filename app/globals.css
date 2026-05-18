@@ -26880,6 +26880,15 @@ html.dark .pr-archive-api-badge-clear:hover {
   font-weight: 600;
 }
 
+.tour-callout-desc ol {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.tour-callout-desc li + li {
+  margin-top: 4px;
+}
+
 /* Preview mockup */
 .tour-callout-preview {
   margin: 12px 16px 0;
@@ -27019,13 +27028,12 @@ html.dark .pr-archive-api-badge-clear:hover {
 .tour-preview-finidx-btn {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 10px;
-  font-weight: 600;
+  justify-content: center;
   color: #4fc3f7;
   background: rgba(79, 195, 247, 0.1);
   border-radius: 4px;
-  padding: 3px 7px;
+  width: 22px;
+  height: 22px;
   border: 1px solid rgba(79, 195, 247, 0.25);
 }
 

@@ -99,7 +99,6 @@ function Step1Preview() {
               <rect x="10.5" y="2" width="2.5" height="11" rx="0.5" stroke="currentColor" strokeWidth="1.1" />
               <path d="M2.25 7.5 L7 4 L12.75 1.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
             </svg>
-            Financial Index
           </span>
         </div>
       </div>
@@ -179,10 +178,11 @@ const TOUR_STEPS: TourStep[] = [
     targetSelector: '.topnav-search-wrap',
     title: 'Financial Index Search',
     subtitle: 'NEW FEATURE',
-    description:
-      'Type a company ticker or name (e.g. <strong>AAPL</strong>) in the search bar. ' +
-      'For companies with financial data, click the <strong>📊 Financial Index</strong> icon ' +
-      'to instantly reveal key metrics — Revenue, Gross Profit, Net Income, and more.',
+    description: '<ol>' +
+      '<li>Type a company name (e.g., Apple) in the search bar.</li>' +
+      '<li>Click the "Financial Index" icon to instantly view: Revenue with QoQ and YoY and Gross Margin.</li>' +
+      '<li>Click "more information" for additional financial indices.</li>' +
+      '</ol>',
     calloutSide: 'bottom',
     icon: <SearchBarIcon />,
     preview: <Step1Preview />,
@@ -404,7 +404,7 @@ export default function OnboardingTour() {
         </div>
 
         {/* Description */}
-        <p
+        <div
           className="tour-callout-desc"
           dangerouslySetInnerHTML={{ __html: currentStep.description }}
         />
