@@ -246,8 +246,8 @@ const TOUR_STEPS: TourStep[] = [
     subtitle: 'NEW FEATURE',
     description: '<p>Click the subscribe button to follow your favorite companies\' events in watchlist. Then, click the notification to customize your notification preferences for upcoming events. You can choose to:</p>' +
       '<ol>' +
-      '<li>Receive email notifications.</li>' +
-      '<li>Book an event directly into your Outlook calendar.</li>' +
+      '<li><strong>Receive email notifications.</strong></li>' +
+      '<li><strong>Book an event directly into your Outlook calendar.</strong></li>' +
       '</ol>',
     calloutSide: 'left',
     icon: <BellSettingsIcon />,
