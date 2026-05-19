@@ -1598,24 +1598,24 @@ function GovPenaltyRecordsTab({ lang, accentColor }: { lang: 'zh' | 'en'; accent
 
   return (
     <div className="de-gov-penalty-layout">
-      <div className="de-gov-penalty-content">
-        {activeGovTab === 'disqualified-vendors' && <GovDisqualifiedTab lang={lang} accentColor={accentColor} />}
-        {activeGovTab === 'pollution-sources' && <GovPollutionTab lang={lang} accentColor={accentColor} />}
-        {activeGovTab === 'labor-violations' && <GovLaborTab lang={lang} accentColor={accentColor} />}
-      </div>
       <nav className="de-gov-penalty-sidebar" aria-label={zh ? '政府處分資料子分類' : 'Government penalty sub categories'}>
         <div className="de-gov-penalty-sidebar-title">{zh ? '子分類' : 'Sub Category'}</div>
         {innerTabs.map((tab) => (
           <button
             key={tab.id}
             className={`de-gov-penalty-sidebar-item${activeGovTab === tab.id ? ' active' : ''}`}
-            style={activeGovTab === tab.id ? { borderRightColor: accentColor, color: accentColor } : {}}
+            style={activeGovTab === tab.id ? { borderLeftColor: accentColor, color: accentColor } : {}}
             onClick={() => setActiveGovTab(tab.id)}
           >
             <span className="de-gov-penalty-sidebar-item-name">{tab.label}</span>
           </button>
         ))}
       </nav>
+      <div className="de-gov-penalty-content">
+        {activeGovTab === 'disqualified-vendors' && <GovDisqualifiedTab lang={lang} accentColor={accentColor} />}
+        {activeGovTab === 'pollution-sources' && <GovPollutionTab lang={lang} accentColor={accentColor} />}
+        {activeGovTab === 'labor-violations' && <GovLaborTab lang={lang} accentColor={accentColor} />}
+      </div>
     </div>
   );
 }
