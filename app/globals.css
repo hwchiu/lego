@@ -10431,7 +10431,7 @@ html.dark .seg-item-l3.fin-stmt-td-item {
 .de-gov-penalty-content {
   flex: 1;
   min-width: 0;
-  padding-right: 24px;
+  padding-left: 24px;
 }
 .de-gov-penalty-sidebar {
   width: 180px;
@@ -10440,8 +10440,8 @@ html.dark .seg-item-l3.fin-stmt-td-item {
   flex-direction: column;
   gap: 2px;
   padding: 4px 0;
-  border-right: none;
-  border-left: 1px solid var(--c-border);
+  border-right: 1px solid var(--c-border);
+  border-left: none;
 }
 .de-gov-penalty-sidebar-title {
   font-size: 10px;
@@ -10460,10 +10460,10 @@ html.dark .seg-item-l3.fin-stmt-td-item {
   background: transparent;
   text-align: left;
   cursor: pointer;
-  border-right: 3px solid transparent;
+  border-left: 3px solid transparent;
   transition:
     background 0.13s,
-    border-right-color 0.13s,
+    border-left-color 0.13s,
     color 0.13s;
   font-family: var(--font);
   color: var(--c-text-2);
@@ -10474,7 +10474,7 @@ html.dark .seg-item-l3.fin-stmt-td-item {
 .de-gov-penalty-sidebar-item.active {
   background: var(--c-bg);
   font-weight: 700;
-  border-right-color: currentColor;
+  border-left-color: currentColor;
 }
 .de-gov-penalty-sidebar-item-name {
   font-size: 13px;
@@ -10760,13 +10760,14 @@ html.dark .seg-item-l3.fin-stmt-td-item {
     flex-direction: column;
   }
   .de-gov-penalty-content {
-    padding-right: 0;
+    padding-left: 0;
     padding-bottom: 16px;
   }
   .de-gov-penalty-sidebar {
     width: 100%;
     min-width: 0;
     border-left: none;
+    border-right: none;
     border-top: 1px solid var(--c-border);
     border-bottom: none;
     flex-direction: row;
@@ -10778,13 +10779,13 @@ html.dark .seg-item-l3.fin-stmt-td-item {
     padding-bottom: 4px;
   }
   .de-gov-penalty-sidebar-item {
-    border-right: none;
+    border-left: none;
     border-bottom: 3px solid transparent;
     border-radius: var(--radius-sm);
     padding: 8px 12px;
   }
   .de-gov-penalty-sidebar-item.active {
-    border-right: none;
+    border-left: none;
     border-bottom-color: currentColor;
   }
   .de-map-panel {
