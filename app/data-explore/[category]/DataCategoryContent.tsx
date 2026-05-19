@@ -1460,7 +1460,7 @@ function GovPollutionTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentColor
       ? ['廠商代碼', '標案案號', '廠商名稱', '刊登機關代碼', '刊登機關名稱', '標案名稱', '拒絕往來截止日', '台積此筆更新的時間']
       : ['Corporation Number', 'Case No', 'Corporation Name', 'Announce Agency No', 'Announce Agency Name', 'Case Name', 'Expire Date', 'Update Date'];
     downloadCSV(
-      zh ? '列管事業污染源裁處資.csv' : 'regulatory-on-pollution-sources.csv',
+      zh ? '列管事業污染源裁處資料.csv' : 'regulatory-on-pollution-sources.csv',
       headers,
       sourceRows.map((r) => [
         String(r.Corporation_Number),
@@ -1479,7 +1479,7 @@ function GovPollutionTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentColor
     <div className="de-data-section">
       <div className="de-data-section-header">
         <span className="de-data-section-title" style={{ color: accentColor }}>
-          {zh ? '列管事業污染源裁處資' : 'Regulatory on pollution sources'}
+          {zh ? '列管事業污染源裁處資料' : 'Regulatory on pollution sources'}
         </span>
         <GovInfoWrap />
         <button className="de-news-download-btn de-gov-csv-btn" onClick={handleDownloadCSV}>
@@ -1592,7 +1592,7 @@ function GovPenaltyRecordsTab({ lang, accentColor }: { lang: 'zh' | 'en'; accent
 
   const innerTabs = [
     { id: 'disqualified-vendors', label: zh ? '拒絕往來廠商公告' : 'Disqualified Vendors' },
-    { id: 'pollution-sources', label: zh ? '列管事業污染源裁處資' : 'Regulatory on pollution sources' },
+    { id: 'pollution-sources', label: zh ? '列管事業污染源裁處資料' : 'Regulatory on pollution sources' },
     { id: 'labor-violations', label: zh ? '違反勞動法令事業單位' : 'Violations of Labor Laws' },
   ];
 
@@ -1603,16 +1603,16 @@ function GovPenaltyRecordsTab({ lang, accentColor }: { lang: 'zh' | 'en'; accent
         {activeGovTab === 'pollution-sources' && <GovPollutionTab lang={lang} accentColor={accentColor} />}
         {activeGovTab === 'labor-violations' && <GovLaborTab lang={lang} accentColor={accentColor} />}
       </div>
-      <nav className="de-intl-tax-sidebar de-gov-penalty-sidebar" aria-label={zh ? '政府處分資料子分類' : 'Government penalty sub categories'}>
-        <div className="de-intl-tax-sidebar-title">{zh ? '子分類' : 'Sub Category'}</div>
+      <nav className="de-gov-penalty-sidebar" aria-label={zh ? '政府處分資料子分類' : 'Government penalty sub categories'}>
+        <div className="de-gov-penalty-sidebar-title">{zh ? '子分類' : 'Sub Category'}</div>
         {innerTabs.map((tab) => (
           <button
             key={tab.id}
-            className={`de-intl-tax-sidebar-item${activeGovTab === tab.id ? ' active' : ''}`}
+            className={`de-gov-penalty-sidebar-item${activeGovTab === tab.id ? ' active' : ''}`}
             style={activeGovTab === tab.id ? { borderRightColor: accentColor, color: accentColor } : {}}
             onClick={() => setActiveGovTab(tab.id)}
           >
-            <span className="de-intl-tax-sidebar-item-name">{tab.label}</span>
+            <span className="de-gov-penalty-sidebar-item-name">{tab.label}</span>
           </button>
         ))}
       </nav>
