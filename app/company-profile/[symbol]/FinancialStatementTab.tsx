@@ -1036,7 +1036,8 @@ export default function FinancialStatementTab({ symbol, companyStatements: propS
                 )}
                 <button
                   className={`toggle-btn${effectiveViewMode === 'quarterly' ? ' active' : ''}`}
-                  onClick={isQuarterlyOnlyTab ? undefined : () => setViewMode('quarterly')}
+                  onClick={() => setViewMode('quarterly')}
+                  disabled={isQuarterlyOnlyTab}
                 >
                   Quarterly Report
                 </button>

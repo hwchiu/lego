@@ -1339,6 +1339,9 @@ select {
   background: var(--c-btn-active);
   color: var(--c-white);
 }
+.toggle-btn:disabled {
+  cursor: default;
+}
 
 /* ===== WEEK GRID ===== */
 .week-grid {
