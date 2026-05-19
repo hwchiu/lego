@@ -887,6 +887,8 @@ export default function FinancialStatementTab({ symbol, companyStatements: propS
       : (visibleTabs[0]?.key ?? 'income');
   const isQuarterlyOnlyTab = effectiveType === 'balance' || effectiveType === 'cashflow';
   const effectiveViewMode: ViewMode = isQuarterlyOnlyTab ? 'quarterly' : viewMode;
+  const annualReportLabel = lang === 'zh' ? '年報表' : 'Annual Report';
+  const quarterlyReportLabel = lang === 'zh' ? '季報表' : 'Quarterly Report';
   const quarterlyOnlyTitle =
     lang === 'zh'
       ? '季報表（此報表類型僅提供季度模式）'
@@ -1034,20 +1036,19 @@ export default function FinancialStatementTab({ symbol, companyStatements: propS
               <div className="toggle-group">
                 {!isQuarterlyOnlyTab && (
                   <button
-                    className={`toggle-btn${effectiveViewMode === 'annual' ? ' active' : ''}`}
-                    onClick={() => setViewMode('annual')}
-                  >
-                    Annual Report
+                  className={`toggle-btn${effectiveViewMode === 'annual' ? ' active' : ''}`}
+                  onClick={() => setViewMode('annual')}
+                >
+                    {annualReportLabel}
                   </button>
                 )}
                 <button
                   className={`toggle-btn${effectiveViewMode === 'quarterly' ? ' active' : ''}`}
                   onClick={() => setViewMode('quarterly')}
                   disabled={isQuarterlyOnlyTab}
-                  aria-disabled={isQuarterlyOnlyTab}
                   title={isQuarterlyOnlyTab ? quarterlyOnlyTitle : undefined}
                 >
-                  Quarterly Report
+                  {quarterlyReportLabel}
                 </button>
               </div>
 
