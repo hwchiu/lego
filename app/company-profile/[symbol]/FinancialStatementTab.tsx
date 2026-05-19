@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import type { StatementData } from '@/app/data/financialData';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 import {
   getFinancialStatementByCoCd,
   type StatementType,
@@ -842,6 +843,7 @@ interface FinancialStatementTabProps {
 }
 
 export default function FinancialStatementTab({ symbol, companyStatements: propStatements, segmentRecords: propSegmentRecords }: FinancialStatementTabProps) {
+  const { lang } = useLanguage();
   const [statementType, setStatementType] = useState<StatementType>('income');
   const [viewMode, setViewMode] = useState<ViewMode>('quarterly');
   const [currency, setCurrency] = useState<Currency>('usd');
@@ -885,6 +887,10 @@ export default function FinancialStatementTab({ symbol, companyStatements: propS
       : (visibleTabs[0]?.key ?? 'income');
   const isQuarterlyOnlyTab = effectiveType === 'balance' || effectiveType === 'cashflow';
   const effectiveViewMode: ViewMode = isQuarterlyOnlyTab ? 'quarterly' : viewMode;
+  const quarterlyOnlyTitle =
+    lang === 'zh'
+      ? '季報表（此報表類型僅提供季度模式）'
+      : 'Quarterly Report (only mode available for this statement type)';
 
   const currentTabData = availableStatements[effectiveType];
 
@@ -1039,7 +1045,7 @@ export default function FinancialStatementTab({ symbol, companyStatements: propS
                   onClick={() => setViewMode('quarterly')}
                   disabled={isQuarterlyOnlyTab}
                   aria-disabled={isQuarterlyOnlyTab}
-                  title={isQuarterlyOnlyTab ? 'Quarterly Report (only mode available for this statement type)' : undefined}
+                  title={isQuarterlyOnlyTab ? quarterlyOnlyTitle : undefined}
                 >
                   Quarterly Report
                 </button>
