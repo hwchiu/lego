@@ -27243,6 +27243,11 @@ html.dark .pr-archive-api-badge-clear:hover {
   border-top: 1px solid var(--c-border);
 }
 
+/* Info-only callout (no footer / action buttons) — add bottom padding */
+.tour-callout--info-only {
+  padding-bottom: 14px;
+}
+
 /* ── Dark mode ── */
 html.dark .tour-callout {
   background: #1a2535;

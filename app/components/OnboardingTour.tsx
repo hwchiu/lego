@@ -197,20 +197,17 @@ function Step12Preview() {
   );
 }
 
-function Step34Preview() {
-  return (
-    <div className="tour-preview-stack">
-      <div className="tour-preview-stack-item">
-        <Step3Preview />
-      </div>
-      <div className="tour-preview-stack-item">
-        <Step4Preview />
-      </div>
-    </div>
-  );
-}
-
 // ── Tour step definitions ─────────────────────────────────────────────────────
+
+interface SecondCallout {
+  selector: string;
+  title: string;
+  description: string;
+  calloutSide: 'bottom' | 'left' | 'right' | 'center';
+  icon: React.ReactNode;
+  preview: React.ReactNode;
+  accentColor: string;
+}
 
 interface TourStep {
   id: number;
@@ -218,10 +215,12 @@ interface TourStep {
   title: string;
   subtitle: string;
   description: string;
-  calloutSide: 'bottom' | 'left' | 'center';
+  calloutSide: 'bottom' | 'left' | 'right' | 'center';
   icon: React.ReactNode;
   preview: React.ReactNode;
   accentColor: string;
+  /** When present, renders a second simultaneous spotlight + info-only callout */
+  secondCallout?: SecondCallout;
 }
 
 const TOUR_STEPS: TourStep[] = [
@@ -245,18 +244,26 @@ const TOUR_STEPS: TourStep[] = [
   {
     id: 2,
     targetSelector: '.wl-action-btn--subscribe-tour',
-    title: 'Subscribe & Notifications Tour',
+    title: 'Subscribe',
     subtitle: 'NEW FEATURE',
     description:
-      '<p>Click <strong>Subscribe</strong> to follow your favorite companies\' events in watchlist. Then open <strong>Notifications</strong> and use <strong>⚙ Settings</strong> to customize channels. You can:</p>' +
-      '<ol>' +
-      '<li><strong>Receive email notifications.</strong></li>' +
-      '<li><strong>Book an event directly into your Outlook calendar.</strong></li>' +
-      '</ol>',
+      'Click <strong>Subscribe</strong> to follow your favourite companies\' events in the watchlist. ' +
+      'Choose which companies and event types you want to track.',
     calloutSide: 'left',
-    icon: <BellSettingsIcon />,
-    preview: <Step34Preview />,
+    icon: <SearchBarIcon />,
+    preview: <Step3Preview />,
     accentColor: '#8b5cf6',
+    secondCallout: {
+      selector: '.topnav-notif-btn--tour',
+      title: 'Notifications',
+      description:
+        'Open <strong>Notifications</strong> from the top-right, then click <strong>⚙ Settings</strong> to customise your notification channels. ' +
+        'Receive email alerts or book events directly into your Outlook calendar.',
+      calloutSide: 'bottom',
+      icon: <BellSettingsIcon />,
+      preview: <Step4Preview />,
+      accentColor: '#f59e0b',
+    },
   },
 ];
 
@@ -277,8 +284,21 @@ export default function OnboardingTour() {
   const [spotlightRect, setSpotlightRect] = useState<SpotlightRect | null>(null);
   const [calloutPos, setCalloutPos] = useState<React.CSSProperties>({});
   const [arrowClass, setArrowClass] = useState('');
+  // Second spotlight + callout (for dual-highlight steps)
+  const [spotlightRect2, setSpotlightRect2] = useState<SpotlightRect | null>(null);
+  const [calloutPos2, setCalloutPos2] = useState<React.CSSProperties>({});
+  const [arrowClass2, setArrowClass2] = useState('');
   const [entering, setEntering] = useState(false);
+  // Viewport size for SVG dual-overlay (needs explicit pixel dimensions)
+  const [vp, setVp] = useState({ w: 0, h: 0 });
   const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    setVp({ w: window.innerWidth, h: window.innerHeight });
+    const onResize = () => setVp({ w: window.innerWidth, h: window.innerHeight });
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   // ── Check cookie on mount ─────────────────────────────────────────────────
   useEffect(() => {
@@ -318,9 +338,41 @@ export default function OnboardingTour() {
   const totalSteps = TOUR_STEPS.length;
 
   // ── Position spotlight + callout ──────────────────────────────────────────
+  const computeCalloutPos = (
+    rect: DOMRect,
+    side: 'bottom' | 'left' | 'right' | 'center',
+  ): { pos: React.CSSProperties; arrow: string } => {
+    if (side === 'bottom') {
+      const left = Math.max(
+        VIEWPORT_EDGE_MARGIN,
+        Math.min(rect.left - SPOTLIGHT_PADDING, window.innerWidth - CALLOUT_WIDTH - VIEWPORT_EDGE_MARGIN),
+      );
+      return {
+        pos: { top: rect.bottom + SPOTLIGHT_PADDING + CALLOUT_MARGIN, left, width: CALLOUT_WIDTH },
+        arrow: 'tour-callout--arrow-top',
+      };
+    }
+    if (side === 'left') {
+      const right = window.innerWidth - rect.left + SPOTLIGHT_PADDING + CALLOUT_MARGIN;
+      const top = Math.max(
+        VIEWPORT_EDGE_MARGIN,
+        Math.min(rect.top - CALLOUT_VERTICAL_OFFSET, window.innerHeight - CALLOUT_MAX_HEIGHT),
+      );
+      return {
+        pos: { top, right, width: CALLOUT_WIDTH },
+        arrow: 'tour-callout--arrow-right',
+      };
+    }
+    return {
+      pos: { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: CALLOUT_WIDTH },
+      arrow: '',
+    };
+  };
+
   const updatePosition = useCallback(() => {
     if (!currentStep?.targetSelector) {
       setSpotlightRect(null);
+      setSpotlightRect2(null);
       setCalloutPos({ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' });
       setArrowClass('');
       return;
@@ -329,13 +381,13 @@ export default function OnboardingTour() {
     const el = document.querySelector(currentStep.targetSelector) as HTMLElement | null;
     if (!el) {
       setSpotlightRect(null);
+      setSpotlightRect2(null);
       setCalloutPos({ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: CALLOUT_WIDTH });
       setArrowClass('');
       return;
     }
 
     const rect = el.getBoundingClientRect();
-
     setSpotlightRect({
       top: rect.top - SPOTLIGHT_PADDING,
       left: rect.left - SPOTLIGHT_PADDING,
@@ -343,35 +395,31 @@ export default function OnboardingTour() {
       height: rect.height + SPOTLIGHT_PADDING * 2,
     });
 
-    if (currentStep.calloutSide === 'bottom') {
-      // Position callout below the target, left-aligned to target
-      const left = Math.max(
-        VIEWPORT_EDGE_MARGIN,
-        Math.min(rect.left - SPOTLIGHT_PADDING, window.innerWidth - CALLOUT_WIDTH - VIEWPORT_EDGE_MARGIN),
-      );
-      setCalloutPos({
-        top: rect.bottom + SPOTLIGHT_PADDING + CALLOUT_MARGIN,
-        left,
-        width: CALLOUT_WIDTH,
-      });
-      setArrowClass('tour-callout--arrow-top');
-    } else if (currentStep.calloutSide === 'left') {
-      // Position callout to the left of the target
-      const right = window.innerWidth - rect.left + SPOTLIGHT_PADDING + CALLOUT_MARGIN;
-      const top = Math.max(
-        VIEWPORT_EDGE_MARGIN,
-        Math.min(rect.top - CALLOUT_VERTICAL_OFFSET, window.innerHeight - CALLOUT_MAX_HEIGHT),
-      );
-      setCalloutPos({
-        top,
-        right,
-        width: CALLOUT_WIDTH,
-      });
-      setArrowClass('tour-callout--arrow-right');
+    const { pos, arrow } = computeCalloutPos(rect, currentStep.calloutSide);
+    setCalloutPos(pos);
+    setArrowClass(arrow);
+
+    // Second target (dual-highlight steps)
+    if (currentStep.secondCallout) {
+      const el2 = document.querySelector(currentStep.secondCallout.selector) as HTMLElement | null;
+      if (el2) {
+        const rect2 = el2.getBoundingClientRect();
+        setSpotlightRect2({
+          top: rect2.top - SPOTLIGHT_PADDING,
+          left: rect2.left - SPOTLIGHT_PADDING,
+          width: rect2.width + SPOTLIGHT_PADDING * 2,
+          height: rect2.height + SPOTLIGHT_PADDING * 2,
+        });
+        const { pos: pos2, arrow: arrow2 } = computeCalloutPos(rect2, currentStep.secondCallout.calloutSide);
+        setCalloutPos2(pos2);
+        setArrowClass2(arrow2);
+      } else {
+        setSpotlightRect2(null);
+      }
     } else {
-      setCalloutPos({ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: CALLOUT_WIDTH });
-      setArrowClass('');
+      setSpotlightRect2(null);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
   useEffect(() => {
@@ -434,26 +482,101 @@ export default function OnboardingTour() {
 
   if (!visible) return null;
 
+  const isDual = !!(currentStep.secondCallout && spotlightRect2);
+
   return (
     <div className="tour-root" role="dialog" aria-modal="true" aria-label="New features tour">
-      {/* Dark overlay — shown when no spotlight; spotlight's box-shadow handles overlay when spotlight is active */}
-      {!spotlightRect && <div className="tour-overlay" />}
-
-      {/* Spotlight cutout with box-shadow overlay */}
-      {spotlightRect && (
-        <div
-          className="tour-spotlight"
+      {/* ── Overlay ───────────────────────────────────────────────────────── */}
+      {isDual ? (
+        /* SVG overlay: cuts out both spotlight targets simultaneously.
+           Explicit width/height attributes (not just CSS) are required so that
+           the SVG internal coordinate system matches viewport pixels. */
+        <svg
+          className="tour-dual-overlay"
+          aria-hidden="true"
+          width={vp.w || window.innerWidth}
+          height={vp.h || window.innerHeight}
           style={{
-            top: spotlightRect.top,
-            left: spotlightRect.left,
-            width: spotlightRect.width,
-            height: spotlightRect.height,
-            '--tour-accent': currentStep.accentColor,
-          } as React.CSSProperties}
-        />
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9901,
+            pointerEvents: 'none',
+          }}
+        >
+          <defs>
+            <mask id="tour-dual-mask">
+              <rect x="0" y="0" width="100%" height="100%" fill="white" />
+              {spotlightRect && (
+                <rect
+                  x={spotlightRect.left}
+                  y={spotlightRect.top}
+                  width={spotlightRect.width}
+                  height={spotlightRect.height}
+                  rx="8"
+                  fill="black"
+                />
+              )}
+              {spotlightRect2 && (
+                <rect
+                  x={spotlightRect2.left}
+                  y={spotlightRect2.top}
+                  width={spotlightRect2.width}
+                  height={spotlightRect2.height}
+                  rx="8"
+                  fill="black"
+                />
+              )}
+            </mask>
+          </defs>
+          {/* Dark overlay */}
+          <rect x="0" y="0" width="100%" height="100%" fill="rgba(14,22,36,0.78)" mask="url(#tour-dual-mask)" />
+          {/* Accent ring – Subscribe */}
+          {spotlightRect && (
+            <rect
+              x={spotlightRect.left}
+              y={spotlightRect.top}
+              width={spotlightRect.width}
+              height={spotlightRect.height}
+              rx="8"
+              fill="none"
+              stroke={currentStep.accentColor}
+              strokeWidth="2.5"
+            />
+          )}
+          {/* Accent ring – Notifications */}
+          {spotlightRect2 && (
+            <rect
+              x={spotlightRect2.left}
+              y={spotlightRect2.top}
+              width={spotlightRect2.width}
+              height={spotlightRect2.height}
+              rx="8"
+              fill="none"
+              stroke={currentStep.secondCallout!.accentColor}
+              strokeWidth="2.5"
+            />
+          )}
+        </svg>
+      ) : (
+        <>
+          {/* Single-target: use existing box-shadow spotlight or plain overlay */}
+          {!spotlightRect && <div className="tour-overlay" />}
+          {spotlightRect && (
+            <div
+              className="tour-spotlight"
+              style={{
+                top: spotlightRect.top,
+                left: spotlightRect.left,
+                width: spotlightRect.width,
+                height: spotlightRect.height,
+                '--tour-accent': currentStep.accentColor,
+              } as React.CSSProperties}
+            />
+          )}
+        </>
       )}
 
-      {/* Callout panel */}
+      {/* ── Primary callout (Subscribe / step 1) ─────────────────────────── */}
       <div
         className={`tour-callout${arrowClass ? ` ${arrowClass}` : ''}${entering ? ' tour-callout--enter' : ''}`}
         style={{ ...calloutPos, '--tour-accent': currentStep.accentColor } as React.CSSProperties}
@@ -496,7 +619,7 @@ export default function OnboardingTour() {
           {currentStep.preview}
         </div>
 
-        {/* Step progress dots */}
+        {/* Footer: progress dots + action buttons */}
         <div className="tour-callout-footer">
           <div className="tour-dots">
             {TOUR_STEPS.map((_, i) => (
@@ -532,6 +655,36 @@ export default function OnboardingTour() {
           </div>
         </div>
       </div>
+
+      {/* ── Secondary info-only callout (Notifications) — no action buttons ─ */}
+      {isDual && currentStep.secondCallout && (
+        <div
+          className={`tour-callout tour-callout--info-only${arrowClass2 ? ` ${arrowClass2}` : ''}${entering ? ' tour-callout--enter' : ''}`}
+          style={{ ...calloutPos2, '--tour-accent': currentStep.secondCallout.accentColor } as React.CSSProperties}
+          role="document"
+          aria-label={currentStep.secondCallout.title}
+        >
+          <div className="tour-callout-accent-bar" style={{ background: currentStep.secondCallout.accentColor }} />
+          <div className="tour-callout-header">
+            <div className="tour-callout-icon" style={{ color: currentStep.secondCallout.accentColor }}>
+              {currentStep.secondCallout.icon}
+            </div>
+            <div className="tour-callout-header-text">
+              <span className="tour-callout-subtitle" style={{ color: currentStep.secondCallout.accentColor }}>
+                {currentStep.subtitle}
+              </span>
+              <h3 className="tour-callout-title">{currentStep.secondCallout.title}</h3>
+            </div>
+          </div>
+          <div
+            className="tour-callout-desc"
+            dangerouslySetInnerHTML={{ __html: currentStep.secondCallout.description }}
+          />
+          <div className="tour-callout-preview">
+            {currentStep.secondCallout.preview}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
