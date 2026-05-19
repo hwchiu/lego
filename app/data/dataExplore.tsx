@@ -214,7 +214,7 @@ export const CATEGORIES: Category[] = [
     icon: <GovernmentIcon />,
     color: '#2563eb',
     description:
-      '(TW) Government Penalty Records',
+      '"Government Regulations & Policies" offers access to government-related information, including but not limited to regulatory enforcement data and public open data.',
     items: extractJson<DataItem[]>(govRegsRaw),
   },
   {
