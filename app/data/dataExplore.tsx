@@ -205,7 +205,7 @@ export const CATEGORIES: Category[] = [
     icon: <CapitalMarketsIcon />,
     color: '#be123c',
     description:
-      'Capital Markets provides market-related stock information(e.g. TWSE, AMEX, JPX)',
+      'Capital Markets provides market-related stock information (e.g. TWSE, AMEX, JPX)',
     items: extractJson<DataItem[]>(capitalRaw),
   },
   {

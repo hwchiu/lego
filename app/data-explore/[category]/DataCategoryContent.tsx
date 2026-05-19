@@ -1373,7 +1373,7 @@ function CmDatePicker({ lang, selectedDate, onSelect, onSearch, onClear }: CmDat
 
 // ── CSV download helpers for Capital Markets ──────────────────────────────────
 
-function cmDownload(tabId: string, lang: 'zh' | 'en') {
+function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en') {
   const zh = lang === 'zh';
   switch (tabId) {
     case 'daily-quotes':
@@ -1446,7 +1446,7 @@ function CapitalMarketsLayout({ lang, accentColor }: { lang: 'zh' | 'en'; accent
     setSearchDate(null);
   }
   function handleDownload() {
-    cmDownload(activeCmTab, lang);
+    downloadCapitalMarketsCSV(activeCmTab, lang);
   }
 
   const refDate = searchDate ?? CM_DATE;
