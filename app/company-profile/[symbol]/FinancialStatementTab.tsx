@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import type { StatementData } from '@/app/data/financialData';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 import {
   getFinancialStatementByCoCd,
   type StatementType,
@@ -842,6 +843,7 @@ interface FinancialStatementTabProps {
 }
 
 export default function FinancialStatementTab({ symbol, companyStatements: propStatements, segmentRecords: propSegmentRecords }: FinancialStatementTabProps) {
+  const { lang } = useLanguage();
   const [statementType, setStatementType] = useState<StatementType>('income');
   const [viewMode, setViewMode] = useState<ViewMode>('quarterly');
   const [currency, setCurrency] = useState<Currency>('usd');
@@ -883,6 +885,14 @@ export default function FinancialStatementTab({ symbol, companyStatements: propS
     visibleTabs.some((t) => t.key === statementType)
       ? statementType
       : (visibleTabs[0]?.key ?? 'income');
+  const isQuarterlyOnlyTab = effectiveType === 'balance' || effectiveType === 'cashflow';
+  const effectiveViewMode: ViewMode = isQuarterlyOnlyTab ? 'quarterly' : viewMode;
+  const annualReportLabel = lang === 'zh' ? '年報表' : 'Annual Report';
+  const quarterlyReportLabel = lang === 'zh' ? '季報表' : 'Quarterly Report';
+  const quarterlyOnlyTooltip =
+    lang === 'zh'
+      ? '季報表（此報表類型僅提供季度模式）'
+      : 'Quarterly Report (only mode available for this statement type)';
 
   const currentTabData = availableStatements[effectiveType];
 
@@ -945,8 +955,8 @@ export default function FinancialStatementTab({ symbol, companyStatements: propS
     }));
   }
 
-  const simpleCanGoPrev = viewMode === 'quarterly' && activeAllYears.length > 0 && simpleYearWindowStart > activeAllYears[0];
-  const simpleCanGoNext = viewMode === 'quarterly' && simpleYearWindowStart < activeMaxYearWindowStart;
+  const simpleCanGoPrev = effectiveViewMode === 'quarterly' && activeAllYears.length > 0 && simpleYearWindowStart > activeAllYears[0];
+  const simpleCanGoNext = effectiveViewMode === 'quarterly' && simpleYearWindowStart < activeMaxYearWindowStart;
 
   // Loading state
   if (loading) {
@@ -993,7 +1003,7 @@ export default function FinancialStatementTab({ symbol, companyStatements: propS
         {(currentTabData != null || useSegmentRecordsForTable) && (
           <div className="fin-stmt-toolbar">
             <div className="fin-stmt-year-nav">
-              {viewMode === 'quarterly' && activeAllYears.length > 0 && (
+              {effectiveViewMode === 'quarterly' && activeAllYears.length > 0 && (
                 <>
                   <button
                     className="wl-quarter-btn"
@@ -1024,17 +1034,21 @@ export default function FinancialStatementTab({ symbol, companyStatements: propS
 
             <div className="fin-stmt-toolbar-right">
               <div className="toggle-group">
-                <button
-                  className={`toggle-btn${viewMode === 'annual' ? ' active' : ''}`}
+                {!isQuarterlyOnlyTab && (
+                  <button
+                  className={`toggle-btn${effectiveViewMode === 'annual' ? ' active' : ''}`}
                   onClick={() => setViewMode('annual')}
                 >
-                  Annual Report
-                </button>
+                    {annualReportLabel}
+                  </button>
+                )}
                 <button
-                  className={`toggle-btn${viewMode === 'quarterly' ? ' active' : ''}`}
+                  className={`toggle-btn${effectiveViewMode === 'quarterly' ? ' active' : ''}`}
                   onClick={() => setViewMode('quarterly')}
+                  disabled={isQuarterlyOnlyTab}
+                  title={isQuarterlyOnlyTab ? quarterlyOnlyTooltip : undefined}
                 >
-                  Quarterly Report
+                  {quarterlyReportLabel}
                 </button>
               </div>
 
@@ -1061,21 +1075,21 @@ export default function FinancialStatementTab({ symbol, companyStatements: propS
         {useSegmentRecordsForTable ? (
           <SegmentReportTable
             records={propSegmentRecords!}
-            viewMode={viewMode}
+            viewMode={effectiveViewMode}
             yearWindowStart={simpleYearWindowStart}
             currency={currency}
           />
         ) : currentTabData?.kind === 'findata' ? (
           <FinDataTable
             data={(currency === 'original' && currentTabData.docAmtData) ? currentTabData.docAmtData : currentTabData.data}
-            viewMode={viewMode}
+            viewMode={effectiveViewMode}
             yearWindowStart={simpleYearWindowStart}
           />
         ) : isSimpleStatement ? (
           simpleData ? (
             <SimpleStatementTable
               data={simpleData}
-              viewMode={viewMode}
+              viewMode={effectiveViewMode}
               yearWindowStart={simpleYearWindowStart}
               allYears={simpleAllYears}
             />

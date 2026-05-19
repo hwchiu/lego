@@ -1339,6 +1339,11 @@ select {
   background: var(--c-btn-active);
   color: var(--c-white);
 }
+.toggle-btn:disabled {
+  cursor: default;
+  color: var(--c-text-4);
+  opacity: 0.72;
+}
 
 /* ===== WEEK GRID ===== */
 .week-grid {
