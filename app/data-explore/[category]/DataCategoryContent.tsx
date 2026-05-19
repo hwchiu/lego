@@ -701,10 +701,6 @@ const CM_PE_RATIO = [
 function CmTableWrapper({ children }: { children: ReactNode }) {
   return (
     <div className="de-data-section">
-      <div className="de-data-section-header">
-        <span className="de-data-section-sub">Reference date: {CM_DATE}</span>
-        <span className="de-data-section-date">Source: TWSE</span>
-      </div>
       <div className="de-data-table-wrap">{children}</div>
     </div>
   );
@@ -897,7 +893,7 @@ function CmNameCell({ lang, code, nameZh, nameEn }: { lang: 'zh' | 'en'; code: s
 
 function CmDailyQuotesTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     CM_DAILY_QUOTES,
     [
       (r) => r.code,
@@ -914,20 +910,19 @@ function CmDailyQuotesTab({ lang }: { lang: 'zh' | 'en' }) {
   );
   return (
     <CmTableWrapper>
-      <SortSearchBar search={search} onSearch={setSearch} total={CM_DAILY_QUOTES.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '成交股數' : 'Volume'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '成交金額' : 'Amount (NT$)'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '開盤價' : 'Open'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '最高價' : 'High'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '最低價' : 'Low'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '收盤價' : 'Close'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '漲跌' : 'Change'} colIndex={8} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '成交筆數' : 'Transactions'} colIndex={9} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+            <ThSortFilter label={zh ? '成交股數' : 'Volume'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '成交金額' : 'Amount (NT$)'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '開盤價' : 'Open'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '最高價' : 'High'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '最低價' : 'Low'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '收盤價' : 'Close'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '漲跌' : 'Change'} colIndex={8} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[8] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '成交筆數' : 'Transactions'} colIndex={9} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[9] ?? ''} className="num" />
           </tr>
         </thead>
         <tbody>
@@ -952,22 +947,21 @@ function CmDailyQuotesTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmDayTradingTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     CM_DAY_TRADING,
     [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.buy, (r) => r.sell, (r) => r.net, (r) => r.ratio],
   );
   return (
     <CmTableWrapper>
-      <SortSearchBar search={search} onSearch={setSearch} total={CM_DAY_TRADING.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '當沖買進股數' : 'Day-Trade Buy'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '當沖賣出股數' : 'Day-Trade Sell'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '當沖成交股數' : 'Day-Trade Volume'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '占總成交股數比' : '% of Total Vol.'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+            <ThSortFilter label={zh ? '當沖買進股數' : 'Day-Trade Buy'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '當沖賣出股數' : 'Day-Trade Sell'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '當沖成交股數' : 'Day-Trade Volume'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '占總成交股數比' : '% of Total Vol.'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
           </tr>
         </thead>
         <tbody>
@@ -988,24 +982,23 @@ function CmDayTradingTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmMarginTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     CM_MARGIN,
     [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.finBuy, (r) => r.finSell, (r) => r.finBal, (r) => r.shoBuy, (r) => r.shoSell, (r) => r.shoBal],
   );
   return (
     <CmTableWrapper>
-      <SortSearchBar search={search} onSearch={setSearch} total={CM_MARGIN.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '融資買進' : 'Margin Buy'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '融資賣出' : 'Margin Sell'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '融資餘額' : 'Margin Balance'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '融券賣出' : 'Short Sell'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '融券買進' : 'Short Buy'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '融券餘額' : 'Short Balance'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+            <ThSortFilter label={zh ? '融資買進' : 'Margin Buy'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '融資賣出' : 'Margin Sell'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '融資餘額' : 'Margin Balance'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '融券賣出' : 'Short Sell'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '融券買進' : 'Short Buy'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '融券餘額' : 'Short Balance'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} className="num" />
           </tr>
         </thead>
         <tbody>
@@ -1028,24 +1021,23 @@ function CmMarginTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmShortSaleTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     CM_SHORT_SALE,
     [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.finLimit, (r) => r.finUsed, (r) => r.finRatio, (r) => r.shoLimit, (r) => r.shoUsed, (r) => r.shoRatio],
   );
   return (
     <CmTableWrapper>
-      <SortSearchBar search={search} onSearch={setSearch} total={CM_SHORT_SALE.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '融資限額' : 'Margin Limit'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '融資已用' : 'Margin Used'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '融資使用率' : 'Margin Util.'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '融券限額' : 'Short Limit'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '融券已用' : 'Short Used'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '融券使用率' : 'Short Util.'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+            <ThSortFilter label={zh ? '融資限額' : 'Margin Limit'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '融資已用' : 'Margin Used'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '融資使用率' : 'Margin Util.'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '融券限額' : 'Short Limit'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '融券已用' : 'Short Used'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '融券使用率' : 'Short Util.'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} className="num" />
           </tr>
         </thead>
         <tbody>
@@ -1068,23 +1060,22 @@ function CmShortSaleTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmExDividendTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     CM_EX_DIVIDEND,
     [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.exDivDate, (r) => r.divVal, (r) => r.exRightDate, (r) => r.rightVal, (r) => r.listDate],
   );
   return (
     <CmTableWrapper>
-      <SortSearchBar search={search} onSearch={setSearch} total={CM_EX_DIVIDEND.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '除息日' : 'Ex-Div Date'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '息值(元)' : 'Div. Value'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '除權日' : 'Ex-Right Date'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '權值' : 'Right Value'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '上市日期' : 'Listing Date'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+            <ThSortFilter label={zh ? '除息日' : 'Ex-Div Date'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} />
+            <ThSortFilter label={zh ? '息值(元)' : 'Div. Value'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '除權日' : 'Ex-Right Date'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} />
+            <ThSortFilter label={zh ? '權值' : 'Right Value'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '上市日期' : 'Listing Date'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} />
           </tr>
         </thead>
         <tbody>
@@ -1106,22 +1097,21 @@ function CmExDividendTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmForeignTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     CM_FOREIGN,
     [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.buy, (r) => r.sell, (r) => r.shares, (r) => r.ratio],
   );
   return (
     <CmTableWrapper>
-      <SortSearchBar search={search} onSearch={setSearch} total={CM_FOREIGN.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '外資買進(股)' : 'Foreign Buy'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '外資賣出(股)' : 'Foreign Sell'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '外資持股股數' : 'Foreign Holdings'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '持股比例' : 'Holding %'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+            <ThSortFilter label={zh ? '外資買進(股)' : 'Foreign Buy'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '外資賣出(股)' : 'Foreign Sell'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '外資持股股數' : 'Foreign Holdings'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '持股比例' : 'Holding %'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
           </tr>
         </thead>
         <tbody>
@@ -1142,22 +1132,21 @@ function CmForeignTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmPriceLimitTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     CM_PRICE_LIMIT,
     [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.refPrice, (r) => r.ceiling, (r) => r.floor, (r) => r.pct],
   );
   return (
     <CmTableWrapper>
-      <SortSearchBar search={search} onSearch={setSearch} total={CM_PRICE_LIMIT.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '參考收盤價' : 'Ref. Price'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '漲停價格' : 'Upper Limit'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '跌停價格' : 'Lower Limit'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '漲跌幅限制' : 'Limit %'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+            <ThSortFilter label={zh ? '參考收盤價' : 'Ref. Price'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '漲停價格' : 'Upper Limit'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '跌停價格' : 'Lower Limit'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '漲跌幅限制' : 'Limit %'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
           </tr>
         </thead>
         <tbody>
@@ -1178,21 +1167,20 @@ function CmPriceLimitTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmPeRatioTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     CM_PE_RATIO,
     [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.yield, (r) => r.pe, (r) => r.pb],
   );
   return (
     <CmTableWrapper>
-      <SortSearchBar search={search} onSearch={setSearch} total={CM_PE_RATIO.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '殖利率(%)' : 'Dividend Yield (%)'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '本益比' : 'P/E Ratio'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '股價淨值比' : 'P/B Ratio'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+            <ThSortFilter label={zh ? '殖利率(%)' : 'Dividend Yield (%)'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '本益比' : 'P/E Ratio'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '股價淨值比' : 'P/B Ratio'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
           </tr>
         </thead>
         <tbody>
@@ -1207,6 +1195,309 @@ function CmPeRatioTab({ lang }: { lang: 'zh' | 'en' }) {
         </tbody>
       </table>
     </CmTableWrapper>
+  );
+}
+
+// ── Capital Markets — Date Picker + Layout ────────────────────────────────────
+
+interface CmDatePickerProps {
+  lang: 'zh' | 'en';
+  selectedDate: string | null;
+  onSelect: (date: string) => void;
+  onSearch: () => void;
+  onClear: () => void;
+}
+
+const CM_MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const CM_MONTH_NAMES_ZH = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+const CM_DAY_LABELS = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+const CM_DAY_LABELS_ZH = ['日','一','二','三','四','五','六'];
+
+function CmDatePicker({ lang, selectedDate, onSelect, onSearch, onClear }: CmDatePickerProps) {
+  const zh = lang === 'zh';
+  const today = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
+  const minDate = useMemo(() => {
+    const d = new Date(today);
+    d.setMonth(d.getMonth() - 3);
+    return d;
+  }, [today]);
+
+  const [viewYear, setViewYear] = useState(today.getFullYear());
+  const [viewMonth, setViewMonth] = useState(today.getMonth());
+  const [calOpen, setCalOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    function handleOutside(e: MouseEvent) {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+        setCalOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, []);
+
+  function isoDate(y: number, m: number, d: number): string {
+    return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  }
+
+  function isDisabled(y: number, m: number, d: number): boolean {
+    const dt = new Date(y, m, d);
+    return dt < minDate || dt > today;
+  }
+
+  function buildCalendar() {
+    const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+    const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+    const cells: Array<{ day: number | null; date: string | null }> = [];
+    for (let i = 0; i < firstDay; i++) cells.push({ day: null, date: null });
+    for (let d = 1; d <= daysInMonth; d++) cells.push({ day: d, date: isoDate(viewYear, viewMonth, d) });
+    return cells;
+  }
+
+  function prevMonth() {
+    if (viewMonth === 0) { setViewYear(y => y - 1); setViewMonth(11); }
+    else setViewMonth(m => m - 1);
+  }
+  function nextMonth() {
+    const nextM = viewMonth === 11 ? 0 : viewMonth + 1;
+    const nextY = viewMonth === 11 ? viewYear + 1 : viewYear;
+    const firstOfNext = new Date(nextY, nextM, 1);
+    if (firstOfNext > today) return;
+    if (viewMonth === 11) { setViewYear(y => y + 1); setViewMonth(0); }
+    else setViewMonth(m => m + 1);
+  }
+
+  const canGoNext = (() => {
+    const nextM = viewMonth === 11 ? 0 : viewMonth + 1;
+    const nextY = viewMonth === 11 ? viewYear + 1 : viewYear;
+    return new Date(nextY, nextM, 1) <= today;
+  })();
+
+  const canGoPrev = (() => {
+    const prevM = viewMonth === 0 ? 11 : viewMonth - 1;
+    const prevY = viewMonth === 0 ? viewYear - 1 : viewYear;
+    const lastOfPrev = new Date(prevY, prevM + 1, 0);
+    return lastOfPrev >= minDate;
+  })();
+
+  const cells = buildCalendar();
+  const monthLabel = zh
+    ? `${viewYear}年 ${CM_MONTH_NAMES_ZH[viewMonth]}`
+    : `${CM_MONTH_NAMES[viewMonth]} ${viewYear}`;
+  const dayLabels = zh ? CM_DAY_LABELS_ZH : CM_DAY_LABELS;
+
+  const displayText = selectedDate
+    ? selectedDate
+    : (zh ? '選擇日期…' : 'Select date…');
+
+  return (
+    <div className="de-cm-datepicker-wrap" ref={wrapRef}>
+      <button
+        type="button"
+        className={`de-cm-datepicker-input${calOpen ? ' open' : ''}`}
+        onClick={() => setCalOpen(v => !v)}
+        aria-haspopup="dialog"
+        aria-expanded={calOpen}
+      >
+        <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+          <rect x="1" y="2" width="12" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
+          <path d="M1 5.5h12" stroke="currentColor" strokeWidth="1.3"/>
+          <path d="M4 1v2.5M10 1v2.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+        </svg>
+        <span>{displayText}</span>
+      </button>
+      {calOpen && (
+        <div className="de-cm-cal-popup" role="dialog" aria-label={zh ? '日期選擇器' : 'Date picker'}>
+          <div className="de-cm-cal-nav">
+            <button type="button" className="de-cm-cal-nav-btn" onClick={prevMonth} disabled={!canGoPrev} aria-label={zh ? '上個月' : 'Previous month'}>
+              <svg viewBox="0 0 14 14" fill="none" width="12" height="12"><path d="M9 2L4 7L9 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+            <span className="de-cm-cal-month">{monthLabel}</span>
+            <button type="button" className="de-cm-cal-nav-btn" onClick={nextMonth} disabled={!canGoNext} aria-label={zh ? '下個月' : 'Next month'}>
+              <svg viewBox="0 0 14 14" fill="none" width="12" height="12"><path d="M5 2L10 7L5 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+          </div>
+          <div className="de-cm-cal-grid">
+            {dayLabels.map(d => (
+              <div key={d} className="de-cm-cal-day-label">{d}</div>
+            ))}
+            {cells.map((cell, i) => {
+              if (!cell.day || !cell.date) return <div key={`empty-${i}`} className="de-cm-cal-cell de-cm-cal-cell--empty" />;
+              const disabled = isDisabled(viewYear, viewMonth, cell.day);
+              const isSelected = cell.date === selectedDate;
+              const isToday = cell.date === isoDate(today.getFullYear(), today.getMonth(), today.getDate());
+              return (
+                <button
+                  key={cell.date}
+                  type="button"
+                  className={`de-cm-cal-cell${isSelected ? ' selected' : ''}${isToday ? ' today' : ''}${disabled ? ' disabled' : ''}`}
+                  disabled={disabled}
+                  onClick={() => { onSelect(cell.date!); setCalOpen(false); }}
+                  aria-label={cell.date}
+                  aria-pressed={isSelected}
+                >
+                  {cell.day}
+                </button>
+              );
+            })}
+          </div>
+          <div className="de-cm-cal-hint">
+            {zh ? `可選範圍：${minDate.toLocaleDateString('zh-TW')} – 今天` : `Range: ${minDate.toLocaleDateString('en-US')} – Today`}
+          </div>
+        </div>
+      )}
+      <button
+        type="button"
+        className="de-cm-search-btn"
+        onClick={() => { onSearch(); setCalOpen(false); }}
+        disabled={!selectedDate}
+      >
+        {zh ? '搜尋' : 'Search'}
+      </button>
+      <button
+        type="button"
+        className="de-cm-clear-btn"
+        onClick={onClear}
+        disabled={!selectedDate}
+      >
+        {zh ? '清除' : 'Clear'}
+      </button>
+    </div>
+  );
+}
+
+// ── CSV download helpers for Capital Markets ──────────────────────────────────
+
+function cmDownload(tabId: string, lang: 'zh' | 'en') {
+  const zh = lang === 'zh';
+  switch (tabId) {
+    case 'daily-quotes':
+      downloadCSV(zh ? '每日收盤行情.csv' : 'daily-quotes.csv',
+        zh ? ['股票代號','名稱','成交股數','成交金額','開盤價','最高價','最低價','收盤價','漲跌','成交筆數'] : ['Code','Name','Volume','Amount (NT$)','Open','High','Low','Close','Change','Transactions'],
+        CM_DAILY_QUOTES.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.vol, r.amount, r.open, r.high, r.low, r.close, r.change, r.txn]));
+      break;
+    case 'day-trading':
+      downloadCSV(zh ? '每日沖銷交易.csv' : 'day-trading.csv',
+        zh ? ['股票代號','名稱','當沖買進股數','當沖賣出股數','當沖成交股數','占總成交股數比'] : ['Code','Name','Day-Trade Buy','Day-Trade Sell','Day-Trade Volume','% of Total Vol.'],
+        CM_DAY_TRADING.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.buy, r.sell, r.net, r.ratio]));
+      break;
+    case 'margin':
+      downloadCSV(zh ? '融資融券餘額.csv' : 'margin-transaction.csv',
+        zh ? ['股票代號','名稱','融資買進','融資賣出','融資餘額','融券賣出','融券買進','融券餘額'] : ['Code','Name','Margin Buy','Margin Sell','Margin Balance','Short Sell','Short Buy','Short Balance'],
+        CM_MARGIN.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.finBuy, r.finSell, r.finBal, r.shoBuy, r.shoSell, r.shoBal]));
+      break;
+    case 'short-sale':
+      downloadCSV(zh ? '信用額度總量管制餘額.csv' : 'short-sale-balances.csv',
+        zh ? ['股票代號','名稱','融資限額','融資已用','融資使用率','融券限額','融券已用','融券使用率'] : ['Code','Name','Margin Limit','Margin Used','Margin Util.','Short Limit','Short Used','Short Util.'],
+        CM_SHORT_SALE.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.finLimit, r.finUsed, r.finRatio, r.shoLimit, r.shoUsed, r.shoRatio]));
+      break;
+    case 'ex-dividend':
+      downloadCSV(zh ? '除權息及上下市資訊.csv' : 'ex-right-dividend.csv',
+        zh ? ['股票代號','名稱','除息日','息值(元)','除權日','權值','上市日期'] : ['Code','Name','Ex-Div Date','Div. Value','Ex-Right Date','Right Value','Listing Date'],
+        CM_EX_DIVIDEND.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.exDivDate, r.divVal, r.exRightDate, r.rightVal, r.listDate]));
+      break;
+    case 'foreign-investors':
+      downloadCSV(zh ? '外資投資持股統計.csv' : 'foreign-investors.csv',
+        zh ? ['股票代號','名稱','外資買進(股)','外資賣出(股)','外資持股股數','持股比例'] : ['Code','Name','Foreign Buy','Foreign Sell','Foreign Holdings','Holding %'],
+        CM_FOREIGN.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.buy, r.sell, r.shares, r.ratio]));
+      break;
+    case 'price-limit':
+      downloadCSV(zh ? '漲跌幅度表.csv' : 'price-variation-limit.csv',
+        zh ? ['股票代號','名稱','參考收盤價','漲停價格','跌停價格','漲跌幅限制'] : ['Code','Name','Ref. Price','Upper Limit','Lower Limit','Limit %'],
+        CM_PRICE_LIMIT.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.refPrice, r.ceiling, r.floor, r.pct]));
+      break;
+    case 'pe-ratio':
+      downloadCSV(zh ? '個股日本益比殖利率及股價淨值比.csv' : 'pe-ratio-dividend-yield.csv',
+        zh ? ['股票代號','名稱','殖利率(%)','本益比','股價淨值比'] : ['Code','Name','Dividend Yield (%)','P/E Ratio','P/B Ratio'],
+        CM_PE_RATIO.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.yield, r.pe, r.pb]));
+      break;
+  }
+}
+
+// ── Capital Markets Layout (sidebar + content) ────────────────────────────────
+
+function CapitalMarketsLayout({ lang, accentColor }: { lang: 'zh' | 'en'; accentColor: string }) {
+  const zh = lang === 'zh';
+  const [activeCmTab, setActiveCmTab] = useState('daily-quotes');
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [searchDate, setSearchDate] = useState<string | null>(null);
+
+  const CM_INNER_TABS = [
+    { id: 'daily-quotes',      label: zh ? '每日收盤行情' : 'Daily Quotes' },
+    { id: 'day-trading',       label: zh ? '每日沖銷交易標記及統計' : 'Statistics for Day Trading' },
+    { id: 'margin',            label: zh ? '融資融券餘額' : 'Margin Transaction' },
+    { id: 'short-sale',        label: zh ? '信用額度總量管制餘額檔' : 'Daily Short Sale Balances' },
+    { id: 'ex-dividend',       label: zh ? '除權息及上下市資訊檔' : 'Ex-Right/Dividend & List/Delist' },
+    { id: 'foreign-investors', label: zh ? '外資投資持股統計' : 'Invested Amt of Foreign' },
+    { id: 'price-limit',       label: zh ? '漲跌幅度表檔' : 'Price Variation Limit' },
+    { id: 'pe-ratio',          label: zh ? '個股日本益比、殖利率及股價淨值比' : 'P/E Ratio, Dividend Yield, P/B Ratio' },
+  ];
+
+  function handleSearch() {
+    setSearchDate(selectedDate);
+  }
+  function handleClear() {
+    setSelectedDate(null);
+    setSearchDate(null);
+  }
+  function handleDownload() {
+    cmDownload(activeCmTab, lang);
+  }
+
+  const refDate = searchDate ?? CM_DATE;
+
+  return (
+    <div className="de-cm-layout">
+      <nav className="de-cm-sidebar" aria-label={zh ? 'Capital Markets 子分類' : 'Capital Markets sub categories'}>
+        <div className="de-cm-sidebar-title">{zh ? '子分類' : 'Sub Category'}</div>
+        {CM_INNER_TABS.map((tab) => (
+          <button
+            key={tab.id}
+            className={`de-cm-sidebar-item${activeCmTab === tab.id ? ' active' : ''}`}
+            style={activeCmTab === tab.id ? { borderLeftColor: accentColor, color: accentColor } : {}}
+            onClick={() => setActiveCmTab(tab.id)}
+          >
+            <span className="de-cm-sidebar-item-name">{tab.label}</span>
+          </button>
+        ))}
+      </nav>
+      <div className="de-cm-content">
+        <div className="de-cm-content-toolbar">
+          <div className="de-cm-content-toolbar-left">
+            <CmDatePicker
+              lang={lang}
+              selectedDate={selectedDate}
+              onSelect={setSelectedDate}
+              onSearch={handleSearch}
+              onClear={handleClear}
+            />
+            {searchDate && (
+              <span className="de-cm-ref-date">{zh ? `查詢日期：${searchDate}` : `Date: ${searchDate}`}</span>
+            )}
+          </div>
+          <div className="de-cm-content-toolbar-right">
+            <span className="de-data-section-date">Source: TWSE · {refDate}</span>
+            <button className="de-news-download-btn de-gov-csv-btn" onClick={handleDownload}>
+              <DownloadIcon />
+              <span>{zh ? '下載 CSV' : 'Download CSV'}</span>
+            </button>
+          </div>
+        </div>
+        {activeCmTab === 'daily-quotes'      && <CmDailyQuotesTab lang={lang} />}
+        {activeCmTab === 'day-trading'       && <CmDayTradingTab lang={lang} />}
+        {activeCmTab === 'margin'            && <CmMarginTab lang={lang} />}
+        {activeCmTab === 'short-sale'        && <CmShortSaleTab lang={lang} />}
+        {activeCmTab === 'ex-dividend'       && <CmExDividendTab lang={lang} />}
+        {activeCmTab === 'foreign-investors' && <CmForeignTab lang={lang} />}
+        {activeCmTab === 'price-limit'       && <CmPriceLimitTab lang={lang} />}
+        {activeCmTab === 'pe-ratio'          && <CmPeRatioTab lang={lang} />}
+      </div>
+    </div>
   );
 }
 
@@ -2304,14 +2595,7 @@ export default function DataCategoryContent({ params }: { params: { category: st
   const isNewsSummary = params.category === 'news-summary';
 
   const CAPITAL_TABS = [
-    { id: 'daily-quotes',      label: lang === 'zh' ? '每日收盤行情' : 'Daily Quotes' },
-    { id: 'day-trading',       label: lang === 'zh' ? '每日沖銷交易標記及統計' : 'Statistics for Day Trading' },
-    { id: 'margin',            label: lang === 'zh' ? '融資融券餘額' : 'Margin Transaction' },
-    { id: 'short-sale',        label: lang === 'zh' ? '信用額度總量管制餘額檔' : 'Daily Short Sale Balances' },
-    { id: 'ex-dividend',       label: lang === 'zh' ? '除權息及上下市資訊檔' : 'Ex-Right/Dividend & List/Delist' },
-    { id: 'foreign-investors', label: lang === 'zh' ? '外資投資持股統計' : 'Invested Amt of Foreign' },
-    { id: 'price-limit',       label: lang === 'zh' ? '漲跌幅度表檔' : 'Price Variation Limit' },
-    { id: 'pe-ratio',          label: lang === 'zh' ? '個股日本益比、殖利率及股價淨值比' : 'P/E Ratio, Dividend Yield, P/B Ratio' },
+    { id: 'twse-info', label: 'Taiwan Stock Exchange Trading Info/Data' },
   ];
 
   const GOV_TABS = [
@@ -2324,7 +2608,7 @@ export default function DataCategoryContent({ params }: { params: { category: st
     { id: 'intl-news',     label: lang === 'zh' ? '每週國際稅務快訊' : 'Weekly International Tax News Summary' },
   ];
 
-  const defaultTab = isGov ? 'tw-government-penalty-records' : isCapital ? 'daily-quotes' : isNewsSummary ? 'biweekly-esg' : 'articles';
+  const defaultTab = isGov ? 'tw-government-penalty-records' : isCapital ? 'twse-info' : isNewsSummary ? 'biweekly-esg' : 'articles';
   const [activeSubTab, setActiveSubTab] = useState(defaultTab);
 
   const hasSubTabs = isEsg || isGov || isCapital || isNewsSummary;
@@ -2424,15 +2708,10 @@ export default function DataCategoryContent({ params }: { params: { category: st
                 <SubTabBar tabs={subTabs} active={activeSubTab} color={cat.color} onChange={handleSubTabChange} />
               )}
 
-              {/* Capital Markets tabs */}
-              {isCapital && activeSubTab === 'daily-quotes'      && <CmDailyQuotesTab lang={lang} />}
-              {isCapital && activeSubTab === 'day-trading'       && <CmDayTradingTab lang={lang} />}
-              {isCapital && activeSubTab === 'margin'            && <CmMarginTab lang={lang} />}
-              {isCapital && activeSubTab === 'short-sale'        && <CmShortSaleTab lang={lang} />}
-              {isCapital && activeSubTab === 'ex-dividend'       && <CmExDividendTab lang={lang} />}
-              {isCapital && activeSubTab === 'foreign-investors' && <CmForeignTab lang={lang} />}
-              {isCapital && activeSubTab === 'price-limit'       && <CmPriceLimitTab lang={lang} />}
-              {isCapital && activeSubTab === 'pe-ratio'          && <CmPeRatioTab lang={lang} />}
+              {/* Capital Markets — sidebar layout */}
+              {isCapital && activeSubTab === 'twse-info' && (
+                <CapitalMarketsLayout lang={lang} accentColor={cat.color} />
+              )}
 
               {/* ESG / Gov tabs that show articles */}
               {!isCapital && !isGov && activeSubTab === 'articles' && (
