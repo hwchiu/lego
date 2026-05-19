@@ -48,17 +48,6 @@ function SearchBarIcon() {
   );
 }
 
-function StatementIcon() {
-  return (
-    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
-      <rect x="5" y="4" width="22" height="28" rx="2.5" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M10 11h12M10 15h12M10 19h8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-      <circle cx="27" cy="27" r="5.5" fill="currentColor" opacity="0.15" stroke="currentColor" strokeWidth="1.4" />
-      <path d="M24.5 27h5M27 24.5v5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 function BellSettingsIcon() {
   return (
     <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
@@ -195,6 +184,32 @@ function Step4Preview() {
   );
 }
 
+function Step12Preview() {
+  return (
+    <div className="tour-preview-stack">
+      <div className="tour-preview-stack-item">
+        <Step1Preview />
+      </div>
+      <div className="tour-preview-stack-item">
+        <Step2Preview />
+      </div>
+    </div>
+  );
+}
+
+function Step34Preview() {
+  return (
+    <div className="tour-preview-stack">
+      <div className="tour-preview-stack-item">
+        <Step3Preview />
+      </div>
+      <div className="tour-preview-stack-item">
+        <Step4Preview />
+      </div>
+    </div>
+  );
+}
+
 // ── Tour step definitions ─────────────────────────────────────────────────────
 
 interface TourStep {
@@ -213,60 +228,35 @@ const TOUR_STEPS: TourStep[] = [
   {
     id: 1,
     targetSelector: '.topnav-search-wrap',
-    title: 'Financial Index Search',
+    title: 'Financial Index Tour',
     subtitle: 'NEW FEATURE',
-    description: '<ol>' +
+    description:
+      '<ol>' +
       '<li>Type a company name (e.g., Apple) in the search bar.</li>' +
-      '<li>Click the "Financial Index" icon to instantly view: Revenue with QoQ and YoY and Gross Margin.</li>' +
-      '<li>Click "more information" for additional financial indices.</li>' +
+      '<li>Click the "Financial Index" icon to view Revenue with QoQ/YoY and Gross Margin.</li>' +
+      '<li>Inside the Financial Index panel, click <strong>More Information</strong>.</li>' +
+      '<li>You will jump to Company Profile <strong>FIN. Statement</strong> with full quarterly/annual reports.</li>' +
       '</ol>',
     calloutSide: 'bottom',
     icon: <SearchBarIcon />,
-    preview: <Step1Preview />,
+    preview: <Step12Preview />,
     accentColor: '#4fc3f7',
   },
   {
     id: 2,
-    targetSelector: '.topnav-search-wrap',
-    title: 'Navigate to Financial Statements',
+    targetSelector: '.wl-action-btn--subscribe-tour',
+    title: 'Subscribe & Notifications Tour',
     subtitle: 'NEW FEATURE',
     description:
-      'Inside the Financial Index panel, click <strong>More Information</strong> to jump ' +
-      'directly to the Company Profile\'s <strong>FIN. Statement</strong> tab. ' +
-      'Access full quarterly and annual financial reports — income statement, balance sheet, and cash flow.',
-    calloutSide: 'bottom',
-    icon: <StatementIcon />,
-    preview: <Step2Preview />,
-    accentColor: '#34d399',
-  },
-  {
-    id: 3,
-    targetSelector: '.wl-action-btn--subscribe-tour',
-    title: 'Subscribe',
-    subtitle: 'NEW FEATURE',
-    description: '<p>Click the subscribe button to follow your favorite companies\' events in watchlist. Then, click the notification to customize your notification preferences for upcoming events. You can choose to:</p>' +
+      '<p>Click <strong>Subscribe</strong> to follow your favorite companies\' events in watchlist. Then open <strong>Notifications</strong> and use <strong>⚙ Settings</strong> to customize channels. You can:</p>' +
       '<ol>' +
       '<li><strong>Receive email notifications.</strong></li>' +
       '<li><strong>Book an event directly into your Outlook calendar.</strong></li>' +
       '</ol>',
     calloutSide: 'left',
     icon: <BellSettingsIcon />,
-    preview: <Step3Preview />,
+    preview: <Step34Preview />,
     accentColor: '#8b5cf6',
-  },
-  {
-    id: 4,
-    targetSelector: '.topnav-notif-panel-wrap',
-    title: 'Notification Settings',
-    subtitle: 'NEW FEATURE',
-    description:
-      'Click the <strong>bell icon</strong> to open the Notifications panel. ' +
-      'Then tap <strong>⚙ Settings</strong> in the panel header to customize your notification channels ' +
-      '— Email, Event Booking in Outlook, and more — tailored to your workflow.',
-    calloutSide: 'left',
-    icon: <BellSettingsIcon />,
-    preview: <Step4Preview />,
-    accentColor: '#f59e0b',
   },
 ];
 
@@ -416,7 +406,7 @@ export default function OnboardingTour() {
     if (step < totalSteps - 1) {
       const nextStep = step + 1;
       const nextStepDef = TOUR_STEPS[nextStep];
-      if (nextStepDef?.id === 3 && typeof window !== 'undefined') {
+      if (nextStepDef?.id === 2 && typeof window !== 'undefined') {
         const pathname = window.location.pathname.endsWith('/')
           ? window.location.pathname
           : `${window.location.pathname}/`;

@@ -27233,6 +27233,16 @@ html.dark .pr-archive-api-badge-clear:hover {
   left: 14px;
 }
 
+/* Grouped previews for 2-page onboarding flow */
+.tour-preview-stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.tour-preview-stack-item + .tour-preview-stack-item {
+  border-top: 1px solid var(--c-border);
+}
+
 /* ── Dark mode ── */
 html.dark .tour-callout {
   background: #1a2535;
@@ -27319,6 +27329,10 @@ html.dark .tour-preview-toggle-row {
 
 html.dark .tour-dot {
   background: rgba(255, 255, 255, 0.18);
+}
+
+html.dark .tour-preview-stack-item + .tour-preview-stack-item {
+  border-top-color: rgba(255, 255, 255, 0.08);
 }
 
 /* ── RWD ── */
