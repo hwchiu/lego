@@ -1586,6 +1586,40 @@ function GovLaborTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentColor: st
   );
 }
 
+function GovPenaltyRecordsTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentColor: string }) {
+  const zh = lang === 'zh';
+  const [activeGovTab, setActiveGovTab] = useState('disqualified-vendors');
+
+  const innerTabs = [
+    { id: 'disqualified-vendors', label: zh ? '拒絕往來廠商公告' : 'Disqualified Vendors' },
+    { id: 'pollution-sources', label: zh ? '列管事業污染源裁處資' : 'Regulatory on pollution sources' },
+    { id: 'labor-violations', label: zh ? '違反勞動法令事業單位' : 'Violations of Labor Laws' },
+  ];
+
+  return (
+    <div className="de-gov-penalty-layout">
+      <div className="de-gov-penalty-content">
+        {activeGovTab === 'disqualified-vendors' && <GovDisqualifiedTab lang={lang} accentColor={accentColor} />}
+        {activeGovTab === 'pollution-sources' && <GovPollutionTab lang={lang} accentColor={accentColor} />}
+        {activeGovTab === 'labor-violations' && <GovLaborTab lang={lang} accentColor={accentColor} />}
+      </div>
+      <nav className="de-intl-tax-sidebar de-gov-penalty-sidebar" aria-label={zh ? '政府處分資料子分類' : 'Government penalty sub categories'}>
+        <div className="de-intl-tax-sidebar-title">{zh ? '子分類' : 'Sub Category'}</div>
+        {innerTabs.map((tab) => (
+          <button
+            key={tab.id}
+            className={`de-intl-tax-sidebar-item${activeGovTab === tab.id ? ' active' : ''}`}
+            style={activeGovTab === tab.id ? { borderRightColor: accentColor, color: accentColor } : {}}
+            onClick={() => setActiveGovTab(tab.id)}
+          >
+            <span className="de-intl-tax-sidebar-item-name">{tab.label}</span>
+          </button>
+        ))}
+      </nav>
+    </div>
+  );
+}
+
 // ── News Summary tab components ───────────────────────────────────────────────
 
 const NEWS_ACCENT = '#0ea5e9';
@@ -2281,9 +2315,7 @@ export default function DataCategoryContent({ params }: { params: { category: st
   ];
 
   const GOV_TABS = [
-    { id: 'disqualified-vendors', label: lang === 'zh' ? '拒絕往來廠商公告' : 'Disqualified Vendors' },
-    { id: 'pollution-sources',    label: lang === 'zh' ? '列管事業污染源裁處資' : 'Regulatory on pollution sources' },
-    { id: 'labor-violations',     label: lang === 'zh' ? '違反勞動法令事業單位' : 'Violations of Labor Laws' },
+    { id: 'tw-government-penalty-records', label: '(TW) Government Penalty Records' },
   ];
 
   const NEWS_SUMMARY_TABS = [
@@ -2292,7 +2324,7 @@ export default function DataCategoryContent({ params }: { params: { category: st
     { id: 'intl-news',     label: lang === 'zh' ? '每週國際稅務快訊' : 'Weekly International Tax News Summary' },
   ];
 
-  const defaultTab = isGov ? 'disqualified-vendors' : isCapital ? 'daily-quotes' : isNewsSummary ? 'biweekly-esg' : 'articles';
+  const defaultTab = isGov ? 'tw-government-penalty-records' : isCapital ? 'daily-quotes' : isNewsSummary ? 'biweekly-esg' : 'articles';
   const [activeSubTab, setActiveSubTab] = useState(defaultTab);
 
   const hasSubTabs = isEsg || isGov || isCapital || isNewsSummary;
@@ -2417,9 +2449,9 @@ export default function DataCategoryContent({ params }: { params: { category: st
               )}
 
               {activeSubTab === 'reports'               && isEsg  && <EsgReportsTab />}
-              {activeSubTab === 'disqualified-vendors'  && isGov  && <GovDisqualifiedTab lang={lang} accentColor={cat.color} />}
-              {activeSubTab === 'pollution-sources'     && isGov  && <GovPollutionTab lang={lang} accentColor={cat.color} />}
-              {activeSubTab === 'labor-violations'      && isGov  && <GovLaborTab lang={lang} accentColor={cat.color} />}
+              {activeSubTab === 'tw-government-penalty-records' && isGov && (
+                <GovPenaltyRecordsTab lang={lang} accentColor={cat.color} />
+              )}
 
               {/* News Summary tabs */}
               {activeSubTab === 'biweekly-esg' && isNewsSummary && (

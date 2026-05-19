@@ -10421,6 +10421,30 @@ html.dark .seg-item-l3.fin-stmt-td-item {
   color: var(--c-text-4);
 }
 
+/* ── Government Penalty Records layout ── */
+.de-gov-penalty-layout {
+  display: flex;
+  gap: 0;
+  align-items: flex-start;
+  min-height: 400px;
+}
+.de-gov-penalty-content {
+  flex: 1;
+  min-width: 0;
+  padding-right: 24px;
+}
+.de-gov-penalty-sidebar {
+  border-right: none;
+  border-left: 1px solid var(--c-border);
+}
+.de-gov-penalty-sidebar .de-intl-tax-sidebar-item {
+  border-left: none;
+  border-right: 3px solid transparent;
+}
+.de-gov-penalty-sidebar .de-intl-tax-sidebar-item.active {
+  border-right-color: currentColor;
+}
+
 /* ── ESG Topic Sections (collapsible) ── */
 .de-esg-topics-wrap {
   display: flex;
@@ -10693,6 +10717,33 @@ html.dark .seg-item-l3.fin-stmt-td-item {
   }
   .de-intl-tax-sidebar-item.active {
     border-left: none;
+    border-bottom-color: currentColor;
+  }
+  .de-gov-penalty-layout {
+    flex-direction: column;
+  }
+  .de-gov-penalty-content {
+    padding-right: 0;
+    padding-bottom: 16px;
+  }
+  .de-gov-penalty-sidebar {
+    width: 100%;
+    min-width: 0;
+    border-left: none;
+    border-top: 1px solid var(--c-border);
+    border-bottom: none;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 8px 0;
+  }
+  .de-gov-penalty-sidebar .de-intl-tax-sidebar-item {
+    border-right: none;
+    border-bottom: 3px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+  }
+  .de-gov-penalty-sidebar .de-intl-tax-sidebar-item.active {
+    border-right: none;
     border-bottom-color: currentColor;
   }
   .de-map-panel {
