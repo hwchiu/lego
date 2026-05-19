@@ -889,7 +889,7 @@ export default function FinancialStatementTab({ symbol, companyStatements: propS
   const effectiveViewMode: ViewMode = isQuarterlyOnlyTab ? 'quarterly' : viewMode;
   const annualReportLabel = lang === 'zh' ? '年報表' : 'Annual Report';
   const quarterlyReportLabel = lang === 'zh' ? '季報表' : 'Quarterly Report';
-  const quarterlyOnlyTitle =
+  const quarterlyOnlyTooltip =
     lang === 'zh'
       ? '季報表（此報表類型僅提供季度模式）'
       : 'Quarterly Report (only mode available for this statement type)';
@@ -1046,7 +1046,7 @@ export default function FinancialStatementTab({ symbol, companyStatements: propS
                   className={`toggle-btn${effectiveViewMode === 'quarterly' ? ' active' : ''}`}
                   onClick={() => setViewMode('quarterly')}
                   disabled={isQuarterlyOnlyTab}
-                  title={isQuarterlyOnlyTab ? quarterlyOnlyTitle : undefined}
+                  title={isQuarterlyOnlyTab ? quarterlyOnlyTooltip : undefined}
                 >
                   {quarterlyReportLabel}
                 </button>
