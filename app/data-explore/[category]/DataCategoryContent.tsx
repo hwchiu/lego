@@ -1449,8 +1449,6 @@ function CapitalMarketsLayout({ lang, accentColor }: { lang: 'zh' | 'en'; accent
     downloadCapitalMarketsCSV(activeCmTab, lang);
   }
 
-  const refDate = searchDate ?? CM_DATE;
-
   return (
     <div className="de-cm-layout">
       <nav className="de-cm-sidebar" aria-label={zh ? 'Capital Markets 子分類' : 'Capital Markets sub categories'}>
@@ -1481,7 +1479,6 @@ function CapitalMarketsLayout({ lang, accentColor }: { lang: 'zh' | 'en'; accent
             )}
           </div>
           <div className="de-cm-content-toolbar-right">
-            <span className="de-data-section-date">Source: TWSE · {refDate}</span>
             <button className="de-news-download-btn de-gov-csv-btn" onClick={handleDownload}>
               <DownloadIcon />
               <span>{zh ? '下載 CSV' : 'Download CSV'}</span>
