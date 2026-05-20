@@ -1029,7 +1029,7 @@ export default function TopNav() {
         {/* Notification bell */}
         <div className="topnav-notif-panel-wrap" ref={notifRef}>
           <button
-            className={`topnav-action-btn topnav-action-btn--icon-only${notifOpen ? ' active' : ''}`}
+            className={`topnav-action-btn topnav-action-btn--icon-only topnav-notif-btn--tour${notifOpen ? ' active' : ''}`}
             title="Notifications"
             aria-label="Notifications"
             onClick={handleNotifToggle}
