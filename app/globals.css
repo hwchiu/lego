@@ -28546,6 +28546,7 @@ html.dark .tour-preview-stack-item + .tour-preview-stack-item {
   .tour-callout--arrow-top::before {
     left: 20px;
   }
+}
 /* Spinner animation for Subscribe button loading state */
 @keyframes wl-spin {
   to { transform: rotate(360deg); }
