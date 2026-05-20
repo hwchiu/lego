@@ -28201,7 +28201,7 @@ html.dark .pr-archive-api-badge-clear:hover {
 
 .tour-preview-badge {
   background: var(--c-dark);
-  color: var(--c-bg);
+  color: var(--c-white);
   font-size: 9.5px;
   font-weight: 700;
   padding: 2px 6px;
@@ -28490,6 +28490,10 @@ html.dark .tour-preview-search-input {
 html.dark .tour-preview-result {
   background: #111827;
   border-color: rgba(255, 255, 255, 0.07);
+}
+
+html.dark .tour-preview-badge {
+  color: var(--c-bg);
 }
 
 html.dark .tour-preview-fin-card {
