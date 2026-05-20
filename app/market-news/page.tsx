@@ -267,7 +267,7 @@ export default function MarketNewsPage() {
                     placeholder="End date"
                     error={periodEndError}
                     minDate={filterPeriodStart || undefined}
-                    maxDate={filterPeriodStart ? addMonths(filterPeriodStart, 3) : undefined}
+                    maxDate={filterPeriodStart ? (addMonths(filterPeriodStart, 3) < todayStr() ? addMonths(filterPeriodStart, 3) : todayStr()) : todayStr()}
                   />
                 </div>
               </div>

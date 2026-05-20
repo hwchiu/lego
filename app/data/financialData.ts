@@ -84,17 +84,17 @@ const ANNUAL_QUARTER = 'NA';
 /**
  * Derives a canonical period label from calendar_year + calendar_quarter.
  * This ensures table columns always reflect calendar dates.
- *   annual  → "FY2022"
+ *   annual  → "CY2022"
  *   quarterly → "Q1 2023"
  */
 function periodLabel(calendarYear: number, calendarQuarter: string): string {
-  if (calendarQuarter === ANNUAL_QUARTER) return `FY${calendarYear}`;
+  if (calendarQuarter === ANNUAL_QUARTER) return `CY${calendarYear}`;
   return `${calendarQuarter} ${calendarYear}`;
 }
 
 /** Sort key for a period so that annual sorts before quarterly, both chronological.
  *  Annual gets quarter offset 0; Q1–Q4 get offsets 1–4.
- *  Example: FY2022 → 20220, Q1 2025 → 20251, Q4 2025 → 20254.
+ *  Example: CY2022 → 20220, Q1 2025 → 20251, Q4 2025 → 20254.
  */
 function periodSortKey(calendarYear: number, calendarQuarter: string): number {
   if (calendarQuarter === ANNUAL_QUARTER) return calendarYear * 10;
@@ -108,8 +108,8 @@ function parsePeriodSortKey(p: string): number {
   // Quarterly: "Q1 2025"
   const mq = p.match(/^(Q\d)\s+(\d{4})$/);
   if (mq) return periodSortKey(parseInt(mq[2], 10), mq[1]);
-  // Annual: "FY2022"
-  const ma = p.match(/^FY(\d+)$/);
+  // Annual: "CY2022"
+  const ma = p.match(/^CY(\d+)$/);
   if (ma) return periodSortKey(parseInt(ma[1], 10), ANNUAL_QUARTER);
   return 0;
 }

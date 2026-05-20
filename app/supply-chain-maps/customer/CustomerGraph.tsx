@@ -13,6 +13,7 @@ import {
   type CustomerRelationKey,
 } from '@/app/data/tcCustomerData';
 import { COMPANY_MASTER_LIST } from '@/app/data/companyMaster';
+import { formatUsdM } from '@/app/lib/formatters';
 
 // ── Layout constants ──────────────────────────────────────────────────────────
 
@@ -108,8 +109,7 @@ function trunc(s: string, n: number) {
 }
 
 function formatAmount(millionUsd: number): string {
-  if (millionUsd >= 1000) return `$${(millionUsd / 1000).toFixed(1)}B`;
-  return `$${millionUsd}M`;
+  return formatUsdM(millionUsd);
 }
 
 // ── SVG Node components ───────────────────────────────────────────────────────

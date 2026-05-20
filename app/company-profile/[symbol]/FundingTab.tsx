@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { getFundingByCoCd, FundingRecord } from '@/app/lib/getFundingByCoCd';
+import { formatRawUsdToM, formatIsoDate } from '@/app/lib/formatters';
 
 const FundingLineChartNivo = dynamic(
   () => import('./InvestmentNivoCharts').then((m) => m.FundingLineChartNivo),
@@ -10,13 +11,6 @@ const FundingLineChartNivo = dynamic(
 );
 
 // ── Types ─────────────────────────────────────────────────────────────────────
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-/** Extract YYYY-MM-DD from publ_dt string like "2022-02-16 00:00:00.0" */
-function formatDate(publDt: string): string {
-  return publDt.slice(0, 10);
-}
 
 // ── Funding Panel (used for any company with funding data) ───────────────────
 
@@ -29,18 +23,10 @@ function ExternalLinkIcon() {
   );
 }
 
-/** Format USD value for display: ≥1B → "$X.XB", else "$X,XXXM" */
-function formatUsdValueM(valueM: number): string {
-  return valueM >= 1000
-    ? `$${(valueM / 1000).toFixed(1)}B`
-    : `$${valueM.toLocaleString()}M`;
-}
-
 function FundingPanel({ symbol, records }: { symbol: string; records: FundingRecord[] }) {
 
-  // Summary card uses fund_amount_usd (converted to millions for display)
+  // Summary card uses fund_amount_usd (raw USD) for display
   const totalFundingUsd = records.reduce((sum, r) => sum + (r.fund_amount_usd ?? 0), 0);
-  const totalFundingM = totalFundingUsd / 1_000_000;
 
   // Derive company name from first record
   const companyName = records.length > 0 ? records[0].org_name : symbol;
@@ -73,7 +59,7 @@ function FundingPanel({ symbol, records }: { symbol: string; records: FundingRec
         <div className="aapl-funding-total-card">
           <div className="aapl-funding-total-title">Total Funding Amount (USD $M)</div>
           <div className="aapl-funding-total-value">
-            {formatUsdValueM(totalFundingM)}
+            {formatRawUsdToM(totalFundingUsd)}
           </div>
           <div className="aapl-funding-total-sub">{records.length} funding events recorded</div>
         </div>
@@ -113,21 +99,17 @@ function FundingPanel({ symbol, records }: { symbol: string; records: FundingRec
               </tr>
             </thead>
             <tbody>
-              {sortedRecords.map((record, i) => {
-                const valueM = record.money_raised_usd != null ? record.money_raised_usd / 1_000_000 : null;
-                return (
+              {sortedRecords.map((record, i) => (
                   <tr key={i} className="aapl-ma-table-row">
-                    <td className="aapl-ma-td-date">{formatDate(record.publ_dt)}</td>
+                    <td className="aapl-ma-td-date">{formatIsoDate(record.publ_dt)}</td>
                     <td className="aapl-ma-td-company">{record.invest_name}</td>
                     <td><span className="aapl-ma-type-badge aapl-ma-type-acq">{record.fund_type}</span></td>
                     <td className="text-right">
                       {record.invest_num != null ? record.invest_num : <span className="aapl-ma-undisclosed">—</span>}
                     </td>
                     <td className="text-right aapl-ma-td-value">
-                      {valueM != null ? (
-                        valueM >= 1000
-                          ? `$${(valueM / 1000).toFixed(2)}B`
-                          : `$${valueM.toLocaleString()}M`
+                      {record.money_raised_usd != null ? (
+                        formatRawUsdToM(record.money_raised_usd)
                       ) : (
                         <span className="aapl-ma-undisclosed">Undisclosed</span>
                       )}
@@ -139,8 +121,7 @@ function FundingPanel({ symbol, records }: { symbol: string; records: FundingRec
                       </a>
                     </td>
                   </tr>
-                );
-              })}
+                ))}
             </tbody>
           </table>
         </div>

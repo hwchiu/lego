@@ -200,13 +200,13 @@ export const CATEGORIES: Category[] = [
     items: extractJson<DataItem[]>(newsSummaryRaw),
   },
   {
-    slug: 'esg',
-    label: 'ESG',
-    icon: <EsgIcon />,
-    color: '#16a34a',
+    slug: 'capital-markets',
+    label: 'Capital Markets',
+    icon: <CapitalMarketsIcon />,
+    color: '#be123c',
     description:
-      'Environmental, Social, and Governance disclosures covering TSMC and its supply chain partners — sustainability reports, carbon targets, renewable energy, and social governance.',
-    items: extractJson<DataItem[]>(esgRaw),
+      'Capital Markets provides market-related stock information (e.g. TWSE, AMEX, JPX)',
+    items: extractJson<DataItem[]>(capitalRaw),
   },
   {
     slug: 'government-regulations',
@@ -214,8 +214,17 @@ export const CATEGORIES: Category[] = [
     icon: <GovernmentIcon />,
     color: '#2563eb',
     description:
-      'Regulatory frameworks, export controls, semiconductor subsidies, and trade policies affecting TSMC and the broader semiconductor supply chain — including US CHIPS Act, BIS rules, and allied nation policies.',
+      '"Government Regulations & Policies" offers access to government-related information, including but not limited to regulatory enforcement data and public open data.',
     items: extractJson<DataItem[]>(govRegsRaw),
+  },
+  {
+    slug: 'esg',
+    label: 'ESG',
+    icon: <EsgIcon />,
+    color: '#16a34a',
+    description:
+      'Environmental, Social, and Governance disclosures covering TSMC and its supply chain partners — sustainability reports, carbon targets, renewable energy, and social governance.',
+    items: extractJson<DataItem[]>(esgRaw),
   },
   {
     slug: 'international-standards',
@@ -243,15 +252,6 @@ export const CATEGORIES: Category[] = [
     description:
       'Quarterly earnings, annual financial results, operational metrics, customer relationships, and strategic business developments for TSMC and key supply chain companies.',
     items: extractJson<DataItem[]>(companyOpsRaw),
-  },
-  {
-    slug: 'capital-markets',
-    label: 'Capital Markets',
-    icon: <CapitalMarketsIcon />,
-    color: '#be123c',
-    description:
-      'Investment analysis, analyst ratings, price targets, institutional ownership, and capital market events for TSMC (TC ADR) and associated semiconductor sector equities.',
-    items: extractJson<DataItem[]>(capitalRaw),
   },
 ];
 

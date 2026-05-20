@@ -73,7 +73,7 @@ function segmentToStatementData(records: SegmentRecord[], co_cd: string): Statem
   const ANNUAL_QUARTER = 'NA';
 
   function pLabel(calYear: number, calQ: string): string {
-    return calQ === ANNUAL_QUARTER ? `FY${calYear}` : `${calQ} ${calYear}`;
+    return calQ === ANNUAL_QUARTER ? `CY${calYear}` : `${calQ} ${calYear}`;
   }
   function pSortKey(calYear: number, calQ: string): number {
     if (calQ === ANNUAL_QUARTER) return calYear * 10;

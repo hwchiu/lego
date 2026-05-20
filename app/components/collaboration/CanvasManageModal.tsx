@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { Canvas } from '@/app/data/collaboration';
 import { TAG_I18N } from '@/app/data/collaboration';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { BASE_PATH } from '@/app/lib/basePath';
 
 interface CanvasManageModalProps {
   canvases: Canvas[];
@@ -62,7 +63,7 @@ export function CanvasManageModal({
   }
 
   function handleShare(id: string) {
-    const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/collaboration-playground?canvas=${id}`;
+    const url = `${typeof window !== 'undefined' ? window.location.origin : ''}${BASE_PATH}/collaboration-playground/?canvas=${id}`;
     navigator.clipboard?.writeText(url).catch(() => {});
     setCopied(id);
     setTimeout(() => setCopied(null), 2000);

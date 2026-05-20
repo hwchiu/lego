@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect, type ReactNode } from 'react';
+import { useState, useMemo, useEffect, useRef, type ReactNode } from 'react';
 import Link from 'next/link';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
@@ -13,6 +13,7 @@ import { useLanguage } from '@/app/contexts/LanguageContext';
 import { queryCatgDetail, type CatgDetailType } from '@/app/lib/queryCatgDetail';
 import { queryDataItemContent } from '@/app/lib/queryDataItemContent';
 import { type NewsSummaryItem } from '@/app/data/newsSummaryData';
+import { formatNumber } from '@/app/lib/formatters';
 
 const TAGS_VISIBLE_COUNT = 6;
 
@@ -62,6 +63,150 @@ function DownloadIcon() {
       <path d="M8 2v8M5 7l3 3 3-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M2 12h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
     </svg>
+  );
+}
+
+function InfoIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
+      <circle cx="7" cy="7" r="5.3" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M7 6V9.6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <circle cx="7" cy="4.15" r="0.65" fill="currentColor" />
+    </svg>
+  );
+}
+
+function CloseSmIcon() {
+  return (
+    <svg viewBox="0 0 14 14" width="10" height="10" fill="none" aria-hidden="true">
+      <path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// ── CSV download utility ──────────────────────────────────────────────────────
+
+function downloadCSV(filename: string, headers: string[], dataRows: string[][]): void {
+  const escape = (v: string) => `"${String(v).replace(/"/g, '""')}"`;
+  const lines = [
+    headers.map(escape).join(','),
+    ...dataRows.map((row) => row.map(escape).join(',')),
+  ];
+  const blob = new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ── Capital Markets numeric formatting helpers ────────────────────────────────
+
+/** Format a numeric string (with optional commas/sign) to 2 d.p. with thousands separator. */
+function fmtNum(v: string): string {
+  if (v === '—' || v === '') return v;
+  const isPos = v.startsWith('+');
+  const num = parseFloat(v.replace(/,/g, ''));
+  if (isNaN(num)) return v;
+  return (isPos ? '+' : '') + formatNumber(Math.abs(num));
+}
+
+/** Format a percentage string (e.g. '22.53%' or '10%') to 2 d.p. with '%' suffix. */
+function fmtPct(v: string): string {
+  if (v === '—' || v === '') return v;
+  const stripped = v.replace('%', '');
+  const num = parseFloat(stripped.replace(/,/g, ''));
+  if (isNaN(num)) return v;
+  return formatNumber(num) + '%';
+}
+
+// ── Gov data-source disclosure popup ─────────────────────────────────────────
+
+interface GovUpdateDateItem {
+  id: string;
+  year: string;
+  date: string;
+}
+
+function GovInfoWrap() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [updateDates, setUpdateDates] = useState<GovUpdateDateItem[]>([]);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    fetchGovRows<GovUpdateDateItem>('getUpdateDate')
+      .then((items) => setUpdateDates(items))
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    function handleOutside(e: MouseEvent) {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, []);
+
+  function getItem(id: string): GovUpdateDateItem {
+    return updateDates.find((d) => d.id === id) ?? { id, year: '2025', date: '2025/06/09' };
+  }
+
+  const dv = getItem('disqualified-vendors');
+  const ps = getItem('pollution-sources');
+  const lb = getItem('labor-basic');
+  const lg = getItem('labor-gender');
+  const ls = getItem('labor-safety');
+  const lm = getItem('labor-min-wage');
+
+  return (
+    <div className="de-gov-info-wrap" ref={wrapRef}>
+      <button
+        type="button"
+        className={`de-gov-info-btn${isOpen ? ' active' : ''}`}
+        onClick={() => setIsOpen((v) => !v)}
+      >
+        <InfoIcon />
+        <span>顯名聲明</span>
+      </button>
+      {isOpen && (
+        <div className="de-gov-info-pop" role="dialog" aria-label="顯名聲明">
+          <button
+            type="button"
+            className="de-gov-info-close"
+            onClick={() => setIsOpen(false)}
+            aria-label="關閉"
+          >
+            <CloseSmIcon />
+          </button>
+          <div className="de-gov-info-title">外部資料來源說明</div>
+          <p className="de-gov-info-text">
+            本網站使用部分內容來自臺灣政府資料開放平臺（https://data.gov.tw）．依據《政府資料開放授權條款》使用。原始資料版權歸資料提供單位所有．若有疑問請參考官方授權條款。
+            <br /><br />
+            [顯名聲明]<br />
+            提供機關/行政院公共工程委員會 [{dv.year}] 招租組來廠商公告 {dv.date}<br />
+            提供機關/環境部環境管理署 [{ps.year}] 列管事業汙染源裁處資料 {ps.date}<br />
+            提供機關/勞動部 [{lb.year}] 違反勞動法令事業單位-勞動基準法 {lb.date}<br />
+            提供機關/勞動部 [{lg.year}] 違反勞動法令事業單位-性別平等法 {lg.date}<br />
+            提供機關/勞動部 [{ls.year}] 違反勞動法令事業單位-職業安全衛生法 {ls.date}<br />
+            提供機關/勞動部 [{lm.year}] 違反勞動法令事業單位-最低工資法 {lm.date}<br /><br />
+            此開放資料依政府資料開放授權條款 (Open Government Data License) 進行公眾釋出．使用者於遵守本條款各項規定之前提下，得利用之。政府資料開放授權條款：{' '}
+            <a
+              href="http://data.gov.tw/?q=principle"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="de-gov-info-link"
+            >
+              http://data.gov.tw/?q=principle
+            </a>
+          </p>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -556,10 +701,6 @@ const CM_PE_RATIO = [
 function CmTableWrapper({ children }: { children: ReactNode }) {
   return (
     <div className="de-data-section">
-      <div className="de-data-section-header">
-        <span className="de-data-section-sub">Reference date: {CM_DATE}</span>
-        <span className="de-data-section-date">Source: TWSE</span>
-      </div>
       <div className="de-data-table-wrap">{children}</div>
     </div>
   );
@@ -608,6 +749,57 @@ function useSortableData<T>(data: T[], getters: ((row: T) => string | number)[])
   return { rows: processed, search, setSearch, sortCol, sortDir, handleSort };
 }
 
+// ── Sortable data hook with per-column filter (for GOV tabs) ─────────────────
+
+function useGovSortableData<T>(data: T[], getters: ((row: T) => string | number)[]) {
+  const [sortCol, setSortCol] = useState<number | null>(null);
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+  const [colFilters, setColFilters] = useState<string[]>(() => Array(getters.length).fill(''));
+
+  function handleSort(colIndex: number) {
+    if (sortCol === colIndex) {
+      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortCol(colIndex);
+      setSortDir('asc');
+    }
+  }
+
+  function handleColFilter(colIndex: number, value: string) {
+    setColFilters((prev) => {
+      const next = [...prev];
+      next[colIndex] = value;
+      return next;
+    });
+  }
+
+  const processed = useMemo(() => {
+    let rows = [...data];
+    colFilters.forEach((filter, colIdx) => {
+      if (filter.trim()) {
+        const q = filter.toLowerCase();
+        rows = rows.filter((row) => String(getters[colIdx](row)).toLowerCase().includes(q));
+      }
+    });
+    if (sortCol !== null) {
+      const getter = getters[sortCol];
+      rows.sort((a, b) => {
+        const av = getter(a);
+        const bv = getter(b);
+        const an = typeof av === 'number' ? av : Number(String(av).replace(/,/g, ''));
+        const bn = typeof bv === 'number' ? bv : Number(String(bv).replace(/,/g, ''));
+        const isNum = !isNaN(an) && !isNaN(bn) && String(av) !== '' && String(bv) !== '';
+        const cmp = isNum ? an - bn : String(av).localeCompare(String(bv));
+        return sortDir === 'asc' ? cmp : -cmp;
+      });
+    }
+    return rows;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, colFilters, sortCol, sortDir]);
+
+  return { rows: processed, colFilters, handleColFilter, sortCol, sortDir, handleSort };
+}
+
 interface ThSortProps {
   label: string;
   colIndex: number;
@@ -626,6 +818,41 @@ function ThSort({ label, colIndex, sortCol, sortDir, onSort, className }: ThSort
         {label}
         <span className={`de-th-sort-icon${isActive ? ' de-th-sort-icon--active' : ''}`}>{icon}</span>
       </button>
+    </th>
+  );
+}
+
+interface ThSortFilterProps {
+  label: string;
+  colIndex: number;
+  sortCol: number | null;
+  sortDir: 'asc' | 'desc';
+  onSort: (i: number) => void;
+  onFilter: (i: number, v: string) => void;
+  filterValue: string;
+  className?: string;
+}
+
+function ThSortFilter({ label, colIndex, sortCol, sortDir, onSort, onFilter, filterValue, className }: ThSortFilterProps) {
+  const isActive = sortCol === colIndex;
+  const icon = isActive ? (sortDir === 'asc' ? '▲' : '▼') : '⇅';
+  return (
+    <th className={className}>
+      <div className="de-th-filter-wrap">
+        <button className="de-th-sort-btn" onClick={() => onSort(colIndex)}>
+          {label}
+          <span className={`de-th-sort-icon${isActive ? ' de-th-sort-icon--active' : ''}`}>{icon}</span>
+        </button>
+        <input
+          className="de-th-filter-input"
+          type="text"
+          value={filterValue}
+          onChange={(e) => onFilter(colIndex, e.target.value)}
+          placeholder="filter..."
+          onClick={(e) => e.stopPropagation()}
+          aria-label={`Filter ${label}`}
+        />
+      </div>
     </th>
   );
 }
@@ -666,7 +893,7 @@ function CmNameCell({ lang, code, nameZh, nameEn }: { lang: 'zh' | 'en'; code: s
 
 function CmDailyQuotesTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     CM_DAILY_QUOTES,
     [
       (r) => r.code,
@@ -683,34 +910,33 @@ function CmDailyQuotesTab({ lang }: { lang: 'zh' | 'en' }) {
   );
   return (
     <CmTableWrapper>
-      <SortSearchBar search={search} onSearch={setSearch} total={CM_DAILY_QUOTES.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '成交股數' : 'Volume'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '成交金額' : 'Amount (NT$)'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '開盤價' : 'Open'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '最高價' : 'High'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '最低價' : 'Low'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '收盤價' : 'Close'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '漲跌' : 'Change'} colIndex={8} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '成交筆數' : 'Transactions'} colIndex={9} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+            <ThSortFilter label={zh ? '成交股數' : 'Volume'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '成交金額' : 'Amount (NT$)'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '開盤價' : 'Open'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '最高價' : 'High'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '最低價' : 'Low'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '收盤價' : 'Close'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '漲跌' : 'Change'} colIndex={8} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[8] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '成交筆數' : 'Transactions'} colIndex={9} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[9] ?? ''} className="num" />
           </tr>
         </thead>
         <tbody>
           {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{r.vol}</td>
-              <td className="num">{r.amount}</td>
-              <td className="num">{r.open}</td>
-              <td className="num">{r.high}</td>
-              <td className="num">{r.low}</td>
-              <td className="num">{r.close}</td>
-              <td className={`num ${r.change.startsWith('+') ? 'pos' : r.change.startsWith('-') ? 'neg' : ''}`}>{r.change}</td>
-              <td className="num">{r.txn}</td>
+              <td className="num">{fmtNum(r.vol)}</td>
+              <td className="num">{fmtNum(r.amount)}</td>
+              <td className="num">{fmtNum(r.open)}</td>
+              <td className="num">{fmtNum(r.high)}</td>
+              <td className="num">{fmtNum(r.low)}</td>
+              <td className="num">{fmtNum(r.close)}</td>
+              <td className="num">{fmtNum(r.change)}</td>
+              <td className="num">{fmtNum(r.txn)}</td>
             </tr>
           ))}
         </tbody>
@@ -721,32 +947,31 @@ function CmDailyQuotesTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmDayTradingTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     CM_DAY_TRADING,
     [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.buy, (r) => r.sell, (r) => r.net, (r) => r.ratio],
   );
   return (
     <CmTableWrapper>
-      <SortSearchBar search={search} onSearch={setSearch} total={CM_DAY_TRADING.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '當沖買進股數' : 'Day-Trade Buy'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '當沖賣出股數' : 'Day-Trade Sell'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '當沖成交股數' : 'Day-Trade Volume'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '占總成交股數比' : '% of Total Vol.'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+            <ThSortFilter label={zh ? '當沖買進股數' : 'Day-Trade Buy'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '當沖賣出股數' : 'Day-Trade Sell'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '當沖成交股數' : 'Day-Trade Volume'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '占總成交股數比' : '% of Total Vol.'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
           </tr>
         </thead>
         <tbody>
           {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{r.buy}</td>
-              <td className="num">{r.sell}</td>
-              <td className="num">{r.net}</td>
-              <td className="num">{r.ratio}</td>
+              <td className="num">{fmtNum(r.buy)}</td>
+              <td className="num">{fmtNum(r.sell)}</td>
+              <td className="num">{fmtNum(r.net)}</td>
+              <td className={`num${r.ratio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.ratio)}</td>
             </tr>
           ))}
         </tbody>
@@ -757,36 +982,35 @@ function CmDayTradingTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmMarginTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     CM_MARGIN,
     [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.finBuy, (r) => r.finSell, (r) => r.finBal, (r) => r.shoBuy, (r) => r.shoSell, (r) => r.shoBal],
   );
   return (
     <CmTableWrapper>
-      <SortSearchBar search={search} onSearch={setSearch} total={CM_MARGIN.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '融資買進' : 'Margin Buy'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '融資賣出' : 'Margin Sell'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '融資餘額' : 'Margin Balance'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '融券賣出' : 'Short Sell'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '融券買進' : 'Short Buy'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '融券餘額' : 'Short Balance'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+            <ThSortFilter label={zh ? '融資買進' : 'Margin Buy'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '融資賣出' : 'Margin Sell'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '融資餘額' : 'Margin Balance'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '融券賣出' : 'Short Sell'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '融券買進' : 'Short Buy'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '融券餘額' : 'Short Balance'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} className="num" />
           </tr>
         </thead>
         <tbody>
           {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{r.finBuy}</td>
-              <td className="num">{r.finSell}</td>
-              <td className="num">{r.finBal}</td>
-              <td className="num">{r.shoBuy}</td>
-              <td className="num">{r.shoSell}</td>
-              <td className="num">{r.shoBal}</td>
+              <td className="num">{fmtNum(r.finBuy)}</td>
+              <td className="num">{fmtNum(r.finSell)}</td>
+              <td className="num">{fmtNum(r.finBal)}</td>
+              <td className="num">{fmtNum(r.shoBuy)}</td>
+              <td className="num">{fmtNum(r.shoSell)}</td>
+              <td className="num">{fmtNum(r.shoBal)}</td>
             </tr>
           ))}
         </tbody>
@@ -797,36 +1021,35 @@ function CmMarginTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmShortSaleTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     CM_SHORT_SALE,
     [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.finLimit, (r) => r.finUsed, (r) => r.finRatio, (r) => r.shoLimit, (r) => r.shoUsed, (r) => r.shoRatio],
   );
   return (
     <CmTableWrapper>
-      <SortSearchBar search={search} onSearch={setSearch} total={CM_SHORT_SALE.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '融資限額' : 'Margin Limit'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '融資已用' : 'Margin Used'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '融資使用率' : 'Margin Util.'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '融券限額' : 'Short Limit'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '融券已用' : 'Short Used'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '融券使用率' : 'Short Util.'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+            <ThSortFilter label={zh ? '融資限額' : 'Margin Limit'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '融資已用' : 'Margin Used'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '融資使用率' : 'Margin Util.'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '融券限額' : 'Short Limit'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '融券已用' : 'Short Used'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '融券使用率' : 'Short Util.'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} className="num" />
           </tr>
         </thead>
         <tbody>
           {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{r.finLimit}</td>
-              <td className="num">{r.finUsed}</td>
-              <td className="num">{r.finRatio}</td>
-              <td className="num">{r.shoLimit}</td>
-              <td className="num">{r.shoUsed}</td>
-              <td className="num">{r.shoRatio}</td>
+              <td className="num">{fmtNum(r.finLimit)}</td>
+              <td className="num">{fmtNum(r.finUsed)}</td>
+              <td className={`num${r.finRatio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.finRatio)}</td>
+              <td className="num">{fmtNum(r.shoLimit)}</td>
+              <td className="num">{fmtNum(r.shoUsed)}</td>
+              <td className={`num${r.shoRatio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.shoRatio)}</td>
             </tr>
           ))}
         </tbody>
@@ -837,23 +1060,22 @@ function CmShortSaleTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmExDividendTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     CM_EX_DIVIDEND,
     [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.exDivDate, (r) => r.divVal, (r) => r.exRightDate, (r) => r.rightVal, (r) => r.listDate],
   );
   return (
     <CmTableWrapper>
-      <SortSearchBar search={search} onSearch={setSearch} total={CM_EX_DIVIDEND.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '除息日' : 'Ex-Div Date'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '息值(元)' : 'Div. Value'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '除權日' : 'Ex-Right Date'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '權值' : 'Right Value'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '上市日期' : 'Listing Date'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+            <ThSortFilter label={zh ? '除息日' : 'Ex-Div Date'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} />
+            <ThSortFilter label={zh ? '息值(元)' : 'Div. Value'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '除權日' : 'Ex-Right Date'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} />
+            <ThSortFilter label={zh ? '權值' : 'Right Value'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '上市日期' : 'Listing Date'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} />
           </tr>
         </thead>
         <tbody>
@@ -861,7 +1083,7 @@ function CmExDividendTab({ lang }: { lang: 'zh' | 'en' }) {
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
               <td>{r.exDivDate}</td>
-              <td className="num">{r.divVal}</td>
+              <td className="num">{fmtNum(r.divVal)}</td>
               <td className="muted">{r.exRightDate}</td>
               <td className="num muted">{r.rightVal}</td>
               <td className="muted">{r.listDate}</td>
@@ -875,32 +1097,31 @@ function CmExDividendTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmForeignTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     CM_FOREIGN,
     [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.buy, (r) => r.sell, (r) => r.shares, (r) => r.ratio],
   );
   return (
     <CmTableWrapper>
-      <SortSearchBar search={search} onSearch={setSearch} total={CM_FOREIGN.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '外資買進(股)' : 'Foreign Buy'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '外資賣出(股)' : 'Foreign Sell'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '外資持股股數' : 'Foreign Holdings'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '持股比例' : 'Holding %'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+            <ThSortFilter label={zh ? '外資買進(股)' : 'Foreign Buy'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '外資賣出(股)' : 'Foreign Sell'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '外資持股股數' : 'Foreign Holdings'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '持股比例' : 'Holding %'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
           </tr>
         </thead>
         <tbody>
           {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{r.buy}</td>
-              <td className="num">{r.sell}</td>
-              <td className="num">{r.shares}</td>
-              <td className="num">{r.ratio}</td>
+              <td className="num">{fmtNum(r.buy)}</td>
+              <td className="num">{fmtNum(r.sell)}</td>
+              <td className="num">{fmtNum(r.shares)}</td>
+              <td className={`num${r.ratio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.ratio)}</td>
             </tr>
           ))}
         </tbody>
@@ -911,32 +1132,31 @@ function CmForeignTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmPriceLimitTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     CM_PRICE_LIMIT,
     [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.refPrice, (r) => r.ceiling, (r) => r.floor, (r) => r.pct],
   );
   return (
     <CmTableWrapper>
-      <SortSearchBar search={search} onSearch={setSearch} total={CM_PRICE_LIMIT.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '參考收盤價' : 'Ref. Price'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '漲停價格' : 'Upper Limit'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '跌停價格' : 'Lower Limit'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '漲跌幅限制' : 'Limit %'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+            <ThSortFilter label={zh ? '參考收盤價' : 'Ref. Price'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '漲停價格' : 'Upper Limit'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '跌停價格' : 'Lower Limit'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '漲跌幅限制' : 'Limit %'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
           </tr>
         </thead>
         <tbody>
           {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{r.refPrice}</td>
-              <td className="num pos">{r.ceiling}</td>
-              <td className="num neg">{r.floor}</td>
-              <td className="num">{r.pct}</td>
+              <td className="num">{fmtNum(r.refPrice)}</td>
+              <td className="num">{fmtNum(r.ceiling)}</td>
+              <td className="num">{fmtNum(r.floor)}</td>
+              <td className={`num${r.pct.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.pct)}</td>
             </tr>
           ))}
         </tbody>
@@ -947,30 +1167,29 @@ function CmPriceLimitTab({ lang }: { lang: 'zh' | 'en' }) {
 
 function CmPeRatioTab({ lang }: { lang: 'zh' | 'en' }) {
   const zh = lang === 'zh';
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     CM_PE_RATIO,
     [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.yield, (r) => r.pe, (r) => r.pb],
   );
   return (
     <CmTableWrapper>
-      <SortSearchBar search={search} onSearch={setSearch} total={CM_PE_RATIO.length} filtered={rows.length} />
       <table className="de-data-table">
         <thead>
           <tr>
-            <ThSort label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-            <ThSort label={zh ? '殖利率(%)' : 'Dividend Yield (%)'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '本益比' : 'P/E Ratio'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-            <ThSort label={zh ? '股價淨值比' : 'P/B Ratio'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
+            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+            <ThSortFilter label={zh ? '殖利率(%)' : 'Dividend Yield (%)'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '本益比' : 'P/E Ratio'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '股價淨值比' : 'P/B Ratio'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
           </tr>
         </thead>
         <tbody>
           {rows.map((r) => (
             <tr key={r.code}>
               <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{r.yield}</td>
-              <td className="num">{r.pe}</td>
-              <td className="num">{r.pb}</td>
+              <td className={`num${r.yield.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.yield)}</td>
+              <td className="num">{fmtNum(r.pe)}</td>
+              <td className="num">{fmtNum(r.pb)}</td>
             </tr>
           ))}
         </tbody>
@@ -979,85 +1198,521 @@ function CmPeRatioTab({ lang }: { lang: 'zh' | 'en' }) {
   );
 }
 
+// ── Capital Markets — Date Picker + Layout ────────────────────────────────────
+
+interface CmDatePickerProps {
+  lang: 'zh' | 'en';
+  selectedDate: string | null;
+  onSelect: (date: string) => void;
+  onSearch: () => void;
+  onClear: () => void;
+}
+
+const CM_MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const CM_MONTH_NAMES_ZH = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+const CM_DAY_LABELS = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+const CM_DAY_LABELS_ZH = ['日','一','二','三','四','五','六'];
+
+function CmDatePicker({ lang, selectedDate, onSelect, onSearch, onClear }: CmDatePickerProps) {
+  const zh = lang === 'zh';
+  const today = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
+  const minDate = useMemo(() => {
+    const d = new Date(today);
+    d.setMonth(d.getMonth() - 3);
+    return d;
+  }, [today]);
+
+  const [viewYear, setViewYear] = useState(today.getFullYear());
+  const [viewMonth, setViewMonth] = useState(today.getMonth());
+  const [calOpen, setCalOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    function handleOutside(e: MouseEvent) {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+        setCalOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, []);
+
+  function isoDate(y: number, m: number, d: number): string {
+    return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  }
+
+  function isDisabled(y: number, m: number, d: number): boolean {
+    const dt = new Date(y, m, d);
+    return dt < minDate || dt > today;
+  }
+
+  function buildCalendar() {
+    const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+    const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+    const cells: Array<{ day: number | null; date: string | null }> = [];
+    for (let i = 0; i < firstDay; i++) cells.push({ day: null, date: null });
+    for (let d = 1; d <= daysInMonth; d++) cells.push({ day: d, date: isoDate(viewYear, viewMonth, d) });
+    return cells;
+  }
+
+  function prevMonth() {
+    if (viewMonth === 0) { setViewYear(y => y - 1); setViewMonth(11); }
+    else setViewMonth(m => m - 1);
+  }
+  function nextMonth() {
+    const nextM = viewMonth === 11 ? 0 : viewMonth + 1;
+    const nextY = viewMonth === 11 ? viewYear + 1 : viewYear;
+    const firstOfNext = new Date(nextY, nextM, 1);
+    if (firstOfNext > today) return;
+    if (viewMonth === 11) { setViewYear(y => y + 1); setViewMonth(0); }
+    else setViewMonth(m => m + 1);
+  }
+
+  const canGoNext = (() => {
+    const nextM = viewMonth === 11 ? 0 : viewMonth + 1;
+    const nextY = viewMonth === 11 ? viewYear + 1 : viewYear;
+    return new Date(nextY, nextM, 1) <= today;
+  })();
+
+  const canGoPrev = (() => {
+    const prevM = viewMonth === 0 ? 11 : viewMonth - 1;
+    const prevY = viewMonth === 0 ? viewYear - 1 : viewYear;
+    const lastOfPrev = new Date(prevY, prevM + 1, 0);
+    return lastOfPrev >= minDate;
+  })();
+
+  const cells = buildCalendar();
+  const monthLabel = zh
+    ? `${viewYear}年 ${CM_MONTH_NAMES_ZH[viewMonth]}`
+    : `${CM_MONTH_NAMES[viewMonth]} ${viewYear}`;
+  const dayLabels = zh ? CM_DAY_LABELS_ZH : CM_DAY_LABELS;
+
+  const displayText = selectedDate
+    ? selectedDate
+    : (zh ? '選擇日期…' : 'Select date…');
+
+  return (
+    <div className="de-cm-datepicker-wrap" ref={wrapRef}>
+      <button
+        type="button"
+        className={`de-cm-datepicker-input${calOpen ? ' open' : ''}`}
+        onClick={() => setCalOpen(v => !v)}
+        aria-haspopup="dialog"
+        aria-expanded={calOpen}
+      >
+        <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
+          <rect x="1" y="2" width="12" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
+          <path d="M1 5.5h12" stroke="currentColor" strokeWidth="1.3"/>
+          <path d="M4 1v2.5M10 1v2.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+        </svg>
+        <span>{displayText}</span>
+      </button>
+      {calOpen && (
+        <div className="de-cm-cal-popup" role="dialog" aria-label={zh ? '日期選擇器' : 'Date picker'}>
+          <div className="de-cm-cal-nav">
+            <button type="button" className="de-cm-cal-nav-btn" onClick={prevMonth} disabled={!canGoPrev} aria-label={zh ? '上個月' : 'Previous month'}>
+              <svg viewBox="0 0 14 14" fill="none" width="12" height="12"><path d="M9 2L4 7L9 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+            <span className="de-cm-cal-month">{monthLabel}</span>
+            <button type="button" className="de-cm-cal-nav-btn" onClick={nextMonth} disabled={!canGoNext} aria-label={zh ? '下個月' : 'Next month'}>
+              <svg viewBox="0 0 14 14" fill="none" width="12" height="12"><path d="M5 2L10 7L5 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+          </div>
+          <div className="de-cm-cal-grid">
+            {dayLabels.map(d => (
+              <div key={d} className="de-cm-cal-day-label">{d}</div>
+            ))}
+            {cells.map((cell, i) => {
+              if (!cell.day || !cell.date) return <div key={`empty-${i}`} className="de-cm-cal-cell de-cm-cal-cell--empty" />;
+              const disabled = isDisabled(viewYear, viewMonth, cell.day);
+              const isSelected = cell.date === selectedDate;
+              const isToday = cell.date === isoDate(today.getFullYear(), today.getMonth(), today.getDate());
+              return (
+                <button
+                  key={cell.date}
+                  type="button"
+                  className={`de-cm-cal-cell${isSelected ? ' selected' : ''}${isToday ? ' today' : ''}${disabled ? ' disabled' : ''}`}
+                  disabled={disabled}
+                  onClick={() => { onSelect(cell.date!); setCalOpen(false); }}
+                  aria-label={cell.date}
+                  aria-pressed={isSelected}
+                >
+                  {cell.day}
+                </button>
+              );
+            })}
+          </div>
+          <div className="de-cm-cal-hint">
+            {zh ? `可選範圍：${minDate.toLocaleDateString('zh-TW')} – 今天` : `Range: ${minDate.toLocaleDateString('en-US')} – Today`}
+          </div>
+        </div>
+      )}
+      <button
+        type="button"
+        className="de-cm-search-btn"
+        onClick={() => { onSearch(); setCalOpen(false); }}
+        disabled={!selectedDate}
+      >
+        {zh ? '搜尋' : 'Search'}
+      </button>
+      <button
+        type="button"
+        className="de-cm-clear-btn"
+        onClick={onClear}
+        disabled={!selectedDate}
+      >
+        {zh ? '清除' : 'Clear'}
+      </button>
+    </div>
+  );
+}
+
+// ── CSV download helpers for Capital Markets ──────────────────────────────────
+
+function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en') {
+  const zh = lang === 'zh';
+  switch (tabId) {
+    case 'daily-quotes':
+      downloadCSV(zh ? '每日收盤行情.csv' : 'daily-quotes.csv',
+        zh ? ['股票代號','名稱','成交股數','成交金額','開盤價','最高價','最低價','收盤價','漲跌','成交筆數'] : ['Code','Name','Volume','Amount (NT$)','Open','High','Low','Close','Change','Transactions'],
+        CM_DAILY_QUOTES.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.vol, r.amount, r.open, r.high, r.low, r.close, r.change, r.txn]));
+      break;
+    case 'day-trading':
+      downloadCSV(zh ? '每日沖銷交易.csv' : 'day-trading.csv',
+        zh ? ['股票代號','名稱','當沖買進股數','當沖賣出股數','當沖成交股數','占總成交股數比'] : ['Code','Name','Day-Trade Buy','Day-Trade Sell','Day-Trade Volume','% of Total Vol.'],
+        CM_DAY_TRADING.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.buy, r.sell, r.net, r.ratio]));
+      break;
+    case 'margin':
+      downloadCSV(zh ? '融資融券餘額.csv' : 'margin-transaction.csv',
+        zh ? ['股票代號','名稱','融資買進','融資賣出','融資餘額','融券賣出','融券買進','融券餘額'] : ['Code','Name','Margin Buy','Margin Sell','Margin Balance','Short Sell','Short Buy','Short Balance'],
+        CM_MARGIN.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.finBuy, r.finSell, r.finBal, r.shoBuy, r.shoSell, r.shoBal]));
+      break;
+    case 'short-sale':
+      downloadCSV(zh ? '信用額度總量管制餘額.csv' : 'short-sale-balances.csv',
+        zh ? ['股票代號','名稱','融資限額','融資已用','融資使用率','融券限額','融券已用','融券使用率'] : ['Code','Name','Margin Limit','Margin Used','Margin Util.','Short Limit','Short Used','Short Util.'],
+        CM_SHORT_SALE.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.finLimit, r.finUsed, r.finRatio, r.shoLimit, r.shoUsed, r.shoRatio]));
+      break;
+    case 'ex-dividend':
+      downloadCSV(zh ? '除權息及上下市資訊.csv' : 'ex-right-dividend.csv',
+        zh ? ['股票代號','名稱','除息日','息值(元)','除權日','權值','上市日期'] : ['Code','Name','Ex-Div Date','Div. Value','Ex-Right Date','Right Value','Listing Date'],
+        CM_EX_DIVIDEND.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.exDivDate, r.divVal, r.exRightDate, r.rightVal, r.listDate]));
+      break;
+    case 'foreign-investors':
+      downloadCSV(zh ? '外資投資持股統計.csv' : 'foreign-investors.csv',
+        zh ? ['股票代號','名稱','外資買進(股)','外資賣出(股)','外資持股股數','持股比例'] : ['Code','Name','Foreign Buy','Foreign Sell','Foreign Holdings','Holding %'],
+        CM_FOREIGN.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.buy, r.sell, r.shares, r.ratio]));
+      break;
+    case 'price-limit':
+      downloadCSV(zh ? '漲跌幅度表.csv' : 'price-variation-limit.csv',
+        zh ? ['股票代號','名稱','參考收盤價','漲停價格','跌停價格','漲跌幅限制'] : ['Code','Name','Ref. Price','Upper Limit','Lower Limit','Limit %'],
+        CM_PRICE_LIMIT.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.refPrice, r.ceiling, r.floor, r.pct]));
+      break;
+    case 'pe-ratio':
+      downloadCSV(zh ? '個股日本益比殖利率及股價淨值比.csv' : 'pe-ratio-dividend-yield.csv',
+        zh ? ['股票代號','名稱','殖利率(%)','本益比','股價淨值比'] : ['Code','Name','Dividend Yield (%)','P/E Ratio','P/B Ratio'],
+        CM_PE_RATIO.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.yield, r.pe, r.pb]));
+      break;
+  }
+}
+
+// ── Capital Markets Layout (sidebar + content) ────────────────────────────────
+
+function CapitalMarketsLayout({ lang, accentColor }: { lang: 'zh' | 'en'; accentColor: string }) {
+  const zh = lang === 'zh';
+  const [activeCmTab, setActiveCmTab] = useState('daily-quotes');
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [searchDate, setSearchDate] = useState<string | null>(null);
+
+  const CM_INNER_TABS = [
+    { id: 'daily-quotes',      label: zh ? '每日收盤行情' : 'Daily Quotes' },
+    { id: 'day-trading',       label: zh ? '每日沖銷交易標記及統計' : 'Statistics for Day Trading' },
+    { id: 'margin',            label: zh ? '融資融券餘額' : 'Margin Transaction' },
+    { id: 'short-sale',        label: zh ? '信用額度總量管制餘額檔' : 'Daily Short Sale Balances' },
+    { id: 'ex-dividend',       label: zh ? '除權息及上下市資訊檔' : 'Ex-Right/Dividend & List/Delist' },
+    { id: 'foreign-investors', label: zh ? '外資投資持股統計' : 'Invested Amt of Foreign' },
+    { id: 'price-limit',       label: zh ? '漲跌幅度表檔' : 'Price Variation Limit' },
+    { id: 'pe-ratio',          label: zh ? '個股日本益比、殖利率及股價淨值比' : 'P/E Ratio, Dividend Yield, P/B Ratio' },
+  ];
+
+  function handleSearch() {
+    setSearchDate(selectedDate);
+  }
+  function handleClear() {
+    setSelectedDate(null);
+    setSearchDate(null);
+  }
+  function handleDownload() {
+    downloadCapitalMarketsCSV(activeCmTab, lang);
+  }
+
+  return (
+    <div className="de-cm-layout">
+      <nav className="de-cm-sidebar" aria-label={zh ? 'Capital Markets 子分類' : 'Capital Markets sub categories'}>
+        <div className="de-cm-sidebar-title">{zh ? '子分類' : 'Sub Category'}</div>
+        {CM_INNER_TABS.map((tab) => (
+          <button
+            key={tab.id}
+            className={`de-cm-sidebar-item${activeCmTab === tab.id ? ' active' : ''}`}
+            style={activeCmTab === tab.id ? { borderLeftColor: accentColor, color: accentColor } : {}}
+            onClick={() => setActiveCmTab(tab.id)}
+          >
+            <span className="de-cm-sidebar-item-name">{tab.label}</span>
+          </button>
+        ))}
+      </nav>
+      <div className="de-cm-content">
+        <div className="de-cm-content-toolbar">
+          <div className="de-cm-content-toolbar-left">
+            <CmDatePicker
+              lang={lang}
+              selectedDate={selectedDate}
+              onSelect={setSelectedDate}
+              onSearch={handleSearch}
+              onClear={handleClear}
+            />
+            {searchDate && (
+              <span className="de-cm-ref-date">{zh ? `查詢日期：${searchDate}` : `Date: ${searchDate}`}</span>
+            )}
+          </div>
+          <div className="de-cm-content-toolbar-right">
+            <button className="de-news-download-btn de-gov-csv-btn" onClick={handleDownload}>
+              <DownloadIcon />
+              <span>{zh ? '下載 CSV' : 'Download CSV'}</span>
+            </button>
+          </div>
+        </div>
+        {activeCmTab === 'daily-quotes'      && <CmDailyQuotesTab lang={lang} />}
+        {activeCmTab === 'day-trading'       && <CmDayTradingTab lang={lang} />}
+        {activeCmTab === 'margin'            && <CmMarginTab lang={lang} />}
+        {activeCmTab === 'short-sale'        && <CmShortSaleTab lang={lang} />}
+        {activeCmTab === 'ex-dividend'       && <CmExDividendTab lang={lang} />}
+        {activeCmTab === 'foreign-investors' && <CmForeignTab lang={lang} />}
+        {activeCmTab === 'price-limit'       && <CmPriceLimitTab lang={lang} />}
+        {activeCmTab === 'pe-ratio'          && <CmPeRatioTab lang={lang} />}
+      </div>
+    </div>
+  );
+}
+
 // ── Government Regulations — new tab data ───────────────────────────────────
 
-const GOV_REG_DISQUALIFIED = [
-  { name: '豐盛工程有限公司',       id: '12345678', period: '2024/03/01–2026/02/28', reason: '偽造文書、詐欺', agency: '行政院公共工程委員會' },
-  { name: '大成建設股份有限公司',   id: '23456789', period: '2024/05/15–2025/05/14', reason: '圍標', agency: '採購機關' },
-  { name: '信義科技股份有限公司',   id: '34567890', period: '2023/11/01–2024/10/31', reason: '履約品質不符', agency: '行政院公共工程委員會' },
-  { name: '華光電子工業股份有限公司', id: '45678901', period: '2024/01/20–2025/01/19', reason: '違反採購法', agency: '採購機關' },
-  { name: '東方資訊股份有限公司',   id: '56789012', period: '2024/07/01–2026/06/30', reason: '洗錢防制', agency: '法務部' },
-  { name: '新興企業股份有限公司',   id: '67890123', period: '2023/09/01–2024/08/31', reason: '偽造標單', agency: '行政院公共工程委員會' },
-  { name: '明德科技股份有限公司',   id: '78901234', period: '2024/04/10–2025/04/09', reason: '違反採購法', agency: '採購機關' },
-  { name: '長隆機械有限公司',       id: '89012345', period: '2024/08/01–2025/07/31', reason: '未依約交貨', agency: '採購機關' },
-  { name: '興業貿易股份有限公司',   id: '90123456', period: '2023/12/01–2024/11/30', reason: '圍標', agency: '行政院公共工程委員會' },
-  { name: '金鑫企業有限公司',       id: '01234567', period: '2024/06/01–2025/05/31', reason: '不實申報', agency: '採購機關' },
-];
+interface GovDisqualifiedRow {
+  ban: string;
+  transgress_control_id: string;
+  fac_city_code: string;
+  county_name: string;
+  ems_no: string;
+  fac_name: string;
+  document_no: string;
+  transgress_date: string;
+  transgress_type: string;
+  transgress_name: string;
+  update_date: string;
+}
 
-const GOV_REG_POLLUTION = [
-  { name: '南亞塑膠工業股份有限公司', city: '桃園市', date: '2024/10/15', reason: '廢水超標排放', fine: '200,000', law: '水污染防治法' },
-  { name: '台灣化學纖維股份有限公司', city: '彰化縣', date: '2024/09/20', reason: '空氣污染物超量', fine: '300,000', law: '空氣污染防制法' },
-  { name: '長春石油化學股份有限公司', city: '雲林縣', date: '2024/08/11', reason: '有毒物質洩漏', fine: '500,000', law: '毒性化學物質管理法' },
-  { name: '中鋼股份有限公司',         city: '高雄市', date: '2024/11/03', reason: '煙塵超標', fine: '150,000', law: '空氣污染防制法' },
-  { name: '永豐餘造紙股份有限公司',   city: '苗栗縣', date: '2024/07/22', reason: '廢水處理不當', fine: '120,000', law: '水污染防治法' },
-  { name: '台灣化成工業股份有限公司', city: '台南市', date: '2024/12/05', reason: '廢棄物非法棄置', fine: '400,000', law: '廢棄物清理法' },
-  { name: '大同股份有限公司',         city: '台北市', date: '2024/06/18', reason: '噪音超標', fine: '80,000',  law: '噪音管制法' },
-  { name: '義聯鋼鐵股份有限公司',     city: '高雄市', date: '2024/05/29', reason: '廢氣排放超標', fine: '250,000', law: '空氣污染防制法' },
-  { name: '東元電機股份有限公司',     city: '桃園市', date: '2024/03/14', reason: '廢水未達標', fine: '100,000', law: '水污染防治法' },
-  { name: '宏碁股份有限公司',         city: '新北市', date: '2024/04/08', reason: '有害事業廢棄物違規', fine: '180,000', law: '廢棄物清理法' },
-];
+interface GovRegulatoryRow {
+  Corporation_Number: number;
+  Case_no: string;
+  Corporation_Name: string;
+  Announce_Agency_No: string;
+  Announce_Agency_Name: string;
+  Case_Name: string;
+  Expire_Date: string;
+  update_date: string;
+}
 
-const GOV_REG_LABOR = [
-  { name: '某某製造股份有限公司',   id: '11223344', date: '2024/11/15', law: '勞動基準法第24條', fine: '60,000',  detail: '未給付加班費' },
-  { name: '大統食品股份有限公司',   id: '22334455', date: '2024/10/08', law: '勞動基準法第38條', fine: '30,000',  detail: '特別休假未依規定' },
-  { name: '晶圓代工技術股份有限公司', id: '33445566', date: '2024/09/22', law: '職業安全衛生法第6條', fine: '90,000',  detail: '安全設備未符合規定' },
-  { name: '精密機械製造有限公司',   id: '44556677', date: '2024/08/14', law: '勞動基準法第30條', fine: '45,000',  detail: '工時超過法定上限' },
-  { name: '東南電子股份有限公司',   id: '55667788', date: '2024/07/30', law: '性別平等工作法第10條', fine: '100,000', detail: '同工不同酬' },
-  { name: '長發建設股份有限公司',   id: '66778899', date: '2024/06/19', law: '職業安全衛生法第17條', fine: '120,000', detail: '未提供安全防護' },
-  { name: '寶達通訊股份有限公司',   id: '77889900', date: '2024/05/07', law: '勞動基準法第14條', fine: '50,000',  detail: '未依法訂立勞動契約' },
-  { name: '金豐紡織股份有限公司',   id: '88990011', date: '2024/04/25', law: '勞工退休金條例第14條', fine: '75,000',  detail: '未足額提撥退休金' },
-  { name: '凱旋科技股份有限公司',   id: '99001122', date: '2024/03/13', law: '勞動基準法第59條', fine: '40,000',  detail: '職災未依規補償' },
-  { name: '和順物流股份有限公司',   id: '00112233', date: '2024/02/28', law: '勞動基準法第79條', fine: '30,000',  detail: '工資記錄不全' },
-];
+interface GovLaborRow {
+  name: string;
+  id: string;
+  date: string;
+  law: string;
+  fine: string;
+  detail: string;
+}
+
+const APP_BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? '/lego';
+const GOV_ERROR_TEXT_MAX_LENGTH = 200;
+
+async function fetchGovRows<T>(endpoint: string): Promise<T[]> {
+  const res = await fetch(`${APP_BASE_PATH}/api/${endpoint}`);
+  if (!res.ok) {
+    const rawErrorText = await res.text().catch(() => '');
+    const errorText = rawErrorText.length > GOV_ERROR_TEXT_MAX_LENGTH
+      ? `${rawErrorText.slice(0, GOV_ERROR_TEXT_MAX_LENGTH)}...`
+      : rawErrorText;
+    throw new Error(`Failed to fetch ${endpoint} (${res.status} ${res.statusText})${errorText ? `: ${errorText}` : ''}`);
+  }
+  const data = (await res.json()) as { items: T[] };
+  return data.items;
+}
+
+function useGovApiRows<T>(endpoint: string) {
+  const [sourceRows, setSourceRows] = useState<T[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    fetchGovRows<T>(endpoint)
+      .then((items) => {
+        if (!cancelled) setSourceRows(items);
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : String(err));
+          console.error('Government regulations API request failed:', err);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [endpoint]);
+
+  return { sourceRows, loading, error };
+}
+
+function useRegulatoryApiRows() {
+  const [sourceRows, setSourceRows] = useState<GovRegulatoryRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    fetch(`${APP_BASE_PATH}/api/getRegulatoryOnPollutionSources`)
+      .then(async (res) => {
+        if (!res.ok) {
+          const rawText = await res.text().catch(() => '');
+          const errText = rawText.length > GOV_ERROR_TEXT_MAX_LENGTH
+            ? `${rawText.slice(0, GOV_ERROR_TEXT_MAX_LENGTH)}...`
+            : rawText;
+          throw new Error(`Failed to fetch getRegulatoryOnPollutionSources (${res.status} ${res.statusText})${errText ? `: ${errText}` : ''}`);
+        }
+        const data = (await res.json()) as { Rvlmd_List: { Rvlmd: GovRegulatoryRow[] } };
+        return data.Rvlmd_List.Rvlmd;
+      })
+      .then((items) => {
+        if (!cancelled) setSourceRows(items);
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : String(err));
+          console.error('Government regulations API request failed:', err);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return { sourceRows, loading, error };
+}
 
 // ── Government Regulations new tab components ────────────────────────────────
 
-function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
+function GovDisqualifiedTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentColor: string }) {
   const zh = lang === 'zh';
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
-    GOV_REG_DISQUALIFIED,
-    [(r) => r.name, (r) => r.id, (r) => r.period, (r) => r.reason, (r) => r.agency],
+  const { sourceRows, loading, error } = useGovApiRows<GovDisqualifiedRow>('getDisqualifiedVendors');
+
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
+    sourceRows,
+    [
+      (r) => r.ban,
+      (r) => r.transgress_control_id,
+      (r) => r.fac_city_code,
+      (r) => r.county_name,
+      (r) => r.ems_no,
+      (r) => r.fac_name,
+      (r) => r.document_no,
+      (r) => r.transgress_date,
+      (r) => r.transgress_type,
+      (r) => r.transgress_name,
+      (r) => r.update_date,
+    ],
   );
+
+  if (loading) return <div className="de-esg-loading">{zh ? '載入中…' : 'Loading…'}</div>;
+  if (error) return <div className="de-esg-empty">{zh ? '載入失敗，請稍後再試。' : 'Failed to load. Please try again later.'}</div>;
+
+  function handleDownloadCSV() {
+    const headers = zh
+      ? ['統一編號', '違規人管制編號', '公司（工廠）地址縣市別代碼', '裁處機關', '管制事業編號', '事業名稱', '裁處書字號', '違反時間', '污染類別', '違規人名稱', '台積更新此筆紀錄的時間']
+      : ['UBN', 'Transgress Control ID', 'Fac. City Code', 'County Name', 'EMS No', 'Fac. Name', 'Document No', 'Transgress Date', 'Transgress Type', 'Transgress Name', 'Update Date'];
+    downloadCSV(
+      zh ? '拒絕往來廠商公告.csv' : 'disqualified-vendors.csv',
+      headers,
+      sourceRows.map((r) => [
+        r.ban,
+        r.transgress_control_id,
+        r.fac_city_code,
+        r.county_name,
+        r.ems_no,
+        r.fac_name,
+        r.document_no,
+        r.transgress_date,
+        r.transgress_type,
+        r.transgress_name,
+        r.update_date,
+      ]),
+    );
+  }
+
   return (
     <div className="de-data-section">
       <div className="de-data-section-header">
-        <span className="de-data-section-title">
-          {zh ? '拒絕往來廠商公告' : 'Announcement of Disqualified Vendors'}
+        <span className="de-data-section-title" style={{ color: accentColor }}>
+          {zh ? '拒絕往來廠商公告' : 'Disqualified Vendors'}
         </span>
-        <span className="de-data-section-date">Source: 行政院公共工程委員會</span>
+        <GovInfoWrap />
+        <button className="de-news-download-btn de-gov-csv-btn" onClick={handleDownloadCSV}>
+          <DownloadIcon />
+          <span>{zh ? '下載 CSV' : 'Download CSV'}</span>
+        </button>
       </div>
       <div className="de-data-table-wrap">
-        <div style={{ padding: '8px 12px 0' }}>
-          <SortSearchBar search={search} onSearch={setSearch} total={GOV_REG_DISQUALIFIED.length} filtered={rows.length} />
-        </div>
         <table className="de-data-table">
           <thead>
             <tr>
-              <ThSort label={zh ? '廠商名稱' : 'Vendor Name'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '統一編號' : 'Tax ID'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '禁止往來期間' : 'Banned Period'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '違法事由' : 'Violation Reason'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '主管機關' : 'Authority'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+              <ThSortFilter label={zh ? '統一編號' : 'UBN'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+              <ThSortFilter label={zh ? '違規人管制編號' : 'Transgress Control ID'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+              <ThSortFilter label={zh ? '公司（工廠）地址縣市別代碼' : 'Fac. City Code'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} />
+              <ThSortFilter label={zh ? '裁處機關' : 'County Name'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} />
+              <ThSortFilter label={zh ? '管制事業編號' : 'EMS No'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} />
+              <ThSortFilter label={zh ? '事業名稱' : 'Fac. Name'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} />
+              <ThSortFilter label={zh ? '裁處書字號' : 'Document No'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} />
+              <ThSortFilter label={zh ? '違反時間' : 'Transgress Date'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} />
+              <ThSortFilter label={zh ? '污染類別' : 'Transgress Type'} colIndex={8} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[8] ?? ''} />
+              <ThSortFilter label={zh ? '違規人名稱' : 'Transgress Name'} colIndex={9} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[9] ?? ''} />
+              <ThSortFilter label={zh ? '台積更新此筆紀錄的時間' : 'Update Date'} colIndex={10} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[10] ?? ''} />
             </tr>
           </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.id}>
-                <td>{r.name}</td>
-                <td className="code">{r.id}</td>
-                <td className="muted">{r.period}</td>
-                <td>{r.reason}</td>
-                <td className="muted">{r.agency}</td>
+              <tr key={r.ban}>
+                <td className="code">{r.ban}</td>
+                <td className="code">{r.transgress_control_id}</td>
+                <td className="muted">{r.fac_city_code}</td>
+                <td>{r.county_name}</td>
+                <td className="code">{r.ems_no}</td>
+                <td>{r.fac_name}</td>
+                <td className="muted">{r.document_no}</td>
+                <td className="muted">{r.transgress_date}</td>
+                <td>{r.transgress_type}</td>
+                <td>{r.transgress_name}</td>
+                <td className="muted">{r.update_date}</td>
               </tr>
             ))}
           </tbody>
@@ -1067,44 +1722,84 @@ function GovDisqualifiedTab({ lang }: { lang: 'zh' | 'en' }) {
   );
 }
 
-function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
+function GovPollutionTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentColor: string }) {
   const zh = lang === 'zh';
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
-    GOV_REG_POLLUTION,
-    [(r) => r.name, (r) => r.city, (r) => r.date, (r) => r.reason, (r) => r.fine, (r) => r.law],
+  const { sourceRows, loading, error } = useRegulatoryApiRows();
+
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
+    sourceRows,
+    [
+      (r) => String(r.Corporation_Number),
+      (r) => r.Case_no,
+      (r) => r.Corporation_Name,
+      (r) => r.Announce_Agency_No,
+      (r) => r.Announce_Agency_Name,
+      (r) => r.Case_Name,
+      (r) => r.Expire_Date,
+      (r) => r.update_date,
+    ],
   );
+
+  if (loading) return <div className="de-esg-loading">{zh ? '載入中…' : 'Loading…'}</div>;
+  if (error) return <div className="de-esg-empty">{zh ? '載入失敗，請稍後再試。' : 'Failed to load. Please try again later.'}</div>;
+
+  function handleDownloadCSV() {
+    const headers = zh
+      ? ['廠商代碼', '標案案號', '廠商名稱', '刊登機關代碼', '刊登機關名稱', '標案名稱', '拒絕往來截止日', '台積此筆更新的時間']
+      : ['Corporation Number', 'Case No', 'Corporation Name', 'Announce Agency No', 'Announce Agency Name', 'Case Name', 'Expire Date', 'Update Date'];
+    downloadCSV(
+      zh ? '列管事業污染源裁處資料.csv' : 'regulatory-on-pollution-sources.csv',
+      headers,
+      sourceRows.map((r) => [
+        String(r.Corporation_Number),
+        r.Case_no,
+        r.Corporation_Name,
+        r.Announce_Agency_No,
+        r.Announce_Agency_Name,
+        r.Case_Name,
+        r.Expire_Date,
+        r.update_date,
+      ]),
+    );
+  }
+
   return (
     <div className="de-data-section">
       <div className="de-data-section-header">
-        <span className="de-data-section-title">
-          {zh ? '列管事業污染源裁處資料' : 'Regulatory data on industrial pollution sources'}
+        <span className="de-data-section-title" style={{ color: accentColor }}>
+          {zh ? '列管事業污染源裁處資料' : 'Regulatory on pollution sources'}
         </span>
-        <span className="de-data-section-date">Source: 環境部</span>
+        <GovInfoWrap />
+        <button className="de-news-download-btn de-gov-csv-btn" onClick={handleDownloadCSV}>
+          <DownloadIcon />
+          <span>{zh ? '下載 CSV' : 'Download CSV'}</span>
+        </button>
       </div>
       <div className="de-data-table-wrap">
-        <div style={{ padding: '8px 12px 0' }}>
-          <SortSearchBar search={search} onSearch={setSearch} total={GOV_REG_POLLUTION.length} filtered={rows.length} />
-        </div>
         <table className="de-data-table">
           <thead>
             <tr>
-              <ThSort label={zh ? '事業名稱' : 'Company Name'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '所在縣市' : 'City/County'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '裁處日期' : 'Penalty Date'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '違規事由' : 'Violation'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '裁處金額(元)' : 'Fine (NT$)'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-              <ThSort label={zh ? '法規依據' : 'Regulation'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+              <ThSortFilter label={zh ? '廠商代碼' : 'Corporation Number'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+              <ThSortFilter label={zh ? '標案案號' : 'Case No'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+              <ThSortFilter label={zh ? '廠商名稱' : 'Corporation Name'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} />
+              <ThSortFilter label={zh ? '刊登機關代碼' : 'Announce Agency No'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} />
+              <ThSortFilter label={zh ? '刊登機關名稱' : 'Announce Agency Name'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} />
+              <ThSortFilter label={zh ? '標案名稱' : 'Case Name'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} />
+              <ThSortFilter label={zh ? '拒絕往來截止日' : 'Expire Date'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} />
+              <ThSortFilter label={zh ? '台積此筆更新的時間' : 'Update Date'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} />
             </tr>
           </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.name}>
-                <td>{r.name}</td>
-                <td className="muted">{r.city}</td>
-                <td className="muted">{r.date}</td>
-                <td>{r.reason}</td>
-                <td className="num">{r.fine}</td>
-                <td className="muted">{r.law}</td>
+              <tr key={`${r.Corporation_Number}-${r.Case_no}`}>
+                <td className="code">{r.Corporation_Number}</td>
+                <td className="code">{r.Case_no}</td>
+                <td>{r.Corporation_Name}</td>
+                <td className="muted">{r.Announce_Agency_No}</td>
+                <td>{r.Announce_Agency_Name}</td>
+                <td>{r.Case_Name}</td>
+                <td className="muted">{r.Expire_Date}</td>
+                <td className="muted">{r.update_date}</td>
               </tr>
             ))}
           </tbody>
@@ -1114,33 +1809,51 @@ function GovPollutionTab({ lang }: { lang: 'zh' | 'en' }) {
   );
 }
 
-function GovLaborTab({ lang }: { lang: 'zh' | 'en' }) {
+function GovLaborTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentColor: string }) {
   const zh = lang === 'zh';
-  const { rows, search, setSearch, sortCol, sortDir, handleSort } = useSortableData(
-    GOV_REG_LABOR,
+  const { sourceRows, loading, error } = useGovApiRows<GovLaborRow>('getLaborViolations');
+
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
+    sourceRows,
     [(r) => r.name, (r) => r.id, (r) => r.date, (r) => r.law, (r) => r.fine, (r) => r.detail],
   );
+
+  if (loading) return <div className="de-esg-loading">{zh ? '載入中…' : 'Loading…'}</div>;
+  if (error) return <div className="de-esg-empty">{zh ? '載入失敗，請稍後再試。' : 'Failed to load. Please try again later.'}</div>;
+
+  function handleDownloadCSV() {
+    const headers = zh
+      ? ['事業單位名稱', '統一編號', '違法日期', '違反法規', '裁罰金額(元)', '處分情形']
+      : ['Company Name', 'Tax ID', 'Violation Date', 'Regulation Violated', 'Fine (NT$)', 'Details'];
+    downloadCSV(
+      zh ? '違反勞動法令事業單位.csv' : 'labor-violations.csv',
+      headers,
+      sourceRows.map((r) => [r.name, r.id, r.date, r.law, r.fine, r.detail]),
+    );
+  }
+
   return (
     <div className="de-data-section">
       <div className="de-data-section-header">
-        <span className="de-data-section-title">
+        <span className="de-data-section-title" style={{ color: accentColor }}>
           {zh ? '違反勞動法令事業單位' : 'Violations of Labor Laws'}
         </span>
-        <span className="de-data-section-date">Source: 勞動部</span>
+        <GovInfoWrap />
+        <button className="de-news-download-btn de-gov-csv-btn" onClick={handleDownloadCSV}>
+          <DownloadIcon />
+          <span>{zh ? '下載 CSV' : 'Download CSV'}</span>
+        </button>
       </div>
       <div className="de-data-table-wrap">
-        <div style={{ padding: '8px 12px 0' }}>
-          <SortSearchBar search={search} onSearch={setSearch} total={GOV_REG_LABOR.length} filtered={rows.length} />
-        </div>
         <table className="de-data-table">
           <thead>
             <tr>
-              <ThSort label={zh ? '事業單位名稱' : 'Company Name'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '統一編號' : 'Tax ID'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '違法日期' : 'Violation Date'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '違反法規' : 'Regulation Violated'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-              <ThSort label={zh ? '裁罰金額(元)' : 'Fine (NT$)'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} className="num" />
-              <ThSort label={zh ? '處分情形' : 'Details'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+              <ThSortFilter label={zh ? '事業單位名稱' : 'Company Name'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+              <ThSortFilter label={zh ? '統一編號' : 'Tax ID'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+              <ThSortFilter label={zh ? '違法日期' : 'Violation Date'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} />
+              <ThSortFilter label={zh ? '違反法規' : 'Regulation Violated'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} />
+              <ThSortFilter label={zh ? '裁罰金額(元)' : 'Fine (NT$)'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
+              <ThSortFilter label={zh ? '處分情形' : 'Details'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} />
             </tr>
           </thead>
           <tbody>
@@ -1156,6 +1869,40 @@ function GovLaborTab({ lang }: { lang: 'zh' | 'en' }) {
             ))}
           </tbody>
         </table>
+      </div>
+    </div>
+  );
+}
+
+function GovPenaltyRecordsTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentColor: string }) {
+  const zh = lang === 'zh';
+  const [activeGovTab, setActiveGovTab] = useState('disqualified-vendors');
+
+  const innerTabs = [
+    { id: 'disqualified-vendors', label: zh ? '拒絕往來廠商公告' : 'Disqualified Vendors' },
+    { id: 'pollution-sources', label: zh ? '列管事業污染源裁處資料' : 'Regulatory on pollution sources' },
+    { id: 'labor-violations', label: zh ? '違反勞動法令事業單位' : 'Violations of Labor Laws' },
+  ];
+
+  return (
+    <div className="de-gov-penalty-layout">
+      <nav className="de-gov-penalty-sidebar" aria-label={zh ? '政府處分資料子分類' : 'Government penalty sub categories'}>
+        <div className="de-gov-penalty-sidebar-title">{zh ? '子分類' : 'Sub Category'}</div>
+        {innerTabs.map((tab) => (
+          <button
+            key={tab.id}
+            className={`de-gov-penalty-sidebar-item${activeGovTab === tab.id ? ' active' : ''}`}
+            style={activeGovTab === tab.id ? { borderLeftColor: accentColor, color: accentColor } : {}}
+            onClick={() => setActiveGovTab(tab.id)}
+          >
+            <span className="de-gov-penalty-sidebar-item-name">{tab.label}</span>
+          </button>
+        ))}
+      </nav>
+      <div className="de-gov-penalty-content">
+        {activeGovTab === 'disqualified-vendors' && <GovDisqualifiedTab lang={lang} accentColor={accentColor} />}
+        {activeGovTab === 'pollution-sources' && <GovPollutionTab lang={lang} accentColor={accentColor} />}
+        {activeGovTab === 'labor-violations' && <GovLaborTab lang={lang} accentColor={accentColor} />}
       </div>
     </div>
   );
@@ -1845,23 +2592,11 @@ export default function DataCategoryContent({ params }: { params: { category: st
   const isNewsSummary = params.category === 'news-summary';
 
   const CAPITAL_TABS = [
-    { id: 'daily-quotes',      label: lang === 'zh' ? '每日收盤行情' : 'Daily Quotes' },
-    { id: 'day-trading',       label: lang === 'zh' ? '每日沖銷交易標記及統計' : 'Objects and Statistics for Day Trading' },
-    { id: 'margin',            label: lang === 'zh' ? '融資融券餘額' : 'Margin Transaction Summary' },
-    { id: 'short-sale',        label: lang === 'zh' ? '信用額度總量管制餘額檔' : 'Daily Short Sale Balances' },
-    { id: 'ex-dividend',       label: lang === 'zh' ? '除權息及上下市資訊檔' : 'Ex-Right/Dividend and List/Delist Data' },
-    { id: 'foreign-investors', label: lang === 'zh' ? '外資投資持股統計' : 'Summary of Invested Amount of Foreign Investors' },
-    { id: 'price-limit',       label: lang === 'zh' ? '漲跌幅度表檔' : 'Price Variation Limit' },
-    { id: 'pe-ratio',          label: lang === 'zh' ? '個股日本益比、殖利率及股價淨值比' : 'Individual Stock P/E Ratio, Dividend Yield, and P/B Ratio' },
+    { id: 'twse-info', label: 'Taiwan Stock Exchange Trading Info/Data' },
   ];
 
   const GOV_TABS = [
-    { id: 'articles',             label: lang === 'zh' ? '相關法規' : 'Articles' },
-    { id: 'taiwan-tax',           label: lang === 'zh' ? '每週台灣稅務快訊' : 'Weekly Taiwan Tax News Summary' },
-    { id: 'intl-tax',             label: lang === 'zh' ? '每週國際稅務快訊' : 'Weekly International Tax News Summary' },
-    { id: 'disqualified-vendors', label: lang === 'zh' ? '拒絕往來廠商公告' : 'Announcement of Disqualified Vendors' },
-    { id: 'pollution-sources',    label: lang === 'zh' ? '列管事業污染源裁處資料' : 'Regulatory data on industrial pollution sources' },
-    { id: 'labor-violations',     label: lang === 'zh' ? '違反勞動法令事業單位' : 'Violations of Labor Laws' },
+    { id: 'tw-government-penalty-records', label: '(TW) Government Penalty Records' },
   ];
 
   const NEWS_SUMMARY_TABS = [
@@ -1870,7 +2605,7 @@ export default function DataCategoryContent({ params }: { params: { category: st
     { id: 'intl-news',     label: lang === 'zh' ? '每週國際稅務快訊' : 'Weekly International Tax News Summary' },
   ];
 
-  const defaultTab = isCapital ? 'daily-quotes' : isNewsSummary ? 'biweekly-esg' : 'articles';
+  const defaultTab = isGov ? 'tw-government-penalty-records' : isCapital ? 'twse-info' : isNewsSummary ? 'biweekly-esg' : 'articles';
   const [activeSubTab, setActiveSubTab] = useState(defaultTab);
 
   const hasSubTabs = isEsg || isGov || isCapital || isNewsSummary;
@@ -1970,18 +2705,13 @@ export default function DataCategoryContent({ params }: { params: { category: st
                 <SubTabBar tabs={subTabs} active={activeSubTab} color={cat.color} onChange={handleSubTabChange} />
               )}
 
-              {/* Capital Markets tabs */}
-              {isCapital && activeSubTab === 'daily-quotes'      && <CmDailyQuotesTab lang={lang} />}
-              {isCapital && activeSubTab === 'day-trading'       && <CmDayTradingTab lang={lang} />}
-              {isCapital && activeSubTab === 'margin'            && <CmMarginTab lang={lang} />}
-              {isCapital && activeSubTab === 'short-sale'        && <CmShortSaleTab lang={lang} />}
-              {isCapital && activeSubTab === 'ex-dividend'       && <CmExDividendTab lang={lang} />}
-              {isCapital && activeSubTab === 'foreign-investors' && <CmForeignTab lang={lang} />}
-              {isCapital && activeSubTab === 'price-limit'       && <CmPriceLimitTab lang={lang} />}
-              {isCapital && activeSubTab === 'pe-ratio'          && <CmPeRatioTab lang={lang} />}
+              {/* Capital Markets — sidebar layout */}
+              {isCapital && activeSubTab === 'twse-info' && (
+                <CapitalMarketsLayout lang={lang} accentColor={cat.color} />
+              )}
 
               {/* ESG / Gov tabs that show articles */}
-              {!isCapital && activeSubTab === 'articles' && (
+              {!isCapital && !isGov && activeSubTab === 'articles' && (
                 <ArticlesTab
                   items={filteredItems}
                   accentColor={cat.color}
@@ -1995,11 +2725,9 @@ export default function DataCategoryContent({ params }: { params: { category: st
               )}
 
               {activeSubTab === 'reports'               && isEsg  && <EsgReportsTab />}
-              {activeSubTab === 'taiwan-tax'            && isGov  && <TaiwanTaxNewsTab />}
-              {activeSubTab === 'intl-tax'              && isGov  && <WorldMapTab />}
-              {activeSubTab === 'disqualified-vendors'  && isGov  && <GovDisqualifiedTab lang={lang} />}
-              {activeSubTab === 'pollution-sources'     && isGov  && <GovPollutionTab lang={lang} />}
-              {activeSubTab === 'labor-violations'      && isGov  && <GovLaborTab lang={lang} />}
+              {activeSubTab === 'tw-government-penalty-records' && isGov && (
+                <GovPenaltyRecordsTab lang={lang} accentColor={cat.color} />
+              )}
 
               {/* News Summary tabs */}
               {activeSubTab === 'biweekly-esg' && isNewsSummary && (
