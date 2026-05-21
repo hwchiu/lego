@@ -1030,6 +1030,7 @@ export default function TopNav() {
         <div className="topnav-notif-panel-wrap" ref={notifRef}>
           <button
             className={`topnav-action-btn topnav-action-btn--icon-only topnav-notif-btn--tour${notifOpen ? ' active' : ''}`}
+            data-tour-target="notifications"
             title="Notifications"
             aria-label="Notifications"
             onClick={handleNotifToggle}

@@ -253,7 +253,7 @@ const TOUR_STEPS: TourStep[] = [
     preview: <Step3Preview />,
     accentColor: '#8b5cf6',
     secondCallout: {
-      selector: '.topnav-notif-btn--tour',
+      selector: '[data-tour-target="notifications"]',
       title: 'Notifications',
       description:
         'Open <strong>Notifications</strong> from the top-right, then click <strong>⚙ Settings</strong> to customise your notification channels. ' +
