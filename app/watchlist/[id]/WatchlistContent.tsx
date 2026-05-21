@@ -2228,7 +2228,7 @@ export function WatchlistContent({
                 {/* Subscribe button — Favorites page only */}
                 {showSubscribeButton && (
                   <button
-                    className="wl-action-btn"
+                    className="wl-action-btn wl-action-btn--subscribe-tour"
                     disabled={subscribeLoading}
                     onClick={async () => {
                       setSubscribeLoading(true);
