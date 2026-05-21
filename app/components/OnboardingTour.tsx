@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -290,6 +291,7 @@ interface SpotlightRect {
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function OnboardingTour() {
+  const { lang } = useLanguage();
   const [visible, setVisible] = useState(false);
   const [step, setStep] = useState(0);
   const [spotlightRect, setSpotlightRect] = useState<SpotlightRect | null>(null);
@@ -462,6 +464,7 @@ export default function OnboardingTour() {
 
   // ── Actions ───────────────────────────────────────────────────────────────
   const handleStepChange = (nextStep: number) => {
+    // Skip if step index is invalid or already on this step.
     if (nextStep < 0 || nextStep >= totalSteps || nextStep === step) return;
     const nextStepDef = TOUR_STEPS[nextStep];
     if (nextStepDef?.id === 2 && typeof window !== 'undefined') {
@@ -643,8 +646,8 @@ export default function OnboardingTour() {
                 type="button"
                 className={`tour-dot${i === step ? ' tour-dot--active' : ''}`}
                 style={i === step ? { background: currentStep.accentColor } : {}}
-                aria-label={`Go to step ${i + 1}`}
-                title={`Step ${i + 1}`}
+                aria-label={lang === 'zh' ? `前往第 ${i + 1} 步` : `Go to step ${i + 1}`}
+                title={lang === 'zh' ? `第 ${i + 1} 步` : `Step ${i + 1}`}
                 onClick={() => handleStepChange(i)}
               />
             ))}
