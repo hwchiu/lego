@@ -1027,7 +1027,7 @@ export default function TopNav() {
         <ThemeToggleButton />
 
         {/* Notification bell */}
-        <div className="topnav-notif-panel-wrap" ref={notifRef}>
+        <div className="topnav-notif-panel-wrap" data-tour-target="notifications-wrap" ref={notifRef}>
           <button
             className={`topnav-action-btn topnav-action-btn--icon-only topnav-notif-btn--tour${notifOpen ? ' active' : ''}`}
             data-tour-target="notifications"
