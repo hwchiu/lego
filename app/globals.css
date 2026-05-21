@@ -28107,11 +28107,19 @@ html.dark .pr-archive-api-badge-clear:hover {
   height: 6px;
   border-radius: 50%;
   background: var(--c-border-2);
+  border: none;
+  padding: 0;
+  cursor: pointer;
   transition: background 0.2s, transform 0.2s;
 }
 
 .tour-dot--active {
   transform: scale(1.25);
+}
+
+.tour-dot:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
 }
 
 /* Buttons */

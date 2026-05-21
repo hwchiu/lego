@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -290,6 +291,7 @@ interface SpotlightRect {
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function OnboardingTour() {
+  const { lang } = useLanguage();
   const [visible, setVisible] = useState(false);
   const [step, setStep] = useState(0);
   const [spotlightRect, setSpotlightRect] = useState<SpotlightRect | null>(null);
@@ -461,22 +463,27 @@ export default function OnboardingTour() {
   }, [step, visible]);
 
   // ── Actions ───────────────────────────────────────────────────────────────
+  const handleStepChange = (nextStep: number) => {
+    // Skip if step index is invalid or already on this step.
+    if (nextStep < 0 || nextStep >= totalSteps || nextStep === step) return;
+    const nextStepDef = TOUR_STEPS[nextStep];
+    if (nextStepDef?.id === 2 && typeof window !== 'undefined') {
+      const pathname = window.location.pathname.endsWith('/')
+        ? window.location.pathname
+        : `${window.location.pathname}/`;
+      if (pathname !== FAVORITES_ROUTE_PATH) {
+        sessionStorage.setItem(TOUR_ACTIVE_STORAGE_KEY, '1');
+        sessionStorage.setItem(TOUR_STEP_STORAGE_KEY, String(nextStep));
+        window.location.href = FAVORITES_ROUTE_PATH;
+        return;
+      }
+    }
+    setStep(nextStep);
+  };
+
   const handleNext = () => {
     if (step < totalSteps - 1) {
-      const nextStep = step + 1;
-      const nextStepDef = TOUR_STEPS[nextStep];
-      if (nextStepDef?.id === 2 && typeof window !== 'undefined') {
-        const pathname = window.location.pathname.endsWith('/')
-          ? window.location.pathname
-          : `${window.location.pathname}/`;
-        if (pathname !== FAVORITES_ROUTE_PATH) {
-          sessionStorage.setItem(TOUR_ACTIVE_STORAGE_KEY, '1');
-          sessionStorage.setItem(TOUR_STEP_STORAGE_KEY, String(nextStep));
-          window.location.href = FAVORITES_ROUTE_PATH;
-          return;
-        }
-      }
-      setStep(nextStep);
+      handleStepChange(step + 1);
     } else {
       handleDone();
     }
@@ -634,11 +641,14 @@ export default function OnboardingTour() {
         <div className="tour-callout-footer">
           <div className="tour-dots">
             {TOUR_STEPS.map((_, i) => (
-              <span
+              <button
                 key={i}
+                type="button"
                 className={`tour-dot${i === step ? ' tour-dot--active' : ''}`}
                 style={i === step ? { background: currentStep.accentColor } : {}}
-                aria-label={`Step ${i + 1}`}
+                aria-label={lang === 'zh' ? `前往第 ${i + 1} 步` : `Go to step ${i + 1}`}
+                title={lang === 'zh' ? `第 ${i + 1} 步` : `Step ${i + 1}`}
+                onClick={() => handleStepChange(i)}
               />
             ))}
           </div>
