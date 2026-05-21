@@ -34,16 +34,28 @@ function setCookie(name: string, value: string, days: number) {
 
 // ── Step icons ────────────────────────────────────────────────────────────────
 
-function SearchBarIcon() {
+function FinIdxTourIcon() {
   return (
-    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
-      <rect x="2" y="11" width="32" height="14" rx="4" stroke="currentColor" strokeWidth="1.6" />
-      <circle cx="12" cy="18" r="3.5" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M14.5 20.5L17 23" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <rect x="20" y="14.5" width="1.5" height="7" rx="0.75" fill="currentColor" opacity="0.5" />
-      <rect x="23" y="15.5" width="1.5" height="5" rx="0.75" fill="currentColor" opacity="0.6" />
-      <rect x="26" y="13.5" width="1.5" height="9" rx="0.75" fill="currentColor" opacity="0.8" />
-      <path d="M20.75 17 L23.75 15.5 L27.5 13.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" opacity="0.9" />
+    <svg width="30" height="30" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <rect x="1" y="8" width="2.5" height="5" rx="0.5" stroke="currentColor" strokeWidth="1.1" />
+      <rect x="5.75" y="5" width="2.5" height="8" rx="0.5" stroke="currentColor" strokeWidth="1.1" />
+      <rect x="10.5" y="2" width="2.5" height="11" rx="0.5" stroke="currentColor" strokeWidth="1.1" />
+      <path d="M2.25 7.5 L7 4 L12.75 1.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function SubscribeBellIcon() {
+  return (
+    <svg width="30" height="30" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path
+        d="M7 1.5a4 4 0 0 0-4 4v2.5L2 9.5h10l-1-1.5V5.5a4 4 0 0 0-4-4Z"
+        stroke="currentColor"
+        strokeWidth="1.3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="M5.5 9.5a1.5 1.5 0 0 0 3 0" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
     </svg>
   );
 }
@@ -236,7 +248,7 @@ const TOUR_STEPS: TourStep[] = [
       '<li>You will jump to Company Profile <strong>FIN. Statement</strong> with full quarterly/annual reports.</li>' +
       '</ol>',
     calloutSide: 'bottom',
-    icon: <SearchBarIcon />,
+    icon: <FinIdxTourIcon />,
     preview: <Step12Preview />,
     accentColor: '#4fc3f7',
   },
@@ -249,11 +261,11 @@ const TOUR_STEPS: TourStep[] = [
       'Click <strong>Subscribe</strong> to follow your favourite companies\' events in the watchlist. ' +
       'Choose which companies and event types you want to track.',
     calloutSide: 'left',
-    icon: <SearchBarIcon />,
+    icon: <SubscribeBellIcon />,
     preview: <Step3Preview />,
     accentColor: '#8b5cf6',
     secondCallout: {
-      selector: '.topnav-notif-btn--tour',
+      selector: '[data-tour-target="notifications"]',
       title: 'Notifications',
       description:
         'Open <strong>Notifications</strong> from the top-right, then click <strong>⚙ Settings</strong> to customise your notification channels. ' +
