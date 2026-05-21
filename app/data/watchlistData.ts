@@ -30,6 +30,7 @@ export const holdingsDataQ4_2025: Record<string, HoldingEntity> = extractJsonByS
 // Pre-generated IDs for dynamically created watchlists (static-export compatible)
 // These IDs are reserved for user-created watchlists stored in localStorage
 export const DYNAMIC_WATCHLIST_IDS = [
+  '627836',
   '912847', '583926', '374819', '647203', '829516',
   '193472', '756381', '482039', '261748', '935061',
 ] as const;
