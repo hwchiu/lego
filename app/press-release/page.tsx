@@ -301,11 +301,10 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
 
   const labels = {
     placeholder:   { zh: '搜尋公司名稱或代碼...', en: 'Search company name or ticker…' },
-    selected:      { zh: '已選', en: 'Selected' },
-    clearAll:      { zh: '清除全部', en: 'Clear all' },
+    selected:      { zh: '已選公司', en: 'Selected companies' },
+    clear:         { zh: '清除', en: 'Clear' },
     search:        { zh: '搜尋', en: 'Search' },
     noResults:     { zh: '查無結果', en: 'No results' },
-    companies:     { zh: '公司', en: 'companies' },
     filterByComp:  { zh: '依公司篩選', en: 'Filter by Company' },
   };
 
@@ -316,6 +315,22 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
       <div className="pr-co-filter-input-row">
         <div className={`pr-co-filter-input-wrap${dropdownOpen ? ' open' : ''}`}>
           <SearchIcon />
+          {selectedCodes.length > 0 && (
+            <div className="pr-co-filter-input-tags" aria-label={labels.selected[lang]}>
+              {selectedCodes.map((code) => (
+                <span key={code} className="pr-co-filter-chip">
+                  {code}
+                  <button
+                    className="pr-co-filter-chip-remove"
+                    onClick={() => handleRemove(code)}
+                    aria-label={`Remove ${code}`}
+                  >
+                    <CloseIcon />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
           <input
             className="pr-co-filter-input"
             type="text"
@@ -339,6 +354,14 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
         >
           {isLoading ? <SpinnerIcon size={13} /> : <SearchIcon />}
           <span>{labels.search[lang]}</span>
+        </button>
+        <button
+          className="pr-co-filter-clear-btn"
+          onClick={handleClearAll}
+          disabled={selectedCodes.length === 0 && query.trim().length === 0}
+          title={labels.clear[lang]}
+        >
+          <span>{labels.clear[lang]}</span>
         </button>
       </div>
 
@@ -375,30 +398,6 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
         </div>
       )}
 
-      {selectedCodes.length > 0 && (
-        <div className="pr-co-filter-chips">
-          <span className="pr-co-filter-chips-label">
-            {labels.selected[lang]} {selectedCodes.length} {labels.companies[lang]}:
-          </span>
-          <div className="pr-co-filter-chips-list">
-            {selectedCodes.map((code) => (
-              <span key={code} className="pr-co-filter-chip">
-                {code}
-                <button
-                  className="pr-co-filter-chip-remove"
-                  onClick={() => handleRemove(code)}
-                  aria-label={`Remove ${code}`}
-                >
-                  <CloseIcon />
-                </button>
-              </span>
-            ))}
-            <button className="pr-co-filter-clear-all" onClick={handleClearAll}>
-              {labels.clearAll[lang]}
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
