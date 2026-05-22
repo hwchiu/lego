@@ -108,13 +108,13 @@ export const mainNav: NavItem[] = [
   },
   { label: 'Market News', href: '/market-news', icon: 'news' },
   { label: 'Press Release', href: '/press-release', icon: 'pressRelease' },
-  { label: 'Earnings', href: '/earnings', icon: 'earnings', badge: 'Upcoming', badgeStyle: 'coming-soon' },
+  { label: 'Earnings', href: '/earnings', icon: 'earnings', badge: 'Coming Soon', badgeStyle: 'coming-soon' },
   { label: 'Event Calendar', href: '/event-calendar', icon: 'calendar' },
   {
     label: 'Market Data',
     href: '/market-data',
     icon: 'marketData',
-    badge: 'Upcoming',
+    badge: 'Coming Soon',
     badgeStyle: 'coming-soon',
     subItems: [
       { label: 'M&A', href: '/market-data/ma', icon: 'mAndA' },
@@ -129,7 +129,7 @@ export const supplyChainNav: NavItem[] = [
     label: 'Relationship',
     href: '/supply-chain-maps',
     icon: 'supplyMap',
-    badge: 'Upcoming',
+    badge: 'Coming Soon',
     badgeStyle: 'coming-soon',
   },
   {
@@ -146,7 +146,7 @@ export const supplyChainNav: NavItem[] = [
 ];
 
 export const bottomLinks: NavItem[] = [
-  { label: 'AI Search', href: '/ai-search', icon: 'intelligenceSearch', badge: 'Upcoming', badgeStyle: 'coming-soon' },
+  { label: 'AI Search', href: '/ai-search', icon: 'intelligenceSearch', badge: 'Coming Soon', badgeStyle: 'coming-soon' },
   { label: 'User Manual', href: 'https://tkms.digwork.tw.ent.tsmc.com/pages/Uw5xaVFEXr', icon: 'userManual', external: true },
   { label: 'Product Roadmap', href: 'https://tkms.digwork.tw.ent.tsmc.com/pages/UMfqhC2Hp4', icon: 'productRoadmap', external: true },
   { label: 'Feedback', href: 'https://forms.office.com/Pages/ResponsePage.aspx?id=S_ZVkhgY5UKtePYZqaex55erID1a9UNKlr3EddIx_aZURENQWFpVNjNOSElLVlY0UVdHSklOSFdOUi4u', icon: 'feedback', external: true },
