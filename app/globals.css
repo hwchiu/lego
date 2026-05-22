@@ -27235,7 +27235,7 @@ html.dark .pr-archive-api-badge-clear:hover {
   flex: 1;
   display: flex;
   align-items: center;
-   flex-wrap: wrap;
+  flex-wrap: wrap;
   border: 1px solid var(--c-border-2);
   border-radius: var(--radius);
   background: var(--c-bg);
@@ -27266,7 +27266,7 @@ html.dark .pr-archive-api-badge-clear:hover {
 
 .pr-co-filter-input {
   flex: 1;
-  min-width: 120px;
+  min-width: 8ch;
   border: none;
   background: transparent;
   font-size: 13px;
