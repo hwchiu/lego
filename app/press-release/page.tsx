@@ -253,6 +253,7 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showMaxWarning, setShowMaxWarning] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const filtered = useMemo(() => {
     if (!query.trim()) return COMPANY_MASTER_LIST.slice(0, 50);
@@ -291,7 +292,7 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
 
   useEffect(() => {
     function onOutside(e: MouseEvent) {
-      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setDropdownOpen(false);
       }
     }
@@ -374,7 +375,7 @@ function CompanyFilter({ selectedCodes, onSelectionChange, onSearch, isLoading, 
       )}
 
       {dropdownOpen && (
-        <div className="pr-co-filter-dropdown">
+        <div className="pr-co-filter-dropdown" ref={dropdownRef}>
           {filtered.length === 0 ? (
             <div className="pr-co-filter-no-results">{labels.noResults[lang]}</div>
           ) : (
