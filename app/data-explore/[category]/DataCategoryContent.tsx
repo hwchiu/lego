@@ -1614,9 +1614,8 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   }
   function handleClear() {
     setSelectedDate(null);
-    const todayDate = getTodayIsoDate();
     if (activeCmTab === 'daily-quotes') {
-      queryDailyQuotes(todayDate);
+      queryDailyQuotes(defaultQueryDate);
     }
   }
   function handleDownload() {
