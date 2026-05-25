@@ -22,13 +22,10 @@
 
 ---
 
-## Crawled Articles – TC, TSLA, NVDA, QCOM
+## Crawled Articles – TSLA, NVDA, QCOM
 
 | ID | Title | Company | Source | Tags |
 |----|-------|---------|--------|------|
-| 7 | GlobalTech Q3 2025 Outperformance: 39% Profit Growth Driven by AI Chip Demand | TC | Ainvest / Seeking Alpha | Analysis |
-| 8 | GlobalTech Raises 2025 Capex to $40B to Accelerate 3nm and 5nm Expansion | TC | Investors.com | News, Press Release |
-| 9 | NVDA vs. TC: Which Semiconductor Stock Is the Better AI Investment? | NVDA, TC | Zacks | Analysis |
 | 10 | Nvidia Reports Potential $8B Revenue Hit from US-China Export Restrictions | NVDA | Reuters | News, Warnings |
 | 11 | SA Analyst Upgrades: TSLA, AAPL, NVDA — Bullish Momentum Resumes | TSLA, NVDA | Seeking Alpha | Analysis |
 | 12 | Tesla Q3 2025 Analyst Targets Range from $175 to $500 Amid EV Uncertainty | TSLA | Bloomberg | Analysis, Warnings |

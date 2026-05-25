@@ -79,7 +79,7 @@ function readWatchlistHeader() {
 \`\`\`json
 {
   "627836": "Watchlist1",
-  "738291": "Watchlist-TC",
+  "738291": "Watchlist3",
   "394827": "Watchlist2"
 }
 \`\`\`

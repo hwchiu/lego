@@ -1,7 +1,7 @@
-# GlobalTech Customer Network Data
+# Customer Network Data
 
-> Sources: GlobalTech Annual Reports, company 10-K filings, public revenue disclosures (FY2023–FY2024).
-> `transactionAmount` in $M USD (estimated annual wafer revenue from GlobalTech).
+> Sources: company 10-K filings and public revenue disclosures (FY2023–FY2024).
+> `transactionAmount` in $M USD (illustrative annual customer revenue estimate).
 
 ---
 
@@ -23,7 +23,12 @@
       "marketCap": "~$2.9T"
     },
     "color": "#1565c0",
-    "productCategories": ["Smartphones", "Personal Computers", "Tablets", "Wearables"],
+    "productCategories": [
+      "Smartphones",
+      "Personal Computers",
+      "Tablets",
+      "Wearables"
+    ],
     "industryCategory": "Consumer Electronics"
   },
   {
@@ -40,7 +45,11 @@
       "marketCap": "~$2.2T"
     },
     "color": "#76b900",
-    "productCategories": ["AI Accelerators", "Data Center GPUs", "Automotive SoC"],
+    "productCategories": [
+      "AI Accelerators",
+      "Data Center GPUs",
+      "Automotive SoC"
+    ],
     "industryCategory": "AI & Data Center"
   },
   {
@@ -57,7 +66,11 @@
       "marketCap": "~$230B"
     },
     "color": "#ed1c24",
-    "productCategories": ["PC Processors", "AI GPUs", "Data Center CPUs"],
+    "productCategories": [
+      "PC Processors",
+      "AI GPUs",
+      "Data Center CPUs"
+    ],
     "industryCategory": "PC & Data Center"
   },
   {
@@ -74,7 +87,11 @@
       "marketCap": "~$185B"
     },
     "color": "#3253dc",
-    "productCategories": ["Mobile SoC", "5G Modems", "Automotive Chips"],
+    "productCategories": [
+      "Mobile SoC",
+      "5G Modems",
+      "Automotive Chips"
+    ],
     "industryCategory": "Mobile & Connectivity"
   },
   {
@@ -91,7 +108,11 @@
       "marketCap": "~$780B"
     },
     "color": "#cc0000",
-    "productCategories": ["Networking ASICs", "Custom AI Chips", "Storage Controllers"],
+    "productCategories": [
+      "Networking ASICs",
+      "Custom AI Chips",
+      "Storage Controllers"
+    ],
     "industryCategory": "Networking & Cloud"
   },
   {
@@ -108,7 +129,11 @@
       "marketCap": "~$65B"
     },
     "color": "#6d28d9",
-    "productCategories": ["Data Infrastructure", "Custom AI ASICs", "Optical DSP"],
+    "productCategories": [
+      "Data Infrastructure",
+      "Custom AI ASICs",
+      "Optical DSP"
+    ],
     "industryCategory": "Networking & Cloud"
   },
   {
@@ -125,7 +150,11 @@
       "marketCap": "~$55B"
     },
     "color": "#0891b2",
-    "productCategories": ["Mobile SoC", "Smart TV Chips", "IoT Processors"],
+    "productCategories": [
+      "Mobile SoC",
+      "Smart TV Chips",
+      "IoT Processors"
+    ],
     "industryCategory": "Mobile & Connectivity"
   },
   {
@@ -142,7 +171,11 @@
       "marketCap": "~$105B"
     },
     "color": "#1a1a1a",
-    "productCategories": ["Image Sensors", "Gaming Consoles", "Consumer Electronics"],
+    "productCategories": [
+      "Image Sensors",
+      "Gaming Consoles",
+      "Consumer Electronics"
+    ],
     "industryCategory": "Consumer Electronics"
   },
   {
@@ -159,7 +192,11 @@
       "marketCap": "~$90B"
     },
     "color": "#0068b5",
-    "productCategories": ["PC Processors", "Data Center CPUs", "AI Accelerators"],
+    "productCategories": [
+      "PC Processors",
+      "Data Center CPUs",
+      "AI Accelerators"
+    ],
     "industryCategory": "PC & Data Center"
   },
   {
@@ -176,7 +213,11 @@
       "marketCap": "~$155B"
     },
     "color": "#c0392b",
-    "productCategories": ["Analog Chips", "Embedded Processors", "Industrial ICs"],
+    "productCategories": [
+      "Analog Chips",
+      "Embedded Processors",
+      "Industrial ICs"
+    ],
     "industryCategory": "Industrial & Analog"
   }
 ]
@@ -184,111 +225,10 @@
 
 ---
 
-## Customer Edges (TC → Customer)
+## Customer Edges
 
 ```json
-[
-  {
-    "from": "TC",
-    "to": "AAPL",
-    "transactionAmount": 17500,
-    "newsCoMentionCount": 524,
-    "commonSupplierCount": 12,
-    "commonCustomerCount": 2,
-    "crossShareholdingRatio": 0.0,
-    "commonBoardMembers": 0
-  },
-  {
-    "from": "TC",
-    "to": "NVDA",
-    "transactionAmount": 9200,
-    "newsCoMentionCount": 398,
-    "commonSupplierCount": 8,
-    "commonCustomerCount": 3,
-    "crossShareholdingRatio": 0.0,
-    "commonBoardMembers": 0
-  },
-  {
-    "from": "TC",
-    "to": "AMD",
-    "transactionAmount": 6500,
-    "newsCoMentionCount": 312,
-    "commonSupplierCount": 9,
-    "commonCustomerCount": 4,
-    "crossShareholdingRatio": 0.0,
-    "commonBoardMembers": 0
-  },
-  {
-    "from": "TC",
-    "to": "QCOM",
-    "transactionAmount": 5500,
-    "newsCoMentionCount": 287,
-    "commonSupplierCount": 7,
-    "commonCustomerCount": 5,
-    "crossShareholdingRatio": 0.0,
-    "commonBoardMembers": 0
-  },
-  {
-    "from": "TC",
-    "to": "AVGO",
-    "transactionAmount": 4800,
-    "newsCoMentionCount": 245,
-    "commonSupplierCount": 6,
-    "commonCustomerCount": 3,
-    "crossShareholdingRatio": 0.0,
-    "commonBoardMembers": 0
-  },
-  {
-    "from": "TC",
-    "to": "MTKMF",
-    "transactionAmount": 4500,
-    "newsCoMentionCount": 198,
-    "commonSupplierCount": 5,
-    "commonCustomerCount": 2,
-    "crossShareholdingRatio": 0.0,
-    "commonBoardMembers": 0
-  },
-  {
-    "from": "TC",
-    "to": "MRVL",
-    "transactionAmount": 2400,
-    "newsCoMentionCount": 156,
-    "commonSupplierCount": 4,
-    "commonCustomerCount": 2,
-    "crossShareholdingRatio": 0.0,
-    "commonBoardMembers": 0
-  },
-  {
-    "from": "TC",
-    "to": "INTC",
-    "transactionAmount": 3200,
-    "newsCoMentionCount": 289,
-    "commonSupplierCount": 11,
-    "commonCustomerCount": 5,
-    "crossShareholdingRatio": 0.0,
-    "commonBoardMembers": 0
-  },
-  {
-    "from": "TC",
-    "to": "SONY",
-    "transactionAmount": 2000,
-    "newsCoMentionCount": 134,
-    "commonSupplierCount": 3,
-    "commonCustomerCount": 1,
-    "crossShareholdingRatio": 0.0,
-    "commonBoardMembers": 0
-  },
-  {
-    "from": "TC",
-    "to": "TXN",
-    "transactionAmount": 800,
-    "newsCoMentionCount": 78,
-    "commonSupplierCount": 2,
-    "commonCustomerCount": 1,
-    "crossShareholdingRatio": 0.0,
-    "commonBoardMembers": 0
-  }
-]
+[]
 ```
 
 ---
@@ -296,104 +236,7 @@
 ## Customer News Feed
 
 ```json
-[
-  {
-    "id": 1,
-    "title": "Apple Secures Exclusive GlobalTech 3nm Capacity for iPhone 16 Pro A17 Pro Chip Through 2025",
-    "tickers": ["AAPL", "TC"],
-    "source": "Bloomberg",
-    "time": "Today, 9:15 AM",
-    "category": "Supply Chain"
-  },
-  {
-    "id": 2,
-    "title": "NVIDIA Places Record GlobalTech CoWoS-L Orders for H200 and Upcoming B100 GPU Production",
-    "tickers": ["NVDA", "TC"],
-    "source": "Reuters",
-    "time": "Today, 8:30 AM",
-    "category": "Capacity"
-  },
-  {
-    "id": 3,
-    "title": "AMD's Instinct MI300X Ramps at GlobalTech N5, Signals Strong AI Datacenter Demand in 2025",
-    "tickers": ["AMD", "TC"],
-    "source": "Seeking Alpha",
-    "time": "Yesterday, 6:00 PM",
-    "category": "Earnings"
-  },
-  {
-    "id": 4,
-    "title": "Qualcomm Snapdragon 8 Gen 4 Tape-Out at GlobalTech N3E Confirmed for Late 2024 Volume Ramp",
-    "tickers": ["QCOM", "TC"],
-    "source": "AnandTech",
-    "time": "Yesterday, 4:45 PM",
-    "category": "Supply Chain"
-  },
-  {
-    "id": 5,
-    "title": "Broadcom's Custom XPU Business on Track for $10B Revenue, All Chips Fabbed at GlobalTech",
-    "tickers": ["AVGO", "TC"],
-    "source": "Financial Times",
-    "time": "Apr 2, 3:00 PM",
-    "category": "Earnings"
-  },
-  {
-    "id": 6,
-    "title": "MediaTek Dimensity 9400 Tape-Out at GlobalTech N3E, Targets Flagship Android Market",
-    "tickers": ["MTKMF", "TC"],
-    "source": "Nikkei Asia",
-    "time": "Apr 2, 11:00 AM",
-    "category": "Supply Chain"
-  },
-  {
-    "id": 7,
-    "title": "Marvell Unveils Next-Gen Custom AI Silicon Platform Built on GlobalTech 3nm Process",
-    "tickers": ["MRVL", "TC"],
-    "source": "Business Wire",
-    "time": "Apr 1, 9:30 AM",
-    "category": "Strategy"
-  },
-  {
-    "id": 8,
-    "title": "Intel Foundry Services Transfers Meteor Lake Tile Production to GlobalTech to Meet Holiday Demand",
-    "tickers": ["INTC", "TC"],
-    "source": "Tom's Hardware",
-    "time": "Mar 31, 2:00 PM",
-    "category": "Geopolitical"
-  },
-  {
-    "id": 9,
-    "title": "Sony's Next-Gen Image Sensor Adopts GlobalTech Stacked Process, Enabling 8K at 60fps",
-    "tickers": ["SONY", "TC"],
-    "source": "Nikkei",
-    "time": "Mar 31, 10:00 AM",
-    "category": "Strategy"
-  },
-  {
-    "id": 10,
-    "title": "Texas Instruments Dual-Sources Key Analog Lines from GlobalTech Specialty Fabs Amid Tariff Risks",
-    "tickers": ["TXN", "TC"],
-    "source": "Reuters",
-    "time": "Mar 30, 8:00 AM",
-    "category": "Tariff"
-  },
-  {
-    "id": 11,
-    "title": "GlobalTech Arizona Fab Begins 4nm Apple Silicon Production, Easing US Geopolitical Supply Concerns",
-    "tickers": ["TC", "AAPL"],
-    "source": "The Verge",
-    "time": "Mar 29, 2:00 PM",
-    "category": "Geopolitical"
-  },
-  {
-    "id": 12,
-    "title": "NVIDIA and GlobalTech Sign Long-Term Advanced Packaging Deal for CoWoS and SoIC Technologies",
-    "tickers": ["NVDA", "TC"],
-    "source": "SA News",
-    "time": "Mar 28, 11:00 AM",
-    "category": "Capacity"
-  }
-]
+[]
 ```
 
 ---
@@ -402,11 +245,51 @@
 
 ```json
 [
-  { "industry": "Consumer Electronics", "totalAmount": 19500, "customers": ["AAPL", "SONY"] },
-  { "industry": "AI & Data Center",     "totalAmount": 9200,  "customers": ["NVDA"] },
-  { "industry": "PC & Data Center",     "totalAmount": 9700,  "customers": ["AMD", "INTC"] },
-  { "industry": "Mobile & Connectivity","totalAmount": 10000, "customers": ["QCOM", "MTKMF"] },
-  { "industry": "Networking & Cloud",   "totalAmount": 7200,  "customers": ["AVGO", "MRVL"] },
-  { "industry": "Industrial & Analog",  "totalAmount": 800,   "customers": ["TXN"] }
+  {
+    "industry": "Consumer Electronics",
+    "totalAmount": 19500,
+    "customers": [
+      "AAPL",
+      "SONY"
+    ]
+  },
+  {
+    "industry": "AI & Data Center",
+    "totalAmount": 9200,
+    "customers": [
+      "NVDA"
+    ]
+  },
+  {
+    "industry": "PC & Data Center",
+    "totalAmount": 9700,
+    "customers": [
+      "AMD",
+      "INTC"
+    ]
+  },
+  {
+    "industry": "Mobile & Connectivity",
+    "totalAmount": 10000,
+    "customers": [
+      "QCOM",
+      "MTKMF"
+    ]
+  },
+  {
+    "industry": "Networking & Cloud",
+    "totalAmount": 7200,
+    "customers": [
+      "AVGO",
+      "MRVL"
+    ]
+  },
+  {
+    "industry": "Industrial & Analog",
+    "totalAmount": 800,
+    "customers": [
+      "TXN"
+    ]
+  }
 ]
 ```

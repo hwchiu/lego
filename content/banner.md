@@ -12,23 +12,11 @@ Static seed data for the top rotating banner. Each object represents one slide i
     "linkHref": "#tutorial"
   },
   {
-    "label": "Breaking News",
-    "labelVariant": "breaking",
-    "linkText": "GlobalTech Reports Record Q1 2025 Revenue Driven by AI Chip Demand",
-    "linkHref": "#news"
-  },
-  {
     "label": "Tip",
     "labelVariant": "tip",
     "prefix": "Use the Symbol Search to explore financials: ",
-    "linkText": "Search AAPL, NVDA, TC and more",
+    "linkText": "Search AAPL, NVDA, INTC and more",
     "linkHref": "#tutorial"
-  },
-  {
-    "label": "Breaking News",
-    "labelVariant": "breaking",
-    "linkText": "Apple Expands GlobalTech Partnership for 2nm A-Series Chips in 2026",
-    "linkHref": "#news"
   },
   {
     "label": "Tip",
@@ -42,13 +30,6 @@ Static seed data for the top rotating banner. Each object represents one slide i
     "labelVariant": "breaking",
     "linkText": "Nvidia Blackwell GPU Demand Outpaces Supply as Data Centers Race to Deploy AI",
     "linkHref": "#news"
-  },
-  {
-    "label": "Tip",
-    "labelVariant": "tip",
-    "prefix": "Track competitors and suppliers: ",
-    "linkText": "Explore the RMAP Supply Chain module for GlobalTech's ecosystem",
-    "linkHref": "/supply-chain-maps"
   },
   {
     "label": "Breaking News",

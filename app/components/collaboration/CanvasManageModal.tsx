@@ -178,7 +178,7 @@ export function CanvasManageModal({
                   className="pg-form-input"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder={isEn ? 'e.g. 2026 Q2 GlobalTech Earnings Call' : '例：2026 Q2 GlobalTech 法說會'}
+                  placeholder={isEn ? 'e.g. 2026 Q2 NVIDIA Earnings Call' : '例：2026 Q2 NVIDIA 法說會'}
                   maxLength={60}
                 />
               </div>

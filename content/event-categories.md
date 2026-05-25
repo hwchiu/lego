@@ -1,7 +1,6 @@
 # Event Categories Data
 
-Event data for 8 non-earnings market categories. Companies in scope: GlobalTech (TC) and its key
-customers (AAPL, NVDA, AMD, QCOM, AVGO) and suppliers (ASML, AMAT, LRCX, KLAC, SNPS, CDNS).
+Event data for 8 non-earnings market categories. Companies in scope: major semiconductor and technology firms including AAPL, NVDA, AMD, QCOM, AVGO, ASML, AMAT, LRCX, KLAC, SNPS, and CDNS.
 All events are representative April 2025 data for display purposes.
 
 ## Bonds
@@ -21,19 +20,7 @@ All events are representative April 2025 data for display purposes.
       "description": "Apple priced a $5.0B senior unsecured green bond offering at 4.65% due 2034. Proceeds are earmarked for renewable energy procurement, recycled material sourcing, and carbon-neutral manufacturing initiatives aligned with Apple's 2030 climate pledge."
     }
   ],
-  "Apr 9": [
-    {
-      "cellLabel": "GLTC",
-      "symbol": "TC",
-      "company": "GlobalTech",
-      "eventType": "Issuance",
-      "amount": "$3.0B",
-      "coupon": "4.80%",
-      "maturity": "2032",
-      "rating": "AA-",
-      "description": "GlobalTech priced a $3.0B dual-tranche senior notes offering (10-year and 5-year tranches) to fund N2 process node fab expansion in Arizona Phase 2 and Hsinchu Advanced Packaging Phase 3. Order book was 4.2x oversubscribed, reflecting strong investor confidence in AI chip demand."
-    }
-  ],
+  "Apr 9": [],
   "Apr 10": [
     {
       "cellLabel": "NVDA",
@@ -109,7 +96,7 @@ All events are representative April 2025 data for display purposes.
       "coupon": "4.70%",
       "maturity": "2031",
       "rating": "A",
-      "description": "Lam Research priced $800M senior unsecured notes at 4.70% due 2031 for general corporate purposes including working capital and opportunistic share repurchases. Lam's etch and deposition equipment portfolio serves TC's advanced node ramp and memory customer capacity expansions at Samsung and Micron."
+      "description": "Lam Research priced $800M senior unsecured notes at 4.70% due 2031 for general corporate purposes including working capital and opportunistic share repurchases. Lam's etch and deposition equipment portfolio serves advanced-node ramps and memory customer capacity expansions at Samsung and Micron."
     }
   ]
 }
@@ -129,7 +116,7 @@ All events are representative April 2025 data for display purposes.
       "changePct": "+2.1%",
       "weekHigh": "86.50",
       "weekLow": "83.20",
-      "relevance": "Primary substrate for TC advanced node fabs; AMAT and LRCX process equipment consumables"
+      "relevance": "Primary substrate for advanced-node fabs; AMAT and LRCX process equipment consumables"
     }
   ],
   "Apr 7": [
@@ -153,7 +140,7 @@ All events are representative April 2025 data for display purposes.
       "changePct": "-0.8%",
       "weekHigh": "2400",
       "weekLow": "2310",
-      "relevance": "Critical rare earth for high-temperature magnets in EUV stage systems (ASML, TC)"
+      "relevance": "Critical rare earth for high-temperature magnets in EUV stage systems (ASML and peers)"
     }
   ],
   "Apr 9": [
@@ -166,7 +153,7 @@ All events are representative April 2025 data for display purposes.
       "changePct": "-0.8%",
       "weekHigh": "9980",
       "weekLow": "9790",
-      "relevance": "Interconnect metal for advanced packaging (CoWoS/SoIC) at TC; used in AMAT plating systems"
+      "relevance": "Interconnect metal for advanced packaging (CoWoS/SoIC); used in AMAT plating systems"
     }
   ],
   "Apr 14": [
@@ -179,7 +166,7 @@ All events are representative April 2025 data for display purposes.
       "changePct": "+3.2%",
       "weekHigh": "995",
       "weekLow": "950",
-      "relevance": "Essential laser excimer gas for DUV/ArF lithography steps at TC, NVDA, AMD wafer fabs"
+      "relevance": "Essential laser excimer gas for DUV/ArF lithography steps across advanced wafer fabs"
     }
   ],
   "Apr 16": [
@@ -192,7 +179,7 @@ All events are representative April 2025 data for display purposes.
       "changePct": "+0.9%",
       "weekHigh": "144.0",
       "weekLow": "140.8",
-      "relevance": "Key patterning chemical used in every wafer layer at TC; demand tied to AAPL, NVDA, AMD production"
+      "relevance": "Key patterning chemical used in every wafer layer; demand tied to AAPL, NVDA, and AMD production"
     }
   ],
   "Apr 21": [
@@ -241,54 +228,10 @@ All events are representative April 2025 data for display purposes.
 
 ```json
 {
-  "Apr 3": [
-    {
-      "cellLabel": "Taiwan",
-      "country": "Taiwan",
-      "flag": "🇹🇼",
-      "eventType": "Policy",
-      "title": "GlobalTech Phase 3 Advanced Packaging Approved",
-      "description": "Taiwan's Executive Yuan approved GlobalTech's Phase 3 CoWoS advanced packaging capacity expansion in Hsinchu Science Park, targeting a 50% output increase by end-2026. The NT$420B ($13B) investment is supported by a 25% tax credit under the Statute for Industrial Innovation. The expansion directly serves NVIDIA GB300, AMD MI400, and Apple A-series packaging demand.",
-      "affectedCompanies": ["TC", "NVDA", "AMD", "AAPL"],
-      "impact": "High"
-    }
-  ],
-  "Apr 7": [
-    {
-      "cellLabel": "USA",
-      "country": "United States",
-      "flag": "🇺🇸",
-      "eventType": "Funding",
-      "title": "CHIPS Act Awards $2.6B Grant to GlobalTech Arizona",
-      "description": "The US Department of Commerce finalized a $2.6B direct grant and up to $5B in loan guarantees to GlobalTech's Arizona subsidiary for its N3 and N2 fabs in Phoenix. The agreement conditions 40% domestic equipment sourcing, benefiting Applied Materials, Lam Research, and KLA. GlobalTech Arizona is on track for first N3 wafer output in H2 2025.",
-      "affectedCompanies": ["TC", "AMAT", "LRCX", "KLAC"],
-      "impact": "High"
-    }
-  ],
-  "Apr 10": [
-    {
-      "cellLabel": "Netherlands",
-      "country": "Netherlands",
-      "flag": "🇳🇱",
-      "eventType": "Regulation",
-      "title": "ASML Export Licenses Renewed for 2025–2026",
-      "description": "The Dutch Ministry of Foreign Affairs renewed ASML's export licenses for ArF immersion and DUV systems to non-restricted markets through 2026. EUV export restrictions to China remain in force. ASML reaffirmed €35B–37B revenue guidance for 2025, with High-NA EUV shipments to GlobalTech, Samsung, and Intel accelerating.",
-      "affectedCompanies": ["ASML", "TC"],
-      "impact": "Medium"
-    }
-  ],
-  "Apr 14": [
-    {
-      "cellLabel": "Japan",
-      "country": "Japan",
-      "flag": "🇯🇵",
-      "eventType": "Subsidy",
-      "title": "METI Approves ¥120B for GlobalTech Kumamoto Phase 2",
-      "description": "Japan's Ministry of Economy, Trade and Industry (METI) approved ¥120B ($800M) in additional subsidies for GlobalTech's Kumamoto Phase 2 fab (JASM joint venture with Sony and Denso). The 6nm/7nm facility targets automotive sensors and image processors, with Synopsys and Cadence Design selected as primary EDA partners. Production is slated for Q3 2026.",
-      "affectedCompanies": ["TC", "SNPS", "CDNS"],
-      "impact": "High"
-    }
-  ],
+  "Apr 3": [],
+  "Apr 7": [],
+  "Apr 10": [],
+  "Apr 14": [],
   "Apr 17": [
     {
       "cellLabel": "South Korea",
@@ -297,7 +240,11 @@ All events are representative April 2025 data for display purposes.
       "eventType": "Report",
       "title": "K-Semiconductor Q1 Equipment Market Report",
       "description": "South Korea's Ministry of Science released its Q1 K-Semiconductor Belt report, showing 18% YoY growth in semiconductor equipment imports. Applied Materials, Lam Research, and KLA collectively hold 62% market share in Korean advanced logic fabs. Samsung's 2nm GAA ramp has driven etch equipment orders up 34% versus Q1 2024.",
-      "affectedCompanies": ["AMAT", "LRCX", "KLAC"],
+      "affectedCompanies": [
+        "AMAT",
+        "LRCX",
+        "KLAC"
+      ],
       "impact": "Medium"
     }
   ],
@@ -309,7 +256,11 @@ All events are representative April 2025 data for display purposes.
       "eventType": "Milestone",
       "title": "TATA Electronics Dholera Fab Groundbreaking",
       "description": "TATA Electronics announced the groundbreaking of its Dholera semiconductor fab in Gujarat with a $11B investment commitment. Cadence Design Systems and Synopsys were selected as EDA platform partners for 28nm/40nm process qualification. Applied Materials signed a preferred supplier agreement for CVD and PVD equipment. Full production is targeted by 2028.",
-      "affectedCompanies": ["CDNS", "SNPS", "AMAT"],
+      "affectedCompanies": [
+        "CDNS",
+        "SNPS",
+        "AMAT"
+      ],
       "impact": "Medium"
     }
   ],
@@ -321,7 +272,11 @@ All events are representative April 2025 data for display purposes.
       "eventType": "Funding",
       "title": "EU Chips Act Phase 2 Disbursements",
       "description": "The EU Chips Act disbursed the first €1.4B tranche to support Intel's Magdeburg fab and Infineon's Dresden expansion. ASML confirmed as sole EUV lithography supplier for both facilities. Synopsys and Cadence Design Systems have been engaged for digital twin process simulation and DFM qualification across both fabs.",
-      "affectedCompanies": ["ASML", "SNPS", "CDNS"],
+      "affectedCompanies": [
+        "ASML",
+        "SNPS",
+        "CDNS"
+      ],
       "impact": "Medium"
     }
   ]
@@ -381,7 +336,7 @@ All events are representative April 2025 data for display purposes.
       "changePct": "+2.1%",
       "volume": "$1.4B",
       "marketCap": "$11.8B",
-      "relevance": "Enterprise blockchain subnet launches driving custom ASIC tapeout orders at TC 5nm — Ava Labs partnerships increasing"
+      "relevance": "Enterprise blockchain subnet launches driving custom ASIC tapeout orders on 5nm-class nodes — Ava Labs partnerships increasing"
     }
   ]
 }
@@ -391,17 +346,7 @@ All events are representative April 2025 data for display purposes.
 
 ```json
 {
-  "Apr 2": [
-    {
-      "cellLabel": "TWD/USD",
-      "pair": "TWD/USD",
-      "rate": "32.45",
-      "change": "-0.039",
-      "changePct": "-0.12%",
-      "description": "Taiwan Central Bank held benchmark rate at 2.0% in quarterly policy meeting. TWD softened mildly on broader USD strength. GlobalTech's USD-denominated revenue books a NT$ translation gain of ~0.1% on overseas earnings.",
-      "affectedCompanies": ["TC"]
-    }
-  ],
+  "Apr 2": [],
   "Apr 7": [
     {
       "cellLabel": "JPY/USD",
@@ -410,7 +355,9 @@ All events are representative April 2025 data for display purposes.
       "change": "+1.21",
       "changePct": "+0.81%",
       "description": "Bank of Japan maintained accommodative stance, pushing JPY to 151.2. Weaker yen increases USD-equivalent cost of ASML EUV equipment purchased by Japanese fabs (JASM/Kumamoto). Tokyo Electron yen revenue loses USD-export pricing competitiveness.",
-      "affectedCompanies": ["ASML", "TC"]
+      "affectedCompanies": [
+        "ASML"
+      ]
     }
   ],
   "Apr 9": [
@@ -421,7 +368,9 @@ All events are representative April 2025 data for display purposes.
       "change": "-0.003",
       "changePct": "-0.28%",
       "description": "ECB cut rates by 25bps to 3.15%, weakening EUR. ASML, which reports in EUR, benefits from USD-invoiced tool revenue translating to higher EUR earnings. European R&D cost base in EUR creates a modest operating hedge.",
-      "affectedCompanies": ["ASML"]
+      "affectedCompanies": [
+        "ASML"
+      ]
     }
   ],
   "Apr 14": [
@@ -432,20 +381,14 @@ All events are representative April 2025 data for display purposes.
       "change": "+6.8",
       "changePct": "+0.50%",
       "description": "Korean won depreciated on regional risk sentiment. Samsung and SK Hynix benefit from USD export pricing uplift; equipment costs from AMAT, LRCX, and KLAC rise in KRW terms, compressing Korean fab capex budgets in local currency.",
-      "affectedCompanies": ["AMAT", "LRCX", "KLAC"]
+      "affectedCompanies": [
+        "AMAT",
+        "LRCX",
+        "KLAC"
+      ]
     }
   ],
-  "Apr 21": [
-    {
-      "cellLabel": "TWD/USD",
-      "pair": "TWD/USD",
-      "rate": "32.1",
-      "change": "-0.35",
-      "changePct": "-1.08%",
-      "description": "TWD strengthened on positive US-Taiwan trade framework discussions and GlobalTech's strong Q1 earnings beat. The move reduces GlobalTech's USD-to-NT$ translation gain but signals solid Taiwan macroeconomic fundamentals and FDI inflows.",
-      "affectedCompanies": ["TC"]
-    }
-  ],
+  "Apr 21": [],
   "Apr 25": [
     {
       "cellLabel": "CNH/USD",
@@ -454,7 +397,11 @@ All events are representative April 2025 data for display purposes.
       "change": "+0.015",
       "changePct": "+0.21%",
       "description": "Offshore yuan weakened slightly following PBOC guidance. Semiconductor-related export controls limit NVDA, AMAT, and LRCX China revenues. USD-CNH dynamics affect pricing competitiveness for US-based chip designers accessing Chinese OEM customers.",
-      "affectedCompanies": ["NVDA", "AMAT", "LRCX"]
+      "affectedCompanies": [
+        "NVDA",
+        "AMAT",
+        "LRCX"
+      ]
     }
   ]
 }
@@ -561,21 +508,7 @@ All events are representative April 2025 data for display purposes.
       "annualGrowth": "+18.4%"
     }
   ],
-  "Apr 14": [
-    {
-      "cellLabel": "GLTC",
-      "symbol": "TC",
-      "company": "GlobalTech",
-      "exDate": "Apr 14",
-      "payDate": "Oct 10",
-      "dividend": "$2.00",
-      "annualDividend": "$4.00",
-      "yield": "1.82%",
-      "frequency": "Semi-annual",
-      "consecutiveYears": 8,
-      "annualGrowth": "+8.9%"
-    }
-  ],
+  "Apr 14": [],
   "Apr 21": [
     {
       "cellLabel": "CDNS",
@@ -622,19 +555,7 @@ All events are representative April 2025 data for display purposes.
       "type": "Regular Cash"
     }
   ],
-  "Apr 7": [
-    {
-      "cellLabel": "GLTC",
-      "symbol": "TC",
-      "company": "GlobalTech",
-      "exDate": "Apr 7",
-      "payDate": "Oct 10",
-      "dividend": "$2.00",
-      "yield": "1.82%",
-      "frequency": "Semi-annual",
-      "type": "Regular Cash"
-    }
-  ],
+  "Apr 7": [],
   "Apr 9": [
     {
       "cellLabel": "AAPL",
@@ -669,17 +590,6 @@ All events are representative April 2025 data for display purposes.
       "dividend": "$5.25",
       "yield": "1.19%",
       "frequency": "Quarterly",
-      "type": "Regular Cash"
-    },
-    {
-      "cellLabel": "GLTC",
-      "symbol": "TC",
-      "company": "GlobalTech",
-      "exDate": "Apr 14",
-      "payDate": "Oct 10",
-      "dividend": "$2.00",
-      "yield": "1.82%",
-      "frequency": "Semi-annual",
       "type": "Regular Cash"
     }
   ],

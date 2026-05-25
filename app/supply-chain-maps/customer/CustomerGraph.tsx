@@ -1031,7 +1031,7 @@ export default function CustomerGraph({ tableOnly }: CustomerGraphProps) {
             style={{ cursor: isGrabbing ? 'grabbing' : 'grab' }}
           >
             <defs>
-              {/* Arrow points FROM TC (center) TO customer (outer) — supplier→customer direction */}
+              {/* Arrow points FROM the center node TO the customer node — supplier→customer direction */}
               <marker id="arr-cust" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
                 <polygon points="0 0, 8 3, 0 6" className="rmap-arrow-marker" />
               </marker>

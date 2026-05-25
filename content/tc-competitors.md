@@ -1,7 +1,7 @@
-# GlobalTech Competitor Network Data
+# Competitor Network Data
 
 > Sources: TrendForce, IDC, company annual reports, analyst research (FY2023–FY2024).
-> Market share figures represent global foundry revenue share.
+> Market share figures represent illustrative global foundry revenue share.
 
 ---
 
@@ -23,7 +23,13 @@
     },
     "color": "#1428a0",
     "marketShare": 11.3,
-    "processNodes": ["3nm GAA", "4nm", "5nm", "8nm", "14nm"],
+    "processNodes": [
+      "3nm GAA",
+      "4nm",
+      "5nm",
+      "8nm",
+      "14nm"
+    ],
     "industryCategory": "Advanced Foundry"
   },
   {
@@ -40,7 +46,13 @@
     },
     "color": "#e31937",
     "marketShare": 6.0,
-    "processNodes": ["12nm", "14nm", "22nm", "28nm", "55nm"],
+    "processNodes": [
+      "12nm",
+      "14nm",
+      "22nm",
+      "28nm",
+      "55nm"
+    ],
     "industryCategory": "Mature Node Foundry"
   },
   {
@@ -57,7 +69,12 @@
     },
     "color": "#0070c0",
     "marketShare": 6.3,
-    "processNodes": ["22nm", "28nm", "40nm", "65nm"],
+    "processNodes": [
+      "22nm",
+      "28nm",
+      "40nm",
+      "65nm"
+    ],
     "industryCategory": "Mature Node Foundry"
   },
   {
@@ -74,7 +91,12 @@
     },
     "color": "#c0392b",
     "marketShare": 5.7,
-    "processNodes": ["28nm", "40nm", "55nm", "90nm"],
+    "processNodes": [
+      "28nm",
+      "40nm",
+      "55nm",
+      "90nm"
+    ],
     "industryCategory": "Mature Node Foundry"
   },
   {
@@ -91,7 +113,11 @@
     },
     "color": "#0071c5",
     "marketShare": 2.0,
-    "processNodes": ["Intel 3", "Intel 18A", "Intel 20A"],
+    "processNodes": [
+      "Intel 3",
+      "Intel 18A",
+      "Intel 20A"
+    ],
     "industryCategory": "Advanced Foundry"
   },
   {
@@ -108,7 +134,12 @@
     },
     "color": "#2e7d32",
     "marketShare": 1.2,
-    "processNodes": ["SiGe", "RF CMOS", "180nm", "350nm"],
+    "processNodes": [
+      "SiGe",
+      "RF CMOS",
+      "180nm",
+      "350nm"
+    ],
     "industryCategory": "Specialty Foundry"
   },
   {
@@ -125,7 +156,12 @@
     },
     "color": "#6d4c41",
     "marketShare": 2.2,
-    "processNodes": ["65nm", "90nm", "130nm", "180nm"],
+    "processNodes": [
+      "65nm",
+      "90nm",
+      "130nm",
+      "180nm"
+    ],
     "industryCategory": "Specialty Foundry"
   },
   {
@@ -142,7 +178,11 @@
     },
     "color": "#7b1fa2",
     "marketShare": 1.5,
-    "processNodes": ["40nm", "55nm", "90nm"],
+    "processNodes": [
+      "40nm",
+      "55nm",
+      "90nm"
+    ],
     "industryCategory": "Mature Node Foundry"
   }
 ]
@@ -155,99 +195,14 @@
 ```json
 [
   {
-    "id": 1,
-    "title": "Samsung Foundry Struggles with 3nm GAA Yield, GlobalTech Widens Advanced Node Lead",
-    "tickers": ["SSNLF", "TC"],
-    "source": "Bloomberg",
-    "time": "Today, 9:20 AM",
-    "category": "Strategy"
-  },
-  {
-    "id": 2,
-    "title": "GlobalFoundries Doubles Down on RF and Auto-Grade Chips as GlobalTech Avoids Mature Nodes",
-    "tickers": ["GFS", "TC"],
-    "source": "Reuters",
-    "time": "Today, 8:45 AM",
-    "category": "Strategy"
-  },
-  {
-    "id": 3,
-    "title": "SMIC Achieves 7nm-Class Chip Using Immersion DUV Litho Despite US Export Restrictions",
-    "tickers": ["SMICY", "TC"],
-    "source": "Nikkei Asia",
-    "time": "Yesterday, 7:00 PM",
-    "category": "Geopolitical"
-  },
-  {
-    "id": 4,
-    "title": "Intel Foundry 18A Process Enters Risk Production — CEO Pat Gelsinger Eyes GlobalTech Customers",
-    "tickers": ["INTC_F", "TC"],
-    "source": "The Register",
-    "time": "Yesterday, 5:30 PM",
-    "category": "Strategy"
-  },
-  {
-    "id": 5,
-    "title": "UMC Partners with Intel for 12nm Production in US, Competing With GlobalTech Specialty Lines",
-    "tickers": ["UMC", "INTC_F", "TC"],
-    "source": "Financial Times",
-    "time": "Apr 2, 4:00 PM",
-    "category": "Supply Chain"
-  },
-  {
-    "id": 6,
-    "title": "Samsung Foundry Wins Major Qualcomm Snapdragon Order, Pressuring GlobalTech Exclusivity",
-    "tickers": ["SSNLF", "TC"],
-    "source": "Korea Herald",
-    "time": "Apr 2, 10:00 AM",
-    "category": "Earnings"
-  },
-  {
-    "id": 7,
-    "title": "Tower Semiconductor Expands Power IC Capacity at Newport Beach Fab, Targeting EV Market",
-    "tickers": ["TSEM", "TC"],
-    "source": "Business Wire",
-    "time": "Apr 1, 11:00 AM",
-    "category": "Capacity"
-  },
-  {
     "id": 8,
     "title": "Hua Hong Semiconductor Revenue Declines as SMIC Absorbs Domestic China Chip Orders",
-    "tickers": ["HHGR", "SMICY"],
+    "tickers": [
+      "HHGR",
+      "SMICY"
+    ],
     "source": "Caixin",
     "time": "Mar 31, 3:00 PM",
-    "category": "Earnings"
-  },
-  {
-    "id": 9,
-    "title": "US Export Controls Push SMIC to 28nm Specialization, Ceding Advanced Node Ground to GlobalTech",
-    "tickers": ["SMICY", "TC"],
-    "source": "Reuters",
-    "time": "Mar 31, 9:00 AM",
-    "category": "Geopolitical"
-  },
-  {
-    "id": 10,
-    "title": "Intel CEO Confirms 18A Yield on Track — 'We Are in the Race' Against GlobalTech and Samsung",
-    "tickers": ["INTC_F", "TC", "SSNLF"],
-    "source": "CNBC",
-    "time": "Mar 30, 1:00 PM",
-    "category": "Strategy"
-  },
-  {
-    "id": 11,
-    "title": "Powerchip PSMC Plans Joint Venture Fab in India to Serve Local Auto and Consumer Demand",
-    "tickers": ["PSMC", "TC"],
-    "source": "Economic Times",
-    "time": "Mar 29, 10:00 AM",
-    "category": "Capacity"
-  },
-  {
-    "id": 12,
-    "title": "GlobalFoundries Reports Q4 Beat on Automotive Revenue, Raises 2025 Capacity Guidance",
-    "tickers": ["GFS", "TC"],
-    "source": "Seeking Alpha",
-    "time": "Mar 28, 4:00 PM",
     "category": "Earnings"
   }
 ]
@@ -259,14 +214,45 @@
 
 ```json
 [
-  { "id": "TC",    "name": "GlobalTech",                  "marketShare": 62.3 },
-  { "id": "SSNLF", "name": "Samsung Foundry",        "marketShare": 11.3 },
-  { "id": "UMC",   "name": "UMC",                    "marketShare": 6.3  },
-  { "id": "GFS",   "name": "GlobalFoundries",        "marketShare": 6.0  },
-  { "id": "SMICY", "name": "SMIC",                   "marketShare": 5.7  },
-  { "id": "HHGR",  "name": "Hua Hong Semiconductor", "marketShare": 2.2  },
-  { "id": "INTC_F","name": "Intel Foundry",           "marketShare": 2.0  },
-  { "id": "PSMC",  "name": "Powerchip",               "marketShare": 1.5  },
-  { "id": "TSEM",  "name": "Tower Semiconductor",    "marketShare": 1.2  }
+  {
+    "id": "SSNLF",
+    "name": "Samsung Foundry",
+    "marketShare": 11.3
+  },
+  {
+    "id": "UMC",
+    "name": "UMC",
+    "marketShare": 6.3
+  },
+  {
+    "id": "GFS",
+    "name": "GlobalFoundries",
+    "marketShare": 6.0
+  },
+  {
+    "id": "SMICY",
+    "name": "SMIC",
+    "marketShare": 5.7
+  },
+  {
+    "id": "HHGR",
+    "name": "Hua Hong Semiconductor",
+    "marketShare": 2.2
+  },
+  {
+    "id": "INTC_F",
+    "name": "Intel Foundry",
+    "marketShare": 2.0
+  },
+  {
+    "id": "PSMC",
+    "name": "Powerchip",
+    "marketShare": 1.5
+  },
+  {
+    "id": "TSEM",
+    "name": "Tower Semiconductor",
+    "marketShare": 1.2
+  }
 ]
 ```

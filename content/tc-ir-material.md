@@ -52,49 +52,49 @@ Intel Corporation (NASDAQ: INTC).
   "newsroom": [
     {
       "date": "Jan 16, 2025",
-      "title": "GlobalTech Reports Fourth Quarter and Full Year 2024 Results",
+      "title": "Intel Reports Fourth Quarter and Full Year 2024 Results",
       "url": "#",
       "category": "Earnings"
     },
     {
       "date": "Oct 17, 2024",
-      "title": "GlobalTech Reports Third Quarter 2024 Results",
+      "title": "Intel Reports Third Quarter 2024 Results",
       "url": "#",
       "category": "Earnings"
     },
     {
       "date": "Apr 18, 2024",
-      "title": "GlobalTech Announces First Quarter 2024 Results",
+      "title": "Intel Announces First Quarter 2024 Results",
       "url": "#",
       "category": "Earnings"
     },
     {
       "date": "Apr 22, 2024",
-      "title": "GlobalTech Breaks Ground on First Europe Fab in Dresden, Germany",
+      "title": "Intel Breaks Ground on First Europe Fab in Dresden, Germany",
       "url": "#",
       "category": "Corporate"
     },
     {
       "date": "Mar 5, 2024",
-      "title": "GlobalTech Announces Arizona Fab Progress — 2nm Technology on Track for 2025",
+      "title": "Intel Announces Arizona Fab Progress — 2nm Technology on Track for 2025",
       "url": "#",
       "category": "Technology"
     },
     {
       "date": "Jan 18, 2024",
-      "title": "GlobalTech Reports Fourth Quarter and Full Year 2023 Results",
+      "title": "Intel Reports Fourth Quarter and Full Year 2023 Results",
       "url": "#",
       "category": "Earnings"
     },
     {
       "date": "Oct 19, 2023",
-      "title": "GlobalTech Reports Third Quarter 2023 Results",
+      "title": "Intel Reports Third Quarter 2023 Results",
       "url": "#",
       "category": "Earnings"
     },
     {
       "date": "Jul 20, 2023",
-      "title": "GlobalTech Reports Second Quarter 2023 Results",
+      "title": "Intel Reports Second Quarter 2023 Results",
       "url": "#",
       "category": "Earnings"
     }
@@ -107,28 +107,28 @@ Intel Corporation (NASDAQ: INTC).
           "label": "FY2024 Annual Report (20-F)",
           "period": "Dec 31, 2024",
           "filed": "Apr 2025",
-          "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=TC&type=20-F&dateb=&owner=include&count=10",
+          "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=INTC&type=20-F&dateb=&owner=include&count=10",
           "type": "HTML"
         },
         {
           "label": "FY2023 Annual Report (20-F)",
           "period": "Dec 31, 2023",
           "filed": "Apr 2024",
-          "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=TC&type=20-F&dateb=&owner=include&count=10",
+          "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=INTC&type=20-F&dateb=&owner=include&count=10",
           "type": "HTML"
         },
         {
           "label": "FY2022 Annual Report (20-F)",
           "period": "Dec 31, 2022",
           "filed": "Apr 2023",
-          "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=TC&type=20-F&dateb=&owner=include&count=10",
+          "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=INTC&type=20-F&dateb=&owner=include&count=10",
           "type": "HTML"
         },
         {
           "label": "FY2021 Annual Report (20-F)",
           "period": "Dec 31, 2021",
           "filed": "Apr 2022",
-          "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=TC&type=20-F&dateb=&owner=include&count=10",
+          "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=INTC&type=20-F&dateb=&owner=include&count=10",
           "type": "HTML"
         }
       ]

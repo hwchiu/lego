@@ -56,7 +56,6 @@
       "company": "Kioxia (minority stake)",
       "type": "Funding",
       "industry": "Semiconductor & NAND",
-      "valueM": null,
       "newsUrl": "https://www.nikkei.com/article/kioxia-apple-stake"
     },
     {
@@ -83,7 +82,6 @@
       "company": "Reality Labs (Meta partnership research fund)",
       "type": "Funding",
       "industry": "AR/VR Technology",
-      "valueM": null,
       "newsUrl": "https://techcrunch.com/2022/apple-ar-research"
     },
     {
@@ -101,7 +99,6 @@
       "company": "Dialog Semiconductor (supply financing)",
       "type": "Funding",
       "industry": "Power Management IC",
-      "valueM": null,
       "newsUrl": "https://www.ft.com/content/dialog-semiconductor-apple"
     },
     {
@@ -110,17 +107,7 @@
       "company": "OpenAI (partnership capital)",
       "type": "Funding",
       "industry": "AI & Machine Learning",
-      "valueM": null,
       "newsUrl": "https://www.bloomberg.com/news/apple-openai-partnership"
-    },
-    {
-      "year": 2024,
-      "date": "2024-06",
-      "company": "GlobalTech Arizona (capacity pre-purchase)",
-      "type": "Funding",
-      "industry": "Semiconductor Foundry",
-      "valueM": 3500,
-      "newsUrl": "https://www.reuters.com/technology/apple-globaltech-arizona-prepurchase"
     },
     {
       "year": 2024,
@@ -146,7 +133,6 @@
       "company": "Enovis Corp. (medical-grade titanium supply)",
       "type": "Funding",
       "industry": "Medical & Materials",
-      "valueM": null,
       "newsUrl": "https://techcrunch.com/2025/apple-enovis-titanium"
     },
     {
@@ -155,7 +141,6 @@
       "company": "Arm Holdings (IP licensing extension fund)",
       "type": "Funding",
       "industry": "Semiconductor IP",
-      "valueM": null,
       "newsUrl": "https://www.bloomberg.com/news/apple-arm-licensing"
     },
     {

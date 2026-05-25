@@ -104,7 +104,7 @@ export default function DataExplorePage() {
                 <div className="section-eyebrow">Data Explore</div>
                 <h1 className="de-hero-title">Data Explore</h1>
                 <p className="de-hero-sub">
-                  Curated intelligence on GlobalTech and its supply chain ecosystem, covering ESG, regulatory policy,
+                  Curated intelligence on semiconductor and supply-chain ecosystems, covering ESG, regulatory policy,
                   international standards, industry trends, company operations, and capital markets —{' '}
                   <strong>{totalCount}</strong> selected records.
                 </p>

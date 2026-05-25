@@ -379,12 +379,11 @@ const ESG_ACCENT = '#16a34a';
 // ── ESG companies list ────────────────────────────────────────────────────────
 
 const ESG_COMPANIES: { id: string; label: string; subLabel: string; sectionTitle: string }[] = [
-  { id: 'GlobalTech', label: 'GlobalTech', subLabel: 'GlobalTech Manufacturing', sectionTitle: 'Sustainability Reports' },
   { id: 'Apple', label: 'Apple', subLabel: 'Apple Inc.', sectionTitle: 'Environmental Progress Reports' },
 ];
 
 function EsgReportsTab() {
-  const [selectedCompany, setSelectedCompany] = useState<string>('GlobalTech');
+  const [selectedCompany, setSelectedCompany] = useState<string>('Apple');
 
   const reports = useMemo(
     () =>
@@ -620,7 +619,6 @@ interface CmDailyQuoteRow {
 }
 
 const CM_DAILY_QUOTES_FALLBACK_TEMPLATE = [
-  { security_code: '2330', suspension_of_buy_after_sale_day_trading: 'N', volume: '6,430,000', day_trading_value_of_buys: '6,250,110,000', trading_value_of_sells: '6,198,930,000' },
   { security_code: '2317', suspension_of_buy_after_sale_day_trading: 'N', volume: '5,567,000', day_trading_value_of_buys: '659,581,000', trading_value_of_sells: '650,440,000' },
   { security_code: '2454', suspension_of_buy_after_sale_day_trading: 'Y', volume: '2,010,000', day_trading_value_of_buys: '1,830,220,000', trading_value_of_sells: '1,812,740,000' },
   { security_code: '2881', suspension_of_buy_after_sale_day_trading: 'N', volume: '3,763,000', day_trading_value_of_buys: '319,882,000', trading_value_of_sells: '318,211,000' },
@@ -629,7 +627,6 @@ const CM_DAILY_QUOTES_FALLBACK_TEMPLATE = [
 ] as const;
 
 const CM_COMPANIES = [
-  { code: '2330', nameZh: 'GlobalTech', nameEn: 'GlobalTech' },
   { code: '2317', nameZh: '鴻海', nameEn: 'Hon Hai' },
   { code: '2454', nameZh: '聯發科', nameEn: 'MediaTek' },
   { code: '2881', nameZh: '富邦金', nameEn: 'Fubon Financial' },
@@ -644,7 +641,6 @@ const CM_COMPANIES = [
 const CM_DATE = '2025/04/07';
 
 const CM_DAILY_QUOTES = [
-  { ...CM_COMPANIES[0], vol: '28,543,000', amount: '27,891,450,000', open: '970.00', high: '975.00', low: '965.00', close: '972.00', change: '+5.00', txn: '168,432' },
   { ...CM_COMPANIES[1], vol: '18,234,000', amount: '2,157,662,000', open: '117.50', high: '119.50', low: '117.00', close: '118.50', change: '+1.00', txn: '62,781' },
   { ...CM_COMPANIES[2], vol: '6,124,000',  amount: '5,578,920,000', open: '900.00', high: '918.00', low: '898.00', close: '910.00', change: '+10.00', txn: '48,923' },
   { ...CM_COMPANIES[3], vol: '12,891,000', amount: '1,093,735,000', open: '84.30',  high: '85.30',  low: '84.00',  close: '84.80', change: '+0.50', txn: '38,214' },
@@ -657,7 +653,6 @@ const CM_DAILY_QUOTES = [
 ];
 
 const CM_DAY_TRADING = [
-  { ...CM_COMPANIES[0], buy: '3,241,000', sell: '3,189,000', net: '6,430,000', ratio: '22.53%' },
   { ...CM_COMPANIES[1], buy: '2,814,000', sell: '2,753,000', net: '5,567,000', ratio: '30.54%' },
   { ...CM_COMPANIES[2], buy: '1,023,000', sell: '987,000',   net: '2,010,000', ratio: '32.82%' },
   { ...CM_COMPANIES[3], buy: '1,892,000', sell: '1,871,000', net: '3,763,000', ratio: '29.19%' },
@@ -670,7 +665,6 @@ const CM_DAY_TRADING = [
 ];
 
 const CM_MARGIN = [
-  { ...CM_COMPANIES[0], finBuy: '1,234,000', finSell: '892,000',   finBal: '12,451,000', shoBuy: '98,000',  shoSell: '112,000', shoBal: '892,000'  },
   { ...CM_COMPANIES[1], finBuy: '2,341,000', finSell: '1,821,000', finBal: '21,234,000', shoBuy: '234,000', shoSell: '198,000', shoBal: '1,541,000' },
   { ...CM_COMPANIES[2], finBuy: '892,000',   finSell: '634,000',   finBal: '8,921,000',  shoBuy: '78,000',  shoSell: '91,000',  shoBal: '654,000'   },
   { ...CM_COMPANIES[3], finBuy: '1,892,000', finSell: '1,341,000', finBal: '18,231,000', shoBuy: '143,000', shoSell: '121,000', shoBal: '1,123,000' },
@@ -683,7 +677,6 @@ const CM_MARGIN = [
 ];
 
 const CM_SHORT_SALE = [
-  { ...CM_COMPANIES[0], finLimit: '50,000,000', finUsed: '12,451,000', finRatio: '24.90%', shoLimit: '5,000,000', shoUsed: '892,000',   shoRatio: '17.84%' },
   { ...CM_COMPANIES[1], finLimit: '80,000,000', finUsed: '21,234,000', finRatio: '26.54%', shoLimit: '8,000,000', shoUsed: '1,541,000', shoRatio: '19.26%' },
   { ...CM_COMPANIES[2], finLimit: '30,000,000', finUsed: '8,921,000',  finRatio: '29.74%', shoLimit: '3,000,000', shoUsed: '654,000',   shoRatio: '21.80%' },
   { ...CM_COMPANIES[3], finLimit: '60,000,000', finUsed: '18,231,000', finRatio: '30.39%', shoLimit: '6,000,000', shoUsed: '1,123,000', shoRatio: '18.72%' },
@@ -696,7 +689,6 @@ const CM_SHORT_SALE = [
 ];
 
 const CM_EX_DIVIDEND = [
-  { ...CM_COMPANIES[0], exDivDate: '2025/07/16', divVal: '4.50', exRightDate: '2025/07/16', rightVal: '—', listDate: '1994/09/05' },
   { ...CM_COMPANIES[1], exDivDate: '2025/08/14', divVal: '5.00', exRightDate: '—',           rightVal: '—', listDate: '1991/06/11' },
   { ...CM_COMPANIES[2], exDivDate: '2025/07/10', divVal: '93.0', exRightDate: '—',           rightVal: '—', listDate: '2001/07/23' },
   { ...CM_COMPANIES[3], exDivDate: '2025/08/07', divVal: '2.00', exRightDate: '—',           rightVal: '—', listDate: '2003/01/02' },
@@ -709,7 +701,6 @@ const CM_EX_DIVIDEND = [
 ];
 
 const CM_FOREIGN = [
-  { ...CM_COMPANIES[0], buy: '8,231,000',  sell: '6,912,000', shares: '14,521,845,000', ratio: '75.12%' },
   { ...CM_COMPANIES[1], buy: '12,341,000', sell: '9,823,000', shares: '6,234,512,000',  ratio: '44.89%' },
   { ...CM_COMPANIES[2], buy: '2,134,000',  sell: '1,892,000', shares: '892,341,000',    ratio: '56.34%' },
   { ...CM_COMPANIES[3], buy: '4,231,000',  sell: '3,812,000', shares: '5,234,123,000',  ratio: '38.12%' },
@@ -722,7 +713,6 @@ const CM_FOREIGN = [
 ];
 
 const CM_PRICE_LIMIT = [
-  { ...CM_COMPANIES[0], refPrice: '972.00', ceiling: '1,069.00', floor: '875.00', pct: '10%' },
   { ...CM_COMPANIES[1], refPrice: '118.50', ceiling: '130.00',   floor: '107.00', pct: '10%' },
   { ...CM_COMPANIES[2], refPrice: '910.00', ceiling: '1,001.00', floor: '819.00', pct: '10%' },
   { ...CM_COMPANIES[3], refPrice: '84.80',  ceiling: '93.20',    floor: '76.40',  pct: '10%' },
@@ -735,7 +725,6 @@ const CM_PRICE_LIMIT = [
 ];
 
 const CM_PE_RATIO = [
-  { ...CM_COMPANIES[0], yield: '0.46', pe: '25.34', pb: '6.12' },
   { ...CM_COMPANIES[1], yield: '4.22', pe: '11.81', pb: '1.34' },
   { ...CM_COMPANIES[2], yield: '10.21', pe: '9.78',  pb: '3.45' },
   { ...CM_COMPANIES[3], yield: '2.36', pe: '10.23', pb: '1.08' },
@@ -2135,7 +2124,7 @@ function GovPenaltyRecordsTab({ lang, accentColor }: { lang: 'zh' | 'en'; accent
 const NEWS_ACCENT = '#0ea5e9';
 
 // Tag sets for each digest category (used by legacy tabs)
-const TAIWAN_TAGS = new Set(['GlobalTech', 'Taiwan', 'Japan', 'JASM', 'Arizona', 'Fab 21', '12nm', '2nm', 'TC', 'CoWoS', 'Production', 'Supply Chain']);
+const TAIWAN_TAGS = new Set(['Taiwan', 'Japan', 'JASM', 'Arizona', 'Fab 21', '12nm', '2nm', 'CoWoS', 'Production', 'Supply Chain']);
 const INTL_TAGS = new Set(['NVIDIA', 'Apple', 'AAPL', 'Intel', 'INTC', 'ASML', 'SK Hynix', 'HBM4', 'Blackwell', 'GPU', 'Qualcomm', 'Broadcom', 'Samsung SDI', 'Memory', 'Recovery', 'Orders', 'AI', 'Data Center', 'Earnings']);
 
 function newsMatchesSet(item: DataItem, tagSet: Set<string>): boolean {

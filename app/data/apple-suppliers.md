@@ -18,22 +18,7 @@
 
 ## Tier-1 Suppliers
 
-### 1. GlobalTech (GlobalTech)
-
-| Field | Value |
-|---|---|
-| Ticker | TC |
-| Exchange | NYSE / TWSE |
-| Country | Taiwan |
-| Relationship | Sole manufacturer of Apple Silicon (A/M-series chips) |
-| Revenue (FY2023) | ~$69.3B |
-| Gross Margin (FY2023) | ~54.4% |
-| Market Cap | ~$900B |
-| Supply Items | A17 Pro, M3, M4, Apple Silicon SoCs |
-
----
-
-### 2. Foxconn (Hon Hai Precision Industry)
+### 1. Foxconn (Hon Hai Precision Industry)
 
 | Field | Value |
 |---|---|
@@ -48,7 +33,7 @@
 
 ---
 
-### 3. Samsung Electronics
+### 2. Samsung Electronics
 
 | Field | Value |
 |---|---|
@@ -63,7 +48,7 @@
 
 ---
 
-### 4. LG Display
+### 3. LG Display
 
 | Field | Value |
 |---|---|
@@ -78,7 +63,7 @@
 
 ---
 
-### 5. Qualcomm
+### 4. Qualcomm
 
 | Field | Value |
 |---|---|
@@ -93,7 +78,7 @@
 
 ---
 
-### 6. Broadcom
+### 5. Broadcom
 
 | Field | Value |
 |---|---|
@@ -108,7 +93,7 @@
 
 ---
 
-### 7. Sony Group (Image Sensors)
+### 6. Sony Group (Image Sensors)
 
 | Field | Value |
 |---|---|
@@ -123,7 +108,7 @@
 
 ---
 
-### 8. Murata Manufacturing
+### 7. Murata Manufacturing
 
 | Field | Value |
 |---|---|
@@ -138,7 +123,7 @@
 
 ---
 
-### 9. Corning
+### 8. Corning
 
 | Field | Value |
 |---|---|
@@ -153,7 +138,7 @@
 
 ---
 
-### 10. Luxshare Precision
+### 9. Luxshare Precision
 
 | Field | Value |
 |---|---|
@@ -168,7 +153,7 @@
 
 ---
 
-### 11. Skyworks Solutions
+### 10. Skyworks Solutions
 
 | Field | Value |
 |---|---|
@@ -183,7 +168,7 @@
 
 ---
 
-### 12. Texas Instruments
+### 11. Texas Instruments
 
 | Field | Value |
 |---|---|

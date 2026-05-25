@@ -1,7 +1,7 @@
 # Semiconductor & AI Industry — Key M&A Transactions
 
-Companies covered: GlobalTech key suppliers (ASML, Applied Materials, Lam Research, KLA),
-GlobalTech key customers (Apple, NVIDIA, AMD, Qualcomm, Broadcom),
+Companies covered: a leading foundry key suppliers (ASML, Applied Materials, Lam Research, KLA),
+a leading foundry key customers (Apple, NVIDIA, AMD, Qualcomm, Broadcom),
 and semiconductor / AI industry leaders (Intel, Samsung, Micron, Texas Instruments,
 Analog Devices, Marvell, NXP Semiconductors).
 
@@ -77,7 +77,6 @@ Analog Devices, Marvell, NXP Semiconductors).
       "acquirer": "NVIDIA",
       "type": "Acquisition",
       "industry": "Software & AI",
-      "valueM": null,
       "newsUrl": "https://en.wikipedia.org/wiki/Ageia"
     },
     {
@@ -447,7 +446,6 @@ Analog Devices, Marvell, NXP Semiconductors).
       "acquirer": "AMD",
       "type": "Acquisition",
       "industry": "Software & AI",
-      "valueM": null,
       "newsUrl": "https://www.amd.com/en/press-releases/2022-08-16-amd-acquires-mipsology"
     },
     {
@@ -457,7 +455,6 @@ Analog Devices, Marvell, NXP Semiconductors).
       "acquirer": "Qualcomm",
       "type": "Acquisition",
       "industry": "Automotive",
-      "valueM": null,
       "newsUrl": "https://www.qualcomm.com/news/releases/2023/05/qualcomm-acquires-autotalks"
     },
     {
@@ -467,7 +464,6 @@ Analog Devices, Marvell, NXP Semiconductors).
       "acquirer": "AMD",
       "type": "Acquisition",
       "industry": "Software & AI",
-      "valueM": null,
       "newsUrl": "https://www.amd.com/en/press-releases/2023-09-21-amd-acquires-nod-ai"
     },
     {

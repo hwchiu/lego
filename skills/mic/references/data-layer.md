@@ -26,8 +26,8 @@ app/lib/parseContent.ts      # Markdown → JSON 解析工具
 ## Entity Data
 ```json
 {
-  "GLTC": { "name": "GlobalTech", "shares": 120, "cost": 105.3 },
-  "AAPL": { "name": "Apple", "shares": 45, "cost": 167.8 }
+  "AAPL": { "name": "Apple", "shares": 45, "cost": 167.8 },
+  "NVDA": { "name": "NVIDIA", "shares": 30, "cost": 512.6 }
 }
 ```​
 

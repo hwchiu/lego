@@ -162,17 +162,7 @@ display purposes.
       "irLink": "https://ir.lamresearch.com"
     }
   ],
-  "May 7": [
-    {
-      "cellLabel": "GLTC",
-      "company": "GlobalTech Semiconductor Co., Ltd.",
-      "description": "GlobalTech April 2026 monthly revenue report: Consolidated revenue NT$326.4B (approx. $10.1B), up 38% YoY. Quarterly cumulative Q1 2026 revenue NT$939B, exceeding management's guidance of $25–26B for the quarter. Strong demand from Apple A20 chip orders, NVIDIA Blackwell Ultra, and AMD MI400 is driving 3nm utilization above 95%.",
-      "eventDate": "May 7, 2026",
-      "eventType": "Sales Revenue Release",
-      "webcastLink": "#",
-      "irLink": "#"
-    }
-  ]
+  "May 7": []
 }
 ```
 
@@ -461,15 +451,6 @@ display purposes.
     }
   ],
   "May 5": [
-    {
-      "cellLabel": "GLTC",
-      "company": "GlobalTech Semiconductor Co., Ltd.",
-      "description": "GlobalTech April 2026 monthly revenue conference call. Management reviews April consolidated revenue of NT$326B, discusses 3nm and 2nm utilization rates, CoWoS advanced packaging capacity, and reiterates FY2026 revenue growth guidance of 24–26%.",
-      "eventDate": "May 5, 2026",
-      "eventType": "Conference",
-      "webcastLink": "#",
-      "irLink": "#"
-    },
     {
       "cellLabel": "ASML",
       "company": "ASML Holding N.V.",

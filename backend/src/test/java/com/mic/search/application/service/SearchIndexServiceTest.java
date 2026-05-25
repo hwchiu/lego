@@ -37,13 +37,13 @@ class SearchIndexServiceTest {
     @Test
     void search_returnsResults() {
         SearchDocument doc1 = new SearchDocument();
-        doc1.setTitle("GlobalTech 2025 Q1 財報");
+        doc1.setTitle("NVIDIA 2025 Q1 財報");
         SearchDocument doc2 = new SearchDocument();
-        doc2.setTitle("GlobalTech宣布擴廠");
+        doc2.setTitle("NVIDIA宣布擴大 AI 產能");
 
-        when(repository.fuzzySearch("GlobalTech")).thenReturn(List.of(doc1, doc2));
+        when(repository.fuzzySearch("NVIDIA")).thenReturn(List.of(doc1, doc2));
 
-        List<SearchDocument> results = service.search("GlobalTech");
+        List<SearchDocument> results = service.search("NVIDIA");
 
         assertThat(results).containsExactlyInAnyOrder(doc1, doc2);
     }

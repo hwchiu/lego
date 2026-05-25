@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 const ITEMS = [
   {
     ban: '12345678',
-    transgress_control_id: 'TC-2024-001',
+    transgress_control_id: 'DV-2024-001',
     fac_city_code: '01',
     county_name: '臺北市政府環境保護局',
     ems_no: 'EMS-001',
@@ -16,7 +16,7 @@ const ITEMS = [
   },
   {
     ban: '23456789',
-    transgress_control_id: 'TC-2024-002',
+    transgress_control_id: 'DV-2024-002',
     fac_city_code: '02',
     county_name: '新北市政府環境保護局',
     ems_no: 'EMS-002',
@@ -29,7 +29,7 @@ const ITEMS = [
   },
   {
     ban: '34567890',
-    transgress_control_id: 'TC-2023-003',
+    transgress_control_id: 'DV-2023-003',
     fac_city_code: '03',
     county_name: '桃園市政府環境保護局',
     ems_no: 'EMS-003',
@@ -42,7 +42,7 @@ const ITEMS = [
   },
   {
     ban: '45678901',
-    transgress_control_id: 'TC-2024-004',
+    transgress_control_id: 'DV-2024-004',
     fac_city_code: '04',
     county_name: '臺中市政府環境保護局',
     ems_no: 'EMS-004',
@@ -55,7 +55,7 @@ const ITEMS = [
   },
   {
     ban: '56789012',
-    transgress_control_id: 'TC-2024-005',
+    transgress_control_id: 'DV-2024-005',
     fac_city_code: '05',
     county_name: '臺南市政府環境保護局',
     ems_no: 'EMS-005',
@@ -68,7 +68,7 @@ const ITEMS = [
   },
   {
     ban: '67890123',
-    transgress_control_id: 'TC-2023-006',
+    transgress_control_id: 'DV-2023-006',
     fac_city_code: '06',
     county_name: '高雄市政府環境保護局',
     ems_no: 'EMS-006',
@@ -81,7 +81,7 @@ const ITEMS = [
   },
   {
     ban: '78901234',
-    transgress_control_id: 'TC-2024-007',
+    transgress_control_id: 'DV-2024-007',
     fac_city_code: '07',
     county_name: '新竹縣政府環境保護局',
     ems_no: 'EMS-007',
@@ -94,7 +94,7 @@ const ITEMS = [
   },
   {
     ban: '89012345',
-    transgress_control_id: 'TC-2024-008',
+    transgress_control_id: 'DV-2024-008',
     fac_city_code: '08',
     county_name: '苗栗縣政府環境保護局',
     ems_no: 'EMS-008',
@@ -107,7 +107,7 @@ const ITEMS = [
   },
   {
     ban: '90123456',
-    transgress_control_id: 'TC-2023-009',
+    transgress_control_id: 'DV-2023-009',
     fac_city_code: '09',
     county_name: '彰化縣政府環境保護局',
     ems_no: 'EMS-009',
@@ -120,7 +120,7 @@ const ITEMS = [
   },
   {
     ban: '01234567',
-    transgress_control_id: 'TC-2024-010',
+    transgress_control_id: 'DV-2024-010',
     fac_city_code: '10',
     county_name: '雲林縣政府環境保護局',
     ems_no: 'EMS-010',

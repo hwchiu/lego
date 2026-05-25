@@ -41,19 +41,6 @@ export const APPLE_CENTER_NODE: SupplierNode = {
 };
 
 export const APPLE_SUPPLIERS: SupplierNode[] = [
-  {
-    id: 'TC',
-    name: 'GlobalTech',
-    ticker: 'TC',
-    exchange: 'NYSE / TWSE',
-    country: 'Taiwan',
-    relationship: 'Semiconductor Foundry',
-    supplyItems: 'A17 Pro, M3, M4 SoCs',
-    financials: {
-      revenue: '$69.3B',
-      grossMargin: '54.4%',
-      marketCap: '~$900B',
-    },
     color: '#1565c0',
   },
   {
@@ -225,7 +212,6 @@ export const APPLE_SUPPLIERS: SupplierNode[] = [
 
 // Default edge annotations (editable by user)
 export const DEFAULT_EDGE_LABELS: Record<string, string> = {
-  TC: '',
   FOXCONN: '',
   SAMSUNG: '',
   QCOM: '',

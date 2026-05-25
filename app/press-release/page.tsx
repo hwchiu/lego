@@ -24,8 +24,6 @@ const TICKER_COLORS: Record<string, string> = {
   LRCX: '#003f7e',
   KLAC: '#0055a4',
   '8035.T': '#c8000b',
-  GLTC: '#1a2332',
-  TC: '#1a2332',
 };
 
 function getTickerColor(ticker: string): string {

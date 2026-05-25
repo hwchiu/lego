@@ -41,18 +41,6 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     private static final List<SearchDocument> MOCK_DATA = List.of(
-        new SearchDocument("1", "2330", "GlobalTech Semiconductor Co., Ltd.", "GlobalTech",
-            "GlobalTech 2025 Q1 財報：營收創歷史新高",
-            "GlobalTech公布 2025 年第一季財報，合併營收達新台幣 8,392 億元，較去年同期成長 41.6%。先進製程 3nm 及 5nm 合計佔晶圓銷售金額約 69%，顯示 AI 相關需求持續強勁。",
-            "2025-04-17", "財報"),
-        new SearchDocument("2", "2330", "GlobalTech Semiconductor Co., Ltd.", "GlobalTech",
-            "GlobalTech宣布在美國亞利桑那州興建第三座晶圓廠",
-            "GlobalTech今日宣布將在美國亞利桑那州鳳凰城建設第三座晶圓廠，預計採用 2nm 製程技術，總投資額超過 650 億美元。此舉有助於分散地緣政治風險並強化與美國客戶的合作關係。",
-            "2025-03-28", "供應鏈"),
-        new SearchDocument("3", "2330", "GlobalTech Semiconductor Co., Ltd.", "GlobalTech",
-            "GlobalTech與 NVIDIA 深化 CoWoS 先進封裝合作",
-            "GlobalTech與 NVIDIA 簽署多年期 CoWoS 先進封裝合作協議，以支應 H100 及下一代 Blackwell 系列 GPU 的強勁需求，預計 2025 年底前產能倍增。",
-            "2025-02-10", "合作"),
         new SearchDocument("4", "005930", "三星電子株式會社", "三星電子",
             "三星電子 2025 年 HBM3E 出貨量預計超越預期",
             "三星電子半導體部門表示，HBM3E 已完成主要客戶認證，預計 2025 年出貨量將較原計畫增加 30%。三星同時宣布擴大 1c DRAM 製程的量產規模，以應對 AI 伺服器需求。",
@@ -63,7 +51,7 @@ public class DataInitializer implements ApplicationRunner {
             "2025-01-22", "製程"),
         new SearchDocument("6", "2454", "聯發科技股份有限公司", "聯發科",
             "聯發科 Dimensity 9400 拿下多家旗艦手機訂單",
-            "聯發科技旗艦行動平台 Dimensity 9400 採用GlobalTech 3nm 製程，已獲三星、小米、vivo 等品牌採用於 2025 年旗艦機型。聯發科預估 2025 年行動業務營收成長超過 25%。",
+            "聯發科技旗艦行動平台 Dimensity 9400 採用 3nm 製程，已獲三星、小米、vivo 等品牌採用於 2025 年旗艦機型。聯發科預估 2025 年行動業務營收成長超過 25%。",
             "2025-03-15", "產品"),
         new SearchDocument("7", "2454", "聯發科技股份有限公司", "聯發科",
             "聯發科積極布局 AI PC 市場，推出 Kompanio Ultra 平台",

@@ -1,23 +1,23 @@
-# Financial Data — GlobalTech Key Customers
+# Financial Data — Key Customers
 
 **Disclaimer:** All financial figures below are sample/mock data for demonstration purposes only. They do not represent actual financial results and should not be used for investment decisions.
 
-Financial statements for GlobalTech's 10 major customers. Figures are approximate, illustrative, and based on publicly available annual and quarterly reports.
+Financial statements for 10 major technology customers. Figures are approximate, illustrative, and based on publicly available annual and quarterly reports.
 
 ## Company List
 
 ```json
 [
-  { "symbol": "AAPL",  "name": "Apple Inc.",                    "sector": "Technology",       "marketCap": "3.0T",  "currency": "USD", "description": "World's largest technology company; GlobalTech's biggest customer (~25% of revenue) for A-series and M-series chips." },
-  { "symbol": "NVDA",  "name": "NVIDIA Corporation",            "sector": "Semiconductors",   "marketCap": "2.6T",  "currency": "USD", "description": "Leading GPU and AI accelerator designer. Relies on GlobalTech's advanced nodes (4nm/3nm) for data-center GPUs." },
-  { "symbol": "AMD",   "name": "Advanced Micro Devices",        "sector": "Semiconductors",   "marketCap": "210B",  "currency": "USD", "description": "Fabless CPU/GPU designer. Partners with GlobalTech for Ryzen, EPYC, and Radeon products." },
-  { "symbol": "QCOM",  "name": "Qualcomm Incorporated",         "sector": "Semiconductors",   "marketCap": "165B",  "currency": "USD", "description": "Leader in mobile SoCs and wireless technology. Snapdragon chips are primarily manufactured at GlobalTech." },
-  { "symbol": "AVGO",  "name": "Broadcom Inc.",                 "sector": "Semiconductors",   "marketCap": "680B",  "currency": "USD", "description": "Diversified chip and infrastructure software company. Uses GlobalTech for advanced networking and custom AI ASICs." },
-  { "symbol": "MRVL",  "name": "Marvell Technology Inc.",       "sector": "Semiconductors",   "marketCap": "55B",   "currency": "USD", "description": "Specializes in data infrastructure semiconductors. GlobalTech manufactures its cloud-optimized chips." },
-  { "symbol": "NXPI",  "name": "NXP Semiconductors N.V.",       "sector": "Semiconductors",   "marketCap": "48B",   "currency": "USD", "description": "Automotive and IoT chip leader. Partners with GlobalTech for advanced automotive-grade processors." },
-  { "symbol": "STM",   "name": "STMicroelectronics N.V.",       "sector": "Semiconductors",   "marketCap": "24B",   "currency": "USD", "description": "European semiconductor leader in automotive and industrial chips. Collaborates with GlobalTech on FD-SOI nodes." },
-  { "symbol": "SONY",  "name": "Sony Group Corporation",        "sector": "Technology",       "marketCap": "95B",   "currency": "USD", "description": "Global electronics and entertainment conglomerate. Uses GlobalTech for image sensors and PlayStation chip components." },
-  { "symbol": "TXN",   "name": "Texas Instruments Incorporated","sector": "Semiconductors",   "marketCap": "145B",  "currency": "USD", "description": "Analog and embedded processing leader. Leverages GlobalTech for some advanced digital products alongside its own fabs." }
+  { "symbol": "AAPL",  "name": "Apple Inc.",                    "sector": "Technology",       "marketCap": "3.0T",  "currency": "USD", "description": "World's largest technology company; A major customer for A-series and M-series chips." },
+  { "symbol": "NVDA",  "name": "NVIDIA Corporation",            "sector": "Semiconductors",   "marketCap": "2.6T",  "currency": "USD", "description": "Leading GPU and AI accelerator designer. Relies on advanced foundry nodes for data-center GPUs." },
+  { "symbol": "AMD",   "name": "Advanced Micro Devices",        "sector": "Semiconductors",   "marketCap": "210B",  "currency": "USD", "description": "Fabless CPU/GPU designer. Works with major foundry partners for Ryzen, EPYC, and Radeon products." },
+  { "symbol": "QCOM",  "name": "Qualcomm Incorporated",         "sector": "Semiconductors",   "marketCap": "165B",  "currency": "USD", "description": "Leader in mobile SoCs and wireless technology. Snapdragon chips are primarily manufactured by a major foundry partner." },
+  { "symbol": "AVGO",  "name": "Broadcom Inc.",                 "sector": "Semiconductors",   "marketCap": "680B",  "currency": "USD", "description": "Diversified chip and infrastructure software company. Uses a major foundry partner for advanced networking and custom AI ASICs." },
+  { "symbol": "MRVL",  "name": "Marvell Technology Inc.",       "sector": "Semiconductors",   "marketCap": "55B",   "currency": "USD", "description": "Specializes in data infrastructure semiconductors. A major foundry partner manufactures its cloud-optimized chips." },
+  { "symbol": "NXPI",  "name": "NXP Semiconductors N.V.",       "sector": "Semiconductors",   "marketCap": "48B",   "currency": "USD", "description": "Automotive and IoT chip leader. Partners with major foundries for advanced automotive-grade processors." },
+  { "symbol": "STM",   "name": "STMicroelectronics N.V.",       "sector": "Semiconductors",   "marketCap": "24B",   "currency": "USD", "description": "European semiconductor leader in automotive and industrial chips. Collaborates with leading foundries on FD-SOI nodes." },
+  { "symbol": "SONY",  "name": "Sony Group Corporation",        "sector": "Technology",       "marketCap": "95B",   "currency": "USD", "description": "Global electronics and entertainment conglomerate. Uses major foundry partners for image sensors and PlayStation chip components." },
+  { "symbol": "TXN",   "name": "Texas Instruments Incorporated","sector": "Semiconductors",   "marketCap": "145B",  "currency": "USD", "description": "Analog and embedded processing leader. Leverages external foundry partners for some advanced digital products alongside its own fabs." }
 ]
 ```
 

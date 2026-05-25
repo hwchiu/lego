@@ -127,7 +127,6 @@ function LineChart({ data, unit }: { data: ChartBar[]; unit?: string }) {
 // ─── AI Supply-Chain SVG ──────────────────────
 function AiSupplyChainGraph() {
   const nodes = [
-    { id: 'tc', label: 'GlobalTech', sub: 'CoWoS 封裝', x: 40, y: 90, color: '#1a2332' },
     { id: 'nvda', label: 'NVIDIA', sub: 'GPU 設計', x: 160, y: 40, color: '#76b900' },
     { id: 'amd', label: 'AMD', sub: 'GPU/CPU', x: 160, y: 140, color: '#ed1c24' },
     { id: 'aws', label: 'AWS', sub: 'Cloud AI', x: 280, y: 20, color: '#ff9900' },
@@ -136,8 +135,6 @@ function AiSupplyChainGraph() {
     { id: 'meta', label: 'Meta', sub: 'Llama / AI', x: 280, y: 195, color: '#1877f2' },
   ];
   const edges = [
-    ['tc', 'nvda'],
-    ['tc', 'amd'],
     ['nvda', 'aws'],
     ['nvda', 'azure'],
     ['amd', 'gcp'],

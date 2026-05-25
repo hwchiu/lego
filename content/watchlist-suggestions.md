@@ -65,13 +65,12 @@ Companies with significant Taiwan-US trade flows and supply chain exposure:
 
 | Symbol | Company | Reason |
 |--------|---------|--------|
-| TC | GlobalTech (GlobalTech) | World's largest contract chipmaker; central to Taiwan-US trade |
 | AAPL | Apple | >90% of iPhone production in Asia; direct tariff exposure |
 | QCOM | Qualcomm | Fabless; chips manufactured in Taiwan |
 | AVGO | Broadcom | Semiconductor & infrastructure; Taiwan manufacturing reliance |
 | AMAT | Applied Materials | Semiconductor equipment exported to Taiwan fabs |
 | LRCX | Lam Research | Key etch & deposition tools for Taiwan fabs |
-| INTC | Intel | Expanding into contract manufacturing; competes with GlobalTech |
+| INTC | Intel | Expanding into contract manufacturing; competes with leading foundries |
 | TXN | Texas Instruments | Analog chips; significant Taiwan manufacturing |
 | MU | Micron Technology | Memory chips; Taiwan production facilities |
 | KLAC | KLA Corporation | Wafer inspection tools; critical Taiwan supply chain |
@@ -80,7 +79,7 @@ Companies with significant Taiwan-US trade flows and supply chain exposure:
 {
   "id": "event-taiwan-us-trade",
   "label": "Taiwan-US Trade Agreement (15% Tariff)",
-  "symbols": ["TC", "AAPL", "QCOM", "AVGO", "AMAT", "LRCX", "INTC", "TXN", "MU", "KLAC"]
+  "symbols": ["AAPL", "QCOM", "AVGO", "AMAT", "LRCX", "INTC", "TXN", "MU", "KLAC"]
 }
 ```
 
@@ -122,7 +121,6 @@ Core semiconductor manufacturers and equipment companies driving chip innovation
 | Symbol | Company | Reason |
 |--------|---------|--------|
 | NVDA | NVIDIA | GPU/AI accelerator dominance |
-| TC | GlobalTech | World's leading pure-play foundry |
 | INTC | Intel | Diversified chipmaker; IDM 2.0 strategy |
 | AMD | AMD | CPU/GPU market share gains vs INTC/NVDA |
 | QCOM | Qualcomm | Mobile SoC and RF chip leader |
@@ -138,7 +136,7 @@ Core semiconductor manufacturers and equipment companies driving chip innovation
 {
   "id": "topic-semiconductors",
   "label": "Semiconductors",
-  "symbols": ["NVDA", "TC", "INTC", "AMD", "QCOM", "ASML", "AMAT", "LRCX", "KLAC", "MU", "AVGO", "TXN"]
+  "symbols": ["NVDA", "INTC", "AMD", "QCOM", "ASML", "AMAT", "LRCX", "KLAC", "MU", "AVGO", "TXN"]
 }
 ```
 
@@ -150,7 +148,6 @@ Companies pioneering 3D chip stacking, advanced packaging, and heterogeneous int
 
 | Symbol | Company | Reason |
 |--------|---------|--------|
-| TC | GlobalTech | CoWoS, SoIC, and InFO advanced packaging leader |
 | NVDA | NVIDIA | H100/B200 use CoWoS HBM packaging |
 | AMD | AMD | 3D V-Cache stacking; chiplet architecture |
 | INTC | Intel | Foveros 3D stacking and EMIB interconnect |
@@ -165,7 +162,7 @@ Companies pioneering 3D chip stacking, advanced packaging, and heterogeneous int
 {
   "id": "topic-3d-fabric",
   "label": "3D Fabric",
-  "symbols": ["TC", "NVDA", "AMD", "INTC", "MU", "AMKR", "ASX", "SMCI", "AMAT", "ENTG"]
+  "symbols": ["NVDA", "AMD", "INTC", "MU", "AMKR", "ASX", "SMCI", "AMAT", "ENTG"]
 }
 ```
 
@@ -185,13 +182,12 @@ Companies with significant exposure to US reciprocal tariff policy affecting imp
 | WMT | Walmart | Import-heavy retail; ~70% of goods from overseas |
 | COST | Costco | Significant private-label imports affected by tariffs |
 | TGT | Target | Heavy reliance on imported apparel and electronics |
-| TC | GlobalTech | Semiconductor tariffs threaten chip supply cost |
 | QCOM | Qualcomm | Chip designs manufactured overseas; US tariff exposure |
 
 ```json
 {
   "id": "topic-reciprocal-tariff",
   "label": "US Reciprocal Tariff Policy",
-  "symbols": ["AAPL", "MSFT", "AMZN", "TSLA", "NKE", "WMT", "COST", "TGT", "TC", "QCOM"]
+  "symbols": ["AAPL", "MSFT", "AMZN", "TSLA", "NKE", "WMT", "COST", "TGT", "QCOM"]
 }
 ```

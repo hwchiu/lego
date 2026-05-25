@@ -5,7 +5,7 @@
 ```json
 {
   "627836": "Watchlist1",
-  "738291": "Watchlist-TC",
+  "738291": "Watchlist3",
   "394827": "Watchlist2"
 }
 ```
@@ -14,9 +14,33 @@
 
 ```json
 {
-  "627836": ["TC", "TSLA", "QCOM", "GOOGL", "SONY", "AAPL", "NVDA", "ASML"],
-  "738291": ["TC", "TSLA", "QCOM", "GOOGL", "SONY", "AAPL", "NVDA", "ASML"],
-  "394827": ["TC", "TSLA", "QCOM", "GOOGL", "SONY", "AAPL", "NVDA", "ASML"]
+  "627836": [
+    "TSLA",
+    "QCOM",
+    "GOOGL",
+    "SONY",
+    "AAPL",
+    "NVDA",
+    "ASML"
+  ],
+  "738291": [
+    "TSLA",
+    "QCOM",
+    "GOOGL",
+    "SONY",
+    "AAPL",
+    "NVDA",
+    "ASML"
+  ],
+  "394827": [
+    "TSLA",
+    "QCOM",
+    "GOOGL",
+    "SONY",
+    "AAPL",
+    "NVDA",
+    "ASML"
+  ]
 }
 ```
 
@@ -28,56 +52,202 @@
 
 ```json
 {
-  "TC": { "shares": 120, "cost": 105.3 },
-  "TSLA": { "shares": 50, "cost": 196.4 },
-  "QCOM": { "shares": 80, "cost": 128.9 },
-  "GOOGL": { "shares": 60, "cost": 138.5 },
-  "SONY": { "shares": 200, "cost": 18.7 },
-  "AAPL": { "shares": 45, "cost": 167.8 },
-  "NVDA": { "shares": 30, "cost": 512.6 },
-  "ASML": { "shares": 20, "cost": 598.0 },
-  "MSFT": { "shares": 40, "cost": 310.5 },
-  "AMZN": { "shares": 55, "cost": 127.8 },
-  "META": { "shares": 35, "cost": 290.4 },
-  "AVGO": { "shares": 25, "cost": 620.3 },
-  "CRM": { "shares": 45, "cost": 210.6 },
-  "ORCL": { "shares": 70, "cost": 105.2 },
-  "AMD": { "shares": 65, "cost": 112.7 },
-  "INTC": { "shares": 150, "cost": 35.2 },
-  "ADBE": { "shares": 20, "cost": 480.5 },
-  "NFLX": { "shares": 15, "cost": 445.3 },
-  "JPM": { "shares": 40, "cost": 148.6 },
-  "V": { "shares": 35, "cost": 235.4 },
-  "MA": { "shares": 25, "cost": 380.2 },
-  "BAC": { "shares": 120, "cost": 32.8 },
-  "GS": { "shares": 15, "cost": 340.7 },
-  "BRK-B": { "shares": 30, "cost": 350.9 },
-  "UNH": { "shares": 18, "cost": 490.3 },
-  "JNJ": { "shares": 50, "cost": 155.8 },
-  "LLY": { "shares": 12, "cost": 520.4 },
-  "PFE": { "shares": 200, "cost": 28.6 },
-  "ABBV": { "shares": 40, "cost": 145.2 },
-  "MRK": { "shares": 55, "cost": 108.7 },
-  "WMT": { "shares": 60, "cost": 52.3 },
-  "COST": { "shares": 15, "cost": 560.8 },
-  "KO": { "shares": 80, "cost": 58.4 },
-  "PEP": { "shares": 35, "cost": 172.6 },
-  "MCD": { "shares": 25, "cost": 268.5 },
-  "NKE": { "shares": 50, "cost": 98.3 },
-  "SBUX": { "shares": 45, "cost": 95.7 },
-  "XOM": { "shares": 60, "cost": 98.5 },
-  "CVX": { "shares": 35, "cost": 152.3 },
-  "CAT": { "shares": 20, "cost": 245.6 },
-  "BA": { "shares": 30, "cost": 198.4 },
-  "GE": { "shares": 40, "cost": 115.8 },
-  "UNP": { "shares": 25, "cost": 220.3 },
-  "DIS": { "shares": 55, "cost": 92.4 },
-  "CMCSA": { "shares": 80, "cost": 42.6 },
-  "TMUS": { "shares": 30, "cost": 148.7 },
-  "MU": { "shares": 70, "cost": 72.4 },
-  "MRVL": { "shares": 60, "cost": 48.5 },
-  "LRCX": { "shares": 15, "cost": 620.8 },
-  "KLAC": { "shares": 12, "cost": 510.3 }
+  "TSLA": {
+    "shares": 50,
+    "cost": 196.4
+  },
+  "QCOM": {
+    "shares": 80,
+    "cost": 128.9
+  },
+  "GOOGL": {
+    "shares": 60,
+    "cost": 138.5
+  },
+  "SONY": {
+    "shares": 200,
+    "cost": 18.7
+  },
+  "AAPL": {
+    "shares": 45,
+    "cost": 167.8
+  },
+  "NVDA": {
+    "shares": 30,
+    "cost": 512.6
+  },
+  "ASML": {
+    "shares": 20,
+    "cost": 598.0
+  },
+  "MSFT": {
+    "shares": 40,
+    "cost": 310.5
+  },
+  "AMZN": {
+    "shares": 55,
+    "cost": 127.8
+  },
+  "META": {
+    "shares": 35,
+    "cost": 290.4
+  },
+  "AVGO": {
+    "shares": 25,
+    "cost": 620.3
+  },
+  "CRM": {
+    "shares": 45,
+    "cost": 210.6
+  },
+  "ORCL": {
+    "shares": 70,
+    "cost": 105.2
+  },
+  "AMD": {
+    "shares": 65,
+    "cost": 112.7
+  },
+  "INTC": {
+    "shares": 150,
+    "cost": 35.2
+  },
+  "ADBE": {
+    "shares": 20,
+    "cost": 480.5
+  },
+  "NFLX": {
+    "shares": 15,
+    "cost": 445.3
+  },
+  "JPM": {
+    "shares": 40,
+    "cost": 148.6
+  },
+  "V": {
+    "shares": 35,
+    "cost": 235.4
+  },
+  "MA": {
+    "shares": 25,
+    "cost": 380.2
+  },
+  "BAC": {
+    "shares": 120,
+    "cost": 32.8
+  },
+  "GS": {
+    "shares": 15,
+    "cost": 340.7
+  },
+  "BRK-B": {
+    "shares": 30,
+    "cost": 350.9
+  },
+  "UNH": {
+    "shares": 18,
+    "cost": 490.3
+  },
+  "JNJ": {
+    "shares": 50,
+    "cost": 155.8
+  },
+  "LLY": {
+    "shares": 12,
+    "cost": 520.4
+  },
+  "PFE": {
+    "shares": 200,
+    "cost": 28.6
+  },
+  "ABBV": {
+    "shares": 40,
+    "cost": 145.2
+  },
+  "MRK": {
+    "shares": 55,
+    "cost": 108.7
+  },
+  "WMT": {
+    "shares": 60,
+    "cost": 52.3
+  },
+  "COST": {
+    "shares": 15,
+    "cost": 560.8
+  },
+  "KO": {
+    "shares": 80,
+    "cost": 58.4
+  },
+  "PEP": {
+    "shares": 35,
+    "cost": 172.6
+  },
+  "MCD": {
+    "shares": 25,
+    "cost": 268.5
+  },
+  "NKE": {
+    "shares": 50,
+    "cost": 98.3
+  },
+  "SBUX": {
+    "shares": 45,
+    "cost": 95.7
+  },
+  "XOM": {
+    "shares": 60,
+    "cost": 98.5
+  },
+  "CVX": {
+    "shares": 35,
+    "cost": 152.3
+  },
+  "CAT": {
+    "shares": 20,
+    "cost": 245.6
+  },
+  "BA": {
+    "shares": 30,
+    "cost": 198.4
+  },
+  "GE": {
+    "shares": 40,
+    "cost": 115.8
+  },
+  "UNP": {
+    "shares": 25,
+    "cost": 220.3
+  },
+  "DIS": {
+    "shares": 55,
+    "cost": 92.4
+  },
+  "CMCSA": {
+    "shares": 80,
+    "cost": 42.6
+  },
+  "TMUS": {
+    "shares": 30,
+    "cost": 148.7
+  },
+  "MU": {
+    "shares": 70,
+    "cost": 72.4
+  },
+  "MRVL": {
+    "shares": 60,
+    "cost": 48.5
+  },
+  "LRCX": {
+    "shares": 15,
+    "cost": 620.8
+  },
+  "KLAC": {
+    "shares": 12,
+    "cost": 510.3
+  }
 }
 ```
 
@@ -92,25 +262,6 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
 
 ```json
 {
-  "TC": {
-    "symbol": "TC",
-    "price": 0,
-    "change": 0,
-    "changePct": 0,
-    "shares": 120,
-    "cost": 105.3,
-    "todayGain": 0,
-    "todayGainPct": 0,
-    "revenue": "$5.92",
-    "revenueQoQ": "N/A",
-    "revenueYoY": "N/A",
-    "grossMargin": "2.8%",
-    "doi": "N/A",
-    "nextEarning": "N/A",
-    "lastQtrRevenue": "N/A",
-    "lastQtrGrossMargin": "N/A",
-    "lastQtrDOI": "N/A"
-  },
   "TSLA": {
     "symbol": "TSLA",
     "price": 426.01,
@@ -1073,29 +1224,10 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
 
 ```json
 {
-  "TC": {
-    "symbol": "TC",
-    "price": 204.50,
-    "change": 1.85,
-    "changePct": 0.91,
-    "shares": 120,
-    "cost": 105.3,
-    "todayGain": 222.0,
-    "todayGainPct": 0.91,
-    "revenue": "NT$3.33",
-    "revenueQoQ": "+12.8%",
-    "revenueYoY": "+38.8%",
-    "grossMargin": "57.8%",
-    "doi": "55",
-    "nextEarning": "Jan 16, 2026",
-    "lastQtrRevenue": "NT$759.69",
-    "lastQtrGrossMargin": "57.8%",
-    "lastQtrDOI": "55"
-  },
   "TSLA": {
     "symbol": "TSLA",
     "price": 402.04,
-    "change": -8.50,
+    "change": -8.5,
     "changePct": -2.07,
     "shares": 50,
     "cost": 196.4,
@@ -1114,7 +1246,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "QCOM": {
     "symbol": "QCOM",
     "price": 168.74,
-    "change": 1.20,
+    "change": 1.2,
     "changePct": 0.72,
     "shares": 80,
     "cost": 128.9,
@@ -1171,7 +1303,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "AAPL": {
     "symbol": "AAPL",
     "price": 254.49,
-    "change": 1.80,
+    "change": 1.8,
     "changePct": 0.71,
     "shares": 45,
     "cost": 167.8,
@@ -1190,7 +1322,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "NVDA": {
     "symbol": "NVDA",
     "price": 138.85,
-    "change": 2.10,
+    "change": 2.1,
     "changePct": 1.54,
     "shares": 30,
     "cost": 512.6,
@@ -1209,7 +1341,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "ASML": {
     "symbol": "ASML",
     "price": 726.54,
-    "change": -11.20,
+    "change": -11.2,
     "changePct": -1.52,
     "shares": 20,
     "cost": 598.0,
@@ -1228,7 +1360,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "MSFT": {
     "symbol": "MSFT",
     "price": 423.15,
-    "change": 3.10,
+    "change": 3.1,
     "changePct": 0.74,
     "shares": 40,
     "cost": 310.5,
@@ -1247,7 +1379,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "AMZN": {
     "symbol": "AMZN",
     "price": 224.19,
-    "change": -1.40,
+    "change": -1.4,
     "changePct": -0.62,
     "shares": 55,
     "cost": 127.8,
@@ -1267,11 +1399,11 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "symbol": "META",
     "price": 583.24,
     "change": 5.22,
-    "changePct": 0.90,
+    "changePct": 0.9,
     "shares": 35,
     "cost": 290.4,
     "todayGain": 182.7,
-    "todayGainPct": 0.90,
+    "todayGainPct": 0.9,
     "revenue": "$185.79",
     "revenueQoQ": "+12.3%",
     "revenueYoY": "+21.2%",
@@ -1323,7 +1455,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "ORCL": {
     "symbol": "ORCL",
     "price": 188.15,
-    "change": 2.10,
+    "change": 2.1,
     "changePct": 1.13,
     "shares": 70,
     "cost": 105.2,
@@ -1380,7 +1512,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "ADBE": {
     "symbol": "ADBE",
     "price": 479.71,
-    "change": 2.10,
+    "change": 2.1,
     "changePct": 0.44,
     "shares": 20,
     "cost": 480.5,
@@ -1399,7 +1531,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "NFLX": {
     "symbol": "NFLX",
     "price": 895.41,
-    "change": 5.60,
+    "change": 5.6,
     "changePct": 0.63,
     "shares": 15,
     "cost": 445.3,
@@ -1418,7 +1550,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "JPM": {
     "symbol": "JPM",
     "price": 231.32,
-    "change": 0.90,
+    "change": 0.9,
     "changePct": 0.39,
     "shares": 40,
     "cost": 148.6,
@@ -1437,7 +1569,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "V": {
     "symbol": "V",
     "price": 310.93,
-    "change": 1.50,
+    "change": 1.5,
     "changePct": 0.48,
     "shares": 35,
     "cost": 235.4,
@@ -1456,7 +1588,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "MA": {
     "symbol": "MA",
     "price": 525.88,
-    "change": 1.20,
+    "change": 1.2,
     "changePct": 0.23,
     "shares": 25,
     "cost": 380.2,
@@ -1494,7 +1626,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "GS": {
     "symbol": "GS",
     "price": 573.21,
-    "change": 4.10,
+    "change": 4.1,
     "changePct": 0.72,
     "shares": 15,
     "cost": 340.7,
@@ -1512,7 +1644,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   },
   "BRK-B": {
     "symbol": "BRK-B",
-    "price": 471.10,
+    "price": 471.1,
     "change": 0,
     "changePct": 0,
     "shares": 30,
@@ -1532,7 +1664,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "UNH": {
     "symbol": "UNH",
     "price": 591.11,
-    "change": -3.50,
+    "change": -3.5,
     "changePct": -0.59,
     "shares": 18,
     "cost": 490.3,
@@ -1551,7 +1683,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "JNJ": {
     "symbol": "JNJ",
     "price": 152.36,
-    "change": -0.90,
+    "change": -0.9,
     "changePct": -0.59,
     "shares": 50,
     "cost": 155.8,
@@ -1570,7 +1702,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "LLY": {
     "symbol": "LLY",
     "price": 826.84,
-    "change": -12.50,
+    "change": -12.5,
     "changePct": -1.49,
     "shares": 12,
     "cost": 520.4,
@@ -1627,7 +1759,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "MRK": {
     "symbol": "MRK",
     "price": 96.28,
-    "change": -1.10,
+    "change": -1.1,
     "changePct": -1.13,
     "shares": 55,
     "cost": 108.7,
@@ -1665,7 +1797,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "COST": {
     "symbol": "COST",
     "price": 971.81,
-    "change": 4.20,
+    "change": 4.2,
     "changePct": 0.43,
     "shares": 15,
     "cost": 560.8,
@@ -1703,7 +1835,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "PEP": {
     "symbol": "PEP",
     "price": 149.64,
-    "change": -0.80,
+    "change": -0.8,
     "changePct": -0.53,
     "shares": 35,
     "cost": 172.6,
@@ -1722,7 +1854,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "MCD": {
     "symbol": "MCD",
     "price": 288.59,
-    "change": 1.40,
+    "change": 1.4,
     "changePct": 0.49,
     "shares": 25,
     "cost": 268.5,
@@ -1798,7 +1930,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "CVX": {
     "symbol": "CVX",
     "price": 155.01,
-    "change": -1.20,
+    "change": -1.2,
     "changePct": -0.77,
     "shares": 35,
     "cost": 152.3,
@@ -1817,7 +1949,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "CAT": {
     "symbol": "CAT",
     "price": 361.53,
-    "change": -2.40,
+    "change": -2.4,
     "changePct": -0.66,
     "shares": 20,
     "cost": 245.6,
@@ -1836,7 +1968,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "BA": {
     "symbol": "BA",
     "price": 174.84,
-    "change": 2.50,
+    "change": 2.5,
     "changePct": 1.45,
     "shares": 30,
     "cost": 198.4,
@@ -1874,7 +2006,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "UNP": {
     "symbol": "UNP",
     "price": 231.42,
-    "change": 1.10,
+    "change": 1.1,
     "changePct": 0.48,
     "shares": 25,
     "cost": 220.3,
@@ -1913,11 +2045,11 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "symbol": "CMCSA",
     "price": 36.32,
     "change": -0.22,
-    "changePct": -0.60,
+    "changePct": -0.6,
     "shares": 80,
     "cost": 42.6,
     "todayGain": -17.6,
-    "todayGainPct": -0.60,
+    "todayGainPct": -0.6,
     "revenue": "$123.24",
     "revenueQoQ": "+2.8%",
     "revenueYoY": "+1.6%",
@@ -1931,7 +2063,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "TMUS": {
     "symbol": "TMUS",
     "price": 246.96,
-    "change": 1.60,
+    "change": 1.6,
     "changePct": 0.65,
     "shares": 30,
     "cost": 148.7,
@@ -1988,7 +2120,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "LRCX": {
     "symbol": "LRCX",
     "price": 791.41,
-    "change": -6.20,
+    "change": -6.2,
     "changePct": -0.78,
     "shares": 15,
     "cost": 620.8,
@@ -2007,7 +2139,7 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "KLAC": {
     "symbol": "KLAC",
     "price": 736.75,
-    "change": -3.80,
+    "change": -3.8,
     "changePct": -0.51,
     "shares": 12,
     "cost": 510.3,

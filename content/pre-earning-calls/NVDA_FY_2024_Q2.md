@@ -25,7 +25,7 @@ Management's Q3 guidance of ~$16.0B (±2%) — a 19% QoQ increase from the alrea
 
 **3. Breakthroughs and Challenges**
 
-The breakthrough is absolute: a single chip architecture (H100 Hopper) generating $10.3B in quarterly revenue from scratch validates that NVIDIA had correctly anticipated the training compute requirements for large language models three years before ChatGPT made them commercially visible. Gaming's $2.5B (+11% QoQ) recovery from inventory correction normalizes a second pillar of the business, providing investors with evidence that the Data Center surge didn't cannibalize NVIDIA's traditional markets. The challenge entering the back half of FY2024 is CoWoS packaging capacity: GlobalTech's advanced packaging process is the bottleneck limiting H100 production, not wafer supply — an infrastructure constraint that NVIDIA cannot unilaterally resolve.
+The breakthrough is absolute: a single chip architecture (H100 Hopper) generating $10.3B in quarterly revenue from scratch validates that NVIDIA had correctly anticipated the training compute requirements for large language models three years before ChatGPT made them commercially visible. Gaming's $2.5B (+11% QoQ) recovery from inventory correction normalizes a second pillar of the business, providing investors with evidence that the Data Center surge didn't cannibalize NVIDIA's traditional markets. The challenge entering the back half of FY2024 is CoWoS packaging capacity: advanced packaging is the bottleneck limiting H100 production, not wafer supply — an infrastructure constraint that NVIDIA cannot unilaterally resolve.
 
 **4. Potential "Non-Consensus" Views**
 
