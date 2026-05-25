@@ -1458,9 +1458,9 @@ function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: Ca
       const rows = options.dailyQuotesRows ?? [];
       downloadCSV(zh ? '每日收盤行情.csv' : 'daily-quotes.csv',
         zh
-          ? ['成交日期', '標的代碼', '暫停現股賣出後現款買進當沖註記', '當日沖銷交易成交股數', '當日沖銷交易買進成交金額', '當日沖銷交易賣出成交金額']
-          : ['Trading Date', 'Security Code', 'Suspension Of Buy After Sale Day Trading', 'Volume', 'Day Trading Value Of Buys', 'Trading Value Of Sells'],
-        rows.map((r) => [r.trading_date, r.security_code, r.suspension_of_buy_after_sale_day_trading, r.volume, r.day_trading_value_of_buys, r.trading_value_of_sells]));
+          ? ['標的代碼', '成交日期', '暫停現股賣出後現款買進當沖註記', '當日沖銷交易成交股數', '當日沖銷交易買進成交金額', '當日沖銷交易賣出成交金額']
+          : ['Security Code', 'Trading Date', 'Suspension Of Buy After Sale Day Trading', 'Volume', 'Day Trading Value Of Buys', 'Trading Value Of Sells'],
+        rows.map((r) => [r.security_code, r.trading_date, r.suspension_of_buy_after_sale_day_trading, r.volume, r.day_trading_value_of_buys, r.trading_value_of_sells]));
       break;
     }
     case 'day-trading':
