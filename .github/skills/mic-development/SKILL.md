@@ -167,7 +167,7 @@ Content lives in `content/*.md` with embedded JSON:
 ## Entity Data
 ```json
 {
-  "TSM": { "shares": 120, "cost": 105.3 },
+  "GT": { "shares": 120, "cost": 105.3 },
   "AAPL": { "shares": 45, "cost": 167.8 }
 }
 ```​

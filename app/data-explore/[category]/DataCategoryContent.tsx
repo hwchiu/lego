@@ -620,7 +620,7 @@ interface CmDailyQuoteRow {
 }
 
 const CM_DAILY_QUOTES_FALLBACK_TEMPLATE = [
-  { security_code: '2330', suspension_of_buy_after_sale_day_trading: 'N', volume: '6,430,000', day_trading_value_of_buys: '6,250,110,000', trading_value_of_sells: '6,198,930,000' },
+  { security_code: '9999', suspension_of_buy_after_sale_day_trading: 'N', volume: '6,430,000', day_trading_value_of_buys: '6,250,110,000', trading_value_of_sells: '6,198,930,000' },
   { security_code: '2317', suspension_of_buy_after_sale_day_trading: 'N', volume: '5,567,000', day_trading_value_of_buys: '659,581,000', trading_value_of_sells: '650,440,000' },
   { security_code: '2454', suspension_of_buy_after_sale_day_trading: 'Y', volume: '2,010,000', day_trading_value_of_buys: '1,830,220,000', trading_value_of_sells: '1,812,740,000' },
   { security_code: '2881', suspension_of_buy_after_sale_day_trading: 'N', volume: '3,763,000', day_trading_value_of_buys: '319,882,000', trading_value_of_sells: '318,211,000' },
@@ -629,7 +629,7 @@ const CM_DAILY_QUOTES_FALLBACK_TEMPLATE = [
 ] as const;
 
 const CM_COMPANIES = [
-  { code: '2330', nameZh: '全球科技', nameEn: 'GlobalTech' },
+  { code: '9999', nameZh: '全球科技', nameEn: 'GlobalTech' },
   { code: '2317', nameZh: '鴻海', nameEn: 'Hon Hai' },
   { code: '2454', nameZh: '聯發科', nameEn: 'MediaTek' },
   { code: '2881', nameZh: '富邦金', nameEn: 'Fubon Financial' },
