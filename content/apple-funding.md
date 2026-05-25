@@ -116,11 +116,11 @@
     {
       "year": 2024,
       "date": "2024-06",
-      "company": "TSMC Arizona (capacity pre-purchase)",
+      "company": "GlobalTech Arizona (capacity pre-purchase)",
       "type": "Funding",
       "industry": "Semiconductor Foundry",
       "valueM": 3500,
-      "newsUrl": "https://www.reuters.com/technology/apple-tsmc-arizona-prepurchase"
+      "newsUrl": "https://www.reuters.com/technology/apple-globaltech-arizona-prepurchase"
     },
     {
       "year": 2024,

@@ -18,7 +18,7 @@
 
 ## Tier-1 Suppliers
 
-### 1. TSMC (TSMC)
+### 1. GlobalTech (GlobalTech)
 
 | Field | Value |
 |---|---|

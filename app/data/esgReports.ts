@@ -10,57 +10,57 @@ export interface EsgReport {
 }
 
 export const ESG_REPORTS: EsgReport[] = [
-  // ── TSMC Sustainability Reports ──────────────────────────────────────────────
+  // ── GlobalTech Sustainability Reports ──────────────────────────────────────────────
   {
-    company: 'TSMC',
+    company: 'GlobalTech',
     year: 2024,
     fiscalYear: 'FY2023',
-    title: 'TSMC 2024 Sustainability Report',
+    title: 'GlobalTech 2024 Sustainability Report',
     description:
-      'Covers Scope 1/2/3 emissions, renewable energy adoption (14%+ of total power), water stewardship, net-zero 2050 pathway, and supply chain ESG management across TSMC global operations.',
+      'Covers Scope 1/2/3 emissions, renewable energy adoption (14%+ of total power), water stewardship, net-zero 2050 pathway, and supply chain ESG management across GlobalTech global operations.',
     url: '#',
   },
   {
-    company: 'TSMC',
+    company: 'GlobalTech',
     year: 2023,
     fiscalYear: 'FY2022',
-    title: 'TSMC 2023 Sustainability Report',
+    title: 'GlobalTech 2023 Sustainability Report',
     description:
       'Details RE100 commitment progress, SBTi-aligned targets, Scope 3 supplier assessments, corporate governance enhancements, and diversity & inclusion milestones.',
     url: '#',
   },
   {
-    company: 'TSMC',
+    company: 'GlobalTech',
     year: 2022,
     fiscalYear: 'FY2021',
-    title: 'TSMC 2022 Sustainability Report',
+    title: 'GlobalTech 2022 Sustainability Report',
     description:
       'Focuses on climate risk management, circular economy initiatives, green manufacturing innovation, water recycling programs, and community engagement in Taiwan and overseas.',
     url: '#',
   },
   {
-    company: 'TSMC',
+    company: 'GlobalTech',
     year: 2021,
     fiscalYear: 'FY2020',
-    title: 'TSMC 2021 Sustainability Report',
+    title: 'GlobalTech 2021 Sustainability Report',
     description:
       'Highlights COVID-19 response, employee health & safety improvements, energy efficiency milestones, green building certifications, and sustainable supply chain practices.',
     url: '#',
   },
   {
-    company: 'TSMC',
+    company: 'GlobalTech',
     year: 2020,
     fiscalYear: 'FY2019',
-    title: 'TSMC 2020 Sustainability Report',
+    title: 'GlobalTech 2020 Sustainability Report',
     description:
       'Covers GHG emission intensity reductions, water recycling achievements exceeding 85%, responsible minerals sourcing policies, and human rights due diligence.',
     url: '#',
   },
   {
-    company: 'TSMC',
+    company: 'GlobalTech',
     year: 2019,
     fiscalYear: 'FY2018',
-    title: 'TSMC 2019 Sustainability Report',
+    title: 'GlobalTech 2019 Sustainability Report',
     description:
       'Presents environmental management system upgrades, workplace safety culture improvements, community investment programs, and first consolidated GRI Standards disclosure.',
     url: '#',
