@@ -336,12 +336,12 @@
     "invest_num": 6
   },
   {
-    "org_url": "https://www.reuters.com/technology/apple-tsmc-arizona-capacity",
+    "org_url": "https://www.reuters.com/technology/apple-globaltech-arizona-capacity",
     "fund_type": "Capacity Commitment",
     "fund_amount": 3500000000,
     "fund_amount_curr": "USD",
     "money_raised_curr": "USD",
-    "trans_name": "Capacity Commitment - TSMC Arizona Fab",
+    "trans_name": "Capacity Commitment - GlobalTech Arizona Fab",
     "fund_amount_usd": 3500000000,
     "co_cd": "AAPL",
     "update_dt": "2024-06-01 17:55:49.277",
@@ -350,8 +350,8 @@
     "org_catg": "Semiconductor Foundry",
     "create_dt": "2024-06-01 10:59:01.76",
     "money_raised_usd": 3500000000,
-    "trans_name_url": "https://www.reuters.com/technology/apple-tsmc-arizona-capacity",
-    "org_name": "TSMC Arizona Fab",
+    "trans_name_url": "https://www.reuters.com/technology/apple-globaltech-arizona-capacity",
+    "org_name": "GlobalTech Arizona Fab",
     "money_raised": 3500000000,
     "invest_name": "Apple Inc.",
     "invest_num": 1
