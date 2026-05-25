@@ -33,6 +33,23 @@ function isCapitalMarketsInnerTab(tabId: string | null): tabId is (typeof CAPITA
   return tabId !== null && CAPITAL_MARKETS_INNER_TAB_IDS.includes(tabId as (typeof CAPITAL_MARKETS_INNER_TAB_IDS)[number]);
 }
 
+function toIsoDate(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+function getTodayIsoDate(): string {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return toIsoDate(today);
+}
+
+function getYesterdayIsoDate(): string {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() - 1);
+  return toIsoDate(d);
+}
+
 const CAT_IMAGES: Record<string, string> = {
   'esg': 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=900&q=80',
   'government-regulations': 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=900&q=80',
@@ -593,6 +610,15 @@ const ESG_TABS = [
 
 // ── Capital Markets data ──────────────────────────────────────────────────────
 
+interface CmDailyQuoteRow {
+  trading_date: string;
+  security_code: string;
+  suspension_of_buy_after_sale_day_trading: string;
+  volume: string;
+  day_trading_value_of_buys: string;
+  trading_value_of_sells: string;
+}
+
 const CM_COMPANIES = [
   { code: '2330', nameZh: '台積電', nameEn: 'TSMC' },
   { code: '2317', nameZh: '鴻海', nameEn: 'Hon Hai' },
@@ -907,52 +933,70 @@ function CmNameCell({ lang, code, nameZh, nameEn }: { lang: 'zh' | 'en'; code: s
   );
 }
 
-function CmDailyQuotesTab({ lang }: { lang: 'zh' | 'en' }) {
+interface CmDailyQuotesTabProps {
+  lang: 'zh' | 'en';
+  rowsData: CmDailyQuoteRow[];
+  loading: boolean;
+  error: string | null;
+  onVisibleRowsChange: (rows: CmDailyQuoteRow[]) => void;
+}
+
+function CmDailyQuotesTab({ lang, rowsData, loading, error, onVisibleRowsChange }: CmDailyQuotesTabProps) {
   const zh = lang === 'zh';
   const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
-    CM_DAILY_QUOTES,
+    rowsData,
     [
-      (r) => r.code,
-      (r) => (zh ? r.nameZh : r.nameEn),
-      (r) => r.vol,
-      (r) => r.amount,
-      (r) => r.open,
-      (r) => r.high,
-      (r) => r.low,
-      (r) => r.close,
-      (r) => r.change,
-      (r) => r.txn,
+      (r) => r.trading_date,
+      (r) => r.security_code,
+      (r) => r.suspension_of_buy_after_sale_day_trading,
+      (r) => r.volume,
+      (r) => r.day_trading_value_of_buys,
+      (r) => r.trading_value_of_sells,
     ],
   );
+
+  useEffect(() => {
+    onVisibleRowsChange(rows);
+  }, [rows, onVisibleRowsChange]);
+
+  if (loading) {
+    return (
+      <CmTableWrapper>
+        <div className="de-empty-state">{zh ? '載入中…' : 'Loading...'}</div>
+      </CmTableWrapper>
+    );
+  }
+
+  if (error) {
+    return (
+      <CmTableWrapper>
+        <div className="de-empty-state">{error}</div>
+      </CmTableWrapper>
+    );
+  }
+
   return (
     <CmTableWrapper>
       <table className="de-data-table">
         <thead>
           <tr>
-            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
-            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
-            <ThSortFilter label={zh ? '成交股數' : 'Volume'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '成交金額' : 'Amount (NT$)'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '開盤價' : 'Open'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '最高價' : 'High'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '最低價' : 'Low'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '收盤價' : 'Close'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '漲跌' : 'Change'} colIndex={8} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[8] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '成交筆數' : 'Transactions'} colIndex={9} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[9] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '成交日期' : 'Trading Date'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+            <ThSortFilter label={zh ? '標的代碼' : 'Security Code'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+            <ThSortFilter label={zh ? '暫停現股賣出後現款買進當沖註記' : 'Suspension Of Buy After Sale Day Trading'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} />
+            <ThSortFilter label={zh ? '當日沖銷交易成交股數' : 'Volume'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '當日沖銷交易買進成交金額' : 'Day Trading Value Of Buys'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
+            <ThSortFilter label={zh ? '當日沖銷交易賣出成交金額' : 'Trading Value Of Sells'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
           </tr>
         </thead>
         <tbody>
           {rows.map((r) => (
-            <tr key={r.code}>
-              <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{fmtNum(r.vol)}</td>
-              <td className="num">{fmtNum(r.amount)}</td>
-              <td className="num">{fmtNum(r.open)}</td>
-              <td className="num">{fmtNum(r.high)}</td>
-              <td className="num">{fmtNum(r.low)}</td>
-              <td className="num">{fmtNum(r.close)}</td>
-              <td className="num">{fmtNum(r.change)}</td>
-              <td className="num">{fmtNum(r.txn)}</td>
+            <tr key={`${r.security_code}-${r.trading_date}`}>
+              <td>{r.trading_date}</td>
+              <td className="code">{r.security_code}</td>
+              <td>{r.suspension_of_buy_after_sale_day_trading}</td>
+              <td className="num">{fmtNum(r.volume)}</td>
+              <td className="num">{fmtNum(r.day_trading_value_of_buys)}</td>
+              <td className="num">{fmtNum(r.trading_value_of_sells)}</td>
             </tr>
           ))}
         </tbody>
@@ -1236,14 +1280,19 @@ function CmDatePicker({ lang, selectedDate, onSelect, onSearch, onClear }: CmDat
     d.setHours(0, 0, 0, 0);
     return d;
   }, []);
-  const minDate = useMemo(() => {
+  const maxSelectableDate = useMemo(() => {
     const d = new Date(today);
-    d.setMonth(d.getMonth() - 3);
+    d.setDate(d.getDate() - 1);
     return d;
   }, [today]);
+  const minDate = useMemo(() => {
+    const d = new Date(maxSelectableDate);
+    d.setMonth(d.getMonth() - 3);
+    return d;
+  }, [maxSelectableDate]);
 
-  const [viewYear, setViewYear] = useState(today.getFullYear());
-  const [viewMonth, setViewMonth] = useState(today.getMonth());
+  const [viewYear, setViewYear] = useState(maxSelectableDate.getFullYear());
+  const [viewMonth, setViewMonth] = useState(maxSelectableDate.getMonth());
   const [calOpen, setCalOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement | null>(null);
 
@@ -1263,7 +1312,7 @@ function CmDatePicker({ lang, selectedDate, onSelect, onSearch, onClear }: CmDat
 
   function isDisabled(y: number, m: number, d: number): boolean {
     const dt = new Date(y, m, d);
-    return dt < minDate || dt > today;
+    return dt < minDate || dt > maxSelectableDate;
   }
 
   function buildCalendar() {
@@ -1283,7 +1332,7 @@ function CmDatePicker({ lang, selectedDate, onSelect, onSearch, onClear }: CmDat
     const nextM = viewMonth === 11 ? 0 : viewMonth + 1;
     const nextY = viewMonth === 11 ? viewYear + 1 : viewYear;
     const firstOfNext = new Date(nextY, nextM, 1);
-    if (firstOfNext > today) return;
+    if (firstOfNext > maxSelectableDate) return;
     if (viewMonth === 11) { setViewYear(y => y + 1); setViewMonth(0); }
     else setViewMonth(m => m + 1);
   }
@@ -1291,7 +1340,7 @@ function CmDatePicker({ lang, selectedDate, onSelect, onSearch, onClear }: CmDat
   const canGoNext = (() => {
     const nextM = viewMonth === 11 ? 0 : viewMonth + 1;
     const nextY = viewMonth === 11 ? viewYear + 1 : viewYear;
-    return new Date(nextY, nextM, 1) <= today;
+    return new Date(nextY, nextM, 1) <= maxSelectableDate;
   })();
 
   const canGoPrev = (() => {
@@ -1363,7 +1412,7 @@ function CmDatePicker({ lang, selectedDate, onSelect, onSearch, onClear }: CmDat
             })}
           </div>
           <div className="de-cm-cal-hint">
-            {zh ? `可選範圍：${minDate.toLocaleDateString('zh-TW')} – 今天` : `Range: ${minDate.toLocaleDateString('en-US')} – Today`}
+            {zh ? `可選範圍：${minDate.toLocaleDateString('zh-TW')} – 昨天` : `Range: ${minDate.toLocaleDateString('en-US')} – Yesterday`}
           </div>
         </div>
       )}
@@ -1389,14 +1438,22 @@ function CmDatePicker({ lang, selectedDate, onSelect, onSearch, onClear }: CmDat
 
 // ── CSV download helpers for Capital Markets ──────────────────────────────────
 
-function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en') {
+interface CapitalMarketsCsvOptions {
+  dailyQuotesRows?: CmDailyQuoteRow[];
+}
+
+function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: CapitalMarketsCsvOptions = {}) {
   const zh = lang === 'zh';
   switch (tabId) {
-    case 'daily-quotes':
+    case 'daily-quotes': {
+      const rows = options.dailyQuotesRows ?? [];
       downloadCSV(zh ? '每日收盤行情.csv' : 'daily-quotes.csv',
-        zh ? ['股票代號','名稱','成交股數','成交金額','開盤價','最高價','最低價','收盤價','漲跌','成交筆數'] : ['Code','Name','Volume','Amount (NT$)','Open','High','Low','Close','Change','Transactions'],
-        CM_DAILY_QUOTES.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.vol, r.amount, r.open, r.high, r.low, r.close, r.change, r.txn]));
+        zh
+          ? ['成交日期', '標的代碼', '暫停現股賣出後現款買進當沖註記', '當日沖銷交易成交股數', '當日沖銷交易買進成交金額', '當日沖銷交易賣出成交金額']
+          : ['Trading Date', 'Security Code', 'Suspension Of Buy After Sale Day Trading', 'Volume', 'Day Trading Value Of Buys', 'Trading Value Of Sells'],
+        rows.map((r) => [r.trading_date, r.security_code, r.suspension_of_buy_after_sale_day_trading, r.volume, r.day_trading_value_of_buys, r.trading_value_of_sells]));
       break;
+    }
     case 'day-trading':
       downloadCSV(zh ? '每日沖銷交易.csv' : 'day-trading.csv',
         zh ? ['股票代號','名稱','當沖買進股數','當沖賣出股數','當沖成交股數','占總成交股數比'] : ['Code','Name','Day-Trade Buy','Day-Trade Sell','Day-Trade Volume','% of Total Vol.'],
@@ -1446,8 +1503,13 @@ interface CapitalMarketsLayoutProps {
 
 function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }: CapitalMarketsLayoutProps) {
   const zh = lang === 'zh';
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [searchDate, setSearchDate] = useState<string | null>(null);
+  const defaultQueryDate = useMemo(() => getYesterdayIsoDate(), []);
+  const [selectedDate, setSelectedDate] = useState<string | null>(defaultQueryDate);
+  const [searchDate, setSearchDate] = useState<string>(defaultQueryDate);
+  const [dailyQuoteRows, setDailyQuoteRows] = useState<CmDailyQuoteRow[]>([]);
+  const [dailyQuoteVisibleRows, setDailyQuoteVisibleRows] = useState<CmDailyQuoteRow[]>([]);
+  const [dailyQuotesLoading, setDailyQuotesLoading] = useState(false);
+  const [dailyQuotesError, setDailyQuotesError] = useState<string | null>(null);
 
   const CM_INNER_TABS = [
     { id: 'daily-quotes',      label: zh ? '每日收盤行情' : 'Daily Quotes' },
@@ -1460,15 +1522,48 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     { id: 'pe-ratio',          label: zh ? '個股日本益比、殖利率及股價淨值比' : 'P/E Ratio, Dividend Yield, P/B Ratio' },
   ];
 
+  const queryDailyQuotes = useCallback(async (date: string) => {
+    setDailyQuotesLoading(true);
+    setDailyQuotesError(null);
+    try {
+      const rows = await fetchDailyQuotesRowsByDate(date);
+      setDailyQuoteRows(rows);
+      setDailyQuoteVisibleRows(rows);
+    } catch (error) {
+      setDailyQuotesError(error instanceof Error ? error.message : (zh ? '資料讀取失敗' : 'Failed to load data'));
+      setDailyQuoteRows([]);
+      setDailyQuoteVisibleRows([]);
+    } finally {
+      setDailyQuotesLoading(false);
+    }
+  }, [zh]);
+
+  useEffect(() => {
+    if (activeCmTab !== 'daily-quotes') return;
+    setSelectedDate(defaultQueryDate);
+    setSearchDate(defaultQueryDate);
+    queryDailyQuotes(defaultQueryDate);
+  }, [activeCmTab, defaultQueryDate, queryDailyQuotes]);
+
   function handleSearch() {
+    if (!selectedDate) return;
     setSearchDate(selectedDate);
+    if (activeCmTab === 'daily-quotes') {
+      queryDailyQuotes(selectedDate);
+    }
   }
   function handleClear() {
     setSelectedDate(null);
-    setSearchDate(null);
+    const todayDate = getTodayIsoDate();
+    setSearchDate(todayDate);
+    if (activeCmTab === 'daily-quotes') {
+      queryDailyQuotes(todayDate);
+    }
   }
   function handleDownload() {
-    downloadCapitalMarketsCSV(activeCmTab, lang);
+    downloadCapitalMarketsCSV(activeCmTab, lang, {
+      dailyQuotesRows: dailyQuoteVisibleRows,
+    });
   }
 
   return (
@@ -1496,9 +1591,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
               onSearch={handleSearch}
               onClear={handleClear}
             />
-            {searchDate && (
-              <span className="de-cm-ref-date">{zh ? `查詢日期：${searchDate}` : `Date: ${searchDate}`}</span>
-            )}
+            <span className="de-cm-ref-date">{zh ? `查詢日期：${searchDate}` : `Date: ${searchDate}`}</span>
           </div>
           <div className="de-cm-content-toolbar-right">
             <button className="de-news-download-btn de-gov-csv-btn" onClick={handleDownload}>
@@ -1507,7 +1600,15 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
             </button>
           </div>
         </div>
-        {activeCmTab === 'daily-quotes'      && <CmDailyQuotesTab lang={lang} />}
+        {activeCmTab === 'daily-quotes'      && (
+          <CmDailyQuotesTab
+            lang={lang}
+            rowsData={dailyQuoteRows}
+            loading={dailyQuotesLoading}
+            error={dailyQuotesError}
+            onVisibleRowsChange={setDailyQuoteVisibleRows}
+          />
+        )}
         {activeCmTab === 'day-trading'       && <CmDayTradingTab lang={lang} />}
         {activeCmTab === 'margin'            && <CmMarginTab lang={lang} />}
         {activeCmTab === 'short-sale'        && <CmShortSaleTab lang={lang} />}
@@ -1558,6 +1659,17 @@ interface GovLaborRow {
 
 const APP_BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? '/lego';
 const GOV_ERROR_TEXT_MAX_LENGTH = 200;
+
+async function fetchDailyQuotesRowsByDate(date: string): Promise<CmDailyQuoteRow[]> {
+  const url = new URL(`${APP_BASE_PATH}/api/getDailyQuotesByDate`, window.location.origin);
+  url.searchParams.set('date', date);
+  const res = await fetch(url.toString());
+  if (!res.ok) {
+    throw new Error(`Failed to fetch getDailyQuotesByDate (${res.status} ${res.statusText})`);
+  }
+  const data = (await res.json()) as { items: CmDailyQuoteRow[] };
+  return data.items;
+}
 
 async function fetchGovRows<T>(endpoint: string): Promise<T[]> {
   const res = await fetch(`${APP_BASE_PATH}/api/${endpoint}`);
@@ -2675,16 +2787,12 @@ export default function DataCategoryContent({ params }: { params: { category: st
   const updateCapitalTabQuery = useCallback((nextTab: (typeof CAPITAL_MARKETS_INNER_TAB_IDS)[number]) => {
     if (!isCapital) return;
     const currentTab = searchParams.get('tab');
-    if (currentTab === nextTab || (nextTab === DEFAULT_CM_TAB && !currentTab)) {
+    if (currentTab === nextTab) {
       return;
     }
 
     const nextSearchParams = new URLSearchParams(searchParams.toString());
-    if (nextTab === DEFAULT_CM_TAB) {
-      nextSearchParams.delete('tab');
-    } else {
-      nextSearchParams.set('tab', nextTab);
-    }
+    nextSearchParams.set('tab', nextTab);
     const nextQuery = nextSearchParams.toString();
     router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, { scroll: false });
   }, [isCapital, pathname, router, searchParams]);
@@ -2702,7 +2810,8 @@ export default function DataCategoryContent({ params }: { params: { category: st
       return;
     }
     setActiveCmTab(DEFAULT_CM_TAB);
-  }, [isCapital, searchParams]);
+    updateCapitalTabQuery(DEFAULT_CM_TAB);
+  }, [isCapital, searchParams, updateCapitalTabQuery]);
 
   if (!cat) {
     return (
