@@ -110,7 +110,7 @@
     "date": "2025-10-16",
     "summary": "TSMC guided Q4 2025 revenue of US$32.2–33.4 billion, with gross margin of 57–59% and operating margin of 47–49%. The guidance implies continued sequential growth despite normal seasonal smartphone demand fluctuations, underpinned by sustained AI accelerator and HPC demand from NVIDIA, AMD, and hyperscale cloud customers.",
     "tags": ["Q4 2025", "Guidance", "Revenue", "Margin"],
-    "url": "https://investor.tsmc.com/english/quarterly-results/2025/q4"
+    "url": "#"
   }
 ]
 ```

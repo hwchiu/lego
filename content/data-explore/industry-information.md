@@ -11,7 +11,7 @@
     "date": "2024-04-18",
     "summary": "TSMC redefined its business scope as 'Foundry 2.0,' incorporating advanced packaging, testing, and mask-making in addition to traditional wafer fabrication. Advanced packaging (CoWoS, SoIC) now accounts for 7–10% of TSMC's total revenue and is growing rapidly, driven by AI and HPC chip demand.",
     "tags": ["Foundry 2.0", "TSMC", "Advanced Packaging", "Strategy"],
-    "url": "https://investor.tsmc.com/sites/ir/annual-report/2024/2024%20Annual%20Report-E.pdf"
+    "url": "#"
   },
   {
     "id": "ind-002",
