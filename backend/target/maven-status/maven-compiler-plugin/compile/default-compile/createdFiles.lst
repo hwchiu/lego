@@ -1,0 +1,11 @@
+com/mic/search/domain/model/SearchDocument.class
+com/mic/search/interfaces/rest/SearchController.class
+com/mic/search/infrastructure/elasticsearch/config/ElasticsearchConfig.class
+com/mic/search/interfaces/rest/dto/SearchRequest.class
+com/mic/search/application/service/SearchIndexService.class
+com/mic/search/interfaces/rest/dto/SearchResponse.class
+com/mic/search/infrastructure/elasticsearch/repository/SearchDocumentRepositoryImpl.class
+com/mic/search/SearchBackendApplication.class
+com/mic/search/infrastructure/elasticsearch/initializer/DataInitializer.class
+com/mic/search/infrastructure/elasticsearch/repository/EsSearchDocumentRepository.class
+com/mic/search/domain/repository/SearchDocumentRepository.class

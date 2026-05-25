@@ -1,0 +1,44 @@
+nohup: ignoring input
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.1)
+
+2026-05-13T03:50:43.276Z  INFO 381367 --- [search-backend] [           main] c.mic.search.SearchBackendApplication    : Starting SearchBackendApplication v1.0.0 using Java 21.0.10 with PID 381367 (/home/ubuntu/lego/backend/target/search-backend.jar started by ubuntu in /home/ubuntu/lego/backend)
+2026-05-13T03:50:43.278Z DEBUG 381367 --- [search-backend] [           main] c.mic.search.SearchBackendApplication    : Running with Spring Boot v3.4.1, Spring v6.2.1
+2026-05-13T03:50:43.279Z  INFO 381367 --- [search-backend] [           main] c.mic.search.SearchBackendApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-05-13T03:50:43.938Z  INFO 381367 --- [search-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Elasticsearch repositories in DEFAULT mode.
+2026-05-13T03:50:43.985Z  INFO 381367 --- [search-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 42 ms. Found 1 Elasticsearch repository interface.
+2026-05-13T03:50:44.271Z  INFO 381367 --- [search-backend] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-05-13T03:50:44.281Z  INFO 381367 --- [search-backend] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-13T03:50:44.281Z  INFO 381367 --- [search-backend] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.34]
+2026-05-13T03:50:44.301Z  INFO 381367 --- [search-backend] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-05-13T03:50:44.302Z  INFO 381367 --- [search-backend] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 980 ms
+2026-05-13T03:50:45.663Z  INFO 381367 --- [search-backend] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoints beneath base path '/actuator'
+2026-05-13T03:50:45.699Z  INFO 381367 --- [search-backend] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-05-13T03:50:45.709Z  INFO 381367 --- [search-backend] [           main] c.mic.search.SearchBackendApplication    : Started SearchBackendApplication in 2.816 seconds (process running for 3.234)
+2026-05-13T03:50:45.902Z  INFO 381367 --- [search-backend] [           main] c.m.s.i.e.initializer.DataInitializer    : DataInitializer: seeding 10 mock documents...
+2026-05-13T03:50:46.070Z  INFO 381367 --- [search-backend] [           main] c.m.s.i.e.initializer.DataInitializer    : DataInitializer: seed complete. Total documents: 10
+2026-05-13T03:51:06.681Z  INFO 381367 --- [search-backend] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-13T03:51:06.682Z  INFO 381367 --- [search-backend] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-05-13T03:51:06.683Z  INFO 381367 --- [search-backend] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-05-13T04:22:10.023Z  INFO 381367 --- [search-backend] [nio-8080-exec-9] o.apache.coyote.http11.Http11Processor   : Error parsing HTTP request header
+ Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
+
+java.lang.IllegalArgumentException: Invalid character found in method name [0x160x030x010x000xee0x010x000x000xea0x030x030x110xf8`0xed0x05]#0x91bz0x18d0x1a]0xe1p0xe4q0xc60x0a0x8d0xd60xfb0xb80xfdhj0x8f0x970xb60x98S ]. HTTP method names must be tokens
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:406) ~[tomcat-embed-core-10.1.34.jar!/:na]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:270) ~[tomcat-embed-core-10.1.34.jar!/:na]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.34.jar!/:na]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905) ~[tomcat-embed-core-10.1.34.jar!/:na]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) ~[tomcat-embed-core-10.1.34.jar!/:na]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.34.jar!/:na]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190) ~[tomcat-embed-core-10.1.34.jar!/:na]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.34.jar!/:na]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.34.jar!/:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+

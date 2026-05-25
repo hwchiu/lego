@@ -1,0 +1,11 @@
+/home/ubuntu/lego/backend/src/main/java/com/mic/search/SearchBackendApplication.java
+/home/ubuntu/lego/backend/src/main/java/com/mic/search/application/service/SearchIndexService.java
+/home/ubuntu/lego/backend/src/main/java/com/mic/search/domain/model/SearchDocument.java
+/home/ubuntu/lego/backend/src/main/java/com/mic/search/domain/repository/SearchDocumentRepository.java
+/home/ubuntu/lego/backend/src/main/java/com/mic/search/infrastructure/elasticsearch/config/ElasticsearchConfig.java
+/home/ubuntu/lego/backend/src/main/java/com/mic/search/infrastructure/elasticsearch/initializer/DataInitializer.java
+/home/ubuntu/lego/backend/src/main/java/com/mic/search/infrastructure/elasticsearch/repository/EsSearchDocumentRepository.java
+/home/ubuntu/lego/backend/src/main/java/com/mic/search/infrastructure/elasticsearch/repository/SearchDocumentRepositoryImpl.java
+/home/ubuntu/lego/backend/src/main/java/com/mic/search/interfaces/rest/SearchController.java
+/home/ubuntu/lego/backend/src/main/java/com/mic/search/interfaces/rest/dto/SearchRequest.java
+/home/ubuntu/lego/backend/src/main/java/com/mic/search/interfaces/rest/dto/SearchResponse.java
