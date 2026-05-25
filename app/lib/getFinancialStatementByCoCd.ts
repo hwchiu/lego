@@ -135,7 +135,7 @@ const MD_FIN_CONFIG: Record<
   string,
   { mdContent: string; sections: Partial<Record<'income' | 'balance' | 'cashflow', string>> }
 > = {
-  TC: {
+  INTC: {
     mdContent: tcFinStmtMd as string,
     sections: {
       income:   'Income Statement',

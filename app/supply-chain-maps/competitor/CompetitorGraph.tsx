@@ -27,7 +27,7 @@ const CORNER_R = 12;
 const NODE_STRIP_COLOR = '#9a3412';
 
 // ID of the center node
-const CENTER_NODE_ID = 'TC';
+const CENTER_NODE_ID = 'INTC';
 
 // ── Static lookups (computed once) ───────────────────────────────────────────
 
@@ -609,7 +609,7 @@ function CompetitorTable() {
   return (
     <div className="rmap-supplier-table-wrap">
       <div className="rmap-supplier-table-section">
-        <div className="rmap-supplier-table-title">TSMC Competitors by Market Share</div>
+        <div className="rmap-supplier-table-title">Intel Competitors by Market Share</div>
         <table className="rmap-supplier-table">
           <thead>
             <tr>
@@ -920,7 +920,7 @@ export default function CompetitorGraph({ tableOnly }: CompetitorGraphProps) {
             ref={svgRef}
             viewBox={vbStr}
             className="rmap-svg"
-            aria-label="TSMC Competitor Relationship Graph"
+            aria-label="Intel Competitor Relationship Graph"
             onMouseDown={handleSvgMouseDown}
             onMouseMove={handleSvgMouseMove}
             onMouseUp={clearDrag}
