@@ -1531,13 +1531,13 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   const zh = lang === 'zh';
   const defaultQueryDate = useMemo(() => getYesterdayIsoDate(), []);
   const [selectedDate, setSelectedDate] = useState<string | null>(defaultQueryDate);
-  const [searchDate, setSearchDate] = useState<string>(defaultQueryDate);
   const [dailyQuoteRows, setDailyQuoteRows] = useState<CmDailyQuoteRow[]>([]);
   const [dailyQuoteVisibleRows, setDailyQuoteVisibleRows] = useState<CmDailyQuoteRow[]>([]);
   const [dailyQuotesLoading, setDailyQuotesLoading] = useState(false);
   const [dailyQuotesError, setDailyQuotesError] = useState<string | null>(null);
   const [updateDatetime, setUpdateDatetime] = useState<string | null>(null);
   const [updateDatetimeLoading, setUpdateDatetimeLoading] = useState(false);
+  const updateDatetimeDisplay = updateDatetime ?? getTodayIsoDate();
 
   const CM_INNER_TABS = [
     { id: 'daily-quotes',      label: zh ? '每日收盤行情' : 'Daily Quotes' },
@@ -1569,7 +1569,6 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   useEffect(() => {
     if (activeCmTab !== 'daily-quotes') return;
     setSelectedDate(defaultQueryDate);
-    setSearchDate(defaultQueryDate);
     queryDailyQuotes(defaultQueryDate);
   }, [activeCmTab, defaultQueryDate, queryDailyQuotes]);
 
@@ -1609,7 +1608,6 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
 
   function handleSearch() {
     if (!selectedDate) return;
-    setSearchDate(selectedDate);
     if (activeCmTab === 'daily-quotes') {
       queryDailyQuotes(selectedDate);
     }
@@ -1617,7 +1615,6 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   function handleClear() {
     setSelectedDate(null);
     const todayDate = getTodayIsoDate();
-    setSearchDate(todayDate);
     if (activeCmTab === 'daily-quotes') {
       queryDailyQuotes(todayDate);
     }
@@ -1659,9 +1656,8 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
               onSearch={handleSearch}
               onClear={handleClear}
             />
-            <span className="de-cm-ref-date">{zh ? `查詢日期：${searchDate}` : `Date: ${searchDate}`}</span>
             <span className="de-cm-ref-date">
-              tMIC Update Date: {updateDatetimeLoading ? (zh ? '載入中…' : 'Loading...') : (updateDatetime ?? '—')}
+              tMIC Update Date: {updateDatetimeLoading ? (zh ? '載入中…' : 'Loading...') : updateDatetimeDisplay}
             </span>
           </div>
           <div className="de-cm-content-toolbar-right">
