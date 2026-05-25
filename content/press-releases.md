@@ -1240,7 +1240,7 @@ Data sourced from public press releases of GlobalTech's key ecosystem partners.
     "id": "pr-057",
     "title": "GlobalTech Reports April 2026 Revenue of NT$296.4B; N2 Yields Surpass Industry Milestone",
     "company": "GlobalTech",
-    "ticker": "TSM",
+    "ticker": "GT",
     "relationship": "customer",
     "industry": "Semiconductors",
     "topics": [
@@ -1372,7 +1372,7 @@ Data sourced from public press releases of GlobalTech's key ecosystem partners.
     "id": "pr-063",
     "title": "GlobalTech Announces CoWoS-X Advanced Packaging Platform for 3D AI Chiplet Integration",
     "company": "GlobalTech",
-    "ticker": "TSM",
+    "ticker": "GT",
     "relationship": "customer",
     "industry": "Semiconductors",
     "topics": [
@@ -1526,7 +1526,7 @@ Data sourced from public press releases of GlobalTech's key ecosystem partners.
     "id": "pr-070",
     "title": "GlobalTech Hosts 2026 Technology Symposium; N2P and A16 Roadmap Details Disclosed",
     "company": "GlobalTech",
-    "ticker": "TSM",
+    "ticker": "GT",
     "relationship": "customer",
     "industry": "Semiconductors",
     "topics": [
@@ -1944,7 +1944,7 @@ Data sourced from public press releases of GlobalTech's key ecosystem partners.
     "id": "pr-089",
     "title": "GlobalTech Reports April 2026 Revenue of NT$349.6 Billion, Up 48.1% YoY",
     "company": "GlobalTech",
-    "ticker": "TSM",
+    "ticker": "GT",
     "relationship": "customer",
     "industry": "Semiconductors",
     "topics": [

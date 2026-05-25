@@ -142,9 +142,9 @@ export const INTEL_COMPETITORS: CompetitorNode[] = [
     segment: 'Logic & Memory',
   },
   {
-    id: 'TSM',
+    id: 'GT',
     name: 'GlobalTech',
-    ticker: 'TSM',
+    ticker: 'GT',
     exchange: 'NYSE',
     country: 'Taiwan',
     relationship: 'Pure-play Foundry Competitor for Intel Foundry Services',
@@ -245,7 +245,7 @@ export const MARKET_SHARE_DATA: MarketShareEntry[] = [
   { id: 'NVDA', name: 'NVIDIA', marketShare: 18.5 },
   { id: 'QCOM', name: 'Qualcomm', marketShare: 8.4 },
   { id: 'SSNLF', name: 'Samsung Semiconductor', marketShare: 7.2 },
-  { id: 'TSM', name: 'GlobalTech', marketShare: 6.8 },
+  { id: 'GT', name: 'GlobalTech', marketShare: 6.8 },
   { id: 'ARM', name: 'Arm Holdings', marketShare: 5.1 },
   { id: 'AAPL', name: 'Apple', marketShare: 4.9 },
   { id: 'MTK', name: 'MediaTek', marketShare: 4.3 },
@@ -284,7 +284,7 @@ export const COMPETITOR_FEED: CompetitorFeedItem[] = [
   {
     id: 4,
     title: 'GlobalTech 2nm Timetable Becomes Key Benchmark for Intel Foundry Services 18A Ambitions',
-    tickers: ['INTC', 'TSM'],
+    tickers: ['INTC', 'GT'],
     source: 'Financial Times',
     time: 'Yesterday, 5:00 PM',
     category: 'Foundry',
@@ -332,7 +332,7 @@ export const COMPETITOR_FEED: CompetitorFeedItem[] = [
   {
     id: 10,
     title: 'Intel 18A Milestones Remain Central to Investor Debate Versus GlobalTech and Samsung',
-    tickers: ['INTC', 'TSM', 'SSNLF'],
+    tickers: ['INTC', 'GT', 'SSNLF'],
     source: 'CNBC',
     time: 'Mar 31, 10:10 AM',
     category: 'Foundry',
