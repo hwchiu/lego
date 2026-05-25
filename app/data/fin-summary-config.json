@@ -1,0 +1,15 @@
+{
+  "financialIndices": [
+    { "index": "Revenue",                  "rpt_fin_type": "income",  "rpt_fin_item": "Revenue ($M)" },
+    { "index": "Gross Profit",             "rpt_fin_type": "income",  "rpt_fin_item": "Gross Income ($M)" },
+    { "index": "Gross Margin",             "rpt_fin_type": "income",  "rpt_fin_item": "Gross Margin (%)" },
+    { "index": "Operating Margin",         "rpt_fin_type": "income",  "rpt_fin_item": "Operating Margin (%)" },
+    { "index": "Net Income",               "rpt_fin_type": "income",  "rpt_fin_item": "Net Income" },
+    { "index": "Net Margin",               "rpt_fin_type": "income",  "rpt_fin_item": "Net Margin (%)" },
+    { "index": "Cash & Cash Equivalents",  "rpt_fin_type": "balance", "rpt_fin_item": "  Cash & Cash Equivalents" }
+  ],
+  "doiRevenue": [
+    { "index": "DOI",     "rpt_fin_type": "balance", "rpt_fin_item": "Ending Point DOI" },
+    { "index": "Revenue", "rpt_fin_type": "income",  "rpt_fin_item": "Revenue ($M)" }
+  ]
+}

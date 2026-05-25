@@ -1,0 +1,115 @@
+// ─── Types matching the JSON API format ────────────────────────────────────
+
+export interface EventCalendarSummaryItem {
+  EVENT_YEAR: string;
+  EVENT_MONTH: string;
+  EVENT_DATE: string;
+  EVENT_COUNT: string;
+  EVENT_COMPANY_LIST: string;
+  EVENT_TYPE: string;
+}
+
+export interface EventCalendarDetailItem {
+  COMPANY_NAME: string;
+  CONTACT_EMAIL: string;
+  CONTACT_NAME: string;
+  CONTACT_PHONE: string;
+  CO_CD: string;
+  CO_SHORT_NAME: string;
+  DESCRIPTION: string;
+  EVENT_DATETIME: string;
+  EVENT_ID: string;
+  EVENT_TYPE: string;
+  FISCAL_PERIOD: string;
+  FISCAL_QUARTER: string;
+  FISCAL_YEAR: string;
+  IR_LINK: string;
+  IS_SUB: boolean;
+  LAST_MODIFY_DATETIME: string;
+  MARKET_TIME_CODE: string;
+  TICKER: string;
+  WEBCAST_LINK: string;
+}
+
+// ─── Calendar cell data derived from summary ────────────────────────────────
+
+export interface CalendarCellData {
+  companies: string[];
+  count: number;
+}
+
+/** Map: "Apr 7" → CalendarCellData */
+export type CalendarSummaryMap = Record<string, CalendarCellData>;
+
+// ─── API functions ──────────────────────────────────────────────────────────
+
+const SUMMARY_URL = '/lego/data/event-calendar-summary.json';
+const DETAIL_URL = '/lego/data/event-calendar-detail.json';
+
+/**
+ * Fetch summary items for a given year, month and event category.
+ * @param year           Calendar year as a string, e.g. "2026"
+ * @param month          Calendar month number as a string, e.g. "4" for April
+ * @param eventType  Event category label, or "All" for the full unfiltered summary
+ */
+export async function getEventCalendarSummary(
+  year: string,
+  month: string,
+  eventType: string,
+): Promise<EventCalendarSummaryItem[]> {
+  const res = await fetch(SUMMARY_URL);
+  if (!res.ok) throw new Error(`Failed to fetch event calendar summary: ${res.status}`);
+  const allItems = (await res.json()) as EventCalendarSummaryItem[];
+  return allItems.filter(
+    (item) => item.EVENT_YEAR === year && item.EVENT_MONTH === month && item.EVENT_TYPE === eventType,
+  );
+}
+
+/**
+ * Fetch event detail records filtered by date and event category.
+ * @param dateLabel  Date in "YYYY-MM-DD" format, e.g. "2026-04-07"
+ * @param category   Event category label, or "All" for no category filter
+ */
+export async function getEventCalendarDetail(
+  dateLabel: string,
+  category: string,
+): Promise<EventCalendarDetailItem[]> {
+  const res = await fetch(DETAIL_URL);
+  if (!res.ok) throw new Error(`Failed to fetch event calendar detail: ${res.status}`);
+  const allItems = (await res.json()) as EventCalendarDetailItem[];
+
+  // Filter by date (YYYY-MM-DD)
+  // EVENT_DATETIME format: "2026-04-07 00:00:00.0" — extract the date prefix directly
+  const filtered = allItems.filter((item) => {
+    if (!item.EVENT_DATETIME) return false;
+    return item.EVENT_DATETIME.substring(0, 10) === dateLabel;
+  });
+
+  if (category === 'All') return filtered;
+  return filtered.filter((item) => item.EVENT_TYPE === category);
+}
+
+// ─── Utility: convert summary items to CalendarSummaryMap ──────────────────
+
+/**
+ * Convert raw summary items from the JSON API to the "YYYY-MM-DD" → CalendarCellData
+ * map consumed by the calendar grid builders.
+ */
+export function buildCalendarSummaryMap(
+  items: EventCalendarSummaryItem[],
+): CalendarSummaryMap {
+  const map: CalendarSummaryMap = {};
+  for (const item of items) {
+    const monthNum = parseInt(item.EVENT_MONTH, 10);
+    const day = parseInt(item.EVENT_DATE, 10);
+    if (isNaN(monthNum) || monthNum < 1 || monthNum > 12 || isNaN(day)) continue;
+    const month = String(monthNum).padStart(2, '0');
+    const dayStr = String(day).padStart(2, '0');
+    const key = `${item.EVENT_YEAR}-${month}-${dayStr}`;
+    const companies = item.EVENT_COMPANY_LIST
+      ? item.EVENT_COMPANY_LIST.split(',').map((s) => s.trim()).filter(Boolean)
+      : [];
+    map[key] = { companies, count: parseInt(item.EVENT_COUNT, 10) || companies.length };
+  }
+  return map;
+}
