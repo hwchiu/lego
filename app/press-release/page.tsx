@@ -24,7 +24,7 @@ const TICKER_COLORS: Record<string, string> = {
   LRCX: '#003f7e',
   KLAC: '#0055a4',
   '8035.T': '#c8000b',
-  TSM: '#1a2332',
+  GLTC: '#1a2332',
   TC: '#1a2332',
 };
 

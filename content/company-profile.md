@@ -16,7 +16,7 @@
     },
     {
       "symbol": "TC",
-      "name": "TSMC",
+      "name": "GlobalTech",
       "localCurrency": "TWD",
       "bbgId": "200711 TW Equity",
       "stockExchange": "TWSE",

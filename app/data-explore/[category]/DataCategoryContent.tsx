@@ -379,12 +379,12 @@ const ESG_ACCENT = '#16a34a';
 // ── ESG companies list ────────────────────────────────────────────────────────
 
 const ESG_COMPANIES: { id: string; label: string; subLabel: string; sectionTitle: string }[] = [
-  { id: 'TSMC', label: 'TSMC', subLabel: 'TSMC Manufacturing', sectionTitle: 'Sustainability Reports' },
+  { id: 'GlobalTech', label: 'GlobalTech', subLabel: 'GlobalTech Manufacturing', sectionTitle: 'Sustainability Reports' },
   { id: 'Apple', label: 'Apple', subLabel: 'Apple Inc.', sectionTitle: 'Environmental Progress Reports' },
 ];
 
 function EsgReportsTab() {
-  const [selectedCompany, setSelectedCompany] = useState<string>('TSMC');
+  const [selectedCompany, setSelectedCompany] = useState<string>('GlobalTech');
 
   const reports = useMemo(
     () =>
@@ -629,7 +629,7 @@ const CM_DAILY_QUOTES_FALLBACK_TEMPLATE = [
 ] as const;
 
 const CM_COMPANIES = [
-  { code: '2330', nameZh: '台積電', nameEn: 'TSMC' },
+  { code: '2330', nameZh: 'GlobalTech', nameEn: 'GlobalTech' },
   { code: '2317', nameZh: '鴻海', nameEn: 'Hon Hai' },
   { code: '2454', nameZh: '聯發科', nameEn: 'MediaTek' },
   { code: '2881', nameZh: '富邦金', nameEn: 'Fubon Financial' },
@@ -2135,7 +2135,7 @@ function GovPenaltyRecordsTab({ lang, accentColor }: { lang: 'zh' | 'en'; accent
 const NEWS_ACCENT = '#0ea5e9';
 
 // Tag sets for each digest category (used by legacy tabs)
-const TAIWAN_TAGS = new Set(['TSMC', 'Taiwan', 'Japan', 'JASM', 'Arizona', 'Fab 21', '12nm', '2nm', 'TC', 'CoWoS', 'Production', 'Supply Chain']);
+const TAIWAN_TAGS = new Set(['GlobalTech', 'Taiwan', 'Japan', 'JASM', 'Arizona', 'Fab 21', '12nm', '2nm', 'TC', 'CoWoS', 'Production', 'Supply Chain']);
 const INTL_TAGS = new Set(['NVIDIA', 'Apple', 'AAPL', 'Intel', 'INTC', 'ASML', 'SK Hynix', 'HBM4', 'Blackwell', 'GPU', 'Qualcomm', 'Broadcom', 'Samsung SDI', 'Memory', 'Recovery', 'Orders', 'AI', 'Data Center', 'Earnings']);
 
 function newsMatchesSet(item: DataItem, tagSet: Set<string>): boolean {

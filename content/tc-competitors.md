@@ -1,4 +1,4 @@
-# TSMC Competitor Network Data
+# GlobalTech Competitor Network Data
 
 > Sources: TrendForce, IDC, company annual reports, analyst research (FY2023–FY2024).
 > Market share figures represent global foundry revenue share.
@@ -156,7 +156,7 @@
 [
   {
     "id": 1,
-    "title": "Samsung Foundry Struggles with 3nm GAA Yield, TSMC Widens Advanced Node Lead",
+    "title": "Samsung Foundry Struggles with 3nm GAA Yield, GlobalTech Widens Advanced Node Lead",
     "tickers": ["SSNLF", "TC"],
     "source": "Bloomberg",
     "time": "Today, 9:20 AM",
@@ -164,7 +164,7 @@
   },
   {
     "id": 2,
-    "title": "GlobalFoundries Doubles Down on RF and Auto-Grade Chips as TSMC Avoids Mature Nodes",
+    "title": "GlobalFoundries Doubles Down on RF and Auto-Grade Chips as GlobalTech Avoids Mature Nodes",
     "tickers": ["GFS", "TC"],
     "source": "Reuters",
     "time": "Today, 8:45 AM",
@@ -180,7 +180,7 @@
   },
   {
     "id": 4,
-    "title": "Intel Foundry 18A Process Enters Risk Production — CEO Pat Gelsinger Eyes TSMC Customers",
+    "title": "Intel Foundry 18A Process Enters Risk Production — CEO Pat Gelsinger Eyes GlobalTech Customers",
     "tickers": ["INTC_F", "TC"],
     "source": "The Register",
     "time": "Yesterday, 5:30 PM",
@@ -188,7 +188,7 @@
   },
   {
     "id": 5,
-    "title": "UMC Partners with Intel for 12nm Production in US, Competing With TSMC Specialty Lines",
+    "title": "UMC Partners with Intel for 12nm Production in US, Competing With GlobalTech Specialty Lines",
     "tickers": ["UMC", "INTC_F", "TC"],
     "source": "Financial Times",
     "time": "Apr 2, 4:00 PM",
@@ -196,7 +196,7 @@
   },
   {
     "id": 6,
-    "title": "Samsung Foundry Wins Major Qualcomm Snapdragon Order, Pressuring TSMC Exclusivity",
+    "title": "Samsung Foundry Wins Major Qualcomm Snapdragon Order, Pressuring GlobalTech Exclusivity",
     "tickers": ["SSNLF", "TC"],
     "source": "Korea Herald",
     "time": "Apr 2, 10:00 AM",
@@ -220,7 +220,7 @@
   },
   {
     "id": 9,
-    "title": "US Export Controls Push SMIC to 28nm Specialization, Ceding Advanced Node Ground to TSMC",
+    "title": "US Export Controls Push SMIC to 28nm Specialization, Ceding Advanced Node Ground to GlobalTech",
     "tickers": ["SMICY", "TC"],
     "source": "Reuters",
     "time": "Mar 31, 9:00 AM",
@@ -228,7 +228,7 @@
   },
   {
     "id": 10,
-    "title": "Intel CEO Confirms 18A Yield on Track — 'We Are in the Race' Against TSMC and Samsung",
+    "title": "Intel CEO Confirms 18A Yield on Track — 'We Are in the Race' Against GlobalTech and Samsung",
     "tickers": ["INTC_F", "TC", "SSNLF"],
     "source": "CNBC",
     "time": "Mar 30, 1:00 PM",
@@ -259,7 +259,7 @@
 
 ```json
 [
-  { "id": "TC",    "name": "TSMC",                  "marketShare": 62.3 },
+  { "id": "TC",    "name": "GlobalTech",                  "marketShare": 62.3 },
   { "id": "SSNLF", "name": "Samsung Foundry",        "marketShare": 11.3 },
   { "id": "UMC",   "name": "UMC",                    "marketShare": 6.3  },
   { "id": "GFS",   "name": "GlobalFoundries",        "marketShare": 6.0  },

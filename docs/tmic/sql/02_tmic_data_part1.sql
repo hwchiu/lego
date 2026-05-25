@@ -8,7 +8,7 @@ INSERT INTO company_master (co_cd, co_name, co_short_name, co_type, country_cd, 
 ('MSFT',   'Microsoft Corporation',                'Microsoft',    'customer',  'US', 'TECH'),
 ('GOOGL',  'Alphabet Inc.',                        'Alphabet',     'customer',  'US', 'TECH'),
 ('AMZN',   'Amazon.com Inc.',                      'Amazon',       'both',      'US', 'RETAIL'),
-('TSMC',   'Taiwan Semiconductor Mfg. Co.',        'TSMC',         'supplier',  'TW', 'SEMICON'),
+('GlobalTech',   'GlobalTech Semiconductor Co., Ltd.',        'GlobalTech',         'supplier',  'TW', 'SEMICON'),
 ('SMSNG',  'Samsung Electronics Co., Ltd.',        'Samsung',      'both',      'KR', 'TECH'),
 ('NVDA',   'NVIDIA Corporation',                   'NVIDIA',       'customer',  'US', 'SEMICON'),
 ('ASML',   'ASML Holding N.V.',                    'ASML',         'supplier',  'NL', 'SEMICON'),
@@ -156,12 +156,12 @@ INSERT INTO entity_identifier (co_cd, provider_cd, external_id, id_type, is_prim
 ('AMZN','FACTSET','0Q4HXX-E','FACTSET_ID',1,'2020-01-01'),
 ('AMZN','DNB','85-739-4910','DUNS',1,'2020-01-01'),
 ('AMZN','SP_GLOBAL','4031263','SP_ENTITY_ID',1,'2020-01-01'),
--- TSMC
-('TSMC','BBG','BBG000BD8ZK7','BBG_ID',1,'2020-01-01'),
-('TSMC','BBG','2330 TT Equity','TICKER',0,'2020-01-01'),
-('TSMC','FACTSET','0RIZ9D-E','FACTSET_ID',1,'2020-01-01'),
-('TSMC','DNB','55-827-3199','DUNS',1,'2020-01-01'),
-('TSMC','REFINITIV','4295895640','REFINITIV_ID',1,'2020-01-01'),
+-- GlobalTech
+('GlobalTech','BBG','BBG000BD8ZK7','BBG_ID',1,'2020-01-01'),
+('GlobalTech','BBG','GLTC US Equity','TICKER',0,'2020-01-01'),
+('GlobalTech','FACTSET','0RIZ9D-E','FACTSET_ID',1,'2020-01-01'),
+('GlobalTech','DNB','55-827-3199','DUNS',1,'2020-01-01'),
+('GlobalTech','REFINITIV','4295895640','REFINITIV_ID',1,'2020-01-01'),
 -- Samsung
 ('SMSNG','BBG','BBG000BCY2S8','BBG_ID',1,'2020-01-01'),
 ('SMSNG','BBG','005930 KS Equity','TICKER',0,'2020-01-01'),
@@ -251,9 +251,9 @@ INSERT INTO entity_provider_config (co_cd, provider_cd, is_active, schedule_cron
 ('AMZN',    'BBG',      1, '0 6 * * 1-5', '2026-05-13 06:05:44'),
 ('AMZN',    'DNB',      1, '0 8 * * 1',   '2026-05-12 08:10:22'),
 ('AMZN',    'SP_GLOBAL',1, '0 9 * * 1',   '2026-05-12 09:02:31'),
-('TSMC',    'BBG',      1, '0 6 * * 1-5', '2026-05-13 06:06:15'),
-('TSMC',    'FACTSET',  1, '0 7 * * 1-5', '2026-05-13 07:08:02'),
-('TSMC',    'REFINITIV',1, '0 7 * * 1-5', '2026-05-13 07:20:44'),
+('GlobalTech',    'BBG',      1, '0 6 * * 1-5', '2026-05-13 06:06:15'),
+('GlobalTech',    'FACTSET',  1, '0 7 * * 1-5', '2026-05-13 07:08:02'),
+('GlobalTech',    'REFINITIV',1, '0 7 * * 1-5', '2026-05-13 07:20:44'),
 ('SMSNG',   'BBG',      1, '0 6 * * 1-5', '2026-05-13 06:07:55'),
 ('NVDA',    'BBG',      1, '0 6 * * 1-5', '2026-05-13 06:09:01'),
 ('NVDA',    'FACTSET',  1, '0 7 * * 1-5', '2026-05-13 07:12:44'),
@@ -304,13 +304,13 @@ JOIN (VALUES
   -- MSFT+SP_GLOBAL
   ('MSFT','SP_GLOBAL','api_timeout_sec','20'),
   ('MSFT','SP_GLOBAL','rate_limit_per_min','60'),
-  -- TSMC+BBG
-  ('TSMC','BBG','api_timeout_sec','30'),
-  ('TSMC','BBG','rate_limit_per_min','60'),
-  -- TSMC+REFINITIV
-  ('TSMC','REFINITIV','api_timeout_sec','30'),
-  ('TSMC','REFINITIV','rate_limit_per_min','90'),
-  ('TSMC','REFINITIV','access_tier','STANDARD'),
+  -- GlobalTech+BBG
+  ('GlobalTech','BBG','api_timeout_sec','30'),
+  ('GlobalTech','BBG','rate_limit_per_min','60'),
+  -- GlobalTech+REFINITIV
+  ('GlobalTech','REFINITIV','api_timeout_sec','30'),
+  ('GlobalTech','REFINITIV','rate_limit_per_min','90'),
+  ('GlobalTech','REFINITIV','access_tier','STANDARD'),
   -- NVDA+BBG
   ('NVDA','BBG','api_timeout_sec','30'),
   ('NVDA','BBG','rate_limit_per_min','60'),
@@ -347,11 +347,11 @@ INSERT INTO entity_subject_config (co_cd, subject_cd, is_active, schedule_cron, 
 ('AMZN','BBG_EQ_PRICE',     1, '0 8 * * 1-5',   '2026-05-14 08:03:22'),
 ('AMZN','DNB_CREDIT',       1, NULL,            '2026-05-12 08:10:22'),
 ('AMZN','SP_CREDIT',        1, NULL,            '2026-05-12 09:02:31'),
--- TSMC
-('TSMC','BBG_FINANCIALS',   1, NULL,            '2026-05-13 06:06:15'),
-('TSMC','BBG_EQ_PRICE',     1, '0 8 * * 1-5',   '2026-05-14 08:04:33'),
-('TSMC','FACTSET_FINS',     1, NULL,            '2026-05-13 07:08:02'),
-('TSMC','REFIN_FINANCIALS', 1, NULL,            '2026-05-13 07:20:44'),
+-- GlobalTech
+('GlobalTech','BBG_FINANCIALS',   1, NULL,            '2026-05-13 06:06:15'),
+('GlobalTech','BBG_EQ_PRICE',     1, '0 8 * * 1-5',   '2026-05-14 08:04:33'),
+('GlobalTech','FACTSET_FINS',     1, NULL,            '2026-05-13 07:08:02'),
+('GlobalTech','REFIN_FINANCIALS', 1, NULL,            '2026-05-13 07:20:44'),
 -- Samsung
 ('SMSNG','BBG_FINANCIALS',  1, NULL,            '2026-05-13 06:07:55'),
 ('SMSNG','BBG_EQ_PRICE',    1, '0 8 * * 1-5',   '2026-05-14 08:05:44'),
@@ -436,16 +436,16 @@ JOIN (VALUES
   ('MSFT','FACTSET_FINS','fiscal_year_offset','-6'),
   ('MSFT','FACTSET_FINS','earnings_release_lag_days','30'),
   ('MSFT','FACTSET_FINS','normalization','AS_REPORTED'),
-  -- TSMC BBG_FINANCIALS (FY ends Dec = offset 0)
-  ('TSMC','BBG_FINANCIALS','fiscal_year_offset','0'),
-  ('TSMC','BBG_FINANCIALS','earnings_release_lag_days','60'),
-  ('TSMC','BBG_FINANCIALS','report_currency','TWD'),
-  ('TSMC','BBG_FINANCIALS','period_type','Q'),
-  ('TSMC','BBG_FINANCIALS','accounting_standard','IFRS'),
-  -- TSMC REFIN_FINANCIALS
-  ('TSMC','REFIN_FINANCIALS','fiscal_year_offset','0'),
-  ('TSMC','REFIN_FINANCIALS','earnings_release_lag_days','60'),
-  ('TSMC','REFIN_FINANCIALS','report_currency','USD'),
+  -- GlobalTech BBG_FINANCIALS (FY ends Dec = offset 0)
+  ('GlobalTech','BBG_FINANCIALS','fiscal_year_offset','0'),
+  ('GlobalTech','BBG_FINANCIALS','earnings_release_lag_days','60'),
+  ('GlobalTech','BBG_FINANCIALS','report_currency','TWD'),
+  ('GlobalTech','BBG_FINANCIALS','period_type','Q'),
+  ('GlobalTech','BBG_FINANCIALS','accounting_standard','IFRS'),
+  -- GlobalTech REFIN_FINANCIALS
+  ('GlobalTech','REFIN_FINANCIALS','fiscal_year_offset','0'),
+  ('GlobalTech','REFIN_FINANCIALS','earnings_release_lag_days','60'),
+  ('GlobalTech','REFIN_FINANCIALS','report_currency','USD'),
   -- SMSNG BBG_FINANCIALS (FY ends Dec)
   ('SMSNG','BBG_FINANCIALS','fiscal_year_offset','0'),
   ('SMSNG','BBG_FINANCIALS','earnings_release_lag_days','60'),

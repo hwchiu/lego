@@ -267,7 +267,7 @@ export const GRAPH_EDGES: GraphEdge[] = [
   { from: 'INTC', to: 'AMD', label: 'x86 CPU Competition', weight: 5, description: "AMD is Intel's primary x86 CPU rival in client and server processors." },
   { from: 'INTC', to: 'NVDA', label: 'AI Accelerator Competition', weight: 5, description: 'NVIDIA dominates AI accelerators, pressuring Intel Gaudi and broader data center strategy.' },
   { from: 'INTC', to: 'QCOM', label: 'ARM PC Competition', weight: 4, description: "Qualcomm's Snapdragon X platforms challenge Intel in thin-and-light AI PCs." },
-  { from: 'INTC', to: 'TSM', label: 'Foundry Competition', weight: 4, description: 'TSMC remains the benchmark competitor for Intel Foundry Services on leading-edge nodes.' },
+  { from: 'INTC', to: 'GLTC', label: 'Foundry Competition', weight: 4, description: 'GlobalTech remains the benchmark competitor for Intel Foundry Services on leading-edge nodes.' },
   { from: 'INTC', to: 'ARM', label: 'CPU Architecture Competition', weight: 3, description: "Arm's architecture gains share in servers and PCs, challenging Intel's x86 position." },
   { from: 'ASML', to: 'ZEISS', label: 'Optics Supply', weight: 5, description: 'Carl Zeiss supplies EUV optics exclusively to ASML; critical sole-source relationship.' },
   { from: 'AMAT', to: 'AZTA', label: 'Wafer Handling', weight: 3, description: 'Brooks Automation vacuum robots and transfer systems are used in AMAT process tools.' },

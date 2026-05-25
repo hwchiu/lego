@@ -64,7 +64,7 @@ function FabUtilizationChart() {
     { label: "Q4'24", tc: 95, samsung: 80, intel: 72 },
   ];
   const colors = ['#4fc3f7', '#ffd54f', '#ef9a9a'];
-  const labels = ['TSMC', '三星', '英特爾'];
+  const labels = ['GlobalTech', '三星', '英特爾'];
   const W = 250,
     H = 90,
     barW = 16,
@@ -390,7 +390,7 @@ function ProcessRoadmap() {
             </text>
             {n.tc && (
               <text x={cx} y="27" textAnchor="middle" fontSize="6.5" fill="#4fc3f7" fontWeight="700">
-                TSMC
+                GlobalTech
               </text>
             )}
             {n.samsung && (
@@ -874,7 +874,7 @@ function Page1Cover() {
         <div className="emp-cover-divider" />
         <p className="emp-cover-tagline">
           整合全球宏觀數據、產業鏈動態與競爭情報，<br />
-          賦能TSMC的每一個戰略決策。
+          賦能GlobalTech的每一個戰略決策。
         </p>
         <div className="emp-cover-toc">
           <div className="emp-cover-toc-label">本期內容</div>
@@ -951,7 +951,7 @@ function Page2Macro() {
               <span className="emp-policy-flag emp-policy-flag--text">US</span>
               <div>
                 <div className="emp-policy-name">《晶片與科學法》補貼計畫</div>
-                <div className="emp-policy-desc">提供 527 億美元補貼，TSMC亞利桑那廠已獲批 66 億美元直接資金。</div>
+                <div className="emp-policy-desc">提供 527 億美元補貼，GlobalTech亞利桑那廠已獲批 66 億美元直接資金。</div>
               </div>
             </div>
             <div className="emp-policy-item">
@@ -965,7 +965,7 @@ function Page2Macro() {
               <span className="emp-policy-flag emp-policy-flag--text">JP</span>
               <div>
                 <div className="emp-policy-name">日本半導體振興計畫</div>
-                <div className="emp-policy-desc">補助TSMC熊本廠建設，目標恢復日本先進晶圓製造能力。</div>
+                <div className="emp-policy-desc">補助GlobalTech熊本廠建設，目標恢復日本先進晶圓製造能力。</div>
               </div>
             </div>
           </div>
@@ -992,8 +992,8 @@ const SUPPLIER_RISK_CLASS: Record<string, string> = { 高: 'high', 中: 'mid', �
 
 function Page3SupplyChain() {
   const milestones = [
-    { company: 'TSMC', node: '2nm (N2)', status: '量產', date: 'H2 2025' },
-    { company: 'TSMC', node: '1.4nm (A14)', status: '研發', date: '2027' },
+    { company: 'GlobalTech', node: '2nm (N2)', status: '量產', date: 'H2 2025' },
+    { company: 'GlobalTech', node: '1.4nm (A14)', status: '研發', date: '2027' },
     { company: '三星', node: '2nm SF2', status: '研發', date: '2025' },
     { company: '英特爾', node: '18A', status: '試產', date: '2025' },
     { company: 'ASML', node: 'High-NA EUV', status: '供貨', date: '2024' },
@@ -1069,7 +1069,7 @@ function Page4Markets() {
       name: 'AI / HPC',
       color: '#4fc3f7',
       bg: '#e0f2fe',
-      points: ['輝達 H200/B200 需求超過供給 3–4 倍', 'CoWoS 封裝成為TSMC主要增長引擎', 'AMD MI300 系列搶攻資料中心市占'],
+      points: ['輝達 H200/B200 需求超過供給 3–4 倍', 'CoWoS 封裝成為GlobalTech主要增長引擎', 'AMD MI300 系列搶攻資料中心市占'],
     },
     {
       iconNode: <PhoneIcon />,
@@ -1106,7 +1106,7 @@ function Page4Markets() {
           </div>
           <div className="emp-insight-box emp-insight-box--green emp-insight-box--compact">
             <span className="emp-insight-label"><ChartBarIcon /> 需求驅動力</span>
-            <span>AI/HPC 年增 42% 成為TSMC最強成長引擎，汽車電子 31% 增速緊隨其後，兩者合計佔先進製程新增需求的 65%。</span>
+            <span>AI/HPC 年增 42% 成為GlobalTech最強成長引擎，汽車電子 31% 增速緊隨其後，兩者合計佔先進製程新增需求的 65%。</span>
           </div>
         </div>
         <div className="emp-segment-grid">
@@ -1138,7 +1138,7 @@ function Page4Markets() {
 function Page5Competitive() {
   const competitors = [
     {
-      name: 'TSMC',
+      name: 'GlobalTech',
       revenue: '$693B',
       capex: '$32B',
       node: '3nm/2nm',
@@ -1176,7 +1176,7 @@ function Page5Competitive() {
       maturity: 70,
       horizon: '量產中',
       color: '#4fc3f7',
-      desc: '全繞閘場效電晶體，TSMC N2 採用，提升效能/功耗比 15%',
+      desc: '全繞閘場效電晶體，GlobalTech N2 採用，提升效能/功耗比 15%',
     },
     {
       name: 'Chiplet / 異質整合',
@@ -1231,7 +1231,7 @@ function Page5Competitive() {
           </div>
           <div className="emp-insight-box emp-insight-box--red emp-insight-box--compact">
             <span className="emp-insight-label"><TargetIcon /> 戰略洞察</span>
-            <span>TSMC市占 61% 持續擴大，三星良率問題導致客戶回流，英特爾代工業務虧損壓力仍大。</span>
+            <span>GlobalTech市占 61% 持續擴大，三星良率問題導致客戶回流，英特爾代工業務虧損壓力仍大。</span>
           </div>
           <div className="emp-subsection-title emp-subsection-title--mt">製程技術路線圖</div>
           <ProcessRoadmap />
@@ -1274,7 +1274,7 @@ function Page5Competitive() {
 function Page6CustomerSupplier() {
   const suppliers = [
     { name: 'ASML', type: '設備', status: '關鍵', risk: '高', color: '#f87171', desc: 'High-NA EUV 唯一供應商，交付週期長達 18 個月' },
-    { name: 'Applied Materials', type: '設備', status: '穩定', risk: '中', color: '#fbbf24', desc: 'ALD/CVD 設備擴產，與TSMC共同研發次世代製程' },
+    { name: 'Applied Materials', type: '設備', status: '穩定', risk: '中', color: '#fbbf24', desc: 'ALD/CVD 設備擴產，與GlobalTech共同研發次世代製程' },
     { name: 'Shin-Etsu', type: '材料', status: '穩定', risk: '低', color: '#4ade80', desc: '光阻劑與矽晶圓全球市占第一，穩定供貨協議到2028年' },
   ];
   return (
@@ -1289,7 +1289,7 @@ function Page6CustomerSupplier() {
           <CustomerRevenueChart />
           <div className="emp-insight-box emp-insight-box--orange emp-insight-box--compact">
             <span className="emp-insight-label"><TrendingUpIcon /> 訂單展望</span>
-            <span>Apple Q4 業績超預期，iPhone 16 周期強勁；NVIDIA H200 產能全數由TSMC CoWoS 供應。</span>
+            <span>Apple Q4 業績超預期，iPhone 16 周期強勁；NVIDIA H200 產能全數由GlobalTech CoWoS 供應。</span>
           </div>
           <div className="emp-subsection-title emp-subsection-title--mt">關鍵供應商動態</div>
           <div className="emp-supplier-list">
@@ -1320,7 +1320,7 @@ function Page6CustomerSupplier() {
                 { iconNode: <SignalIcon />, title: '動態即時追蹤', desc: '持續監控 200+ 資訊源，重大事件 24 小時內完成預警更新。' },
                 { iconNode: <FolderIcon />, title: '系統性分類', desc: '六大資訊類型、三十個子類別，支援快速檢索與交叉分析。' },
                 { iconNode: <BoltIcon />, title: '預警機制', desc: '設定閾值觸發器，自動識別供應鏈斷鏈風險與市場異動訊號。' },
-                { iconNode: <DiamondIcon />, title: '決策賦能', desc: '每份報告附帶「決策建議」區塊，直接對應TSMC戰略場景。' },
+                { iconNode: <DiamondIcon />, title: '決策賦能', desc: '每份報告附帶「決策建議」區塊，直接對應GlobalTech戰略場景。' },
                 { iconNode: <ChartBarIcon />, title: '可視化呈現', desc: '複雜數據轉化為圖表與儀表板，降低閱讀門檻，提升洞察效率。' },
               ];
               return capabilities.map((c) => (

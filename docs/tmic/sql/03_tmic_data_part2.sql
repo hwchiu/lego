@@ -19,10 +19,10 @@ INSERT INTO entity_subject_config (co_cd, subject_cd, is_active, schedule_cron, 
 ('AMZN','BBG_EQ_PRICE',     1, '0 8 * * 1-5',   '2026-05-14 08:03:22'),
 ('AMZN','DNB_CREDIT',       1, NULL,            '2026-05-12 08:10:22'),
 ('AMZN','SP_CREDIT',        1, NULL,            '2026-05-12 09:02:31'),
-('TSMC','BBG_FINANCIALS',   1, NULL,            '2026-05-13 06:06:15'),
-('TSMC','BBG_EQ_PRICE',     1, '0 8 * * 1-5',   '2026-05-14 08:04:33'),
-('TSMC','FACTSET_FINS',     1, NULL,            '2026-05-13 07:08:02'),
-('TSMC','REFIN_FINANCIALS', 1, NULL,            '2026-05-13 07:20:44'),
+('GlobalTech','BBG_FINANCIALS',   1, NULL,            '2026-05-13 06:06:15'),
+('GlobalTech','BBG_EQ_PRICE',     1, '0 8 * * 1-5',   '2026-05-14 08:04:33'),
+('GlobalTech','FACTSET_FINS',     1, NULL,            '2026-05-13 07:08:02'),
+('GlobalTech','REFIN_FINANCIALS', 1, NULL,            '2026-05-13 07:20:44'),
 ('SMSNG','BBG_FINANCIALS',  1, NULL,            '2026-05-13 06:07:55'),
 ('SMSNG','BBG_EQ_PRICE',    1, '0 8 * * 1-5',   '2026-05-14 08:05:44'),
 ('NVDA','BBG_FINANCIALS',   1, NULL,            '2026-05-13 06:09:01'),
@@ -106,17 +106,17 @@ VALUES (
   '60', 'system');
 INSERT INTO entity_provider_config_param (config_id, param_def_id, param_value, updated_by)
 VALUES (
-  (SELECT config_id FROM entity_provider_config WHERE co_cd='TSMC' AND provider_cd='REFINITIV'),
+  (SELECT config_id FROM entity_provider_config WHERE co_cd='GlobalTech' AND provider_cd='REFINITIV'),
   (SELECT param_def_id FROM provider_config_def WHERE provider_cd='REFINITIV' AND param_key='api_timeout_sec'),
   '30', 'system');
 INSERT INTO entity_provider_config_param (config_id, param_def_id, param_value, updated_by)
 VALUES (
-  (SELECT config_id FROM entity_provider_config WHERE co_cd='TSMC' AND provider_cd='REFINITIV'),
+  (SELECT config_id FROM entity_provider_config WHERE co_cd='GlobalTech' AND provider_cd='REFINITIV'),
   (SELECT param_def_id FROM provider_config_def WHERE provider_cd='REFINITIV' AND param_key='rate_limit_per_min'),
   '90', 'system');
 INSERT INTO entity_provider_config_param (config_id, param_def_id, param_value, updated_by)
 VALUES (
-  (SELECT config_id FROM entity_provider_config WHERE co_cd='TSMC' AND provider_cd='REFINITIV'),
+  (SELECT config_id FROM entity_provider_config WHERE co_cd='GlobalTech' AND provider_cd='REFINITIV'),
   (SELECT param_def_id FROM provider_config_def WHERE provider_cd='REFINITIV' AND param_key='access_tier'),
   'STANDARD', 'system');
 INSERT INTO entity_provider_config_param (config_id, param_def_id, param_value, updated_by)
@@ -203,18 +203,18 @@ INSERT INTO entity_subject_config_param (config_id, param_def_id, param_value, u
 INSERT INTO entity_subject_config_param (config_id, param_def_id, param_value, updated_by) VALUES
   ((SELECT config_id FROM entity_subject_config WHERE co_cd='MSFT' AND subject_cd='BBG_FINANCIALS'),
    (SELECT param_def_id FROM subject_config_def WHERE subject_cd='BBG_FINANCIALS' AND param_key='accounting_standard'),'GAAP','system');
--- TSMC BBG_FINANCIALS (FY ends Dec = 0, IFRS)
+-- GlobalTech BBG_FINANCIALS (FY ends Dec = 0, IFRS)
 INSERT INTO entity_subject_config_param (config_id, param_def_id, param_value, updated_by) VALUES
-  ((SELECT config_id FROM entity_subject_config WHERE co_cd='TSMC' AND subject_cd='BBG_FINANCIALS'),
+  ((SELECT config_id FROM entity_subject_config WHERE co_cd='GlobalTech' AND subject_cd='BBG_FINANCIALS'),
    (SELECT param_def_id FROM subject_config_def WHERE subject_cd='BBG_FINANCIALS' AND param_key='fiscal_year_offset'),'0','system');
 INSERT INTO entity_subject_config_param (config_id, param_def_id, param_value, updated_by) VALUES
-  ((SELECT config_id FROM entity_subject_config WHERE co_cd='TSMC' AND subject_cd='BBG_FINANCIALS'),
+  ((SELECT config_id FROM entity_subject_config WHERE co_cd='GlobalTech' AND subject_cd='BBG_FINANCIALS'),
    (SELECT param_def_id FROM subject_config_def WHERE subject_cd='BBG_FINANCIALS' AND param_key='earnings_release_lag_days'),'60','system');
 INSERT INTO entity_subject_config_param (config_id, param_def_id, param_value, updated_by) VALUES
-  ((SELECT config_id FROM entity_subject_config WHERE co_cd='TSMC' AND subject_cd='BBG_FINANCIALS'),
+  ((SELECT config_id FROM entity_subject_config WHERE co_cd='GlobalTech' AND subject_cd='BBG_FINANCIALS'),
    (SELECT param_def_id FROM subject_config_def WHERE subject_cd='BBG_FINANCIALS' AND param_key='report_currency'),'TWD','system');
 INSERT INTO entity_subject_config_param (config_id, param_def_id, param_value, updated_by) VALUES
-  ((SELECT config_id FROM entity_subject_config WHERE co_cd='TSMC' AND subject_cd='BBG_FINANCIALS'),
+  ((SELECT config_id FROM entity_subject_config WHERE co_cd='GlobalTech' AND subject_cd='BBG_FINANCIALS'),
    (SELECT param_def_id FROM subject_config_def WHERE subject_cd='BBG_FINANCIALS' AND param_key='accounting_standard'),'IFRS','system');
 -- NVDA BBG_FINANCIALS (FY ends Jan = +1)
 INSERT INTO entity_subject_config_param (config_id, param_def_id, param_value, updated_by) VALUES

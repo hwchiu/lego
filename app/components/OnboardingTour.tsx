@@ -150,7 +150,7 @@ function Step3Preview() {
           <div className="tour-preview-subscribe-item tour-preview-subscribe-item--active">All Companies</div>
           <div className="tour-preview-subscribe-item">AAPL</div>
           <div className="tour-preview-subscribe-item">NVDA</div>
-          <div className="tour-preview-subscribe-item">TSM</div>
+          <div className="tour-preview-subscribe-item">GLTC</div>
         </div>
         <div className="tour-preview-subscribe-panel">
           <div className="tour-preview-subscribe-panel-title">Event Types</div>
