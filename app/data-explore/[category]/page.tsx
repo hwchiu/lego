@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import DataCategoryContent from './DataCategoryContent';
 import { CATEGORIES } from '@/app/data/dataExplore';
 
@@ -7,5 +8,9 @@ export function generateStaticParams() {
 }
 
 export default function DataCategoryPage({ params }: { params: { category: string } }) {
-  return <DataCategoryContent params={params} />;
+  return (
+    <Suspense fallback={null}>
+      <DataCategoryContent params={params} />
+    </Suspense>
+  );
 }

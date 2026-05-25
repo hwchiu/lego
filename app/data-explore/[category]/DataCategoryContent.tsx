@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useMemo, useEffect, useRef, type ReactNode } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback, type ReactNode } from 'react';
 import Link from 'next/link';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
@@ -16,6 +17,21 @@ import { type NewsSummaryItem } from '@/app/data/newsSummaryData';
 import { formatNumber } from '@/app/lib/formatters';
 
 const TAGS_VISIBLE_COUNT = 6;
+const DEFAULT_CM_TAB = 'daily-quotes';
+const CAPITAL_MARKETS_INNER_TAB_IDS = [
+  'daily-quotes',
+  'day-trading',
+  'margin',
+  'short-sale',
+  'ex-dividend',
+  'foreign-investors',
+  'price-limit',
+  'pe-ratio',
+] as const;
+
+function isCapitalMarketsInnerTab(tabId: string | null): tabId is (typeof CAPITAL_MARKETS_INNER_TAB_IDS)[number] {
+  return tabId !== null && CAPITAL_MARKETS_INNER_TAB_IDS.includes(tabId as (typeof CAPITAL_MARKETS_INNER_TAB_IDS)[number]);
+}
 
 const CAT_IMAGES: Record<string, string> = {
   'esg': 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=900&q=80',
@@ -1421,9 +1437,15 @@ function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en') {
 
 // ── Capital Markets Layout (sidebar + content) ────────────────────────────────
 
-function CapitalMarketsLayout({ lang, accentColor }: { lang: 'zh' | 'en'; accentColor: string }) {
+interface CapitalMarketsLayoutProps {
+  lang: 'zh' | 'en';
+  accentColor: string;
+  activeCmTab: (typeof CAPITAL_MARKETS_INNER_TAB_IDS)[number];
+  onChangeCmTab: (tabId: (typeof CAPITAL_MARKETS_INNER_TAB_IDS)[number]) => void;
+}
+
+function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }: CapitalMarketsLayoutProps) {
   const zh = lang === 'zh';
-  const [activeCmTab, setActiveCmTab] = useState('daily-quotes');
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [searchDate, setSearchDate] = useState<string | null>(null);
 
@@ -1458,7 +1480,7 @@ function CapitalMarketsLayout({ lang, accentColor }: { lang: 'zh' | 'en'; accent
             key={tab.id}
             className={`de-cm-sidebar-item${activeCmTab === tab.id ? ' active' : ''}`}
             style={activeCmTab === tab.id ? { borderLeftColor: accentColor, color: accentColor } : {}}
-            onClick={() => setActiveCmTab(tab.id)}
+            onClick={() => onChangeCmTab(tab.id as (typeof CAPITAL_MARKETS_INNER_TAB_IDS)[number])}
           >
             <span className="de-cm-sidebar-item-name">{tab.label}</span>
           </button>
@@ -2582,6 +2604,9 @@ function BiweeklyEsgTab({ lang }: { lang: 'zh' | 'en' }) {
 
 
 export default function DataCategoryContent({ params }: { params: { category: string } }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { lang } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTag, setActiveTag] = useState<string | null>(null);
@@ -2607,6 +2632,10 @@ export default function DataCategoryContent({ params }: { params: { category: st
 
   const defaultTab = isGov ? 'tw-government-penalty-records' : isCapital ? 'twse-info' : isNewsSummary ? 'biweekly-esg' : 'articles';
   const [activeSubTab, setActiveSubTab] = useState(defaultTab);
+  const [activeCmTab, setActiveCmTab] = useState<(typeof CAPITAL_MARKETS_INNER_TAB_IDS)[number]>(() => {
+    const tabParam = searchParams.get('tab');
+    return isCapitalMarketsInnerTab(tabParam) ? tabParam : DEFAULT_CM_TAB;
+  });
 
   const hasSubTabs = isEsg || isGov || isCapital || isNewsSummary;
   const subTabs = isCapital ? CAPITAL_TABS : isEsg ? ESG_TABS : isGov ? GOV_TABS : isNewsSummary ? NEWS_SUMMARY_TABS : [];
@@ -2642,6 +2671,38 @@ export default function DataCategoryContent({ params }: { params: { category: st
     setSearchQuery('');
     setActiveTag(null);
   }
+
+  const updateCapitalTabQuery = useCallback((nextTab: (typeof CAPITAL_MARKETS_INNER_TAB_IDS)[number]) => {
+    if (!isCapital) return;
+    const currentTab = searchParams.get('tab');
+    if (currentTab === nextTab || (nextTab === DEFAULT_CM_TAB && !currentTab)) {
+      return;
+    }
+
+    const nextSearchParams = new URLSearchParams(searchParams.toString());
+    if (nextTab === DEFAULT_CM_TAB) {
+      nextSearchParams.delete('tab');
+    } else {
+      nextSearchParams.set('tab', nextTab);
+    }
+    const nextQuery = nextSearchParams.toString();
+    router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, { scroll: false });
+  }, [isCapital, pathname, router, searchParams]);
+
+  const handleCapitalCmTabChange = useCallback((nextTab: (typeof CAPITAL_MARKETS_INNER_TAB_IDS)[number]) => {
+    setActiveCmTab(nextTab);
+    updateCapitalTabQuery(nextTab);
+  }, [updateCapitalTabQuery]);
+
+  useEffect(() => {
+    if (!isCapital) return;
+    const tabParam = searchParams.get('tab');
+    if (isCapitalMarketsInnerTab(tabParam)) {
+      setActiveCmTab(tabParam);
+      return;
+    }
+    setActiveCmTab(DEFAULT_CM_TAB);
+  }, [isCapital, searchParams]);
 
   if (!cat) {
     return (
@@ -2707,7 +2768,12 @@ export default function DataCategoryContent({ params }: { params: { category: st
 
               {/* Capital Markets — sidebar layout */}
               {isCapital && activeSubTab === 'twse-info' && (
-                <CapitalMarketsLayout lang={lang} accentColor={cat.color} />
+                <CapitalMarketsLayout
+                  lang={lang}
+                  accentColor={cat.color}
+                  activeCmTab={activeCmTab}
+                  onChangeCmTab={handleCapitalCmTabChange}
+                />
               )}
 
               {/* ESG / Gov tabs that show articles */}
