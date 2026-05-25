@@ -1,6 +1,6 @@
-# TSMC Supplier Network — Edge Entities Reference
+# GlobalTech Supplier Network — Edge Entities Reference
 
-> Sources: TSMC Annual Reports, public filings, supplier disclosures (FY2023–FY2024).  
+> Sources: GlobalTech Annual Reports, public filings, supplier disclosures (FY2023–FY2024).  
 > `transactionAmount` in $M USD (estimated). All other counts/ratios are approximate.
 
 ---
@@ -96,7 +96,7 @@
 
 | ID  | Name  | Country | Industry              |
 |-----|-------|---------|-----------------------|
-| TC | TSMC  | Taiwan  | Semiconductor Foundry |
+| TC | GlobalTech  | Taiwan  | Semiconductor Foundry |
 
 ### Tier 1 (9 nodes)
 

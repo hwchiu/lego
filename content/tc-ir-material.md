@@ -1,7 +1,7 @@
-# TC (TSMC) Investor Relations Material
+# TC (GlobalTech) Investor Relations Material
 
-Source: investor.tsmc.com, SEC EDGAR (20-F filings), TSMC press releases.
-TSMC Limited (TWSE: 2330, NYSE: TC).
+Source: investor.globaltech-example.com, SEC EDGAR (20-F filings), GlobalTech press releases.
+GlobalTech Limited (TWSE: 2330, NYSE: TC).
 
 ## IR Material
 
@@ -52,50 +52,50 @@ TSMC Limited (TWSE: 2330, NYSE: TC).
   "newsroom": [
     {
       "date": "Jan 16, 2025",
-      "title": "TSMC Reports Fourth Quarter and Full Year 2024 Results",
-      "url": "https://investor.tsmc.com/en/quarterly-results/2024/q4",
+      "title": "GlobalTech Reports Fourth Quarter and Full Year 2024 Results",
+      "url": "https://investor.globaltech-example.com/en/quarterly-results/2024/q4",
       "category": "Earnings"
     },
     {
       "date": "Oct 17, 2024",
-      "title": "TSMC Reports Third Quarter 2024 Results",
-      "url": "https://investor.tsmc.com/en/quarterly-results/2024/q3",
+      "title": "GlobalTech Reports Third Quarter 2024 Results",
+      "url": "https://investor.globaltech-example.com/en/quarterly-results/2024/q3",
       "category": "Earnings"
     },
     {
       "date": "Apr 18, 2024",
-      "title": "TSMC Announces First Quarter 2024 Results",
-      "url": "https://investor.tsmc.com/en/quarterly-results/2024/q1",
+      "title": "GlobalTech Announces First Quarter 2024 Results",
+      "url": "https://investor.globaltech-example.com/en/quarterly-results/2024/q1",
       "category": "Earnings"
     },
     {
       "date": "Apr 22, 2024",
-      "title": "TSMC Breaks Ground on First Europe Fab in Dresden, Germany",
-      "url": "https://newsroom.tsmc.com/en/news/2024/europe-fab-groundbreaking",
+      "title": "GlobalTech Breaks Ground on First Europe Fab in Dresden, Germany",
+      "url": "https://newsroom.globaltech-example.com/en/news/2024/europe-fab-groundbreaking",
       "category": "Corporate"
     },
     {
       "date": "Mar 5, 2024",
-      "title": "TSMC Announces Arizona Fab Progress — 2nm Technology on Track for 2025",
-      "url": "https://investor.tsmc.com/en/speeches/2024/arizona-fab-update",
+      "title": "GlobalTech Announces Arizona Fab Progress — 2nm Technology on Track for 2025",
+      "url": "https://investor.globaltech-example.com/en/speeches/2024/arizona-fab-update",
       "category": "Technology"
     },
     {
       "date": "Jan 18, 2024",
-      "title": "TSMC Reports Fourth Quarter and Full Year 2023 Results",
-      "url": "https://investor.tsmc.com/en/quarterly-results/2023/q4",
+      "title": "GlobalTech Reports Fourth Quarter and Full Year 2023 Results",
+      "url": "https://investor.globaltech-example.com/en/quarterly-results/2023/q4",
       "category": "Earnings"
     },
     {
       "date": "Oct 19, 2023",
-      "title": "TSMC Reports Third Quarter 2023 Results",
-      "url": "https://investor.tsmc.com/en/quarterly-results/2023/q3",
+      "title": "GlobalTech Reports Third Quarter 2023 Results",
+      "url": "https://investor.globaltech-example.com/en/quarterly-results/2023/q3",
       "category": "Earnings"
     },
     {
       "date": "Jul 20, 2023",
-      "title": "TSMC Reports Second Quarter 2023 Results",
-      "url": "https://investor.tsmc.com/en/quarterly-results/2023/q2",
+      "title": "GlobalTech Reports Second Quarter 2023 Results",
+      "url": "https://investor.globaltech-example.com/en/quarterly-results/2023/q2",
       "category": "Earnings"
     }
   ],
@@ -140,42 +140,42 @@ TSMC Limited (TWSE: 2330, NYSE: TC).
           "label": "Q4 2024 Earnings Release",
           "period": "Jan 16, 2025",
           "filed": "Jan 16, 2025",
-          "url": "https://investor.tsmc.com/en/quarterly-results/2024/q4",
+          "url": "https://investor.globaltech-example.com/en/quarterly-results/2024/q4",
           "type": "HTML"
         },
         {
           "label": "Q3 2024 Earnings Release",
           "period": "Oct 17, 2024",
           "filed": "Oct 17, 2024",
-          "url": "https://investor.tsmc.com/en/quarterly-results/2024/q3",
+          "url": "https://investor.globaltech-example.com/en/quarterly-results/2024/q3",
           "type": "HTML"
         },
         {
           "label": "Q2 2024 Earnings Release",
           "period": "Jul 18, 2024",
           "filed": "Jul 18, 2024",
-          "url": "https://investor.tsmc.com/en/quarterly-results/2024/q2",
+          "url": "https://investor.globaltech-example.com/en/quarterly-results/2024/q2",
           "type": "HTML"
         },
         {
           "label": "Q1 2024 Earnings Release",
           "period": "Apr 18, 2024",
           "filed": "Apr 18, 2024",
-          "url": "https://investor.tsmc.com/en/quarterly-results/2024/q1",
+          "url": "https://investor.globaltech-example.com/en/quarterly-results/2024/q1",
           "type": "HTML"
         },
         {
           "label": "Q4 2023 Earnings Release",
           "period": "Jan 18, 2024",
           "filed": "Jan 18, 2024",
-          "url": "https://investor.tsmc.com/en/quarterly-results/2023/q4",
+          "url": "https://investor.globaltech-example.com/en/quarterly-results/2023/q4",
           "type": "HTML"
         },
         {
           "label": "Q3 2023 Earnings Release",
           "period": "Oct 19, 2023",
           "filed": "Oct 19, 2023",
-          "url": "https://investor.tsmc.com/en/quarterly-results/2023/q3",
+          "url": "https://investor.globaltech-example.com/en/quarterly-results/2023/q3",
           "type": "HTML"
         }
       ]
@@ -187,21 +187,21 @@ TSMC Limited (TWSE: 2330, NYSE: TC).
           "label": "2024 Annual Shareholder Meeting Presentation",
           "period": "Jun 4, 2024",
           "filed": "Jun 4, 2024",
-          "url": "https://investor.tsmc.com/en/shareholders-meeting/2024",
+          "url": "https://investor.globaltech-example.com/en/shareholders-meeting/2024",
           "type": "HTML"
         },
         {
           "label": "2024 Technology Symposium",
           "period": "Apr 24, 2024",
           "filed": "Apr 24, 2024",
-          "url": "https://investor.tsmc.com/en/events/tech-symposium/2024",
+          "url": "https://investor.globaltech-example.com/en/events/tech-symposium/2024",
           "type": "HTML"
         },
         {
           "label": "2023 Annual Shareholder Meeting Presentation",
           "period": "Jun 6, 2023",
           "filed": "Jun 6, 2023",
-          "url": "https://investor.tsmc.com/en/shareholders-meeting/2023",
+          "url": "https://investor.globaltech-example.com/en/shareholders-meeting/2023",
           "type": "HTML"
         }
       ]

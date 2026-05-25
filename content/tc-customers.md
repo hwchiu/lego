@@ -1,7 +1,7 @@
-# TSMC Customer Network Data
+# GlobalTech Customer Network Data
 
-> Sources: TSMC Annual Reports, company 10-K filings, public revenue disclosures (FY2023–FY2024).
-> `transactionAmount` in $M USD (estimated annual wafer revenue from TSMC).
+> Sources: GlobalTech Annual Reports, company 10-K filings, public revenue disclosures (FY2023–FY2024).
+> `transactionAmount` in $M USD (estimated annual wafer revenue from GlobalTech).
 
 ---
 
@@ -189,7 +189,7 @@
 ```json
 [
   {
-    "from": "TC",
+    "from": "GT",
     "to": "AAPL",
     "transactionAmount": 17500,
     "newsCoMentionCount": 524,
@@ -199,7 +199,7 @@
     "commonBoardMembers": 0
   },
   {
-    "from": "TC",
+    "from": "GT",
     "to": "NVDA",
     "transactionAmount": 9200,
     "newsCoMentionCount": 398,
@@ -209,7 +209,7 @@
     "commonBoardMembers": 0
   },
   {
-    "from": "TC",
+    "from": "GT",
     "to": "AMD",
     "transactionAmount": 6500,
     "newsCoMentionCount": 312,
@@ -219,7 +219,7 @@
     "commonBoardMembers": 0
   },
   {
-    "from": "TC",
+    "from": "GT",
     "to": "QCOM",
     "transactionAmount": 5500,
     "newsCoMentionCount": 287,
@@ -229,7 +229,7 @@
     "commonBoardMembers": 0
   },
   {
-    "from": "TC",
+    "from": "GT",
     "to": "AVGO",
     "transactionAmount": 4800,
     "newsCoMentionCount": 245,
@@ -239,7 +239,7 @@
     "commonBoardMembers": 0
   },
   {
-    "from": "TC",
+    "from": "GT",
     "to": "MTKMF",
     "transactionAmount": 4500,
     "newsCoMentionCount": 198,
@@ -249,7 +249,7 @@
     "commonBoardMembers": 0
   },
   {
-    "from": "TC",
+    "from": "GT",
     "to": "MRVL",
     "transactionAmount": 2400,
     "newsCoMentionCount": 156,
@@ -259,7 +259,7 @@
     "commonBoardMembers": 0
   },
   {
-    "from": "TC",
+    "from": "GT",
     "to": "INTC",
     "transactionAmount": 3200,
     "newsCoMentionCount": 289,
@@ -269,7 +269,7 @@
     "commonBoardMembers": 0
   },
   {
-    "from": "TC",
+    "from": "GT",
     "to": "SONY",
     "transactionAmount": 2000,
     "newsCoMentionCount": 134,
@@ -279,7 +279,7 @@
     "commonBoardMembers": 0
   },
   {
-    "from": "TC",
+    "from": "GT",
     "to": "TXN",
     "transactionAmount": 800,
     "newsCoMentionCount": 78,
@@ -299,96 +299,96 @@
 [
   {
     "id": 1,
-    "title": "Apple Secures Exclusive TSMC 3nm Capacity for iPhone 16 Pro A17 Pro Chip Through 2025",
-    "tickers": ["AAPL", "TC"],
+    "title": "Apple Secures Exclusive GlobalTech 3nm Capacity for iPhone 16 Pro A17 Pro Chip Through 2025",
+    "tickers": ["AAPL", "GT"],
     "source": "Bloomberg",
     "time": "Today, 9:15 AM",
     "category": "Supply Chain"
   },
   {
     "id": 2,
-    "title": "NVIDIA Places Record TSMC CoWoS-L Orders for H200 and Upcoming B100 GPU Production",
-    "tickers": ["NVDA", "TC"],
+    "title": "NVIDIA Places Record GlobalTech CoWoS-L Orders for H200 and Upcoming B100 GPU Production",
+    "tickers": ["NVDA", "GT"],
     "source": "Reuters",
     "time": "Today, 8:30 AM",
     "category": "Capacity"
   },
   {
     "id": 3,
-    "title": "AMD's Instinct MI300X Ramps at TSMC N5, Signals Strong AI Datacenter Demand in 2025",
-    "tickers": ["AMD", "TC"],
+    "title": "AMD's Instinct MI300X Ramps at GlobalTech N5, Signals Strong AI Datacenter Demand in 2025",
+    "tickers": ["AMD", "GT"],
     "source": "Seeking Alpha",
     "time": "Yesterday, 6:00 PM",
     "category": "Earnings"
   },
   {
     "id": 4,
-    "title": "Qualcomm Snapdragon 8 Gen 4 Tape-Out at TSMC N3E Confirmed for Late 2024 Volume Ramp",
-    "tickers": ["QCOM", "TC"],
+    "title": "Qualcomm Snapdragon 8 Gen 4 Tape-Out at GlobalTech N3E Confirmed for Late 2024 Volume Ramp",
+    "tickers": ["QCOM", "GT"],
     "source": "AnandTech",
     "time": "Yesterday, 4:45 PM",
     "category": "Supply Chain"
   },
   {
     "id": 5,
-    "title": "Broadcom's Custom XPU Business on Track for $10B Revenue, All Chips Fabbed at TSMC",
-    "tickers": ["AVGO", "TC"],
+    "title": "Broadcom's Custom XPU Business on Track for $10B Revenue, All Chips Fabbed at GlobalTech",
+    "tickers": ["AVGO", "GT"],
     "source": "Financial Times",
     "time": "Apr 2, 3:00 PM",
     "category": "Earnings"
   },
   {
     "id": 6,
-    "title": "MediaTek Dimensity 9400 Tape-Out at TSMC N3E, Targets Flagship Android Market",
-    "tickers": ["MTKMF", "TC"],
+    "title": "MediaTek Dimensity 9400 Tape-Out at GlobalTech N3E, Targets Flagship Android Market",
+    "tickers": ["MTKMF", "GT"],
     "source": "Nikkei Asia",
     "time": "Apr 2, 11:00 AM",
     "category": "Supply Chain"
   },
   {
     "id": 7,
-    "title": "Marvell Unveils Next-Gen Custom AI Silicon Platform Built on TSMC 3nm Process",
-    "tickers": ["MRVL", "TC"],
+    "title": "Marvell Unveils Next-Gen Custom AI Silicon Platform Built on GlobalTech 3nm Process",
+    "tickers": ["MRVL", "GT"],
     "source": "Business Wire",
     "time": "Apr 1, 9:30 AM",
     "category": "Strategy"
   },
   {
     "id": 8,
-    "title": "Intel Foundry Services Transfers Meteor Lake Tile Production to TSMC to Meet Holiday Demand",
-    "tickers": ["INTC", "TC"],
+    "title": "Intel Foundry Services Transfers Meteor Lake Tile Production to GlobalTech to Meet Holiday Demand",
+    "tickers": ["INTC", "GT"],
     "source": "Tom's Hardware",
     "time": "Mar 31, 2:00 PM",
     "category": "Geopolitical"
   },
   {
     "id": 9,
-    "title": "Sony's Next-Gen Image Sensor Adopts TSMC Stacked Process, Enabling 8K at 60fps",
-    "tickers": ["SONY", "TC"],
+    "title": "Sony's Next-Gen Image Sensor Adopts GlobalTech Stacked Process, Enabling 8K at 60fps",
+    "tickers": ["SONY", "GT"],
     "source": "Nikkei",
     "time": "Mar 31, 10:00 AM",
     "category": "Strategy"
   },
   {
     "id": 10,
-    "title": "Texas Instruments Dual-Sources Key Analog Lines from TSMC Specialty Fabs Amid Tariff Risks",
-    "tickers": ["TXN", "TC"],
+    "title": "Texas Instruments Dual-Sources Key Analog Lines from GlobalTech Specialty Fabs Amid Tariff Risks",
+    "tickers": ["TXN", "GT"],
     "source": "Reuters",
     "time": "Mar 30, 8:00 AM",
     "category": "Tariff"
   },
   {
     "id": 11,
-    "title": "TSMC Arizona Fab Begins 4nm Apple Silicon Production, Easing US Geopolitical Supply Concerns",
-    "tickers": ["TC", "AAPL"],
+    "title": "GlobalTech Arizona Fab Begins 4nm Apple Silicon Production, Easing US Geopolitical Supply Concerns",
+    "tickers": ["GT", "AAPL"],
     "source": "The Verge",
     "time": "Mar 29, 2:00 PM",
     "category": "Geopolitical"
   },
   {
     "id": 12,
-    "title": "NVIDIA and TSMC Sign Long-Term Advanced Packaging Deal for CoWoS and SoIC Technologies",
-    "tickers": ["NVDA", "TC"],
+    "title": "NVIDIA and GlobalTech Sign Long-Term Advanced Packaging Deal for CoWoS and SoIC Technologies",
+    "tickers": ["NVDA", "GT"],
     "source": "SA News",
     "time": "Mar 28, 11:00 AM",
     "category": "Capacity"

@@ -1,9 +1,9 @@
-# TC (TSMC) Financial Statement Data
+# TC (GlobalTech) Financial Statement Data
 
-Source: TSMC (TSMC) 20-F SEC filings,
-quarterly earnings releases, and investor.tsmc.com. All monetary values in USD millions
-unless noted. TSMC fiscal year follows calendar year (Q1=Jan-Mar, Q2=Apr-Jun,
-Q3=Jul-Sep, Q4=Oct-Dec). EPS is for TC ADR (1 ADR = 5 TSMC common shares).
+Source: GlobalTech (GlobalTech) 20-F SEC filings,
+quarterly earnings releases, and investor.globaltech-example.com. All monetary values in USD millions
+unless noted. GlobalTech fiscal year follows calendar year (Q1=Jan-Mar, Q2=Apr-Jun,
+Q3=Jul-Sep, Q4=Oct-Dec). EPS is for TC ADR (1 ADR = 5 GlobalTech common shares).
 Note: marketCap values are in USD billions ($B), not millions.
 
 ## Income Statement
@@ -13,7 +13,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Revenue ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q1",
@@ -28,7 +28,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "YoY Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q1",
@@ -43,7 +43,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "COGS ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q1",
@@ -58,7 +58,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q1",
@@ -73,7 +73,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q1",
@@ -88,7 +88,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q1",
@@ -103,7 +103,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "R&D Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q1",
@@ -118,7 +118,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "SG&A Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q1",
@@ -133,7 +133,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q1",
@@ -148,7 +148,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q1",
@@ -163,7 +163,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q1",
@@ -178,7 +178,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q1",
@@ -193,7 +193,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Tax Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q1",
@@ -208,7 +208,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q1",
@@ -223,7 +223,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q1",
@@ -238,7 +238,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Earnings per Share ($)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q1",
@@ -253,7 +253,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Market Cap ($B)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q1",
@@ -268,7 +268,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Revenue ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q2",
@@ -283,7 +283,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Sequential Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q2",
@@ -298,7 +298,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "YoY Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q2",
@@ -313,7 +313,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "COGS ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q2",
@@ -328,7 +328,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q2",
@@ -343,7 +343,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q2",
@@ -358,7 +358,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q2",
@@ -373,7 +373,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "R&D Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q2",
@@ -388,7 +388,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "SG&A Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q2",
@@ -403,7 +403,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q2",
@@ -418,7 +418,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q2",
@@ -433,7 +433,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q2",
@@ -448,7 +448,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q2",
@@ -463,7 +463,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Tax Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q2",
@@ -478,7 +478,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q2",
@@ -493,7 +493,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q2",
@@ -508,7 +508,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Earnings per Share ($)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q2",
@@ -523,7 +523,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Market Cap ($B)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q2",
@@ -538,7 +538,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Revenue ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q3",
@@ -553,7 +553,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Sequential Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q3",
@@ -568,7 +568,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "YoY Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q3",
@@ -583,7 +583,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "COGS ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q3",
@@ -598,7 +598,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q3",
@@ -613,7 +613,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q3",
@@ -628,7 +628,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q3",
@@ -643,7 +643,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "R&D Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q3",
@@ -658,7 +658,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "SG&A Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q3",
@@ -673,7 +673,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q3",
@@ -688,7 +688,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q3",
@@ -703,7 +703,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q3",
@@ -718,7 +718,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q3",
@@ -733,7 +733,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Tax Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q3",
@@ -748,7 +748,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q3",
@@ -763,7 +763,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q3",
@@ -778,7 +778,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Earnings per Share ($)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q3",
@@ -793,7 +793,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Market Cap ($B)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q3",
@@ -808,7 +808,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Revenue ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q4",
@@ -823,7 +823,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Sequential Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q4",
@@ -838,7 +838,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "YoY Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q4",
@@ -853,7 +853,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "COGS ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q4",
@@ -868,7 +868,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q4",
@@ -883,7 +883,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q4",
@@ -898,7 +898,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q4",
@@ -913,7 +913,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "R&D Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q4",
@@ -928,7 +928,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "SG&A Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q4",
@@ -943,7 +943,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q4",
@@ -958,7 +958,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q4",
@@ -973,7 +973,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q4",
@@ -988,7 +988,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q4",
@@ -1003,7 +1003,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Tax Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q4",
@@ -1018,7 +1018,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q4",
@@ -1033,7 +1033,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q4",
@@ -1048,7 +1048,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Earnings per Share ($)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q4",
@@ -1063,7 +1063,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Market Cap ($B)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q4",
@@ -1078,7 +1078,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Revenue ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q1",
@@ -1093,7 +1093,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Sequential Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q1",
@@ -1108,7 +1108,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "YoY Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q1",
@@ -1123,7 +1123,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "COGS ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q1",
@@ -1138,7 +1138,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q1",
@@ -1153,7 +1153,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q1",
@@ -1168,7 +1168,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q1",
@@ -1183,7 +1183,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "R&D Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q1",
@@ -1198,7 +1198,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "SG&A Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q1",
@@ -1213,7 +1213,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q1",
@@ -1228,7 +1228,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q1",
@@ -1243,7 +1243,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q1",
@@ -1258,7 +1258,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q1",
@@ -1273,7 +1273,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Tax Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q1",
@@ -1288,7 +1288,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q1",
@@ -1303,7 +1303,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q1",
@@ -1318,7 +1318,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Earnings per Share ($)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q1",
@@ -1333,7 +1333,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Market Cap ($B)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q1",
@@ -1348,7 +1348,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Revenue ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q2",
@@ -1363,7 +1363,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Sequential Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q2",
@@ -1378,7 +1378,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "YoY Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q2",
@@ -1393,7 +1393,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "COGS ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q2",
@@ -1408,7 +1408,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q2",
@@ -1423,7 +1423,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q2",
@@ -1438,7 +1438,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q2",
@@ -1453,7 +1453,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "R&D Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q2",
@@ -1468,7 +1468,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "SG&A Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q2",
@@ -1483,7 +1483,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q2",
@@ -1498,7 +1498,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q2",
@@ -1513,7 +1513,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q2",
@@ -1528,7 +1528,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q2",
@@ -1543,7 +1543,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Tax Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q2",
@@ -1558,7 +1558,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q2",
@@ -1573,7 +1573,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q2",
@@ -1588,7 +1588,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Earnings per Share ($)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q2",
@@ -1603,7 +1603,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Market Cap ($B)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q2",
@@ -1618,7 +1618,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Revenue ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q3",
@@ -1633,7 +1633,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Sequential Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q3",
@@ -1648,7 +1648,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "YoY Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q3",
@@ -1663,7 +1663,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "COGS ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q3",
@@ -1678,7 +1678,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q3",
@@ -1693,7 +1693,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q3",
@@ -1708,7 +1708,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q3",
@@ -1723,7 +1723,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "R&D Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q3",
@@ -1738,7 +1738,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "SG&A Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q3",
@@ -1753,7 +1753,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q3",
@@ -1768,7 +1768,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q3",
@@ -1783,7 +1783,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q3",
@@ -1798,7 +1798,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q3",
@@ -1813,7 +1813,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Tax Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q3",
@@ -1828,7 +1828,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q3",
@@ -1843,7 +1843,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q3",
@@ -1858,7 +1858,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Earnings per Share ($)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q3",
@@ -1873,7 +1873,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Market Cap ($B)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q3",
@@ -1888,7 +1888,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Revenue ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q4",
@@ -1903,7 +1903,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Sequential Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q4",
@@ -1918,7 +1918,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "YoY Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q4",
@@ -1933,7 +1933,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "COGS ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q4",
@@ -1948,7 +1948,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q4",
@@ -1963,7 +1963,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q4",
@@ -1978,7 +1978,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q4",
@@ -1993,7 +1993,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "R&D Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q4",
@@ -2008,7 +2008,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "SG&A Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q4",
@@ -2023,7 +2023,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q4",
@@ -2038,7 +2038,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q4",
@@ -2053,7 +2053,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q4",
@@ -2068,7 +2068,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q4",
@@ -2083,7 +2083,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Tax Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q4",
@@ -2098,7 +2098,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q4",
@@ -2113,7 +2113,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q4",
@@ -2128,7 +2128,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Earnings per Share ($)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q4",
@@ -2143,7 +2143,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Market Cap ($B)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q4",
@@ -2158,7 +2158,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Revenue ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -2173,7 +2173,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Sequential Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -2188,7 +2188,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "YoY Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -2203,7 +2203,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "COGS ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -2218,7 +2218,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -2233,7 +2233,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -2248,7 +2248,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -2263,7 +2263,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "R&D Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -2278,7 +2278,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "SG&A Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -2293,7 +2293,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -2308,7 +2308,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -2323,7 +2323,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -2338,7 +2338,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -2353,7 +2353,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Tax Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -2368,7 +2368,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -2383,7 +2383,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -2398,7 +2398,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Earnings per Share ($)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -2413,7 +2413,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Market Cap ($B)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -2428,7 +2428,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Revenue ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -2443,7 +2443,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Sequential Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -2458,7 +2458,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "YoY Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -2473,7 +2473,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "COGS ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -2488,7 +2488,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -2503,7 +2503,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -2518,7 +2518,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -2533,7 +2533,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "R&D Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -2548,7 +2548,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "SG&A Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -2563,7 +2563,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -2578,7 +2578,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -2593,7 +2593,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -2608,7 +2608,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -2623,7 +2623,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Tax Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -2638,7 +2638,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -2653,7 +2653,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -2668,7 +2668,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Earnings per Share ($)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -2683,7 +2683,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Market Cap ($B)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -2698,7 +2698,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Revenue ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -2713,7 +2713,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Sequential Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -2728,7 +2728,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "YoY Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -2743,7 +2743,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "COGS ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -2758,7 +2758,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -2773,7 +2773,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -2788,7 +2788,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -2803,7 +2803,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "R&D Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -2818,7 +2818,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "SG&A Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -2833,7 +2833,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -2848,7 +2848,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -2863,7 +2863,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -2878,7 +2878,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -2893,7 +2893,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Tax Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -2908,7 +2908,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -2923,7 +2923,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -2938,7 +2938,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Earnings per Share ($)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -2953,7 +2953,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Market Cap ($B)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -2968,7 +2968,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Revenue ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -2983,7 +2983,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Sequential Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -2998,7 +2998,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "YoY Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -3013,7 +3013,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "COGS ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -3028,7 +3028,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -3043,7 +3043,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -3058,7 +3058,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -3073,7 +3073,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "R&D Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -3088,7 +3088,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "SG&A Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -3103,7 +3103,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -3118,7 +3118,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -3133,7 +3133,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -3148,7 +3148,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -3163,7 +3163,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Tax Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -3178,7 +3178,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -3193,7 +3193,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -3208,7 +3208,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Earnings per Share ($)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -3223,7 +3223,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Market Cap ($B)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -3238,7 +3238,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Revenue ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -3253,7 +3253,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "YoY Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -3268,7 +3268,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "COGS ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -3283,7 +3283,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -3298,7 +3298,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -3313,7 +3313,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -3328,7 +3328,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "R&D Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -3343,7 +3343,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "SG&A Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -3358,7 +3358,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -3373,7 +3373,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -3388,7 +3388,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -3403,7 +3403,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -3418,7 +3418,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Tax Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -3433,7 +3433,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -3448,7 +3448,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -3463,7 +3463,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Earnings per Share ($)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -3478,7 +3478,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Market Cap ($B)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -3493,7 +3493,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Revenue ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -3508,7 +3508,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "YoY Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -3523,7 +3523,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "COGS ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -3538,7 +3538,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -3553,7 +3553,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -3568,7 +3568,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -3583,7 +3583,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "R&D Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -3598,7 +3598,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "SG&A Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -3613,7 +3613,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -3628,7 +3628,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -3643,7 +3643,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -3658,7 +3658,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -3673,7 +3673,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Tax Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -3688,7 +3688,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -3703,7 +3703,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -3718,7 +3718,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Earnings per Share ($)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -3733,7 +3733,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Market Cap ($B)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -3748,7 +3748,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Revenue ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -3763,7 +3763,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "YoY Growth (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -3778,7 +3778,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "COGS ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -3793,7 +3793,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -3808,7 +3808,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Gross Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -3823,7 +3823,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -3838,7 +3838,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "R&D Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -3853,7 +3853,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "SG&A Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -3868,7 +3868,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Income ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -3883,7 +3883,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Operating Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -3898,7 +3898,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -3913,7 +3913,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "EBT Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -3928,7 +3928,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Tax Expense ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -3943,7 +3943,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -3958,7 +3958,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Net Margin (%)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -3973,7 +3973,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Earnings per Share ($)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -3988,7 +3988,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "income",
     "rpt_fin_item": "Market Cap ($B)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -4010,7 +4010,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "ASSETS",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4025,7 +4025,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "  Cash & Cash Equivalents",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4040,7 +4040,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Short-term Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4055,7 +4055,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accounts Receivable, net ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4070,7 +4070,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Inventories ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4085,7 +4085,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4100,7 +4100,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4115,7 +4115,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Property, Plant & Equipment, net ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4130,7 +4130,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Right-of-use Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4145,7 +4145,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Non-current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4160,7 +4160,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4175,7 +4175,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "LIABILITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4190,7 +4190,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accounts Payable ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4205,7 +4205,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accrued Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4220,7 +4220,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Current Portion of Long-term Debt ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4235,7 +4235,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4250,7 +4250,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4265,7 +4265,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Long-term Debt ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4280,7 +4280,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Non-current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4295,7 +4295,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4310,7 +4310,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "STOCKHOLDERS' EQUITY",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4325,7 +4325,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Common Stock ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4340,7 +4340,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Additional Paid-in Capital ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4355,7 +4355,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Retained Earnings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4370,7 +4370,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Equity Components ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4385,7 +4385,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Stockholders' Equity ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4400,7 +4400,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Liabilities & Equity ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -4415,7 +4415,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "ASSETS",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4430,7 +4430,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "  Cash & Cash Equivalents",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4445,7 +4445,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Short-term Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4460,7 +4460,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accounts Receivable, net ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4475,7 +4475,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Inventories ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4490,7 +4490,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4505,7 +4505,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4520,7 +4520,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Property, Plant & Equipment, net ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4535,7 +4535,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Right-of-use Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4550,7 +4550,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Non-current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4565,7 +4565,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4580,7 +4580,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "LIABILITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4595,7 +4595,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accounts Payable ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4610,7 +4610,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accrued Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4625,7 +4625,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Current Portion of Long-term Debt ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4640,7 +4640,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4655,7 +4655,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4670,7 +4670,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Long-term Debt ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4685,7 +4685,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Non-current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4700,7 +4700,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4715,7 +4715,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "STOCKHOLDERS' EQUITY",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4730,7 +4730,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Common Stock ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4745,7 +4745,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Additional Paid-in Capital ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4760,7 +4760,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Retained Earnings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4775,7 +4775,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Equity Components ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4790,7 +4790,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Stockholders' Equity ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4805,7 +4805,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Liabilities & Equity ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -4820,7 +4820,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "ASSETS",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -4835,7 +4835,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "  Cash & Cash Equivalents",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -4850,7 +4850,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Short-term Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -4865,7 +4865,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accounts Receivable, net ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -4880,7 +4880,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Inventories ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -4895,7 +4895,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -4910,7 +4910,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -4925,7 +4925,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Property, Plant & Equipment, net ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -4940,7 +4940,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Right-of-use Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -4955,7 +4955,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Non-current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -4970,7 +4970,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -4985,7 +4985,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "LIABILITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -5000,7 +5000,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accounts Payable ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -5015,7 +5015,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accrued Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -5030,7 +5030,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Current Portion of Long-term Debt ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -5045,7 +5045,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -5060,7 +5060,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -5075,7 +5075,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Long-term Debt ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -5090,7 +5090,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Non-current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -5105,7 +5105,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -5120,7 +5120,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "STOCKHOLDERS' EQUITY",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -5135,7 +5135,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Common Stock ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -5150,7 +5150,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Additional Paid-in Capital ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -5165,7 +5165,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Retained Earnings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -5180,7 +5180,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Equity Components ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -5195,7 +5195,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Stockholders' Equity ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -5210,7 +5210,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Liabilities & Equity ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -5225,7 +5225,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "ASSETS",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5240,7 +5240,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "  Cash & Cash Equivalents",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5255,7 +5255,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Short-term Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5270,7 +5270,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accounts Receivable, net ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5285,7 +5285,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Inventories ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5300,7 +5300,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5315,7 +5315,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5330,7 +5330,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Property, Plant & Equipment, net ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5345,7 +5345,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Right-of-use Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5360,7 +5360,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Non-current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5375,7 +5375,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5390,7 +5390,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "LIABILITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5405,7 +5405,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accounts Payable ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5420,7 +5420,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accrued Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5435,7 +5435,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Current Portion of Long-term Debt ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5450,7 +5450,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5465,7 +5465,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5480,7 +5480,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Long-term Debt ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5495,7 +5495,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Non-current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5510,7 +5510,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5525,7 +5525,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "STOCKHOLDERS' EQUITY",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5540,7 +5540,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Common Stock ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5555,7 +5555,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Additional Paid-in Capital ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5570,7 +5570,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Retained Earnings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5585,7 +5585,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Equity Components ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5600,7 +5600,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Stockholders' Equity ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5615,7 +5615,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Liabilities & Equity ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -5630,7 +5630,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "ASSETS",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5645,7 +5645,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "  Cash & Cash Equivalents",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5660,7 +5660,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Short-term Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5675,7 +5675,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accounts Receivable, net ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5690,7 +5690,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Inventories ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5705,7 +5705,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5720,7 +5720,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5735,7 +5735,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Property, Plant & Equipment, net ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5750,7 +5750,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Right-of-use Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5765,7 +5765,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Non-current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5780,7 +5780,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5795,7 +5795,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "LIABILITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5810,7 +5810,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accounts Payable ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5825,7 +5825,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accrued Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5840,7 +5840,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Current Portion of Long-term Debt ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5855,7 +5855,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5870,7 +5870,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5885,7 +5885,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Long-term Debt ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5900,7 +5900,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Non-current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5915,7 +5915,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5930,7 +5930,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "STOCKHOLDERS' EQUITY",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5945,7 +5945,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Common Stock ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5960,7 +5960,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Additional Paid-in Capital ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5975,7 +5975,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Retained Earnings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -5990,7 +5990,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Equity Components ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -6005,7 +6005,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Stockholders' Equity ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -6020,7 +6020,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Liabilities & Equity ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -6035,7 +6035,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "ASSETS",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6050,7 +6050,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "  Cash & Cash Equivalents",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6065,7 +6065,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Short-term Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6080,7 +6080,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accounts Receivable, net ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6095,7 +6095,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Inventories ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6110,7 +6110,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6125,7 +6125,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6140,7 +6140,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Property, Plant & Equipment, net ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6155,7 +6155,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Right-of-use Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6170,7 +6170,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Non-current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6185,7 +6185,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6200,7 +6200,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "LIABILITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6215,7 +6215,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accounts Payable ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6230,7 +6230,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accrued Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6245,7 +6245,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Current Portion of Long-term Debt ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6260,7 +6260,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6275,7 +6275,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6290,7 +6290,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Long-term Debt ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6305,7 +6305,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Non-current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6320,7 +6320,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6335,7 +6335,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "STOCKHOLDERS' EQUITY",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6350,7 +6350,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Common Stock ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6365,7 +6365,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Additional Paid-in Capital ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6380,7 +6380,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Retained Earnings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6395,7 +6395,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Equity Components ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6410,7 +6410,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Stockholders' Equity ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6425,7 +6425,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Liabilities & Equity ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -6440,7 +6440,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "ASSETS",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6455,7 +6455,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "  Cash & Cash Equivalents",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6470,7 +6470,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Short-term Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6485,7 +6485,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accounts Receivable, net ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6500,7 +6500,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Inventories ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6515,7 +6515,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6530,7 +6530,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6545,7 +6545,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Property, Plant & Equipment, net ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6560,7 +6560,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Right-of-use Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6575,7 +6575,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Non-current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6590,7 +6590,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6605,7 +6605,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "LIABILITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6620,7 +6620,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accounts Payable ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6635,7 +6635,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accrued Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6650,7 +6650,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Current Portion of Long-term Debt ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6665,7 +6665,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6680,7 +6680,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6695,7 +6695,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Long-term Debt ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6710,7 +6710,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Non-current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6725,7 +6725,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6740,7 +6740,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "STOCKHOLDERS' EQUITY",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6755,7 +6755,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Common Stock ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6770,7 +6770,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Additional Paid-in Capital ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6785,7 +6785,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Retained Earnings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6800,7 +6800,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Equity Components ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6815,7 +6815,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Stockholders' Equity ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6830,7 +6830,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Liabilities & Equity ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -6845,7 +6845,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "ASSETS",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -6860,7 +6860,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "  Cash & Cash Equivalents",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -6875,7 +6875,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Short-term Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -6890,7 +6890,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accounts Receivable, net ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -6905,7 +6905,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Inventories ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -6920,7 +6920,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -6935,7 +6935,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -6950,7 +6950,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Property, Plant & Equipment, net ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -6965,7 +6965,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Right-of-use Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -6980,7 +6980,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Non-current Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -6995,7 +6995,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Assets ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -7010,7 +7010,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "LIABILITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -7025,7 +7025,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accounts Payable ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -7040,7 +7040,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Accrued Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -7055,7 +7055,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Current Portion of Long-term Debt ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -7070,7 +7070,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -7085,7 +7085,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -7100,7 +7100,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Long-term Debt ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -7115,7 +7115,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Non-current Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -7130,7 +7130,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Liabilities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -7145,7 +7145,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "STOCKHOLDERS' EQUITY",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -7160,7 +7160,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Common Stock ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -7175,7 +7175,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Additional Paid-in Capital ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -7190,7 +7190,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Retained Earnings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -7205,7 +7205,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Other Equity Components ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -7220,7 +7220,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Stockholders' Equity ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -7235,7 +7235,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Total Liabilities & Equity ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -7250,7 +7250,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Ending Point DOI",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q1",
@@ -7265,7 +7265,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Ending Point DOI",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q2",
@@ -7280,7 +7280,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Ending Point DOI",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q3",
@@ -7295,7 +7295,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Ending Point DOI",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "Q4",
@@ -7310,7 +7310,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Ending Point DOI",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q1",
@@ -7325,7 +7325,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Ending Point DOI",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q2",
@@ -7340,7 +7340,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Ending Point DOI",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q3",
@@ -7355,7 +7355,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Ending Point DOI",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "Q4",
@@ -7370,7 +7370,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Ending Point DOI",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -7385,7 +7385,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Ending Point DOI",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -7400,7 +7400,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Ending Point DOI",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -7415,7 +7415,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Ending Point DOI",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -7430,7 +7430,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Ending Point DOI",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7445,7 +7445,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Ending Point DOI",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -7460,7 +7460,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "balance",
     "rpt_fin_item": "Ending Point DOI",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -7482,7 +7482,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "OPERATING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7497,7 +7497,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7512,7 +7512,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Depreciation & Amortization ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7527,7 +7527,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Share-based Compensation ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7542,7 +7542,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Changes in Working Capital ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7557,7 +7557,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Operating Items ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7572,7 +7572,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Operations ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7587,7 +7587,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "INVESTING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7602,7 +7602,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Purchases of PP&E ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7617,7 +7617,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Purchases of Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7632,7 +7632,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Proceeds from Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7647,7 +7647,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Investing Activities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7662,7 +7662,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Investing ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7677,7 +7677,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "FINANCING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7692,7 +7692,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Dividends Paid ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7707,7 +7707,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Proceeds from Borrowings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7722,7 +7722,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Repayment of Borrowings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7737,7 +7737,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Financing Activities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7752,7 +7752,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Financing ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7767,7 +7767,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "CASH SUMMARY",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7782,7 +7782,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Increase / (Decrease) in Cash ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7797,7 +7797,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Cash at Beginning of Period ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7812,7 +7812,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Cash at End of Period ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2022,
     "fiscal_quarter": "NA",
@@ -7827,7 +7827,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "OPERATING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -7842,7 +7842,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -7857,7 +7857,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Depreciation & Amortization ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -7872,7 +7872,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Share-based Compensation ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -7887,7 +7887,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Changes in Working Capital ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -7902,7 +7902,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Operating Items ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -7917,7 +7917,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Operations ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -7932,7 +7932,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "INVESTING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -7947,7 +7947,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Purchases of PP&E ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -7962,7 +7962,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Purchases of Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -7977,7 +7977,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Proceeds from Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -7992,7 +7992,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Investing Activities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -8007,7 +8007,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Investing ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -8022,7 +8022,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "FINANCING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -8037,7 +8037,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Dividends Paid ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -8052,7 +8052,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Proceeds from Borrowings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -8067,7 +8067,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Repayment of Borrowings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -8082,7 +8082,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Financing Activities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -8097,7 +8097,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Financing ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -8112,7 +8112,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "CASH SUMMARY",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -8127,7 +8127,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Increase / (Decrease) in Cash ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -8142,7 +8142,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Cash at Beginning of Period ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -8157,7 +8157,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Cash at End of Period ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2023,
     "fiscal_quarter": "NA",
@@ -8172,7 +8172,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "OPERATING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8187,7 +8187,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8202,7 +8202,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Depreciation & Amortization ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8217,7 +8217,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Share-based Compensation ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8232,7 +8232,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Changes in Working Capital ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8247,7 +8247,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Operating Items ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8262,7 +8262,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Operations ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8277,7 +8277,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "INVESTING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8292,7 +8292,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Purchases of PP&E ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8307,7 +8307,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Purchases of Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8322,7 +8322,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Proceeds from Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8337,7 +8337,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Investing Activities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8352,7 +8352,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Investing ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8367,7 +8367,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "FINANCING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8382,7 +8382,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Dividends Paid ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8397,7 +8397,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Proceeds from Borrowings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8412,7 +8412,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Repayment of Borrowings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8427,7 +8427,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Financing Activities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8442,7 +8442,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Financing ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8457,7 +8457,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "CASH SUMMARY",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8472,7 +8472,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Increase / (Decrease) in Cash ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8487,7 +8487,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Cash at Beginning of Period ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8502,7 +8502,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Cash at End of Period ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "NA",
@@ -8517,7 +8517,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "OPERATING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8532,7 +8532,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8547,7 +8547,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Depreciation & Amortization ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8562,7 +8562,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Share-based Compensation ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8577,7 +8577,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Changes in Working Capital ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8592,7 +8592,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Operating Items ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8607,7 +8607,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Operations ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8622,7 +8622,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "INVESTING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8637,7 +8637,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Purchases of PP&E ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8652,7 +8652,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Purchases of Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8667,7 +8667,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Proceeds from Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8682,7 +8682,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Investing Activities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8697,7 +8697,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Investing ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8712,7 +8712,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "FINANCING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8727,7 +8727,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Dividends Paid ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8742,7 +8742,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Proceeds from Borrowings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8757,7 +8757,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Repayment of Borrowings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8772,7 +8772,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Financing Activities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8787,7 +8787,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Financing ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8802,7 +8802,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "CASH SUMMARY",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8817,7 +8817,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Increase / (Decrease) in Cash ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8832,7 +8832,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Cash at Beginning of Period ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8847,7 +8847,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Cash at End of Period ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q1",
@@ -8862,7 +8862,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "OPERATING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -8877,7 +8877,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -8892,7 +8892,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Depreciation & Amortization ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -8907,7 +8907,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Share-based Compensation ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -8922,7 +8922,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Changes in Working Capital ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -8937,7 +8937,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Operating Items ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -8952,7 +8952,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Operations ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -8967,7 +8967,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "INVESTING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -8982,7 +8982,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Purchases of PP&E ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -8997,7 +8997,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Purchases of Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -9012,7 +9012,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Proceeds from Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -9027,7 +9027,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Investing Activities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -9042,7 +9042,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Investing ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -9057,7 +9057,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "FINANCING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -9072,7 +9072,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Dividends Paid ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -9087,7 +9087,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Proceeds from Borrowings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -9102,7 +9102,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Repayment of Borrowings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -9117,7 +9117,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Financing Activities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -9132,7 +9132,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Financing ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -9147,7 +9147,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "CASH SUMMARY",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -9162,7 +9162,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Increase / (Decrease) in Cash ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -9177,7 +9177,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Cash at Beginning of Period ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -9192,7 +9192,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Cash at End of Period ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q2",
@@ -9207,7 +9207,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "OPERATING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9222,7 +9222,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9237,7 +9237,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Depreciation & Amortization ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9252,7 +9252,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Share-based Compensation ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9267,7 +9267,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Changes in Working Capital ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9282,7 +9282,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Operating Items ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9297,7 +9297,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Operations ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9312,7 +9312,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "INVESTING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9327,7 +9327,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Purchases of PP&E ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9342,7 +9342,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Purchases of Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9357,7 +9357,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Proceeds from Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9372,7 +9372,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Investing Activities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9387,7 +9387,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Investing ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9402,7 +9402,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "FINANCING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9417,7 +9417,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Dividends Paid ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9432,7 +9432,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Proceeds from Borrowings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9447,7 +9447,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Repayment of Borrowings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9462,7 +9462,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Financing Activities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9477,7 +9477,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Financing ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9492,7 +9492,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "CASH SUMMARY",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9507,7 +9507,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Increase / (Decrease) in Cash ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9522,7 +9522,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Cash at Beginning of Period ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9537,7 +9537,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Cash at End of Period ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q3",
@@ -9552,7 +9552,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "OPERATING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9567,7 +9567,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9582,7 +9582,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Depreciation & Amortization ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9597,7 +9597,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Share-based Compensation ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9612,7 +9612,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Changes in Working Capital ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9627,7 +9627,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Operating Items ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9642,7 +9642,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Operations ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9657,7 +9657,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "INVESTING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9672,7 +9672,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Purchases of PP&E ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9687,7 +9687,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Purchases of Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9702,7 +9702,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Proceeds from Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9717,7 +9717,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Investing Activities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9732,7 +9732,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Investing ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9747,7 +9747,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "FINANCING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9762,7 +9762,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Dividends Paid ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9777,7 +9777,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Proceeds from Borrowings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9792,7 +9792,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Repayment of Borrowings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9807,7 +9807,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Financing Activities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9822,7 +9822,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Financing ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9837,7 +9837,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "CASH SUMMARY",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9852,7 +9852,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Increase / (Decrease) in Cash ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9867,7 +9867,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Cash at Beginning of Period ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9882,7 +9882,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Cash at End of Period ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2024,
     "fiscal_quarter": "Q4",
@@ -9897,7 +9897,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "OPERATING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -9912,7 +9912,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Income",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -9927,7 +9927,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Depreciation & Amortization ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -9942,7 +9942,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Share-based Compensation ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -9957,7 +9957,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Changes in Working Capital ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -9972,7 +9972,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Operating Items ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -9987,7 +9987,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Operations ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -10002,7 +10002,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "INVESTING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -10017,7 +10017,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Purchases of PP&E ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -10032,7 +10032,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Purchases of Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -10047,7 +10047,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Proceeds from Investments ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -10062,7 +10062,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Investing Activities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -10077,7 +10077,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Investing ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -10092,7 +10092,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "FINANCING ACTIVITIES",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -10107,7 +10107,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Dividends Paid ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -10122,7 +10122,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Proceeds from Borrowings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -10137,7 +10137,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Repayment of Borrowings ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -10152,7 +10152,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Other Financing Activities ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -10167,7 +10167,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Cash from Financing ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -10182,7 +10182,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "CASH SUMMARY",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -10197,7 +10197,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Net Increase / (Decrease) in Cash ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -10212,7 +10212,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Cash at Beginning of Period ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",
@@ -10227,7 +10227,7 @@ Note: marketCap values are in USD billions ($B), not millions.
   {
     "rpt_fin_type": "cashflow",
     "rpt_fin_item": "Cash at End of Period ($M)",
-    "co_cd": "TC",
+    "co_cd": "GT",
     "curr_cd": "USD",
     "fiscal_year": 2025,
     "fiscal_quarter": "Q1",

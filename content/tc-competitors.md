@@ -1,4 +1,4 @@
-# TSMC Competitor Network Data
+# GlobalTech Competitor Network Data
 
 > Sources: TrendForce, IDC, company annual reports, analyst research (FY2023–FY2024).
 > Market share figures represent global foundry revenue share.
@@ -156,16 +156,16 @@
 [
   {
     "id": 1,
-    "title": "Samsung Foundry Struggles with 3nm GAA Yield, TSMC Widens Advanced Node Lead",
-    "tickers": ["SSNLF", "TC"],
+    "title": "Samsung Foundry Struggles with 3nm GAA Yield, GlobalTech Widens Advanced Node Lead",
+    "tickers": ["SSNLF", "GT"],
     "source": "Bloomberg",
     "time": "Today, 9:20 AM",
     "category": "Strategy"
   },
   {
     "id": 2,
-    "title": "GlobalFoundries Doubles Down on RF and Auto-Grade Chips as TSMC Avoids Mature Nodes",
-    "tickers": ["GFS", "TC"],
+    "title": "GlobalFoundries Doubles Down on RF and Auto-Grade Chips as GlobalTech Avoids Mature Nodes",
+    "tickers": ["GFS", "GT"],
     "source": "Reuters",
     "time": "Today, 8:45 AM",
     "category": "Strategy"
@@ -173,31 +173,31 @@
   {
     "id": 3,
     "title": "SMIC Achieves 7nm-Class Chip Using Immersion DUV Litho Despite US Export Restrictions",
-    "tickers": ["SMICY", "TC"],
+    "tickers": ["SMICY", "GT"],
     "source": "Nikkei Asia",
     "time": "Yesterday, 7:00 PM",
     "category": "Geopolitical"
   },
   {
     "id": 4,
-    "title": "Intel Foundry 18A Process Enters Risk Production — CEO Pat Gelsinger Eyes TSMC Customers",
-    "tickers": ["INTC_F", "TC"],
+    "title": "Intel Foundry 18A Process Enters Risk Production — CEO Pat Gelsinger Eyes GlobalTech Customers",
+    "tickers": ["INTC_F", "GT"],
     "source": "The Register",
     "time": "Yesterday, 5:30 PM",
     "category": "Strategy"
   },
   {
     "id": 5,
-    "title": "UMC Partners with Intel for 12nm Production in US, Competing With TSMC Specialty Lines",
-    "tickers": ["UMC", "INTC_F", "TC"],
+    "title": "UMC Partners with Intel for 12nm Production in US, Competing With GlobalTech Specialty Lines",
+    "tickers": ["UMC", "INTC_F", "GT"],
     "source": "Financial Times",
     "time": "Apr 2, 4:00 PM",
     "category": "Supply Chain"
   },
   {
     "id": 6,
-    "title": "Samsung Foundry Wins Major Qualcomm Snapdragon Order, Pressuring TSMC Exclusivity",
-    "tickers": ["SSNLF", "TC"],
+    "title": "Samsung Foundry Wins Major Qualcomm Snapdragon Order, Pressuring GlobalTech Exclusivity",
+    "tickers": ["SSNLF", "GT"],
     "source": "Korea Herald",
     "time": "Apr 2, 10:00 AM",
     "category": "Earnings"
@@ -205,7 +205,7 @@
   {
     "id": 7,
     "title": "Tower Semiconductor Expands Power IC Capacity at Newport Beach Fab, Targeting EV Market",
-    "tickers": ["TSEM", "TC"],
+    "tickers": ["TSEM", "GT"],
     "source": "Business Wire",
     "time": "Apr 1, 11:00 AM",
     "category": "Capacity"
@@ -220,16 +220,16 @@
   },
   {
     "id": 9,
-    "title": "US Export Controls Push SMIC to 28nm Specialization, Ceding Advanced Node Ground to TSMC",
-    "tickers": ["SMICY", "TC"],
+    "title": "US Export Controls Push SMIC to 28nm Specialization, Ceding Advanced Node Ground to GlobalTech",
+    "tickers": ["SMICY", "GT"],
     "source": "Reuters",
     "time": "Mar 31, 9:00 AM",
     "category": "Geopolitical"
   },
   {
     "id": 10,
-    "title": "Intel CEO Confirms 18A Yield on Track — 'We Are in the Race' Against TSMC and Samsung",
-    "tickers": ["INTC_F", "TC", "SSNLF"],
+    "title": "Intel CEO Confirms 18A Yield on Track — 'We Are in the Race' Against GlobalTech and Samsung",
+    "tickers": ["INTC_F", "GT", "SSNLF"],
     "source": "CNBC",
     "time": "Mar 30, 1:00 PM",
     "category": "Strategy"
@@ -237,7 +237,7 @@
   {
     "id": 11,
     "title": "Powerchip PSMC Plans Joint Venture Fab in India to Serve Local Auto and Consumer Demand",
-    "tickers": ["PSMC", "TC"],
+    "tickers": ["PSMC", "GT"],
     "source": "Economic Times",
     "time": "Mar 29, 10:00 AM",
     "category": "Capacity"
@@ -245,7 +245,7 @@
   {
     "id": 12,
     "title": "GlobalFoundries Reports Q4 Beat on Automotive Revenue, Raises 2025 Capacity Guidance",
-    "tickers": ["GFS", "TC"],
+    "tickers": ["GFS", "GT"],
     "source": "Seeking Alpha",
     "time": "Mar 28, 4:00 PM",
     "category": "Earnings"
@@ -259,7 +259,7 @@
 
 ```json
 [
-  { "id": "TC",    "name": "TSMC",                  "marketShare": 62.3 },
+  { "id": "GT",    "name": "GlobalTech",                  "marketShare": 62.3 },
   { "id": "SSNLF", "name": "Samsung Foundry",        "marketShare": 11.3 },
   { "id": "UMC",   "name": "UMC",                    "marketShare": 6.3  },
   { "id": "GFS",   "name": "GlobalFoundries",        "marketShare": 6.0  },

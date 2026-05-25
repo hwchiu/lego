@@ -8,8 +8,8 @@
   },
   {
     "seq": 2,
-    "co_cd": "TSMC",
-    "comp_tag_short_name": "TSMC",
+    "co_cd": "GlobalTech",
+    "comp_tag_short_name": "GlobalTech",
     "mentions": 35,
     "daily_count": [20, 28, 35, 30, 40, 38, 45]
   },

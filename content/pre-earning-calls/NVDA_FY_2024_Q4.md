@@ -25,7 +25,7 @@ Management's Q1 FY2025 guidance of ~$24.0B (±2%) represents triple-digit YoY gr
 
 **3. Breakthroughs and Challenges**
 
-The breakthrough is Gaming's 56% QoQ recovery: the Ada Lovelace RTX 40 refresh showed that NVIDIA's consumer GPU market remains structurally healthy despite the AI-driven media narrative that all of NVIDIA's silicon is consumed by data centers. Professional Visualization at $463M (+11% QoQ) signals enterprise AI workstation deployment accelerating. The challenge entering FY2025 is supply: TSMC's CoWoS advanced packaging capacity constraints limit H100/H200 production ramp, creating allocation rationing that benefits NVIDIA's pricing power in the short term but risks customer frustration and competitive experimentation in the medium term.
+The breakthrough is Gaming's 56% QoQ recovery: the Ada Lovelace RTX 40 refresh showed that NVIDIA's consumer GPU market remains structurally healthy despite the AI-driven media narrative that all of NVIDIA's silicon is consumed by data centers. Professional Visualization at $463M (+11% QoQ) signals enterprise AI workstation deployment accelerating. The challenge entering FY2025 is supply: GlobalTech's CoWoS advanced packaging capacity constraints limit H100/H200 production ramp, creating allocation rationing that benefits NVIDIA's pricing power in the short term but risks customer frustration and competitive experimentation in the medium term.
 
 **4. Potential "Non-Consensus" Views**
 

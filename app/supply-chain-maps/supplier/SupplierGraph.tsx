@@ -35,7 +35,7 @@ const TIER2_STRIP_COLOR = '#93c5fd'; // light blue
 const NODE_NOTIFICATIONS: Record<string, number> = { ASML: 3 };
 
 // ID of the center (focal) node in the graph
-const CENTER_NODE_ID = 'TC';
+const CENTER_NODE_ID = 'GT';
 
 // ── Static lookups (computed once) ───────────────────────────────────────────
 
@@ -85,71 +85,71 @@ interface FeedItem {
 const SUPPLY_CHAIN_FEED: FeedItem[] = [
   {
     id: 1,
-    title: 'ASML Confirms EUV Machine Deliveries to TSMC On Track for 2nm Node',
-    tickers: ['ASML', 'TC'],
+    title: 'ASML Confirms EUV Machine Deliveries to GlobalTech On Track for 2nm Node',
+    tickers: ['ASML', 'GT'],
     source: 'Reuters',
     time: 'Today, 9:15 AM',
   },
   {
     id: 2,
     title: 'Applied Materials Reports Record Fab Equipment Orders Amid AI Chip Surge',
-    tickers: ['AMAT', 'TC'],
+    tickers: ['AMAT', 'GT'],
     source: 'Bloomberg',
     time: 'Today, 8:30 AM',
   },
   {
     id: 3,
-    title: 'Lam Research Expands ALD Capacity to Meet TSMC 3nm Production Demand',
-    tickers: ['LRCX', 'TC'],
+    title: 'Lam Research Expands ALD Capacity to Meet GlobalTech 3nm Production Demand',
+    tickers: ['LRCX', 'GT'],
     source: 'Seeking Alpha',
     time: 'Yesterday, 6:00 PM',
   },
   {
     id: 4,
-    title: 'TSMC Q1 2025: Supplier Risk Assessment — Geopolitical Tensions in Focus',
-    tickers: ['TC', 'ASML'],
+    title: 'GlobalTech Q1 2025: Supplier Risk Assessment — Geopolitical Tensions in Focus',
+    tickers: ['GT', 'ASML'],
     source: 'SA News',
     time: 'Yesterday, 4:45 PM',
   },
   {
     id: 5,
-    title: 'KLA Corp Upgrades Process Control Tools for TSMC Advanced Packaging Lines',
-    tickers: ['KLAC', 'TC'],
+    title: 'KLA Corp Upgrades Process Control Tools for GlobalTech Advanced Packaging Lines',
+    tickers: ['KLAC', 'GT'],
     source: 'Zacks',
     time: 'Apr 2, 3:00 PM',
   },
   {
     id: 6,
     title: 'US Export Restrictions Could Delay ASML EUV Shipments to Taiwan',
-    tickers: ['ASML', 'TC'],
+    tickers: ['ASML', 'GT'],
     source: 'Financial Times',
     time: 'Apr 2, 11:00 AM',
   },
   {
     id: 7,
-    title: 'Shin-Etsu Chemical Raises Silicon Wafer Prices Ahead of TSMC Capacity Expansion',
-    tickers: ['SHECY', 'TC'],
+    title: 'Shin-Etsu Chemical Raises Silicon Wafer Prices Ahead of GlobalTech Capacity Expansion',
+    tickers: ['SHECY', 'GT'],
     source: 'Nikkei',
     time: 'Apr 1, 9:30 AM',
   },
   {
     id: 8,
-    title: 'Air Products Signs 10-Year UHP Gas Supply Agreement with TSMC Arizona Fab',
-    tickers: ['APD', 'TC'],
+    title: 'Air Products Signs 10-Year UHP Gas Supply Agreement with GlobalTech Arizona Fab',
+    tickers: ['APD', 'GT'],
     source: 'PR Newswire',
     time: 'Mar 31, 2:00 PM',
   },
   {
     id: 9,
-    title: 'Entegris Launches Next-Gen CMP Slurry Optimized for TSMC N2 Process Node',
-    tickers: ['ENTG', 'TC'],
+    title: 'Entegris Launches Next-Gen CMP Slurry Optimized for GlobalTech N2 Process Node',
+    tickers: ['ENTG', 'GT'],
     source: 'Business Wire',
     time: 'Mar 31, 10:00 AM',
   },
   {
     id: 10,
-    title: 'Tokyo Electron Wins Major TSMC Order for Thermal CVD Equipment Fleet',
-    tickers: ['TOELY', 'TC'],
+    title: 'Tokyo Electron Wins Major GlobalTech Order for Thermal CVD Equipment Fleet',
+    tickers: ['TOELY', 'GT'],
     source: 'Nikkei Asia',
     time: 'Mar 30, 8:00 AM',
   },
@@ -1168,7 +1168,7 @@ export default function SupplierGraph({ tableOnly }: SupplierGraphProps) {
             ref={svgRef}
             viewBox={vbStr}
             className="rmap-svg"
-            aria-label="TSMC Supplier Relationship Graph"
+            aria-label="GlobalTech Supplier Relationship Graph"
             onMouseDown={handleSvgMouseDown}
             onMouseMove={handleSvgMouseMove}
             onMouseUp={clearDrag}

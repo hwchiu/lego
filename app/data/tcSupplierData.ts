@@ -1,5 +1,5 @@
-// TSMC (TSMC) supplier network data
-// Sources: TSMC Annual Reports, public filings, supplier disclosures (FY2023–FY2024)
+// GlobalTech (GlobalTech) supplier network data
+// Sources: GlobalTech Annual Reports, public filings, supplier disclosures (FY2023–FY2024)
 
 // ---------------------------------------------------------------------------
 // Type definitions
@@ -55,9 +55,9 @@ export type RelationTypeKey = (typeof RELATION_TYPES)[number]['key'];
 // ---------------------------------------------------------------------------
 
 export const TC_CENTER_NODE: SupplierNodeTC = {
-  id: 'TC',
-  name: 'TSMC',
-  ticker: 'TC',
+  id: 'GT',
+  name: 'GlobalTech',
+  ticker: 'GT',
   exchange: 'NYSE / TWSE',
   country: 'Taiwan',
   relationship: 'Central Company — Pure-play Foundry',
@@ -713,7 +713,7 @@ export const TC_TIER2_SUPPLIERS: SupplierNodeTC[] = [
 export const EDGE_ENTITIES: EdgeEntity[] = [
   // TC → Tier 1 (9 edges)
   {
-    from: 'TC',
+    from: 'GT',
     to: 'ASML',
     transactionAmount: 4800,
     newsCoMentionCount: 342,
@@ -723,7 +723,7 @@ export const EDGE_ENTITIES: EdgeEntity[] = [
     commonBoardMembers: 1,
   },
   {
-    from: 'TC',
+    from: 'GT',
     to: 'AMAT',
     transactionAmount: 2900,
     newsCoMentionCount: 287,
@@ -733,7 +733,7 @@ export const EDGE_ENTITIES: EdgeEntity[] = [
     commonBoardMembers: 2,
   },
   {
-    from: 'TC',
+    from: 'GT',
     to: 'LRCX',
     transactionAmount: 2300,
     newsCoMentionCount: 251,
@@ -743,7 +743,7 @@ export const EDGE_ENTITIES: EdgeEntity[] = [
     commonBoardMembers: 1,
   },
   {
-    from: 'TC',
+    from: 'GT',
     to: 'KLAC',
     transactionAmount: 1900,
     newsCoMentionCount: 198,
@@ -753,7 +753,7 @@ export const EDGE_ENTITIES: EdgeEntity[] = [
     commonBoardMembers: 1,
   },
   {
-    from: 'TC',
+    from: 'GT',
     to: 'TOELY',
     transactionAmount: 1600,
     newsCoMentionCount: 176,
@@ -763,7 +763,7 @@ export const EDGE_ENTITIES: EdgeEntity[] = [
     commonBoardMembers: 0,
   },
   {
-    from: 'TC',
+    from: 'GT',
     to: 'SHECY',
     transactionAmount: 1500,
     newsCoMentionCount: 143,
@@ -773,7 +773,7 @@ export const EDGE_ENTITIES: EdgeEntity[] = [
     commonBoardMembers: 0,
   },
   {
-    from: 'TC',
+    from: 'GT',
     to: 'SUOPY',
     transactionAmount: 1200,
     newsCoMentionCount: 112,
@@ -783,7 +783,7 @@ export const EDGE_ENTITIES: EdgeEntity[] = [
     commonBoardMembers: 0,
   },
   {
-    from: 'TC',
+    from: 'GT',
     to: 'APD',
     transactionAmount: 800,
     newsCoMentionCount: 89,
@@ -793,7 +793,7 @@ export const EDGE_ENTITIES: EdgeEntity[] = [
     commonBoardMembers: 0,
   },
   {
-    from: 'TC',
+    from: 'GT',
     to: 'ENTG',
     transactionAmount: 650,
     newsCoMentionCount: 76,

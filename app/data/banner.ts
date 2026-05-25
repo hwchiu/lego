@@ -18,7 +18,7 @@ export const bannerSlides: BannerSlide[] = [
   {
     label: 'User Guide',
     linkText: 'User guide',
-    linkHref: 'https://tkms.digwork.tw.ent.tsmc.com/pages/Uw5xaVFEXr',
+    linkHref: 'https://intranet.globaltech-example.com/pages/Uw5xaVFEXr',
     afterLink: ' available now \u2013 explore its features!',
   },
   {

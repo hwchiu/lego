@@ -248,7 +248,7 @@
       "dateLabel": "Apr 16",
       "companyCount": 71,
       "companies": [
-        "TC",
+        "GT",
         "IBKR",
         "UNH",
         "PPG",
@@ -1863,8 +1863,8 @@
     ],
     "Apr 16": [
       {
-        "symbol": "TC",
-        "company": "TSMC Manufacturing Co.",
+        "symbol": "GT",
+        "company": "GlobalTech Manufacturing Co.",
         "report": "Pre",
         "mktCap": "$892.4B",
         "epsNormalized": "$2.18",
@@ -4287,8 +4287,8 @@
     ],
     "Apr 16": [
       {
-        "symbol": "TC",
-        "company": "TSMC Manufacturing Co.",
+        "symbol": "GT",
+        "company": "GlobalTech Manufacturing Co.",
         "report": "Pre",
         "mktCap": "$892.4B",
         "revConsensus": "$25.4B",

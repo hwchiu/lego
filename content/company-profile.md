@@ -15,8 +15,8 @@
       "myTags": ["Competitors", "Backend"]
     },
     {
-      "symbol": "TC",
-      "name": "TSMC",
+      "symbol": "GT",
+      "name": "GlobalTech",
       "localCurrency": "TWD",
       "bbgId": "200711 TW Equity",
       "stockExchange": "TWSE",
@@ -99,7 +99,7 @@
         { "quarter": "23Q2", "doi": 129, "revenue": 13507, "guidance": 16875 }
       ]
     },
-    "TC": {
+    "GT": {
       "currentCalendarQuarter": "23Q2",
       "currentQtr": {
         "label": "23Q2",

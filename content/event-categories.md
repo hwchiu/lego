@@ -1,6 +1,6 @@
 # Event Categories Data
 
-Event data for 8 non-earnings market categories. Companies in scope: TSMC (TC) and its key
+Event data for 8 non-earnings market categories. Companies in scope: GlobalTech (TC) and its key
 customers (AAPL, NVDA, AMD, QCOM, AVGO) and suppliers (ASML, AMAT, LRCX, KLAC, SNPS, CDNS).
 All events are representative April 2025 data for display purposes.
 
@@ -23,15 +23,15 @@ All events are representative April 2025 data for display purposes.
   ],
   "Apr 9": [
     {
-      "cellLabel": "TC",
-      "symbol": "TC",
-      "company": "TSMC",
+      "cellLabel": "GT",
+      "symbol": "GT",
+      "company": "GlobalTech",
       "eventType": "Issuance",
       "amount": "$3.0B",
       "coupon": "4.80%",
       "maturity": "2032",
       "rating": "AA-",
-      "description": "TSMC priced a $3.0B dual-tranche senior notes offering (10-year and 5-year tranches) to fund N2 process node fab expansion in Arizona Phase 2 and Hsinchu Advanced Packaging Phase 3. Order book was 4.2x oversubscribed, reflecting strong investor confidence in AI chip demand."
+      "description": "GlobalTech priced a $3.0B dual-tranche senior notes offering (10-year and 5-year tranches) to fund N2 process node fab expansion in Arizona Phase 2 and Hsinchu Advanced Packaging Phase 3. Order book was 4.2x oversubscribed, reflecting strong investor confidence in AI chip demand."
     }
   ],
   "Apr 10": [
@@ -247,9 +247,9 @@ All events are representative April 2025 data for display purposes.
       "country": "Taiwan",
       "flag": "🇹🇼",
       "eventType": "Policy",
-      "title": "TSMC Phase 3 Advanced Packaging Approved",
-      "description": "Taiwan's Executive Yuan approved TSMC's Phase 3 CoWoS advanced packaging capacity expansion in Hsinchu Science Park, targeting a 50% output increase by end-2026. The NT$420B ($13B) investment is supported by a 25% tax credit under the Statute for Industrial Innovation. The expansion directly serves NVIDIA GB300, AMD MI400, and Apple A-series packaging demand.",
-      "affectedCompanies": ["TC", "NVDA", "AMD", "AAPL"],
+      "title": "GlobalTech Phase 3 Advanced Packaging Approved",
+      "description": "Taiwan's Executive Yuan approved GlobalTech's Phase 3 CoWoS advanced packaging capacity expansion in Hsinchu Science Park, targeting a 50% output increase by end-2026. The NT$420B ($13B) investment is supported by a 25% tax credit under the Statute for Industrial Innovation. The expansion directly serves NVIDIA GB300, AMD MI400, and Apple A-series packaging demand.",
+      "affectedCompanies": ["GT", "NVDA", "AMD", "AAPL"],
       "impact": "High"
     }
   ],
@@ -259,9 +259,9 @@ All events are representative April 2025 data for display purposes.
       "country": "United States",
       "flag": "🇺🇸",
       "eventType": "Funding",
-      "title": "CHIPS Act Awards $2.6B Grant to TSMC Arizona",
-      "description": "The US Department of Commerce finalized a $2.6B direct grant and up to $5B in loan guarantees to TSMC's Arizona subsidiary for its N3 and N2 fabs in Phoenix. The agreement conditions 40% domestic equipment sourcing, benefiting Applied Materials, Lam Research, and KLA. TSMC Arizona is on track for first N3 wafer output in H2 2025.",
-      "affectedCompanies": ["TC", "AMAT", "LRCX", "KLAC"],
+      "title": "CHIPS Act Awards $2.6B Grant to GlobalTech Arizona",
+      "description": "The US Department of Commerce finalized a $2.6B direct grant and up to $5B in loan guarantees to GlobalTech's Arizona subsidiary for its N3 and N2 fabs in Phoenix. The agreement conditions 40% domestic equipment sourcing, benefiting Applied Materials, Lam Research, and KLA. GlobalTech Arizona is on track for first N3 wafer output in H2 2025.",
+      "affectedCompanies": ["GT", "AMAT", "LRCX", "KLAC"],
       "impact": "High"
     }
   ],
@@ -272,8 +272,8 @@ All events are representative April 2025 data for display purposes.
       "flag": "🇳🇱",
       "eventType": "Regulation",
       "title": "ASML Export Licenses Renewed for 2025–2026",
-      "description": "The Dutch Ministry of Foreign Affairs renewed ASML's export licenses for ArF immersion and DUV systems to non-restricted markets through 2026. EUV export restrictions to China remain in force. ASML reaffirmed €35B–37B revenue guidance for 2025, with High-NA EUV shipments to TSMC, Samsung, and Intel accelerating.",
-      "affectedCompanies": ["ASML", "TC"],
+      "description": "The Dutch Ministry of Foreign Affairs renewed ASML's export licenses for ArF immersion and DUV systems to non-restricted markets through 2026. EUV export restrictions to China remain in force. ASML reaffirmed €35B–37B revenue guidance for 2025, with High-NA EUV shipments to GlobalTech, Samsung, and Intel accelerating.",
+      "affectedCompanies": ["ASML", "GT"],
       "impact": "Medium"
     }
   ],
@@ -283,9 +283,9 @@ All events are representative April 2025 data for display purposes.
       "country": "Japan",
       "flag": "🇯🇵",
       "eventType": "Subsidy",
-      "title": "METI Approves ¥120B for TSMC Kumamoto Phase 2",
-      "description": "Japan's Ministry of Economy, Trade and Industry (METI) approved ¥120B ($800M) in additional subsidies for TSMC's Kumamoto Phase 2 fab (JASM joint venture with Sony and Denso). The 6nm/7nm facility targets automotive sensors and image processors, with Synopsys and Cadence Design selected as primary EDA partners. Production is slated for Q3 2026.",
-      "affectedCompanies": ["TC", "SNPS", "CDNS"],
+      "title": "METI Approves ¥120B for GlobalTech Kumamoto Phase 2",
+      "description": "Japan's Ministry of Economy, Trade and Industry (METI) approved ¥120B ($800M) in additional subsidies for GlobalTech's Kumamoto Phase 2 fab (JASM joint venture with Sony and Denso). The 6nm/7nm facility targets automotive sensors and image processors, with Synopsys and Cadence Design selected as primary EDA partners. Production is slated for Q3 2026.",
+      "affectedCompanies": ["GT", "SNPS", "CDNS"],
       "impact": "High"
     }
   ],
@@ -398,8 +398,8 @@ All events are representative April 2025 data for display purposes.
       "rate": "32.45",
       "change": "-0.039",
       "changePct": "-0.12%",
-      "description": "Taiwan Central Bank held benchmark rate at 2.0% in quarterly policy meeting. TWD softened mildly on broader USD strength. TSMC's USD-denominated revenue books a NT$ translation gain of ~0.1% on overseas earnings.",
-      "affectedCompanies": ["TC"]
+      "description": "Taiwan Central Bank held benchmark rate at 2.0% in quarterly policy meeting. TWD softened mildly on broader USD strength. GlobalTech's USD-denominated revenue books a NT$ translation gain of ~0.1% on overseas earnings.",
+      "affectedCompanies": ["GT"]
     }
   ],
   "Apr 7": [
@@ -410,7 +410,7 @@ All events are representative April 2025 data for display purposes.
       "change": "+1.21",
       "changePct": "+0.81%",
       "description": "Bank of Japan maintained accommodative stance, pushing JPY to 151.2. Weaker yen increases USD-equivalent cost of ASML EUV equipment purchased by Japanese fabs (JASM/Kumamoto). Tokyo Electron yen revenue loses USD-export pricing competitiveness.",
-      "affectedCompanies": ["ASML", "TC"]
+      "affectedCompanies": ["ASML", "GT"]
     }
   ],
   "Apr 9": [
@@ -442,8 +442,8 @@ All events are representative April 2025 data for display purposes.
       "rate": "32.1",
       "change": "-0.35",
       "changePct": "-1.08%",
-      "description": "TWD strengthened on positive US-Taiwan trade framework discussions and TSMC's strong Q1 earnings beat. The move reduces TSMC's USD-to-NT$ translation gain but signals solid Taiwan macroeconomic fundamentals and FDI inflows.",
-      "affectedCompanies": ["TC"]
+      "description": "TWD strengthened on positive US-Taiwan trade framework discussions and GlobalTech's strong Q1 earnings beat. The move reduces GlobalTech's USD-to-NT$ translation gain but signals solid Taiwan macroeconomic fundamentals and FDI inflows.",
+      "affectedCompanies": ["GT"]
     }
   ],
   "Apr 25": [
@@ -563,9 +563,9 @@ All events are representative April 2025 data for display purposes.
   ],
   "Apr 14": [
     {
-      "cellLabel": "TC",
-      "symbol": "TC",
-      "company": "TSMC",
+      "cellLabel": "GT",
+      "symbol": "GT",
+      "company": "GlobalTech",
       "exDate": "Apr 14",
       "payDate": "Oct 10",
       "dividend": "$2.00",
@@ -624,9 +624,9 @@ All events are representative April 2025 data for display purposes.
   ],
   "Apr 7": [
     {
-      "cellLabel": "TC",
-      "symbol": "TC",
-      "company": "TSMC",
+      "cellLabel": "GT",
+      "symbol": "GT",
+      "company": "GlobalTech",
       "exDate": "Apr 7",
       "payDate": "Oct 10",
       "dividend": "$2.00",
@@ -672,9 +672,9 @@ All events are representative April 2025 data for display purposes.
       "type": "Regular Cash"
     },
     {
-      "cellLabel": "TC",
-      "symbol": "TC",
-      "company": "TSMC",
+      "cellLabel": "GT",
+      "symbol": "GT",
+      "company": "GlobalTech",
       "exDate": "Apr 14",
       "payDate": "Oct 10",
       "dividend": "$2.00",

@@ -5,7 +5,7 @@
 ```json
 {
   "627836": "Watchlist1",
-  "738291": "Watchlist-TC",
+  "738291": "Watchlist-GT",
   "394827": "Watchlist2"
 }
 ```
@@ -14,9 +14,9 @@
 
 ```json
 {
-  "627836": ["TC", "TSLA", "QCOM", "GOOGL", "SONY", "AAPL", "NVDA", "ASML"],
-  "738291": ["TC", "TSLA", "QCOM", "GOOGL", "SONY", "AAPL", "NVDA", "ASML"],
-  "394827": ["TC", "TSLA", "QCOM", "GOOGL", "SONY", "AAPL", "NVDA", "ASML"]
+  "627836": ["GT", "TSLA", "QCOM", "GOOGL", "SONY", "AAPL", "NVDA", "ASML"],
+  "738291": ["GT", "TSLA", "QCOM", "GOOGL", "SONY", "AAPL", "NVDA", "ASML"],
+  "394827": ["GT", "TSLA", "QCOM", "GOOGL", "SONY", "AAPL", "NVDA", "ASML"]
 }
 ```
 
@@ -28,7 +28,7 @@
 
 ```json
 {
-  "TC": { "shares": 120, "cost": 105.3 },
+  "GT": { "shares": 120, "cost": 105.3 },
   "TSLA": { "shares": 50, "cost": 196.4 },
   "QCOM": { "shares": 80, "cost": 128.9 },
   "GOOGL": { "shares": 60, "cost": 138.5 },
@@ -92,8 +92,8 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
 
 ```json
 {
-  "TC": {
-    "symbol": "TC",
+  "GT": {
+    "symbol": "GT",
     "price": 0,
     "change": 0,
     "changePct": 0,
@@ -1073,8 +1073,8 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
 
 ```json
 {
-  "TC": {
-    "symbol": "TC",
+  "GT": {
+    "symbol": "GT",
     "price": 204.50,
     "change": 1.85,
     "changePct": 0.91,

@@ -33,8 +33,8 @@ function PlusIcon() {
 const COMPETITOR_TABS = ['Network Graph', 'Table View', 'Analytics', 'Risk Heatmap'] as const;
 type CompetitorTab = (typeof COMPETITOR_TABS)[number];
 
-// Top 4 competitors by market share (excluding TSMC itself) for summary cards
-const TOP_COMPETITORS = MARKET_SHARE_DATA.filter((e) => e.id !== 'TC')
+// Top 4 competitors by market share (excluding GlobalTech itself) for summary cards
+const TOP_COMPETITORS = MARKET_SHARE_DATA.filter((e) => e.id !== 'GT')
   .sort((a, b) => b.marketShare - a.marketShare)
   .slice(0, 4);
 
@@ -67,7 +67,7 @@ export default function CompetitorPage() {
               <div className="rmap-company-header-info">
                 <div className="rmap-company-header-name">TC</div>
                 <div className="rmap-company-header-full">
-                  TSMC
+                  GlobalTech
                 </div>
               </div>
             </div>

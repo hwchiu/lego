@@ -35,7 +35,7 @@ type SupplierTab = (typeof SUPPLIER_TABS)[number];
 
 const tier1Count = TC_TIER1_SUPPLIERS.length;
 const tier2Count = TC_TIER2_SUPPLIERS.length;
-const tier1TotalRevenue = EDGE_ENTITIES.filter((e) => e.from === 'TC').reduce(
+const tier1TotalRevenue = EDGE_ENTITIES.filter((e) => e.from === 'GT').reduce(
   (sum, e) => sum + e.transactionAmount,
   0,
 );
@@ -73,7 +73,7 @@ export default function MyRmapSupplierPage() {
               <span className="rmap-risk-light rmap-risk-light--green" title="No active risk signals" />
               <div className="rmap-company-header-info">
                 <div className="rmap-company-header-name">TC</div>
-                <div className="rmap-company-header-full">TSMC</div>
+                <div className="rmap-company-header-full">GlobalTech</div>
               </div>
             </div>
 
