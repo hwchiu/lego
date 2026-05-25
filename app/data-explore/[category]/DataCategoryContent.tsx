@@ -1510,6 +1510,23 @@ interface CapitalMarketsLayoutProps {
   onChangeCmTab: (tabId: (typeof CAPITAL_MARKETS_INNER_TAB_IDS)[number]) => void;
 }
 
+function formatCapitalMarketUpdateDatetime(value: unknown, lang: 'zh' | 'en'): string | null {
+  if (typeof value !== 'string' || value.trim() === '') return null;
+  const parsedDate = new Date(value);
+  if (Number.isNaN(parsedDate.getTime())) {
+    return value;
+  }
+  return parsedDate.toLocaleString(lang === 'en' ? 'en-US' : 'zh-TW', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  });
+}
+
 function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }: CapitalMarketsLayoutProps) {
   const zh = lang === 'zh';
   const defaultQueryDate = useMemo(() => getYesterdayIsoDate(), []);
@@ -1519,6 +1536,8 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   const [dailyQuoteVisibleRows, setDailyQuoteVisibleRows] = useState<CmDailyQuoteRow[]>([]);
   const [dailyQuotesLoading, setDailyQuotesLoading] = useState(false);
   const [dailyQuotesError, setDailyQuotesError] = useState<string | null>(null);
+  const [updateDatetime, setUpdateDatetime] = useState<string | null>(null);
+  const [updateDatetimeLoading, setUpdateDatetimeLoading] = useState(false);
 
   const CM_INNER_TABS = [
     { id: 'daily-quotes',      label: zh ? '每日收盤行情' : 'Daily Quotes' },
@@ -1553,6 +1572,40 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     setSearchDate(defaultQueryDate);
     queryDailyQuotes(defaultQueryDate);
   }, [activeCmTab, defaultQueryDate, queryDailyQuotes]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setUpdateDatetimeLoading(true);
+    setUpdateDatetime(null);
+
+    const url = new URL('/getUpdateDatetime', window.location.origin);
+    url.searchParams.set('category', activeCmTab);
+    url.searchParams.set('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone);
+
+    fetch(url.toString(), { cache: 'no-store' })
+      .then(async (res) => {
+        if (!res.ok) return null;
+        const data = (await res.json()) as
+          | { updateDatetime?: string; updateDateTime?: string; datetime?: string; data?: { updateDatetime?: string; updateDateTime?: string; datetime?: string } }
+          | string;
+        if (typeof data === 'string') return data;
+        return data.updateDatetime ?? data.updateDateTime ?? data.datetime ?? data.data?.updateDatetime ?? data.data?.updateDateTime ?? data.data?.datetime ?? null;
+      })
+      .then((value) => {
+        if (cancelled) return;
+        setUpdateDatetime(formatCapitalMarketUpdateDatetime(value, lang));
+      })
+      .catch(() => {
+        if (!cancelled) setUpdateDatetime(null);
+      })
+      .finally(() => {
+        if (!cancelled) setUpdateDatetimeLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeCmTab, lang]);
 
   function handleSearch() {
     if (!selectedDate) return;
@@ -1591,6 +1644,11 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
         ))}
       </nav>
       <div className="de-cm-content">
+        <div className="de-cm-description">
+          {zh
+            ? '資料僅可查近三個月資料，預設顯示最新更新日期資料，若要查看或下載其他日期資料則在上方選取對應日期。'
+            : 'Only the most recent three months of data are provided. To download data, please search for the corresponding date and then click "Download" to retrieve the data for that specific date.'}
+        </div>
         <div className="de-cm-content-toolbar">
           <div className="de-cm-content-toolbar-left">
             <CmDatePicker
@@ -1601,6 +1659,9 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
               onClear={handleClear}
             />
             <span className="de-cm-ref-date">{zh ? `查詢日期：${searchDate}` : `Date: ${searchDate}`}</span>
+            <span className="de-cm-ref-date">
+              tMIC Update Date: {updateDatetimeLoading ? (zh ? '載入中…' : 'Loading...') : (updateDatetime ?? '—')}
+            </span>
           </div>
           <div className="de-cm-content-toolbar-right">
             <button className="de-news-download-btn de-gov-csv-btn" onClick={handleDownload}>
