@@ -955,8 +955,8 @@ function CmDailyQuotesTab({ lang, rowsData, loading, error, onVisibleRowsChange 
   const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     rowsData,
     [
-      (r) => r.trading_date,
       (r) => r.security_code,
+      (r) => r.trading_date,
       (r) => r.suspension_of_buy_after_sale_day_trading,
       (r) => r.volume,
       (r) => r.day_trading_value_of_buys,
@@ -986,11 +986,11 @@ function CmDailyQuotesTab({ lang, rowsData, loading, error, onVisibleRowsChange 
 
   return (
     <CmTableWrapper>
-      <table className="de-data-table">
+      <table className="de-data-table de-cm-dq-table">
         <thead>
           <tr>
-            <ThSortFilter label={zh ? '成交日期' : 'Trading Date'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
-            <ThSortFilter label={zh ? '標的代碼' : 'Security Code'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+            <ThSortFilter label={zh ? '標的代碼' : 'Security Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} className="de-cm-dq-col-sticky" />
+            <ThSortFilter label={zh ? '成交日期' : 'Trading Date'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
             <ThSortFilter label={zh ? '暫停現股賣出後現款買進當沖註記' : 'Suspension Of Buy After Sale Day Trading'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} />
             <ThSortFilter label={zh ? '當日沖銷交易成交股數' : 'Volume'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
             <ThSortFilter label={zh ? '當日沖銷交易買進成交金額' : 'Day Trading Value Of Buys'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
@@ -1000,8 +1000,8 @@ function CmDailyQuotesTab({ lang, rowsData, loading, error, onVisibleRowsChange 
         <tbody>
           {rows.map((r) => (
             <tr key={`${r.security_code}-${r.trading_date}`}>
+              <td className="code de-cm-dq-col-sticky">{r.security_code}</td>
               <td>{r.trading_date}</td>
-              <td className="code">{r.security_code}</td>
               <td>{r.suspension_of_buy_after_sale_day_trading}</td>
               <td className="num">{fmtNum(r.volume)}</td>
               <td className="num">{fmtNum(r.day_trading_value_of_buys)}</td>

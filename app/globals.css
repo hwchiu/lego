@@ -22329,6 +22329,33 @@ html.dark .cp-fin-index-tab:hover {
   font-size: 11px;
 }
 
+.de-cm-dq-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.de-cm-dq-table .de-cm-dq-col-sticky {
+  position: sticky;
+  left: 0;
+}
+
+.de-cm-dq-table thead .de-cm-dq-col-sticky {
+  z-index: 30;
+  background: var(--c-bg);
+  box-shadow: 1px 0 0 var(--c-border);
+}
+
+.de-cm-dq-table tbody .de-cm-dq-col-sticky {
+  z-index: 20;
+  background: var(--c-white);
+  box-shadow: 1px 0 0 var(--c-border);
+}
+
+.de-cm-dq-table tbody tr:hover .de-cm-dq-col-sticky {
+  background: var(--c-bg);
+}
+
 .de-data-section {
   margin-bottom: 28px;
 }
