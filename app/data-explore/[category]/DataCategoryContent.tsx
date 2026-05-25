@@ -1629,27 +1629,28 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   }
 
   return (
-    <div className="de-cm-layout">
-      <nav className="de-cm-sidebar" aria-label={zh ? 'Capital Markets 子分類' : 'Capital Markets sub categories'}>
-        <div className="de-cm-sidebar-title">{zh ? '子分類' : 'Sub Category'}</div>
-        {CM_INNER_TABS.map((tab) => (
-          <button
-            key={tab.id}
-            className={`de-cm-sidebar-item${activeCmTab === tab.id ? ' active' : ''}`}
-            style={activeCmTab === tab.id ? { borderLeftColor: accentColor, color: accentColor } : {}}
-            onClick={() => onChangeCmTab(tab.id as (typeof CAPITAL_MARKETS_INNER_TAB_IDS)[number])}
-          >
-            <span className="de-cm-sidebar-item-name">{tab.label}</span>
-          </button>
-        ))}
-      </nav>
-      <div className="de-cm-content">
-        <div className="de-cm-description">
-          {zh
-            ? '資料僅可查近三個月資料，預設顯示最新更新日期資料，若要查看或下載其他日期資料則在上方選取對應日期。'
-            : 'Only the most recent three months of data are provided. To download data, please search for the corresponding date and then click "Download" to retrieve the data for that specific date.'}
-        </div>
-        <div className="de-cm-content-toolbar">
+    <>
+      <div className="de-cm-description">
+        {zh
+          ? '資料僅可查近三個月資料，預設顯示最新更新日期資料，若要查看或下載其他日期資料則在上方選取對應日期。'
+          : 'Only the most recent three months of data are provided. To download data, please search for the corresponding date and then click "Download" to retrieve the data for that specific date.'}
+      </div>
+      <div className="de-cm-layout">
+        <nav className="de-cm-sidebar" aria-label={zh ? 'Capital Markets 子分類' : 'Capital Markets sub categories'}>
+          <div className="de-cm-sidebar-title">{zh ? '子分類' : 'Sub Category'}</div>
+          {CM_INNER_TABS.map((tab) => (
+            <button
+              key={tab.id}
+              className={`de-cm-sidebar-item${activeCmTab === tab.id ? ' active' : ''}`}
+              style={activeCmTab === tab.id ? { borderLeftColor: accentColor, color: accentColor } : {}}
+              onClick={() => onChangeCmTab(tab.id as (typeof CAPITAL_MARKETS_INNER_TAB_IDS)[number])}
+            >
+              <span className="de-cm-sidebar-item-name">{tab.label}</span>
+            </button>
+          ))}
+        </nav>
+        <div className="de-cm-content">
+          <div className="de-cm-content-toolbar">
           <div className="de-cm-content-toolbar-left">
             <CmDatePicker
               lang={lang}
@@ -1686,8 +1687,9 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
         {activeCmTab === 'foreign-investors' && <CmForeignTab lang={lang} />}
         {activeCmTab === 'price-limit'       && <CmPriceLimitTab lang={lang} />}
         {activeCmTab === 'pe-ratio'          && <CmPeRatioTab lang={lang} />}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
