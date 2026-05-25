@@ -26,7 +26,7 @@ app/lib/parseContent.ts      # Markdown → JSON 解析工具
 ## Entity Data
 ```json
 {
-  "TSM": { "name": "台積電", "shares": 120, "cost": 105.3 },
+  "GT": { "name": "全球科技", "shares": 120, "cost": 105.3 },
   "AAPL": { "name": "Apple", "shares": 45, "cost": 167.8 }
 }
 ```​

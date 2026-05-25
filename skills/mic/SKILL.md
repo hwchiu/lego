@@ -344,7 +344,7 @@ transition: background 0.15s, color 0.15s, border-color 0.15s;
 ## Entity Data
 ```json
 {
-  "TSM": { "shares": 120, "cost": 105.3 },
+  "GT": { "shares": 120, "cost": 105.3 },
   "AAPL": { "shares": 45, "cost": 167.8 }
 }
 ```​
