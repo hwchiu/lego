@@ -25,7 +25,7 @@ const SearchFinancialIndicesChart = dynamic(
   { ssr: false, loading: () => <div style={{ height: 200, background: 'var(--c-bg)', borderRadius: 6 }} /> },
 );
 
-const POPULAR_SEARCHES = ['TC', 'AAPL', 'NVDA'];
+const POPULAR_SEARCHES = ['INTC', 'AAPL', 'NVDA'];
 
 // Pre-computed lowercase SP500 companies for faster filtering
 const COMPANY_MASTER_LC = COMPANY_MASTER_LIST.map((c) => ({
@@ -996,7 +996,7 @@ export default function TopNav() {
           className="topnav-action-btn"
           title="User Manual"
           aria-label="User Manual"
-          onClick={() => window.open('https://tkms.digwork.tw.ent.tsmc.com/pages/Uw5xaVFEXr', '_blank', 'noopener,noreferrer')}
+          onClick={() => window.open('https://www.intel.com/content/www/us/en/products/docs/processors/user-manual.html', '_blank', 'noopener,noreferrer')}
         >
           {/* Book / manual icon */}
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">

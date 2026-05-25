@@ -1058,7 +1058,7 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "publishedAt": "2025-10-16",
     "summary": "TSMC reported Q3 2025 consolidated net revenue of NT$759.69B (+12.8% QoQ, +38.8% YoY), driven by 3nm and 5nm demand from AI accelerator and smartphone clients. Gross margin reached 57.8%. Management guided Q4 revenue of NT$868-888B and raised FY2025 capex guidance to $38-39B.",
     "viewCount": 135800,
-    "url": "https://ir.tsmc.com/english/news-and-events/press-releases"
+    "url": "#"
   },
   {
     "id": "pr-049",
@@ -1124,7 +1124,7 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "publishedAt": "2026-01-16",
     "summary": "TSMC reported Q4 2025 net revenue of NT$868.46B (+14.3% QoQ, +38.8% YoY) and full-year 2025 revenue of NT$3.33T (+38.8% YoY). Gross margin reached 59.0%. N2 production ramp is progressing ahead of schedule, with smartphone and AI customers confirmed for H1 2026 volume production.",
     "viewCount": 156900,
-    "url": "https://ir.tsmc.com/english/news-and-events/press-releases"
+    "url": "#"
   },
   {
     "id": "pr-052",
@@ -1256,7 +1256,7 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "publishedAt": "2026-04-28",
     "summary": "TSMC announced April 2026 consolidated revenue of NT$296.4B (+41.3% YoY), driven by surging N2 demand from AI and smartphone customers. The company confirmed that N2 wafer yield has surpassed its internal qualification milestone ahead of schedule, enabling confident H2 2026 ramp.",
     "viewCount": 143200,
-    "url": "https://ir.tsmc.com/english/news-and-events/press-releases"
+    "url": "#"
   },
   {
     "id": "pr-058",
@@ -1388,7 +1388,7 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "publishedAt": "2026-04-21",
     "summary": "TSMC introduced CoWoS-X, its next-generation advanced packaging platform enabling 3D stacking of up to 8 chiplets with silicon photonics integration. The platform supports HBM5 memory interfaces and 12.8 Tb/s optical I/O bandwidth, targeting GPU and AI accelerator products planned from 2028 onwards.",
     "viewCount": 91500,
-    "url": "https://ir.tsmc.com/english/news-and-events/press-releases"
+    "url": "#"
   },
   {
     "id": "pr-064",
@@ -1542,7 +1542,7 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "publishedAt": "2026-04-29",
     "summary": "TSMC's 2026 North America Technology Symposium revealed roadmap details for N2P (enhanced 2nm) and A16 processes. N2P delivers 5% additional performance over N2 at the same power, while A16 integrates backside power delivery for the first time, targeting high-performance compute and AI accelerator chips in 2028.",
     "viewCount": 156200,
-    "url": "https://ir.tsmc.com/english/news-and-events/press-releases"
+    "url": "#"
   },
   {
     "id": "pr-071",
@@ -1960,7 +1960,7 @@ Data sourced from public press releases of TSMC's key ecosystem partners.
     "publishedAt": "2026-05-06",
     "summary": "TSMC announced April 2026 consolidated revenue of NT$349.6 billion, a 48.1% increase year-over-year and a 3.7% increase month-over-month. The record monthly revenue reflects sustained hyperscaler demand for CoWoS-packaged AI accelerators on N3 and N2 process nodes, with management reaffirming full-year 2026 guidance of approximately 30% revenue growth.",
     "viewCount": 215000,
-    "url": "https://ir.tsmc.com/english/news/"
+    "url": "#"
   },
   {
     "id": "pr-090",

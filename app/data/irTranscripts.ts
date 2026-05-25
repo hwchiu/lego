@@ -261,7 +261,7 @@ export const IR_TRANSCRIPT_HTML_ENTRIES: IrTranscriptHtmlEntry[] = [
     company_name: 'NVIDIA Corp.',
     fiscal_year_no: '2026',
     fiscal_qtr_no: 'Q4',
-    file_url: 'https://eipbe-central.digwork.tw.ent.tsmc.com/mtl-trx/pdf/1772229761407183',
+    file_url: 'https://www.intel.com/content/www/us/en/investor-relations/annual-reports/1772229761407183',
     doc_html: NVDA_2026_Q4,
   },
 ];

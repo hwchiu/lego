@@ -1,7 +1,7 @@
-# TC (TSMC) Investor Relations Material
+# Intel (INTC) Investor Relations Material
 
-Source: investor.tsmc.com, SEC EDGAR (20-F filings), TSMC press releases.
-TSMC Limited (TWSE: 2330, NYSE: TC).
+Source: investor.intel.com, SEC EDGAR (10-K filings), Intel press releases.
+Intel Corporation (NASDAQ: INTC).
 
 ## IR Material
 
@@ -53,49 +53,49 @@ TSMC Limited (TWSE: 2330, NYSE: TC).
     {
       "date": "Jan 16, 2025",
       "title": "TSMC Reports Fourth Quarter and Full Year 2024 Results",
-      "url": "https://investor.tsmc.com/en/quarterly-results/2024/q4",
+      "url": "#",
       "category": "Earnings"
     },
     {
       "date": "Oct 17, 2024",
       "title": "TSMC Reports Third Quarter 2024 Results",
-      "url": "https://investor.tsmc.com/en/quarterly-results/2024/q3",
+      "url": "#",
       "category": "Earnings"
     },
     {
       "date": "Apr 18, 2024",
       "title": "TSMC Announces First Quarter 2024 Results",
-      "url": "https://investor.tsmc.com/en/quarterly-results/2024/q1",
+      "url": "#",
       "category": "Earnings"
     },
     {
       "date": "Apr 22, 2024",
       "title": "TSMC Breaks Ground on First Europe Fab in Dresden, Germany",
-      "url": "https://newsroom.tsmc.com/en/news/2024/europe-fab-groundbreaking",
+      "url": "#",
       "category": "Corporate"
     },
     {
       "date": "Mar 5, 2024",
       "title": "TSMC Announces Arizona Fab Progress — 2nm Technology on Track for 2025",
-      "url": "https://investor.tsmc.com/en/speeches/2024/arizona-fab-update",
+      "url": "#",
       "category": "Technology"
     },
     {
       "date": "Jan 18, 2024",
       "title": "TSMC Reports Fourth Quarter and Full Year 2023 Results",
-      "url": "https://investor.tsmc.com/en/quarterly-results/2023/q4",
+      "url": "#",
       "category": "Earnings"
     },
     {
       "date": "Oct 19, 2023",
       "title": "TSMC Reports Third Quarter 2023 Results",
-      "url": "https://investor.tsmc.com/en/quarterly-results/2023/q3",
+      "url": "#",
       "category": "Earnings"
     },
     {
       "date": "Jul 20, 2023",
       "title": "TSMC Reports Second Quarter 2023 Results",
-      "url": "https://investor.tsmc.com/en/quarterly-results/2023/q2",
+      "url": "#",
       "category": "Earnings"
     }
   ],
@@ -140,42 +140,42 @@ TSMC Limited (TWSE: 2330, NYSE: TC).
           "label": "Q4 2024 Earnings Release",
           "period": "Jan 16, 2025",
           "filed": "Jan 16, 2025",
-          "url": "https://investor.tsmc.com/en/quarterly-results/2024/q4",
+          "url": "#",
           "type": "HTML"
         },
         {
           "label": "Q3 2024 Earnings Release",
           "period": "Oct 17, 2024",
           "filed": "Oct 17, 2024",
-          "url": "https://investor.tsmc.com/en/quarterly-results/2024/q3",
+          "url": "#",
           "type": "HTML"
         },
         {
           "label": "Q2 2024 Earnings Release",
           "period": "Jul 18, 2024",
           "filed": "Jul 18, 2024",
-          "url": "https://investor.tsmc.com/en/quarterly-results/2024/q2",
+          "url": "#",
           "type": "HTML"
         },
         {
           "label": "Q1 2024 Earnings Release",
           "period": "Apr 18, 2024",
           "filed": "Apr 18, 2024",
-          "url": "https://investor.tsmc.com/en/quarterly-results/2024/q1",
+          "url": "#",
           "type": "HTML"
         },
         {
           "label": "Q4 2023 Earnings Release",
           "period": "Jan 18, 2024",
           "filed": "Jan 18, 2024",
-          "url": "https://investor.tsmc.com/en/quarterly-results/2023/q4",
+          "url": "#",
           "type": "HTML"
         },
         {
           "label": "Q3 2023 Earnings Release",
           "period": "Oct 19, 2023",
           "filed": "Oct 19, 2023",
-          "url": "https://investor.tsmc.com/en/quarterly-results/2023/q3",
+          "url": "#",
           "type": "HTML"
         }
       ]
@@ -187,21 +187,21 @@ TSMC Limited (TWSE: 2330, NYSE: TC).
           "label": "2024 Annual Shareholder Meeting Presentation",
           "period": "Jun 4, 2024",
           "filed": "Jun 4, 2024",
-          "url": "https://investor.tsmc.com/en/shareholders-meeting/2024",
+          "url": "#",
           "type": "HTML"
         },
         {
           "label": "2024 Technology Symposium",
           "period": "Apr 24, 2024",
           "filed": "Apr 24, 2024",
-          "url": "https://investor.tsmc.com/en/events/tech-symposium/2024",
+          "url": "#",
           "type": "HTML"
         },
         {
           "label": "2023 Annual Shareholder Meeting Presentation",
           "period": "Jun 6, 2023",
           "filed": "Jun 6, 2023",
-          "url": "https://investor.tsmc.com/en/shareholders-meeting/2023",
+          "url": "#",
           "type": "HTML"
         }
       ]

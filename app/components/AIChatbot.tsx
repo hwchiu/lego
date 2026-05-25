@@ -53,8 +53,8 @@ const ROLES = knowledge.roles;
 const BOT_AVATAR_URL = `${BASE_PATH}/images/bot-avatar.svg`;
 
 // ── AI preset question — entering this exact text triggers AI simulation ──────
-const AI_PRESET_QUESTION_ZH = 'TSMC 近期的供應鏈風險有哪些？';
-const AI_PRESET_QUESTION_EN = "What are TSMC's recent supply chain risks?";
+const AI_PRESET_QUESTION_ZH = 'Intel 近期的供應鏈風險有哪些？';
+const AI_PRESET_QUESTION_EN = "What are Intel's recent supply chain risks?";
 
 function isPresetQuestion(text: string): boolean {
   const t = text.trim();
@@ -243,7 +243,7 @@ export default function AIChatbot() {
       setShowAmountInput(false);
       setTimeout(() => {
         addBotMessage({
-          text: `AI Analysis: Based on "${text}", here are TSMC's recent supply chain risks:\n\n• Over-concentration on a single advanced-node foundry partner\n• Geopolitical tension affecting cross-strait logistics\n• Rare earth material shortages impacting CoWoS packaging capacity\n• Lead-time extension for HBM memory stacks from key suppliers`,
+          text: `AI Analysis: Based on "${text}", here are Intel's recent supply chain risks:\n\n• Dependence on specialized EUV lithography tools from ASML for advanced node production\n• Geopolitical tensions affecting global semiconductor supply chains\n• Rare earth material shortages impacting advanced packaging capacity\n• Lead-time extension for HBM memory and specialty substrate procurement`,
           steps: [
             'Review Supply Chain Maps → Supplier for Tier 1 & Tier 2 exposure.',
             'Check Market News for latest disruption signals.',

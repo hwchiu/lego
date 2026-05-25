@@ -1,5 +1,5 @@
-// TSMC (TSMC) supplier network data
-// Sources: TSMC Annual Reports, public filings, supplier disclosures (FY2023–FY2024)
+// Intel supplier network data
+// Sources: Intel Annual Reports, public filings, supplier disclosures (FY2023–FY2024)
 
 // ---------------------------------------------------------------------------
 // Type definitions
@@ -54,31 +54,34 @@ export type RelationTypeKey = (typeof RELATION_TYPES)[number]['key'];
 // Center node
 // ---------------------------------------------------------------------------
 
-export const TC_CENTER_NODE: SupplierNodeTC = {
-  id: 'TC',
-  name: 'TSMC',
-  ticker: 'TC',
-  exchange: 'NYSE / TWSE',
-  country: 'Taiwan',
-  relationship: 'Central Company — Pure-play Foundry',
+
+export const INTEL_CENTER_NODE: SupplierNodeTC = {
+  id: 'INTC',
+  name: 'Intel Corporation',
+  ticker: 'INTC',
+  exchange: 'NASDAQ',
+  country: 'USA',
+  relationship: 'Central Company — Integrated Device Manufacturer (IDM)',
   supplyItems: '',
   financials: {
-    revenue: '$69.3B',
-    grossMargin: '54.4%',
-    marketCap: '~$900B',
+    revenue: '$54.2B',
+    grossMargin: '41.7%',
+    marketCap: '~$90B',
   },
   color: '#1a2332',
   tier: 1,
-  productCategories: ['Logic Chips', 'Advanced Packaging'],
-  industryCategory: 'Semiconductor Foundry',
-  segment: 'Foundry',
+  productCategories: ['PC CPUs', 'Server CPUs', 'AI Accelerators', 'Foundry Services'],
+  industryCategory: 'Semiconductor IDM',
+  segment: 'IDM',
 };
+
+export const TC_CENTER_NODE = INTEL_CENTER_NODE;
 
 // ---------------------------------------------------------------------------
 // Tier 1 suppliers
 // ---------------------------------------------------------------------------
 
-export const TC_TIER1_SUPPLIERS: SupplierNodeTC[] = [
+export const INTEL_TIER1_SUPPLIERS: SupplierNodeTC[] = [
   {
     id: 'ASML',
     name: 'ASML Holding',
@@ -294,11 +297,13 @@ export const TC_TIER1_SUPPLIERS: SupplierNodeTC[] = [
   },
 ];
 
+export const TC_TIER1_SUPPLIERS = INTEL_TIER1_SUPPLIERS;
+
 // ---------------------------------------------------------------------------
 // Tier 2 suppliers
 // ---------------------------------------------------------------------------
 
-export const TC_TIER2_SUPPLIERS: SupplierNodeTC[] = [
+export const INTEL_TIER2_SUPPLIERS: SupplierNodeTC[] = [
   // --- ASML sub-suppliers ---
   {
     id: 'ZEISS',
@@ -706,14 +711,16 @@ export const TC_TIER2_SUPPLIERS: SupplierNodeTC[] = [
   },
 ];
 
+export const TC_TIER2_SUPPLIERS = INTEL_TIER2_SUPPLIERS;
+
 // ---------------------------------------------------------------------------
 // Edge entities
 // ---------------------------------------------------------------------------
 
 export const EDGE_ENTITIES: EdgeEntity[] = [
-  // TC → Tier 1 (9 edges)
+  // INTC → Tier 1 (9 edges)
   {
-    from: 'TC',
+    from: 'INTC',
     to: 'ASML',
     transactionAmount: 4800,
     newsCoMentionCount: 342,
@@ -723,7 +730,7 @@ export const EDGE_ENTITIES: EdgeEntity[] = [
     commonBoardMembers: 1,
   },
   {
-    from: 'TC',
+    from: 'INTC',
     to: 'AMAT',
     transactionAmount: 2900,
     newsCoMentionCount: 287,
@@ -733,7 +740,7 @@ export const EDGE_ENTITIES: EdgeEntity[] = [
     commonBoardMembers: 2,
   },
   {
-    from: 'TC',
+    from: 'INTC',
     to: 'LRCX',
     transactionAmount: 2300,
     newsCoMentionCount: 251,
@@ -743,7 +750,7 @@ export const EDGE_ENTITIES: EdgeEntity[] = [
     commonBoardMembers: 1,
   },
   {
-    from: 'TC',
+    from: 'INTC',
     to: 'KLAC',
     transactionAmount: 1900,
     newsCoMentionCount: 198,
@@ -753,7 +760,7 @@ export const EDGE_ENTITIES: EdgeEntity[] = [
     commonBoardMembers: 1,
   },
   {
-    from: 'TC',
+    from: 'INTC',
     to: 'TOELY',
     transactionAmount: 1600,
     newsCoMentionCount: 176,
@@ -763,7 +770,7 @@ export const EDGE_ENTITIES: EdgeEntity[] = [
     commonBoardMembers: 0,
   },
   {
-    from: 'TC',
+    from: 'INTC',
     to: 'SHECY',
     transactionAmount: 1500,
     newsCoMentionCount: 143,
@@ -773,7 +780,7 @@ export const EDGE_ENTITIES: EdgeEntity[] = [
     commonBoardMembers: 0,
   },
   {
-    from: 'TC',
+    from: 'INTC',
     to: 'SUOPY',
     transactionAmount: 1200,
     newsCoMentionCount: 112,
@@ -783,7 +790,7 @@ export const EDGE_ENTITIES: EdgeEntity[] = [
     commonBoardMembers: 0,
   },
   {
-    from: 'TC',
+    from: 'INTC',
     to: 'APD',
     transactionAmount: 800,
     newsCoMentionCount: 89,
@@ -793,7 +800,7 @@ export const EDGE_ENTITIES: EdgeEntity[] = [
     commonBoardMembers: 0,
   },
   {
-    from: 'TC',
+    from: 'INTC',
     to: 'ENTG',
     transactionAmount: 650,
     newsCoMentionCount: 76,

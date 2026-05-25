@@ -147,8 +147,8 @@ export const supplyChainNav: NavItem[] = [
 
 export const bottomLinks: NavItem[] = [
   { label: 'AI Search', href: '/ai-search', icon: 'intelligenceSearch', badge: 'Coming Soon', badgeStyle: 'coming-soon' },
-  { label: 'User Manual', href: 'https://tkms.digwork.tw.ent.tsmc.com/pages/Uw5xaVFEXr', icon: 'userManual', external: true },
-  { label: 'Product Roadmap', href: 'https://tkms.digwork.tw.ent.tsmc.com/pages/UMfqhC2Hp4', icon: 'productRoadmap', external: true },
+  { label: 'User Manual', href: 'https://www.intel.com/content/www/us/en/products/docs/processors/user-manual.html', icon: 'userManual', external: true },
+  { label: 'Product Roadmap', href: 'https://www.intel.com/content/www/us/en/products/details/processors.html', icon: 'productRoadmap', external: true },
   { label: 'Feedback', href: 'https://forms.office.com/Pages/ResponsePage.aspx?id=S_ZVkhgY5UKtePYZqaex55erID1a9UNKlr3EddIx_aZURENQWFpVNjNOSElLVlY0UVdHSklOSFdOUi4u', icon: 'feedback', external: true },
 ];
 
