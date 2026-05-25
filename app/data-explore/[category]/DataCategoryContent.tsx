@@ -1871,7 +1871,7 @@ function GovDisqualifiedTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentCo
 
   function handleDownloadCSV() {
     const headers = zh
-      ? ['統一編號', '違規人管制編號', '公司（工廠）地址縣市別代碼', '裁處機關', '管制事業編號', '事業名稱', '裁處書字號', '違反時間', '污染類別', '違規人名稱', '台積更新此筆紀錄的時間']
+      ? ['統一編號', '違規人管制編號', '公司（工廠）地址縣市別代碼', '裁處機關', '管制事業編號', '事業名稱', '裁處書字號', '違反時間', '污染類別', '違規人名稱', '全球科技更新此筆紀錄的時間']
       : ['UBN', 'Transgress Control ID', 'Fac. City Code', 'County Name', 'EMS No', 'Fac. Name', 'Document No', 'Transgress Date', 'Transgress Type', 'Transgress Name', 'Update Date'];
     downloadCSV(
       zh ? '拒絕往來廠商公告.csv' : 'disqualified-vendors.csv',
@@ -1918,7 +1918,7 @@ function GovDisqualifiedTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentCo
               <ThSortFilter label={zh ? '違反時間' : 'Transgress Date'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} />
               <ThSortFilter label={zh ? '污染類別' : 'Transgress Type'} colIndex={8} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[8] ?? ''} />
               <ThSortFilter label={zh ? '違規人名稱' : 'Transgress Name'} colIndex={9} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[9] ?? ''} />
-              <ThSortFilter label={zh ? '台積更新此筆紀錄的時間' : 'Update Date'} colIndex={10} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[10] ?? ''} />
+              <ThSortFilter label={zh ? '全球科技更新此筆紀錄的時間' : 'Update Date'} colIndex={10} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[10] ?? ''} />
             </tr>
           </thead>
           <tbody>
@@ -1967,7 +1967,7 @@ function GovPollutionTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentColor
 
   function handleDownloadCSV() {
     const headers = zh
-      ? ['廠商代碼', '標案案號', '廠商名稱', '刊登機關代碼', '刊登機關名稱', '標案名稱', '拒絕往來截止日', '台積此筆更新的時間']
+      ? ['廠商代碼', '標案案號', '廠商名稱', '刊登機關代碼', '刊登機關名稱', '標案名稱', '拒絕往來截止日', '全球科技此筆更新的時間']
       : ['Corporation Number', 'Case No', 'Corporation Name', 'Announce Agency No', 'Announce Agency Name', 'Case Name', 'Expire Date', 'Update Date'];
     downloadCSV(
       zh ? '列管事業污染源裁處資料.csv' : 'regulatory-on-pollution-sources.csv',
@@ -2008,7 +2008,7 @@ function GovPollutionTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentColor
               <ThSortFilter label={zh ? '刊登機關名稱' : 'Announce Agency Name'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} />
               <ThSortFilter label={zh ? '標案名稱' : 'Case Name'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} />
               <ThSortFilter label={zh ? '拒絕往來截止日' : 'Expire Date'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} />
-              <ThSortFilter label={zh ? '台積此筆更新的時間' : 'Update Date'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} />
+              <ThSortFilter label={zh ? '全球科技此筆更新的時間' : 'Update Date'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} />
             </tr>
           </thead>
           <tbody>

@@ -20,7 +20,7 @@
     "date": "2026-01-20",
     "summary": "Barclays raised its GlobalTech ADR price target from $380 to $450, maintaining an Overweight rating. The upgrade reflects stronger-than-expected AI chip demand, CoWoS capacity expansion benefits, and GlobalTech's continued margin improvement trend. Barclays analysts highlighted NVIDIA's increasing share of GlobalTech orders as a multi-year growth driver.",
     "tags": ["Barclays", "Price Target", "Overweight", "TC"],
-    "url": "https://www.benzinga.com/quote/TSM/analyst-ratings"
+    "url": "https://www.benzinga.com/quote/GT/analyst-ratings"
   },
   {
     "id": "cap-003",
@@ -29,7 +29,7 @@
     "date": "2026-02-05",
     "summary": "DA Davidson initiated coverage on GlobalTech ADR with a $450 price target and Strong Buy rating, citing GlobalTech's irreplaceable position in the global semiconductor supply chain, 2nm leadership, and massive AI-driven revenue growth. Davidson's thesis emphasized that no competitor can challenge GlobalTech at leading-edge nodes within the next 5+ years.",
     "tags": ["DA Davidson", "Initiation", "Strong Buy", "TC"],
-    "url": "https://www.benzinga.com/quote/TSM/analyst-ratings"
+    "url": "https://www.benzinga.com/quote/GT/analyst-ratings"
   },
   {
     "id": "cap-004",
@@ -101,7 +101,7 @@
     "date": "2025-09-30",
     "summary": "Major institutional investors including Vanguard (largest holder), BlackRock, and State Street own substantial positions in GlobalTech ADR (TC). Institutional ownership exceeds 75% of ADR float, reflecting strong conviction from long-term fund managers in GlobalTech's role as the dominant advanced semiconductor foundry.",
     "tags": ["Institutional", "Vanguard", "BlackRock", "Ownership"],
-    "url": "https://finance.yahoo.com/quote/TSM/analysis/"
+    "url": "https://finance.yahoo.com/quote/GT/analysis/"
   },
   {
     "id": "cap-012",
