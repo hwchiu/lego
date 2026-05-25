@@ -22601,14 +22601,18 @@ html.dark .cp-fin-index-tab:hover {
 }
 
 .de-cm-description {
-  margin-bottom: 12px;
-  padding: 10px 12px;
-  border: 1px solid var(--c-border);
-  border-radius: var(--radius);
-  background: #f8fafc;
+  margin-bottom: 4px;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
   color: var(--c-text-2);
   font-size: 12.5px;
   line-height: 1.5;
+}
+
+.de-page-body > .de-subtab-bar + .de-cm-description {
+  margin-top: -13px;
 }
 
 /* ── CM content toolbar (date + download) ── */
