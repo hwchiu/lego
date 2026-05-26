@@ -15,6 +15,7 @@ import { queryCatgDetail, type CatgDetailType } from '@/app/lib/queryCatgDetail'
 import { queryDataItemContent } from '@/app/lib/queryDataItemContent';
 import { type NewsSummaryItem } from '@/app/data/newsSummaryData';
 import { formatNumber } from '@/app/lib/formatters';
+import { getPaginationRange } from '@/app/lib/paginationUtils';
 
 const TAGS_VISIBLE_COUNT = 6;
 const DEFAULT_CM_TAB = 'day-trading';
@@ -639,6 +640,61 @@ const CM_DAILY_QUOTES_FALLBACK_TEMPLATE = [
   { security_code: '2881', suspension_of_buy_after_sale_day_trading: 'N', volume: '3,763,000', day_trading_value_of_buys: '319,882,000', trading_value_of_sells: '318,211,000' },
   { security_code: '2882', suspension_of_buy_after_sale_day_trading: 'N', volume: '4,232,000', day_trading_value_of_buys: '410,401,000', trading_value_of_sells: '408,702,000' },
   { security_code: '2891', suspension_of_buy_after_sale_day_trading: 'N', volume: '2,458,000', day_trading_value_of_buys: '270,552,000', trading_value_of_sells: '269,399,000' },
+  { security_code: '2412', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,980,000', day_trading_value_of_buys: '220,450,000', trading_value_of_sells: '218,720,000' },
+  { security_code: '3045', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,540,000', day_trading_value_of_buys: '185,200,000', trading_value_of_sells: '183,500,000' },
+  { security_code: '1301', suspension_of_buy_after_sale_day_trading: 'N', volume: '2,100,000', day_trading_value_of_buys: '198,800,000', trading_value_of_sells: '197,100,000' },
+  { security_code: '1216', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,230,000', day_trading_value_of_buys: '85,600,000', trading_value_of_sells: '84,900,000' },
+  { security_code: '2330', suspension_of_buy_after_sale_day_trading: 'N', volume: '8,750,000', day_trading_value_of_buys: '9,100,500,000', trading_value_of_sells: '9,050,200,000' },
+  { security_code: '2303', suspension_of_buy_after_sale_day_trading: 'N', volume: '3,120,000', day_trading_value_of_buys: '560,400,000', trading_value_of_sells: '558,100,000' },
+  { security_code: '2308', suspension_of_buy_after_sale_day_trading: 'Y', volume: '1,870,000', day_trading_value_of_buys: '312,700,000', trading_value_of_sells: '311,200,000' },
+  { security_code: '2886', suspension_of_buy_after_sale_day_trading: 'N', volume: '2,450,000', day_trading_value_of_buys: '281,300,000', trading_value_of_sells: '280,100,000' },
+  { security_code: '2884', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,980,000', day_trading_value_of_buys: '189,600,000', trading_value_of_sells: '188,300,000' },
+  { security_code: '2357', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,340,000', day_trading_value_of_buys: '145,200,000', trading_value_of_sells: '144,500,000' },
+  { security_code: '2395', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,670,000', day_trading_value_of_buys: '432,100,000', trading_value_of_sells: '430,800,000' },
+  { security_code: '3711', suspension_of_buy_after_sale_day_trading: 'Y', volume: '980,000', day_trading_value_of_buys: '125,400,000', trading_value_of_sells: '124,700,000' },
+  { security_code: '6505', suspension_of_buy_after_sale_day_trading: 'N', volume: '2,230,000', day_trading_value_of_buys: '268,900,000', trading_value_of_sells: '267,200,000' },
+  { security_code: '1303', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,560,000', day_trading_value_of_buys: '175,300,000', trading_value_of_sells: '174,100,000' },
+  { security_code: '2002', suspension_of_buy_after_sale_day_trading: 'N', volume: '3,450,000', day_trading_value_of_buys: '290,700,000', trading_value_of_sells: '289,300,000' },
+  { security_code: '1402', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,120,000', day_trading_value_of_buys: '68,500,000', trading_value_of_sells: '68,100,000' },
+  { security_code: '2885', suspension_of_buy_after_sale_day_trading: 'N', volume: '2,780,000', day_trading_value_of_buys: '342,600,000', trading_value_of_sells: '341,100,000' },
+  { security_code: '2892', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,890,000', day_trading_value_of_buys: '215,400,000', trading_value_of_sells: '214,200,000' },
+  { security_code: '5880', suspension_of_buy_after_sale_day_trading: 'N', volume: '2,340,000', day_trading_value_of_buys: '321,800,000', trading_value_of_sells: '320,500,000' },
+  { security_code: '2912', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,450,000', day_trading_value_of_buys: '178,200,000', trading_value_of_sells: '177,600,000' },
+  { security_code: '1326', suspension_of_buy_after_sale_day_trading: 'N', volume: '2,010,000', day_trading_value_of_buys: '240,100,000', trading_value_of_sells: '239,400,000' },
+  { security_code: '2207', suspension_of_buy_after_sale_day_trading: 'Y', volume: '1,760,000', day_trading_value_of_buys: '156,300,000', trading_value_of_sells: '155,800,000' },
+  { security_code: '6669', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,320,000', day_trading_value_of_buys: '198,700,000', trading_value_of_sells: '197,900,000' },
+  { security_code: '3034', suspension_of_buy_after_sale_day_trading: 'N', volume: '870,000', day_trading_value_of_buys: '112,500,000', trading_value_of_sells: '111,900,000' },
+  { security_code: '2823', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,580,000', day_trading_value_of_buys: '187,600,000', trading_value_of_sells: '186,800,000' },
+  { security_code: '2880', suspension_of_buy_after_sale_day_trading: 'N', volume: '2,670,000', day_trading_value_of_buys: '305,400,000', trading_value_of_sells: '304,200,000' },
+  { security_code: '8046', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,230,000', day_trading_value_of_buys: '148,900,000', trading_value_of_sells: '148,200,000' },
+  { security_code: '3008', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,450,000', day_trading_value_of_buys: '342,100,000', trading_value_of_sells: '341,300,000' },
+  { security_code: '2379', suspension_of_buy_after_sale_day_trading: 'N', volume: '2,100,000', day_trading_value_of_buys: '256,700,000', trading_value_of_sells: '255,900,000' },
+  { security_code: '4904', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,890,000', day_trading_value_of_buys: '176,400,000', trading_value_of_sells: '175,700,000' },
+  { security_code: '2474', suspension_of_buy_after_sale_day_trading: 'Y', volume: '1,340,000', day_trading_value_of_buys: '189,500,000', trading_value_of_sells: '188,800,000' },
+  { security_code: '2376', suspension_of_buy_after_sale_day_trading: 'N', volume: '980,000', day_trading_value_of_buys: '132,100,000', trading_value_of_sells: '131,500,000' },
+  { security_code: '3481', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,670,000', day_trading_value_of_buys: '212,300,000', trading_value_of_sells: '211,600,000' },
+  { security_code: '2337', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,120,000', day_trading_value_of_buys: '87,600,000', trading_value_of_sells: '87,100,000' },
+  { security_code: '2327', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,450,000', day_trading_value_of_buys: '165,400,000', trading_value_of_sells: '164,700,000' },
+  { security_code: '2344', suspension_of_buy_after_sale_day_trading: 'N', volume: '2,230,000', day_trading_value_of_buys: '278,900,000', trading_value_of_sells: '277,600,000' },
+  { security_code: '3474', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,560,000', day_trading_value_of_buys: '189,700,000', trading_value_of_sells: '188,900,000' },
+  { security_code: '2383', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,890,000', day_trading_value_of_buys: '221,300,000', trading_value_of_sells: '220,400,000' },
+  { security_code: '6415', suspension_of_buy_after_sale_day_trading: 'Y', volume: '1,670,000', day_trading_value_of_buys: '278,500,000', trading_value_of_sells: '277,200,000' },
+  { security_code: '2049', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,230,000', day_trading_value_of_buys: '132,400,000', trading_value_of_sells: '131,900,000' },
+  { security_code: '1590', suspension_of_buy_after_sale_day_trading: 'N', volume: '980,000', day_trading_value_of_buys: '98,700,000', trading_value_of_sells: '98,200,000' },
+  { security_code: '2356', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,340,000', day_trading_value_of_buys: '143,200,000', trading_value_of_sells: '142,700,000' },
+  { security_code: '2385', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,780,000', day_trading_value_of_buys: '198,400,000', trading_value_of_sells: '197,600,000' },
+  { security_code: '3006', suspension_of_buy_after_sale_day_trading: 'N', volume: '870,000', day_trading_value_of_buys: '78,900,000', trading_value_of_sells: '78,400,000' },
+  { security_code: '2388', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,120,000', day_trading_value_of_buys: '123,500,000', trading_value_of_sells: '122,900,000' },
+  { security_code: '3324', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,560,000', day_trading_value_of_buys: '167,800,000', trading_value_of_sells: '167,100,000' },
+  { security_code: '4938', suspension_of_buy_after_sale_day_trading: 'N', volume: '2,100,000', day_trading_value_of_buys: '232,400,000', trading_value_of_sells: '231,700,000' },
+  { security_code: '3037', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,670,000', day_trading_value_of_buys: '178,900,000', trading_value_of_sells: '178,200,000' },
+  { security_code: '2498', suspension_of_buy_after_sale_day_trading: 'Y', volume: '1,450,000', day_trading_value_of_buys: '165,300,000', trading_value_of_sells: '164,600,000' },
+  { security_code: '6271', suspension_of_buy_after_sale_day_trading: 'N', volume: '980,000', day_trading_value_of_buys: '112,100,000', trading_value_of_sells: '111,500,000' },
+  { security_code: '2301', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,230,000', day_trading_value_of_buys: '132,800,000', trading_value_of_sells: '132,200,000' },
+  { security_code: '5871', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,890,000', day_trading_value_of_buys: '243,600,000', trading_value_of_sells: '242,800,000' },
+  { security_code: '2347', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,560,000', day_trading_value_of_buys: '178,400,000', trading_value_of_sells: '177,700,000' },
+  { security_code: '3533', suspension_of_buy_after_sale_day_trading: 'N', volume: '1,120,000', day_trading_value_of_buys: '134,500,000', trading_value_of_sells: '133,900,000' },
+  { security_code: '6443', suspension_of_buy_after_sale_day_trading: 'N', volume: '870,000', day_trading_value_of_buys: '98,400,000', trading_value_of_sells: '97,900,000' },
 ] as const;
 
 const CM_COMPANIES = [
@@ -1031,19 +1087,18 @@ function CmDailyQuotesTab({ lang, rowsData, loading, error, onVisibleRowsChange 
     rowsData,
     tableColumns.map((column) => column.value),
   );
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 50;
-  const totalPages = Math.max(1, Math.min(100, Math.ceil(rows.length / pageSize)));
-  const pageStart = (currentPage - 1) * pageSize;
-  const pagedRows = rows.slice(pageStart, pageStart + pageSize);
+  const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+  const pagedRows = rows.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
 
   useEffect(() => {
-    setCurrentPage(1);
+    setCurrentPage(0);
   }, [rowsData, colFilters, sortCol, sortDir]);
 
   useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
+    if (currentPage >= totalPages) {
+      setCurrentPage(Math.max(0, totalPages - 1));
     }
   }, [currentPage, totalPages]);
 
@@ -1118,25 +1173,38 @@ function CmDailyQuotesTab({ lang, rowsData, loading, error, onVisibleRowsChange 
           ))}
         </tbody>
       </table>
-      <div className="de-cm-pagination">
+      <div className="cp-news-tab-pagination">
         <button
           type="button"
-          className="de-cm-page-btn"
-          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-          disabled={currentPage === 1}
+          className="cp-news-tab-page-btn"
+          onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+          disabled={currentPage === 0}
         >
-          {zh ? '上一頁' : 'Prev'}
+          {zh ? '‹ 上一頁' : '‹ Prev'}
         </button>
-        <span className="de-cm-page-text">
-          {zh ? `第 ${currentPage} / ${totalPages} 頁` : `Page ${currentPage} / ${totalPages}`}
-        </span>
+        {getPaginationRange(currentPage, totalPages).map((item) =>
+          typeof item === 'string' ? (
+            <span key={item} className="cp-news-tab-page-ellipsis">…</span>
+          ) : (
+            <button
+              key={item}
+              type="button"
+              className={`cp-news-tab-page-btn${currentPage === item ? ' active' : ''}`}
+              onClick={() => setCurrentPage(item)}
+              aria-label={`Page ${item + 1}`}
+              aria-current={currentPage === item ? 'page' : undefined}
+            >
+              {item + 1}
+            </button>
+          )
+        )}
         <button
           type="button"
-          className="de-cm-page-btn"
-          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-          disabled={currentPage === totalPages}
+          className="cp-news-tab-page-btn"
+          onClick={() => setCurrentPage((p) => Math.min(totalPages - 1, p + 1))}
+          disabled={currentPage >= totalPages - 1}
         >
-          {zh ? '下一頁' : 'Next'}
+          {zh ? '下一頁 ›' : 'Next ›'}
         </button>
       </div>
     </CmTableWrapper>
