@@ -22282,6 +22282,10 @@ html.dark .cp-fin-index-tab:hover {
   background: var(--c-text-4);
 }
 
+.de-cm-inner-table-wrap {
+  max-height: 520px;
+}
+
 .de-data-table {
   width: 100%;
   border-collapse: collapse;
