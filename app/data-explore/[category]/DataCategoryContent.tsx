@@ -17,9 +17,8 @@ import { type NewsSummaryItem } from '@/app/data/newsSummaryData';
 import { formatNumber } from '@/app/lib/formatters';
 
 const TAGS_VISIBLE_COUNT = 6;
-const DEFAULT_CM_TAB = 'daily-quotes';
+const DEFAULT_CM_TAB = 'day-trading';
 const CAPITAL_MARKETS_INNER_TAB_IDS = [
-  'daily-quotes',
   'day-trading',
   'margin',
   'short-sale',
@@ -31,6 +30,11 @@ const CAPITAL_MARKETS_INNER_TAB_IDS = [
 
 function isCapitalMarketsInnerTab(tabId: string | null): tabId is (typeof CAPITAL_MARKETS_INNER_TAB_IDS)[number] {
   return tabId !== null && CAPITAL_MARKETS_INNER_TAB_IDS.includes(tabId as (typeof CAPITAL_MARKETS_INNER_TAB_IDS)[number]);
+}
+
+function resolveCapitalMarketsInnerTab(tabId: string | null): (typeof CAPITAL_MARKETS_INNER_TAB_IDS)[number] {
+  if (tabId === 'daily-quotes') return 'day-trading';
+  return isCapitalMarketsInnerTab(tabId) ? tabId : DEFAULT_CM_TAB;
 }
 
 function toIsoDate(date: Date): string {
@@ -47,6 +51,12 @@ function getYesterdayIsoDate(): string {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
   d.setDate(d.getDate() - 1);
+  return toIsoDate(d);
+}
+
+function addMonthsIsoDate(isoDate: string, months: number): string {
+  const d = new Date(`${isoDate}T00:00:00`);
+  d.setMonth(d.getMonth() + months);
   return toIsoDate(d);
 }
 
@@ -641,33 +651,7 @@ const CM_COMPANIES = [
   { code: '1216', nameZh: '統一', nameEn: 'Uni-President' },
 ];
 
-const CM_DATE = '2025/04/07';
-
-const CM_DAILY_QUOTES = [
-  { ...CM_COMPANIES[0], vol: '28,543,000', amount: '27,891,450,000', open: '970.00', high: '975.00', low: '965.00', close: '972.00', change: '+5.00', txn: '168,432' },
-  { ...CM_COMPANIES[1], vol: '18,234,000', amount: '2,157,662,000', open: '117.50', high: '119.50', low: '117.00', close: '118.50', change: '+1.00', txn: '62,781' },
-  { ...CM_COMPANIES[2], vol: '6,124,000',  amount: '5,578,920,000', open: '900.00', high: '918.00', low: '898.00', close: '910.00', change: '+10.00', txn: '48,923' },
-  { ...CM_COMPANIES[3], vol: '12,891,000', amount: '1,093,735,000', open: '84.30',  high: '85.30',  low: '84.00',  close: '84.80', change: '+0.50', txn: '38,214' },
-  { ...CM_COMPANIES[4], vol: '15,034,000', amount: '1,458,297,000', open: '96.10',  high: '97.50',  low: '95.80',  close: '97.00', change: '+0.90', txn: '45,671' },
-  { ...CM_COMPANIES[5], vol: '9,812,000',  amount: '1,080,112,000', open: '109.00', high: '110.50', low: '108.50', close: '110.00', change: '+1.50', txn: '31,508' },
-  { ...CM_COMPANIES[6], vol: '4,231,000',  amount: '316,043,000',   open: '74.60',  high: '75.20',  low: '74.30',  close: '74.70', change: '-0.10', txn: '14,892' },
-  { ...CM_COMPANIES[7], vol: '3,178,000',  amount: '296,808,000',   open: '92.80',  high: '93.60',  low: '92.60',  close: '93.40', change: '+0.60', txn: '11,243' },
-  { ...CM_COMPANIES[8], vol: '5,892,000',  amount: '582,308,000',   open: '98.60',  high: '99.50',  low: '98.40',  close: '98.90', change: '+0.30', txn: '17,632' },
-  { ...CM_COMPANIES[9], vol: '7,341,000',  amount: '400,383,000',   open: '54.40',  high: '54.90',  low: '54.10',  close: '54.60', change: '+0.20', txn: '22,109' },
-];
-
-const CM_DAY_TRADING = [
-  { ...CM_COMPANIES[0], buy: '3,241,000', sell: '3,189,000', net: '6,430,000', ratio: '22.53%' },
-  { ...CM_COMPANIES[1], buy: '2,814,000', sell: '2,753,000', net: '5,567,000', ratio: '30.54%' },
-  { ...CM_COMPANIES[2], buy: '1,023,000', sell: '987,000',   net: '2,010,000', ratio: '32.82%' },
-  { ...CM_COMPANIES[3], buy: '1,892,000', sell: '1,871,000', net: '3,763,000', ratio: '29.19%' },
-  { ...CM_COMPANIES[4], buy: '2,134,000', sell: '2,098,000', net: '4,232,000', ratio: '28.15%' },
-  { ...CM_COMPANIES[5], buy: '1,245,000', sell: '1,213,000', net: '2,458,000', ratio: '25.05%' },
-  { ...CM_COMPANIES[6], buy: '521,000',   sell: '498,000',   net: '1,019,000', ratio: '24.09%' },
-  { ...CM_COMPANIES[7], buy: '412,000',   sell: '403,000',   net: '815,000',   ratio: '25.65%' },
-  { ...CM_COMPANIES[8], buy: '712,000',   sell: '698,000',   net: '1,410,000', ratio: '23.93%' },
-  { ...CM_COMPANIES[9], buy: '934,000',   sell: '921,000',   net: '1,855,000', ratio: '25.27%' },
-];
+const CM_MIN_ISO_DATE = '2000-01-01';
 
 const CM_MARGIN = [
   { ...CM_COMPANIES[0], finBuy: '1,234,000', finSell: '892,000',   finBal: '12,451,000', shoBuy: '98,000',  shoSell: '112,000', shoBal: '892,000'  },
@@ -963,6 +947,21 @@ function CmDailyQuotesTab({ lang, rowsData, loading, error, onVisibleRowsChange 
       (r) => r.trading_value_of_sells,
     ],
   );
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 50;
+  const totalPages = Math.max(1, Math.min(100, Math.ceil(rows.length / pageSize)));
+  const pageStart = (currentPage - 1) * pageSize;
+  const pagedRows = rows.slice(pageStart, pageStart + pageSize);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [rowsData, colFilters, sortCol, sortDir]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   useEffect(() => {
     onVisibleRowsChange(rows);
@@ -998,7 +997,7 @@ function CmDailyQuotesTab({ lang, rowsData, loading, error, onVisibleRowsChange 
           </tr>
         </thead>
         <tbody>
-          {rows.map((r) => (
+          {pagedRows.map((r) => (
             <tr key={`${r.security_code}-${r.trading_date}`}>
               <td className="code de-cm-dq-col-sticky">{r.security_code}</td>
               <td>{r.trading_date}</td>
@@ -1010,41 +1009,27 @@ function CmDailyQuotesTab({ lang, rowsData, loading, error, onVisibleRowsChange 
           ))}
         </tbody>
       </table>
-    </CmTableWrapper>
-  );
-}
-
-function CmDayTradingTab({ lang }: { lang: 'zh' | 'en' }) {
-  const zh = lang === 'zh';
-  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
-    CM_DAY_TRADING,
-    [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.buy, (r) => r.sell, (r) => r.net, (r) => r.ratio],
-  );
-  return (
-    <CmTableWrapper>
-      <table className="de-data-table">
-        <thead>
-          <tr>
-            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
-            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
-            <ThSortFilter label={zh ? '當沖買進股數' : 'Day-Trade Buy'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '當沖賣出股數' : 'Day-Trade Sell'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '當沖成交股數' : 'Day-Trade Volume'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '占總成交股數比' : '% of Total Vol.'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.code}>
-              <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{fmtNum(r.buy)}</td>
-              <td className="num">{fmtNum(r.sell)}</td>
-              <td className="num">{fmtNum(r.net)}</td>
-              <td className={`num${r.ratio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.ratio)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="de-cm-pagination">
+        <button
+          type="button"
+          className="de-cm-page-btn"
+          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+          disabled={currentPage === 1}
+        >
+          {zh ? '上一頁' : 'Prev'}
+        </button>
+        <span className="de-cm-page-text">
+          {zh ? `第 ${currentPage} / ${totalPages} 頁` : `Page ${currentPage} / ${totalPages}`}
+        </span>
+        <button
+          type="button"
+          className="de-cm-page-btn"
+          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+          disabled={currentPage === totalPages}
+        >
+          {zh ? '下一頁' : 'Next'}
+        </button>
+      </div>
     </CmTableWrapper>
   );
 }
@@ -1269,167 +1254,87 @@ function CmPeRatioTab({ lang }: { lang: 'zh' | 'en' }) {
 
 // ── Capital Markets — Date Picker + Layout ────────────────────────────────────
 
-interface CmDatePickerProps {
+interface CmFilterBarProps {
   lang: 'zh' | 'en';
-  selectedDate: string | null;
-  onSelect: (date: string) => void;
+  securityCode: string;
+  securityCodes: string[];
+  startDate: string;
+  endDate: string;
+  minStartDate: string;
+  maxStartDate: string;
+  minEndDate: string;
+  maxEndDate: string;
+  onSecurityCodeChange: (value: string) => void;
+  onStartDateChange: (value: string) => void;
+  onEndDateChange: (value: string) => void;
   onSearch: () => void;
   onClear: () => void;
 }
 
-const CM_MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-const CM_MONTH_NAMES_ZH = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
-const CM_DAY_LABELS = ['Su','Mo','Tu','We','Th','Fr','Sa'];
-const CM_DAY_LABELS_ZH = ['日','一','二','三','四','五','六'];
-
-function CmDatePicker({ lang, selectedDate, onSelect, onSearch, onClear }: CmDatePickerProps) {
+function CmFilterBar({
+  lang,
+  securityCode,
+  securityCodes,
+  startDate,
+  endDate,
+  minStartDate,
+  maxStartDate,
+  minEndDate,
+  maxEndDate,
+  onSecurityCodeChange,
+  onStartDateChange,
+  onEndDateChange,
+  onSearch,
+  onClear,
+}: CmFilterBarProps) {
   const zh = lang === 'zh';
-  const today = useMemo(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d;
-  }, []);
-  const maxSelectableDate = useMemo(() => {
-    const d = new Date(today);
-    d.setDate(d.getDate() - 1);
-    return d;
-  }, [today]);
-  const minDate = useMemo(() => {
-    const d = new Date(maxSelectableDate);
-    d.setMonth(d.getMonth() - 3);
-    return d;
-  }, [maxSelectableDate]);
-
-  const [viewYear, setViewYear] = useState(maxSelectableDate.getFullYear());
-  const [viewMonth, setViewMonth] = useState(maxSelectableDate.getMonth());
-  const [calOpen, setCalOpen] = useState(false);
-  const wrapRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    function handleOutside(e: MouseEvent) {
-      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
-        setCalOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleOutside);
-    return () => document.removeEventListener('mousedown', handleOutside);
-  }, []);
-
-  function isoDate(y: number, m: number, d: number): string {
-    return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-  }
-
-  function isDisabled(y: number, m: number, d: number): boolean {
-    const dt = new Date(y, m, d);
-    return dt < minDate || dt > maxSelectableDate;
-  }
-
-  function buildCalendar() {
-    const firstDay = new Date(viewYear, viewMonth, 1).getDay();
-    const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
-    const cells: Array<{ day: number | null; date: string | null }> = [];
-    for (let i = 0; i < firstDay; i++) cells.push({ day: null, date: null });
-    for (let d = 1; d <= daysInMonth; d++) cells.push({ day: d, date: isoDate(viewYear, viewMonth, d) });
-    return cells;
-  }
-
-  function prevMonth() {
-    if (viewMonth === 0) { setViewYear(y => y - 1); setViewMonth(11); }
-    else setViewMonth(m => m - 1);
-  }
-  function nextMonth() {
-    const nextM = viewMonth === 11 ? 0 : viewMonth + 1;
-    const nextY = viewMonth === 11 ? viewYear + 1 : viewYear;
-    const firstOfNext = new Date(nextY, nextM, 1);
-    if (firstOfNext > maxSelectableDate) return;
-    if (viewMonth === 11) { setViewYear(y => y + 1); setViewMonth(0); }
-    else setViewMonth(m => m + 1);
-  }
-
-  const canGoNext = (() => {
-    const nextM = viewMonth === 11 ? 0 : viewMonth + 1;
-    const nextY = viewMonth === 11 ? viewYear + 1 : viewYear;
-    return new Date(nextY, nextM, 1) <= maxSelectableDate;
-  })();
-
-  const canGoPrev = (() => {
-    const prevM = viewMonth === 0 ? 11 : viewMonth - 1;
-    const prevY = viewMonth === 0 ? viewYear - 1 : viewYear;
-    const lastOfPrev = new Date(prevY, prevM + 1, 0);
-    return lastOfPrev >= minDate;
-  })();
-
-  const cells = buildCalendar();
-  const monthLabel = zh
-    ? `${viewYear}年 ${CM_MONTH_NAMES_ZH[viewMonth]}`
-    : `${CM_MONTH_NAMES[viewMonth]} ${viewYear}`;
-  const dayLabels = zh ? CM_DAY_LABELS_ZH : CM_DAY_LABELS;
-
-  const displayText = selectedDate
-    ? selectedDate
-    : (zh ? '選擇日期…' : 'Select date…');
+  const disableSearch = !startDate || !endDate;
 
   return (
-    <div className="de-cm-datepicker-wrap" ref={wrapRef}>
-      <button
-        type="button"
-        className={`de-cm-datepicker-input${calOpen ? ' open' : ''}`}
-        onClick={() => setCalOpen(v => !v)}
-        aria-haspopup="dialog"
-        aria-expanded={calOpen}
-      >
-        <svg viewBox="0 0 14 14" fill="none" width="13" height="13" aria-hidden="true">
-          <rect x="1" y="2" width="12" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
-          <path d="M1 5.5h12" stroke="currentColor" strokeWidth="1.3"/>
-          <path d="M4 1v2.5M10 1v2.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-        </svg>
-        <span>{displayText}</span>
-      </button>
-      {calOpen && (
-        <div className="de-cm-cal-popup" role="dialog" aria-label={zh ? '日期選擇器' : 'Date picker'}>
-          <div className="de-cm-cal-nav">
-            <button type="button" className="de-cm-cal-nav-btn" onClick={prevMonth} disabled={!canGoPrev} aria-label={zh ? '上個月' : 'Previous month'}>
-              <svg viewBox="0 0 14 14" fill="none" width="12" height="12"><path d="M9 2L4 7L9 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </button>
-            <span className="de-cm-cal-month">{monthLabel}</span>
-            <button type="button" className="de-cm-cal-nav-btn" onClick={nextMonth} disabled={!canGoNext} aria-label={zh ? '下個月' : 'Next month'}>
-              <svg viewBox="0 0 14 14" fill="none" width="12" height="12"><path d="M5 2L10 7L5 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </button>
-          </div>
-          <div className="de-cm-cal-grid">
-            {dayLabels.map(d => (
-              <div key={d} className="de-cm-cal-day-label">{d}</div>
-            ))}
-            {cells.map((cell, i) => {
-              if (!cell.day || !cell.date) return <div key={`empty-${i}`} className="de-cm-cal-cell de-cm-cal-cell--empty" />;
-              const disabled = isDisabled(viewYear, viewMonth, cell.day);
-              const isSelected = cell.date === selectedDate;
-              const isToday = cell.date === isoDate(today.getFullYear(), today.getMonth(), today.getDate());
-              return (
-                <button
-                  key={cell.date}
-                  type="button"
-                  className={`de-cm-cal-cell${isSelected ? ' selected' : ''}${isToday ? ' today' : ''}${disabled ? ' disabled' : ''}`}
-                  disabled={disabled}
-                  onClick={() => { onSelect(cell.date!); setCalOpen(false); }}
-                  aria-label={cell.date}
-                  aria-pressed={isSelected}
-                >
-                  {cell.day}
-                </button>
-              );
-            })}
-          </div>
-          <div className="de-cm-cal-hint">
-            {zh ? `可選範圍：${minDate.toLocaleDateString('zh-TW')} – 昨天` : `Range: ${minDate.toLocaleDateString('en-US')} – Yesterday`}
-          </div>
+    <div className="de-cm-filter-wrap">
+      <div className="de-cm-filter-field">
+        <span className="de-cm-filter-label">{zh ? 'Security Code' : 'Security Code'}</span>
+        <select
+          className="de-cm-filter-select"
+          value={securityCode}
+          onChange={(e) => onSecurityCodeChange(e.target.value)}
+          aria-label={zh ? 'Security Code' : 'Security Code'}
+        >
+          <option value="">{zh ? '全部' : 'All'}</option>
+          {securityCodes.map((code) => (
+            <option key={code} value={code}>{code}</option>
+          ))}
+        </select>
+      </div>
+      <div className="de-cm-filter-field">
+        <span className="de-cm-filter-label">{zh ? 'Period' : 'Period'}</span>
+        <div className="de-cm-period-wrap">
+          <input
+            className="de-cm-period-input"
+            type="date"
+            value={startDate}
+            min={minStartDate}
+            max={maxStartDate}
+            onChange={(e) => onStartDateChange(e.target.value)}
+            aria-label={zh ? '起始日期' : 'Start date'}
+          />
+          <span className="de-cm-period-sep">~</span>
+          <input
+            className="de-cm-period-input"
+            type="date"
+            value={endDate}
+            min={minEndDate}
+            max={maxEndDate}
+            onChange={(e) => onEndDateChange(e.target.value)}
+            aria-label={zh ? '結束日期' : 'End date'}
+          />
         </div>
-      )}
+      </div>
       <button
         type="button"
         className="de-cm-search-btn"
-        onClick={() => { onSearch(); setCalOpen(false); }}
-        disabled={!selectedDate}
+        onClick={onSearch}
+        disabled={disableSearch}
       >
         {zh ? '搜尋' : 'Search'}
       </button>
@@ -1437,7 +1342,7 @@ function CmDatePicker({ lang, selectedDate, onSelect, onSearch, onClear }: CmDat
         type="button"
         className="de-cm-clear-btn"
         onClick={onClear}
-        disabled={!selectedDate}
+        disabled={disableSearch}
       >
         {zh ? '清除' : 'Clear'}
       </button>
@@ -1448,26 +1353,21 @@ function CmDatePicker({ lang, selectedDate, onSelect, onSearch, onClear }: CmDat
 // ── CSV download helpers for Capital Markets ──────────────────────────────────
 
 interface CapitalMarketsCsvOptions {
-  dailyQuotesRows?: CmDailyQuoteRow[];
+  statisticsForDayTradingRows?: CmDailyQuoteRow[];
 }
 
 function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: CapitalMarketsCsvOptions = {}) {
   const zh = lang === 'zh';
   switch (tabId) {
-    case 'daily-quotes': {
-      const rows = options.dailyQuotesRows ?? [];
-      downloadCSV(zh ? '每日收盤行情.csv' : 'daily-quotes.csv',
+    case 'day-trading': {
+      const rows = options.statisticsForDayTradingRows ?? [];
+      downloadCSV(zh ? '每日沖銷交易標記及統計.csv' : 'statistics-for-day-trading.csv',
         zh
           ? ['標的代碼', '成交日期', '暫停現股賣出後現款買進當沖註記', '當日沖銷交易成交股數', '當日沖銷交易買進成交金額', '當日沖銷交易賣出成交金額']
           : ['Security Code', 'Trading Date', 'Suspension Of Buy After Sale Day Trading', 'Volume', 'Day Trading Value Of Buys', 'Trading Value Of Sells'],
         rows.map((r) => [r.security_code, r.trading_date, r.suspension_of_buy_after_sale_day_trading, r.volume, r.day_trading_value_of_buys, r.trading_value_of_sells]));
       break;
     }
-    case 'day-trading':
-      downloadCSV(zh ? '每日沖銷交易.csv' : 'day-trading.csv',
-        zh ? ['股票代號','名稱','當沖買進股數','當沖賣出股數','當沖成交股數','占總成交股數比'] : ['Code','Name','Day-Trade Buy','Day-Trade Sell','Day-Trade Volume','% of Total Vol.'],
-        CM_DAY_TRADING.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.buy, r.sell, r.net, r.ratio]));
-      break;
     case 'margin':
       downloadCSV(zh ? '融資融券餘額.csv' : 'margin-transaction.csv',
         zh ? ['股票代號','名稱','融資買進','融資賣出','融資餘額','融券賣出','融券買進','融券餘額'] : ['Code','Name','Margin Buy','Margin Sell','Margin Balance','Short Sell','Short Buy','Short Balance'],
@@ -1530,7 +1430,10 @@ function formatCapitalMarketUpdateDatetime(value: unknown, lang: 'zh' | 'en'): s
 function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }: CapitalMarketsLayoutProps) {
   const zh = lang === 'zh';
   const defaultQueryDate = useMemo(() => getYesterdayIsoDate(), []);
-  const [selectedDate, setSelectedDate] = useState<string | null>(defaultQueryDate);
+  const [securityCodes, setSecurityCodes] = useState<string[]>([]);
+  const [securityCode, setSecurityCode] = useState('');
+  const [startDate, setStartDate] = useState(defaultQueryDate);
+  const [endDate, setEndDate] = useState(defaultQueryDate);
   const [dailyQuoteRows, setDailyQuoteRows] = useState<CmDailyQuoteRow[]>([]);
   const [dailyQuoteVisibleRows, setDailyQuoteVisibleRows] = useState<CmDailyQuoteRow[]>([]);
   const [dailyQuotesLoading, setDailyQuotesLoading] = useState(false);
@@ -1540,7 +1443,6 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   const updateDatetimeDisplay = updateDatetime ?? getTodayIsoDate();
 
   const CM_INNER_TABS = [
-    { id: 'daily-quotes',      label: zh ? '每日收盤行情' : 'Daily Quotes' },
     { id: 'day-trading',       label: zh ? '每日沖銷交易標記及統計' : 'Statistics for Day Trading' },
     { id: 'margin',            label: zh ? '融資融券餘額' : 'Margin Transaction' },
     { id: 'short-sale',        label: zh ? '信用額度總量管制餘額檔' : 'Daily Short Sale Balances' },
@@ -1550,11 +1452,11 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     { id: 'pe-ratio',          label: zh ? '個股日本益比、殖利率及股價淨值比' : 'P/E Ratio, Dividend Yield, P/B Ratio' },
   ];
 
-  const queryDailyQuotes = useCallback(async (date: string) => {
+  const queryDailyQuotes = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
     setDailyQuotesLoading(true);
     setDailyQuotesError(null);
     try {
-      const rows = await fetchDailyQuotesRowsByDate(date);
+      const rows = await fetchStatisticsForDayTradingRows(nextStartDate, nextEndDate, nextSecurityCode);
       setDailyQuoteRows(rows);
       setDailyQuoteVisibleRows(rows);
     } catch (error) {
@@ -1567,10 +1469,20 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   }, [zh]);
 
   useEffect(() => {
-    if (activeCmTab !== 'daily-quotes') return;
-    setSelectedDate(defaultQueryDate);
-    queryDailyQuotes(defaultQueryDate);
-  }, [activeCmTab, defaultQueryDate, queryDailyQuotes]);
+    fetchSecurityCodeOptions()
+      .then((items) => {
+        setSecurityCodes(items);
+      })
+      .catch(() => {
+        setSecurityCodes(CM_COMPANIES.map((company) => company.code));
+      });
+  }, []);
+
+  useEffect(() => {
+    if (activeCmTab !== 'day-trading') return;
+    queryDailyQuotes(startDate, endDate, securityCode);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeCmTab, queryDailyQuotes]);
 
   useEffect(() => {
     let cancelled = false;
@@ -1607,29 +1519,81 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   }, [activeCmTab, lang]);
 
   function handleSearch() {
-    if (!selectedDate) return;
-    if (activeCmTab === 'daily-quotes') {
-      queryDailyQuotes(selectedDate);
-    }
+    queryDailyQuotes(startDate, endDate, securityCode);
   }
+
   function handleClear() {
-    setSelectedDate(null);
-    if (activeCmTab === 'daily-quotes') {
-      queryDailyQuotes(defaultQueryDate);
-    }
+    setSecurityCode('');
+    setStartDate(defaultQueryDate);
+    setEndDate(defaultQueryDate);
+    queryDailyQuotes(defaultQueryDate, defaultQueryDate, '');
   }
+
+  function handleSecurityCodeChange(value: string) {
+    if (!value) {
+      setSecurityCode('');
+      setStartDate(endDate);
+      setEndDate(endDate);
+      return;
+    }
+
+    const nextEndDate = endDate > getYesterdayIsoDate() ? getYesterdayIsoDate() : endDate;
+    const maxByStart = addMonthsIsoDate(startDate, 3);
+    const clampedEnd = nextEndDate > maxByStart ? maxByStart : nextEndDate;
+    setSecurityCode(value);
+    setEndDate(clampedEnd < startDate ? startDate : clampedEnd);
+  }
+
+  function handleStartDateChange(value: string) {
+    if (!value) return;
+    if (!securityCode) {
+      setStartDate(value);
+      setEndDate(value);
+      return;
+    }
+
+    const maxEnd = addMonthsIsoDate(value, 3) < getYesterdayIsoDate()
+      ? addMonthsIsoDate(value, 3)
+      : getYesterdayIsoDate();
+    const nextEnd = endDate < value ? value : endDate > maxEnd ? maxEnd : endDate;
+    setStartDate(value);
+    setEndDate(nextEnd);
+  }
+
+  function handleEndDateChange(value: string) {
+    if (!value) return;
+    if (!securityCode) {
+      setStartDate(value);
+      setEndDate(value);
+      return;
+    }
+
+    const maxEnd = addMonthsIsoDate(startDate, 3) < getYesterdayIsoDate()
+      ? addMonthsIsoDate(startDate, 3)
+      : getYesterdayIsoDate();
+    const nextEnd = value < startDate ? startDate : value > maxEnd ? maxEnd : value;
+    setEndDate(nextEnd);
+  }
+
   function handleDownload() {
     downloadCapitalMarketsCSV(activeCmTab, lang, {
-      dailyQuotesRows: dailyQuoteVisibleRows,
+      statisticsForDayTradingRows: dailyQuoteVisibleRows,
     });
   }
+
+  const minStartDate = securityCode ? CM_MIN_ISO_DATE : endDate;
+  const maxStartDate = securityCode ? endDate : getYesterdayIsoDate();
+  const minEndDate = securityCode ? startDate : startDate;
+  const maxEndDate = securityCode
+    ? (addMonthsIsoDate(startDate, 3) < getYesterdayIsoDate() ? addMonthsIsoDate(startDate, 3) : getYesterdayIsoDate())
+    : startDate;
 
   return (
     <>
       <div className="de-cm-description">
         {zh
-          ? '資料僅可查近三個月資料，預設顯示最新更新日期資料，若要查看或下載其他日期資料則在上方選取對應日期。'
-          : 'Only the most recent three months of data are provided. To download data, please search for the corresponding date and then click "Download" to retrieve the data for that specific date.'}
+          ? 'Security Code 為空時僅可查詢單日；選擇 Security Code 後可查詢最多三個月區間，結束日上限為昨天。'
+          : 'When Security Code is empty, only a single day can be queried. After selecting a Security Code, the allowed range is up to three months, with end date limited to yesterday.'}
       </div>
       <div className="de-cm-layout">
         <nav className="de-cm-sidebar" aria-label={zh ? 'Capital Markets 子分類' : 'Capital Markets sub categories'}>
@@ -1648,10 +1612,19 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
         <div className="de-cm-content">
           <div className="de-cm-content-toolbar">
           <div className="de-cm-content-toolbar-left">
-            <CmDatePicker
+            <CmFilterBar
               lang={lang}
-              selectedDate={selectedDate}
-              onSelect={setSelectedDate}
+              securityCode={securityCode}
+              securityCodes={securityCodes}
+              startDate={startDate}
+              endDate={endDate}
+              minStartDate={minStartDate}
+              maxStartDate={maxStartDate}
+              minEndDate={minEndDate}
+              maxEndDate={maxEndDate}
+              onSecurityCodeChange={handleSecurityCodeChange}
+              onStartDateChange={handleStartDateChange}
+              onEndDateChange={handleEndDateChange}
               onSearch={handleSearch}
               onClear={handleClear}
             />
@@ -1666,7 +1639,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
             </button>
           </div>
         </div>
-        {activeCmTab === 'daily-quotes'      && (
+        {activeCmTab === 'day-trading'       && (
           <CmDailyQuotesTab
             lang={lang}
             rowsData={dailyQuoteRows}
@@ -1675,7 +1648,6 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
             onVisibleRowsChange={setDailyQuoteVisibleRows}
           />
         )}
-        {activeCmTab === 'day-trading'       && <CmDayTradingTab lang={lang} />}
         {activeCmTab === 'margin'            && <CmMarginTab lang={lang} />}
         {activeCmTab === 'short-sale'        && <CmShortSaleTab lang={lang} />}
         {activeCmTab === 'ex-dividend'       && <CmExDividendTab lang={lang} />}
@@ -1738,24 +1710,60 @@ function buildFallbackDailyQuotesRows(date: string): CmDailyQuoteRow[] {
   }));
 }
 
-async function fetchDailyQuotesRowsByDate(date: string): Promise<CmDailyQuoteRow[]> {
+async function fetchSecurityCodeOptions(): Promise<string[]> {
   try {
-    const url = new URL('/getDailyQuotesByDate', window.location.origin);
-    url.searchParams.set('date', date);
+    const url = new URL('/getSecurityCd', window.location.origin);
     const res = await fetch(url.toString(), { cache: 'no-store' });
     if (!res.ok) {
-      return buildFallbackDailyQuotesRows(date);
+      return CM_COMPANIES.map((company) => company.code);
     }
-    const data = (await res.json()) as { items?: CmDailyQuoteRow[] } | CmDailyQuoteRow[];
+    const data = (await res.json()) as
+      | string[]
+      | { items?: string[]; data?: string[]; list?: string[]; securityCodes?: string[] }
+      | Array<{ security_code?: string; securityCode?: string; code?: string }>;
+
+    if (Array.isArray(data) && data.length > 0) {
+      if (typeof data[0] === 'string') {
+        return [...new Set((data as string[]).filter((item) => item.trim() !== ''))];
+      }
+      const mapped = (data as Array<{ security_code?: string; securityCode?: string; code?: string }>)
+        .map((item) => item.security_code ?? item.securityCode ?? item.code ?? '')
+        .filter((item) => item.trim() !== '');
+      return [...new Set(mapped)];
+    }
+
+    if (!Array.isArray(data)) {
+      const list = data.items ?? data.data ?? data.list ?? data.securityCodes ?? [];
+      return [...new Set(list.filter((item) => item.trim() !== ''))];
+    }
+
+    return CM_COMPANIES.map((company) => company.code);
+  } catch {
+    return CM_COMPANIES.map((company) => company.code);
+  }
+}
+
+async function fetchStatisticsForDayTradingRows(startDate: string, endDate: string, securityCode: string): Promise<CmDailyQuoteRow[]> {
+  try {
+    const url = new URL('/getStatisticsForDayTrading', window.location.origin);
+    url.searchParams.set('startDate', startDate);
+    url.searchParams.set('endDate', endDate);
+    if (securityCode) {
+      url.searchParams.set('securityCode', securityCode);
+    }
+    const res = await fetch(url.toString(), { cache: 'no-store' });
+    if (!res.ok) {
+      return buildFallbackDailyQuotesRows(endDate);
+    }
+    const data = (await res.json()) as
+      | CmDailyQuoteRow[]
+      | { items?: CmDailyQuoteRow[]; data?: CmDailyQuoteRow[]; rows?: CmDailyQuoteRow[] };
     if (Array.isArray(data)) {
       return data;
     }
-    if (Array.isArray(data.items)) {
-      return data.items;
-    }
-    return buildFallbackDailyQuotesRows(date);
+    return data.items ?? data.data ?? data.rows ?? buildFallbackDailyQuotesRows(endDate);
   } catch {
-    return buildFallbackDailyQuotesRows(date);
+    return buildFallbackDailyQuotesRows(endDate);
   }
 }
 
@@ -2834,7 +2842,7 @@ export default function DataCategoryContent({ params }: { params: { category: st
   const [activeSubTab, setActiveSubTab] = useState(defaultTab);
   const [activeCmTab, setActiveCmTab] = useState<(typeof CAPITAL_MARKETS_INNER_TAB_IDS)[number]>(() => {
     const tabParam = searchParams.get('tab');
-    return isCapitalMarketsInnerTab(tabParam) ? tabParam : DEFAULT_CM_TAB;
+    return resolveCapitalMarketsInnerTab(tabParam);
   });
 
   const hasSubTabs = isEsg || isGov || isCapital || isNewsSummary;
@@ -2893,12 +2901,13 @@ export default function DataCategoryContent({ params }: { params: { category: st
   useEffect(() => {
     if (!isCapital) return;
     const tabParam = searchParams.get('tab');
-    if (isCapitalMarketsInnerTab(tabParam)) {
-      setActiveCmTab(tabParam);
+    const resolvedTab = resolveCapitalMarketsInnerTab(tabParam);
+    if (resolvedTab === tabParam) {
+      setActiveCmTab(resolvedTab);
       return;
     }
-    setActiveCmTab(DEFAULT_CM_TAB);
-    updateCapitalTabQuery(DEFAULT_CM_TAB);
+    setActiveCmTab(resolvedTab);
+    updateCapitalTabQuery(resolvedTab);
   }, [isCapital, searchParams, updateCapitalTabQuery]);
 
   if (!cat) {
