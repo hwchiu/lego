@@ -22640,12 +22640,6 @@ html.dark .cp-fin-index-tab:hover {
   margin-left: auto;
 }
 
-.de-cm-ref-date {
-  font-size: 12px;
-  color: var(--c-text-3);
-  font-variant-numeric: tabular-nums;
-}
-
 /* ── Filter bar ── */
 
 .de-cm-filter-wrap {
@@ -22787,6 +22781,82 @@ html.dark .cp-fin-index-tab:hover {
   color: var(--c-text-3);
 }
 
+/* ── Capital markets CSV modal ── */
+
+.de-cm-csv-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 500;
+}
+
+.de-cm-csv-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(520px, calc(100vw - 32px));
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  z-index: 501;
+}
+
+.de-cm-csv-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.de-cm-csv-modal-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--c-text);
+}
+
+.de-cm-csv-modal-close {
+  width: 26px;
+  height: 26px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--c-text-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.de-cm-csv-modal-close:hover {
+  background: var(--c-bg);
+  color: var(--c-text);
+  border-color: var(--c-border);
+}
+
+.de-cm-csv-modal-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.de-cm-csv-modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.de-cm-csv-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
 /* RWD */
 @media (max-width: 768px) {
   .de-cm-layout {
@@ -22810,6 +22880,13 @@ html.dark .cp-fin-index-tab:hover {
   }
   .de-cm-content {
     padding-left: 0;
+  }
+  .de-cm-csv-modal-actions {
+    justify-content: stretch;
+  }
+  .de-cm-csv-modal-actions .de-news-download-btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 

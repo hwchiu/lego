@@ -41,12 +41,6 @@ function toIsoDate(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
-function getTodayIsoDate(): string {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return toIsoDate(today);
-}
-
 function getYesterdayIsoDate(): string {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
@@ -626,7 +620,10 @@ interface CmDailyQuoteRow {
   suspension_of_buy_after_sale_day_trading: string;
   volume: string;
   day_trading_value_of_buys: string;
-  trading_value_of_sells: string;
+  day_trading_value_of_sells?: string;
+  trading_value_of_sells?: string;
+  data_gen_dt?: string;
+  data_gen_time?: string;
 }
 
 const CM_DAILY_QUOTES_FALLBACK_TEMPLATE = [
@@ -651,7 +648,88 @@ const CM_COMPANIES = [
   { code: '1216', nameZh: '統一', nameEn: 'Uni-President' },
 ];
 
-const CM_MIN_ISO_DATE = '2000-01-01';
+function getCmDayTradingValueOfSells(row: CmDailyQuoteRow): string {
+  return row.day_trading_value_of_sells ?? row.trading_value_of_sells ?? '';
+}
+
+function getCmUpdateDatetimeText(row: CmDailyQuoteRow): string {
+  const dt = row.data_gen_dt?.trim() ?? '';
+  const tm = row.data_gen_time?.trim() ?? '';
+  const value = `${dt}${dt && tm ? ' ' : ''}${tm}`.trim();
+  return value || '—';
+}
+
+interface CmDayTradingColumn {
+  id:
+    | 'security_code'
+    | 'trading_date'
+    | 'suspension_of_buy_after_sale_day_trading'
+    | 'volume'
+    | 'day_trading_value_of_buys'
+    | 'day_trading_value_of_sells'
+    | 'tsmc_updatetime';
+  labels: { zh: string; en: string };
+  value: (row: CmDailyQuoteRow) => string;
+  tableVisible: 'Y' | 'N';
+  freezePane: 'Y' | 'N';
+  className?: string;
+}
+
+const CM_DAY_TRADING_COLUMNS: CmDayTradingColumn[] = [
+  {
+    id: 'security_code',
+    labels: { zh: '標的代碼', en: 'Security Code' },
+    value: (row) => row.security_code,
+    tableVisible: 'Y',
+    freezePane: 'Y',
+    className: 'code',
+  },
+  {
+    id: 'trading_date',
+    labels: { zh: '成交日期', en: 'Trading Date' },
+    value: (row) => row.trading_date,
+    tableVisible: 'Y',
+    freezePane: 'N',
+  },
+  {
+    id: 'suspension_of_buy_after_sale_day_trading',
+    labels: { zh: '暫停現股賣出後現款買進當沖註記', en: 'Suspension Of Buy After Sale Day Trading' },
+    value: (row) => row.suspension_of_buy_after_sale_day_trading,
+    tableVisible: 'Y',
+    freezePane: 'N',
+  },
+  {
+    id: 'volume',
+    labels: { zh: '當日沖銷交易成交股數', en: 'Day Trading Volume' },
+    value: (row) => row.volume,
+    tableVisible: 'Y',
+    freezePane: 'N',
+    className: 'num',
+  },
+  {
+    id: 'day_trading_value_of_buys',
+    labels: { zh: '當日沖銷交易買進成交金額', en: 'Day Trading Value Of Buys' },
+    value: (row) => row.day_trading_value_of_buys,
+    tableVisible: 'Y',
+    freezePane: 'N',
+    className: 'num',
+  },
+  {
+    id: 'day_trading_value_of_sells',
+    labels: { zh: '當日沖銷交易賣出成交金額', en: 'Day Trading Value Of Sells' },
+    value: (row) => getCmDayTradingValueOfSells(row),
+    tableVisible: 'Y',
+    freezePane: 'N',
+    className: 'num',
+  },
+  {
+    id: 'tsmc_updatetime',
+    labels: { zh: '台積更新時間', en: 'TSMC Updatetime' },
+    value: (row) => getCmUpdateDatetimeText(row),
+    tableVisible: 'Y',
+    freezePane: 'N',
+  },
+];
 
 const CM_MARGIN = [
   { ...CM_COMPANIES[0], finBuy: '1,234,000', finSell: '892,000',   finBal: '12,451,000', shoBuy: '98,000',  shoSell: '112,000', shoBal: '892,000'  },
@@ -936,16 +1014,13 @@ interface CmDailyQuotesTabProps {
 
 function CmDailyQuotesTab({ lang, rowsData, loading, error, onVisibleRowsChange }: CmDailyQuotesTabProps) {
   const zh = lang === 'zh';
+  const tableColumns = useMemo(
+    () => CM_DAY_TRADING_COLUMNS.filter((column) => column.tableVisible === 'Y'),
+    [],
+  );
   const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     rowsData,
-    [
-      (r) => r.security_code,
-      (r) => r.trading_date,
-      (r) => r.suspension_of_buy_after_sale_day_trading,
-      (r) => r.volume,
-      (r) => r.day_trading_value_of_buys,
-      (r) => r.trading_value_of_sells,
-    ],
+    tableColumns.map((column) => column.value),
   );
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 50;
@@ -988,23 +1063,47 @@ function CmDailyQuotesTab({ lang, rowsData, loading, error, onVisibleRowsChange 
       <table className="de-data-table de-cm-dq-table">
         <thead>
           <tr>
-            <ThSortFilter label={zh ? '標的代碼' : 'Security Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} className="de-cm-dq-col-sticky" />
-            <ThSortFilter label={zh ? '成交日期' : 'Trading Date'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
-            <ThSortFilter label={zh ? '暫停現股賣出後現款買進當沖註記' : 'Suspension Of Buy After Sale Day Trading'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} />
-            <ThSortFilter label={zh ? '當日沖銷交易成交股數' : 'Volume'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '當日沖銷交易買進成交金額' : 'Day Trading Value Of Buys'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '當日沖銷交易賣出成交金額' : 'Trading Value Of Sells'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
+            {tableColumns.map((column, index) => {
+              const className = [
+                column.className ?? '',
+                column.freezePane === 'Y' ? 'de-cm-dq-col-sticky' : '',
+              ].filter(Boolean).join(' ');
+              return (
+                <ThSortFilter
+                  key={column.id}
+                  label={column.labels[lang]}
+                  colIndex={index}
+                  sortCol={sortCol}
+                  sortDir={sortDir}
+                  onSort={handleSort}
+                  onFilter={handleColFilter}
+                  filterValue={colFilters[index] ?? ''}
+                  className={className || undefined}
+                />
+              );
+            })}
           </tr>
         </thead>
         <tbody>
           {pagedRows.map((r) => (
             <tr key={`${r.security_code}-${r.trading_date}`}>
-              <td className="code de-cm-dq-col-sticky">{r.security_code}</td>
-              <td>{r.trading_date}</td>
-              <td>{r.suspension_of_buy_after_sale_day_trading}</td>
-              <td className="num">{fmtNum(r.volume)}</td>
-              <td className="num">{fmtNum(r.day_trading_value_of_buys)}</td>
-              <td className="num">{fmtNum(r.trading_value_of_sells)}</td>
+              {tableColumns.map((column) => {
+                const rawValue = column.value(r);
+                const displayValue = column.id === 'volume'
+                  || column.id === 'day_trading_value_of_buys'
+                  || column.id === 'day_trading_value_of_sells'
+                  ? fmtNum(rawValue)
+                  : rawValue;
+                const className = [
+                  column.className ?? '',
+                  column.freezePane === 'Y' ? 'de-cm-dq-col-sticky' : '',
+                ].filter(Boolean).join(' ');
+                return (
+                  <td key={column.id} className={className || undefined}>
+                    {displayValue}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>
@@ -1350,6 +1449,110 @@ function CmFilterBar({
   );
 }
 
+interface CmDownloadCsvModalProps {
+  lang: 'zh' | 'en';
+  isOpen: boolean;
+  startDate: string;
+  endDate: string;
+  minDate: string;
+  maxDate: string;
+  downloading: boolean;
+  onStartDateChange: (value: string) => void;
+  onEndDateChange: (value: string) => void;
+  onClose: () => void;
+  onDownload: () => void;
+}
+
+function CmDownloadCsvModal({
+  lang,
+  isOpen,
+  startDate,
+  endDate,
+  minDate,
+  maxDate,
+  downloading,
+  onStartDateChange,
+  onEndDateChange,
+  onClose,
+  onDownload,
+}: CmDownloadCsvModalProps) {
+  const zh = lang === 'zh';
+
+  useEffect(() => {
+    if (!isOpen) return;
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  return (
+    <>
+      <div className="de-cm-csv-modal-backdrop" onClick={onClose} />
+      <div
+        className="de-cm-csv-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label={zh ? '下載 CSV 區間設定' : 'Download CSV date range'}
+      >
+        <div className="de-cm-csv-modal-header">
+          <h2 className="de-cm-csv-modal-title">{zh ? '下載 CSV' : 'Download CSV'}</h2>
+          <button
+            type="button"
+            className="de-cm-csv-modal-close"
+            onClick={onClose}
+            aria-label={zh ? '關閉' : 'Close'}
+          >
+            <CloseSmIcon />
+          </button>
+        </div>
+        <div className="de-cm-csv-modal-body">
+          <div className="de-cm-csv-modal-field">
+            <span className="de-cm-filter-label">{zh ? '期間' : 'Period'}</span>
+            <div className="de-cm-period-wrap">
+              <input
+                className="de-cm-period-input"
+                type="date"
+                min={minDate}
+                max={maxDate}
+                value={startDate}
+                onChange={(e) => onStartDateChange(e.target.value)}
+                aria-label={zh ? '下載起始日期' : 'Download start date'}
+              />
+              <span className="de-cm-period-sep">~</span>
+              <input
+                className="de-cm-period-input"
+                type="date"
+                min={minDate}
+                max={maxDate}
+                value={endDate}
+                onChange={(e) => onEndDateChange(e.target.value)}
+                aria-label={zh ? '下載結束日期' : 'Download end date'}
+              />
+            </div>
+          </div>
+          <div className="de-cm-csv-modal-actions">
+            <button
+              type="button"
+              className="de-news-download-btn de-gov-csv-btn"
+              onClick={onDownload}
+              disabled={downloading}
+            >
+              <DownloadIcon />
+              <span>{downloading ? (zh ? '下載中…' : 'Downloading...') : (zh ? '下載 CSV' : 'Download CSV')}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
 // ── CSV download helpers for Capital Markets ──────────────────────────────────
 
 interface CapitalMarketsCsvOptions {
@@ -1361,11 +1564,10 @@ function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: Ca
   switch (tabId) {
     case 'day-trading': {
       const rows = options.statisticsForDayTradingRows ?? [];
+      const csvColumns = CM_DAY_TRADING_COLUMNS;
       downloadCSV(zh ? '每日沖銷交易標記及統計.csv' : 'statistics-for-day-trading.csv',
-        zh
-          ? ['標的代碼', '成交日期', '暫停現股賣出後現款買進當沖註記', '當日沖銷交易成交股數', '當日沖銷交易買進成交金額', '當日沖銷交易賣出成交金額']
-          : ['Security Code', 'Trading Date', 'Suspension Of Buy After Sale Day Trading', 'Volume', 'Day Trading Value Of Buys', 'Trading Value Of Sells'],
-        rows.map((r) => [r.security_code, r.trading_date, r.suspension_of_buy_after_sale_day_trading, r.volume, r.day_trading_value_of_buys, r.trading_value_of_sells]));
+        csvColumns.map((column) => column.labels[lang]),
+        rows.map((row) => csvColumns.map((column) => column.value(row))));
       break;
     }
     case 'margin':
@@ -1410,26 +1612,10 @@ interface CapitalMarketsLayoutProps {
   onChangeCmTab: (tabId: (typeof CAPITAL_MARKETS_INNER_TAB_IDS)[number]) => void;
 }
 
-function formatCapitalMarketUpdateDatetime(value: unknown, lang: 'zh' | 'en'): string | null {
-  if (typeof value !== 'string' || value.trim() === '') return null;
-  const parsedDate = new Date(value);
-  if (Number.isNaN(parsedDate.getTime())) {
-    return value;
-  }
-  return parsedDate.toLocaleString(lang === 'en' ? 'en-US' : 'zh-TW', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  });
-}
-
 function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }: CapitalMarketsLayoutProps) {
   const zh = lang === 'zh';
   const defaultQueryDate = useMemo(() => getYesterdayIsoDate(), []);
+  const minAllowedDate = useMemo(() => addMonthsIsoDate(defaultQueryDate, -3), [defaultQueryDate]);
   const [securityCodes, setSecurityCodes] = useState<string[]>([]);
   const [securityCode, setSecurityCode] = useState('');
   const [startDate, setStartDate] = useState(defaultQueryDate);
@@ -1438,9 +1624,10 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   const [dailyQuoteVisibleRows, setDailyQuoteVisibleRows] = useState<CmDailyQuoteRow[]>([]);
   const [dailyQuotesLoading, setDailyQuotesLoading] = useState(false);
   const [dailyQuotesError, setDailyQuotesError] = useState<string | null>(null);
-  const [updateDatetime, setUpdateDatetime] = useState<string | null>(null);
-  const [updateDatetimeLoading, setUpdateDatetimeLoading] = useState(false);
-  const updateDatetimeDisplay = updateDatetime ?? getTodayIsoDate();
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+  const [downloadStartDate, setDownloadStartDate] = useState(defaultQueryDate);
+  const [downloadEndDate, setDownloadEndDate] = useState(defaultQueryDate);
+  const [downloadLoading, setDownloadLoading] = useState(false);
 
   const CM_INNER_TABS = [
     { id: 'day-trading',       label: zh ? '每日沖銷交易標記及統計' : 'Statistics for Day Trading' },
@@ -1484,39 +1671,11 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeCmTab, queryDailyQuotes]);
 
-  useEffect(() => {
-    let cancelled = false;
-    setUpdateDatetimeLoading(true);
-    setUpdateDatetime(null);
-
-    const url = new URL('/getUpdateDatetime', window.location.origin);
-    url.searchParams.set('category', activeCmTab);
-    url.searchParams.set('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone);
-
-    fetch(url.toString(), { cache: 'no-store' })
-      .then(async (res) => {
-        if (!res.ok) return null;
-        const data = (await res.json()) as
-          | { updateDatetime?: string; updateDateTime?: string; datetime?: string; data?: { updateDatetime?: string; updateDateTime?: string; datetime?: string } }
-          | string;
-        if (typeof data === 'string') return data;
-        return data.updateDatetime ?? data.updateDateTime ?? data.datetime ?? data.data?.updateDatetime ?? data.data?.updateDateTime ?? data.data?.datetime ?? null;
-      })
-      .then((value) => {
-        if (cancelled) return;
-        setUpdateDatetime(formatCapitalMarketUpdateDatetime(value, lang));
-      })
-      .catch(() => {
-        if (!cancelled) setUpdateDatetime(null);
-      })
-      .finally(() => {
-        if (!cancelled) setUpdateDatetimeLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [activeCmTab, lang]);
+  const clampToAllowedDate = useCallback((value: string): string => {
+    if (value < minAllowedDate) return minAllowedDate;
+    if (value > defaultQueryDate) return defaultQueryDate;
+    return value;
+  }, [defaultQueryDate, minAllowedDate]);
 
   function handleSearch() {
     queryDailyQuotes(startDate, endDate, securityCode);
@@ -1530,70 +1689,107 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   }
 
   function handleSecurityCodeChange(value: string) {
+    const clampedStart = clampToAllowedDate(startDate);
+    const clampedEnd = clampToAllowedDate(endDate);
+
     if (!value) {
       setSecurityCode('');
-      setStartDate(endDate);
-      setEndDate(endDate);
+      setStartDate(clampedEnd);
+      setEndDate(clampedEnd);
       return;
     }
 
-    const nextEndDate = endDate > getYesterdayIsoDate() ? getYesterdayIsoDate() : endDate;
-    const maxByStart = addMonthsIsoDate(startDate, 3);
-    const clampedEnd = nextEndDate > maxByStart ? maxByStart : nextEndDate;
     setSecurityCode(value);
-    setEndDate(clampedEnd < startDate ? startDate : clampedEnd);
+    if (clampedStart > clampedEnd) {
+      setStartDate(clampedEnd);
+      setEndDate(clampedEnd);
+      return;
+    }
+    setStartDate(clampedStart);
+    setEndDate(clampedEnd);
   }
 
   function handleStartDateChange(value: string) {
     if (!value) return;
+    const nextStart = clampToAllowedDate(value);
     if (!securityCode) {
-      setStartDate(value);
-      setEndDate(value);
+      setStartDate(nextStart);
+      setEndDate(nextStart);
       return;
     }
 
-    const maxEnd = addMonthsIsoDate(value, 3) < getYesterdayIsoDate()
-      ? addMonthsIsoDate(value, 3)
-      : getYesterdayIsoDate();
-    const nextEnd = endDate < value ? value : endDate > maxEnd ? maxEnd : endDate;
-    setStartDate(value);
-    setEndDate(nextEnd);
+    setStartDate(nextStart);
+    if (endDate < nextStart) {
+      setEndDate(nextStart);
+    }
   }
 
   function handleEndDateChange(value: string) {
     if (!value) return;
+    const nextEnd = clampToAllowedDate(value);
     if (!securityCode) {
-      setStartDate(value);
-      setEndDate(value);
+      setStartDate(nextEnd);
+      setEndDate(nextEnd);
       return;
     }
 
-    const maxEnd = addMonthsIsoDate(startDate, 3) < getYesterdayIsoDate()
-      ? addMonthsIsoDate(startDate, 3)
-      : getYesterdayIsoDate();
-    const nextEnd = value < startDate ? startDate : value > maxEnd ? maxEnd : value;
     setEndDate(nextEnd);
+    if (nextEnd < startDate) {
+      setStartDate(nextEnd);
+    }
   }
 
-  function handleDownload() {
-    downloadCapitalMarketsCSV(activeCmTab, lang, {
-      statisticsForDayTradingRows: dailyQuoteVisibleRows,
-    });
+  function handleOpenDownloadModal() {
+    setDownloadStartDate(startDate);
+    setDownloadEndDate(endDate);
+    setIsDownloadModalOpen(true);
   }
 
-  const minStartDate = securityCode ? CM_MIN_ISO_DATE : endDate;
-  const maxStartDate = securityCode ? endDate : getYesterdayIsoDate();
+  function handleDownloadModalStartDateChange(value: string) {
+    if (!value) return;
+    const nextStart = clampToAllowedDate(value);
+    setDownloadStartDate(nextStart);
+    if (downloadEndDate < nextStart) {
+      setDownloadEndDate(nextStart);
+    }
+  }
+
+  function handleDownloadModalEndDateChange(value: string) {
+    if (!value) return;
+    const nextEnd = clampToAllowedDate(value);
+    setDownloadEndDate(nextEnd);
+    if (nextEnd < downloadStartDate) {
+      setDownloadStartDate(nextEnd);
+    }
+  }
+
+  async function handleDownloadFromModal() {
+    setDownloadLoading(true);
+    try {
+      let downloadRows = dailyQuoteVisibleRows;
+      if (activeCmTab === 'day-trading') {
+        downloadRows = await fetchStatisticsForDayTradingRows(downloadStartDate, downloadEndDate, securityCode);
+      }
+      downloadCapitalMarketsCSV(activeCmTab, lang, {
+        statisticsForDayTradingRows: downloadRows,
+      });
+      setIsDownloadModalOpen(false);
+    } finally {
+      setDownloadLoading(false);
+    }
+  }
+
+  const minStartDate = securityCode ? minAllowedDate : endDate;
+  const maxStartDate = securityCode ? endDate : defaultQueryDate;
   const minEndDate = securityCode ? startDate : startDate;
-  const maxEndDate = securityCode
-    ? (addMonthsIsoDate(startDate, 3) < getYesterdayIsoDate() ? addMonthsIsoDate(startDate, 3) : getYesterdayIsoDate())
-    : startDate;
+  const maxEndDate = securityCode ? defaultQueryDate : startDate;
 
   return (
     <>
       <div className="de-cm-description">
         {zh
-          ? 'Security Code 為空時僅可查詢單日；選擇 Security Code 後可查詢最多三個月區間，結束日上限為昨天。'
-          : 'When Security Code is empty, only a single day can be queried. After selecting a Security Code, the allowed range is up to three months, with end date limited to yesterday.'}
+          ? '期間僅支援昨天往前三個月內；Security Code 為空時仍僅可查詢單日。'
+          : 'Period supports only the last three months up to yesterday; when Security Code is empty, single-day query remains required.'}
       </div>
       <div className="de-cm-layout">
         <nav className="de-cm-sidebar" aria-label={zh ? 'Capital Markets 子分類' : 'Capital Markets sub categories'}>
@@ -1628,12 +1824,9 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
               onSearch={handleSearch}
               onClear={handleClear}
             />
-            <span className="de-cm-ref-date">
-              tMIC Update Date: {updateDatetimeLoading ? (zh ? '載入中…' : 'Loading...') : updateDatetimeDisplay}
-            </span>
           </div>
           <div className="de-cm-content-toolbar-right">
-            <button className="de-news-download-btn de-gov-csv-btn" onClick={handleDownload}>
+            <button className="de-news-download-btn de-gov-csv-btn" onClick={handleOpenDownloadModal}>
               <DownloadIcon />
               <span>{zh ? '下載 CSV' : 'Download CSV'}</span>
             </button>
@@ -1654,6 +1847,19 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
         {activeCmTab === 'foreign-investors' && <CmForeignTab lang={lang} />}
         {activeCmTab === 'price-limit'       && <CmPriceLimitTab lang={lang} />}
         {activeCmTab === 'pe-ratio'          && <CmPeRatioTab lang={lang} />}
+        <CmDownloadCsvModal
+          lang={lang}
+          isOpen={isDownloadModalOpen}
+          startDate={downloadStartDate}
+          endDate={downloadEndDate}
+          minDate={minAllowedDate}
+          maxDate={defaultQueryDate}
+          downloading={downloadLoading}
+          onStartDateChange={handleDownloadModalStartDateChange}
+          onEndDateChange={handleDownloadModalEndDateChange}
+          onClose={() => setIsDownloadModalOpen(false)}
+          onDownload={handleDownloadFromModal}
+        />
         </div>
       </div>
     </>
@@ -1706,7 +1912,7 @@ function buildFallbackDailyQuotesRows(date: string): CmDailyQuoteRow[] {
     suspension_of_buy_after_sale_day_trading: item.suspension_of_buy_after_sale_day_trading,
     volume: item.volume,
     day_trading_value_of_buys: item.day_trading_value_of_buys,
-    trading_value_of_sells: item.trading_value_of_sells,
+    day_trading_value_of_sells: item.trading_value_of_sells,
   }));
 }
 
