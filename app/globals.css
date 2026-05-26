@@ -22624,6 +22624,8 @@ html.dark .cp-fin-index-tab:hover {
   gap: 12px;
   margin-bottom: 16px;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 100;
 }
 
 .de-cm-content-toolbar-left {
@@ -22694,7 +22696,7 @@ html.dark .cp-fin-index-tab:hover {
   border-radius: var(--radius-sm);
   background: var(--c-white);
   box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12);
-  z-index: 20;
+  z-index: 1200;
 }
 
 .de-cm-security-option {
