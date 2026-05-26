@@ -52,49 +52,49 @@ Intel Corporation (NASDAQ: INTC).
   "newsroom": [
     {
       "date": "Jan 16, 2025",
-      "title": "TSMC Reports Fourth Quarter and Full Year 2024 Results",
+      "title": "GlobalTech Reports Fourth Quarter and Full Year 2024 Results",
       "url": "#",
       "category": "Earnings"
     },
     {
       "date": "Oct 17, 2024",
-      "title": "TSMC Reports Third Quarter 2024 Results",
+      "title": "GlobalTech Reports Third Quarter 2024 Results",
       "url": "#",
       "category": "Earnings"
     },
     {
       "date": "Apr 18, 2024",
-      "title": "TSMC Announces First Quarter 2024 Results",
+      "title": "GlobalTech Announces First Quarter 2024 Results",
       "url": "#",
       "category": "Earnings"
     },
     {
       "date": "Apr 22, 2024",
-      "title": "TSMC Breaks Ground on First Europe Fab in Dresden, Germany",
+      "title": "GlobalTech Breaks Ground on First Europe Fab in Dresden, Germany",
       "url": "#",
       "category": "Corporate"
     },
     {
       "date": "Mar 5, 2024",
-      "title": "TSMC Announces Arizona Fab Progress — 2nm Technology on Track for 2025",
+      "title": "GlobalTech Announces Arizona Fab Progress — 2nm Technology on Track for 2025",
       "url": "#",
       "category": "Technology"
     },
     {
       "date": "Jan 18, 2024",
-      "title": "TSMC Reports Fourth Quarter and Full Year 2023 Results",
+      "title": "GlobalTech Reports Fourth Quarter and Full Year 2023 Results",
       "url": "#",
       "category": "Earnings"
     },
     {
       "date": "Oct 19, 2023",
-      "title": "TSMC Reports Third Quarter 2023 Results",
+      "title": "GlobalTech Reports Third Quarter 2023 Results",
       "url": "#",
       "category": "Earnings"
     },
     {
       "date": "Jul 20, 2023",
-      "title": "TSMC Reports Second Quarter 2023 Results",
+      "title": "GlobalTech Reports Second Quarter 2023 Results",
       "url": "#",
       "category": "Earnings"
     }

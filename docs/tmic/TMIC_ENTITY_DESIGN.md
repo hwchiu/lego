@@ -63,7 +63,7 @@ company_master (co_cd PK)
 
 | Column | Type | Note |
 |--------|------|------|
-| co_cd | VARCHAR(20) PK | Internal company code (e.g. AAPL, TSMC) |
+| co_cd | VARCHAR(20) PK | Internal company code (e.g. AAPL, GT) |
 | co_name | VARCHAR(200) | Full legal name |
 | co_type | ENUM | customer / supplier / both / other |
 | country_cd | CHAR(2) | ISO 3166-1 alpha-2 |

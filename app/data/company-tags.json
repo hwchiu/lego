@@ -9,7 +9,7 @@
     { "tag_id": 5, "tag_name": "AI" },
     { "tag_id": 6, "tag_name": "GPU" }
   ],
-  "TSM": [
+  "GT": [
     { "tag_id": 7, "tag_name": "Competitors" },
     { "tag_id": 8, "tag_name": "Backend" },
     { "tag_id": 9, "tag_name": "Foundry" }

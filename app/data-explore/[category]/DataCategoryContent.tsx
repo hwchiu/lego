@@ -379,12 +379,12 @@ const ESG_ACCENT = '#16a34a';
 // ── ESG companies list ────────────────────────────────────────────────────────
 
 const ESG_COMPANIES: { id: string; label: string; subLabel: string; sectionTitle: string }[] = [
-  { id: 'TSMC', label: 'TSMC', subLabel: 'TSMC Manufacturing', sectionTitle: 'Sustainability Reports' },
+  { id: 'GlobalTech', label: 'GlobalTech', subLabel: 'GlobalTech Manufacturing', sectionTitle: 'Sustainability Reports' },
   { id: 'Apple', label: 'Apple', subLabel: 'Apple Inc.', sectionTitle: 'Environmental Progress Reports' },
 ];
 
 function EsgReportsTab() {
-  const [selectedCompany, setSelectedCompany] = useState<string>('TSMC');
+  const [selectedCompany, setSelectedCompany] = useState<string>('GlobalTech');
 
   const reports = useMemo(
     () =>
@@ -620,7 +620,7 @@ interface CmDailyQuoteRow {
 }
 
 const CM_DAILY_QUOTES_FALLBACK_TEMPLATE = [
-  { security_code: '2330', suspension_of_buy_after_sale_day_trading: 'N', volume: '6,430,000', day_trading_value_of_buys: '6,250,110,000', trading_value_of_sells: '6,198,930,000' },
+  { security_code: '9999', suspension_of_buy_after_sale_day_trading: 'N', volume: '6,430,000', day_trading_value_of_buys: '6,250,110,000', trading_value_of_sells: '6,198,930,000' },
   { security_code: '2317', suspension_of_buy_after_sale_day_trading: 'N', volume: '5,567,000', day_trading_value_of_buys: '659,581,000', trading_value_of_sells: '650,440,000' },
   { security_code: '2454', suspension_of_buy_after_sale_day_trading: 'Y', volume: '2,010,000', day_trading_value_of_buys: '1,830,220,000', trading_value_of_sells: '1,812,740,000' },
   { security_code: '2881', suspension_of_buy_after_sale_day_trading: 'N', volume: '3,763,000', day_trading_value_of_buys: '319,882,000', trading_value_of_sells: '318,211,000' },
@@ -629,7 +629,7 @@ const CM_DAILY_QUOTES_FALLBACK_TEMPLATE = [
 ] as const;
 
 const CM_COMPANIES = [
-  { code: '2330', nameZh: '台積電', nameEn: 'TSMC' },
+  { code: '9999', nameZh: '全球科技', nameEn: 'GlobalTech' },
   { code: '2317', nameZh: '鴻海', nameEn: 'Hon Hai' },
   { code: '2454', nameZh: '聯發科', nameEn: 'MediaTek' },
   { code: '2881', nameZh: '富邦金', nameEn: 'Fubon Financial' },
@@ -1458,9 +1458,9 @@ function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: Ca
       const rows = options.dailyQuotesRows ?? [];
       downloadCSV(zh ? '每日收盤行情.csv' : 'daily-quotes.csv',
         zh
-          ? ['成交日期', '標的代碼', '暫停現股賣出後現款買進當沖註記', '當日沖銷交易成交股數', '當日沖銷交易買進成交金額', '當日沖銷交易賣出成交金額']
-          : ['Trading Date', 'Security Code', 'Suspension Of Buy After Sale Day Trading', 'Volume', 'Day Trading Value Of Buys', 'Trading Value Of Sells'],
-        rows.map((r) => [r.trading_date, r.security_code, r.suspension_of_buy_after_sale_day_trading, r.volume, r.day_trading_value_of_buys, r.trading_value_of_sells]));
+          ? ['標的代碼', '成交日期', '暫停現股賣出後現款買進當沖註記', '當日沖銷交易成交股數', '當日沖銷交易買進成交金額', '當日沖銷交易賣出成交金額']
+          : ['Security Code', 'Trading Date', 'Suspension Of Buy After Sale Day Trading', 'Volume', 'Day Trading Value Of Buys', 'Trading Value Of Sells'],
+        rows.map((r) => [r.security_code, r.trading_date, r.suspension_of_buy_after_sale_day_trading, r.volume, r.day_trading_value_of_buys, r.trading_value_of_sells]));
       break;
     }
     case 'day-trading':
@@ -1614,9 +1614,8 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   }
   function handleClear() {
     setSelectedDate(null);
-    const todayDate = getTodayIsoDate();
     if (activeCmTab === 'daily-quotes') {
-      queryDailyQuotes(todayDate);
+      queryDailyQuotes(defaultQueryDate);
     }
   }
   function handleDownload() {
@@ -1872,7 +1871,7 @@ function GovDisqualifiedTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentCo
 
   function handleDownloadCSV() {
     const headers = zh
-      ? ['統一編號', '違規人管制編號', '公司（工廠）地址縣市別代碼', '裁處機關', '管制事業編號', '事業名稱', '裁處書字號', '違反時間', '污染類別', '違規人名稱', '台積更新此筆紀錄的時間']
+      ? ['統一編號', '違規人管制編號', '公司（工廠）地址縣市別代碼', '裁處機關', '管制事業編號', '事業名稱', '裁處書字號', '違反時間', '污染類別', '違規人名稱', '全球科技更新此筆紀錄的時間']
       : ['UBN', 'Transgress Control ID', 'Fac. City Code', 'County Name', 'EMS No', 'Fac. Name', 'Document No', 'Transgress Date', 'Transgress Type', 'Transgress Name', 'Update Date'];
     downloadCSV(
       zh ? '拒絕往來廠商公告.csv' : 'disqualified-vendors.csv',
@@ -1919,7 +1918,7 @@ function GovDisqualifiedTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentCo
               <ThSortFilter label={zh ? '違反時間' : 'Transgress Date'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} />
               <ThSortFilter label={zh ? '污染類別' : 'Transgress Type'} colIndex={8} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[8] ?? ''} />
               <ThSortFilter label={zh ? '違規人名稱' : 'Transgress Name'} colIndex={9} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[9] ?? ''} />
-              <ThSortFilter label={zh ? '台積更新此筆紀錄的時間' : 'Update Date'} colIndex={10} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[10] ?? ''} />
+              <ThSortFilter label={zh ? '全球科技更新此筆紀錄的時間' : 'Update Date'} colIndex={10} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[10] ?? ''} />
             </tr>
           </thead>
           <tbody>
@@ -1968,7 +1967,7 @@ function GovPollutionTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentColor
 
   function handleDownloadCSV() {
     const headers = zh
-      ? ['廠商代碼', '標案案號', '廠商名稱', '刊登機關代碼', '刊登機關名稱', '標案名稱', '拒絕往來截止日', '台積此筆更新的時間']
+      ? ['廠商代碼', '標案案號', '廠商名稱', '刊登機關代碼', '刊登機關名稱', '標案名稱', '拒絕往來截止日', '全球科技此筆更新的時間']
       : ['Corporation Number', 'Case No', 'Corporation Name', 'Announce Agency No', 'Announce Agency Name', 'Case Name', 'Expire Date', 'Update Date'];
     downloadCSV(
       zh ? '列管事業污染源裁處資料.csv' : 'regulatory-on-pollution-sources.csv',
@@ -2009,7 +2008,7 @@ function GovPollutionTab({ lang, accentColor }: { lang: 'zh' | 'en'; accentColor
               <ThSortFilter label={zh ? '刊登機關名稱' : 'Announce Agency Name'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} />
               <ThSortFilter label={zh ? '標案名稱' : 'Case Name'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} />
               <ThSortFilter label={zh ? '拒絕往來截止日' : 'Expire Date'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} />
-              <ThSortFilter label={zh ? '台積此筆更新的時間' : 'Update Date'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} />
+              <ThSortFilter label={zh ? '全球科技此筆更新的時間' : 'Update Date'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} />
             </tr>
           </thead>
           <tbody>
@@ -2136,7 +2135,7 @@ function GovPenaltyRecordsTab({ lang, accentColor }: { lang: 'zh' | 'en'; accent
 const NEWS_ACCENT = '#0ea5e9';
 
 // Tag sets for each digest category (used by legacy tabs)
-const TAIWAN_TAGS = new Set(['TSMC', 'Taiwan', 'Japan', 'JASM', 'Arizona', 'Fab 21', '12nm', '2nm', 'TC', 'CoWoS', 'Production', 'Supply Chain']);
+const TAIWAN_TAGS = new Set(['GlobalTech', 'Taiwan', 'Japan', 'JASM', 'Arizona', 'Fab 21', '12nm', '2nm', 'GT', 'CoWoS', 'Production', 'Supply Chain']);
 const INTL_TAGS = new Set(['NVIDIA', 'Apple', 'AAPL', 'Intel', 'INTC', 'ASML', 'SK Hynix', 'HBM4', 'Blackwell', 'GPU', 'Qualcomm', 'Broadcom', 'Samsung SDI', 'Memory', 'Recovery', 'Orders', 'AI', 'Data Center', 'Earnings']);
 
 function newsMatchesSet(item: DataItem, tagSet: Set<string>): boolean {
