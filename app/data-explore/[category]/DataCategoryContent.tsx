@@ -128,8 +128,8 @@ function CloseSmIcon() {
   );
 }
 
-function openNativeDatePicker(input: HTMLInputElement) {
-  (input as HTMLInputElement & { showPicker?: () => void }).showPicker?.();
+function tryOpenNativeDatePicker(inputElement: HTMLInputElement) {
+  inputElement.showPicker?.();
 }
 
 // ── CSV download utility ──────────────────────────────────────────────────────
@@ -1056,18 +1056,19 @@ interface CmForeignInvestorsColumn {
   value: (row: CmForeignInvestorsRow) => string;
   tableVisible: 'Y' | 'N';
   freezePane: 'Y' | 'N';
+  formatType?: 'number' | 'percent';
   className?: string;
 }
 
 const CM_FOREIGN_INVESTORS_ALL_COLUMNS: CmForeignInvestorsColumn[] = [
   { id: 'security_code', labels: { zh: '證券代號', en: 'Security Code' }, value: (row) => row.security_code, tableVisible: 'Y', freezePane: 'Y', className: 'code' },
   { id: 'security_name', labels: { zh: '證券名稱', en: 'Stock Name' }, value: (row) => row.security_name, tableVisible: 'Y', freezePane: 'N' },
-  { id: 'total_issued_shares', labels: { zh: '發行股數', en: 'Shares Issued' }, value: (row) => row.total_issued_shares, tableVisible: 'Y', freezePane: 'N', className: 'num' },
-  { id: 'foreign_investor_remaining_shares', labels: { zh: '外資尚可投資股數', en: 'Shares Available for Foreign Investment' }, value: (row) => row.foreign_investor_remaining_shares, tableVisible: 'Y', freezePane: 'N', className: 'num' },
-  { id: 'total_foreign_investor_holding_shares', labels: { zh: '全體外資持有股數', en: 'Total Shares Held by Foreign Investors' }, value: (row) => row.total_foreign_investor_holding_shares, tableVisible: 'Y', freezePane: 'N', className: 'num' },
-  { id: 'foreign_investor_remaining_ratio', labels: { zh: '外資尚可投資比率', en: 'Foreign Investment Available Percentage' }, value: (row) => row.foreign_investor_remaining_ratio, tableVisible: 'Y', freezePane: 'N', className: 'num' },
-  { id: 'total_foreign_investor_holding_ratio', labels: { zh: '全體外資持股比率', en: 'Total Foreign Ownership Percentage' }, value: (row) => row.total_foreign_investor_holding_ratio, tableVisible: 'Y', freezePane: 'N', className: 'num' },
-  { id: 'statutory_investment_cap_ratio', labels: { zh: '法令投資上限比率', en: 'Regulatory Foreign Ownership Limit (FOL)' }, value: (row) => row.statutory_investment_cap_ratio, tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'total_issued_shares', labels: { zh: '發行股數', en: 'Shares Issued' }, value: (row) => row.total_issued_shares, tableVisible: 'Y', freezePane: 'N', formatType: 'number', className: 'num' },
+  { id: 'foreign_investor_remaining_shares', labels: { zh: '外資尚可投資股數', en: 'Shares Available for Foreign Investment' }, value: (row) => row.foreign_investor_remaining_shares, tableVisible: 'Y', freezePane: 'N', formatType: 'number', className: 'num' },
+  { id: 'total_foreign_investor_holding_shares', labels: { zh: '全體外資持有股數', en: 'Total Shares Held by Foreign Investors' }, value: (row) => row.total_foreign_investor_holding_shares, tableVisible: 'Y', freezePane: 'N', formatType: 'number', className: 'num' },
+  { id: 'foreign_investor_remaining_ratio', labels: { zh: '外資尚可投資比率', en: 'Foreign Investment Available Percentage' }, value: (row) => row.foreign_investor_remaining_ratio, tableVisible: 'Y', freezePane: 'N', formatType: 'percent', className: 'num' },
+  { id: 'total_foreign_investor_holding_ratio', labels: { zh: '全體外資持股比率', en: 'Total Foreign Ownership Percentage' }, value: (row) => row.total_foreign_investor_holding_ratio, tableVisible: 'Y', freezePane: 'N', formatType: 'percent', className: 'num' },
+  { id: 'statutory_investment_cap_ratio', labels: { zh: '法令投資上限比率', en: 'Regulatory Foreign Ownership Limit (FOL)' }, value: (row) => row.statutory_investment_cap_ratio, tableVisible: 'Y', freezePane: 'N', formatType: 'percent', className: 'num' },
   { id: 'change_reason_code', labels: { zh: '與前日異動原因', en: 'Reason for Day-over-Day Change' }, value: (row) => row.change_reason_code, tableVisible: 'N', freezePane: 'N' },
   { id: 'last_foreign_holding_change_date', labels: { zh: '最近一次上市公司申報外資持股異動日期', en: 'Last Reported Foreign Shareholding Change Date' }, value: (row) => row.last_foreign_holding_change_date, tableVisible: 'N', freezePane: 'N' },
   { id: 'tsmc_updatetime', labels: { zh: '台積更新時間', en: 'TSMC Updatetime' }, value: (row) => `${row.data_gen_dt}${row.data_gen_time ? ` ${row.data_gen_time}` : ''}`.trim() || '—', tableVisible: 'Y', freezePane: 'N' },
@@ -1467,7 +1468,6 @@ function CmDailyQuotesTab({ lang, rowsData, loading, error, onVisibleRowsChange 
   const pageSize = 50;
   const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
   const pagedRows = rows.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
-
   useEffect(() => {
     setCurrentPage(0);
   }, [rowsData, colFilters, sortCol, sortDir]);
@@ -1941,7 +1941,6 @@ function CmExDividendTab({ lang, rowsData, loading, error }: CmStandardTabProps<
     () => new Set(tableColumns.filter((column) => column.className === 'num').map((column) => column.id)),
     [tableColumns],
   );
-
   useEffect(() => {
     setCurrentPage(0);
   }, [rows]);
@@ -2046,7 +2045,11 @@ function CmForeignTab({ lang, rowsData, loading, error }: CmStandardTabProps<CmF
                 {tableColumns.map((column) => {
                   const className = [column.className ?? '', column.freezePane === 'Y' ? 'de-cm-dq-col-sticky' : ''].filter(Boolean).join(' ');
                   const rawValue = column.value(row);
-                  const value = numericFieldIds.has(column.id) ? (column.id.includes('ratio') ? fmtPct(rawValue) : fmtNum(rawValue)) : rawValue;
+                  const value = column.formatType === 'percent'
+                    ? fmtPct(rawValue)
+                    : column.formatType === 'number'
+                      ? fmtNum(rawValue)
+                      : rawValue;
                   return <td key={column.id} className={className || undefined}>{value}</td>;
                 })}
               </tr>
@@ -2274,8 +2277,8 @@ function CmFilterBar({
             min={minStartDate}
             max={maxStartDate}
             onChange={(e) => onStartDateChange(e.target.value)}
-            onClick={(e) => openNativeDatePicker(e.currentTarget)}
-            onFocus={(e) => openNativeDatePicker(e.currentTarget)}
+            onClick={(e) => tryOpenNativeDatePicker(e.currentTarget)}
+            onFocus={(e) => tryOpenNativeDatePicker(e.currentTarget)}
             aria-label={zh ? '起始日期' : 'Start date'}
           />
           <span className="de-cm-period-sep">~</span>
@@ -2286,8 +2289,8 @@ function CmFilterBar({
             min={minEndDate}
             max={maxEndDate}
             onChange={(e) => onEndDateChange(e.target.value)}
-            onClick={(e) => openNativeDatePicker(e.currentTarget)}
-            onFocus={(e) => openNativeDatePicker(e.currentTarget)}
+            onClick={(e) => tryOpenNativeDatePicker(e.currentTarget)}
+            onFocus={(e) => tryOpenNativeDatePicker(e.currentTarget)}
             aria-label={zh ? '結束日期' : 'End date'}
           />
         </div>
@@ -2385,8 +2388,8 @@ function CmDownloadCsvModal({
                 max={maxDate}
                 value={startDate}
                 onChange={(e) => onStartDateChange(e.target.value)}
-                onClick={(e) => openNativeDatePicker(e.currentTarget)}
-                onFocus={(e) => openNativeDatePicker(e.currentTarget)}
+                onClick={(e) => tryOpenNativeDatePicker(e.currentTarget)}
+                onFocus={(e) => tryOpenNativeDatePicker(e.currentTarget)}
                 aria-label={zh ? '下載起始日期' : 'Download start date'}
               />
               <span className="de-cm-period-sep">~</span>
@@ -2397,8 +2400,8 @@ function CmDownloadCsvModal({
                 max={maxDate}
                 value={endDate}
                 onChange={(e) => onEndDateChange(e.target.value)}
-                onClick={(e) => openNativeDatePicker(e.currentTarget)}
-                onFocus={(e) => openNativeDatePicker(e.currentTarget)}
+                onClick={(e) => tryOpenNativeDatePicker(e.currentTarget)}
+                onFocus={(e) => tryOpenNativeDatePicker(e.currentTarget)}
                 aria-label={zh ? '下載結束日期' : 'Download end date'}
               />
             </div>
@@ -2717,7 +2720,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     setForeignLoading(true);
     setForeignError(null);
     try {
-      const rows = await fetchInvestedAmtofForeign(nextStartDate, nextEndDate, nextSecurityCode);
+      const rows = await fetchInvestedAmtOfForeign(nextStartDate, nextEndDate, nextSecurityCode);
       setForeignRows(rows);
     } catch (error) {
       setForeignError(error instanceof Error ? error.message : (zh ? '資料讀取失敗' : 'Failed to load data'));
@@ -2968,7 +2971,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
         const downloadRows = await fetchRightAndDividend(downloadStartDate, downloadEndDate, securityCode);
         downloadCapitalMarketsCSV('ex-dividend', lang, { exRightDividendRows: downloadRows });
       } else if (activeCmTab === 'foreign-investors') {
-        const downloadRows = await fetchInvestedAmtofForeign(downloadStartDate, downloadEndDate, securityCode);
+        const downloadRows = await fetchInvestedAmtOfForeign(downloadStartDate, downloadEndDate, securityCode);
         downloadCapitalMarketsCSV('foreign-investors', lang, { foreignInvestorsRows: downloadRows });
       } else {
         let downloadRows = dailyQuoteVisibleRows;
@@ -3303,7 +3306,7 @@ async function fetchRightAndDividend(startDate: string, endDate: string, securit
   return fetchCapitalMarketRows<CmExRightDividendRow>('/getRightAndDividend', startDate, endDate, securityCode, fallbackRows);
 }
 
-async function fetchInvestedAmtofForeign(startDate: string, endDate: string, securityCode: string): Promise<CmForeignInvestorsRow[]> {
+async function fetchInvestedAmtOfForeign(startDate: string, endDate: string, securityCode: string): Promise<CmForeignInvestorsRow[]> {
   const fallbackRows = filterRowsBySecurityCode(CM_FOREIGN_INVESTORS_MOCK_DATA, securityCode);
   return fetchCapitalMarketRows<CmForeignInvestorsRow>('/getInvestedAmtofForeign', startDate, endDate, securityCode, fallbackRows);
 }
