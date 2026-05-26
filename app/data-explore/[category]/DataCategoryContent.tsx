@@ -981,7 +981,7 @@ interface CmExRightDividendRow {
 }
 
 interface CmExRightDividendColumn {
-  id: keyof CmExRightDividendRow | 'tsmc_updatetime';
+  id: string;
   labels: { zh: string; en: string };
   value: (row: CmExRightDividendRow) => string;
   tableVisible: 'Y' | 'N';
@@ -2613,11 +2613,11 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     }
   }, [zh]);
 
-  const queryExRightDividendListDelist = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
+  const queryRightAndDividend = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
     setExDividendLoading(true);
     setExDividendError(null);
     try {
-      const rows = await fetchExRightDividendListDelist(nextStartDate, nextEndDate, nextSecurityCode);
+      const rows = await fetchRightAndDividend(nextStartDate, nextEndDate, nextSecurityCode);
       setExDividendRows(rows);
     } catch (error) {
       setExDividendError(error instanceof Error ? error.message : (zh ? '資料讀取失敗' : 'Failed to load data'));
@@ -2694,7 +2694,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
         queryDailyShortSaleBalances(startDate, endDate, securityCode);
         break;
       case 'ex-dividend':
-        queryExRightDividendListDelist(startDate, endDate, securityCode);
+        queryRightAndDividend(startDate, endDate, securityCode);
         break;
       case 'foreign-investors':
         queryInvestedAmtOfForeign(startDate, endDate, securityCode);
@@ -2712,7 +2712,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     activeCmTab,
     queryDailyQuotes,
     queryDailyShortSaleBalances,
-    queryExRightDividendListDelist,
+    queryRightAndDividend,
     queryGetDailyQuotes,
     queryInvestedAmtOfForeign,
     queryMarginTransaction,
@@ -2741,7 +2741,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
         queryDailyShortSaleBalances(startDate, endDate, securityCode);
         break;
       case 'ex-dividend':
-        queryExRightDividendListDelist(startDate, endDate, securityCode);
+        queryRightAndDividend(startDate, endDate, securityCode);
         break;
       case 'foreign-investors':
         queryInvestedAmtOfForeign(startDate, endDate, securityCode);
@@ -2775,7 +2775,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
         queryDailyShortSaleBalances(defaultQueryDate, defaultQueryDate, '');
         break;
       case 'ex-dividend':
-        queryExRightDividendListDelist(defaultQueryDate, defaultQueryDate, '');
+        queryRightAndDividend(defaultQueryDate, defaultQueryDate, '');
         break;
       case 'foreign-investors':
         queryInvestedAmtOfForeign(defaultQueryDate, defaultQueryDate, '');
@@ -2879,7 +2879,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
         const downloadRows = await fetchDailyShortSaleBalances(downloadStartDate, downloadEndDate, securityCode);
         downloadCapitalMarketsCSV('short-sale', lang, { shortSaleRows: downloadRows });
       } else if (activeCmTab === 'ex-dividend') {
-        const downloadRows = await fetchExRightDividendListDelist(downloadStartDate, downloadEndDate, securityCode);
+        const downloadRows = await fetchRightAndDividend(downloadStartDate, downloadEndDate, securityCode);
         downloadCapitalMarketsCSV('ex-dividend', lang, { exRightDividendRows: downloadRows });
       } else {
         let downloadRows = dailyQuoteVisibleRows;
@@ -3204,7 +3204,7 @@ async function fetchDailyShortSaleBalances(startDate: string, endDate: string, s
   return fetchCapitalMarketRows<CmDailyShortSaleBalanceRow>('/getDailyShortSaleBalances', startDate, endDate, securityCode, fallbackRows);
 }
 
-async function fetchExRightDividendListDelist(startDate: string, endDate: string, securityCode: string): Promise<CmExRightDividendRow[]> {
+async function fetchRightAndDividend(startDate: string, endDate: string, securityCode: string): Promise<CmExRightDividendRow[]> {
   const fallbackRows = filterRowsBySecurityCode(
     CM_EX_RIGHT_DIVIDEND_MOCK_DATA,
     securityCode,
