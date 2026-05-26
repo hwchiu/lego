@@ -1788,8 +1788,8 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     <>
       <div className="de-cm-description">
         {zh
-          ? '期間僅支援昨天往前三個月內；Security Code 為空時仍僅可查詢單日。'
-          : 'Period supports only the last three months up to yesterday; when Security Code is empty, single-day query remains required.'}
+          ? '資料提供三個月內資料。畫面僅呈現重要資訊，若需完整欄位資料請直接下載檔案'
+          : 'Only the most recent three months of data are provided. While the on-screen display shows essential information only, you may download the file to access all data fields.'}
       </div>
       <div className="de-cm-layout">
         <nav className="de-cm-sidebar" aria-label={zh ? 'Capital Markets 子分類' : 'Capital Markets sub categories'}>
