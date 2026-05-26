@@ -22674,6 +22674,53 @@ html.dark .cp-fin-index-tab:hover {
   font-family: var(--font);
 }
 
+.de-cm-security-select {
+  position: relative;
+  min-width: 160px;
+}
+
+.de-cm-security-input {
+  width: 100%;
+}
+
+.de-cm-security-options {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  max-height: 220px;
+  overflow-y: auto;
+  border: 1px solid var(--c-border-2);
+  border-radius: var(--radius-sm);
+  background: var(--c-white);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12);
+  z-index: 20;
+}
+
+.de-cm-security-option {
+  display: block;
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 7px 10px;
+  font-size: 12px;
+  color: var(--c-text-2);
+  cursor: pointer;
+}
+
+.de-cm-security-option:hover,
+.de-cm-security-option.active {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.de-cm-security-empty {
+  padding: 8px 10px;
+  font-size: 12px;
+  color: var(--c-text-4);
+}
+
 .de-cm-filter-select:hover,
 .de-cm-period-input:hover,
 .de-cm-filter-select:focus,
@@ -22779,6 +22826,14 @@ html.dark .cp-fin-index-tab:hover {
 .de-cm-page-text {
   font-size: 12px;
   color: var(--c-text-3);
+}
+
+.de-cm-content .de-th-filter-wrap {
+  gap: 0;
+}
+
+.de-cm-content .de-th-filter-input {
+  display: none;
 }
 
 /* ── Capital markets CSV modal ── */
