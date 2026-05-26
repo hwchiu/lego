@@ -22646,19 +22646,30 @@ html.dark .cp-fin-index-tab:hover {
   font-variant-numeric: tabular-nums;
 }
 
-/* ── Date picker ── */
+/* ── Filter bar ── */
 
-.de-cm-datepicker-wrap {
-  position: relative;
+.de-cm-filter-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.de-cm-filter-field {
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
-.de-cm-datepicker-input {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+.de-cm-filter-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-text-2);
+  white-space: nowrap;
+}
+
+.de-cm-filter-select,
+.de-cm-period-input {
   height: 32px;
   padding: 0 10px;
   border: 1.5px solid var(--c-border-2);
@@ -22667,132 +22678,29 @@ html.dark .cp-fin-index-tab:hover {
   color: var(--c-text-2);
   font-size: 12.5px;
   font-family: var(--font);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: border-color 0.15s, color 0.15s;
 }
 
-.de-cm-datepicker-input:hover,
-.de-cm-datepicker-input.open {
+.de-cm-filter-select:hover,
+.de-cm-period-input:hover,
+.de-cm-filter-select:focus,
+.de-cm-period-input:focus {
   border-color: var(--c-accent);
-  color: var(--c-text);
+  outline: none;
 }
 
-/* ── Calendar popup ── */
-
-.de-cm-cal-popup {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  z-index: 200;
-  background: var(--c-white);
-  border: 1.5px solid var(--c-border);
-  border-radius: var(--radius);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.13);
-  padding: 12px;
-  min-width: 230px;
-}
-
-.de-cm-cal-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.de-cm-cal-nav-btn {
+.de-cm-period-wrap {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border: none;
-  background: transparent;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
+  gap: 6px;
+}
+
+.de-cm-period-sep {
   color: var(--c-text-3);
-  transition: background 0.13s, color 0.13s;
-}
-
-.de-cm-cal-nav-btn:hover:not(:disabled) {
-  background: var(--c-bg);
-  color: var(--c-text);
-}
-
-.de-cm-cal-nav-btn:disabled {
-  opacity: 0.3;
-  cursor: default;
-}
-
-.de-cm-cal-month {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--c-text);
-}
-
-.de-cm-cal-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
-}
-
-.de-cm-cal-day-label {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--c-text-4);
-  text-align: center;
-  padding: 4px 0 6px;
-  text-transform: uppercase;
-}
-
-.de-cm-cal-cell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 28px;
-  border: none;
-  background: transparent;
-  border-radius: var(--radius-sm);
   font-size: 12px;
-  color: var(--c-text-2);
-  cursor: pointer;
-  font-family: var(--font);
-  transition: background 0.12s, color 0.12s;
 }
 
-.de-cm-cal-cell:hover:not(.disabled) {
-  background: var(--c-bg);
-}
-
-.de-cm-cal-cell.today {
-  font-weight: 700;
-  color: var(--c-accent);
-}
-
-.de-cm-cal-cell.selected {
-  background: var(--c-accent);
-  color: var(--c-white);
-  font-weight: 700;
-}
-
-.de-cm-cal-cell.selected.today {
-  color: var(--c-white);
-}
-
-.de-cm-cal-cell.disabled {
-  opacity: 0.28;
-  cursor: default;
-}
-
-.de-cm-cal-cell--empty {
-  pointer-events: none;
-}
-
-.de-cm-cal-hint {
-  margin-top: 8px;
-  font-size: 10.5px;
-  color: var(--c-text-4);
-  text-align: center;
+.de-cm-period-input {
+  min-width: 150px;
 }
 
 /* ── Search & Clear buttons ── */
@@ -22842,6 +22750,41 @@ html.dark .cp-fin-index-tab:hover {
 .de-cm-clear-btn:disabled {
   opacity: 0.4;
   cursor: default;
+}
+
+.de-cm-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.de-cm-page-btn {
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--c-border-2);
+  border-radius: var(--radius-sm);
+  background: var(--c-white);
+  color: var(--c-text-2);
+  font-size: 12px;
+  font-family: var(--font);
+  cursor: pointer;
+}
+
+.de-cm-page-btn:hover:not(:disabled) {
+  border-color: var(--c-accent);
+  color: var(--c-accent);
+}
+
+.de-cm-page-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.de-cm-page-text {
+  font-size: 12px;
+  color: var(--c-text-3);
 }
 
 /* RWD */
