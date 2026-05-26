@@ -54,6 +54,12 @@ function addMonthsIsoDate(isoDate: string, months: number): string {
   return toIsoDate(d);
 }
 
+function addDaysIsoDate(isoDate: string, days: number): string {
+  const d = new Date(`${isoDate}T00:00:00`);
+  d.setDate(d.getDate() + days);
+  return toIsoDate(d);
+}
+
 const CAT_IMAGES: Record<string, string> = {
   'esg': 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=900&q=80',
   'government-regulations': 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=900&q=80',
@@ -1673,6 +1679,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   const zh = lang === 'zh';
   const defaultQueryDate = useMemo(() => getYesterdayIsoDate(), []);
   const minAllowedDate = useMemo(() => addMonthsIsoDate(defaultQueryDate, -3), [defaultQueryDate]);
+  const minAllowedDateNoCode = useMemo(() => addDaysIsoDate(defaultQueryDate, -30), [defaultQueryDate]);
   const [securityCodes, setSecurityCodes] = useState<string[]>([]);
   const [securityCode, setSecurityCode] = useState('');
   const [startDate, setStartDate] = useState(defaultQueryDate);
@@ -1836,10 +1843,10 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     }
   }
 
-  const minStartDate = securityCode ? minAllowedDate : endDate;
+  const minStartDate = securityCode ? minAllowedDate : minAllowedDateNoCode;
   const maxStartDate = securityCode ? endDate : defaultQueryDate;
-  const minEndDate = securityCode ? startDate : startDate;
-  const maxEndDate = securityCode ? defaultQueryDate : startDate;
+  const minEndDate = securityCode ? startDate : minAllowedDateNoCode;
+  const maxEndDate = defaultQueryDate;
 
   return (
     <>
