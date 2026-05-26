@@ -18,8 +18,9 @@ import { formatNumber } from '@/app/lib/formatters';
 import { getPaginationRange } from '@/app/lib/paginationUtils';
 
 const TAGS_VISIBLE_COUNT = 6;
-const DEFAULT_CM_TAB = 'day-trading';
+const DEFAULT_CM_TAB = 'daily-quotes';
 const CAPITAL_MARKETS_INNER_TAB_IDS = [
+  'daily-quotes',
   'day-trading',
   'margin',
   'short-sale',
@@ -34,7 +35,6 @@ function isCapitalMarketsInnerTab(tabId: string | null): tabId is (typeof CAPITA
 }
 
 function resolveCapitalMarketsInnerTab(tabId: string | null): (typeof CAPITAL_MARKETS_INNER_TAB_IDS)[number] {
-  if (tabId === 'daily-quotes') return 'day-trading';
   return isCapitalMarketsInnerTab(tabId) ? tabId : DEFAULT_CM_TAB;
 }
 
@@ -871,6 +871,94 @@ const CM_PE_RATIO = [
   { ...CM_COMPANIES[9], yield: '2.56', pe: '16.78', pb: '1.43' },
 ];
 
+// ── Daily Quotes (每日收盤行情) data ─────────────────────────────────────────
+
+interface DailyQuoteRow {
+  security_code: string;
+  security_name: string;
+  trade_volume: string;
+  open_price: string;
+  high_price: string;
+  low_price: string;
+  close_price: string;
+  price_change_indicator: string;
+  price_change: string;
+  bid_price: string;
+  ask_price: string;
+  trade_count: string;
+  trade_value: string;
+  pe_ratio_or_settlement_price: string;
+  avg_dividend_or_strike_price: string;
+  shares_per_trading_unit: string;
+  currency: string;
+  last_trade_date: string;
+  data_gen_dt: string;
+  data_gen_time: string;
+}
+
+interface DqColumn {
+  id: string;
+  labels: { zh: string; en: string };
+  value: (row: DailyQuoteRow) => string;
+  tableVisible: 'Y' | 'N';
+  freezePane: 'Y' | 'N';
+  className?: string;
+}
+
+const CM_QUOTES_ALL_COLUMNS: DqColumn[] = [
+  { id: 'security_code',                 labels: { zh: '證券代號',               en: 'Security Code'                             }, value: (r) => r.security_code,                 tableVisible: 'Y', freezePane: 'Y', className: 'code' },
+  { id: 'security_name',                 labels: { zh: '證券名稱',               en: 'Stock Name'                                }, value: (r) => r.security_name,                 tableVisible: 'Y', freezePane: 'N' },
+  { id: 'trade_volume',                  labels: { zh: '成交股數',               en: 'Trading Volume'                            }, value: (r) => r.trade_volume,                  tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'open_price',                    labels: { zh: '開盤價',                 en: 'Opening Price'                             }, value: (r) => r.open_price,                    tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'high_price',                    labels: { zh: '最高價',                 en: 'Highest Price'                             }, value: (r) => r.high_price,                    tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'low_price',                     labels: { zh: '最低價',                 en: 'Lowest Price'                              }, value: (r) => r.low_price,                     tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'close_price',                   labels: { zh: '收盤',                   en: 'Closing Price'                             }, value: (r) => r.close_price,                   tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'price_change_indicator',        labels: { zh: '漲跌註記',               en: 'Price Change Indicator'                    }, value: (r) => r.price_change_indicator,        tableVisible: 'Y', freezePane: 'N' },
+  { id: 'price_change',                  labels: { zh: '漲跌',                   en: 'Price Change'                              }, value: (r) => r.price_change,                  tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'bid_price',                     labels: { zh: '最後買價',               en: 'Last Bid Price'                            }, value: (r) => r.bid_price,                     tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'ask_price',                     labels: { zh: '最後賣價',               en: 'Last Ask Price'                            }, value: (r) => r.ask_price,                     tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'trade_count',                   labels: { zh: '成交筆數',               en: 'Trade Count'                               }, value: (r) => r.trade_count,                   tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'trade_value',                   labels: { zh: '成交金額',               en: 'Trading Value'                             }, value: (r) => r.trade_value,                   tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'pe_ratio_or_settlement_price',  labels: { zh: '本益比或結算價',         en: 'P/E Ratio or Settlement Price'             }, value: (r) => r.pe_ratio_or_settlement_price,  tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'avg_dividend_or_strike_price',  labels: { zh: '平均股利或最新履約價',   en: 'Average Dividend or Latest Strike Price'   }, value: (r) => r.avg_dividend_or_strike_price,  tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'shares_per_trading_unit',       labels: { zh: '每交易單位所含股數',     en: 'Shares per Trading Unit'                  }, value: (r) => r.shares_per_trading_unit,       tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'currency',                      labels: { zh: '交易幣別',               en: 'Trading Currency'                          }, value: (r) => r.currency,                      tableVisible: 'N', freezePane: 'N' },
+  { id: 'last_trade_date',               labels: { zh: '最後交易日期',           en: 'Last Trade Date'                           }, value: (r) => r.last_trade_date,               tableVisible: 'N', freezePane: 'N' },
+  { id: 'tsmc_updatetime',               labels: { zh: '台積更新時間',           en: 'TSMC Updatetime'                           }, value: (r) => `${r.data_gen_dt}${r.data_gen_time ? ' ' + r.data_gen_time : ''}`.trim() || '—', tableVisible: 'Y', freezePane: 'N' },
+];
+
+const CM_DAILY_QUOTES_MOCK_DATA: DailyQuoteRow[] = [
+  { security_code: '2330', security_name: '台積電',   trade_volume: '32,456,000', open_price: '980.00',  high_price: '998.00',  low_price: '975.00',  close_price: '992.00',  price_change_indicator: '+', price_change: '+12.00', bid_price: '991.00', ask_price: '993.00', trade_count: '35,621', trade_value: '32,218,500,000', pe_ratio_or_settlement_price: '25.34', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2317', security_name: '鴻海',     trade_volume: '14,230,000', open_price: '118.00',  high_price: '121.00',  low_price: '117.00',  close_price: '120.00',  price_change_indicator: '+', price_change: '+2.00',  bid_price: '119.50', ask_price: '120.50', trade_count: '12,341', trade_value: '1,703,200,000',  pe_ratio_or_settlement_price: '11.81', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2454', security_name: '聯發科',   trade_volume: '4,120,000',  open_price: '908.00',  high_price: '921.00',  low_price: '904.00',  close_price: '916.00',  price_change_indicator: '+', price_change: '+8.00',  bid_price: '915.00', ask_price: '917.00', trade_count: '8,432',  trade_value: '3,773,920,000',  pe_ratio_or_settlement_price: '9.78',  avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2881', security_name: '富邦金',   trade_volume: '9,870,000',  open_price: '84.50',   high_price: '85.80',   low_price: '84.20',   close_price: '85.40',   price_change_indicator: '+', price_change: '+0.90',  bid_price: '85.20', ask_price: '85.50', trade_count: '7,218',  trade_value: '843,468,000',    pe_ratio_or_settlement_price: '10.23', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2882', security_name: '國泰金',   trade_volume: '8,342,000',  open_price: '96.50',   high_price: '98.00',   low_price: '96.00',   close_price: '97.50',   price_change_indicator: '+', price_change: '+1.00',  bid_price: '97.30', ask_price: '97.60', trade_count: '6,543',  trade_value: '813,345,000',    pe_ratio_or_settlement_price: '12.34', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2891', security_name: '中信金',   trade_volume: '7,654,000',  open_price: '109.50',  high_price: '111.00',  low_price: '109.00',  close_price: '110.50',  price_change_indicator: '+', price_change: '+1.00',  bid_price: '110.00', ask_price: '111.00', trade_count: '5,231', trade_value: '845,847,000',   pe_ratio_or_settlement_price: '12.89', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2412', security_name: '中華電',   trade_volume: '3,210,000',  open_price: '74.20',   high_price: '75.10',   low_price: '73.90',   close_price: '74.80',   price_change_indicator: '+', price_change: '+0.60',  bid_price: '74.70', ask_price: '74.90', trade_count: '3,120',  trade_value: '240,108,000',    pe_ratio_or_settlement_price: '20.11', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '3045', security_name: '台灣大',   trade_volume: '2,890,000',  open_price: '93.20',   high_price: '94.30',   low_price: '92.80',   close_price: '93.80',   price_change_indicator: '+', price_change: '+0.60',  bid_price: '93.50', ask_price: '94.00', trade_count: '2,456',  trade_value: '271,122,000',    pe_ratio_or_settlement_price: '22.34', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '1301', security_name: '台塑',     trade_volume: '5,430,000',  open_price: '98.70',   high_price: '100.00',  low_price: '98.40',   close_price: '99.60',   price_change_indicator: '+', price_change: '+0.90',  bid_price: '99.50', ask_price: '99.70', trade_count: '4,318',  trade_value: '540,828,000',    pe_ratio_or_settlement_price: '14.23', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '1216', security_name: '統一',     trade_volume: '4,120,000',  open_price: '54.40',   high_price: '55.20',   low_price: '54.20',   close_price: '55.00',   price_change_indicator: '+', price_change: '+0.60',  bid_price: '54.90', ask_price: '55.10', trade_count: '3,204',  trade_value: '226,600,000',    pe_ratio_or_settlement_price: '16.78', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2303', security_name: '聯電',     trade_volume: '18,230,000', open_price: '41.20',   high_price: '42.10',   low_price: '41.00',   close_price: '41.80',   price_change_indicator: '-', price_change: '-0.40',  bid_price: '41.70', ask_price: '41.90', trade_count: '15,432', trade_value: '762,034,000',    pe_ratio_or_settlement_price: '13.45', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2308', security_name: '台達電',   trade_volume: '3,450,000',  open_price: '312.50',  high_price: '316.00',  low_price: '311.00',  close_price: '313.50',  price_change_indicator: '-', price_change: '-1.00',  bid_price: '313.00', ask_price: '314.00', trade_count: '4,231', trade_value: '1,081,575,000', pe_ratio_or_settlement_price: '19.87', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2886', security_name: '兆豐金',   trade_volume: '6,780,000',  open_price: '43.80',   high_price: '44.50',   low_price: '43.60',   close_price: '44.20',   price_change_indicator: '+', price_change: '+0.40',  bid_price: '44.10', ask_price: '44.30', trade_count: '3,987',  trade_value: '299,676,000',    pe_ratio_or_settlement_price: '11.23', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2884', security_name: '玉山金',   trade_volume: '5,320,000',  open_price: '28.90',   high_price: '29.50',   low_price: '28.70',   close_price: '29.30',   price_change_indicator: '+', price_change: '+0.40',  bid_price: '29.20', ask_price: '29.40', trade_count: '3,156',  trade_value: '155,876,000',    pe_ratio_or_settlement_price: '13.67', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2357', security_name: '華碩',     trade_volume: '2,670,000',  open_price: '419.00',  high_price: '426.00',  low_price: '417.50',  close_price: '423.00',  price_change_indicator: '+', price_change: '+4.00',  bid_price: '422.50', ask_price: '423.50', trade_count: '4,567', trade_value: '1,129,410,000', pe_ratio_or_settlement_price: '15.34', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2395', security_name: '研華',     trade_volume: '1,230,000',  open_price: '432.00',  high_price: '438.00',  low_price: '430.00',  close_price: '435.00',  price_change_indicator: '+', price_change: '+3.00',  bid_price: '434.00', ask_price: '436.00', trade_count: '2,341', trade_value: '535,050,000',    pe_ratio_or_settlement_price: '26.12', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '6505', security_name: '台塑化',   trade_volume: '4,560,000',  open_price: '68.40',   high_price: '69.20',   low_price: '68.10',   close_price: '68.80',   price_change_indicator: '-', price_change: '-0.20',  bid_price: '68.70', ask_price: '68.90', trade_count: '3,892',  trade_value: '314,528,000',    pe_ratio_or_settlement_price: '12.56', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '1303', security_name: '南亞',     trade_volume: '3,870,000',  open_price: '60.10',   high_price: '61.00',   low_price: '59.80',   close_price: '60.60',   price_change_indicator: '+', price_change: '+0.50',  bid_price: '60.50', ask_price: '60.70', trade_count: '2,678',  trade_value: '234,522,000',    pe_ratio_or_settlement_price: '10.89', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2002', security_name: '中鋼',     trade_volume: '12,340,000', open_price: '22.40',   high_price: '22.90',   low_price: '22.30',   close_price: '22.70',   price_change_indicator: '+', price_change: '+0.30',  bid_price: '22.60', ask_price: '22.80', trade_count: '7,432',  trade_value: '280,318,000',    pe_ratio_or_settlement_price: '8.23',  avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2885', security_name: '元大金',   trade_volume: '6,120,000',  open_price: '24.30',   high_price: '24.80',   low_price: '24.10',   close_price: '24.60',   price_change_indicator: '+', price_change: '+0.30',  bid_price: '24.50', ask_price: '24.70', trade_count: '3,214',  trade_value: '150,552,000',    pe_ratio_or_settlement_price: '9.45',  avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '9999', security_name: '全球科技', trade_volume: '5,670,000',  open_price: '960.00',  high_price: '975.00',  low_price: '958.00',  close_price: '970.00',  price_change_indicator: '+', price_change: '+10.00', bid_price: '969.00', ask_price: '971.00', trade_count: '6,890', trade_value: '5,499,900,000', pe_ratio_or_settlement_price: '18.90', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2880', security_name: '華南金',   trade_volume: '4,340,000',  open_price: '23.80',   high_price: '24.20',   low_price: '23.70',   close_price: '24.00',   price_change_indicator: '+', price_change: '+0.20',  bid_price: '23.90', ask_price: '24.10', trade_count: '2,543',  trade_value: '104,196,000',    pe_ratio_or_settlement_price: '10.34', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '5880', security_name: '合庫金',   trade_volume: '7,230,000',  open_price: '27.60',   high_price: '28.10',   low_price: '27.50',   close_price: '27.90',   price_change_indicator: '+', price_change: '+0.30',  bid_price: '27.80', ask_price: '28.00', trade_count: '3,876',  trade_value: '201,747,000',    pe_ratio_or_settlement_price: '11.67', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2892', security_name: '第一金',   trade_volume: '5,430,000',  open_price: '25.10',   high_price: '25.60',   low_price: '25.00',   close_price: '25.40',   price_change_indicator: '+', price_change: '+0.30',  bid_price: '25.30', ask_price: '25.50', trade_count: '2,987',  trade_value: '137,922,000',    pe_ratio_or_settlement_price: '10.89', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '3711', security_name: '日月光',   trade_volume: '8,920,000',  open_price: '119.00',  high_price: '121.50',  low_price: '118.50',  close_price: '120.50',  price_change_indicator: '-', price_change: '-0.50',  bid_price: '120.00', ask_price: '121.00', trade_count: '6,234', trade_value: '1,075,260,000', pe_ratio_or_settlement_price: '14.56', avg_dividend_or_strike_price: '—', shares_per_trading_unit: '1000', currency: 'TWD', last_trade_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+];
+
+function buildFallbackGetDailyQuotesRows(date: string): DailyQuoteRow[] {
+  return CM_DAILY_QUOTES_MOCK_DATA.map((r) => ({ ...r, data_gen_dt: date.replace(/-/g, ''), last_trade_date: date }));
+}
+
 // ── Capital Markets tab components ──────────────────────────────────────────
 
 function CmTableWrapper({ children }: { children: ReactNode }) {
@@ -1208,6 +1296,214 @@ function CmDailyQuotesTab({ lang, rowsData, loading, error, onVisibleRowsChange 
         </button>
       </div>
     </CmTableWrapper>
+  );
+}
+
+// ── Daily Quotes Field Overview Modal ────────────────────────────────────────
+
+interface DqFieldOverviewModalProps {
+  lang: 'zh' | 'en';
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+function DqFieldOverviewModal({ lang, isOpen, onClose }: DqFieldOverviewModalProps) {
+  const zh = lang === 'zh';
+
+  useEffect(() => {
+    if (!isOpen) return;
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') onClose();
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  return (
+    <>
+      <div className="de-dq-overview-backdrop" onClick={onClose} aria-hidden="true" />
+      <div
+        className="de-dq-overview-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label={zh ? '欄位總覽' : 'Field Overview'}
+      >
+        <div className="de-dq-overview-header">
+          <span className="de-dq-overview-title">{zh ? '欄位總覽' : 'Field Overview'}</span>
+          <button
+            type="button"
+            className="de-dq-overview-close"
+            onClick={onClose}
+            aria-label={zh ? '關閉' : 'Close'}
+          >
+            <CloseSmIcon />
+          </button>
+        </div>
+        <div className="de-dq-overview-body">
+          <table className="de-dq-overview-table">
+            <thead>
+              <tr>
+                <th>English Field</th>
+                <th>Chinese Field</th>
+              </tr>
+            </thead>
+            <tbody>
+              {CM_QUOTES_ALL_COLUMNS.map((col) => (
+                <tr key={col.id}>
+                  <td>{col.labels.en}</td>
+                  <td>{col.labels.zh}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ── Daily Quotes (每日收盤行情) Tab ───────────────────────────────────────────
+
+interface DailyQuotesTabProps {
+  lang: 'zh' | 'en';
+  rowsData: DailyQuoteRow[];
+  loading: boolean;
+  error: string | null;
+  onVisibleRowsChange: (rows: DailyQuoteRow[]) => void;
+}
+
+function DailyQuotesTab({ lang, rowsData, loading, error, onVisibleRowsChange }: DailyQuotesTabProps) {
+  const zh = lang === 'zh';
+  const tableColumns = useMemo(
+    () => CM_QUOTES_ALL_COLUMNS.filter((col) => col.tableVisible === 'Y'),
+    [],
+  );
+  const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
+    rowsData,
+    tableColumns.map((col) => col.value),
+  );
+  const [currentPage, setCurrentPage] = useState(0);
+  const pageSize = 50;
+  const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+  const pagedRows = rows.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [rowsData, colFilters, sortCol, sortDir]);
+
+  useEffect(() => {
+    if (currentPage >= totalPages) {
+      setCurrentPage(Math.max(0, totalPages - 1));
+    }
+  }, [currentPage, totalPages]);
+
+  useEffect(() => {
+    onVisibleRowsChange(rows);
+  }, [rows, onVisibleRowsChange]);
+
+  if (loading) {
+    return (
+      <CmTableWrapper>
+        <div className="de-empty-state">{zh ? '載入中…' : 'Loading...'}</div>
+      </CmTableWrapper>
+    );
+  }
+
+  if (error) {
+    return (
+      <CmTableWrapper>
+        <div className="de-empty-state">{error}</div>
+      </CmTableWrapper>
+    );
+  }
+
+  return (
+    <div className="de-data-section">
+      <div className="de-dq-table-scroll-wrap">
+        <table className="de-data-table de-cm-dq-table">
+          <thead>
+            <tr>
+              {tableColumns.map((col, index) => {
+                const thClass = [
+                  col.className ?? '',
+                  col.freezePane === 'Y' ? 'de-cm-dq-col-sticky' : '',
+                ].filter(Boolean).join(' ');
+                return (
+                  <ThSortFilter
+                    key={col.id}
+                    label={col.labels[lang]}
+                    colIndex={index}
+                    sortCol={sortCol}
+                    sortDir={sortDir}
+                    onSort={handleSort}
+                    onFilter={handleColFilter}
+                    filterValue={colFilters[index] ?? ''}
+                    showFilter={false}
+                    className={thClass || undefined}
+                  />
+                );
+              })}
+            </tr>
+          </thead>
+          <tbody>
+            {pagedRows.map((r) => (
+              <tr key={r.security_code}>
+                {tableColumns.map((col) => {
+                  const tdClass = [
+                    col.className ?? '',
+                    col.freezePane === 'Y' ? 'de-cm-dq-col-sticky' : '',
+                    col.id === 'price_change' || col.id === 'price_change_indicator'
+                      ? (r.price_change_indicator === '+' ? 'pos' : r.price_change_indicator === '-' ? 'neg' : '')
+                      : '',
+                  ].filter(Boolean).join(' ');
+                  return (
+                    <td key={col.id} className={tdClass || undefined}>
+                      {col.value(r)}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="cp-news-tab-pagination">
+        <button
+          type="button"
+          className="cp-news-tab-page-btn"
+          onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+          disabled={currentPage === 0}
+        >
+          {zh ? '‹ 上一頁' : '‹ Prev'}
+        </button>
+        {getPaginationRange(currentPage, totalPages).map((item) =>
+          typeof item === 'string' ? (
+            <span key={item} className="cp-news-tab-page-ellipsis">…</span>
+          ) : (
+            <button
+              key={item}
+              type="button"
+              className={`cp-news-tab-page-btn${currentPage === item ? ' active' : ''}`}
+              onClick={() => setCurrentPage(item)}
+              aria-label={`Page ${item + 1}`}
+              aria-current={currentPage === item ? 'page' : undefined}
+            >
+              {item + 1}
+            </button>
+          )
+        )}
+        <button
+          type="button"
+          className="cp-news-tab-page-btn"
+          onClick={() => setCurrentPage((p) => Math.min(totalPages - 1, p + 1))}
+          disabled={currentPage >= totalPages - 1}
+        >
+          {zh ? '下一頁 ›' : 'Next ›'}
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -1688,11 +1984,21 @@ function CmDownloadCsvModal({
 
 interface CapitalMarketsCsvOptions {
   statisticsForDayTradingRows?: CmDailyQuoteRow[];
+  dailyQuotesRows?: DailyQuoteRow[];
 }
 
 function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: CapitalMarketsCsvOptions = {}) {
   const zh = lang === 'zh';
   switch (tabId) {
+    case 'daily-quotes': {
+      const rows = options.dailyQuotesRows ?? [];
+      downloadCSV(
+        zh ? '每日收盤行情.csv' : 'daily-quotes.csv',
+        CM_QUOTES_ALL_COLUMNS.map((col) => col.labels[lang]),
+        rows.map((row) => CM_QUOTES_ALL_COLUMNS.map((col) => col.value(row))),
+      );
+      break;
+    }
     case 'day-trading': {
       const rows = options.statisticsForDayTradingRows ?? [];
       const csvColumns = CM_DAY_TRADING_COLUMNS;
@@ -1752,16 +2058,24 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   const [securityCode, setSecurityCode] = useState('');
   const [startDate, setStartDate] = useState(defaultQueryDate);
   const [endDate, setEndDate] = useState(defaultQueryDate);
+  // day-trading tab state
   const [dailyQuoteRows, setDailyQuoteRows] = useState<CmDailyQuoteRow[]>([]);
   const [dailyQuoteVisibleRows, setDailyQuoteVisibleRows] = useState<CmDailyQuoteRow[]>([]);
   const [dailyQuotesLoading, setDailyQuotesLoading] = useState(false);
   const [dailyQuotesError, setDailyQuotesError] = useState<string | null>(null);
+  // daily-quotes tab state
+  const [getDailyQuotesRows, setGetDailyQuotesRows] = useState<DailyQuoteRow[]>([]);
+  const [getDailyQuotesVisibleRows, setGetDailyQuotesVisibleRows] = useState<DailyQuoteRow[]>([]);
+  const [getDailyQuotesLoading, setGetDailyQuotesLoading] = useState(false);
+  const [getDailyQuotesError, setGetDailyQuotesError] = useState<string | null>(null);
+  const [isFieldOverviewOpen, setIsFieldOverviewOpen] = useState(false);
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [downloadStartDate, setDownloadStartDate] = useState(defaultQueryDate);
   const [downloadEndDate, setDownloadEndDate] = useState(defaultQueryDate);
   const [downloadLoading, setDownloadLoading] = useState(false);
 
   const CM_INNER_TABS = [
+    { id: 'daily-quotes',      label: zh ? '每日收盤行情' : 'Daily Quotes' },
     { id: 'day-trading',       label: zh ? '每日沖銷交易標記及統計' : 'Statistics for Day Trading' },
     { id: 'margin',            label: zh ? '融資融券餘額' : 'Margin Transaction' },
     { id: 'short-sale',        label: zh ? '信用額度總量管制餘額檔' : 'Daily Short Sale Balances' },
@@ -1787,6 +2101,22 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     }
   }, [zh]);
 
+  const queryGetDailyQuotes = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
+    setGetDailyQuotesLoading(true);
+    setGetDailyQuotesError(null);
+    try {
+      const rows = await fetchDailyQuotes(nextStartDate, nextEndDate, nextSecurityCode);
+      setGetDailyQuotesRows(rows);
+      setGetDailyQuotesVisibleRows(rows);
+    } catch (error) {
+      setGetDailyQuotesError(error instanceof Error ? error.message : (zh ? '資料讀取失敗' : 'Failed to load data'));
+      setGetDailyQuotesRows([]);
+      setGetDailyQuotesVisibleRows([]);
+    } finally {
+      setGetDailyQuotesLoading(false);
+    }
+  }, [zh]);
+
   useEffect(() => {
     fetchSecurityCodeOptions()
       .then((items) => {
@@ -1803,6 +2133,12 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeCmTab, queryDailyQuotes]);
 
+  useEffect(() => {
+    if (activeCmTab !== 'daily-quotes') return;
+    queryGetDailyQuotes(startDate, endDate, securityCode);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeCmTab, queryGetDailyQuotes]);
+
   const clampToAllowedDate = useCallback((value: string): string => {
     if (value < minAllowedDate) return minAllowedDate;
     if (value > defaultQueryDate) return defaultQueryDate;
@@ -1810,14 +2146,22 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   }, [defaultQueryDate, minAllowedDate]);
 
   function handleSearch() {
-    queryDailyQuotes(startDate, endDate, securityCode);
+    if (activeCmTab === 'daily-quotes') {
+      queryGetDailyQuotes(startDate, endDate, securityCode);
+    } else {
+      queryDailyQuotes(startDate, endDate, securityCode);
+    }
   }
 
   function handleClear() {
     setSecurityCode('');
     setStartDate(defaultQueryDate);
     setEndDate(defaultQueryDate);
-    queryDailyQuotes(defaultQueryDate, defaultQueryDate, '');
+    if (activeCmTab === 'daily-quotes') {
+      queryGetDailyQuotes(defaultQueryDate, defaultQueryDate, '');
+    } else {
+      queryDailyQuotes(defaultQueryDate, defaultQueryDate, '');
+    }
   }
 
   function handleSecurityCodeChange(value: string) {
@@ -1898,13 +2242,18 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   async function handleDownloadFromModal() {
     setDownloadLoading(true);
     try {
-      let downloadRows = dailyQuoteVisibleRows;
-      if (activeCmTab === 'day-trading') {
-        downloadRows = await fetchStatisticsForDayTradingRows(downloadStartDate, downloadEndDate, securityCode);
+      if (activeCmTab === 'daily-quotes') {
+        const downloadRows = await fetchDailyQuotes(downloadStartDate, downloadEndDate, securityCode);
+        downloadCapitalMarketsCSV('daily-quotes', lang, { dailyQuotesRows: downloadRows });
+      } else {
+        let downloadRows = dailyQuoteVisibleRows;
+        if (activeCmTab === 'day-trading') {
+          downloadRows = await fetchStatisticsForDayTradingRows(downloadStartDate, downloadEndDate, securityCode);
+        }
+        downloadCapitalMarketsCSV(activeCmTab, lang, {
+          statisticsForDayTradingRows: downloadRows,
+        });
       }
-      downloadCapitalMarketsCSV(activeCmTab, lang, {
-        statisticsForDayTradingRows: downloadRows,
-      });
       setIsDownloadModalOpen(false);
     } finally {
       setDownloadLoading(false);
@@ -1915,6 +2264,8 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   const maxStartDate = securityCode ? endDate : defaultQueryDate;
   const minEndDate = securityCode ? startDate : minAllowedDateNoCode;
   const maxEndDate = defaultQueryDate;
+
+  const showFilterBar = activeCmTab === 'daily-quotes' || activeCmTab === 'day-trading';
 
   return (
     <>
@@ -1940,30 +2291,56 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
         <div className="de-cm-content">
           <div className="de-cm-content-toolbar">
           <div className="de-cm-content-toolbar-left">
-            <CmFilterBar
-              lang={lang}
-              securityCode={securityCode}
-              securityCodes={securityCodes}
-              startDate={startDate}
-              endDate={endDate}
-              minStartDate={minStartDate}
-              maxStartDate={maxStartDate}
-              minEndDate={minEndDate}
-              maxEndDate={maxEndDate}
-              onSecurityCodeChange={handleSecurityCodeChange}
-              onStartDateChange={handleStartDateChange}
-              onEndDateChange={handleEndDateChange}
-              onSearch={handleSearch}
-              onClear={handleClear}
-            />
+            {showFilterBar && (
+              <CmFilterBar
+                lang={lang}
+                securityCode={securityCode}
+                securityCodes={securityCodes}
+                startDate={startDate}
+                endDate={endDate}
+                minStartDate={minStartDate}
+                maxStartDate={maxStartDate}
+                minEndDate={minEndDate}
+                maxEndDate={maxEndDate}
+                onSecurityCodeChange={handleSecurityCodeChange}
+                onStartDateChange={handleStartDateChange}
+                onEndDateChange={handleEndDateChange}
+                onSearch={handleSearch}
+                onClear={handleClear}
+              />
+            )}
           </div>
           <div className="de-cm-content-toolbar-right">
+            {activeCmTab === 'daily-quotes' && (
+              <button
+                type="button"
+                className="de-news-download-btn de-gov-csv-btn de-dq-field-overview-btn"
+                onClick={() => setIsFieldOverviewOpen(true)}
+                title={zh ? '欄位總覽' : 'Field Overview'}
+              >
+                <svg viewBox="0 0 14 14" fill="none" width="14" height="14" aria-hidden="true">
+                  <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.4"/>
+                  <path d="M7 6v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                  <circle cx="7" cy="4" r="0.8" fill="currentColor"/>
+                </svg>
+                <span>{zh ? '欄位總覽' : 'Field Overview'}</span>
+              </button>
+            )}
             <button className="de-news-download-btn de-gov-csv-btn" onClick={handleOpenDownloadModal}>
               <DownloadIcon />
               <span>{zh ? '下載 CSV' : 'Download CSV'}</span>
             </button>
           </div>
         </div>
+        {activeCmTab === 'daily-quotes'      && (
+          <DailyQuotesTab
+            lang={lang}
+            rowsData={getDailyQuotesRows}
+            loading={getDailyQuotesLoading}
+            error={getDailyQuotesError}
+            onVisibleRowsChange={setGetDailyQuotesVisibleRows}
+          />
+        )}
         {activeCmTab === 'day-trading'       && (
           <CmDailyQuotesTab
             lang={lang}
@@ -1991,6 +2368,11 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
           onEndDateChange={handleDownloadModalEndDateChange}
           onClose={() => setIsDownloadModalOpen(false)}
           onDownload={handleDownloadFromModal}
+        />
+        <DqFieldOverviewModal
+          lang={lang}
+          isOpen={isFieldOverviewOpen}
+          onClose={() => setIsFieldOverviewOpen(false)}
         />
         </div>
       </div>
@@ -2102,6 +2484,30 @@ async function fetchStatisticsForDayTradingRows(startDate: string, endDate: stri
     return data.items ?? data.data ?? data.rows ?? buildFallbackDailyQuotesRows(endDate);
   } catch {
     return buildFallbackDailyQuotesRows(endDate);
+  }
+}
+
+async function fetchDailyQuotes(startDate: string, endDate: string, securityCode: string): Promise<DailyQuoteRow[]> {
+  try {
+    const url = new URL('/getDailyQuotes', window.location.origin);
+    url.searchParams.set('startDate', startDate);
+    url.searchParams.set('endDate', endDate);
+    if (securityCode) {
+      url.searchParams.set('securityCode', securityCode);
+    }
+    const res = await fetch(url.toString(), { cache: 'no-store' });
+    if (!res.ok) {
+      return buildFallbackGetDailyQuotesRows(endDate);
+    }
+    const data = (await res.json()) as
+      | DailyQuoteRow[]
+      | { items?: DailyQuoteRow[]; data?: DailyQuoteRow[]; rows?: DailyQuoteRow[] };
+    if (Array.isArray(data)) {
+      return data;
+    }
+    return data.items ?? data.data ?? data.rows ?? buildFallbackGetDailyQuotesRows(endDate);
+  } catch {
+    return buildFallbackGetDailyQuotesRows(endDate);
   }
 }
 
