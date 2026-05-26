@@ -701,3 +701,82 @@ CSS：
 | Tab Navigation | `app/my-rmap/supplier/page.tsx` |
 | Modal | `app/components/collaboration/CanvasManageModal.tsx` |
 | Loading State | `app/press-release/page.tsx` |
+| Pagination | `app/components/news/CompanyNewsTab.tsx` (Market News style) |
+
+---
+
+## 📄 分頁元件 (Pagination) 標準模式
+
+整站使用統一的分頁元件樣式，基於 `getPaginationRange` 工具函式，提供帶省略號的頁碼按鈕。
+
+### 使用方式
+
+```tsx
+import { getPaginationRange } from '@/app/lib/paginationUtils';
+
+// 0-based index (page 0 = first page)
+const [page, setPage] = useState(0);
+const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+const paged = items.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
+// Reset to first page when data/filters change
+useEffect(() => { setPage(0); }, [items]);
+
+// Render pagination
+<div className="cp-news-tab-pagination">
+  <button
+    type="button"
+    className="cp-news-tab-page-btn"
+    onClick={() => setPage(p => Math.max(0, p - 1))}
+    disabled={page === 0}
+  >
+    {lang === 'zh' ? '‹ 上一頁' : '‹ Prev'}
+  </button>
+  {getPaginationRange(page, totalPages).map(item =>
+    typeof item === 'string' ? (
+      <span key={item} className="cp-news-tab-page-ellipsis">…</span>
+    ) : (
+      <button
+        key={item}
+        type="button"
+        className={`cp-news-tab-page-btn${page === item ? ' active' : ''}`}
+        onClick={() => setPage(item)}
+        aria-label={`Page ${item + 1}`}
+        aria-current={page === item ? 'page' : undefined}
+      >
+        {item + 1}
+      </button>
+    )
+  )}
+  <button
+    type="button"
+    className="cp-news-tab-page-btn"
+    onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+    disabled={page >= totalPages - 1}
+  >
+    {lang === 'zh' ? '下一頁 ›' : 'Next ›'}
+  </button>
+</div>
+```
+
+### CSS 類別 (已在 globals.css 定義，勿重複定義)
+
+```
+.cp-news-tab-pagination   — 容器：flex, justify-content: center, gap: 6px, flex-wrap: wrap
+.cp-news-tab-page-btn     — 按鈕：border, border-radius, 13px font, hover/active 狀態
+.cp-news-tab-page-btn.active — 啟用頁：藍色背景 (#1976d2), 白色文字
+.cp-news-tab-page-ellipsis — 省略號：純文字顯示
+```
+
+### 捲軸樣式規範 (Table Scrollbar)
+
+所有資料表格捲軸使用 `.de-data-table-wrap` 的全域定義：
+
+```css
+.de-data-table-wrap::-webkit-scrollbar { height: 8px; width: 8px; }
+.de-data-table-wrap::-webkit-scrollbar-track { background: transparent; }
+.de-data-table-wrap::-webkit-scrollbar-thumb { background: var(--c-border-2); border-radius: 4px; }
+.de-data-table-wrap::-webkit-scrollbar-thumb:hover { background: var(--c-text-4); }
+```
+
+Firefox 使用：`scrollbar-width: auto; scrollbar-color: var(--c-border-2) transparent;`
