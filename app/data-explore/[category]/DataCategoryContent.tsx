@@ -793,17 +793,87 @@ const CM_DAY_TRADING_COLUMNS: CmDayTradingColumn[] = [
   },
 ];
 
-const CM_MARGIN = [
-  { ...CM_COMPANIES[0], finBuy: '1,234,000', finSell: '892,000',   finBal: '12,451,000', shoBuy: '98,000',  shoSell: '112,000', shoBal: '892,000'  },
-  { ...CM_COMPANIES[1], finBuy: '2,341,000', finSell: '1,821,000', finBal: '21,234,000', shoBuy: '234,000', shoSell: '198,000', shoBal: '1,541,000' },
-  { ...CM_COMPANIES[2], finBuy: '892,000',   finSell: '634,000',   finBal: '8,921,000',  shoBuy: '78,000',  shoSell: '91,000',  shoBal: '654,000'   },
-  { ...CM_COMPANIES[3], finBuy: '1,892,000', finSell: '1,341,000', finBal: '18,231,000', shoBuy: '143,000', shoSell: '121,000', shoBal: '1,123,000' },
-  { ...CM_COMPANIES[4], finBuy: '1,634,000', finSell: '1,123,000', finBal: '15,892,000', shoBuy: '121,000', shoSell: '109,000', shoBal: '934,000'   },
-  { ...CM_COMPANIES[5], finBuy: '1,341,000', finSell: '987,000',   finBal: '13,451,000', shoBuy: '109,000', shoSell: '98,000',  shoBal: '823,000'   },
-  { ...CM_COMPANIES[6], finBuy: '432,000',   finSell: '321,000',   finBal: '4,231,000',  shoBuy: '34,000',  shoSell: '29,000',  shoBal: '234,000'   },
-  { ...CM_COMPANIES[7], finBuy: '323,000',   finSell: '234,000',   finBal: '3,123,000',  shoBuy: '28,000',  shoSell: '24,000',  shoBal: '198,000'   },
-  { ...CM_COMPANIES[8], finBuy: '678,000',   finSell: '534,000',   finBal: '6,789,000',  shoBuy: '56,000',  shoSell: '48,000',  shoBal: '432,000'   },
-  { ...CM_COMPANIES[9], finBuy: '892,000',   finSell: '712,000',   finBal: '8,923,000',  shoBuy: '72,000',  shoSell: '63,000',  shoBal: '543,000'   },
+interface CmMarginTransactionRow {
+  security_code: string;
+  security_type: string;
+  total_mp_reduction_limit: string;
+  prev_mp_balance: string;
+  daily_mp_purchase: string;
+  daily_mp_redemption: string;
+  daily_mp_cash_repayment: string;
+  daily_mp_balance: string;
+  margin_trading_limit: string;
+  prev_ss_balance: string;
+  daily_ss_sale: string;
+  daily_ss_repayment: string;
+  daily_ss_stock_repayment: string;
+  daily_ss_balance: string;
+  mp_restriction_code: string;
+  ss_restriction_code: string;
+  ss_ge_60_percent_mp_flag: string;
+  price_volatility_flag: string;
+  equity_concentration_flag: string;
+  abnormal_volume_flag: string;
+  disposition_measures_flag: string;
+  tdr_mp_reduction: string;
+  mp_balance_for_securities_financing: string;
+  ss_balance_for_securities_financing: string;
+  supervisory_mp_reduction: string;
+  supervisory_ss_margin_increment: string;
+  total_ss_margin_increment: string;
+  data_gen_dt: string;
+  data_gen_time: string;
+}
+
+interface CmMarginColumn {
+  id: string;
+  labels: { zh: string; en: string };
+  value: (row: CmMarginTransactionRow) => string;
+  tableVisible: 'Y' | 'N';
+  freezePane: 'Y' | 'N';
+  className?: string;
+}
+
+const CM_MARGIN_ALL_COLUMNS: CmMarginColumn[] = [
+  { id: 'security_code', labels: { zh: '證券代號', en: 'Code' }, value: (row) => row.security_code, tableVisible: 'Y', freezePane: 'Y', className: 'code' },
+  { id: 'security_type', labels: { zh: '證券類', en: 'Security Type' }, value: (row) => row.security_type, tableVisible: 'N', freezePane: 'N' },
+  { id: 'total_mp_reduction_limit', labels: { zh: '降低融資比率(總計)', en: 'Total Reduction of Margin Purchase Limit' }, value: (row) => row.total_mp_reduction_limit, tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'prev_mp_balance', labels: { zh: '昨日融資餘額', en: 'Last Day Balance of Margin Purchase' }, value: (row) => row.prev_mp_balance, tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'daily_mp_purchase', labels: { zh: '今日融資買進', en: 'New Margin Purchase' }, value: (row) => row.daily_mp_purchase, tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'daily_mp_redemption', labels: { zh: '今日融資賣出', en: 'Redemption of Margin Purchase' }, value: (row) => row.daily_mp_redemption, tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'daily_mp_cash_repayment', labels: { zh: '今日現金償還', en: 'Outstanding of Margin Purchase' }, value: (row) => row.daily_mp_cash_repayment, tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'daily_mp_balance', labels: { zh: '今日融資餘額', en: 'Balance of Margin Purchase' }, value: (row) => row.daily_mp_balance, tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'margin_trading_limit', labels: { zh: '信用交易限額', en: 'Margin Trading Limit' }, value: (row) => row.margin_trading_limit, tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'prev_ss_balance', labels: { zh: '昨日融券餘額', en: 'Last Day Balance of Short Sale' }, value: (row) => row.prev_ss_balance, tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'daily_ss_sale', labels: { zh: '今日融券賣出', en: 'Redemption of Short Sale' }, value: (row) => row.daily_ss_sale, tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'daily_ss_repayment', labels: { zh: '今日融券買進', en: 'New Short Sale' }, value: (row) => row.daily_ss_repayment, tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'daily_ss_stock_repayment', labels: { zh: '今日現券償還', en: 'Outstanding of Short Sale' }, value: (row) => row.daily_ss_stock_repayment, tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'daily_ss_balance', labels: { zh: '今日融券餘額', en: 'Balance of Short Sale' }, value: (row) => row.daily_ss_balance, tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'mp_restriction_code', labels: { zh: '融資限制碼', en: 'Suspension of Margin Purchase' }, value: (row) => row.mp_restriction_code, tableVisible: 'N', freezePane: 'N' },
+  { id: 'ss_restriction_code', labels: { zh: '融券限制碼', en: 'Suspension of Short Sale' }, value: (row) => row.ss_restriction_code, tableVisible: 'N', freezePane: 'N' },
+  { id: 'ss_ge_60_percent_mp_flag', labels: { zh: '融券餘額≧融資餘額60%', en: 'Remain of Short Sale ≧ 60% of Remain of margin' }, value: (row) => row.ss_ge_60_percent_mp_flag, tableVisible: 'N', freezePane: 'N' },
+  { id: 'price_volatility_flag', labels: { zh: '股價波動過度劇烈註記', en: 'Short Sale is too Volatile' }, value: (row) => row.price_volatility_flag, tableVisible: 'N', freezePane: 'N' },
+  { id: 'equity_concentration_flag', labels: { zh: '股權過度集中註記', en: 'Equity Ownership is overly Concentrated' }, value: (row) => row.equity_concentration_flag, tableVisible: 'N', freezePane: 'N' },
+  { id: 'abnormal_volume_flag', labels: { zh: '成交量過度異常', en: 'Trading Volume is excessively Abnormal' }, value: (row) => row.abnormal_volume_flag, tableVisible: 'N', freezePane: 'N' },
+  { id: 'disposition_measures_flag', labels: { zh: '監視第二次處置註記', en: 'Stock under Disposition Measures two or more times (inclusive)' }, value: (row) => row.disposition_measures_flag, tableVisible: 'N', freezePane: 'N' },
+  { id: 'tdr_mp_reduction', labels: { zh: 'tdr兌回異常降低融資比率', en: 'Margin Purchase Reduction' }, value: (row) => row.tdr_mp_reduction, tableVisible: 'N', freezePane: 'N' },
+  { id: 'mp_balance_for_securities_financing', labels: { zh: '融資餘額中屬證金部分', en: 'Balance of Margin Purchase belonging to Securities' }, value: (row) => row.mp_balance_for_securities_financing, tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'ss_balance_for_securities_financing', labels: { zh: '融券餘額中屬證金部分', en: 'Balance of Short Sale belonging to Securities' }, value: (row) => row.ss_balance_for_securities_financing, tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'supervisory_mp_reduction', labels: { zh: '監視業務督導會報降低融資比率', en: 'Margin Purchase Reduction of Margin Purchase Leverage Limit' }, value: (row) => row.supervisory_mp_reduction, tableVisible: 'N', freezePane: 'N' },
+  { id: 'supervisory_ss_margin_increment', labels: { zh: '監視業務督導會報提高融券保證金成數', en: 'Increment of Short Sale Margin Requirement' }, value: (row) => row.supervisory_ss_margin_increment, tableVisible: 'N', freezePane: 'N' },
+  { id: 'total_ss_margin_increment', labels: { zh: '提高融券保證金成數(總計)', en: 'Total of Short Sale Margin Requirement Increment' }, value: (row) => row.total_ss_margin_increment, tableVisible: 'N', freezePane: 'N' },
+  { id: 'tsmc_updatetime', labels: { zh: '台積更新時間', en: 'TSMC Updatetime' }, value: (row) => `${row.data_gen_dt}${row.data_gen_time ? ` ${row.data_gen_time}` : ''}`.trim() || '—', tableVisible: 'Y', freezePane: 'N' },
+];
+
+const CM_MARGIN_MOCK_DATA: CmMarginTransactionRow[] = [
+  { security_code: '2330', security_type: 'TSE', total_mp_reduction_limit: '5%', prev_mp_balance: '132,521,000', daily_mp_purchase: '4,812,000', daily_mp_redemption: '3,998,000', daily_mp_cash_repayment: '721,000', daily_mp_balance: '132,614,000', margin_trading_limit: '500,000,000', prev_ss_balance: '12,987,000', daily_ss_sale: '612,000', daily_ss_repayment: '489,000', daily_ss_stock_repayment: '121,000', daily_ss_balance: '12,989,000', mp_restriction_code: 'N', ss_restriction_code: 'N', ss_ge_60_percent_mp_flag: 'N', price_volatility_flag: 'N', equity_concentration_flag: 'N', abnormal_volume_flag: 'N', disposition_measures_flag: 'N', tdr_mp_reduction: 'N', mp_balance_for_securities_financing: '12,341,000', ss_balance_for_securities_financing: '1,452,000', supervisory_mp_reduction: 'N', supervisory_ss_margin_increment: 'N', total_ss_margin_increment: '0%', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2317', security_type: 'TSE', total_mp_reduction_limit: '3%', prev_mp_balance: '98,320,000', daily_mp_purchase: '3,120,000', daily_mp_redemption: '2,984,000', daily_mp_cash_repayment: '510,000', daily_mp_balance: '97,946,000', margin_trading_limit: '420,000,000', prev_ss_balance: '9,231,000', daily_ss_sale: '435,000', daily_ss_repayment: '402,000', daily_ss_stock_repayment: '95,000', daily_ss_balance: '9,169,000', mp_restriction_code: 'N', ss_restriction_code: 'N', ss_ge_60_percent_mp_flag: 'N', price_volatility_flag: 'N', equity_concentration_flag: 'N', abnormal_volume_flag: 'N', disposition_measures_flag: 'N', tdr_mp_reduction: 'N', mp_balance_for_securities_financing: '9,420,000', ss_balance_for_securities_financing: '962,000', supervisory_mp_reduction: 'N', supervisory_ss_margin_increment: 'N', total_ss_margin_increment: '0%', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2454', security_type: 'TSE', total_mp_reduction_limit: '8%', prev_mp_balance: '66,780,000', daily_mp_purchase: '2,104,000', daily_mp_redemption: '2,361,000', daily_mp_cash_repayment: '440,000', daily_mp_balance: '66,083,000', margin_trading_limit: '300,000,000', prev_ss_balance: '5,675,000', daily_ss_sale: '315,000', daily_ss_repayment: '358,000', daily_ss_stock_repayment: '66,000', daily_ss_balance: '5,566,000', mp_restriction_code: 'A', ss_restriction_code: 'N', ss_ge_60_percent_mp_flag: 'N', price_volatility_flag: 'Y', equity_concentration_flag: 'N', abnormal_volume_flag: 'N', disposition_measures_flag: 'N', tdr_mp_reduction: 'N', mp_balance_for_securities_financing: '6,880,000', ss_balance_for_securities_financing: '730,000', supervisory_mp_reduction: 'N', supervisory_ss_margin_increment: 'Y', total_ss_margin_increment: '5%', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2881', security_type: 'TSE', total_mp_reduction_limit: '2%', prev_mp_balance: '43,190,000', daily_mp_purchase: '1,250,000', daily_mp_redemption: '1,110,000', daily_mp_cash_repayment: '305,000', daily_mp_balance: '43,025,000', margin_trading_limit: '220,000,000', prev_ss_balance: '3,510,000', daily_ss_sale: '156,000', daily_ss_repayment: '149,000', daily_ss_stock_repayment: '30,000', daily_ss_balance: '3,487,000', mp_restriction_code: 'N', ss_restriction_code: 'N', ss_ge_60_percent_mp_flag: 'N', price_volatility_flag: 'N', equity_concentration_flag: 'N', abnormal_volume_flag: 'N', disposition_measures_flag: 'N', tdr_mp_reduction: 'N', mp_balance_for_securities_financing: '4,503,000', ss_balance_for_securities_financing: '401,000', supervisory_mp_reduction: 'N', supervisory_ss_margin_increment: 'N', total_ss_margin_increment: '0%', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2882', security_type: 'TSE', total_mp_reduction_limit: '2%', prev_mp_balance: '41,870,000', daily_mp_purchase: '1,205,000', daily_mp_redemption: '1,081,000', daily_mp_cash_repayment: '276,000', daily_mp_balance: '41,718,000', margin_trading_limit: '210,000,000', prev_ss_balance: '3,201,000', daily_ss_sale: '140,000', daily_ss_repayment: '132,000', daily_ss_stock_repayment: '26,000', daily_ss_balance: '3,183,000', mp_restriction_code: 'N', ss_restriction_code: 'N', ss_ge_60_percent_mp_flag: 'N', price_volatility_flag: 'N', equity_concentration_flag: 'N', abnormal_volume_flag: 'N', disposition_measures_flag: 'N', tdr_mp_reduction: 'N', mp_balance_for_securities_financing: '4,255,000', ss_balance_for_securities_financing: '372,000', supervisory_mp_reduction: 'N', supervisory_ss_margin_increment: 'N', total_ss_margin_increment: '0%', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2891', security_type: 'TSE', total_mp_reduction_limit: '2%', prev_mp_balance: '37,440,000', daily_mp_purchase: '1,093,000', daily_mp_redemption: '981,000', daily_mp_cash_repayment: '241,000', daily_mp_balance: '37,311,000', margin_trading_limit: '200,000,000', prev_ss_balance: '2,983,000', daily_ss_sale: '128,000', daily_ss_repayment: '121,000', daily_ss_stock_repayment: '23,000', daily_ss_balance: '2,967,000', mp_restriction_code: 'N', ss_restriction_code: 'N', ss_ge_60_percent_mp_flag: 'N', price_volatility_flag: 'N', equity_concentration_flag: 'N', abnormal_volume_flag: 'N', disposition_measures_flag: 'N', tdr_mp_reduction: 'N', mp_balance_for_securities_financing: '3,802,000', ss_balance_for_securities_financing: '351,000', supervisory_mp_reduction: 'N', supervisory_ss_margin_increment: 'N', total_ss_margin_increment: '0%', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2412', security_type: 'TSE', total_mp_reduction_limit: '1%', prev_mp_balance: '18,412,000', daily_mp_purchase: '523,000', daily_mp_redemption: '488,000', daily_mp_cash_repayment: '101,000', daily_mp_balance: '18,346,000', margin_trading_limit: '150,000,000', prev_ss_balance: '1,322,000', daily_ss_sale: '58,000', daily_ss_repayment: '53,000', daily_ss_stock_repayment: '10,000', daily_ss_balance: '1,317,000', mp_restriction_code: 'N', ss_restriction_code: 'N', ss_ge_60_percent_mp_flag: 'N', price_volatility_flag: 'N', equity_concentration_flag: 'N', abnormal_volume_flag: 'N', disposition_measures_flag: 'N', tdr_mp_reduction: 'N', mp_balance_for_securities_financing: '1,942,000', ss_balance_for_securities_financing: '151,000', supervisory_mp_reduction: 'N', supervisory_ss_margin_increment: 'N', total_ss_margin_increment: '0%', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '3045', security_type: 'TSE', total_mp_reduction_limit: '1%', prev_mp_balance: '16,512,000', daily_mp_purchase: '501,000', daily_mp_redemption: '472,000', daily_mp_cash_repayment: '96,000', daily_mp_balance: '16,445,000', margin_trading_limit: '140,000,000', prev_ss_balance: '1,240,000', daily_ss_sale: '54,000', daily_ss_repayment: '48,000', daily_ss_stock_repayment: '10,000', daily_ss_balance: '1,236,000', mp_restriction_code: 'N', ss_restriction_code: 'N', ss_ge_60_percent_mp_flag: 'N', price_volatility_flag: 'N', equity_concentration_flag: 'N', abnormal_volume_flag: 'N', disposition_measures_flag: 'N', tdr_mp_reduction: 'N', mp_balance_for_securities_financing: '1,823,000', ss_balance_for_securities_financing: '144,000', supervisory_mp_reduction: 'N', supervisory_ss_margin_increment: 'N', total_ss_margin_increment: '0%', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
 ];
 
 const CM_SHORT_SALE = [
@@ -961,10 +1031,57 @@ function buildFallbackGetDailyQuotesRows(date: string): DailyQuoteRow[] {
 
 // ── Capital Markets tab components ──────────────────────────────────────────
 
-function CmTableWrapper({ children }: { children: ReactNode }) {
+function CmTableWrapper({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div className="de-data-section">
-      <div className="de-data-table-wrap">{children}</div>
+      <div className={`de-data-table-wrap de-cm-inner-table-wrap${className ? ` ${className}` : ''}`}>{children}</div>
+    </div>
+  );
+}
+
+interface CmPaginationProps {
+  lang: 'zh' | 'en';
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
+function CmPagination({ lang, currentPage, totalPages, onPageChange }: CmPaginationProps) {
+  const zh = lang === 'zh';
+  return (
+    <div className="cp-news-tab-pagination">
+      <button
+        type="button"
+        className="cp-news-tab-page-btn"
+        onClick={() => onPageChange(Math.max(0, currentPage - 1))}
+        disabled={currentPage === 0}
+      >
+        {zh ? '‹ 上一頁' : '‹ Prev'}
+      </button>
+      {getPaginationRange(currentPage, totalPages).map((item) =>
+        typeof item === 'string' ? (
+          <span key={item} className="cp-news-tab-page-ellipsis">…</span>
+        ) : (
+          <button
+            key={item}
+            type="button"
+            className={`cp-news-tab-page-btn${currentPage === item ? ' active' : ''}`}
+            onClick={() => onPageChange(item)}
+            aria-label={`Page ${item + 1}`}
+            aria-current={currentPage === item ? 'page' : undefined}
+          >
+            {item + 1}
+          </button>
+        )
+      )}
+      <button
+        type="button"
+        className="cp-news-tab-page-btn"
+        onClick={() => onPageChange(Math.min(totalPages - 1, currentPage + 1))}
+        disabled={currentPage >= totalPages - 1}
+      >
+        {zh ? '下一頁 ›' : 'Next ›'}
+      </button>
     </div>
   );
 }
@@ -1301,13 +1418,13 @@ function CmDailyQuotesTab({ lang, rowsData, loading, error, onVisibleRowsChange 
 
 // ── Daily Quotes Field Overview Modal ────────────────────────────────────────
 
-interface DqFieldOverviewModalProps {
+interface CmFieldOverviewModalProps {
   lang: 'zh' | 'en';
   isOpen: boolean;
   onClose: () => void;
 }
 
-function DqFieldOverviewModal({ lang, isOpen, onClose }: DqFieldOverviewModalProps) {
+function CmFieldOverviewModal({ lang, isOpen, onClose }: CmFieldOverviewModalProps) {
   const zh = lang === 'zh';
 
   useEffect(() => {
@@ -1350,7 +1467,7 @@ function DqFieldOverviewModal({ lang, isOpen, onClose }: DqFieldOverviewModalPro
               </tr>
             </thead>
             <tbody>
-              {CM_QUOTES_ALL_COLUMNS.map((col) => (
+              {CM_MARGIN_ALL_COLUMNS.map((col) => (
                 <tr key={col.id}>
                   <td>{col.labels.en}</td>
                   <td>{col.labels.zh}</td>
@@ -1507,221 +1624,326 @@ function DailyQuotesTab({ lang, rowsData, loading, error, onVisibleRowsChange }:
   );
 }
 
-function CmMarginTab({ lang }: { lang: 'zh' | 'en' }) {
+interface CmStandardTabProps<T> {
+  lang: 'zh' | 'en';
+  rowsData: T[];
+  loading: boolean;
+  error: string | null;
+}
+
+function CmMarginTab({ lang, rowsData, loading, error }: CmStandardTabProps<CmMarginTransactionRow>) {
   const zh = lang === 'zh';
+  const tableColumns = useMemo(() => CM_MARGIN_ALL_COLUMNS.filter((column) => column.tableVisible === 'Y'), []);
   const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
-    CM_MARGIN,
-    [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.finBuy, (r) => r.finSell, (r) => r.finBal, (r) => r.shoBuy, (r) => r.shoSell, (r) => r.shoBal],
+    rowsData,
+    tableColumns.map((column) => column.value),
   );
+  const [currentPage, setCurrentPage] = useState(0);
+  const pageSize = 50;
+  const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+  const pagedRows = rows.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [rows]);
+
+  if (loading) return <CmTableWrapper><div className="de-empty-state">{zh ? '載入中…' : 'Loading...'}</div></CmTableWrapper>;
+  if (error) return <CmTableWrapper><div className="de-empty-state">{error}</div></CmTableWrapper>;
+
   return (
-    <CmTableWrapper>
-      <table className="de-data-table">
-        <thead>
-          <tr>
-            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
-            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
-            <ThSortFilter label={zh ? '融資買進' : 'Margin Buy'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '融資賣出' : 'Margin Sell'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '融資餘額' : 'Margin Balance'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '融券賣出' : 'Short Sell'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '融券買進' : 'Short Buy'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '融券餘額' : 'Short Balance'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} className="num" />
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.code}>
-              <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{fmtNum(r.finBuy)}</td>
-              <td className="num">{fmtNum(r.finSell)}</td>
-              <td className="num">{fmtNum(r.finBal)}</td>
-              <td className="num">{fmtNum(r.shoBuy)}</td>
-              <td className="num">{fmtNum(r.shoSell)}</td>
-              <td className="num">{fmtNum(r.shoBal)}</td>
+    <div className="de-data-section">
+      <div className="de-data-table-wrap de-cm-inner-table-wrap">
+        <table className="de-data-table de-cm-dq-table">
+          <thead>
+            <tr>
+              {tableColumns.map((column, index) => {
+                const className = [column.className ?? '', column.freezePane === 'Y' ? 'de-cm-dq-col-sticky' : ''].filter(Boolean).join(' ');
+                return (
+                  <ThSortFilter
+                    key={column.id}
+                    label={column.labels[lang]}
+                    colIndex={index}
+                    sortCol={sortCol}
+                    sortDir={sortDir}
+                    onSort={handleSort}
+                    onFilter={handleColFilter}
+                    filterValue={colFilters[index] ?? ''}
+                    showFilter={false}
+                    className={className || undefined}
+                  />
+                );
+              })}
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </CmTableWrapper>
+          </thead>
+          <tbody>
+            {pagedRows.map((row) => (
+              <tr key={`${row.security_code}-${row.data_gen_dt}-${row.data_gen_time}`}>
+                {tableColumns.map((column) => {
+                  const className = [column.className ?? '', column.freezePane === 'Y' ? 'de-cm-dq-col-sticky' : ''].filter(Boolean).join(' ');
+                  const value = column.id === 'security_code' || column.id === 'tsmc_updatetime' ? column.value(row) : fmtNum(column.value(row));
+                  return <td key={column.id} className={className || undefined}>{value}</td>;
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <CmPagination lang={lang} currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+    </div>
   );
 }
 
-function CmShortSaleTab({ lang }: { lang: 'zh' | 'en' }) {
+function CmShortSaleTab({ lang, rowsData, loading, error }: CmStandardTabProps<(typeof CM_SHORT_SALE)[number]>) {
   const zh = lang === 'zh';
   const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
-    CM_SHORT_SALE,
+    rowsData,
     [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.finLimit, (r) => r.finUsed, (r) => r.finRatio, (r) => r.shoLimit, (r) => r.shoUsed, (r) => r.shoRatio],
   );
+  const [currentPage, setCurrentPage] = useState(0);
+  const pageSize = 50;
+  const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+  const pagedRows = rows.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [rows]);
+
+  if (loading) return <CmTableWrapper><div className="de-empty-state">{zh ? '載入中…' : 'Loading...'}</div></CmTableWrapper>;
+  if (error) return <CmTableWrapper><div className="de-empty-state">{error}</div></CmTableWrapper>;
+
   return (
-    <CmTableWrapper>
-      <table className="de-data-table">
-        <thead>
-          <tr>
-            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
-            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
-            <ThSortFilter label={zh ? '融資限額' : 'Margin Limit'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '融資已用' : 'Margin Used'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '融資使用率' : 'Margin Util.'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '融券限額' : 'Short Limit'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '融券已用' : 'Short Used'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '融券使用率' : 'Short Util.'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} className="num" />
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.code}>
-              <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{fmtNum(r.finLimit)}</td>
-              <td className="num">{fmtNum(r.finUsed)}</td>
-              <td className={`num${r.finRatio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.finRatio)}</td>
-              <td className="num">{fmtNum(r.shoLimit)}</td>
-              <td className="num">{fmtNum(r.shoUsed)}</td>
-              <td className={`num${r.shoRatio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.shoRatio)}</td>
+    <div className="de-data-section">
+      <div className="de-data-table-wrap de-cm-inner-table-wrap">
+        <table className="de-data-table">
+          <thead>
+            <tr>
+              <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+              <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+              <ThSortFilter label={zh ? '融資限額' : 'Margin Limit'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
+              <ThSortFilter label={zh ? '融資已用' : 'Margin Used'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+              <ThSortFilter label={zh ? '融資使用率' : 'Margin Util.'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
+              <ThSortFilter label={zh ? '融券限額' : 'Short Limit'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
+              <ThSortFilter label={zh ? '融券已用' : 'Short Used'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} className="num" />
+              <ThSortFilter label={zh ? '融券使用率' : 'Short Util.'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} className="num" />
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </CmTableWrapper>
+          </thead>
+          <tbody>
+            {pagedRows.map((r) => (
+              <tr key={r.code}>
+                <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
+                <td className="num">{fmtNum(r.finLimit)}</td>
+                <td className="num">{fmtNum(r.finUsed)}</td>
+                <td className={`num${r.finRatio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.finRatio)}</td>
+                <td className="num">{fmtNum(r.shoLimit)}</td>
+                <td className="num">{fmtNum(r.shoUsed)}</td>
+                <td className={`num${r.shoRatio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.shoRatio)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <CmPagination lang={lang} currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+    </div>
   );
 }
 
-function CmExDividendTab({ lang }: { lang: 'zh' | 'en' }) {
+function CmExDividendTab({ lang, rowsData, loading, error }: CmStandardTabProps<(typeof CM_EX_DIVIDEND)[number]>) {
   const zh = lang === 'zh';
   const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
-    CM_EX_DIVIDEND,
+    rowsData,
     [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.exDivDate, (r) => r.divVal, (r) => r.exRightDate, (r) => r.rightVal, (r) => r.listDate],
   );
+  const [currentPage, setCurrentPage] = useState(0);
+  const pageSize = 50;
+  const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+  const pagedRows = rows.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [rows]);
+
+  if (loading) return <CmTableWrapper><div className="de-empty-state">{zh ? '載入中…' : 'Loading...'}</div></CmTableWrapper>;
+  if (error) return <CmTableWrapper><div className="de-empty-state">{error}</div></CmTableWrapper>;
+
   return (
-    <CmTableWrapper>
-      <table className="de-data-table">
-        <thead>
-          <tr>
-            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
-            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
-            <ThSortFilter label={zh ? '除息日' : 'Ex-Div Date'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} />
-            <ThSortFilter label={zh ? '息值(元)' : 'Div. Value'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '除權日' : 'Ex-Right Date'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} />
-            <ThSortFilter label={zh ? '權值' : 'Right Value'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '上市日期' : 'Listing Date'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} />
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.code}>
-              <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td>{r.exDivDate}</td>
-              <td className="num">{fmtNum(r.divVal)}</td>
-              <td className="muted">{r.exRightDate}</td>
-              <td className="num muted">{r.rightVal}</td>
-              <td className="muted">{r.listDate}</td>
+    <div className="de-data-section">
+      <div className="de-data-table-wrap de-cm-inner-table-wrap">
+        <table className="de-data-table">
+          <thead>
+            <tr>
+              <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+              <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+              <ThSortFilter label={zh ? '除息日' : 'Ex-Div Date'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} />
+              <ThSortFilter label={zh ? '息值(元)' : 'Div. Value'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+              <ThSortFilter label={zh ? '除權日' : 'Ex-Right Date'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} />
+              <ThSortFilter label={zh ? '權值' : 'Right Value'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
+              <ThSortFilter label={zh ? '上市日期' : 'Listing Date'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} />
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </CmTableWrapper>
+          </thead>
+          <tbody>
+            {pagedRows.map((r) => (
+              <tr key={r.code}>
+                <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
+                <td>{r.exDivDate}</td>
+                <td className="num">{fmtNum(r.divVal)}</td>
+                <td className="muted">{r.exRightDate}</td>
+                <td className="num muted">{r.rightVal}</td>
+                <td className="muted">{r.listDate}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <CmPagination lang={lang} currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+    </div>
   );
 }
 
-function CmForeignTab({ lang }: { lang: 'zh' | 'en' }) {
+function CmForeignTab({ lang, rowsData, loading, error }: CmStandardTabProps<(typeof CM_FOREIGN)[number]>) {
   const zh = lang === 'zh';
   const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
-    CM_FOREIGN,
+    rowsData,
     [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.buy, (r) => r.sell, (r) => r.shares, (r) => r.ratio],
   );
+  const [currentPage, setCurrentPage] = useState(0);
+  const pageSize = 50;
+  const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+  const pagedRows = rows.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [rows]);
+
+  if (loading) return <CmTableWrapper><div className="de-empty-state">{zh ? '載入中…' : 'Loading...'}</div></CmTableWrapper>;
+  if (error) return <CmTableWrapper><div className="de-empty-state">{error}</div></CmTableWrapper>;
+
   return (
-    <CmTableWrapper>
-      <table className="de-data-table">
-        <thead>
-          <tr>
-            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
-            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
-            <ThSortFilter label={zh ? '外資買進(股)' : 'Foreign Buy'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '外資賣出(股)' : 'Foreign Sell'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '外資持股股數' : 'Foreign Holdings'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '持股比例' : 'Holding %'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.code}>
-              <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{fmtNum(r.buy)}</td>
-              <td className="num">{fmtNum(r.sell)}</td>
-              <td className="num">{fmtNum(r.shares)}</td>
-              <td className={`num${r.ratio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.ratio)}</td>
+    <div className="de-data-section">
+      <div className="de-data-table-wrap de-cm-inner-table-wrap">
+        <table className="de-data-table">
+          <thead>
+            <tr>
+              <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+              <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+              <ThSortFilter label={zh ? '外資買進(股)' : 'Foreign Buy'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
+              <ThSortFilter label={zh ? '外資賣出(股)' : 'Foreign Sell'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+              <ThSortFilter label={zh ? '外資持股股數' : 'Foreign Holdings'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
+              <ThSortFilter label={zh ? '持股比例' : 'Holding %'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </CmTableWrapper>
+          </thead>
+          <tbody>
+            {pagedRows.map((r) => (
+              <tr key={r.code}>
+                <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
+                <td className="num">{fmtNum(r.buy)}</td>
+                <td className="num">{fmtNum(r.sell)}</td>
+                <td className="num">{fmtNum(r.shares)}</td>
+                <td className={`num${r.ratio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.ratio)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <CmPagination lang={lang} currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+    </div>
   );
 }
 
-function CmPriceLimitTab({ lang }: { lang: 'zh' | 'en' }) {
+function CmPriceLimitTab({ lang, rowsData, loading, error }: CmStandardTabProps<(typeof CM_PRICE_LIMIT)[number]>) {
   const zh = lang === 'zh';
   const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
-    CM_PRICE_LIMIT,
+    rowsData,
     [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.refPrice, (r) => r.ceiling, (r) => r.floor, (r) => r.pct],
   );
+  const [currentPage, setCurrentPage] = useState(0);
+  const pageSize = 50;
+  const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+  const pagedRows = rows.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [rows]);
+
+  if (loading) return <CmTableWrapper><div className="de-empty-state">{zh ? '載入中…' : 'Loading...'}</div></CmTableWrapper>;
+  if (error) return <CmTableWrapper><div className="de-empty-state">{error}</div></CmTableWrapper>;
+
   return (
-    <CmTableWrapper>
-      <table className="de-data-table">
-        <thead>
-          <tr>
-            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
-            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
-            <ThSortFilter label={zh ? '參考收盤價' : 'Ref. Price'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '漲停價格' : 'Upper Limit'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '跌停價格' : 'Lower Limit'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '漲跌幅限制' : 'Limit %'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.code}>
-              <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className="num">{fmtNum(r.refPrice)}</td>
-              <td className="num">{fmtNum(r.ceiling)}</td>
-              <td className="num">{fmtNum(r.floor)}</td>
-              <td className={`num${r.pct.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.pct)}</td>
+    <div className="de-data-section">
+      <div className="de-data-table-wrap de-cm-inner-table-wrap">
+        <table className="de-data-table">
+          <thead>
+            <tr>
+              <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+              <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+              <ThSortFilter label={zh ? '參考收盤價' : 'Ref. Price'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
+              <ThSortFilter label={zh ? '漲停價格' : 'Upper Limit'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+              <ThSortFilter label={zh ? '跌停價格' : 'Lower Limit'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
+              <ThSortFilter label={zh ? '漲跌幅限制' : 'Limit %'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </CmTableWrapper>
+          </thead>
+          <tbody>
+            {pagedRows.map((r) => (
+              <tr key={r.code}>
+                <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
+                <td className="num">{fmtNum(r.refPrice)}</td>
+                <td className="num">{fmtNum(r.ceiling)}</td>
+                <td className="num">{fmtNum(r.floor)}</td>
+                <td className={`num${r.pct.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.pct)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <CmPagination lang={lang} currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+    </div>
   );
 }
 
-function CmPeRatioTab({ lang }: { lang: 'zh' | 'en' }) {
+function CmPeRatioTab({ lang, rowsData, loading, error }: CmStandardTabProps<(typeof CM_PE_RATIO)[number]>) {
   const zh = lang === 'zh';
   const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
-    CM_PE_RATIO,
+    rowsData,
     [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.yield, (r) => r.pe, (r) => r.pb],
   );
+  const [currentPage, setCurrentPage] = useState(0);
+  const pageSize = 50;
+  const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+  const pagedRows = rows.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [rows]);
+
+  if (loading) return <CmTableWrapper><div className="de-empty-state">{zh ? '載入中…' : 'Loading...'}</div></CmTableWrapper>;
+  if (error) return <CmTableWrapper><div className="de-empty-state">{error}</div></CmTableWrapper>;
+
   return (
-    <CmTableWrapper>
-      <table className="de-data-table">
-        <thead>
-          <tr>
-            <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
-            <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
-            <ThSortFilter label={zh ? '殖利率(%)' : 'Dividend Yield (%)'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '本益比' : 'P/E Ratio'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
-            <ThSortFilter label={zh ? '股價淨值比' : 'P/B Ratio'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.code}>
-              <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-              <td className={`num${r.yield.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.yield)}</td>
-              <td className="num">{fmtNum(r.pe)}</td>
-              <td className="num">{fmtNum(r.pb)}</td>
+    <div className="de-data-section">
+      <div className="de-data-table-wrap de-cm-inner-table-wrap">
+        <table className="de-data-table">
+          <thead>
+            <tr>
+              <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
+              <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
+              <ThSortFilter label={zh ? '殖利率(%)' : 'Dividend Yield (%)'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
+              <ThSortFilter label={zh ? '本益比' : 'P/E Ratio'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
+              <ThSortFilter label={zh ? '股價淨值比' : 'P/B Ratio'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </CmTableWrapper>
+          </thead>
+          <tbody>
+            {pagedRows.map((r) => (
+              <tr key={r.code}>
+                <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
+                <td className={`num${r.yield.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.yield)}</td>
+                <td className="num">{fmtNum(r.pe)}</td>
+                <td className="num">{fmtNum(r.pb)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <CmPagination lang={lang} currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+    </div>
   );
 }
 
@@ -1985,6 +2207,7 @@ function CmDownloadCsvModal({
 interface CapitalMarketsCsvOptions {
   statisticsForDayTradingRows?: CmDailyQuoteRow[];
   dailyQuotesRows?: DailyQuoteRow[];
+  marginRows?: CmMarginTransactionRow[];
 }
 
 function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: CapitalMarketsCsvOptions = {}) {
@@ -2007,11 +2230,46 @@ function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: Ca
         rows.map((row) => csvColumns.map((column) => column.value(row))));
       break;
     }
-    case 'margin':
-      downloadCSV(zh ? '融資融券餘額.csv' : 'margin-transaction.csv',
-        zh ? ['股票代號','名稱','融資買進','融資賣出','融資餘額','融券賣出','融券買進','融券餘額'] : ['Code','Name','Margin Buy','Margin Sell','Margin Balance','Short Sell','Short Buy','Short Balance'],
-        CM_MARGIN.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.finBuy, r.finSell, r.finBal, r.shoBuy, r.shoSell, r.shoBal]));
+    case 'margin': {
+      const rows = options.marginRows ?? [];
+      const csvColumns: Array<{ id: keyof CmMarginTransactionRow; labels: { zh: string; en: string } }> = [
+        { id: 'security_code', labels: { zh: '證券代號', en: 'Code' } },
+        { id: 'security_type', labels: { zh: '證券類', en: 'Security Type' } },
+        { id: 'total_mp_reduction_limit', labels: { zh: '降低融資比率(總計)', en: 'Total Reduction of Margin Purchase Limit' } },
+        { id: 'prev_mp_balance', labels: { zh: '昨日融資餘額', en: 'Last Day Balance of Margin Purchase' } },
+        { id: 'daily_mp_purchase', labels: { zh: '今日融資買進', en: 'New Margin Purchase' } },
+        { id: 'daily_mp_redemption', labels: { zh: '今日融資賣出', en: 'Redemption of Margin Purchase' } },
+        { id: 'daily_mp_cash_repayment', labels: { zh: '今日現金償還', en: 'Outstanding of Margin Purchase' } },
+        { id: 'daily_mp_balance', labels: { zh: '今日融資餘額', en: 'Balance of Margin Purchase' } },
+        { id: 'margin_trading_limit', labels: { zh: '信用交易限額', en: 'Margin Trading Limit' } },
+        { id: 'prev_ss_balance', labels: { zh: '昨日融券餘額', en: 'Last Day Balance of Short Sale' } },
+        { id: 'daily_ss_sale', labels: { zh: '今日融券賣出', en: 'Redemption of Short Sale' } },
+        { id: 'daily_ss_repayment', labels: { zh: '今日融券買進', en: 'New Short Sale' } },
+        { id: 'daily_ss_stock_repayment', labels: { zh: '今日現券償還', en: 'Outstanding of Short Sale' } },
+        { id: 'daily_ss_balance', labels: { zh: '今日融券餘額', en: 'Balance of Short Sale' } },
+        { id: 'mp_restriction_code', labels: { zh: '融資限制碼', en: 'Suspension of Margin Purchase' } },
+        { id: 'ss_restriction_code', labels: { zh: '融券限制碼', en: 'Suspension of Short Sale' } },
+        { id: 'ss_ge_60_percent_mp_flag', labels: { zh: '融券餘額≧融資餘額60%', en: 'Remain of Short Sale ≧ 60% of Remain of margin' } },
+        { id: 'price_volatility_flag', labels: { zh: '股價波動過度劇烈註記', en: 'Short Sale is too Volatile' } },
+        { id: 'equity_concentration_flag', labels: { zh: '股權過度集中註記', en: 'Equity Ownership is overly Concentrated' } },
+        { id: 'abnormal_volume_flag', labels: { zh: '成交量過度異常', en: 'Trading Volume is excessively Abnormal' } },
+        { id: 'disposition_measures_flag', labels: { zh: '監視第二次處置註記', en: 'Stock under Disposition Measures two or more times (inclusive)' } },
+        { id: 'tdr_mp_reduction', labels: { zh: 'tdr兌回異常降低融資比率', en: 'Margin Purchase Reduction' } },
+        { id: 'mp_balance_for_securities_financing', labels: { zh: '融資餘額中屬證金部分', en: 'Balance of Margin Purchase belonging to Securities' } },
+        { id: 'ss_balance_for_securities_financing', labels: { zh: '融券餘額中屬證金部分', en: 'Balance of Short Sale belonging to Securities' } },
+        { id: 'supervisory_mp_reduction', labels: { zh: '監視業務督導會報降低融資比率', en: 'Margin Purchase Reduction of Margin Purchase Leverage Limit' } },
+        { id: 'supervisory_ss_margin_increment', labels: { zh: '監視業務督導會報提高融券保證金成數', en: 'Increment of Short Sale Margin Requirement' } },
+        { id: 'total_ss_margin_increment', labels: { zh: '提高融券保證金成數(總計)', en: 'Total of Short Sale Margin Requirement Increment' } },
+        { id: 'data_gen_dt', labels: { zh: '資料產生日期', en: 'Data Generation Date' } },
+        { id: 'data_gen_time', labels: { zh: '資料產生時間', en: 'Data Generation Time' } },
+      ];
+      downloadCSV(
+        zh ? '融資融券餘額.csv' : 'margin-transaction.csv',
+        csvColumns.map((column) => column.labels[lang]),
+        rows.map((row) => csvColumns.map((column) => row[column.id] ?? '')),
+      );
       break;
+    }
     case 'short-sale':
       downloadCSV(zh ? '信用額度總量管制餘額.csv' : 'short-sale-balances.csv',
         zh ? ['股票代號','名稱','融資限額','融資已用','融資使用率','融券限額','融券已用','融券使用率'] : ['Code','Name','Margin Limit','Margin Used','Margin Util.','Short Limit','Short Used','Short Util.'],
@@ -2068,6 +2326,26 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   const [getDailyQuotesVisibleRows, setGetDailyQuotesVisibleRows] = useState<DailyQuoteRow[]>([]);
   const [getDailyQuotesLoading, setGetDailyQuotesLoading] = useState(false);
   const [getDailyQuotesError, setGetDailyQuotesError] = useState<string | null>(null);
+  // margin tab state
+  const [marginRows, setMarginRows] = useState<CmMarginTransactionRow[]>([]);
+  const [marginLoading, setMarginLoading] = useState(false);
+  const [marginError, setMarginError] = useState<string | null>(null);
+  // other inner table states
+  const [shortSaleRows, setShortSaleRows] = useState<Array<(typeof CM_SHORT_SALE)[number]>>([]);
+  const [shortSaleLoading, setShortSaleLoading] = useState(false);
+  const [shortSaleError, setShortSaleError] = useState<string | null>(null);
+  const [exDividendRows, setExDividendRows] = useState<Array<(typeof CM_EX_DIVIDEND)[number]>>([]);
+  const [exDividendLoading, setExDividendLoading] = useState(false);
+  const [exDividendError, setExDividendError] = useState<string | null>(null);
+  const [foreignRows, setForeignRows] = useState<Array<(typeof CM_FOREIGN)[number]>>([]);
+  const [foreignLoading, setForeignLoading] = useState(false);
+  const [foreignError, setForeignError] = useState<string | null>(null);
+  const [priceLimitRows, setPriceLimitRows] = useState<Array<(typeof CM_PRICE_LIMIT)[number]>>([]);
+  const [priceLimitLoading, setPriceLimitLoading] = useState(false);
+  const [priceLimitError, setPriceLimitError] = useState<string | null>(null);
+  const [peRatioRows, setPeRatioRows] = useState<Array<(typeof CM_PE_RATIO)[number]>>([]);
+  const [peRatioLoading, setPeRatioLoading] = useState(false);
+  const [peRatioError, setPeRatioError] = useState<string | null>(null);
   const [isFieldOverviewOpen, setIsFieldOverviewOpen] = useState(false);
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [downloadStartDate, setDownloadStartDate] = useState(defaultQueryDate);
@@ -2117,6 +2395,90 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     }
   }, [zh]);
 
+  const queryMarginTransaction = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
+    setMarginLoading(true);
+    setMarginError(null);
+    try {
+      const rows = await fetchMarginTransaction(nextStartDate, nextEndDate, nextSecurityCode);
+      setMarginRows(rows);
+    } catch (error) {
+      setMarginError(error instanceof Error ? error.message : (zh ? '資料讀取失敗' : 'Failed to load data'));
+      setMarginRows([]);
+    } finally {
+      setMarginLoading(false);
+    }
+  }, [zh]);
+
+  const queryDailyShortSaleBalances = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
+    setShortSaleLoading(true);
+    setShortSaleError(null);
+    try {
+      const rows = await fetchDailyShortSaleBalances(nextStartDate, nextEndDate, nextSecurityCode);
+      setShortSaleRows(rows);
+    } catch (error) {
+      setShortSaleError(error instanceof Error ? error.message : (zh ? '資料讀取失敗' : 'Failed to load data'));
+      setShortSaleRows([]);
+    } finally {
+      setShortSaleLoading(false);
+    }
+  }, [zh]);
+
+  const queryExRightDividendListDelist = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
+    setExDividendLoading(true);
+    setExDividendError(null);
+    try {
+      const rows = await fetchExRightDividendListDelist(nextStartDate, nextEndDate, nextSecurityCode);
+      setExDividendRows(rows);
+    } catch (error) {
+      setExDividendError(error instanceof Error ? error.message : (zh ? '資料讀取失敗' : 'Failed to load data'));
+      setExDividendRows([]);
+    } finally {
+      setExDividendLoading(false);
+    }
+  }, [zh]);
+
+  const queryInvestedAmtOfForeign = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
+    setForeignLoading(true);
+    setForeignError(null);
+    try {
+      const rows = await fetchInvestedAmtOfForeign(nextStartDate, nextEndDate, nextSecurityCode);
+      setForeignRows(rows);
+    } catch (error) {
+      setForeignError(error instanceof Error ? error.message : (zh ? '資料讀取失敗' : 'Failed to load data'));
+      setForeignRows([]);
+    } finally {
+      setForeignLoading(false);
+    }
+  }, [zh]);
+
+  const queryPriceVariationLimit = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
+    setPriceLimitLoading(true);
+    setPriceLimitError(null);
+    try {
+      const rows = await fetchPriceVariationLimit(nextStartDate, nextEndDate, nextSecurityCode);
+      setPriceLimitRows(rows);
+    } catch (error) {
+      setPriceLimitError(error instanceof Error ? error.message : (zh ? '資料讀取失敗' : 'Failed to load data'));
+      setPriceLimitRows([]);
+    } finally {
+      setPriceLimitLoading(false);
+    }
+  }, [zh]);
+
+  const queryPeRatioDividendYieldPbRatio = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
+    setPeRatioLoading(true);
+    setPeRatioError(null);
+    try {
+      const rows = await fetchPeRatioDividendYieldPbRatio(nextStartDate, nextEndDate, nextSecurityCode);
+      setPeRatioRows(rows);
+    } catch (error) {
+      setPeRatioError(error instanceof Error ? error.message : (zh ? '資料讀取失敗' : 'Failed to load data'));
+      setPeRatioRows([]);
+    } finally {
+      setPeRatioLoading(false);
+    }
+  }, [zh]);
+
   useEffect(() => {
     fetchSecurityCodeOptions()
       .then((items) => {
@@ -2128,16 +2490,45 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   }, []);
 
   useEffect(() => {
-    if (activeCmTab !== 'day-trading') return;
-    queryDailyQuotes(startDate, endDate, securityCode);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeCmTab, queryDailyQuotes]);
-
-  useEffect(() => {
-    if (activeCmTab !== 'daily-quotes') return;
-    queryGetDailyQuotes(startDate, endDate, securityCode);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeCmTab, queryGetDailyQuotes]);
+    switch (activeCmTab) {
+      case 'daily-quotes':
+        queryGetDailyQuotes(startDate, endDate, securityCode);
+        break;
+      case 'day-trading':
+        queryDailyQuotes(startDate, endDate, securityCode);
+        break;
+      case 'margin':
+        queryMarginTransaction(startDate, endDate, securityCode);
+        break;
+      case 'short-sale':
+        queryDailyShortSaleBalances(startDate, endDate, securityCode);
+        break;
+      case 'ex-dividend':
+        queryExRightDividendListDelist(startDate, endDate, securityCode);
+        break;
+      case 'foreign-investors':
+        queryInvestedAmtOfForeign(startDate, endDate, securityCode);
+        break;
+      case 'price-limit':
+        queryPriceVariationLimit(startDate, endDate, securityCode);
+        break;
+      case 'pe-ratio':
+        queryPeRatioDividendYieldPbRatio(startDate, endDate, securityCode);
+        break;
+      default:
+        break;
+    }
+  }, [
+    activeCmTab,
+    queryDailyQuotes,
+    queryDailyShortSaleBalances,
+    queryExRightDividendListDelist,
+    queryGetDailyQuotes,
+    queryInvestedAmtOfForeign,
+    queryMarginTransaction,
+    queryPeRatioDividendYieldPbRatio,
+    queryPriceVariationLimit,
+  ]);
 
   const clampToAllowedDate = useCallback((value: string): string => {
     if (value < minAllowedDate) return minAllowedDate;
@@ -2146,10 +2537,33 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   }, [defaultQueryDate, minAllowedDate]);
 
   function handleSearch() {
-    if (activeCmTab === 'daily-quotes') {
-      queryGetDailyQuotes(startDate, endDate, securityCode);
-    } else {
-      queryDailyQuotes(startDate, endDate, securityCode);
+    switch (activeCmTab) {
+      case 'daily-quotes':
+        queryGetDailyQuotes(startDate, endDate, securityCode);
+        break;
+      case 'day-trading':
+        queryDailyQuotes(startDate, endDate, securityCode);
+        break;
+      case 'margin':
+        queryMarginTransaction(startDate, endDate, securityCode);
+        break;
+      case 'short-sale':
+        queryDailyShortSaleBalances(startDate, endDate, securityCode);
+        break;
+      case 'ex-dividend':
+        queryExRightDividendListDelist(startDate, endDate, securityCode);
+        break;
+      case 'foreign-investors':
+        queryInvestedAmtOfForeign(startDate, endDate, securityCode);
+        break;
+      case 'price-limit':
+        queryPriceVariationLimit(startDate, endDate, securityCode);
+        break;
+      case 'pe-ratio':
+        queryPeRatioDividendYieldPbRatio(startDate, endDate, securityCode);
+        break;
+      default:
+        break;
     }
   }
 
@@ -2157,10 +2571,33 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     setSecurityCode('');
     setStartDate(defaultQueryDate);
     setEndDate(defaultQueryDate);
-    if (activeCmTab === 'daily-quotes') {
-      queryGetDailyQuotes(defaultQueryDate, defaultQueryDate, '');
-    } else {
-      queryDailyQuotes(defaultQueryDate, defaultQueryDate, '');
+    switch (activeCmTab) {
+      case 'daily-quotes':
+        queryGetDailyQuotes(defaultQueryDate, defaultQueryDate, '');
+        break;
+      case 'day-trading':
+        queryDailyQuotes(defaultQueryDate, defaultQueryDate, '');
+        break;
+      case 'margin':
+        queryMarginTransaction(defaultQueryDate, defaultQueryDate, '');
+        break;
+      case 'short-sale':
+        queryDailyShortSaleBalances(defaultQueryDate, defaultQueryDate, '');
+        break;
+      case 'ex-dividend':
+        queryExRightDividendListDelist(defaultQueryDate, defaultQueryDate, '');
+        break;
+      case 'foreign-investors':
+        queryInvestedAmtOfForeign(defaultQueryDate, defaultQueryDate, '');
+        break;
+      case 'price-limit':
+        queryPriceVariationLimit(defaultQueryDate, defaultQueryDate, '');
+        break;
+      case 'pe-ratio':
+        queryPeRatioDividendYieldPbRatio(defaultQueryDate, defaultQueryDate, '');
+        break;
+      default:
+        break;
     }
   }
 
@@ -2245,6 +2682,9 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
       if (activeCmTab === 'daily-quotes') {
         const downloadRows = await fetchDailyQuotes(downloadStartDate, downloadEndDate, securityCode);
         downloadCapitalMarketsCSV('daily-quotes', lang, { dailyQuotesRows: downloadRows });
+      } else if (activeCmTab === 'margin') {
+        const downloadRows = await fetchMarginTransaction(downloadStartDate, downloadEndDate, securityCode);
+        downloadCapitalMarketsCSV('margin', lang, { marginRows: downloadRows });
       } else {
         let downloadRows = dailyQuoteVisibleRows;
         if (activeCmTab === 'day-trading') {
@@ -2265,7 +2705,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   const minEndDate = securityCode ? startDate : minAllowedDateNoCode;
   const maxEndDate = defaultQueryDate;
 
-  const showFilterBar = activeCmTab === 'daily-quotes' || activeCmTab === 'day-trading';
+  const showFilterBar = true;
 
   return (
     <>
@@ -2311,7 +2751,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
             )}
           </div>
           <div className="de-cm-content-toolbar-right">
-            {activeCmTab === 'daily-quotes' && (
+            {activeCmTab === 'margin' && (
               <button
                 type="button"
                 className="de-news-download-btn de-gov-csv-btn de-dq-field-overview-btn"
@@ -2350,12 +2790,12 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
             onVisibleRowsChange={setDailyQuoteVisibleRows}
           />
         )}
-        {activeCmTab === 'margin'            && <CmMarginTab lang={lang} />}
-        {activeCmTab === 'short-sale'        && <CmShortSaleTab lang={lang} />}
-        {activeCmTab === 'ex-dividend'       && <CmExDividendTab lang={lang} />}
-        {activeCmTab === 'foreign-investors' && <CmForeignTab lang={lang} />}
-        {activeCmTab === 'price-limit'       && <CmPriceLimitTab lang={lang} />}
-        {activeCmTab === 'pe-ratio'          && <CmPeRatioTab lang={lang} />}
+        {activeCmTab === 'margin'            && <CmMarginTab lang={lang} rowsData={marginRows} loading={marginLoading} error={marginError} />}
+        {activeCmTab === 'short-sale'        && <CmShortSaleTab lang={lang} rowsData={shortSaleRows} loading={shortSaleLoading} error={shortSaleError} />}
+        {activeCmTab === 'ex-dividend'       && <CmExDividendTab lang={lang} rowsData={exDividendRows} loading={exDividendLoading} error={exDividendError} />}
+        {activeCmTab === 'foreign-investors' && <CmForeignTab lang={lang} rowsData={foreignRows} loading={foreignLoading} error={foreignError} />}
+        {activeCmTab === 'price-limit'       && <CmPriceLimitTab lang={lang} rowsData={priceLimitRows} loading={priceLimitLoading} error={priceLimitError} />}
+        {activeCmTab === 'pe-ratio'          && <CmPeRatioTab lang={lang} rowsData={peRatioRows} loading={peRatioLoading} error={peRatioError} />}
         <CmDownloadCsvModal
           lang={lang}
           isOpen={isDownloadModalOpen}
@@ -2369,7 +2809,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
           onClose={() => setIsDownloadModalOpen(false)}
           onDownload={handleDownloadFromModal}
         />
-        <DqFieldOverviewModal
+        <CmFieldOverviewModal
           lang={lang}
           isOpen={isFieldOverviewOpen}
           onClose={() => setIsFieldOverviewOpen(false)}
@@ -2428,6 +2868,43 @@ function buildFallbackDailyQuotesRows(date: string): CmDailyQuoteRow[] {
     day_trading_value_of_buys: item.day_trading_value_of_buys,
     day_trading_value_of_sells: item.trading_value_of_sells,
   }));
+}
+
+function filterRowsBySecurityCode<T extends { code?: string; security_code?: string }>(rows: T[], securityCode: string): T[] {
+  if (!securityCode) return rows;
+  return rows.filter((row) => (row.security_code ?? row.code ?? '') === securityCode);
+}
+
+function buildFallbackMarginRows(date: string): CmMarginTransactionRow[] {
+  return CM_MARGIN_MOCK_DATA.map((row) => ({ ...row, data_gen_dt: date.replace(/-/g, '') }));
+}
+
+async function fetchCapitalMarketRows<T>(
+  endpoint: string,
+  startDate: string,
+  endDate: string,
+  securityCode: string,
+  fallbackRows: T[],
+): Promise<T[]> {
+  try {
+    const url = new URL(endpoint, window.location.origin);
+    url.searchParams.set('startDate', startDate);
+    url.searchParams.set('endDate', endDate);
+    if (securityCode) {
+      url.searchParams.set('securityCode', securityCode);
+    }
+    const res = await fetch(url.toString(), { cache: 'no-store' });
+    if (!res.ok) {
+      return fallbackRows;
+    }
+    const data = (await res.json()) as T[] | { items?: T[]; data?: T[]; rows?: T[] };
+    if (Array.isArray(data)) {
+      return data;
+    }
+    return data.items ?? data.data ?? data.rows ?? fallbackRows;
+  } catch {
+    return fallbackRows;
+  }
 }
 
 async function fetchSecurityCodeOptions(): Promise<string[]> {
@@ -2509,6 +2986,36 @@ async function fetchDailyQuotes(startDate: string, endDate: string, securityCode
   } catch {
     return buildFallbackGetDailyQuotesRows(endDate);
   }
+}
+
+async function fetchMarginTransaction(startDate: string, endDate: string, securityCode: string): Promise<CmMarginTransactionRow[]> {
+  const fallbackRows = filterRowsBySecurityCode(buildFallbackMarginRows(endDate), securityCode);
+  return fetchCapitalMarketRows<CmMarginTransactionRow>('/getMarginTransaction', startDate, endDate, securityCode, fallbackRows);
+}
+
+async function fetchDailyShortSaleBalances(startDate: string, endDate: string, securityCode: string): Promise<Array<(typeof CM_SHORT_SALE)[number]>> {
+  const fallbackRows = filterRowsBySecurityCode(CM_SHORT_SALE, securityCode);
+  return fetchCapitalMarketRows<(typeof CM_SHORT_SALE)[number]>('/getDailyShortSaleBalances', startDate, endDate, securityCode, fallbackRows);
+}
+
+async function fetchExRightDividendListDelist(startDate: string, endDate: string, securityCode: string): Promise<Array<(typeof CM_EX_DIVIDEND)[number]>> {
+  const fallbackRows = filterRowsBySecurityCode(CM_EX_DIVIDEND, securityCode);
+  return fetchCapitalMarketRows<(typeof CM_EX_DIVIDEND)[number]>('/getExRightDividendListDelist', startDate, endDate, securityCode, fallbackRows);
+}
+
+async function fetchInvestedAmtOfForeign(startDate: string, endDate: string, securityCode: string): Promise<Array<(typeof CM_FOREIGN)[number]>> {
+  const fallbackRows = filterRowsBySecurityCode(CM_FOREIGN, securityCode);
+  return fetchCapitalMarketRows<(typeof CM_FOREIGN)[number]>('/getInvestedAmtOfForeign', startDate, endDate, securityCode, fallbackRows);
+}
+
+async function fetchPriceVariationLimit(startDate: string, endDate: string, securityCode: string): Promise<Array<(typeof CM_PRICE_LIMIT)[number]>> {
+  const fallbackRows = filterRowsBySecurityCode(CM_PRICE_LIMIT, securityCode);
+  return fetchCapitalMarketRows<(typeof CM_PRICE_LIMIT)[number]>('/getPriceVariationLimit', startDate, endDate, securityCode, fallbackRows);
+}
+
+async function fetchPeRatioDividendYieldPbRatio(startDate: string, endDate: string, securityCode: string): Promise<Array<(typeof CM_PE_RATIO)[number]>> {
+  const fallbackRows = filterRowsBySecurityCode(CM_PE_RATIO, securityCode);
+  return fetchCapitalMarketRows<(typeof CM_PE_RATIO)[number]>('/getPeRatioDividendYieldPbRatio', startDate, endDate, securityCode, fallbackRows);
 }
 
 async function fetchGovRows<T>(endpoint: string): Promise<T[]> {
