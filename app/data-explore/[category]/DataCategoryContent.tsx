@@ -2947,12 +2947,14 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
             )}
           </div>
           <div className="de-cm-content-toolbar-right">
-            {(activeCmTab === 'margin' || activeCmTab === 'short-sale' || activeCmTab === 'ex-dividend') && (
+            {(activeCmTab === 'daily-quotes' || activeCmTab === 'margin' || activeCmTab === 'short-sale' || activeCmTab === 'ex-dividend') && (
               <button
                 type="button"
                 className="de-news-download-btn de-gov-csv-btn de-dq-field-overview-btn"
                 onClick={() => {
-                  if (activeCmTab === 'short-sale') {
+                  if (activeCmTab === 'daily-quotes') {
+                    setFieldOverviewColumns(CM_QUOTES_ALL_COLUMNS);
+                  } else if (activeCmTab === 'short-sale') {
                     setFieldOverviewColumns(CM_DAILY_SHORT_SALE_ALL_COLUMNS);
                   } else if (activeCmTab === 'ex-dividend') {
                     setFieldOverviewColumns(CM_EX_RIGHT_DIVIDEND_ALL_COLUMNS);
@@ -3096,9 +3098,7 @@ async function fetchCapitalMarketRows<T>(
     const url = new URL(endpoint, window.location.origin);
     url.searchParams.set('startDate', startDate);
     url.searchParams.set('endDate', endDate);
-    if (securityCode) {
-      url.searchParams.set('securityCode', securityCode);
-    }
+    url.searchParams.set('securityCode', securityCode?.trim() ?? '');
     const res = await fetch(url.toString(), { cache: 'no-store' });
     if (!res.ok) {
       return fallbackRows;
@@ -3151,9 +3151,7 @@ async function fetchStatisticsForDayTradingRows(startDate: string, endDate: stri
     const url = new URL('/getStatisticsForDayTrading', window.location.origin);
     url.searchParams.set('startDate', startDate);
     url.searchParams.set('endDate', endDate);
-    if (securityCode) {
-      url.searchParams.set('securityCode', securityCode);
-    }
+    url.searchParams.set('securityCode', securityCode?.trim() ?? '');
     const res = await fetch(url.toString(), { cache: 'no-store' });
     if (!res.ok) {
       return buildFallbackDailyQuotesRows(endDate);
@@ -3175,9 +3173,7 @@ async function fetchDailyQuotes(startDate: string, endDate: string, securityCode
     const url = new URL('/getDailyQuotes', window.location.origin);
     url.searchParams.set('startDate', startDate);
     url.searchParams.set('endDate', endDate);
-    if (securityCode) {
-      url.searchParams.set('securityCode', securityCode);
-    }
+    url.searchParams.set('securityCode', securityCode?.trim() ?? '');
     const res = await fetch(url.toString(), { cache: 'no-store' });
     if (!res.ok) {
       return buildFallbackGetDailyQuotesRows(endDate);
