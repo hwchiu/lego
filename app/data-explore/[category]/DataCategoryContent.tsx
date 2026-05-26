@@ -944,9 +944,10 @@ interface ThSortFilterProps {
   onFilter: (i: number, v: string) => void;
   filterValue: string;
   className?: string;
+  showFilter?: boolean;
 }
 
-function ThSortFilter({ label, colIndex, sortCol, sortDir, onSort, onFilter, filterValue, className }: ThSortFilterProps) {
+function ThSortFilter({ label, colIndex, sortCol, sortDir, onSort, onFilter, filterValue, className, showFilter = true }: ThSortFilterProps) {
   const isActive = sortCol === colIndex;
   const icon = isActive ? (sortDir === 'asc' ? '▲' : '▼') : '⇅';
   return (
@@ -956,15 +957,17 @@ function ThSortFilter({ label, colIndex, sortCol, sortDir, onSort, onFilter, fil
           {label}
           <span className={`de-th-sort-icon${isActive ? ' de-th-sort-icon--active' : ''}`}>{icon}</span>
         </button>
-        <input
-          className="de-th-filter-input"
-          type="text"
-          value={filterValue}
-          onChange={(e) => onFilter(colIndex, e.target.value)}
-          placeholder="filter..."
-          onClick={(e) => e.stopPropagation()}
-          aria-label={`Filter ${label}`}
-        />
+        {showFilter && (
+          <input
+            className="de-th-filter-input"
+            type="text"
+            value={filterValue}
+            onChange={(e) => onFilter(colIndex, e.target.value)}
+            placeholder="filter..."
+            onClick={(e) => e.stopPropagation()}
+            aria-label={`Filter ${label}`}
+          />
+        )}
       </div>
     </th>
   );
@@ -1078,6 +1081,7 @@ function CmDailyQuotesTab({ lang, rowsData, loading, error, onVisibleRowsChange 
                   onSort={handleSort}
                   onFilter={handleColFilter}
                   filterValue={colFilters[index] ?? ''}
+                  showFilter={false}
                   className={className || undefined}
                 />
               );
@@ -1388,22 +1392,75 @@ function CmFilterBar({
 }: CmFilterBarProps) {
   const zh = lang === 'zh';
   const disableSearch = !startDate || !endDate;
+  const [securityCodeSearch, setSecurityCodeSearch] = useState(securityCode);
+  const [isSecurityCodeOpen, setIsSecurityCodeOpen] = useState(false);
+  const filteredSecurityCodes = useMemo(() => {
+    const query = securityCodeSearch.trim().toLowerCase();
+    if (!query) return securityCodes;
+    return securityCodes.filter((code) => code.toLowerCase().includes(query));
+  }, [securityCodeSearch, securityCodes]);
+
+  useEffect(() => {
+    setSecurityCodeSearch(securityCode);
+  }, [securityCode]);
 
   return (
     <div className="de-cm-filter-wrap">
       <div className="de-cm-filter-field">
         <span className="de-cm-filter-label">{zh ? 'Security Code' : 'Security Code'}</span>
-        <select
-          className="de-cm-filter-select"
-          value={securityCode}
-          onChange={(e) => onSecurityCodeChange(e.target.value)}
-          aria-label={zh ? 'Security Code' : 'Security Code'}
-        >
-          <option value="">{zh ? '全部' : 'All'}</option>
-          {securityCodes.map((code) => (
-            <option key={code} value={code}>{code}</option>
-          ))}
-        </select>
+        <div className="de-cm-security-select">
+          <input
+            className="de-cm-filter-select de-cm-security-input"
+            type="text"
+            value={securityCodeSearch}
+            onChange={(e) => {
+              const nextValue = e.target.value;
+              setSecurityCodeSearch(nextValue);
+              setIsSecurityCodeOpen(true);
+              if (!nextValue.trim()) {
+                onSecurityCodeChange('');
+              }
+            }}
+            onFocus={() => setIsSecurityCodeOpen(true)}
+            onBlur={() => setTimeout(() => setIsSecurityCodeOpen(false), 150)}
+            placeholder={zh ? '全部' : 'All'}
+            aria-label={zh ? 'Security Code' : 'Security Code'}
+          />
+          {isSecurityCodeOpen && (
+            <div className="de-cm-security-options" role="listbox" aria-label={zh ? 'Security Code 選單' : 'Security Code options'}>
+              <button
+                type="button"
+                className={`de-cm-security-option${securityCode === '' ? ' active' : ''}`}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  onSecurityCodeChange('');
+                  setSecurityCodeSearch('');
+                  setIsSecurityCodeOpen(false);
+                }}
+              >
+                {zh ? '全部' : 'All'}
+              </button>
+              {filteredSecurityCodes.map((code) => (
+                <button
+                  key={code}
+                  type="button"
+                  className={`de-cm-security-option${securityCode === code ? ' active' : ''}`}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => {
+                    onSecurityCodeChange(code);
+                    setSecurityCodeSearch(code);
+                    setIsSecurityCodeOpen(false);
+                  }}
+                >
+                  {code}
+                </button>
+              ))}
+              {filteredSecurityCodes.length === 0 && (
+                <div className="de-cm-security-empty">{zh ? '查無資料' : 'No results'}</div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
       <div className="de-cm-filter-field">
         <span className="de-cm-filter-label">{zh ? 'Period' : 'Period'}</span>
