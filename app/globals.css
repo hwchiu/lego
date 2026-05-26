@@ -22921,6 +22921,7 @@ html.dark .cp-fin-index-tab:hover {
 
 .de-cm-period-input {
   min-width: 150px;
+  cursor: pointer;
 }
 
 /* ── Search & Clear buttons ── */

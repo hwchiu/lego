@@ -128,6 +128,10 @@ function CloseSmIcon() {
   );
 }
 
+function tryOpenNativeDatePicker(inputElement: HTMLInputElement) {
+  inputElement.showPicker?.();
+}
+
 // ── CSV download utility ──────────────────────────────────────────────────────
 
 function downloadCSV(filename: string, headers: string[], dataRows: string[][]): void {
@@ -1031,17 +1035,56 @@ const CM_EX_RIGHT_DIVIDEND_MOCK_DATA: CmExRightDividendRow[] = [
   { security_code: '1216', effective_date: '2025-09-25', security_abbr_name: '統一', data_code: 'A', prev_close_price: '82.00', ex_ref_price: '80.60', limit_up_price: '88.60', limit_down_price: '72.60', open_ref_price: '80.80', auction_ref_price: '80.70', right_dividend_type: '息', right_value_note: '—', right_value: '0.00', dividend_value: '1.40', stock_dividend_per_1000_shares: '0.00', stock_dividend_ratio: '0.0000', employee_bonus_capitalization: '0.00', employee_bonus_stock_dividend_ratio: '0.0000', cash_capital_increase: '0.00', cash_capital_increase_ratio: '0.0000', subscription_price_per_share: '0.00', public_underwriting_shares: '0', employee_subscription_shares: '0', existing_shareholder_subscription_shares: '0', shareholder_subscription_per_1000_shares: '0.00', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
 ];
 
-const CM_FOREIGN = [
-  { ...CM_COMPANIES[0], buy: '8,231,000',  sell: '6,912,000', shares: '14,521,845,000', ratio: '75.12%' },
-  { ...CM_COMPANIES[1], buy: '12,341,000', sell: '9,823,000', shares: '6,234,512,000',  ratio: '44.89%' },
-  { ...CM_COMPANIES[2], buy: '2,134,000',  sell: '1,892,000', shares: '892,341,000',    ratio: '56.34%' },
-  { ...CM_COMPANIES[3], buy: '4,231,000',  sell: '3,812,000', shares: '5,234,123,000',  ratio: '38.12%' },
-  { ...CM_COMPANIES[4], buy: '3,892,000',  sell: '3,341,000', shares: '4,892,341,000',  ratio: '42.67%' },
-  { ...CM_COMPANIES[5], buy: '3,412,000',  sell: '2,923,000', shares: '4,312,567,000',  ratio: '41.23%' },
-  { ...CM_COMPANIES[6], buy: '892,000',    sell: '812,000',   shares: '1,892,341,000',  ratio: '47.31%' },
-  { ...CM_COMPANIES[7], buy: '623,000',    sell: '589,000',   shares: '823,412,000',    ratio: '29.45%' },
-  { ...CM_COMPANIES[8], buy: '1,234,000',  sell: '1,123,000', shares: '2,123,456,000',  ratio: '34.56%' },
-  { ...CM_COMPANIES[9], buy: '1,892,000',  sell: '1,712,000', shares: '2,892,341,000',  ratio: '32.81%' },
+interface CmForeignInvestorsRow {
+  security_code: string;
+  security_name: string;
+  total_issued_shares: string;
+  foreign_investor_remaining_shares: string;
+  total_foreign_investor_holding_shares: string;
+  foreign_investor_remaining_ratio: string;
+  total_foreign_investor_holding_ratio: string;
+  statutory_investment_cap_ratio: string;
+  change_reason_code: string;
+  last_foreign_holding_change_date: string;
+  data_gen_dt: string;
+  data_gen_time: string;
+}
+
+interface CmForeignInvestorsColumn {
+  id: string;
+  labels: { zh: string; en: string };
+  value: (row: CmForeignInvestorsRow) => string;
+  tableVisible: 'Y' | 'N';
+  freezePane: 'Y' | 'N';
+  formatType?: 'number' | 'percent';
+  className?: string;
+}
+
+const CM_FOREIGN_INVESTORS_ALL_COLUMNS: CmForeignInvestorsColumn[] = [
+  { id: 'security_code', labels: { zh: '證券代號', en: 'Security Code' }, value: (row) => row.security_code, tableVisible: 'Y', freezePane: 'Y', className: 'code' },
+  { id: 'security_name', labels: { zh: '證券名稱', en: 'Stock Name' }, value: (row) => row.security_name, tableVisible: 'Y', freezePane: 'N' },
+  { id: 'total_issued_shares', labels: { zh: '發行股數', en: 'Shares Issued' }, value: (row) => row.total_issued_shares, tableVisible: 'Y', freezePane: 'N', formatType: 'number', className: 'num' },
+  { id: 'foreign_investor_remaining_shares', labels: { zh: '外資尚可投資股數', en: 'Shares Available for Foreign Investment' }, value: (row) => row.foreign_investor_remaining_shares, tableVisible: 'Y', freezePane: 'N', formatType: 'number', className: 'num' },
+  { id: 'total_foreign_investor_holding_shares', labels: { zh: '全體外資持有股數', en: 'Total Shares Held by Foreign Investors' }, value: (row) => row.total_foreign_investor_holding_shares, tableVisible: 'Y', freezePane: 'N', formatType: 'number', className: 'num' },
+  { id: 'foreign_investor_remaining_ratio', labels: { zh: '外資尚可投資比率', en: 'Foreign Investment Available Percentage' }, value: (row) => row.foreign_investor_remaining_ratio, tableVisible: 'Y', freezePane: 'N', formatType: 'percent', className: 'num' },
+  { id: 'total_foreign_investor_holding_ratio', labels: { zh: '全體外資持股比率', en: 'Total Foreign Ownership Percentage' }, value: (row) => row.total_foreign_investor_holding_ratio, tableVisible: 'Y', freezePane: 'N', formatType: 'percent', className: 'num' },
+  { id: 'statutory_investment_cap_ratio', labels: { zh: '法令投資上限比率', en: 'Regulatory Foreign Ownership Limit (FOL)' }, value: (row) => row.statutory_investment_cap_ratio, tableVisible: 'Y', freezePane: 'N', formatType: 'percent', className: 'num' },
+  { id: 'change_reason_code', labels: { zh: '與前日異動原因', en: 'Reason for Day-over-Day Change' }, value: (row) => row.change_reason_code, tableVisible: 'N', freezePane: 'N' },
+  { id: 'last_foreign_holding_change_date', labels: { zh: '最近一次上市公司申報外資持股異動日期', en: 'Last Reported Foreign Shareholding Change Date' }, value: (row) => row.last_foreign_holding_change_date, tableVisible: 'N', freezePane: 'N' },
+  { id: 'tsmc_updatetime', labels: { zh: '台積更新時間', en: 'TSMC Updatetime' }, value: (row) => `${row.data_gen_dt}${row.data_gen_time ? ` ${row.data_gen_time}` : ''}`.trim() || '—', tableVisible: 'Y', freezePane: 'N' },
+];
+
+const CM_FOREIGN_INVESTORS_MOCK_DATA: CmForeignInvestorsRow[] = [
+  { security_code: '2330', security_name: '台積電', total_issued_shares: '25,934,000,000', foreign_investor_remaining_shares: '2,413,642,000', total_foreign_investor_holding_shares: '18,231,658,000', foreign_investor_remaining_ratio: '9.31%', total_foreign_investor_holding_ratio: '70.31%', statutory_investment_cap_ratio: '79.62%', change_reason_code: '0', last_foreign_holding_change_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2317', security_name: '鴻海', total_issued_shares: '13,863,000,000', foreign_investor_remaining_shares: '1,492,016,000', total_foreign_investor_holding_shares: '6,349,092,000', foreign_investor_remaining_ratio: '10.76%', total_foreign_investor_holding_ratio: '45.80%', statutory_investment_cap_ratio: '56.56%', change_reason_code: '1', last_foreign_holding_change_date: '2025-05-22', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2454', security_name: '聯發科', total_issued_shares: '1,599,000,000', foreign_investor_remaining_shares: '151,524,000', total_foreign_investor_holding_shares: '760,876,000', foreign_investor_remaining_ratio: '9.48%', total_foreign_investor_holding_ratio: '47.58%', statutory_investment_cap_ratio: '57.06%', change_reason_code: '0', last_foreign_holding_change_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2881', security_name: '富邦金', total_issued_shares: '12,346,000,000', foreign_investor_remaining_shares: '2,004,375,000', total_foreign_investor_holding_shares: '4,782,445,000', foreign_investor_remaining_ratio: '16.23%', total_foreign_investor_holding_ratio: '38.74%', statutory_investment_cap_ratio: '54.97%', change_reason_code: '2', last_foreign_holding_change_date: '2025-05-21', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2882', security_name: '國泰金', total_issued_shares: '14,638,000,000', foreign_investor_remaining_shares: '2,261,978,000', total_foreign_investor_holding_shares: '6,101,246,000', foreign_investor_remaining_ratio: '15.45%', total_foreign_investor_holding_ratio: '41.68%', statutory_investment_cap_ratio: '57.13%', change_reason_code: '0', last_foreign_holding_change_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2891', security_name: '中信金', total_issued_shares: '19,583,000,000', foreign_investor_remaining_shares: '3,213,512,000', total_foreign_investor_holding_shares: '7,256,238,000', foreign_investor_remaining_ratio: '16.41%', total_foreign_investor_holding_ratio: '37.05%', statutory_investment_cap_ratio: '53.46%', change_reason_code: '0', last_foreign_holding_change_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2412', security_name: '中華電', total_issued_shares: '7,757,000,000', foreign_investor_remaining_shares: '1,120,936,000', total_foreign_investor_holding_shares: '3,212,154,000', foreign_investor_remaining_ratio: '14.45%', total_foreign_investor_holding_ratio: '41.41%', statutory_investment_cap_ratio: '55.86%', change_reason_code: '1', last_foreign_holding_change_date: '2025-05-20', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '3045', security_name: '台灣大', total_issued_shares: '3,422,000,000', foreign_investor_remaining_shares: '495,892,000', total_foreign_investor_holding_shares: '1,361,508,000', foreign_investor_remaining_ratio: '14.49%', total_foreign_investor_holding_ratio: '39.79%', statutory_investment_cap_ratio: '54.28%', change_reason_code: '0', last_foreign_holding_change_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '1301', security_name: '台塑', total_issued_shares: '6,368,000,000', foreign_investor_remaining_shares: '1,070,457,000', total_foreign_investor_holding_shares: '2,384,743,000', foreign_investor_remaining_ratio: '16.81%', total_foreign_investor_holding_ratio: '37.45%', statutory_investment_cap_ratio: '54.26%', change_reason_code: '0', last_foreign_holding_change_date: '2025-05-23', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '1216', security_name: '統一', total_issued_shares: '5,682,000,000', foreign_investor_remaining_shares: '1,000,143,000', total_foreign_investor_holding_shares: '1,979,357,000', foreign_investor_remaining_ratio: '17.60%', total_foreign_investor_holding_ratio: '34.84%', statutory_investment_cap_ratio: '52.44%', change_reason_code: '2', last_foreign_holding_change_date: '2025-05-19', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
 ];
 
 const CM_PRICE_LIMIT = [
@@ -1425,7 +1468,6 @@ function CmDailyQuotesTab({ lang, rowsData, loading, error, onVisibleRowsChange 
   const pageSize = 50;
   const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
   const pagedRows = rows.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
-
   useEffect(() => {
     setCurrentPage(0);
   }, [rowsData, colFilters, sortCol, sortDir]);
@@ -1899,7 +1941,6 @@ function CmExDividendTab({ lang, rowsData, loading, error }: CmStandardTabProps<
     () => new Set(tableColumns.filter((column) => column.className === 'num').map((column) => column.id)),
     [tableColumns],
   );
-
   useEffect(() => {
     setCurrentPage(0);
   }, [rows]);
@@ -1950,16 +1991,21 @@ function CmExDividendTab({ lang, rowsData, loading, error }: CmStandardTabProps<
   );
 }
 
-function CmForeignTab({ lang, rowsData, loading, error }: CmStandardTabProps<(typeof CM_FOREIGN)[number]>) {
+function CmForeignTab({ lang, rowsData, loading, error }: CmStandardTabProps<CmForeignInvestorsRow>) {
   const zh = lang === 'zh';
+  const tableColumns = useMemo(() => CM_FOREIGN_INVESTORS_ALL_COLUMNS.filter((column) => column.tableVisible === 'Y'), []);
   const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     rowsData,
-    [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.buy, (r) => r.sell, (r) => r.shares, (r) => r.ratio],
+    tableColumns.map((column) => column.value),
   );
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 50;
   const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
   const pagedRows = rows.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+  const numericFieldIds = useMemo(
+    () => new Set(tableColumns.filter((column) => column.className === 'num').map((column) => column.id)),
+    [tableColumns],
+  );
 
   useEffect(() => {
     setCurrentPage(0);
@@ -1970,26 +2016,42 @@ function CmForeignTab({ lang, rowsData, loading, error }: CmStandardTabProps<(ty
 
   return (
     <div className="de-data-section">
-      <div className="de-data-table-wrap de-cm-inner-table-wrap">
-        <table className="de-data-table">
+      <div className="de-dq-table-scroll-wrap">
+        <table className="de-data-table de-cm-dq-table">
           <thead>
             <tr>
-              <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
-              <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
-              <ThSortFilter label={zh ? '外資買進(股)' : 'Foreign Buy'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
-              <ThSortFilter label={zh ? '外資賣出(股)' : 'Foreign Sell'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
-              <ThSortFilter label={zh ? '外資持股股數' : 'Foreign Holdings'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
-              <ThSortFilter label={zh ? '持股比例' : 'Holding %'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
+              {tableColumns.map((column, index) => {
+                const className = [column.className ?? '', column.freezePane === 'Y' ? 'de-cm-dq-col-sticky' : ''].filter(Boolean).join(' ');
+                return (
+                  <ThSortFilter
+                    key={column.id}
+                    label={column.labels[lang]}
+                    colIndex={index}
+                    sortCol={sortCol}
+                    sortDir={sortDir}
+                    onSort={handleSort}
+                    onFilter={handleColFilter}
+                    filterValue={colFilters[index] ?? ''}
+                    showFilter={false}
+                    className={className || undefined}
+                  />
+                );
+              })}
             </tr>
           </thead>
           <tbody>
-            {pagedRows.map((r) => (
-              <tr key={r.code}>
-                <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-                <td className="num">{fmtNum(r.buy)}</td>
-                <td className="num">{fmtNum(r.sell)}</td>
-                <td className="num">{fmtNum(r.shares)}</td>
-                <td className={`num${r.ratio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.ratio)}</td>
+            {pagedRows.map((row) => (
+              <tr key={`${row.security_code}-${row.data_gen_dt}-${row.data_gen_time}`}>
+                {tableColumns.map((column) => {
+                  const className = [column.className ?? '', column.freezePane === 'Y' ? 'de-cm-dq-col-sticky' : ''].filter(Boolean).join(' ');
+                  const rawValue = column.value(row);
+                  const value = column.formatType === 'percent'
+                    ? fmtPct(rawValue)
+                    : column.formatType === 'number'
+                      ? fmtNum(rawValue)
+                      : rawValue;
+                  return <td key={column.id} className={className || undefined}>{value}</td>;
+                })}
               </tr>
             ))}
           </tbody>
@@ -2215,6 +2277,8 @@ function CmFilterBar({
             min={minStartDate}
             max={maxStartDate}
             onChange={(e) => onStartDateChange(e.target.value)}
+            onClick={(e) => tryOpenNativeDatePicker(e.currentTarget)}
+            onFocus={(e) => tryOpenNativeDatePicker(e.currentTarget)}
             aria-label={zh ? '起始日期' : 'Start date'}
           />
           <span className="de-cm-period-sep">~</span>
@@ -2225,6 +2289,8 @@ function CmFilterBar({
             min={minEndDate}
             max={maxEndDate}
             onChange={(e) => onEndDateChange(e.target.value)}
+            onClick={(e) => tryOpenNativeDatePicker(e.currentTarget)}
+            onFocus={(e) => tryOpenNativeDatePicker(e.currentTarget)}
             aria-label={zh ? '結束日期' : 'End date'}
           />
         </div>
@@ -2322,6 +2388,8 @@ function CmDownloadCsvModal({
                 max={maxDate}
                 value={startDate}
                 onChange={(e) => onStartDateChange(e.target.value)}
+                onClick={(e) => tryOpenNativeDatePicker(e.currentTarget)}
+                onFocus={(e) => tryOpenNativeDatePicker(e.currentTarget)}
                 aria-label={zh ? '下載起始日期' : 'Download start date'}
               />
               <span className="de-cm-period-sep">~</span>
@@ -2332,6 +2400,8 @@ function CmDownloadCsvModal({
                 max={maxDate}
                 value={endDate}
                 onChange={(e) => onEndDateChange(e.target.value)}
+                onClick={(e) => tryOpenNativeDatePicker(e.currentTarget)}
+                onFocus={(e) => tryOpenNativeDatePicker(e.currentTarget)}
                 aria-label={zh ? '下載結束日期' : 'Download end date'}
               />
             </div>
@@ -2361,6 +2431,7 @@ interface CapitalMarketsCsvOptions {
   marginRows?: CmMarginTransactionRow[];
   shortSaleRows?: CmDailyShortSaleBalanceRow[];
   exRightDividendRows?: CmExRightDividendRow[];
+  foreignInvestorsRows?: CmForeignInvestorsRow[];
 }
 
 function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: CapitalMarketsCsvOptions = {}) {
@@ -2469,11 +2540,29 @@ function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: Ca
       );
       break;
     }
-    case 'foreign-investors':
-      downloadCSV(zh ? '外資投資持股統計.csv' : 'foreign-investors.csv',
-        zh ? ['股票代號','名稱','外資買進(股)','外資賣出(股)','外資持股股數','持股比例'] : ['Code','Name','Foreign Buy','Foreign Sell','Foreign Holdings','Holding %'],
-        CM_FOREIGN.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.buy, r.sell, r.shares, r.ratio]));
+    case 'foreign-investors': {
+      const rows = options.foreignInvestorsRows ?? [];
+      const csvColumns: Array<{ labels: { zh: string; en: string }; getValue: (row: CmForeignInvestorsRow) => string }> = [
+        { labels: { zh: '證券代號', en: 'Security Code' }, getValue: (row) => row.security_code },
+        { labels: { zh: '證券名稱', en: 'Stock Name' }, getValue: (row) => row.security_name },
+        { labels: { zh: '發行股數', en: 'Shares Issued' }, getValue: (row) => row.total_issued_shares },
+        { labels: { zh: '外資尚可投資股數', en: 'Shares Available for Foreign Investment' }, getValue: (row) => row.foreign_investor_remaining_shares },
+        { labels: { zh: '全體外資持有股數', en: 'Total Shares Held by Foreign Investors' }, getValue: (row) => row.total_foreign_investor_holding_shares },
+        { labels: { zh: '外資尚可投資比率', en: 'Foreign Investment Available Percentage' }, getValue: (row) => row.foreign_investor_remaining_ratio },
+        { labels: { zh: '全體外資持股比率', en: 'Total Foreign Ownership Percentage' }, getValue: (row) => row.total_foreign_investor_holding_ratio },
+        { labels: { zh: '法令投資上限比率', en: 'Regulatory Foreign Ownership Limit (FOL)' }, getValue: (row) => row.statutory_investment_cap_ratio },
+        { labels: { zh: '與前日異動原因', en: 'Reason for Day-over-Day Change' }, getValue: (row) => row.change_reason_code },
+        { labels: { zh: '最近一次上市公司申報外資持股異動日期', en: 'Last Reported Foreign Shareholding Change Date' }, getValue: (row) => row.last_foreign_holding_change_date },
+        { labels: { zh: '資料產生日期', en: 'Data Generation Date' }, getValue: (row) => row.data_gen_dt },
+        { labels: { zh: '資料產生時間', en: 'Data Generation Time' }, getValue: (row) => row.data_gen_time },
+      ];
+      downloadCSV(
+        zh ? '外資投資持股統計.csv' : 'foreign-investors.csv',
+        csvColumns.map((column) => column.labels[lang]),
+        rows.map((row) => csvColumns.map((column) => column.getValue(row))),
+      );
       break;
+    }
     case 'price-limit':
       downloadCSV(zh ? '漲跌幅度表.csv' : 'price-variation-limit.csv',
         zh ? ['股票代號','名稱','參考收盤價','漲停價格','跌停價格','漲跌幅限制'] : ['Code','Name','Ref. Price','Upper Limit','Lower Limit','Limit %'],
@@ -2526,7 +2615,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   const [exDividendRows, setExDividendRows] = useState<CmExRightDividendRow[]>([]);
   const [exDividendLoading, setExDividendLoading] = useState(false);
   const [exDividendError, setExDividendError] = useState<string | null>(null);
-  const [foreignRows, setForeignRows] = useState<Array<(typeof CM_FOREIGN)[number]>>([]);
+  const [foreignRows, setForeignRows] = useState<CmForeignInvestorsRow[]>([]);
   const [foreignLoading, setForeignLoading] = useState(false);
   const [foreignError, setForeignError] = useState<string | null>(null);
   const [priceLimitRows, setPriceLimitRows] = useState<Array<(typeof CM_PRICE_LIMIT)[number]>>([]);
@@ -2627,7 +2716,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     }
   }, [zh]);
 
-  const queryInvestedAmtOfForeign = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
+  const queryForeignInvestors = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
     setForeignLoading(true);
     setForeignError(null);
     try {
@@ -2697,7 +2786,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
         queryRightAndDividend(startDate, endDate, securityCode);
         break;
       case 'foreign-investors':
-        queryInvestedAmtOfForeign(startDate, endDate, securityCode);
+        queryForeignInvestors(startDate, endDate, securityCode);
         break;
       case 'price-limit':
         queryPriceVariationLimit(startDate, endDate, securityCode);
@@ -2714,7 +2803,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     queryDailyShortSaleBalances,
     queryRightAndDividend,
     queryGetDailyQuotes,
-    queryInvestedAmtOfForeign,
+    queryForeignInvestors,
     queryMarginTransaction,
     queryPeRatioDividendYieldPbRatio,
     queryPriceVariationLimit,
@@ -2744,7 +2833,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
         queryRightAndDividend(startDate, endDate, securityCode);
         break;
       case 'foreign-investors':
-        queryInvestedAmtOfForeign(startDate, endDate, securityCode);
+        queryForeignInvestors(startDate, endDate, securityCode);
         break;
       case 'price-limit':
         queryPriceVariationLimit(startDate, endDate, securityCode);
@@ -2778,7 +2867,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
         queryRightAndDividend(defaultQueryDate, defaultQueryDate, '');
         break;
       case 'foreign-investors':
-        queryInvestedAmtOfForeign(defaultQueryDate, defaultQueryDate, '');
+        queryForeignInvestors(defaultQueryDate, defaultQueryDate, '');
         break;
       case 'price-limit':
         queryPriceVariationLimit(defaultQueryDate, defaultQueryDate, '');
@@ -2881,6 +2970,9 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
       } else if (activeCmTab === 'ex-dividend') {
         const downloadRows = await fetchRightAndDividend(downloadStartDate, downloadEndDate, securityCode);
         downloadCapitalMarketsCSV('ex-dividend', lang, { exRightDividendRows: downloadRows });
+      } else if (activeCmTab === 'foreign-investors') {
+        const downloadRows = await fetchInvestedAmtOfForeign(downloadStartDate, downloadEndDate, securityCode);
+        downloadCapitalMarketsCSV('foreign-investors', lang, { foreignInvestorsRows: downloadRows });
       } else {
         let downloadRows = dailyQuoteVisibleRows;
         if (activeCmTab === 'day-trading') {
@@ -2947,7 +3039,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
             )}
           </div>
           <div className="de-cm-content-toolbar-right">
-            {(activeCmTab === 'daily-quotes' || activeCmTab === 'margin' || activeCmTab === 'short-sale' || activeCmTab === 'ex-dividend') && (
+            {(activeCmTab === 'daily-quotes' ||activeCmTab === 'margin' || activeCmTab === 'short-sale' || activeCmTab === 'ex-dividend' || activeCmTab === 'foreign-investors') && (
               <button
                 type="button"
                 className="de-news-download-btn de-gov-csv-btn de-dq-field-overview-btn"
@@ -2958,6 +3050,8 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
                     setFieldOverviewColumns(CM_DAILY_SHORT_SALE_ALL_COLUMNS);
                   } else if (activeCmTab === 'ex-dividend') {
                     setFieldOverviewColumns(CM_EX_RIGHT_DIVIDEND_ALL_COLUMNS);
+                  } else if (activeCmTab === 'foreign-investors') {
+                    setFieldOverviewColumns(CM_FOREIGN_INVESTORS_ALL_COLUMNS);
                   } else {
                     setFieldOverviewColumns(CM_MARGIN_ALL_COLUMNS);
                   }
@@ -3208,9 +3302,9 @@ async function fetchRightAndDividend(startDate: string, endDate: string, securit
   return fetchCapitalMarketRows<CmExRightDividendRow>('/getRightAndDividend', startDate, endDate, securityCode, fallbackRows);
 }
 
-async function fetchInvestedAmtOfForeign(startDate: string, endDate: string, securityCode: string): Promise<Array<(typeof CM_FOREIGN)[number]>> {
-  const fallbackRows = filterRowsBySecurityCode(CM_FOREIGN, securityCode);
-  return fetchCapitalMarketRows<(typeof CM_FOREIGN)[number]>('/getInvestedAmtOfForeign', startDate, endDate, securityCode, fallbackRows);
+async function fetchInvestedAmtOfForeign(startDate: string, endDate: string, securityCode: string): Promise<CmForeignInvestorsRow[]> {
+  const fallbackRows = filterRowsBySecurityCode(CM_FOREIGN_INVESTORS_MOCK_DATA, securityCode);
+  return fetchCapitalMarketRows<CmForeignInvestorsRow>('/getInvestedAmtofForeign', startDate, endDate, securityCode, fallbackRows);
 }
 
 async function fetchPriceVariationLimit(startDate: string, endDate: string, securityCode: string): Promise<Array<(typeof CM_PRICE_LIMIT)[number]>> {
