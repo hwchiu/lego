@@ -835,7 +835,7 @@ interface CmMarginColumn {
 }
 
 const CM_MARGIN_ALL_COLUMNS: CmMarginColumn[] = [
-  { id: 'security_code', labels: { zh: '證券代號', en: 'Code' }, value: (row) => row.security_code, tableVisible: 'Y', freezePane: 'Y', className: 'code' },
+  { id: 'security_code', labels: { zh: '證券代號', en: 'Security Code' }, value: (row) => row.security_code, tableVisible: 'Y', freezePane: 'Y', className: 'code' },
   { id: 'security_type', labels: { zh: '證券類', en: 'Security Type' }, value: (row) => row.security_type, tableVisible: 'N', freezePane: 'N' },
   { id: 'total_mp_reduction_limit', labels: { zh: '降低融資比率(總計)', en: 'Total Reduction of Margin Purchase Limit' }, value: (row) => row.total_mp_reduction_limit, tableVisible: 'N', freezePane: 'N', className: 'num' },
   { id: 'prev_mp_balance', labels: { zh: '昨日融資餘額', en: 'Last Day Balance of Margin Purchase' }, value: (row) => row.prev_mp_balance, tableVisible: 'Y', freezePane: 'N', className: 'num' },
@@ -874,6 +874,67 @@ const CM_MARGIN_MOCK_DATA: CmMarginTransactionRow[] = [
   { security_code: '2891', security_type: 'TSE', total_mp_reduction_limit: '2%', prev_mp_balance: '37,440,000', daily_mp_purchase: '1,093,000', daily_mp_redemption: '981,000', daily_mp_cash_repayment: '241,000', daily_mp_balance: '37,311,000', margin_trading_limit: '200,000,000', prev_ss_balance: '2,983,000', daily_ss_sale: '128,000', daily_ss_repayment: '121,000', daily_ss_stock_repayment: '23,000', daily_ss_balance: '2,967,000', mp_restriction_code: 'N', ss_restriction_code: 'N', ss_ge_60_percent_mp_flag: 'N', price_volatility_flag: 'N', equity_concentration_flag: 'N', abnormal_volume_flag: 'N', disposition_measures_flag: 'N', tdr_mp_reduction: 'N', mp_balance_for_securities_financing: '3,802,000', ss_balance_for_securities_financing: '351,000', supervisory_mp_reduction: 'N', supervisory_ss_margin_increment: 'N', total_ss_margin_increment: '0%', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
   { security_code: '2412', security_type: 'TSE', total_mp_reduction_limit: '1%', prev_mp_balance: '18,412,000', daily_mp_purchase: '523,000', daily_mp_redemption: '488,000', daily_mp_cash_repayment: '101,000', daily_mp_balance: '18,346,000', margin_trading_limit: '150,000,000', prev_ss_balance: '1,322,000', daily_ss_sale: '58,000', daily_ss_repayment: '53,000', daily_ss_stock_repayment: '10,000', daily_ss_balance: '1,317,000', mp_restriction_code: 'N', ss_restriction_code: 'N', ss_ge_60_percent_mp_flag: 'N', price_volatility_flag: 'N', equity_concentration_flag: 'N', abnormal_volume_flag: 'N', disposition_measures_flag: 'N', tdr_mp_reduction: 'N', mp_balance_for_securities_financing: '1,942,000', ss_balance_for_securities_financing: '151,000', supervisory_mp_reduction: 'N', supervisory_ss_margin_increment: 'N', total_ss_margin_increment: '0%', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
   { security_code: '3045', security_type: 'TSE', total_mp_reduction_limit: '1%', prev_mp_balance: '16,512,000', daily_mp_purchase: '501,000', daily_mp_redemption: '472,000', daily_mp_cash_repayment: '96,000', daily_mp_balance: '16,445,000', margin_trading_limit: '140,000,000', prev_ss_balance: '1,240,000', daily_ss_sale: '54,000', daily_ss_repayment: '48,000', daily_ss_stock_repayment: '10,000', daily_ss_balance: '1,236,000', mp_restriction_code: 'N', ss_restriction_code: 'N', ss_ge_60_percent_mp_flag: 'N', price_volatility_flag: 'N', equity_concentration_flag: 'N', abnormal_volume_flag: 'N', disposition_measures_flag: 'N', tdr_mp_reduction: 'N', mp_balance_for_securities_financing: '1,823,000', ss_balance_for_securities_financing: '144,000', supervisory_mp_reduction: 'N', supervisory_ss_margin_increment: 'N', total_ss_margin_increment: '0%', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+];
+
+// ── Daily Short Sale Balances (信用額度總量管制餘額檔) ─────────────────────────
+
+interface CmDailyShortSaleBalanceRow {
+  security_code: string;
+  prev_day_m_short_sale_balance: string;
+  daily_m_short_sale_volume: string;
+  daily_m_short_cover_volume: string;
+  daily_m_stock_redemption_volume: string;
+  daily_m_short_sale_balance: string;
+  daily_m_short_sale_quota: string;
+  prev_day_sbl_short_sale_balance: string;
+  daily_sbl_short_sale_volume: string;
+  daily_sbl_return_volume: string;
+  daily_sbl_adjustment_volume: string;
+  daily_sbl_short_sale_balance: string;
+  daily_sbl_next_day_quota: string;
+  margin_trade_status: string;
+  sbl_trade_status: string;
+  data_gen_dt: string;
+  data_gen_time: string;
+}
+
+interface CmDailyShortSaleColumn {
+  id: string;
+  labels: { zh: string; en: string };
+  value: (row: CmDailyShortSaleBalanceRow) => string;
+  tableVisible: 'Y' | 'N';
+  freezePane: 'Y' | 'N';
+  className?: string;
+}
+
+const CM_DAILY_SHORT_SALE_ALL_COLUMNS: CmDailyShortSaleColumn[] = [
+  { id: 'security_code',                  labels: { zh: '證券代號',             en: 'Security Code' },                                       value: (r) => r.security_code,                  tableVisible: 'Y', freezePane: 'Y', className: 'code' },
+  { id: 'prev_day_m_short_sale_balance',  labels: { zh: '前日融券餘額股數',     en: 'Previous day balance of Margin Short Sales' },          value: (r) => r.prev_day_m_short_sale_balance,  tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'daily_m_short_sale_volume',      labels: { zh: '本日融券賣出股數',     en: 'Short Sales of Margin Short Sales' },                   value: (r) => r.daily_m_short_sale_volume,      tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'daily_m_short_cover_volume',     labels: { zh: '本日融券買進股數',     en: 'Short Covering of Margin Short Sales' },                value: (r) => r.daily_m_short_cover_volume,     tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'daily_m_stock_redemption_volume',labels: { zh: '本日現券償還股數',     en: 'Stock Redemption of Margin Short Sales' },              value: (r) => r.daily_m_stock_redemption_volume,tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'daily_m_short_sale_balance',     labels: { zh: '本日融券餘額股數',     en: 'Current day balance of Margin Short Sales' },           value: (r) => r.daily_m_short_sale_balance,     tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'daily_m_short_sale_quota',       labels: { zh: '本日融券限額',         en: 'Quota of Margin Short Sales' },                         value: (r) => r.daily_m_short_sale_quota,       tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'prev_day_sbl_short_sale_balance',labels: { zh: '前日借券賣出餘額股數', en: 'Previous day balance of Sbl Short Sales' },             value: (r) => r.prev_day_sbl_short_sale_balance,tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'daily_sbl_short_sale_volume',    labels: { zh: '本日市場借券賣出股數', en: 'Current day short sales of Sbl Short Sales' },          value: (r) => r.daily_sbl_short_sale_volume,    tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'daily_sbl_return_volume',        labels: { zh: '本日還券股數',         en: 'Current day returns of Sbl Short Sales' },              value: (r) => r.daily_sbl_return_volume,        tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'daily_sbl_adjustment_volume',    labels: { zh: '本日調整股數',         en: 'Current day adjustments of Sbl Short Sales' },          value: (r) => r.daily_sbl_adjustment_volume,    tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'daily_sbl_short_sale_balance',   labels: { zh: '本日借券賣出餘額股數', en: 'Current day balance of Sbl Short Sales' },              value: (r) => r.daily_sbl_short_sale_balance,   tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'daily_sbl_next_day_quota',       labels: { zh: '本日可借券賣出限額',   en: 'Quota for the next day of Sbl Short Sales' },           value: (r) => r.daily_sbl_next_day_quota,       tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'margin_trade_status',            labels: { zh: '信用交易狀態',         en: 'Eligible Trade' },                                      value: (r) => r.margin_trade_status,            tableVisible: 'N', freezePane: 'N' },
+  { id: 'sbl_trade_status',               labels: { zh: '借券交易狀態',         en: 'Suspension of Sbl Short Sales' },                       value: (r) => r.sbl_trade_status,               tableVisible: 'N', freezePane: 'N' },
+  { id: 'tsmc_updatetime',                labels: { zh: '台積更新時間',         en: 'TSMC Updatetime' },                                     value: (r) => `${r.data_gen_dt}${r.data_gen_time ? ` ${r.data_gen_time}` : ''}`.trim() || '—', tableVisible: 'Y', freezePane: 'N' },
+];
+
+const CM_DAILY_SHORT_SALE_MOCK_DATA: CmDailyShortSaleBalanceRow[] = [
+  { security_code: '2330', prev_day_m_short_sale_balance: '12,987,000', daily_m_short_sale_volume: '612,000',   daily_m_short_cover_volume: '489,000',   daily_m_stock_redemption_volume: '121,000', daily_m_short_sale_balance: '12,989,000', daily_m_short_sale_quota: '50,000,000',  prev_day_sbl_short_sale_balance: '45,231,000', daily_sbl_short_sale_volume: '2,341,000', daily_sbl_return_volume: '1,982,000', daily_sbl_adjustment_volume: '0',       daily_sbl_short_sale_balance: '45,590,000', daily_sbl_next_day_quota: '18,000,000', margin_trade_status: 'N', sbl_trade_status: 'N', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2317', prev_day_m_short_sale_balance: '9,231,000',  daily_m_short_sale_volume: '435,000',   daily_m_short_cover_volume: '402,000',   daily_m_stock_redemption_volume: '95,000',  daily_m_short_sale_balance: '9,169,000',  daily_m_short_sale_quota: '40,000,000',  prev_day_sbl_short_sale_balance: '31,452,000', daily_sbl_short_sale_volume: '1,523,000', daily_sbl_return_volume: '1,341,000', daily_sbl_adjustment_volume: '0',       daily_sbl_short_sale_balance: '31,634,000', daily_sbl_next_day_quota: '12,000,000', margin_trade_status: 'N', sbl_trade_status: 'N', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2454', prev_day_m_short_sale_balance: '5,675,000',  daily_m_short_sale_volume: '315,000',   daily_m_short_cover_volume: '358,000',   daily_m_stock_redemption_volume: '66,000',  daily_m_short_sale_balance: '5,566,000',  daily_m_short_sale_quota: '25,000,000',  prev_day_sbl_short_sale_balance: '18,923,000', daily_sbl_short_sale_volume: '934,000',   daily_sbl_return_volume: '812,000',   daily_sbl_adjustment_volume: '0',       daily_sbl_short_sale_balance: '19,045,000', daily_sbl_next_day_quota: '7,000,000',  margin_trade_status: 'A', sbl_trade_status: 'N', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2881', prev_day_m_short_sale_balance: '3,510,000',  daily_m_short_sale_volume: '156,000',   daily_m_short_cover_volume: '149,000',   daily_m_stock_redemption_volume: '30,000',  daily_m_short_sale_balance: '3,487,000',  daily_m_short_sale_quota: '18,000,000',  prev_day_sbl_short_sale_balance: '12,341,000', daily_sbl_short_sale_volume: '612,000',   daily_sbl_return_volume: '534,000',   daily_sbl_adjustment_volume: '0',       daily_sbl_short_sale_balance: '12,419,000', daily_sbl_next_day_quota: '5,000,000',  margin_trade_status: 'N', sbl_trade_status: 'N', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2882', prev_day_m_short_sale_balance: '3,201,000',  daily_m_short_sale_volume: '140,000',   daily_m_short_cover_volume: '132,000',   daily_m_stock_redemption_volume: '26,000',  daily_m_short_sale_balance: '3,183,000',  daily_m_short_sale_quota: '16,000,000',  prev_day_sbl_short_sale_balance: '11,234,000', daily_sbl_short_sale_volume: '541,000',   daily_sbl_return_volume: '489,000',   daily_sbl_adjustment_volume: '0',       daily_sbl_short_sale_balance: '11,286,000', daily_sbl_next_day_quota: '4,500,000',  margin_trade_status: 'N', sbl_trade_status: 'N', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2891', prev_day_m_short_sale_balance: '2,983,000',  daily_m_short_sale_volume: '128,000',   daily_m_short_cover_volume: '121,000',   daily_m_stock_redemption_volume: '23,000',  daily_m_short_sale_balance: '2,967,000',  daily_m_short_sale_quota: '15,000,000',  prev_day_sbl_short_sale_balance: '9,812,000',  daily_sbl_short_sale_volume: '456,000',   daily_sbl_return_volume: '412,000',   daily_sbl_adjustment_volume: '0',       daily_sbl_short_sale_balance: '9,856,000',  daily_sbl_next_day_quota: '4,000,000',  margin_trade_status: 'N', sbl_trade_status: 'N', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2412', prev_day_m_short_sale_balance: '1,322,000',  daily_m_short_sale_volume: '58,000',    daily_m_short_cover_volume: '53,000',    daily_m_stock_redemption_volume: '10,000',  daily_m_short_sale_balance: '1,317,000',  daily_m_short_sale_quota: '8,000,000',   prev_day_sbl_short_sale_balance: '4,523,000',  daily_sbl_short_sale_volume: '214,000',   daily_sbl_return_volume: '196,000',   daily_sbl_adjustment_volume: '0',       daily_sbl_short_sale_balance: '4,541,000',  daily_sbl_next_day_quota: '2,000,000',  margin_trade_status: 'N', sbl_trade_status: 'N', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '3045', prev_day_m_short_sale_balance: '1,240,000',  daily_m_short_sale_volume: '54,000',    daily_m_short_cover_volume: '48,000',    daily_m_stock_redemption_volume: '10,000',  daily_m_short_sale_balance: '1,236,000',  daily_m_short_sale_quota: '7,000,000',   prev_day_sbl_short_sale_balance: '4,102,000',  daily_sbl_short_sale_volume: '195,000',   daily_sbl_return_volume: '177,000',   daily_sbl_adjustment_volume: '0',       daily_sbl_short_sale_balance: '4,120,000',  daily_sbl_next_day_quota: '1,800,000',  margin_trade_status: 'N', sbl_trade_status: 'N', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
 ];
 
 const CM_SHORT_SALE = [
@@ -1422,9 +1483,10 @@ interface CmFieldOverviewModalProps {
   lang: 'zh' | 'en';
   isOpen: boolean;
   onClose: () => void;
+  columns: Array<{ id: string; labels: { zh: string; en: string } }>;
 }
 
-function CmFieldOverviewModal({ lang, isOpen, onClose }: CmFieldOverviewModalProps) {
+function CmFieldOverviewModal({ lang, isOpen, onClose, columns }: CmFieldOverviewModalProps) {
   const zh = lang === 'zh';
 
   useEffect(() => {
@@ -1467,7 +1529,7 @@ function CmFieldOverviewModal({ lang, isOpen, onClose }: CmFieldOverviewModalPro
               </tr>
             </thead>
             <tbody>
-              {CM_MARGIN_ALL_COLUMNS.map((col) => (
+              {columns.map((col) => (
                 <tr key={col.id}>
                   <td>{col.labels.en}</td>
                   <td>{col.labels.zh}</td>
@@ -1693,11 +1755,12 @@ function CmMarginTab({ lang, rowsData, loading, error }: CmStandardTabProps<CmMa
   );
 }
 
-function CmShortSaleTab({ lang, rowsData, loading, error }: CmStandardTabProps<(typeof CM_SHORT_SALE)[number]>) {
+function CmShortSaleBalancesTab({ lang, rowsData, loading, error }: CmStandardTabProps<CmDailyShortSaleBalanceRow>) {
   const zh = lang === 'zh';
+  const tableColumns = useMemo(() => CM_DAILY_SHORT_SALE_ALL_COLUMNS.filter((col) => col.tableVisible === 'Y'), []);
   const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     rowsData,
-    [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.finLimit, (r) => r.finUsed, (r) => r.finRatio, (r) => r.shoLimit, (r) => r.shoUsed, (r) => r.shoRatio],
+    tableColumns.map((col) => col.value),
   );
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 50;
@@ -1713,30 +1776,37 @@ function CmShortSaleTab({ lang, rowsData, loading, error }: CmStandardTabProps<(
 
   return (
     <div className="de-data-section">
-      <div className="de-data-table-wrap de-cm-inner-table-wrap">
-        <table className="de-data-table">
+      <div className="de-dq-table-scroll-wrap">
+        <table className="de-data-table de-cm-dq-table">
           <thead>
             <tr>
-              <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
-              <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
-              <ThSortFilter label={zh ? '融資限額' : 'Margin Limit'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
-              <ThSortFilter label={zh ? '融資已用' : 'Margin Used'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
-              <ThSortFilter label={zh ? '融資使用率' : 'Margin Util.'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
-              <ThSortFilter label={zh ? '融券限額' : 'Short Limit'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
-              <ThSortFilter label={zh ? '融券已用' : 'Short Used'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} className="num" />
-              <ThSortFilter label={zh ? '融券使用率' : 'Short Util.'} colIndex={7} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[7] ?? ''} className="num" />
+              {tableColumns.map((column, index) => {
+                const className = [column.className ?? '', column.freezePane === 'Y' ? 'de-cm-dq-col-sticky' : ''].filter(Boolean).join(' ');
+                return (
+                  <ThSortFilter
+                    key={column.id}
+                    label={column.labels[lang]}
+                    colIndex={index}
+                    sortCol={sortCol}
+                    sortDir={sortDir}
+                    onSort={handleSort}
+                    onFilter={handleColFilter}
+                    filterValue={colFilters[index] ?? ''}
+                    showFilter={false}
+                    className={className || undefined}
+                  />
+                );
+              })}
             </tr>
           </thead>
           <tbody>
-            {pagedRows.map((r) => (
-              <tr key={r.code}>
-                <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-                <td className="num">{fmtNum(r.finLimit)}</td>
-                <td className="num">{fmtNum(r.finUsed)}</td>
-                <td className={`num${r.finRatio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.finRatio)}</td>
-                <td className="num">{fmtNum(r.shoLimit)}</td>
-                <td className="num">{fmtNum(r.shoUsed)}</td>
-                <td className={`num${r.shoRatio.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.shoRatio)}</td>
+            {pagedRows.map((row) => (
+              <tr key={`${row.security_code}-${row.data_gen_dt}-${row.data_gen_time}`}>
+                {tableColumns.map((column) => {
+                  const className = [column.className ?? '', column.freezePane === 'Y' ? 'de-cm-dq-col-sticky' : ''].filter(Boolean).join(' ');
+                  const value = column.id === 'security_code' || column.id === 'tsmc_updatetime' ? column.value(row) : fmtNum(column.value(row));
+                  return <td key={column.id} className={className || undefined}>{value}</td>;
+                })}
               </tr>
             ))}
           </tbody>
@@ -2208,6 +2278,7 @@ interface CapitalMarketsCsvOptions {
   statisticsForDayTradingRows?: CmDailyQuoteRow[];
   dailyQuotesRows?: DailyQuoteRow[];
   marginRows?: CmMarginTransactionRow[];
+  shortSaleRows?: CmDailyShortSaleBalanceRow[];
 }
 
 function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: CapitalMarketsCsvOptions = {}) {
@@ -2233,7 +2304,7 @@ function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: Ca
     case 'margin': {
       const rows = options.marginRows ?? [];
       const csvColumns: Array<{ id: keyof CmMarginTransactionRow; labels: { zh: string; en: string } }> = [
-        { id: 'security_code', labels: { zh: '證券代號', en: 'Code' } },
+        { id: 'security_code', labels: { zh: '證券代號', en: 'Security Code' } },
         { id: 'security_type', labels: { zh: '證券類', en: 'Security Type' } },
         { id: 'total_mp_reduction_limit', labels: { zh: '降低融資比率(總計)', en: 'Total Reduction of Margin Purchase Limit' } },
         { id: 'prev_mp_balance', labels: { zh: '昨日融資餘額', en: 'Last Day Balance of Margin Purchase' } },
@@ -2270,11 +2341,33 @@ function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: Ca
       );
       break;
     }
-    case 'short-sale':
-      downloadCSV(zh ? '信用額度總量管制餘額.csv' : 'short-sale-balances.csv',
-        zh ? ['股票代號','名稱','融資限額','融資已用','融資使用率','融券限額','融券已用','融券使用率'] : ['Code','Name','Margin Limit','Margin Used','Margin Util.','Short Limit','Short Used','Short Util.'],
-        CM_SHORT_SALE.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.finLimit, r.finUsed, r.finRatio, r.shoLimit, r.shoUsed, r.shoRatio]));
+    case 'short-sale': {
+      const rows = options.shortSaleRows ?? [];
+      const csvColumns: Array<{ id: keyof CmDailyShortSaleBalanceRow | 'tsmc_updatetime'; labels: { zh: string; en: string }; getValue: (r: CmDailyShortSaleBalanceRow) => string }> = [
+        { id: 'security_code',                  labels: { zh: '證券代號',             en: 'Security Code' },                                       getValue: (r) => r.security_code },
+        { id: 'prev_day_m_short_sale_balance',  labels: { zh: '前日融券餘額股數',     en: 'Previous day balance of Margin Short Sales' },          getValue: (r) => r.prev_day_m_short_sale_balance },
+        { id: 'daily_m_short_sale_volume',      labels: { zh: '本日融券賣出股數',     en: 'Short Sales of Margin Short Sales' },                   getValue: (r) => r.daily_m_short_sale_volume },
+        { id: 'daily_m_short_cover_volume',     labels: { zh: '本日融券買進股數',     en: 'Short Covering of Margin Short Sales' },                getValue: (r) => r.daily_m_short_cover_volume },
+        { id: 'daily_m_stock_redemption_volume',labels: { zh: '本日現券償還股數',     en: 'Stock Redemption of Margin Short Sales' },              getValue: (r) => r.daily_m_stock_redemption_volume },
+        { id: 'daily_m_short_sale_balance',     labels: { zh: '本日融券餘額股數',     en: 'Current day balance of Margin Short Sales' },           getValue: (r) => r.daily_m_short_sale_balance },
+        { id: 'daily_m_short_sale_quota',       labels: { zh: '本日融券限額',         en: 'Quota of Margin Short Sales' },                         getValue: (r) => r.daily_m_short_sale_quota },
+        { id: 'prev_day_sbl_short_sale_balance',labels: { zh: '前日借券賣出餘額股數', en: 'Previous day balance of Sbl Short Sales' },             getValue: (r) => r.prev_day_sbl_short_sale_balance },
+        { id: 'daily_sbl_short_sale_volume',    labels: { zh: '本日市場借券賣出股數', en: 'Current day short sales of Sbl Short Sales' },          getValue: (r) => r.daily_sbl_short_sale_volume },
+        { id: 'daily_sbl_return_volume',        labels: { zh: '本日還券股數',         en: 'Current day returns of Sbl Short Sales' },              getValue: (r) => r.daily_sbl_return_volume },
+        { id: 'daily_sbl_adjustment_volume',    labels: { zh: '本日調整股數',         en: 'Current day adjustments of Sbl Short Sales' },          getValue: (r) => r.daily_sbl_adjustment_volume },
+        { id: 'daily_sbl_short_sale_balance',   labels: { zh: '本日借券賣出餘額股數', en: 'Current day balance of Sbl Short Sales' },              getValue: (r) => r.daily_sbl_short_sale_balance },
+        { id: 'daily_sbl_next_day_quota',       labels: { zh: '本日可借券賣出限額',   en: 'Quota for the next day of Sbl Short Sales' },           getValue: (r) => r.daily_sbl_next_day_quota },
+        { id: 'margin_trade_status',            labels: { zh: '信用交易狀態',         en: 'Eligible Trade' },                                      getValue: (r) => r.margin_trade_status },
+        { id: 'sbl_trade_status',               labels: { zh: '借券交易狀態',         en: 'Suspension of Sbl Short Sales' },                       getValue: (r) => r.sbl_trade_status },
+        { id: 'tsmc_updatetime',                labels: { zh: '台積更新時間',         en: 'TSMC Updatetime' },                                     getValue: (r) => `${r.data_gen_dt}${r.data_gen_time ? ` ${r.data_gen_time}` : ''}`.trim() || '—' },
+      ];
+      downloadCSV(
+        zh ? '信用額度總量管制餘額檔.csv' : 'daily-short-sale-balances.csv',
+        csvColumns.map((col) => col.labels[lang]),
+        rows.map((row) => csvColumns.map((col) => col.getValue(row))),
+      );
       break;
+    }
     case 'ex-dividend':
       downloadCSV(zh ? '除權息及上下市資訊.csv' : 'ex-right-dividend.csv',
         zh ? ['股票代號','名稱','除息日','息值(元)','除權日','權值','上市日期'] : ['Code','Name','Ex-Div Date','Div. Value','Ex-Right Date','Right Value','Listing Date'],
@@ -2331,7 +2424,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   const [marginLoading, setMarginLoading] = useState(false);
   const [marginError, setMarginError] = useState<string | null>(null);
   // other inner table states
-  const [shortSaleRows, setShortSaleRows] = useState<Array<(typeof CM_SHORT_SALE)[number]>>([]);
+  const [shortSaleRows, setShortSaleRows] = useState<CmDailyShortSaleBalanceRow[]>([]);
   const [shortSaleLoading, setShortSaleLoading] = useState(false);
   const [shortSaleError, setShortSaleError] = useState<string | null>(null);
   const [exDividendRows, setExDividendRows] = useState<Array<(typeof CM_EX_DIVIDEND)[number]>>([]);
@@ -2347,6 +2440,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   const [peRatioLoading, setPeRatioLoading] = useState(false);
   const [peRatioError, setPeRatioError] = useState<string | null>(null);
   const [isFieldOverviewOpen, setIsFieldOverviewOpen] = useState(false);
+  const [fieldOverviewColumns, setFieldOverviewColumns] = useState<Array<{ id: string; labels: { zh: string; en: string } }>>(CM_MARGIN_ALL_COLUMNS);
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [downloadStartDate, setDownloadStartDate] = useState(defaultQueryDate);
   const [downloadEndDate, setDownloadEndDate] = useState(defaultQueryDate);
@@ -2685,6 +2779,9 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
       } else if (activeCmTab === 'margin') {
         const downloadRows = await fetchMarginTransaction(downloadStartDate, downloadEndDate, securityCode);
         downloadCapitalMarketsCSV('margin', lang, { marginRows: downloadRows });
+      } else if (activeCmTab === 'short-sale') {
+        const downloadRows = await fetchDailyShortSaleBalances(downloadStartDate, downloadEndDate, securityCode);
+        downloadCapitalMarketsCSV('short-sale', lang, { shortSaleRows: downloadRows });
       } else {
         let downloadRows = dailyQuoteVisibleRows;
         if (activeCmTab === 'day-trading') {
@@ -2751,11 +2848,14 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
             )}
           </div>
           <div className="de-cm-content-toolbar-right">
-            {activeCmTab === 'margin' && (
+            {(activeCmTab === 'margin' || activeCmTab === 'short-sale') && (
               <button
                 type="button"
                 className="de-news-download-btn de-gov-csv-btn de-dq-field-overview-btn"
-                onClick={() => setIsFieldOverviewOpen(true)}
+                onClick={() => {
+                  setFieldOverviewColumns(activeCmTab === 'short-sale' ? CM_DAILY_SHORT_SALE_ALL_COLUMNS : CM_MARGIN_ALL_COLUMNS);
+                  setIsFieldOverviewOpen(true);
+                }}
                 title={zh ? '欄位總覽' : 'Field Overview'}
               >
                 <svg viewBox="0 0 14 14" fill="none" width="14" height="14" aria-hidden="true">
@@ -2791,7 +2891,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
           />
         )}
         {activeCmTab === 'margin'            && <CmMarginTab lang={lang} rowsData={marginRows} loading={marginLoading} error={marginError} />}
-        {activeCmTab === 'short-sale'        && <CmShortSaleTab lang={lang} rowsData={shortSaleRows} loading={shortSaleLoading} error={shortSaleError} />}
+        {activeCmTab === 'short-sale'        && <CmShortSaleBalancesTab lang={lang} rowsData={shortSaleRows} loading={shortSaleLoading} error={shortSaleError} />}
         {activeCmTab === 'ex-dividend'       && <CmExDividendTab lang={lang} rowsData={exDividendRows} loading={exDividendLoading} error={exDividendError} />}
         {activeCmTab === 'foreign-investors' && <CmForeignTab lang={lang} rowsData={foreignRows} loading={foreignLoading} error={foreignError} />}
         {activeCmTab === 'price-limit'       && <CmPriceLimitTab lang={lang} rowsData={priceLimitRows} loading={priceLimitLoading} error={priceLimitError} />}
@@ -2812,6 +2912,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
         <CmFieldOverviewModal
           lang={lang}
           isOpen={isFieldOverviewOpen}
+          columns={fieldOverviewColumns}
           onClose={() => setIsFieldOverviewOpen(false)}
         />
         </div>
@@ -2993,9 +3094,9 @@ async function fetchMarginTransaction(startDate: string, endDate: string, securi
   return fetchCapitalMarketRows<CmMarginTransactionRow>('/getMarginTransaction', startDate, endDate, securityCode, fallbackRows);
 }
 
-async function fetchDailyShortSaleBalances(startDate: string, endDate: string, securityCode: string): Promise<Array<(typeof CM_SHORT_SALE)[number]>> {
-  const fallbackRows = filterRowsBySecurityCode(CM_SHORT_SALE, securityCode);
-  return fetchCapitalMarketRows<(typeof CM_SHORT_SALE)[number]>('/getDailyShortSaleBalances', startDate, endDate, securityCode, fallbackRows);
+async function fetchDailyShortSaleBalances(startDate: string, endDate: string, securityCode: string): Promise<CmDailyShortSaleBalanceRow[]> {
+  const fallbackRows = filterRowsBySecurityCode(CM_DAILY_SHORT_SALE_MOCK_DATA.map((row) => ({ ...row, data_gen_dt: endDate.replace(/-/g, '') })), securityCode);
+  return fetchCapitalMarketRows<CmDailyShortSaleBalanceRow>('/getDailyShortSaleBalances', startDate, endDate, securityCode, fallbackRows);
 }
 
 async function fetchExRightDividendListDelist(startDate: string, endDate: string, securityCode: string): Promise<Array<(typeof CM_EX_DIVIDEND)[number]>> {
