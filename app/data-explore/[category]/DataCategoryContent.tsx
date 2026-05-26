@@ -1788,8 +1788,8 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     <>
       <div className="de-cm-description">
         {zh
-          ? '資料提供三個月內資料。畫面僅呈現重要資訊，若需完整欄位資料請直接下載檔案'
-          : 'Only the most recent three months of data are provided. While the on-screen display shows essential information only, you may download the file to access all data fields.'}
+          ? '資料提供三個月內資料。畫面僅呈現重要資訊，若需完整欄位資料請直接下載檔案。若未選擇證券代碼，日期區間搜尋只限定搜尋單日'
+          : 'Only the most recent three months of data are provided. While the on-screen display shows essential information only, you may download the file to access all data fields. If no Security Code is selected, the date range search will be limited to a single day.'}
       </div>
       <div className="de-cm-layout">
         <nav className="de-cm-sidebar" aria-label={zh ? 'Capital Markets 子分類' : 'Capital Markets sub categories'}>
