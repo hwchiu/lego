@@ -950,17 +950,85 @@ const CM_SHORT_SALE = [
   { ...CM_COMPANIES[9], finLimit: '30,000,000', finUsed: '8,923,000',  finRatio: '29.74%', shoLimit: '3,000,000', shoUsed: '543,000',   shoRatio: '18.10%' },
 ];
 
-const CM_EX_DIVIDEND = [
-  { ...CM_COMPANIES[0], exDivDate: '2025/07/16', divVal: '4.50', exRightDate: '2025/07/16', rightVal: '—', listDate: '1994/09/05' },
-  { ...CM_COMPANIES[1], exDivDate: '2025/08/14', divVal: '5.00', exRightDate: '—',           rightVal: '—', listDate: '1991/06/11' },
-  { ...CM_COMPANIES[2], exDivDate: '2025/07/10', divVal: '93.0', exRightDate: '—',           rightVal: '—', listDate: '2001/07/23' },
-  { ...CM_COMPANIES[3], exDivDate: '2025/08/07', divVal: '2.00', exRightDate: '—',           rightVal: '—', listDate: '2003/01/02' },
-  { ...CM_COMPANIES[4], exDivDate: '2025/08/13', divVal: '2.50', exRightDate: '—',           rightVal: '—', listDate: '2002/01/02' },
-  { ...CM_COMPANIES[5], exDivDate: '2025/08/20', divVal: '1.80', exRightDate: '—',           rightVal: '—', listDate: '2002/12/30' },
-  { ...CM_COMPANIES[6], exDivDate: '2025/09/10', divVal: '4.29', exRightDate: '—',           rightVal: '—', listDate: '2000/02/11' },
-  { ...CM_COMPANIES[7], exDivDate: '2025/09/17', divVal: '3.50', exRightDate: '—',           rightVal: '—', listDate: '2002/07/09' },
-  { ...CM_COMPANIES[8], exDivDate: '2025/10/09', divVal: '4.30', exRightDate: '—',           rightVal: '—', listDate: '1986/10/13' },
-  { ...CM_COMPANIES[9], exDivDate: '2025/09/25', divVal: '1.40', exRightDate: '—',           rightVal: '—', listDate: '1989/09/12' },
+interface CmExRightDividendRow {
+  security_code: string;
+  effective_date: string;
+  security_abbr_name: string;
+  data_code: string;
+  prev_close_price: string;
+  ex_ref_price: string;
+  limit_up_price: string;
+  limit_down_price: string;
+  open_ref_price: string;
+  auction_ref_price: string;
+  right_dividend_type: string;
+  right_value_note: string;
+  right_value: string;
+  dividend_value: string;
+  stock_dividend_per_1000_shares: string;
+  stock_dividend_ratio: string;
+  employee_bonus_capitalization: string;
+  employee_bonus_stock_dividend_ratio: string;
+  cash_capital_increase: string;
+  cash_capital_increase_ratio: string;
+  subscription_price_per_share: string;
+  public_underwriting_shares: string;
+  employee_subscription_shares: string;
+  existing_shareholder_subscription_shares: string;
+  shareholder_subscription_per_1000_shares: string;
+  data_gen_dt: string;
+  data_gen_time: string;
+}
+
+interface CmExRightDividendColumn {
+  id: keyof CmExRightDividendRow | 'tsmc_updatetime';
+  labels: { zh: string; en: string };
+  value: (row: CmExRightDividendRow) => string;
+  tableVisible: 'Y' | 'N';
+  freezePane: 'Y' | 'N';
+  className?: string;
+}
+
+const CM_EX_RIGHT_DIVIDEND_ALL_COLUMNS: CmExRightDividendColumn[] = [
+  { id: 'security_code', labels: { zh: '股票代號', en: 'Security Code' }, value: (r) => r.security_code, tableVisible: 'Y', freezePane: 'Y', className: 'code' },
+  { id: 'effective_date', labels: { zh: '生效日期', en: 'Effective Date' }, value: (r) => r.effective_date, tableVisible: 'Y', freezePane: 'N' },
+  { id: 'security_abbr_name', labels: { zh: '股票簡稱', en: 'Abbreviation of Security Name' }, value: (r) => r.security_abbr_name, tableVisible: 'Y', freezePane: 'N' },
+  { id: 'data_code', labels: { zh: '資料區分', en: 'Data Code' }, value: (r) => r.data_code, tableVisible: 'N', freezePane: 'N' },
+  { id: 'prev_close_price', labels: { zh: '前一日收盤價', en: 'Closing Price before Ex-right/Ex-dividend' }, value: (r) => r.prev_close_price, tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'ex_ref_price', labels: { zh: '除權參考價', en: 'Ex-right/Ex-dividend Quote' }, value: (r) => r.ex_ref_price, tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'limit_up_price', labels: { zh: '漲停價', en: 'Limit Up' }, value: (r) => r.limit_up_price, tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'limit_down_price', labels: { zh: '跌停價', en: 'Limit Down' }, value: (r) => r.limit_down_price, tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'open_ref_price', labels: { zh: '開盤參考價', en: 'Opening Reference Price' }, value: (r) => r.open_ref_price, tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'auction_ref_price', labels: { zh: '開盤競價基準', en: 'The Auction Reference Price at Market Opening' }, value: (r) => r.auction_ref_price, tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'right_dividend_type', labels: { zh: '權息別', en: 'Right/Dividend' }, value: (r) => r.right_dividend_type, tableVisible: 'Y', freezePane: 'N' },
+  { id: 'right_value_note', labels: { zh: '權值記號', en: 'Note of Value of Right' }, value: (r) => r.right_value_note, tableVisible: 'N', freezePane: 'N' },
+  { id: 'right_value', labels: { zh: '權值', en: 'Value of Right' }, value: (r) => r.right_value, tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'dividend_value', labels: { zh: '息值', en: 'Value of Dividend' }, value: (r) => r.dividend_value, tableVisible: 'Y', freezePane: 'N', className: 'num' },
+  { id: 'stock_dividend_per_1000_shares', labels: { zh: '每仟股無償配股', en: 'Stock Dividend per 1000 Shares' }, value: (r) => r.stock_dividend_per_1000_shares, tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'stock_dividend_ratio', labels: { zh: '無償配股率', en: 'Stock Dividend Ratio' }, value: (r) => r.stock_dividend_ratio, tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'employee_bonus_capitalization', labels: { zh: '員工紅利轉增資', en: 'Capitalization of Employee Bonuses' }, value: (r) => r.employee_bonus_capitalization, tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'employee_bonus_stock_dividend_ratio', labels: { zh: '員工紅利配股率', en: 'Stock Dividend Ratio of Employee Bonuses' }, value: (r) => r.employee_bonus_stock_dividend_ratio, tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'cash_capital_increase', labels: { zh: '(有償)現金增資', en: 'Raise New Capital' }, value: (r) => r.cash_capital_increase, tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'cash_capital_increase_ratio', labels: { zh: '現金增資配股率', en: 'Subscription Ratio to Employee Bonuses' }, value: (r) => r.cash_capital_increase_ratio, tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'subscription_price_per_share', labels: { zh: '每股認購金額(元/股)', en: 'Subscription Price per Share (nt)' }, value: (r) => r.subscription_price_per_share, tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'public_underwriting_shares', labels: { zh: '公開承銷(股數)', en: 'Public Underwriting(share)' }, value: (r) => r.public_underwriting_shares, tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'employee_subscription_shares', labels: { zh: '員工認購(股數)', en: 'Employee Stock(share)' }, value: (r) => r.employee_subscription_shares, tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'existing_shareholder_subscription_shares', labels: { zh: '原股東認購(股數)', en: 'Subscription of Existing Shareholder(share)' }, value: (r) => r.existing_shareholder_subscription_shares, tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'shareholder_subscription_per_1000_shares', labels: { zh: '股東每仟股認購股數', en: 'Subscription of Shareholder per 1000 Shares' }, value: (r) => r.shareholder_subscription_per_1000_shares, tableVisible: 'N', freezePane: 'N', className: 'num' },
+  { id: 'tsmc_updatetime', labels: { zh: '台積更新時間', en: 'TSMC Updatetime' }, value: (r) => `${r.data_gen_dt}${r.data_gen_time ? ` ${r.data_gen_time}` : ''}`.trim() || '—', tableVisible: 'Y', freezePane: 'N' },
+];
+
+const CM_EX_RIGHT_DIVIDEND_MOCK_DATA: CmExRightDividendRow[] = [
+  { security_code: '2330', effective_date: '2025-07-15', security_abbr_name: '台積電', data_code: 'A', prev_close_price: '972.00', ex_ref_price: '958.00', limit_up_price: '1,053.50', limit_down_price: '862.50', open_ref_price: '960.00', auction_ref_price: '959.50', right_dividend_type: '息', right_value_note: '—', right_value: '0.00', dividend_value: '4.50', stock_dividend_per_1000_shares: '0.00', stock_dividend_ratio: '0.0000', employee_bonus_capitalization: '0.00', employee_bonus_stock_dividend_ratio: '0.0000', cash_capital_increase: '0.00', cash_capital_increase_ratio: '0.0000', subscription_price_per_share: '0.00', public_underwriting_shares: '0', employee_subscription_shares: '0', existing_shareholder_subscription_shares: '0', shareholder_subscription_per_1000_shares: '0.00', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2317', effective_date: '2025-08-14', security_abbr_name: '鴻海', data_code: 'A', prev_close_price: '118.50', ex_ref_price: '113.50', limit_up_price: '124.50', limit_down_price: '102.50', open_ref_price: '114.00', auction_ref_price: '113.80', right_dividend_type: '息', right_value_note: '—', right_value: '0.00', dividend_value: '5.00', stock_dividend_per_1000_shares: '0.00', stock_dividend_ratio: '0.0000', employee_bonus_capitalization: '0.00', employee_bonus_stock_dividend_ratio: '0.0000', cash_capital_increase: '0.00', cash_capital_increase_ratio: '0.0000', subscription_price_per_share: '0.00', public_underwriting_shares: '0', employee_subscription_shares: '0', existing_shareholder_subscription_shares: '0', shareholder_subscription_per_1000_shares: '0.00', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2454', effective_date: '2025-07-10', security_abbr_name: '聯發科', data_code: 'B', prev_close_price: '1,290.00', ex_ref_price: '1,197.00', limit_up_price: '1,316.50', limit_down_price: '1,077.50', open_ref_price: '1,200.00', auction_ref_price: '1,198.00', right_dividend_type: '息', right_value_note: '—', right_value: '0.00', dividend_value: '93.00', stock_dividend_per_1000_shares: '0.00', stock_dividend_ratio: '0.0000', employee_bonus_capitalization: '0.00', employee_bonus_stock_dividend_ratio: '0.0000', cash_capital_increase: '0.00', cash_capital_increase_ratio: '0.0000', subscription_price_per_share: '0.00', public_underwriting_shares: '0', employee_subscription_shares: '0', existing_shareholder_subscription_shares: '0', shareholder_subscription_per_1000_shares: '0.00', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2881', effective_date: '2025-08-07', security_abbr_name: '富邦金', data_code: 'C', prev_close_price: '84.80', ex_ref_price: '82.80', limit_up_price: '91.00', limit_down_price: '74.60', open_ref_price: '83.00', auction_ref_price: '82.90', right_dividend_type: '權息', right_value_note: '*', right_value: '0.80', dividend_value: '2.00', stock_dividend_per_1000_shares: '8.00', stock_dividend_ratio: '0.8000', employee_bonus_capitalization: '0.20', employee_bonus_stock_dividend_ratio: '0.0200', cash_capital_increase: '50.00', cash_capital_increase_ratio: '0.0500', subscription_price_per_share: '45.00', public_underwriting_shares: '2000000', employee_subscription_shares: '1200000', existing_shareholder_subscription_shares: '6800000', shareholder_subscription_per_1000_shares: '50.00', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2882', effective_date: '2025-08-13', security_abbr_name: '國泰金', data_code: 'A', prev_close_price: '97.00', ex_ref_price: '94.50', limit_up_price: '103.50', limit_down_price: '85.50', open_ref_price: '95.00', auction_ref_price: '94.80', right_dividend_type: '息', right_value_note: '—', right_value: '0.00', dividend_value: '2.50', stock_dividend_per_1000_shares: '0.00', stock_dividend_ratio: '0.0000', employee_bonus_capitalization: '0.00', employee_bonus_stock_dividend_ratio: '0.0000', cash_capital_increase: '0.00', cash_capital_increase_ratio: '0.0000', subscription_price_per_share: '0.00', public_underwriting_shares: '0', employee_subscription_shares: '0', existing_shareholder_subscription_shares: '0', shareholder_subscription_per_1000_shares: '0.00', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2891', effective_date: '2025-08-20', security_abbr_name: '中信金', data_code: 'A', prev_close_price: '39.50', ex_ref_price: '37.70', limit_up_price: '41.40', limit_down_price: '34.00', open_ref_price: '38.00', auction_ref_price: '37.90', right_dividend_type: '息', right_value_note: '—', right_value: '0.00', dividend_value: '1.80', stock_dividend_per_1000_shares: '0.00', stock_dividend_ratio: '0.0000', employee_bonus_capitalization: '0.00', employee_bonus_stock_dividend_ratio: '0.0000', cash_capital_increase: '0.00', cash_capital_increase_ratio: '0.0000', subscription_price_per_share: '0.00', public_underwriting_shares: '0', employee_subscription_shares: '0', existing_shareholder_subscription_shares: '0', shareholder_subscription_per_1000_shares: '0.00', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2412', effective_date: '2025-09-10', security_abbr_name: '中華電', data_code: 'A', prev_close_price: '124.00', ex_ref_price: '119.71', limit_up_price: '131.50', limit_down_price: '107.90', open_ref_price: '120.00', auction_ref_price: '119.80', right_dividend_type: '息', right_value_note: '—', right_value: '0.00', dividend_value: '4.29', stock_dividend_per_1000_shares: '0.00', stock_dividend_ratio: '0.0000', employee_bonus_capitalization: '0.00', employee_bonus_stock_dividend_ratio: '0.0000', cash_capital_increase: '0.00', cash_capital_increase_ratio: '0.0000', subscription_price_per_share: '0.00', public_underwriting_shares: '0', employee_subscription_shares: '0', existing_shareholder_subscription_shares: '0', shareholder_subscription_per_1000_shares: '0.00', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '3045', effective_date: '2025-09-17', security_abbr_name: '台灣大', data_code: 'A', prev_close_price: '93.40', ex_ref_price: '89.90', limit_up_price: '98.90', limit_down_price: '80.90', open_ref_price: '90.20', auction_ref_price: '90.00', right_dividend_type: '息', right_value_note: '—', right_value: '0.00', dividend_value: '3.50', stock_dividend_per_1000_shares: '0.00', stock_dividend_ratio: '0.0000', employee_bonus_capitalization: '0.00', employee_bonus_stock_dividend_ratio: '0.0000', cash_capital_increase: '0.00', cash_capital_increase_ratio: '0.0000', subscription_price_per_share: '0.00', public_underwriting_shares: '0', employee_subscription_shares: '0', existing_shareholder_subscription_shares: '0', shareholder_subscription_per_1000_shares: '0.00', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '1301', effective_date: '2025-10-09', security_abbr_name: '台塑', data_code: 'D', prev_close_price: '64.50', ex_ref_price: '60.20', limit_up_price: '66.20', limit_down_price: '54.20', open_ref_price: '60.50', auction_ref_price: '60.40', right_dividend_type: '權息', right_value_note: '+', right_value: '1.20', dividend_value: '4.30', stock_dividend_per_1000_shares: '12.00', stock_dividend_ratio: '1.2000', employee_bonus_capitalization: '0.15', employee_bonus_stock_dividend_ratio: '0.0150', cash_capital_increase: '30.00', cash_capital_increase_ratio: '0.0300', subscription_price_per_share: '38.00', public_underwriting_shares: '1000000', employee_subscription_shares: '600000', existing_shareholder_subscription_shares: '3400000', shareholder_subscription_per_1000_shares: '30.00', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '1216', effective_date: '2025-09-25', security_abbr_name: '統一', data_code: 'A', prev_close_price: '82.00', ex_ref_price: '80.60', limit_up_price: '88.60', limit_down_price: '72.60', open_ref_price: '80.80', auction_ref_price: '80.70', right_dividend_type: '息', right_value_note: '—', right_value: '0.00', dividend_value: '1.40', stock_dividend_per_1000_shares: '0.00', stock_dividend_ratio: '0.0000', employee_bonus_capitalization: '0.00', employee_bonus_stock_dividend_ratio: '0.0000', cash_capital_increase: '0.00', cash_capital_increase_ratio: '0.0000', subscription_price_per_share: '0.00', public_underwriting_shares: '0', employee_subscription_shares: '0', existing_shareholder_subscription_shares: '0', shareholder_subscription_per_1000_shares: '0.00', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
 ];
 
 const CM_FOREIGN = [
@@ -1817,16 +1885,21 @@ function CmShortSaleBalancesTab({ lang, rowsData, loading, error }: CmStandardTa
   );
 }
 
-function CmExDividendTab({ lang, rowsData, loading, error }: CmStandardTabProps<(typeof CM_EX_DIVIDEND)[number]>) {
+function CmExDividendTab({ lang, rowsData, loading, error }: CmStandardTabProps<CmExRightDividendRow>) {
   const zh = lang === 'zh';
+  const tableColumns = useMemo(() => CM_EX_RIGHT_DIVIDEND_ALL_COLUMNS.filter((column) => column.tableVisible === 'Y'), []);
   const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     rowsData,
-    [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.exDivDate, (r) => r.divVal, (r) => r.exRightDate, (r) => r.rightVal, (r) => r.listDate],
+    tableColumns.map((column) => column.value),
   );
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 50;
   const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
   const pagedRows = rows.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+  const numericFieldIds = useMemo(
+    () => new Set(['prev_close_price', 'limit_up_price', 'limit_down_price', 'right_value', 'dividend_value']),
+    [],
+  );
 
   useEffect(() => {
     setCurrentPage(0);
@@ -1837,28 +1910,37 @@ function CmExDividendTab({ lang, rowsData, loading, error }: CmStandardTabProps<
 
   return (
     <div className="de-data-section">
-      <div className="de-data-table-wrap de-cm-inner-table-wrap">
-        <table className="de-data-table">
+      <div className="de-dq-table-scroll-wrap">
+        <table className="de-data-table de-cm-dq-table">
           <thead>
             <tr>
-              <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
-              <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
-              <ThSortFilter label={zh ? '除息日' : 'Ex-Div Date'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} />
-              <ThSortFilter label={zh ? '息值(元)' : 'Div. Value'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
-              <ThSortFilter label={zh ? '除權日' : 'Ex-Right Date'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} />
-              <ThSortFilter label={zh ? '權值' : 'Right Value'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
-              <ThSortFilter label={zh ? '上市日期' : 'Listing Date'} colIndex={6} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[6] ?? ''} />
+              {tableColumns.map((column, index) => {
+                const className = [column.className ?? '', column.freezePane === 'Y' ? 'de-cm-dq-col-sticky' : ''].filter(Boolean).join(' ');
+                return (
+                  <ThSortFilter
+                    key={column.id}
+                    label={column.labels[lang]}
+                    colIndex={index}
+                    sortCol={sortCol}
+                    sortDir={sortDir}
+                    onSort={handleSort}
+                    onFilter={handleColFilter}
+                    filterValue={colFilters[index] ?? ''}
+                    showFilter={false}
+                    className={className || undefined}
+                  />
+                );
+              })}
             </tr>
           </thead>
           <tbody>
-            {pagedRows.map((r) => (
-              <tr key={r.code}>
-                <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-                <td>{r.exDivDate}</td>
-                <td className="num">{fmtNum(r.divVal)}</td>
-                <td className="muted">{r.exRightDate}</td>
-                <td className="num muted">{r.rightVal}</td>
-                <td className="muted">{r.listDate}</td>
+            {pagedRows.map((row) => (
+              <tr key={`${row.security_code}-${row.effective_date}-${row.data_code}`}>
+                {tableColumns.map((column) => {
+                  const className = [column.className ?? '', column.freezePane === 'Y' ? 'de-cm-dq-col-sticky' : ''].filter(Boolean).join(' ');
+                  const value = numericFieldIds.has(column.id as string) ? fmtNum(column.value(row)) : column.value(row);
+                  return <td key={column.id} className={className || undefined}>{value}</td>;
+                })}
               </tr>
             ))}
           </tbody>
@@ -2279,6 +2361,7 @@ interface CapitalMarketsCsvOptions {
   dailyQuotesRows?: DailyQuoteRow[];
   marginRows?: CmMarginTransactionRow[];
   shortSaleRows?: CmDailyShortSaleBalanceRow[];
+  exRightDividendRows?: CmExRightDividendRow[];
 }
 
 function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: CapitalMarketsCsvOptions = {}) {
@@ -2368,11 +2451,25 @@ function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: Ca
       );
       break;
     }
-    case 'ex-dividend':
-      downloadCSV(zh ? '除權息及上下市資訊.csv' : 'ex-right-dividend.csv',
-        zh ? ['股票代號','名稱','除息日','息值(元)','除權日','權值','上市日期'] : ['Code','Name','Ex-Div Date','Div. Value','Ex-Right Date','Right Value','Listing Date'],
-        CM_EX_DIVIDEND.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.exDivDate, r.divVal, r.exRightDate, r.rightVal, r.listDate]));
+    case 'ex-dividend': {
+      const rows = options.exRightDividendRows ?? [];
+      const csvColumns = [
+        ...CM_EX_RIGHT_DIVIDEND_ALL_COLUMNS
+          .filter((column) => column.id !== 'tsmc_updatetime')
+          .map((column) => ({
+            labels: column.labels,
+            getValue: (row: CmExRightDividendRow) => row[column.id as keyof CmExRightDividendRow],
+          })),
+        { labels: { zh: '資料產生日期', en: 'Data Generation Date' }, getValue: (row: CmExRightDividendRow) => row.data_gen_dt },
+        { labels: { zh: '資料產生時間', en: 'Data Generation Time' }, getValue: (row: CmExRightDividendRow) => row.data_gen_time },
+      ];
+      downloadCSV(
+        zh ? '除權息及上下市資訊.csv' : 'ex-right-dividend.csv',
+        csvColumns.map((column) => column.labels[lang]),
+        rows.map((row) => csvColumns.map((column) => column.getValue(row))),
+      );
       break;
+    }
     case 'foreign-investors':
       downloadCSV(zh ? '外資投資持股統計.csv' : 'foreign-investors.csv',
         zh ? ['股票代號','名稱','外資買進(股)','外資賣出(股)','外資持股股數','持股比例'] : ['Code','Name','Foreign Buy','Foreign Sell','Foreign Holdings','Holding %'],
@@ -2427,7 +2524,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   const [shortSaleRows, setShortSaleRows] = useState<CmDailyShortSaleBalanceRow[]>([]);
   const [shortSaleLoading, setShortSaleLoading] = useState(false);
   const [shortSaleError, setShortSaleError] = useState<string | null>(null);
-  const [exDividendRows, setExDividendRows] = useState<Array<(typeof CM_EX_DIVIDEND)[number]>>([]);
+  const [exDividendRows, setExDividendRows] = useState<CmExRightDividendRow[]>([]);
   const [exDividendLoading, setExDividendLoading] = useState(false);
   const [exDividendError, setExDividendError] = useState<string | null>(null);
   const [foreignRows, setForeignRows] = useState<Array<(typeof CM_FOREIGN)[number]>>([]);
@@ -2782,6 +2879,9 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
       } else if (activeCmTab === 'short-sale') {
         const downloadRows = await fetchDailyShortSaleBalances(downloadStartDate, downloadEndDate, securityCode);
         downloadCapitalMarketsCSV('short-sale', lang, { shortSaleRows: downloadRows });
+      } else if (activeCmTab === 'ex-dividend') {
+        const downloadRows = await fetchExRightDividendListDelist(downloadStartDate, downloadEndDate, securityCode);
+        downloadCapitalMarketsCSV('ex-dividend', lang, { exRightDividendRows: downloadRows });
       } else {
         let downloadRows = dailyQuoteVisibleRows;
         if (activeCmTab === 'day-trading') {
@@ -2848,12 +2948,18 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
             )}
           </div>
           <div className="de-cm-content-toolbar-right">
-            {(activeCmTab === 'margin' || activeCmTab === 'short-sale') && (
+            {(activeCmTab === 'margin' || activeCmTab === 'short-sale' || activeCmTab === 'ex-dividend') && (
               <button
                 type="button"
                 className="de-news-download-btn de-gov-csv-btn de-dq-field-overview-btn"
                 onClick={() => {
-                  setFieldOverviewColumns(activeCmTab === 'short-sale' ? CM_DAILY_SHORT_SALE_ALL_COLUMNS : CM_MARGIN_ALL_COLUMNS);
+                  if (activeCmTab === 'short-sale') {
+                    setFieldOverviewColumns(CM_DAILY_SHORT_SALE_ALL_COLUMNS);
+                  } else if (activeCmTab === 'ex-dividend') {
+                    setFieldOverviewColumns(CM_EX_RIGHT_DIVIDEND_ALL_COLUMNS);
+                  } else {
+                    setFieldOverviewColumns(CM_MARGIN_ALL_COLUMNS);
+                  }
                   setIsFieldOverviewOpen(true);
                 }}
                 title={zh ? '欄位總覽' : 'Field Overview'}
@@ -3099,9 +3205,12 @@ async function fetchDailyShortSaleBalances(startDate: string, endDate: string, s
   return fetchCapitalMarketRows<CmDailyShortSaleBalanceRow>('/getDailyShortSaleBalances', startDate, endDate, securityCode, fallbackRows);
 }
 
-async function fetchExRightDividendListDelist(startDate: string, endDate: string, securityCode: string): Promise<Array<(typeof CM_EX_DIVIDEND)[number]>> {
-  const fallbackRows = filterRowsBySecurityCode(CM_EX_DIVIDEND, securityCode);
-  return fetchCapitalMarketRows<(typeof CM_EX_DIVIDEND)[number]>('/getExRightDividendListDelist', startDate, endDate, securityCode, fallbackRows);
+async function fetchExRightDividendListDelist(startDate: string, endDate: string, securityCode: string): Promise<CmExRightDividendRow[]> {
+  const fallbackRows = filterRowsBySecurityCode(
+    CM_EX_RIGHT_DIVIDEND_MOCK_DATA.map((row) => ({ ...row, data_gen_dt: endDate.replace(/-/g, '') })),
+    securityCode,
+  );
+  return fetchCapitalMarketRows<CmExRightDividendRow>('/getRightAndDividend', startDate, endDate, securityCode, fallbackRows);
 }
 
 async function fetchInvestedAmtOfForeign(startDate: string, endDate: string, securityCode: string): Promise<Array<(typeof CM_FOREIGN)[number]>> {
