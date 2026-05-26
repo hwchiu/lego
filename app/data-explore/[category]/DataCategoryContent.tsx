@@ -1087,17 +1087,78 @@ const CM_FOREIGN_INVESTORS_MOCK_DATA: CmForeignInvestorsRow[] = [
   { security_code: '1216', security_name: '統一', total_issued_shares: '5,682,000,000', foreign_investor_remaining_shares: '1,000,143,000', total_foreign_investor_holding_shares: '1,979,357,000', foreign_investor_remaining_ratio: '17.60%', total_foreign_investor_holding_ratio: '34.84%', statutory_investment_cap_ratio: '52.44%', change_reason_code: '2', last_foreign_holding_change_date: '2025-05-19', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
 ];
 
-const CM_PRICE_LIMIT = [
-  { ...CM_COMPANIES[0], refPrice: '972.00', ceiling: '1,069.00', floor: '875.00', pct: '10%' },
-  { ...CM_COMPANIES[1], refPrice: '118.50', ceiling: '130.00',   floor: '107.00', pct: '10%' },
-  { ...CM_COMPANIES[2], refPrice: '910.00', ceiling: '1,001.00', floor: '819.00', pct: '10%' },
-  { ...CM_COMPANIES[3], refPrice: '84.80',  ceiling: '93.20',    floor: '76.40',  pct: '10%' },
-  { ...CM_COMPANIES[4], refPrice: '97.00',  ceiling: '106.50',   floor: '87.30',  pct: '10%' },
-  { ...CM_COMPANIES[5], refPrice: '110.00', ceiling: '121.00',   floor: '99.00',  pct: '10%' },
-  { ...CM_COMPANIES[6], refPrice: '74.70',  ceiling: '82.10',    floor: '67.20',  pct: '10%' },
-  { ...CM_COMPANIES[7], refPrice: '93.40',  ceiling: '102.50',   floor: '84.10',  pct: '10%' },
-  { ...CM_COMPANIES[8], refPrice: '98.90',  ceiling: '108.50',   floor: '88.90',  pct: '10%' },
-  { ...CM_COMPANIES[9], refPrice: '54.60',  ceiling: '60.00',    floor: '49.20',  pct: '10%' },
+interface CmPriceVariationLimitRow {
+  security_code: string;
+  limit_up_price: string;
+  opening_ref_price: string;
+  limit_down_price: string;
+  last_trading_date: string;
+  trading_method: string;
+  disposition_mark: string;
+  attention_mark: string;
+  order_limit_mark: string;
+  industry_code: string;
+  security_category_code: string;
+  exempt_short_sale_mark: string;
+  security_ch_name: string;
+  matching_interval_min: string;
+  single_order_volume_limit: string;
+  multiple_order_volume_limit: string;
+  advance_collection_percentage: string;
+  exempt_sbl_short_sale_mark: string;
+  par_value_mark: string;
+  allow_day_trade_mark: string;
+  board_mark: string;
+  data_gen_dt: string;
+  data_gen_time: string;
+}
+
+interface CmPriceVariationLimitColumn {
+  id: string;
+  labels: { zh: string; en: string };
+  value: (row: CmPriceVariationLimitRow) => string;
+  tableVisible: 'Y' | 'N';
+  freezePane: 'Y' | 'N';
+  className?: string;
+  formatType?: 'number' | 'percent';
+}
+
+const CM_PRICE_LIMIT_ALL_COLUMNS: CmPriceVariationLimitColumn[] = [
+  { id: 'security_code', labels: { zh: '股票代號', en: 'Security Code' }, value: (row) => row.security_code, tableVisible: 'Y', freezePane: 'Y', className: 'code' },
+  { id: 'limit_up_price', labels: { zh: '漲停價', en: 'Limit Up' }, value: (row) => row.limit_up_price, tableVisible: 'Y', freezePane: 'N', className: 'num', formatType: 'number' },
+  { id: 'opening_ref_price', labels: { zh: '開盤競價基準', en: 'Opening Reference Price' }, value: (row) => row.opening_ref_price, tableVisible: 'Y', freezePane: 'N', className: 'num', formatType: 'number' },
+  { id: 'limit_down_price', labels: { zh: '跌停價', en: 'Limit Down' }, value: (row) => row.limit_down_price, tableVisible: 'Y', freezePane: 'N', className: 'num', formatType: 'number' },
+  { id: 'last_trading_date', labels: { zh: '上次成交日', en: 'Last Trading Date' }, value: (row) => row.last_trading_date, tableVisible: 'Y', freezePane: 'N' },
+  { id: 'trading_method', labels: { zh: '交易方式', en: 'Trading Method' }, value: (row) => row.trading_method, tableVisible: 'Y', freezePane: 'N' },
+  { id: 'disposition_mark', labels: { zh: '處置股票註記', en: 'Disposition Securities Mark' }, value: (row) => row.disposition_mark, tableVisible: 'N', freezePane: 'N' },
+  { id: 'attention_mark', labels: { zh: '注意股票註記', en: 'Attention Securities Mark' }, value: (row) => row.attention_mark, tableVisible: 'N', freezePane: 'N' },
+  { id: 'order_limit_mark', labels: { zh: '委託限制註記', en: 'Limit Order Mark' }, value: (row) => row.order_limit_mark, tableVisible: 'N', freezePane: 'N' },
+  { id: 'industry_code', labels: { zh: '產業別代碼', en: 'Industry Category Code' }, value: (row) => row.industry_code, tableVisible: 'Y', freezePane: 'N' },
+  { id: 'security_category_code', labels: { zh: '證券別代碼', en: 'Security Category Code' }, value: (row) => row.security_category_code, tableVisible: 'Y', freezePane: 'N' },
+  { id: 'exempt_short_sale_mark', labels: { zh: '豁免平盤下融券賣出註記', en: 'Allow Short Sales When Price Under Opening Price Mark' }, value: (row) => row.exempt_short_sale_mark, tableVisible: 'N', freezePane: 'N' },
+  { id: 'security_ch_name', labels: { zh: '股票中文名稱', en: 'Name' }, value: (row) => row.security_ch_name, tableVisible: 'Y', freezePane: 'N' },
+  { id: 'matching_interval_min', labels: { zh: '撮合循環時間（分）', en: 'Matching Interval (min)' }, value: (row) => row.matching_interval_min, tableVisible: 'N', freezePane: 'N' },
+  { id: 'single_order_volume_limit', labels: { zh: '單筆委託限制數量', en: 'Single Order Volume Limit (Shares)' }, value: (row) => row.single_order_volume_limit, tableVisible: 'N', freezePane: 'N' },
+  { id: 'multiple_order_volume_limit', labels: { zh: '多筆委託限制數量', en: 'Multiple Order Volume Limit (Shares)' }, value: (row) => row.multiple_order_volume_limit, tableVisible: 'N', freezePane: 'N' },
+  { id: 'advance_collection_percentage', labels: { zh: '款券預收成數(%)', en: 'Advance Collection Percentage (%)' }, value: (row) => row.advance_collection_percentage, tableVisible: 'N', freezePane: 'N', formatType: 'percent' },
+  { id: 'exempt_sbl_short_sale_mark', labels: { zh: '豁免平盤下借券賣出註記', en: 'Allow SBL Short Sales When Price Under Opening Price Mark' }, value: (row) => row.exempt_sbl_short_sale_mark, tableVisible: 'N', freezePane: 'N' },
+  { id: 'par_value_mark', labels: { zh: '面額註記', en: 'Par Value Mark' }, value: (row) => row.par_value_mark, tableVisible: 'N', freezePane: 'N' },
+  { id: 'allow_day_trade_mark', labels: { zh: '可先買後賣現股當沖註記', en: 'Allow Day Trade Mark' }, value: (row) => row.allow_day_trade_mark, tableVisible: 'N', freezePane: 'N' },
+  { id: 'board_mark', labels: { zh: '板別註記', en: 'Board Mark' }, value: (row) => row.board_mark, tableVisible: 'N', freezePane: 'N' },
+  { id: 'tsmc_updatetime', labels: { zh: '台積更新時間', en: 'TSMC Updatetime' }, value: (row) => `${row.data_gen_dt}${row.data_gen_time ? ` ${row.data_gen_time}` : ''}`.trim() || '—', tableVisible: 'Y', freezePane: 'N' },
+];
+
+const CM_PRICE_LIMIT_MOCK_DATA: CmPriceVariationLimitRow[] = [
+  { security_code: '2330', limit_up_price: '1,069.00', opening_ref_price: '972.00', limit_down_price: '875.00', last_trading_date: '2025-05-23', trading_method: 'Regular', disposition_mark: '', attention_mark: 'Y', order_limit_mark: '', industry_code: '24', security_category_code: '01', exempt_short_sale_mark: 'N', security_ch_name: '台積電', matching_interval_min: '5', single_order_volume_limit: '499', multiple_order_volume_limit: '999', advance_collection_percentage: '20%', exempt_sbl_short_sale_mark: 'N', par_value_mark: '10', allow_day_trade_mark: 'Y', board_mark: 'TWSE', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2317', limit_up_price: '130.00', opening_ref_price: '118.50', limit_down_price: '107.00', last_trading_date: '2025-05-23', trading_method: 'Regular', disposition_mark: '', attention_mark: '', order_limit_mark: '', industry_code: '31', security_category_code: '01', exempt_short_sale_mark: 'Y', security_ch_name: '鴻海', matching_interval_min: '5', single_order_volume_limit: '499', multiple_order_volume_limit: '999', advance_collection_percentage: '20%', exempt_sbl_short_sale_mark: 'Y', par_value_mark: '10', allow_day_trade_mark: 'Y', board_mark: 'TWSE', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2454', limit_up_price: '1,001.00', opening_ref_price: '910.00', limit_down_price: '819.00', last_trading_date: '2025-05-23', trading_method: 'Regular', disposition_mark: '', attention_mark: '', order_limit_mark: 'A', industry_code: '24', security_category_code: '01', exempt_short_sale_mark: 'N', security_ch_name: '聯發科', matching_interval_min: '5', single_order_volume_limit: '499', multiple_order_volume_limit: '999', advance_collection_percentage: '30%', exempt_sbl_short_sale_mark: 'N', par_value_mark: '10', allow_day_trade_mark: 'Y', board_mark: 'TWSE', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2881', limit_up_price: '93.20', opening_ref_price: '84.80', limit_down_price: '76.40', last_trading_date: '2025-05-23', trading_method: 'Regular', disposition_mark: 'Y', attention_mark: '', order_limit_mark: '', industry_code: '17', security_category_code: '01', exempt_short_sale_mark: 'N', security_ch_name: '富邦金', matching_interval_min: '5', single_order_volume_limit: '499', multiple_order_volume_limit: '999', advance_collection_percentage: '10%', exempt_sbl_short_sale_mark: 'N', par_value_mark: '10', allow_day_trade_mark: 'Y', board_mark: 'TWSE', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2882', limit_up_price: '106.50', opening_ref_price: '97.00', limit_down_price: '87.30', last_trading_date: '2025-05-23', trading_method: 'Regular', disposition_mark: '', attention_mark: '', order_limit_mark: '', industry_code: '17', security_category_code: '01', exempt_short_sale_mark: 'N', security_ch_name: '國泰金', matching_interval_min: '5', single_order_volume_limit: '499', multiple_order_volume_limit: '999', advance_collection_percentage: '10%', exempt_sbl_short_sale_mark: 'N', par_value_mark: '10', allow_day_trade_mark: 'Y', board_mark: 'TWSE', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2891', limit_up_price: '121.00', opening_ref_price: '110.00', limit_down_price: '99.00', last_trading_date: '2025-05-23', trading_method: 'Regular', disposition_mark: '', attention_mark: '', order_limit_mark: '', industry_code: '17', security_category_code: '01', exempt_short_sale_mark: 'N', security_ch_name: '中信金', matching_interval_min: '5', single_order_volume_limit: '499', multiple_order_volume_limit: '999', advance_collection_percentage: '10%', exempt_sbl_short_sale_mark: 'N', par_value_mark: '10', allow_day_trade_mark: 'Y', board_mark: 'TWSE', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2412', limit_up_price: '82.10', opening_ref_price: '74.70', limit_down_price: '67.20', last_trading_date: '2025-05-23', trading_method: 'Regular', disposition_mark: '', attention_mark: '', order_limit_mark: '', industry_code: '28', security_category_code: '01', exempt_short_sale_mark: 'Y', security_ch_name: '中華電', matching_interval_min: '5', single_order_volume_limit: '499', multiple_order_volume_limit: '999', advance_collection_percentage: '20%', exempt_sbl_short_sale_mark: 'Y', par_value_mark: '10', allow_day_trade_mark: 'Y', board_mark: 'TWSE', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '3045', limit_up_price: '102.50', opening_ref_price: '93.40', limit_down_price: '84.10', last_trading_date: '2025-05-23', trading_method: 'Regular', disposition_mark: '', attention_mark: '', order_limit_mark: '', industry_code: '28', security_category_code: '01', exempt_short_sale_mark: 'Y', security_ch_name: '台灣大', matching_interval_min: '5', single_order_volume_limit: '499', multiple_order_volume_limit: '999', advance_collection_percentage: '20%', exempt_sbl_short_sale_mark: 'Y', par_value_mark: '10', allow_day_trade_mark: 'Y', board_mark: 'TWSE', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '1301', limit_up_price: '108.50', opening_ref_price: '98.90', limit_down_price: '88.90', last_trading_date: '2025-05-23', trading_method: 'Regular', disposition_mark: '', attention_mark: '', order_limit_mark: '', industry_code: '21', security_category_code: '01', exempt_short_sale_mark: 'N', security_ch_name: '台塑', matching_interval_min: '5', single_order_volume_limit: '499', multiple_order_volume_limit: '999', advance_collection_percentage: '10%', exempt_sbl_short_sale_mark: 'N', par_value_mark: '10', allow_day_trade_mark: 'Y', board_mark: 'TWSE', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '1216', limit_up_price: '60.00', opening_ref_price: '54.60', limit_down_price: '49.20', last_trading_date: '2025-05-23', trading_method: 'Regular', disposition_mark: '', attention_mark: '', order_limit_mark: '', industry_code: '10', security_category_code: '01', exempt_short_sale_mark: 'N', security_ch_name: '統一', matching_interval_min: '5', single_order_volume_limit: '499', multiple_order_volume_limit: '999', advance_collection_percentage: '10%', exempt_sbl_short_sale_mark: 'N', par_value_mark: '10', allow_day_trade_mark: 'Y', board_mark: 'TWSE', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
 ];
 
 const CM_PE_RATIO = [
@@ -2062,11 +2123,12 @@ function CmForeignTab({ lang, rowsData, loading, error }: CmStandardTabProps<CmF
   );
 }
 
-function CmPriceLimitTab({ lang, rowsData, loading, error }: CmStandardTabProps<(typeof CM_PRICE_LIMIT)[number]>) {
+function CmPriceLimitTab({ lang, rowsData, loading, error }: CmStandardTabProps<CmPriceVariationLimitRow>) {
   const zh = lang === 'zh';
+  const tableColumns = useMemo(() => CM_PRICE_LIMIT_ALL_COLUMNS.filter((column) => column.tableVisible === 'Y'), []);
   const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     rowsData,
-    [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.refPrice, (r) => r.ceiling, (r) => r.floor, (r) => r.pct],
+    tableColumns.map((column) => column.value),
   );
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 50;
@@ -2082,26 +2144,42 @@ function CmPriceLimitTab({ lang, rowsData, loading, error }: CmStandardTabProps<
 
   return (
     <div className="de-data-section">
-      <div className="de-data-table-wrap de-cm-inner-table-wrap">
-        <table className="de-data-table">
+      <div className="de-dq-table-scroll-wrap">
+        <table className="de-data-table de-cm-dq-table">
           <thead>
             <tr>
-              <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
-              <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
-              <ThSortFilter label={zh ? '參考收盤價' : 'Ref. Price'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
-              <ThSortFilter label={zh ? '漲停價格' : 'Upper Limit'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
-              <ThSortFilter label={zh ? '跌停價格' : 'Lower Limit'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
-              <ThSortFilter label={zh ? '漲跌幅限制' : 'Limit %'} colIndex={5} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[5] ?? ''} className="num" />
+              {tableColumns.map((column, index) => {
+                const className = [column.className ?? '', column.freezePane === 'Y' ? 'de-cm-dq-col-sticky' : ''].filter(Boolean).join(' ');
+                return (
+                  <ThSortFilter
+                    key={column.id}
+                    label={column.labels[lang]}
+                    colIndex={index}
+                    sortCol={sortCol}
+                    sortDir={sortDir}
+                    onSort={handleSort}
+                    onFilter={handleColFilter}
+                    filterValue={colFilters[index] ?? ''}
+                    showFilter={false}
+                    className={className || undefined}
+                  />
+                );
+              })}
             </tr>
           </thead>
           <tbody>
-            {pagedRows.map((r) => (
-              <tr key={r.code}>
-                <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-                <td className="num">{fmtNum(r.refPrice)}</td>
-                <td className="num">{fmtNum(r.ceiling)}</td>
-                <td className="num">{fmtNum(r.floor)}</td>
-                <td className={`num${r.pct.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.pct)}</td>
+            {pagedRows.map((row) => (
+              <tr key={`${row.security_code}-${row.data_gen_dt}-${row.data_gen_time}`}>
+                {tableColumns.map((column) => {
+                  const className = [column.className ?? '', column.freezePane === 'Y' ? 'de-cm-dq-col-sticky' : ''].filter(Boolean).join(' ');
+                  const rawValue = column.value(row);
+                  const value = column.formatType === 'percent'
+                    ? fmtPct(rawValue)
+                    : column.formatType === 'number'
+                      ? fmtNum(rawValue)
+                      : rawValue;
+                  return <td key={column.id} className={className || undefined}>{value || '—'}</td>;
+                })}
               </tr>
             ))}
           </tbody>
@@ -2432,6 +2510,7 @@ interface CapitalMarketsCsvOptions {
   shortSaleRows?: CmDailyShortSaleBalanceRow[];
   exRightDividendRows?: CmExRightDividendRow[];
   foreignInvestorsRows?: CmForeignInvestorsRow[];
+  priceLimitRows?: CmPriceVariationLimitRow[];
 }
 
 function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: CapitalMarketsCsvOptions = {}) {
@@ -2563,11 +2642,25 @@ function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: Ca
       );
       break;
     }
-    case 'price-limit':
-      downloadCSV(zh ? '漲跌幅度表.csv' : 'price-variation-limit.csv',
-        zh ? ['股票代號','名稱','參考收盤價','漲停價格','跌停價格','漲跌幅限制'] : ['Code','Name','Ref. Price','Upper Limit','Lower Limit','Limit %'],
-        CM_PRICE_LIMIT.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.refPrice, r.ceiling, r.floor, r.pct]));
+    case 'price-limit': {
+      const rows = options.priceLimitRows ?? [];
+      const csvColumns: Array<{ labels: { zh: string; en: string }; getValue: (row: CmPriceVariationLimitRow) => string }> = [
+        ...CM_PRICE_LIMIT_ALL_COLUMNS
+          .filter((column) => column.id !== 'tsmc_updatetime')
+          .map((column) => ({
+            labels: column.labels,
+            getValue: (row: CmPriceVariationLimitRow) => column.value(row),
+          })),
+        { labels: { zh: '資料產生日期', en: 'Data Generation Date' }, getValue: (row) => row.data_gen_dt },
+        { labels: { zh: '資料產生時間', en: 'Data Generation Time' }, getValue: (row) => row.data_gen_time },
+      ];
+      downloadCSV(
+        zh ? '漲跌幅度表.csv' : 'price-variation-limit.csv',
+        csvColumns.map((column) => column.labels[lang]),
+        rows.map((row) => csvColumns.map((column) => column.getValue(row) || '')),
+      );
       break;
+    }
     case 'pe-ratio':
       downloadCSV(zh ? '個股日本益比殖利率及股價淨值比.csv' : 'pe-ratio-dividend-yield.csv',
         zh ? ['股票代號','名稱','殖利率(%)','本益比','股價淨值比'] : ['Code','Name','Dividend Yield (%)','P/E Ratio','P/B Ratio'],
@@ -2618,7 +2711,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   const [foreignRows, setForeignRows] = useState<CmForeignInvestorsRow[]>([]);
   const [foreignLoading, setForeignLoading] = useState(false);
   const [foreignError, setForeignError] = useState<string | null>(null);
-  const [priceLimitRows, setPriceLimitRows] = useState<Array<(typeof CM_PRICE_LIMIT)[number]>>([]);
+  const [priceLimitRows, setPriceLimitRows] = useState<CmPriceVariationLimitRow[]>([]);
   const [priceLimitLoading, setPriceLimitLoading] = useState(false);
   const [priceLimitError, setPriceLimitError] = useState<string | null>(null);
   const [peRatioRows, setPeRatioRows] = useState<Array<(typeof CM_PE_RATIO)[number]>>([]);
@@ -2973,6 +3066,9 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
       } else if (activeCmTab === 'foreign-investors') {
         const downloadRows = await fetchInvestedAmtOfForeign(downloadStartDate, downloadEndDate, securityCode);
         downloadCapitalMarketsCSV('foreign-investors', lang, { foreignInvestorsRows: downloadRows });
+      } else if (activeCmTab === 'price-limit') {
+        const downloadRows = await fetchPriceVariationLimit(downloadStartDate, downloadEndDate, securityCode);
+        downloadCapitalMarketsCSV('price-limit', lang, { priceLimitRows: downloadRows });
       } else {
         let downloadRows = dailyQuoteVisibleRows;
         if (activeCmTab === 'day-trading') {
@@ -3039,7 +3135,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
             )}
           </div>
           <div className="de-cm-content-toolbar-right">
-            {(activeCmTab === 'daily-quotes' ||activeCmTab === 'margin' || activeCmTab === 'short-sale' || activeCmTab === 'ex-dividend' || activeCmTab === 'foreign-investors') && (
+            {(activeCmTab === 'daily-quotes' ||activeCmTab === 'margin' || activeCmTab === 'short-sale' || activeCmTab === 'ex-dividend' || activeCmTab === 'foreign-investors' || activeCmTab === 'price-limit') && (
               <button
                 type="button"
                 className="de-news-download-btn de-gov-csv-btn de-dq-field-overview-btn"
@@ -3052,6 +3148,8 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
                     setFieldOverviewColumns(CM_EX_RIGHT_DIVIDEND_ALL_COLUMNS);
                   } else if (activeCmTab === 'foreign-investors') {
                     setFieldOverviewColumns(CM_FOREIGN_INVESTORS_ALL_COLUMNS);
+                  } else if (activeCmTab === 'price-limit') {
+                    setFieldOverviewColumns(CM_PRICE_LIMIT_ALL_COLUMNS);
                   } else {
                     setFieldOverviewColumns(CM_MARGIN_ALL_COLUMNS);
                   }
@@ -3307,9 +3405,12 @@ async function fetchInvestedAmtOfForeign(startDate: string, endDate: string, sec
   return fetchCapitalMarketRows<CmForeignInvestorsRow>('/getInvestedAmtofForeign', startDate, endDate, securityCode, fallbackRows);
 }
 
-async function fetchPriceVariationLimit(startDate: string, endDate: string, securityCode: string): Promise<Array<(typeof CM_PRICE_LIMIT)[number]>> {
-  const fallbackRows = filterRowsBySecurityCode(CM_PRICE_LIMIT, securityCode);
-  return fetchCapitalMarketRows<(typeof CM_PRICE_LIMIT)[number]>('/getPriceVariationLimit', startDate, endDate, securityCode, fallbackRows);
+async function fetchPriceVariationLimit(startDate: string, endDate: string, securityCode: string): Promise<CmPriceVariationLimitRow[]> {
+  const fallbackRows = filterRowsBySecurityCode(
+    CM_PRICE_LIMIT_MOCK_DATA.map((row) => ({ ...row, data_gen_dt: endDate.replace(/-/g, '') })),
+    securityCode,
+  );
+  return fetchCapitalMarketRows<CmPriceVariationLimitRow>('/getPriceVariationLimit', startDate, endDate, securityCode, fallbackRows);
 }
 
 async function fetchPeRatioDividendYieldPbRatio(startDate: string, endDate: string, securityCode: string): Promise<Array<(typeof CM_PE_RATIO)[number]>> {
