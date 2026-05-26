@@ -1476,7 +1476,6 @@ function CmDailyQuotesTab({ lang, rowsData, loading, error, onVisibleRowsChange 
                   onSort={handleSort}
                   onFilter={handleColFilter}
                   filterValue={colFilters[index] ?? ''}
-                  showFilter={false}
                   className={className || undefined}
                 />
               );
@@ -3207,7 +3206,7 @@ async function fetchDailyShortSaleBalances(startDate: string, endDate: string, s
 
 async function fetchExRightDividendListDelist(startDate: string, endDate: string, securityCode: string): Promise<CmExRightDividendRow[]> {
   const fallbackRows = filterRowsBySecurityCode(
-    CM_EX_RIGHT_DIVIDEND_MOCK_DATA.map((row) => ({ ...row, data_gen_dt: endDate.replace(/-/g, '') })),
+    CM_EX_RIGHT_DIVIDEND_MOCK_DATA,
     securityCode,
   );
   return fetchCapitalMarketRows<CmExRightDividendRow>('/getRightAndDividend', startDate, endDate, securityCode, fallbackRows);
