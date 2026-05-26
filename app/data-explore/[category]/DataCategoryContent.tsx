@@ -1896,8 +1896,8 @@ function CmExDividendTab({ lang, rowsData, loading, error }: CmStandardTabProps<
   const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
   const pagedRows = rows.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
   const numericFieldIds = useMemo(
-    () => new Set(['prev_close_price', 'limit_up_price', 'limit_down_price', 'right_value', 'dividend_value']),
-    [],
+    () => new Set(tableColumns.filter((column) => column.className === 'num').map((column) => column.id)),
+    [tableColumns],
   );
 
   useEffect(() => {
@@ -1937,7 +1937,7 @@ function CmExDividendTab({ lang, rowsData, loading, error }: CmStandardTabProps<
               <tr key={`${row.security_code}-${row.effective_date}-${row.data_code}`}>
                 {tableColumns.map((column) => {
                   const className = [column.className ?? '', column.freezePane === 'Y' ? 'de-cm-dq-col-sticky' : ''].filter(Boolean).join(' ');
-                  const value = numericFieldIds.has(column.id as string) ? fmtNum(column.value(row)) : column.value(row);
+                  const value = numericFieldIds.has(column.id) ? fmtNum(column.value(row)) : column.value(row);
                   return <td key={column.id} className={className || undefined}>{value}</td>;
                 })}
               </tr>
@@ -2457,7 +2457,7 @@ function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: Ca
           .filter((column) => column.id !== 'tsmc_updatetime')
           .map((column) => ({
             labels: column.labels,
-            getValue: (row: CmExRightDividendRow) => row[column.id as keyof CmExRightDividendRow],
+            getValue: (row: CmExRightDividendRow) => column.value(row),
           })),
         { labels: { zh: '資料產生日期', en: 'Data Generation Date' }, getValue: (row: CmExRightDividendRow) => row.data_gen_dt },
         { labels: { zh: '資料產生時間', en: 'Data Generation Time' }, getValue: (row: CmExRightDividendRow) => row.data_gen_time },
