@@ -1137,10 +1137,10 @@ const CM_PRICE_LIMIT_ALL_COLUMNS: CmPriceVariationLimitColumn[] = [
   { id: 'security_category_code', labels: { zh: '證券別代碼', en: 'Security Category Code' }, value: (row) => row.security_category_code, tableVisible: 'Y', freezePane: 'N' },
   { id: 'exempt_short_sale_mark', labels: { zh: '豁免平盤下融券賣出註記', en: 'Allow Short Sales When Price Under Opening Price Mark' }, value: (row) => row.exempt_short_sale_mark, tableVisible: 'N', freezePane: 'N' },
   { id: 'security_ch_name', labels: { zh: '股票中文名稱', en: 'Name' }, value: (row) => row.security_ch_name, tableVisible: 'Y', freezePane: 'N' },
-  { id: 'matching_interval_min', labels: { zh: '撮合循環時間（分）', en: 'Matching Interval(min)' }, value: (row) => row.matching_interval_min, tableVisible: 'N', freezePane: 'N' },
-  { id: 'single_order_volume_limit', labels: { zh: '單筆委託限制數量', en: 'Single Order Volume Limit(Shares)' }, value: (row) => row.single_order_volume_limit, tableVisible: 'N', freezePane: 'N' },
-  { id: 'multiple_order_volume_limit', labels: { zh: '多筆委託限制數量', en: 'Multiple Order Volume Limit(Shares)' }, value: (row) => row.multiple_order_volume_limit, tableVisible: 'N', freezePane: 'N' },
-  { id: 'advance_collection_percentage', labels: { zh: '款券預收成數(%)', en: 'Advance Collection Percentage(%)' }, value: (row) => row.advance_collection_percentage, tableVisible: 'N', freezePane: 'N', formatType: 'percent' },
+  { id: 'matching_interval_min', labels: { zh: '撮合循環時間（分）', en: 'Matching Interval (min)' }, value: (row) => row.matching_interval_min, tableVisible: 'N', freezePane: 'N' },
+  { id: 'single_order_volume_limit', labels: { zh: '單筆委託限制數量', en: 'Single Order Volume Limit (Shares)' }, value: (row) => row.single_order_volume_limit, tableVisible: 'N', freezePane: 'N' },
+  { id: 'multiple_order_volume_limit', labels: { zh: '多筆委託限制數量', en: 'Multiple Order Volume Limit (Shares)' }, value: (row) => row.multiple_order_volume_limit, tableVisible: 'N', freezePane: 'N' },
+  { id: 'advance_collection_percentage', labels: { zh: '款券預收成數(%)', en: 'Advance Collection Percentage (%)' }, value: (row) => row.advance_collection_percentage, tableVisible: 'N', freezePane: 'N', formatType: 'percent' },
   { id: 'exempt_sbl_short_sale_mark', labels: { zh: '豁免平盤下借券賣出註記', en: 'Allow SBL Short Sales When Price Under Opening Price Mark' }, value: (row) => row.exempt_sbl_short_sale_mark, tableVisible: 'N', freezePane: 'N' },
   { id: 'par_value_mark', labels: { zh: '面額註記', en: 'Par Value Mark' }, value: (row) => row.par_value_mark, tableVisible: 'N', freezePane: 'N' },
   { id: 'allow_day_trade_mark', labels: { zh: '可先買後賣現股當沖註記', en: 'Allow Day Trade Mark' }, value: (row) => row.allow_day_trade_mark, tableVisible: 'N', freezePane: 'N' },
@@ -2645,27 +2645,12 @@ function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: Ca
     case 'price-limit': {
       const rows = options.priceLimitRows ?? [];
       const csvColumns: Array<{ labels: { zh: string; en: string }; getValue: (row: CmPriceVariationLimitRow) => string }> = [
-        { labels: { zh: '股票代號', en: 'Security Code' }, getValue: (row) => row.security_code },
-        { labels: { zh: '漲停價', en: 'Limit Up' }, getValue: (row) => row.limit_up_price },
-        { labels: { zh: '開盤競價基準', en: 'Opening Reference Price' }, getValue: (row) => row.opening_ref_price },
-        { labels: { zh: '跌停價', en: 'Limit Down' }, getValue: (row) => row.limit_down_price },
-        { labels: { zh: '上次成交日', en: 'Last Trading Date' }, getValue: (row) => row.last_trading_date },
-        { labels: { zh: '交易方式', en: 'Trading Method' }, getValue: (row) => row.trading_method },
-        { labels: { zh: '處置股票註記', en: 'Disposition Securities Mark' }, getValue: (row) => row.disposition_mark },
-        { labels: { zh: '注意股票註記', en: 'Attention Securities Mark' }, getValue: (row) => row.attention_mark },
-        { labels: { zh: '委託限制註記', en: 'Limit Order Mark' }, getValue: (row) => row.order_limit_mark },
-        { labels: { zh: '產業別代碼', en: 'Industry Category Code' }, getValue: (row) => row.industry_code },
-        { labels: { zh: '證券別代碼', en: 'Security Category Code' }, getValue: (row) => row.security_category_code },
-        { labels: { zh: '豁免平盤下融券賣出註記', en: 'Allow Short Sales When Price Under Opening Price Mark' }, getValue: (row) => row.exempt_short_sale_mark },
-        { labels: { zh: '股票中文名稱', en: 'Name' }, getValue: (row) => row.security_ch_name },
-        { labels: { zh: '撮合循環時間（分）', en: 'Matching Interval(min)' }, getValue: (row) => row.matching_interval_min },
-        { labels: { zh: '單筆委託限制數量', en: 'Single Order Volume Limit(Shares)' }, getValue: (row) => row.single_order_volume_limit },
-        { labels: { zh: '多筆委託限制數量', en: 'Multiple Order Volume Limit(Shares)' }, getValue: (row) => row.multiple_order_volume_limit },
-        { labels: { zh: '款券預收成數(%)', en: 'Advance Collection Percentage(%)' }, getValue: (row) => row.advance_collection_percentage },
-        { labels: { zh: '豁免平盤下借券賣出註記', en: 'Allow SBL Short Sales When Price Under Opening Price Mark' }, getValue: (row) => row.exempt_sbl_short_sale_mark },
-        { labels: { zh: '面額註記', en: 'Par Value Mark' }, getValue: (row) => row.par_value_mark },
-        { labels: { zh: '可先買後賣現股當沖註記', en: 'Allow Day Trade Mark' }, getValue: (row) => row.allow_day_trade_mark },
-        { labels: { zh: '板別註記', en: 'Board Mark' }, getValue: (row) => row.board_mark },
+        ...CM_PRICE_LIMIT_ALL_COLUMNS
+          .filter((column) => column.id !== 'tsmc_updatetime')
+          .map((column) => ({
+            labels: column.labels,
+            getValue: (row: CmPriceVariationLimitRow) => column.value(row),
+          })),
         { labels: { zh: '資料產生日期', en: 'Data Generation Date' }, getValue: (row) => row.data_gen_dt },
         { labels: { zh: '資料產生時間', en: 'Data Generation Time' }, getValue: (row) => row.data_gen_time },
       ];
