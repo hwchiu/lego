@@ -109,6 +109,8 @@ export const mainNav: NavItem[] = [
   { label: 'Market News', href: '/market-news', icon: 'news' },
   { label: 'Press Release', href: '/press-release', icon: 'pressRelease' },
   { label: 'Earnings', href: '/earnings', icon: 'earnings', badge: 'Coming Soon', badgeStyle: 'coming-soon' },
+  // TODO: remove NEW badge after Evidence tab is fully onboarded in production.
+  { label: 'Earnings Evidence', href: '/earnings-evidence', icon: 'report', badge: 'NEW', badgeStyle: 'new' },
   { label: 'Event Calendar', href: '/event-calendar', icon: 'calendar' },
   {
     label: 'Market Data',
