@@ -22384,11 +22384,11 @@ html.dark .cp-fin-index-tab:hover {
 }
 
 .de-cm-dq-indicator--up {
-  color: #dc2626;
+  color: var(--c-neg);
 }
 
 .de-cm-dq-indicator--down {
-  color: #16a34a;
+  color: var(--c-pos);
 }
 
 .de-cm-dq-indicator--neutral {
