@@ -1,9 +1,11 @@
 'use client';
 
+import { useMemo } from 'react';
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import { marvellCalendarQ22026Case } from '@/app/data/earningsEvidenceData';
+import { runStaticEvidencePipeline } from '@/app/lib/earningsEvidencePipeline';
 
 function confidenceClass(level: 'High' | 'Medium' | 'Low'): string {
   const classMap = {
@@ -16,6 +18,8 @@ function confidenceClass(level: 'High' | 'Medium' | 'Low'): string {
 }
 
 export default function EarningsEvidencePage() {
+  const pipelineResult = useMemo(() => runStaticEvidencePipeline(marvellCalendarQ22026Case), []);
+
   return (
     <>
       <TopNav />
@@ -105,6 +109,42 @@ export default function EarningsEvidencePage() {
                   </li>
                 ))}
               </ol>
+            </section>
+
+            <section className="ee-card ee-card--pipeline">
+              <h2>Pipeline Run (Static Stub)</h2>
+              <div className="ee-pipeline-grid">
+                <div className="ee-pipeline-stage">
+                  <div className="ee-pipeline-label">Collector</div>
+                  <div className="ee-pipeline-value">{pipelineResult.collector.sourcesLoaded} sources · {pipelineResult.collector.status}</div>
+                </div>
+                <div className="ee-pipeline-stage">
+                  <div className="ee-pipeline-label">Extractors</div>
+                  <div className="ee-pipeline-value">
+                    A: {pipelineResult.extractor.A.itemsExtracted} items ·{' '}
+                    B: {pipelineResult.extractor.B.itemsExtracted} items ·{' '}
+                    C: {pipelineResult.extractor.C.itemsExtracted} items
+                  </div>
+                </div>
+                <div className="ee-pipeline-stage">
+                  <div className="ee-pipeline-label">Reconcile</div>
+                  <div className="ee-pipeline-value">
+                    {pipelineResult.reconcile.conflictsFound} conflicts · {pipelineResult.reconcile.conflictsResolved} resolved
+                  </div>
+                </div>
+                <div className="ee-pipeline-stage">
+                  <div className="ee-pipeline-label">Overall Score</div>
+                  <div className={`ee-pipeline-value ${confidenceClass(pipelineResult.scoring.overallLevel)}`}>
+                    {pipelineResult.scoring.overallScore} · {pipelineResult.scoring.overallLevel}
+                  </div>
+                </div>
+                <div className="ee-pipeline-stage">
+                  <div className="ee-pipeline-label">Publish Gate</div>
+                  <div className={`ee-pipeline-value ${pipelineResult.publish.passed ? 'ee-pipeline-value--pass' : 'ee-pipeline-value--fail'}`}>
+                    {pipelineResult.publish.passed ? 'PASSED' : 'BLOCKED'} · {pipelineResult.publish.snapshotType}
+                  </div>
+                </div>
+              </div>
             </section>
           </div>
         </main>

@@ -29346,6 +29346,47 @@ html.dark .pr-archive-tile:hover .pr-archive-tile-title-link {
   background: #fef3c7;
 }
 
+.ee-card--pipeline {
+  border-top: 3px solid var(--c-accent);
+}
+
+.ee-pipeline-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ee-pipeline-stage {
+  flex: 1;
+  min-width: 140px;
+  background: var(--c-bg);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+}
+
+.ee-pipeline-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--c-text-3);
+  margin-bottom: 4px;
+}
+
+.ee-pipeline-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-text);
+}
+
+.ee-pipeline-value--pass {
+  color: var(--c-pos);
+}
+
+.ee-pipeline-value--fail {
+  color: var(--c-neg);
+}
+
 @media (max-width: 768px) {
   .ee-grid {
     grid-template-columns: 1fr;
