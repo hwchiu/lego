@@ -22,7 +22,7 @@
 - 目標窗口：Calendar Year 2026 Q2
 - 目前共識寫法（建議）：
   - **US/Eastern:** 2026-06-03 17:00 ET（盤後）
-  - **Taiwan (UTC+8):** **2026-06-04 06:00**
+  - **Taiwan (UTC+8):** **2026-06-04 05:00**（若以 EDT, UTC-4 換算）
 - 註：若後續官方 PR/IR 更新實際分鐘或時段，以官方 IR 為準。
 
 ### Marvell（MRVL）
@@ -200,28 +200,28 @@ Attach quote + evidence pointer for each claim.
 
 ## 5) Confidence Scoring 設計
 
-## 5.1 Score 維度
+### 5.1 Score 維度
 
-- **Source Reliability (0~35)**
+- **Source Reliability (0-35)**
   - 官方 IR/SEC 高於第三方鏡像。
-- **Cross-source Consistency (0~25)**
+- **Cross-source Consistency (0-25)**
   - 多來源一致加分；互斥資訊扣分。
-- **Extraction Agreement (0~20)**
+- **Extraction Agreement (0-20)**
   - Model-A/B/C 或 rerun 一致性加分。
-- **Traceability Completeness (0~10)**
+- **Traceability Completeness (0-10)**
   - 是否完整提供 source_id + location_hint + quote。
-- **Timezone/Period Integrity (0~10)**
+- **Timezone/Period Integrity (0-10)**
   - ET/PT/TW 轉換是否一致，fiscal/calendar 對應是否正確。
 
 總分：`score = SR + CS + EA + TC + TI`（0~100）
 
-## 5.2 等級規則
+### 5.2 等級規則
 
 - **High:** >= 85
 - **Medium:** 70~84
 - **Low:** < 70
 
-## 5.3 發布門檻
+### 5.3 發布門檻
 
 - 事件時間（event time）若低於 Medium，不可進正式版。
 - 財務主指標（Revenue/EPS）任一為 Low，正式版需標記「待確認」。
@@ -250,3 +250,14 @@ Attach quote + evidence pointer for each claim.
    - `docs/earnings-evidence-a-team-cli-handoff-plan-2026-05-27.md`
 3. 先落地「靜態 Marvell 範例」與台灣時間顯示。
 4. 再分階段導入 sub-model/agent + confidence engine。
+
+---
+
+## 8) 總結與成功標準
+
+- 本輪已完成可交接的設計文件，重點是「台灣時間優先 + evidence-first + A-team 分工」。
+- CLI 接手後第一個里程碑是完成靜態 Marvell 範例並可在頁面驗證 TW 時間。
+- 第二個里程碑是校準 Broadcom CY2026-Q2 時間並整理來源差異說明。
+- 第三個里程碑是建立 sub-model/agent prompt 與 confidence scoring 實作骨架。
+
+若以上三個里程碑都達成，即可進入「真 API 即時觸發」階段的實作與驗證。
