@@ -3,7 +3,7 @@
 import TopNav from '@/app/components/layout/TopNav';
 import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
-import { broadcomCalendarQ12026Case } from '@/app/data/earningsEvidenceData';
+import { marvellCalendarQ22026Case } from '@/app/data/earningsEvidenceData';
 
 function confidenceClass(level: 'High' | 'Medium' | 'Low'): string {
   const classMap = {
@@ -27,30 +27,30 @@ export default function EarningsEvidencePage() {
             <div className="section-eyebrow">Earnings Evidence</div>
             <div className="ee-header">
               <h1>
-                {broadcomCalendarQ12026Case.company} ({broadcomCalendarQ12026Case.symbol}) - {broadcomCalendarQ12026Case.targetWindow}
+                {marvellCalendarQ22026Case.company} ({marvellCalendarQ22026Case.symbol}) - {marvellCalendarQ22026Case.targetWindow}
               </h1>
-              <p>{broadcomCalendarQ12026Case.eventSummary}</p>
+              <p>{marvellCalendarQ22026Case.eventSummary}</p>
             </div>
 
             <section className="ee-card">
               <h2>Event Time (Corrected Calendar Window)</h2>
               <div className="ee-grid">
                 <div>
-                  <div className="ee-label">US/Eastern</div>
-                  <div className="ee-value">{broadcomCalendarQ12026Case.eventTimeEt}</div>
+                  <div className="ee-label ee-label--primary">Taiwan (UTC+8)</div>
+                  <div className="ee-value ee-value--primary">{marvellCalendarQ22026Case.eventTimeTw}</div>
                 </div>
                 <div>
-                  <div className="ee-label">Taiwan (UTC+8)</div>
-                  <div className="ee-value">{broadcomCalendarQ12026Case.eventTimeTw}</div>
+                  <div className="ee-label">US/Eastern</div>
+                  <div className="ee-value">{marvellCalendarQ22026Case.eventTimeEt}</div>
                 </div>
               </div>
-              <p className="ee-note">{broadcomCalendarQ12026Case.sourceReliabilityNote}</p>
+              <p className="ee-note">{marvellCalendarQ22026Case.sourceReliabilityNote}</p>
             </section>
 
             <section className="ee-card">
               <h2>Evidence-Backed Metrics</h2>
               <div className="ee-metric-list">
-                {broadcomCalendarQ12026Case.metrics.map((metric) => (
+                {marvellCalendarQ22026Case.metrics.map((metric) => (
                   <article key={metric.label} className="ee-metric-item">
                     <div className="ee-metric-main">
                       <div>
@@ -76,7 +76,7 @@ export default function EarningsEvidencePage() {
             <section className="ee-card">
               <h2>Evidence Sources</h2>
               <div className="ee-source-list">
-                {broadcomCalendarQ12026Case.sources.map((source) => (
+                {marvellCalendarQ22026Case.sources.map((source) => (
                   <article key={source.id} className="ee-source-item">
                     <div className="ee-source-head">
                       <h3>{source.title}</h3>
@@ -95,7 +95,7 @@ export default function EarningsEvidencePage() {
             <section className="ee-card">
               <h2>Execution Task Plan</h2>
               <ol className="ee-task-list">
-                {broadcomCalendarQ12026Case.taskPlan.map((task) => (
+                {marvellCalendarQ22026Case.taskPlan.map((task) => (
                   <li key={task.step} className="ee-task-item">
                     <div className="ee-task-head">
                       <strong>{task.step}</strong>

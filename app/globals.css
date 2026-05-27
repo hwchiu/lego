@@ -29219,11 +29219,20 @@ html.dark .pr-archive-tile:hover .pr-archive-tile-title-link {
   font-weight: 700;
 }
 
+.ee-label--primary {
+  color: var(--c-accent);
+}
+
 .ee-value {
   margin-top: 4px;
   font-size: 14px;
   color: var(--c-text);
   font-weight: 700;
+}
+
+.ee-value--primary {
+  font-size: 18px;
+  color: var(--c-dark);
 }
 
 .ee-note {
