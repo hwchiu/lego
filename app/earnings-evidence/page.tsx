@@ -6,9 +6,13 @@ import Sidebar from '@/app/components/layout/Sidebar';
 import { broadcomCalendarQ12026Case } from '@/app/data/earningsEvidenceData';
 
 function confidenceClass(level: 'High' | 'Medium' | 'Low'): string {
-  if (level === 'High') return 'ee-confidence ee-confidence--high';
-  if (level === 'Medium') return 'ee-confidence ee-confidence--medium';
-  return 'ee-confidence ee-confidence--low';
+  const classMap = {
+    High: 'ee-confidence--high',
+    Medium: 'ee-confidence--medium',
+    Low: 'ee-confidence--low',
+  };
+
+  return `ee-confidence ${classMap[level]}`;
 }
 
 export default function EarningsEvidencePage() {
@@ -53,12 +57,16 @@ export default function EarningsEvidencePage() {
                         <h3>{metric.label}</h3>
                         <p className="ee-value">{metric.value}</p>
                       </div>
-                      <div className={confidenceClass(metric.confidence.level)}>
+                      <div
+                        className={confidenceClass(metric.confidence.level)}
+                        role="status"
+                        aria-label={`Confidence ${metric.confidence.level} score ${metric.confidence.score}`}
+                      >
                         {metric.confidence.level} ({metric.confidence.score})
                       </div>
                     </div>
                     <p className="ee-reason">{metric.confidence.reason}</p>
-                    {metric.calculationTrace ? <p className="ee-trace">Trace: {metric.calculationTrace}</p> : null}
+                    {metric.calculationTrace && <p className="ee-trace">Trace: {metric.calculationTrace}</p>}
                     <p className="ee-source-refs">Evidence IDs: {metric.evidenceSourceIds.join(', ')}</p>
                   </article>
                 ))}
