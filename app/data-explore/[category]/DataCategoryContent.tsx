@@ -1161,17 +1161,54 @@ const CM_PRICE_LIMIT_MOCK_DATA: CmPriceVariationLimitRow[] = [
   { security_code: '1216', limit_up_price: '60.00', opening_ref_price: '54.60', limit_down_price: '49.20', last_trading_date: '2025-05-23', trading_method: 'Regular', disposition_mark: '', attention_mark: '', order_limit_mark: '', industry_code: '10', security_category_code: '01', exempt_short_sale_mark: 'N', security_ch_name: '統一', matching_interval_min: '5', single_order_volume_limit: '499', multiple_order_volume_limit: '999', advance_collection_percentage: '10%', exempt_sbl_short_sale_mark: 'N', par_value_mark: '10', allow_day_trade_mark: 'Y', board_mark: 'TWSE', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
 ];
 
-const CM_PE_RATIO = [
-  { ...CM_COMPANIES[0], yield: '0.46', pe: '25.34', pb: '6.12' },
-  { ...CM_COMPANIES[1], yield: '4.22', pe: '11.81', pb: '1.34' },
-  { ...CM_COMPANIES[2], yield: '10.21', pe: '9.78',  pb: '3.45' },
-  { ...CM_COMPANIES[3], yield: '2.36', pe: '10.23', pb: '1.08' },
-  { ...CM_COMPANIES[4], yield: '2.58', pe: '12.34', pb: '1.23' },
-  { ...CM_COMPANIES[5], yield: '1.64', pe: '12.89', pb: '1.12' },
-  { ...CM_COMPANIES[6], yield: '5.74', pe: '20.11', pb: '2.67' },
-  { ...CM_COMPANIES[7], yield: '3.75', pe: '22.34', pb: '2.89' },
-  { ...CM_COMPANIES[8], yield: '4.35', pe: '14.23', pb: '1.56' },
-  { ...CM_COMPANIES[9], yield: '2.56', pe: '16.78', pb: '1.43' },
+interface CmPeRatioRow {
+  security_code: string;
+  security_name: string;
+  close_price: string;
+  dividend_yield: string;
+  dividend_year: string;
+  pe_ratio: string;
+  pb_ratio: string;
+  report_period: string;
+  data_gen_dt: string;
+  data_gen_time: string;
+}
+
+interface CmPeRatioColumn {
+  id: string;
+  labels: { zh: string; en: string };
+  value: (row: CmPeRatioRow) => string;
+  tableVisible: 'Y' | 'N';
+  freezePane: 'Y' | 'N';
+  className?: string;
+  formatType?: 'number' | 'percent';
+}
+
+const CM_PE_RATIO_ALL_COLUMNS: CmPeRatioColumn[] = [
+  { id: 'security_code', labels: { zh: '證券代號', en: 'Security Code' }, value: (row) => row.security_code, tableVisible: 'Y', freezePane: 'Y', className: 'code' },
+  { id: 'security_name', labels: { zh: '證券名稱', en: 'Stock Name' }, value: (row) => row.security_name, tableVisible: 'Y', freezePane: 'N' },
+  { id: 'close_price', labels: { zh: '收盤價', en: 'Closing Price' }, value: (row) => row.close_price, tableVisible: 'Y', freezePane: 'N', className: 'num', formatType: 'number' },
+  { id: 'dividend_yield', labels: { zh: '殖利率', en: 'Dividend Yield' }, value: (row) => row.dividend_yield, tableVisible: 'Y', freezePane: 'N', className: 'num', formatType: 'percent' },
+  { id: 'dividend_year', labels: { zh: '股利年度', en: 'Dividend Year' }, value: (row) => row.dividend_year, tableVisible: 'Y', freezePane: 'N' },
+  { id: 'pe_ratio', labels: { zh: '本益比', en: 'P/E Ratio' }, value: (row) => row.pe_ratio, tableVisible: 'Y', freezePane: 'N', className: 'num', formatType: 'number' },
+  { id: 'pb_ratio', labels: { zh: '股價淨值比', en: 'P/B Ratio' }, value: (row) => row.pb_ratio, tableVisible: 'Y', freezePane: 'N', className: 'num', formatType: 'number' },
+  { id: 'report_period', labels: { zh: '財報年/季', en: 'Financial Report Y/Q' }, value: (row) => row.report_period, tableVisible: 'Y', freezePane: 'N' },
+  { id: 'tsmc_updatetime', labels: { zh: '台積更新時間', en: 'TSMC Updatetime' }, value: (row) => `${row.data_gen_dt}${row.data_gen_time ? ` ${row.data_gen_time}` : ''}`.trim() || '—', tableVisible: 'Y', freezePane: 'N' },
+  { id: 'data_gen_dt', labels: { zh: '資料產生日期', en: 'Data Generation Date' }, value: (row) => row.data_gen_dt, tableVisible: 'N', freezePane: 'N' },
+  { id: 'data_gen_time', labels: { zh: '資料產生時間', en: 'Data Generation Time' }, value: (row) => row.data_gen_time, tableVisible: 'N', freezePane: 'N' },
+];
+
+const CM_PE_RATIO_MOCK_DATA: CmPeRatioRow[] = [
+  { security_code: '9999', security_name: '全球科技', close_price: '1,245.00', dividend_yield: '0.46', dividend_year: '2024', pe_ratio: '25.34', pb_ratio: '6.12', report_period: '2024/Q4', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2317', security_name: '鴻海', close_price: '118.50', dividend_yield: '4.22', dividend_year: '2024', pe_ratio: '11.81', pb_ratio: '1.34', report_period: '2024/Q4', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2454', security_name: '聯發科', close_price: '1,290.00', dividend_yield: '10.21', dividend_year: '2024', pe_ratio: '9.78', pb_ratio: '3.45', report_period: '2024/Q4', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2881', security_name: '富邦金', close_price: '84.80', dividend_yield: '2.36', dividend_year: '2024', pe_ratio: '10.23', pb_ratio: '1.08', report_period: '2024/Q4', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2882', security_name: '國泰金', close_price: '97.00', dividend_yield: '2.58', dividend_year: '2024', pe_ratio: '12.34', pb_ratio: '1.23', report_period: '2024/Q4', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2891', security_name: '中信金', close_price: '39.50', dividend_yield: '1.64', dividend_year: '2024', pe_ratio: '12.89', pb_ratio: '1.12', report_period: '2024/Q4', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '2412', security_name: '中華電', close_price: '124.00', dividend_yield: '5.74', dividend_year: '2024', pe_ratio: '20.11', pb_ratio: '2.67', report_period: '2024/Q4', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '3045', security_name: '台灣大', close_price: '93.40', dividend_yield: '3.75', dividend_year: '2024', pe_ratio: '22.34', pb_ratio: '2.89', report_period: '2024/Q4', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '1301', security_name: '台塑', close_price: '64.50', dividend_yield: '4.35', dividend_year: '2024', pe_ratio: '14.23', pb_ratio: '1.56', report_period: '2024/Q4', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
+  { security_code: '1216', security_name: '統一', close_price: '82.00', dividend_yield: '2.56', dividend_year: '2024', pe_ratio: '16.78', pb_ratio: '1.43', report_period: '2024/Q4', data_gen_dt: '20250523', data_gen_time: '14:30:00' },
 ];
 
 // ── Daily Quotes (每日收盤行情) data ─────────────────────────────────────────
@@ -2190,11 +2227,15 @@ function CmPriceLimitTab({ lang, rowsData, loading, error }: CmStandardTabProps<
   );
 }
 
-function CmPeRatioTab({ lang, rowsData, loading, error }: CmStandardTabProps<(typeof CM_PE_RATIO)[number]>) {
+function CmPeRatioTab({ lang, rowsData, loading, error }: CmStandardTabProps<CmPeRatioRow>) {
   const zh = lang === 'zh';
+  const tableColumns = useMemo(
+    () => CM_PE_RATIO_ALL_COLUMNS.filter((column) => column.tableVisible === 'Y'),
+    [],
+  );
   const { rows, colFilters, handleColFilter, sortCol, sortDir, handleSort } = useGovSortableData(
     rowsData,
-    [(r) => r.code, (r) => (zh ? r.nameZh : r.nameEn), (r) => r.yield, (r) => r.pe, (r) => r.pb],
+    tableColumns.map((column) => (row) => column.value(row)),
   );
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 50;
@@ -2210,24 +2251,42 @@ function CmPeRatioTab({ lang, rowsData, loading, error }: CmStandardTabProps<(ty
 
   return (
     <div className="de-data-section">
-      <div className="de-data-table-wrap de-cm-inner-table-wrap">
-        <table className="de-data-table">
+      <div className="de-dq-table-scroll-wrap">
+        <table className="de-data-table de-cm-dq-table">
           <thead>
             <tr>
-              <ThSortFilter label={zh ? '股票代號' : 'Code'} colIndex={0} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[0] ?? ''} />
-              <ThSortFilter label={zh ? '名稱' : 'Name'} colIndex={1} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[1] ?? ''} />
-              <ThSortFilter label={zh ? '殖利率(%)' : 'Dividend Yield (%)'} colIndex={2} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[2] ?? ''} className="num" />
-              <ThSortFilter label={zh ? '本益比' : 'P/E Ratio'} colIndex={3} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[3] ?? ''} className="num" />
-              <ThSortFilter label={zh ? '股價淨值比' : 'P/B Ratio'} colIndex={4} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} onFilter={handleColFilter} filterValue={colFilters[4] ?? ''} className="num" />
+              {tableColumns.map((column, index) => {
+                const className = [column.className ?? '', column.freezePane === 'Y' ? 'de-cm-dq-col-sticky' : ''].filter(Boolean).join(' ');
+                return (
+                  <ThSortFilter
+                    key={column.id}
+                    label={column.labels[lang]}
+                    colIndex={index}
+                    sortCol={sortCol}
+                    sortDir={sortDir}
+                    onSort={handleSort}
+                    onFilter={handleColFilter}
+                    filterValue={colFilters[index] ?? ''}
+                    showFilter={false}
+                    className={className || undefined}
+                  />
+                );
+              })}
             </tr>
           </thead>
           <tbody>
-            {pagedRows.map((r) => (
-              <tr key={r.code}>
-                <CmNameCell lang={lang} code={r.code} nameZh={r.nameZh} nameEn={r.nameEn} />
-                <td className={`num${r.yield.startsWith('-') ? ' neg' : ''}`}>{fmtPct(r.yield)}</td>
-                <td className="num">{fmtNum(r.pe)}</td>
-                <td className="num">{fmtNum(r.pb)}</td>
+            {pagedRows.map((row) => (
+              <tr key={`${row.security_code}-${row.data_gen_dt}-${row.data_gen_time}`}>
+                {tableColumns.map((column) => {
+                  const className = [column.className ?? '', column.freezePane === 'Y' ? 'de-cm-dq-col-sticky' : ''].filter(Boolean).join(' ');
+                  const rawValue = column.value(row);
+                  const value = column.formatType === 'percent'
+                    ? fmtPct(rawValue)
+                    : column.formatType === 'number'
+                      ? fmtNum(rawValue)
+                      : rawValue;
+                  return <td key={column.id} className={className || undefined}>{value || '—'}</td>;
+                })}
               </tr>
             ))}
           </tbody>
@@ -2511,6 +2570,7 @@ interface CapitalMarketsCsvOptions {
   exRightDividendRows?: CmExRightDividendRow[];
   foreignInvestorsRows?: CmForeignInvestorsRow[];
   priceLimitRows?: CmPriceVariationLimitRow[];
+  peRatioRows?: CmPeRatioRow[];
 }
 
 function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: CapitalMarketsCsvOptions = {}) {
@@ -2661,11 +2721,23 @@ function downloadCapitalMarketsCSV(tabId: string, lang: 'zh' | 'en', options: Ca
       );
       break;
     }
-    case 'pe-ratio':
-      downloadCSV(zh ? '個股日本益比殖利率及股價淨值比.csv' : 'pe-ratio-dividend-yield.csv',
-        zh ? ['股票代號','名稱','殖利率(%)','本益比','股價淨值比'] : ['Code','Name','Dividend Yield (%)','P/E Ratio','P/B Ratio'],
-        CM_PE_RATIO.map(r => [r.code, zh ? r.nameZh : r.nameEn, r.yield, r.pe, r.pb]));
+    case 'pe-ratio': {
+      const rows = options.peRatioRows ?? [];
+      const csvColumns: Array<{ labels: { zh: string; en: string }; getValue: (row: CmPeRatioRow) => string }> = [
+        ...CM_PE_RATIO_ALL_COLUMNS
+          .filter((column) => column.id !== 'tsmc_updatetime')
+          .map((column) => ({
+            labels: column.labels,
+            getValue: (row: CmPeRatioRow) => column.value(row),
+          })),
+      ];
+      downloadCSV(
+        zh ? '個股日本益比殖利率及股價淨值比.csv' : 'pe-ratio-dividend-yield.csv',
+        csvColumns.map((column) => column.labels[lang]),
+        rows.map((row) => csvColumns.map((column) => column.getValue(row) || '')),
+      );
       break;
+    }
   }
 }
 
@@ -2714,7 +2786,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   const [priceLimitRows, setPriceLimitRows] = useState<CmPriceVariationLimitRow[]>([]);
   const [priceLimitLoading, setPriceLimitLoading] = useState(false);
   const [priceLimitError, setPriceLimitError] = useState<string | null>(null);
-  const [peRatioRows, setPeRatioRows] = useState<Array<(typeof CM_PE_RATIO)[number]>>([]);
+  const [peRatioRows, setPeRatioRows] = useState<CmPeRatioRow[]>([]);
   const [peRatioLoading, setPeRatioLoading] = useState(false);
   const [peRatioError, setPeRatioError] = useState<string | null>(null);
   const [isFieldOverviewOpen, setIsFieldOverviewOpen] = useState(false);
@@ -2735,7 +2807,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     { id: 'pe-ratio',          label: zh ? '個股日本益比、殖利率及股價淨值比' : 'P/E Ratio, Dividend Yield, P/B Ratio' },
   ];
 
-  const queryDailyQuotes = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
+  const queryDayTrading = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
     setDailyQuotesLoading(true);
     setDailyQuotesError(null);
     try {
@@ -2751,7 +2823,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     }
   }, [zh]);
 
-  const queryGetDailyQuotes = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
+  const queryDailyQuotes = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
     setGetDailyQuotesLoading(true);
     setGetDailyQuotesError(null);
     try {
@@ -2767,7 +2839,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     }
   }, [zh]);
 
-  const queryMarginTransaction = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
+  const queryMargin = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
     setMarginLoading(true);
     setMarginError(null);
     try {
@@ -2781,7 +2853,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     }
   }, [zh]);
 
-  const queryDailyShortSaleBalances = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
+  const queryShortSale = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
     setShortSaleLoading(true);
     setShortSaleError(null);
     try {
@@ -2795,7 +2867,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     }
   }, [zh]);
 
-  const queryRightAndDividend = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
+  const queryExDividend = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
     setExDividendLoading(true);
     setExDividendError(null);
     try {
@@ -2823,7 +2895,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     }
   }, [zh]);
 
-  const queryPriceVariationLimit = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
+  const queryPriceLimit = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
     setPriceLimitLoading(true);
     setPriceLimitError(null);
     try {
@@ -2837,7 +2909,7 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     }
   }, [zh]);
 
-  const queryPeRatioDividendYieldPbRatio = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
+  const queryPeRatio = useCallback(async (nextStartDate: string, nextEndDate: string, nextSecurityCode: string) => {
     setPeRatioLoading(true);
     setPeRatioError(null);
     try {
@@ -2864,28 +2936,28 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   useEffect(() => {
     switch (activeCmTab) {
       case 'daily-quotes':
-        queryGetDailyQuotes(startDate, endDate, securityCode);
-        break;
-      case 'day-trading':
         queryDailyQuotes(startDate, endDate, securityCode);
         break;
+      case 'day-trading':
+        queryDayTrading(startDate, endDate, securityCode);
+        break;
       case 'margin':
-        queryMarginTransaction(startDate, endDate, securityCode);
+        queryMargin(startDate, endDate, securityCode);
         break;
       case 'short-sale':
-        queryDailyShortSaleBalances(startDate, endDate, securityCode);
+        queryShortSale(startDate, endDate, securityCode);
         break;
       case 'ex-dividend':
-        queryRightAndDividend(startDate, endDate, securityCode);
+        queryExDividend(startDate, endDate, securityCode);
         break;
       case 'foreign-investors':
         queryForeignInvestors(startDate, endDate, securityCode);
         break;
       case 'price-limit':
-        queryPriceVariationLimit(startDate, endDate, securityCode);
+        queryPriceLimit(startDate, endDate, securityCode);
         break;
       case 'pe-ratio':
-        queryPeRatioDividendYieldPbRatio(startDate, endDate, securityCode);
+        queryPeRatio(startDate, endDate, securityCode);
         break;
       default:
         break;
@@ -2893,13 +2965,13 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   }, [
     activeCmTab,
     queryDailyQuotes,
-    queryDailyShortSaleBalances,
-    queryRightAndDividend,
-    queryGetDailyQuotes,
+    queryDayTrading,
+    queryExDividend,
     queryForeignInvestors,
-    queryMarginTransaction,
-    queryPeRatioDividendYieldPbRatio,
-    queryPriceVariationLimit,
+    queryMargin,
+    queryPeRatio,
+    queryPriceLimit,
+    queryShortSale,
   ]);
 
   const clampToAllowedDate = useCallback((value: string): string => {
@@ -2911,28 +2983,28 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
   function handleSearch() {
     switch (activeCmTab) {
       case 'daily-quotes':
-        queryGetDailyQuotes(startDate, endDate, securityCode);
-        break;
-      case 'day-trading':
         queryDailyQuotes(startDate, endDate, securityCode);
         break;
+      case 'day-trading':
+        queryDayTrading(startDate, endDate, securityCode);
+        break;
       case 'margin':
-        queryMarginTransaction(startDate, endDate, securityCode);
+        queryMargin(startDate, endDate, securityCode);
         break;
       case 'short-sale':
-        queryDailyShortSaleBalances(startDate, endDate, securityCode);
+        queryShortSale(startDate, endDate, securityCode);
         break;
       case 'ex-dividend':
-        queryRightAndDividend(startDate, endDate, securityCode);
+        queryExDividend(startDate, endDate, securityCode);
         break;
       case 'foreign-investors':
         queryForeignInvestors(startDate, endDate, securityCode);
         break;
       case 'price-limit':
-        queryPriceVariationLimit(startDate, endDate, securityCode);
+        queryPriceLimit(startDate, endDate, securityCode);
         break;
       case 'pe-ratio':
-        queryPeRatioDividendYieldPbRatio(startDate, endDate, securityCode);
+        queryPeRatio(startDate, endDate, securityCode);
         break;
       default:
         break;
@@ -2945,28 +3017,28 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
     setEndDate(defaultQueryDate);
     switch (activeCmTab) {
       case 'daily-quotes':
-        queryGetDailyQuotes(defaultQueryDate, defaultQueryDate, '');
-        break;
-      case 'day-trading':
         queryDailyQuotes(defaultQueryDate, defaultQueryDate, '');
         break;
+      case 'day-trading':
+        queryDayTrading(defaultQueryDate, defaultQueryDate, '');
+        break;
       case 'margin':
-        queryMarginTransaction(defaultQueryDate, defaultQueryDate, '');
+        queryMargin(defaultQueryDate, defaultQueryDate, '');
         break;
       case 'short-sale':
-        queryDailyShortSaleBalances(defaultQueryDate, defaultQueryDate, '');
+        queryShortSale(defaultQueryDate, defaultQueryDate, '');
         break;
       case 'ex-dividend':
-        queryRightAndDividend(defaultQueryDate, defaultQueryDate, '');
+        queryExDividend(defaultQueryDate, defaultQueryDate, '');
         break;
       case 'foreign-investors':
         queryForeignInvestors(defaultQueryDate, defaultQueryDate, '');
         break;
       case 'price-limit':
-        queryPriceVariationLimit(defaultQueryDate, defaultQueryDate, '');
+        queryPriceLimit(defaultQueryDate, defaultQueryDate, '');
         break;
       case 'pe-ratio':
-        queryPeRatioDividendYieldPbRatio(defaultQueryDate, defaultQueryDate, '');
+        queryPeRatio(defaultQueryDate, defaultQueryDate, '');
         break;
       default:
         break;
@@ -3069,6 +3141,9 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
       } else if (activeCmTab === 'price-limit') {
         const downloadRows = await fetchPriceVariationLimit(downloadStartDate, downloadEndDate, securityCode);
         downloadCapitalMarketsCSV('price-limit', lang, { priceLimitRows: downloadRows });
+      } else if (activeCmTab === 'pe-ratio') {
+        const downloadRows = await fetchPeRatioDividendYieldPbRatio(downloadStartDate, downloadEndDate, securityCode);
+        downloadCapitalMarketsCSV('pe-ratio', lang, { peRatioRows: downloadRows });
       } else {
         let downloadRows = dailyQuoteVisibleRows;
         if (activeCmTab === 'day-trading') {
@@ -3135,13 +3210,15 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
             )}
           </div>
           <div className="de-cm-content-toolbar-right">
-            {(activeCmTab === 'daily-quotes' ||activeCmTab === 'margin' || activeCmTab === 'short-sale' || activeCmTab === 'ex-dividend' || activeCmTab === 'foreign-investors' || activeCmTab === 'price-limit') && (
+            {(activeCmTab === 'daily-quotes' || activeCmTab === 'day-trading' || activeCmTab === 'margin' || activeCmTab === 'short-sale' || activeCmTab === 'ex-dividend' || activeCmTab === 'foreign-investors' || activeCmTab === 'price-limit' || activeCmTab === 'pe-ratio') && (
               <button
                 type="button"
                 className="de-news-download-btn de-gov-csv-btn de-dq-field-overview-btn"
                 onClick={() => {
                   if (activeCmTab === 'daily-quotes') {
                     setFieldOverviewColumns(CM_QUOTES_ALL_COLUMNS);
+                  } else if (activeCmTab === 'day-trading') {
+                    setFieldOverviewColumns(CM_DAY_TRADING_COLUMNS);
                   } else if (activeCmTab === 'short-sale') {
                     setFieldOverviewColumns(CM_DAILY_SHORT_SALE_ALL_COLUMNS);
                   } else if (activeCmTab === 'ex-dividend') {
@@ -3150,6 +3227,8 @@ function CapitalMarketsLayout({ lang, accentColor, activeCmTab, onChangeCmTab }:
                     setFieldOverviewColumns(CM_FOREIGN_INVESTORS_ALL_COLUMNS);
                   } else if (activeCmTab === 'price-limit') {
                     setFieldOverviewColumns(CM_PRICE_LIMIT_ALL_COLUMNS);
+                  } else if (activeCmTab === 'pe-ratio') {
+                    setFieldOverviewColumns(CM_PE_RATIO_ALL_COLUMNS);
                   } else {
                     setFieldOverviewColumns(CM_MARGIN_ALL_COLUMNS);
                   }
@@ -3413,9 +3492,12 @@ async function fetchPriceVariationLimit(startDate: string, endDate: string, secu
   return fetchCapitalMarketRows<CmPriceVariationLimitRow>('/getPriceVariationLimit', startDate, endDate, securityCode, fallbackRows);
 }
 
-async function fetchPeRatioDividendYieldPbRatio(startDate: string, endDate: string, securityCode: string): Promise<Array<(typeof CM_PE_RATIO)[number]>> {
-  const fallbackRows = filterRowsBySecurityCode(CM_PE_RATIO, securityCode);
-  return fetchCapitalMarketRows<(typeof CM_PE_RATIO)[number]>('/getPeRatioDividendYieldPbRatio', startDate, endDate, securityCode, fallbackRows);
+async function fetchPeRatioDividendYieldPbRatio(startDate: string, endDate: string, securityCode: string): Promise<CmPeRatioRow[]> {
+  const fallbackRows = filterRowsBySecurityCode(
+    CM_PE_RATIO_MOCK_DATA.map((row) => ({ ...row, data_gen_dt: endDate.replace(/-/g, '') })),
+    securityCode,
+  );
+  return fetchCapitalMarketRows<CmPeRatioRow>('/getPEData', startDate, endDate, securityCode, fallbackRows);
 }
 
 async function fetchGovRows<T>(endpoint: string): Promise<T[]> {

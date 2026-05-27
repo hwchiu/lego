@@ -22924,6 +22924,16 @@ html.dark .cp-fin-index-tab:hover {
   cursor: pointer;
 }
 
+.de-cm-period-input::-webkit-calendar-picker-indicator {
+  opacity: 0.72;
+  cursor: pointer;
+}
+
+html.dark .de-cm-period-input::-webkit-calendar-picker-indicator {
+  filter: invert(0.86) brightness(1.2);
+  opacity: 1;
+}
+
 /* ── Search & Clear buttons ── */
 
 .de-cm-search-btn {
