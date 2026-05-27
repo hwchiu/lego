@@ -1236,6 +1236,24 @@ interface DailyQuoteRow {
   data_gen_time: string;
 }
 
+function PriceChangeIndicatorTriangle({ indicator }: { indicator: string }) {
+  if (indicator === '+') {
+    return (
+      <span className="de-cm-dq-indicator de-cm-dq-indicator--up" aria-label="Price Up">
+        ▲
+      </span>
+    );
+  }
+  if (indicator === '-') {
+    return (
+      <span className="de-cm-dq-indicator de-cm-dq-indicator--down" aria-label="Price Down">
+        ▼
+      </span>
+    );
+  }
+  return <span className="de-cm-dq-indicator de-cm-dq-indicator--neutral">—</span>;
+}
+
 interface DqColumn {
   id: string;
   labels: { zh: string; en: string };
@@ -1840,13 +1858,16 @@ function DailyQuotesTab({ lang, rowsData, loading, error, onVisibleRowsChange }:
                   const tdClass = [
                     col.className ?? '',
                     col.freezePane === 'Y' ? 'de-cm-dq-col-sticky' : '',
-                    col.id === 'price_change' || col.id === 'price_change_indicator'
+                    col.id === 'price_change'
                       ? (r.price_change_indicator === '+' ? 'pos' : r.price_change_indicator === '-' ? 'neg' : '')
                       : '',
+                    col.id === 'price_change_indicator' ? 'de-cm-dq-indicator-cell' : '',
                   ].filter(Boolean).join(' ');
                   return (
                     <td key={col.id} className={tdClass || undefined}>
-                      {col.value(r)}
+                      {col.id === 'price_change_indicator'
+                        ? <PriceChangeIndicatorTriangle indicator={r.price_change_indicator} />
+                        : col.value(r)}
                     </td>
                   );
                 })}

@@ -22370,6 +22370,31 @@ html.dark .cp-fin-index-tab:hover {
   background: var(--c-bg);
 }
 
+.de-cm-dq-table td.de-cm-dq-indicator-cell {
+  text-align: center;
+}
+
+.de-cm-dq-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.de-cm-dq-indicator--up {
+  color: #dc2626;
+}
+
+.de-cm-dq-indicator--down {
+  color: #16a34a;
+}
+
+.de-cm-dq-indicator--neutral {
+  color: var(--c-text-3);
+}
+
 /* ===== DAILY QUOTES TAB ===== */
 
 .de-dq-table-scroll-wrap {
