@@ -261,3 +261,39 @@ Attach quote + evidence pointer for each claim.
 - 第三個里程碑是建立 sub-model/agent prompt 與 confidence scoring 實作骨架。
 
 若以上三個里程碑都達成，即可進入「真 API 即時觸發」階段的實作與驗證。
+
+---
+
+## 9) CLI 接手實作結果（2026-05-27）
+
+### 已完成的里程碑
+
+✅ **里程碑 1：靜態 Marvell 範例 + 台灣時間優先呈現**
+- `app/data/earningsEvidenceData.ts`: 新增 `marvellCalendarQ22026Case`
+- `app/earnings-evidence/page.tsx`: 以 Marvell 為主，Taiwan (UTC+8) 置於第一欄
+- 新增 `ee-label--primary` / `ee-value--primary` CSS 修飾符
+
+✅ **里程碑 2：Broadcom CY2026-Q2 時間校準**
+- `broadcomCalendarQ12026Case` → `broadcomCalendarQ22026Case`
+- targetWindow 改為 Calendar 2026 / Q2
+- eventTimeTw 校準為 `2026-06-04 05:00 (UTC+8)`（EDT 換算）
+- Confidence 設為 Medium (72) — 待官方 IR 確認後升為 High
+
+✅ **里程碑 3：A-team sub-model/agent prompt + confidence engine 骨架**
+- `docs/earnings-evidence-model-a-prompt.md` — 時間/事件抽取模板
+- `docs/earnings-evidence-model-b-prompt.md` — 財務數值抽取模板
+- `docs/earnings-evidence-model-c-prompt.md` — 敘事/風險抽取模板
+- `docs/earnings-confidence-scoring-spec.md` — 計分維度、等級、發布門檻
+- `app/lib/earningsEvidencePipeline.ts` — 靜態管線 stub（5 階段介面）
+- 頁面新增「Pipeline Run (Static Stub)」顯示區
+
+### Build 結果
+- `npm run build` ✅ 527 static pages generated, 0 errors
+- `/earnings-evidence` 頁面正常生成
+
+### 下一步（真 API 即時觸發階段）
+1. 將 `runStaticEvidencePipeline` 替換為真實 collector API 呼叫
+2. 接入 Model-A/B/C（LLM 呼叫）並回傳結構化 JSON
+3. 建立 Reconciliation Agent 邏輯
+4. 上線 Confidence Scoring Engine 計分規則
+5. 實作 Gatekeeper publish gate（Internal / Formal 兩階段）
