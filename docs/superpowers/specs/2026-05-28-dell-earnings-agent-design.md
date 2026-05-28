@@ -23,7 +23,7 @@ A single Node.js process with TypeScript. Runs as a persistent background server
 |--------|---------------|
 | `index.ts` | Express server entry point; starts scheduler and API |
 | `eventDateResolver.ts` | Uses Claude to determine Dell Q1 FY2027 earnings date on startup |
-| `scheduler.ts` | node-cron orchestration; manages state transitions; implements per-cron boolean lock to skip overlapping ticks |
+| `scheduler.ts` | Orchestrates cron-style polling via `setInterval`; manages state transitions; implements per-cron boolean lock to skip overlapping ticks |
 | `dellIRFetcher.ts` | Fetches ir.dell.com; extracts press release text |
 | `transcriptFetcher.ts` | Fetches earnings call transcript from Dell IR or Seeking Alpha |
 | `claudeParser.ts` | Structured extraction of Revenue, Margin, DOI, QoQ, YoY from press release |
@@ -62,7 +62,7 @@ STARTUP
 
 **Two independent crons run in parallel during LIVE state:**
 - **`metricsCron`** — fires every 10 minutes; fetches press release, extracts metrics, appends `JobRecord`. Stops when metrics reach DONE condition.
-- **`transcriptCron`** — fires every 10 minutes (same cadence, separate `node-cron` instance); fetches transcript and/or generates summary. Continues independently even after `metricsCron` stops; stops when transcript reaches a terminal state.
+- **`transcriptCron`** — fires every 10 minutes (same cadence, separate `setInterval` instance); fetches transcript and/or generates summary. Continues independently even after `metricsCron` stops; stops when transcript reaches a terminal state.
 
 **Transcript cron logic:**
 
@@ -197,9 +197,9 @@ Tries sources in priority order; stops at first success:
 
 1. **Dell IR page** (`ir.dell.com/news-events/events-calendar`) — look for a transcript link on the earnings event page
 2. **Seeking Alpha** (`seekingalpha.com/symbol/DELL/earnings/transcripts`) — public transcript page scrape
-3. **Not available** — returns `null`; sets `transcriptStatus = 'unavailable'`; the agent continues showing metrics and the website displays a "Transcript unavailable" message in the transcript section
+3. **Not available** — all sources exhausted; the agent continues showing metrics and the website displays a "Transcript unavailable" message in the transcript section
 
-The module exposes a single `fetchTranscript(eventDate: Date): Promise<string | null>` function. Callers do not need to know which source succeeded.
+The module exposes a single `fetchTranscript(eventDate: Date): Promise<{ kind: 'found'; transcript: string } | { kind: 'unavailable' }>` function. The caller (`scheduler.ts`) owns all state mutations: on `kind === 'found'` it sets `transcriptStatus = 'available'`; on `kind === 'unavailable'` it sets `transcriptStatus = 'unavailable'` and stops the cron. `transcriptFetcher.ts` performs no direct state mutations.
 
 ---
 
@@ -250,7 +250,7 @@ This guarantees the agent never enters WAITING with an undefined event date.
 5. Start scheduler — branch by loaded/resolved status:
    - `WAITING`: schedule a one-shot `setTimeout` to fire at `eventDate` (milliseconds until event); on fire, transition to LIVE and start both crons immediately
    - `LIVE` (persisted or just transitioned): start `metricsCron` + `transcriptCron`; fire both first ticks immediately (no 10-minute wait)
-   - `DONE` with retryable transcript (see resume conditions): start `transcriptCron` only using persisted counters; do NOT re-enter LIVE or reset metrics
+   - `DONE` with retryable transcript (see resume conditions): start `transcriptCron` only using persisted counters; **fire first tick immediately** (no 10-minute wait), then repeat every 600,000 ms; do NOT re-enter LIVE or reset metrics
    - `DONE` with exhausted counters: no crons; serve final state read-only
 
 ---
@@ -266,7 +266,7 @@ EARNINGS_DATE=          # optional override: ISO datetime UTC
 LOG_LEVEL=info
 ```
 
-The poll interval is fixed at **10 minutes** (`*/10 * * * *` cron expression) in both `metricsCron` and `transcriptCron`, and the website's `setInterval` is also fixed at 600,000 ms. This is not configurable to avoid frontend/backend clock drift.
+The poll interval is fixed at **10 minutes** in both `metricsCron` and `transcriptCron`. Each cron fires its first tick immediately on start, then repeats every 600,000 ms via `setInterval` (not a wall-clock `*/10 * * * *` expression) to guarantee exactly 10-minute gaps between ticks regardless of when LIVE starts. The website's polling `setInterval` is also fixed at 600,000 ms. None of these are configurable, to avoid frontend/backend clock drift.
 
 ---
 
