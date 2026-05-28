@@ -49,7 +49,7 @@ New static page in the lego Next.js app. Fetches the agent REST API client-side 
 STARTUP
   └─▶ EventDateResolver resolves Dell Q1 FY2027 earnings date
         └─▶ If current time >= eventDate → skip WAITING, enter LIVE immediately
-        └─▶ If current time < eventDate  → WAITING (hourly cron checks if eventDate reached)
+        └─▶ If current time < eventDate  → WAITING (one-shot setTimeout fires exactly at eventDate)
               └─▶ LIVE  (metricsCron: every 10 minutes; transcriptCron: every 10 minutes, separate instance)
                     metricsCron:
                     ├─▶ DellIRFetcher → fetch press release
@@ -103,17 +103,19 @@ Each cron tick is recorded as a `JobRecord` in `jobHistory` via `dataStore.appen
 
 **jobHistory scope:** Only `metricsCron` ticks generate `JobRecord` entries. `transcriptCron` never writes to `jobHistory`. Transcript-only retry ticks (after metricsCron stops) do NOT append to jobHistory. History is frozen (no new entries added) once status transitions to DONE.
 
+**Terminal tick ordering:** On the tick that triggers the DONE transition (stabilization condition met), `dataStore.appendJobRecord()` is called **before** `dataStore.setState({ status: 'DONE' })`, so the final JobRecord is included in the frozen history.
+
 **Lock-skip behavior:** If a `metricsCron` tick fires while the previous tick is still running (boolean lock is held), the new tick is **silently dropped** — no `JobRecord` is created and no warning is shown to the user. Only the agent log receives a warning. This prevents double-counting in the job history.
 
 The `status` field transitions:
-- `WAITING` → `LIVE`: triggered by the hourly cron when `currentTime >= eventDate`. On transition, `metricsCron` and `transcriptCron` start and **both fire their first tick immediately** (no 10-minute wait).
+- `WAITING` → `LIVE`: triggered by a one-shot `setTimeout` scheduled to fire exactly at `eventDate` (millisecond precision). On transition, `metricsCron` and `transcriptCron` start and **both fire their first tick immediately** (no 10-minute wait).
 - `LIVE` → `DONE`: triggered by `metricsCron` when the **stabilization condition** is met — all three of `revenue`, `grossMargin`, `doi` are non-null AND each metric's `value` field is strictly equal to the corresponding value in `_lastMetricsSnapshot` (i.e., two consecutive polls returned the same numeric value for all three metrics). Only the `value` field is compared; `qoq`, `yoy`, and `confidence` are excluded from the stabilization check.
 
 **`_lastMetricsSnapshot` update rules:**
 - After every `metricsCron` tick that results in status `'success'` or `'partial'` (i.e., any tick where at least one metric was extracted), update `_lastMetricsSnapshot` to the current `metrics` value and increment `_consecutivePollCount`.
 - After any tick with status `'failed'` or `'skipped'`, reset `_consecutivePollCount` to 0 and set `_lastMetricsSnapshot = null`. Stable metrics must be confirmed across two consecutive successful polls without interruption.
 
-The hourly WAITING cron stops once LIVE is entered. The startup fast-path (skip WAITING, enter LIVE immediately) also fires both crons' first ticks immediately on boot.
+The WAITING `setTimeout` is cancelled once LIVE is entered. The startup fast-path (skip WAITING, enter LIVE immediately) also fires both crons' first ticks immediately on boot.
 
 **Restart when DONE but transcript pending:** On startup, if loaded state is `DONE` and transcript work is still retryable, resume the transcript cron using persisted counters (not from zero). Resume conditions:
 - `transcriptStatus = 'pending'` AND `_transcriptAttempts < 12` → resume fetch cron
@@ -195,7 +197,7 @@ Tries sources in priority order; stops at first success:
 
 1. **Dell IR page** (`ir.dell.com/news-events/events-calendar`) — look for a transcript link on the earnings event page
 2. **Seeking Alpha** (`seekingalpha.com/symbol/DELL/earnings/transcripts`) — public transcript page scrape
-3. **Not available** — returns `null`; the agent continues showing metrics without transcript section
+3. **Not available** — returns `null`; sets `transcriptStatus = 'unavailable'`; the agent continues showing metrics and the website displays a "Transcript unavailable" message in the transcript section
 
 The module exposes a single `fetchTranscript(eventDate: Date): Promise<string | null>` function. Callers do not need to know which source succeeded.
 
@@ -246,7 +248,7 @@ This guarantees the agent never enters WAITING with an undefined event date.
 3. Apply the initial status decision: if `currentTime >= eventDate`, set status to `LIVE` now (do not expose a WAITING state that would immediately flip); otherwise status = `WAITING`
 4. **Start HTTP server** (only now — state is fully initialized; API always returns the correct status and non-null `eventDate`)
 5. Start scheduler — branch by loaded/resolved status:
-   - `WAITING`: start hourly WAITING cron (eventDate is in the future)
+   - `WAITING`: schedule a one-shot `setTimeout` to fire at `eventDate` (milliseconds until event); on fire, transition to LIVE and start both crons immediately
    - `LIVE` (persisted or just transitioned): start `metricsCron` + `transcriptCron`; fire both first ticks immediately (no 10-minute wait)
    - `DONE` with retryable transcript (see resume conditions): start `transcriptCron` only using persisted counters; do NOT re-enter LIVE or reset metrics
    - `DONE` with exhausted counters: no crons; serve final state read-only
@@ -302,7 +304,7 @@ app/earnings-agent/
 **Nav entry:** Added to `app/data/navigation.ts` immediately after the existing `Earnings` entry (line ~111), with label `{ zh: '財報監控', en: 'Earnings Monitor' }`.
 
 **Layout:**
-1. **Status bar** — agent status badge (WAITING / LIVE / DONE) + event date + last-updated timestamp. When status is `WAITING`, show a live countdown to the event date (days / hours / minutes / seconds, updated every second via `setInterval(1000)`). Countdown is hidden once status transitions to LIVE or DONE.
+1. **Status bar** — agent status badge (WAITING / LIVE / DONE) + event date + last-updated timestamp. When status is `WAITING`, show a live countdown to the event date (days / hours / minutes / seconds, updated every second via `setInterval(1000)`). The countdown is hidden when `Date.now() >= new Date(eventDate).getTime()` (local clock comparison), so it disappears at the correct moment even if the next API poll hasn't arrived yet.
 2. **Metrics section** — three cards: Revenue, Gross Margin, DOI. Each shows value, QoQ delta (▲▼ in pp or days, or "N/A" if null), YoY delta (▲▼ or "N/A" if null), and per-metric confidence badge (e.g., "95% confidence"). An overall confidence badge (from `metricsConfidence`) is shown at the top of the section.
    - Hidden when `status = 'WAITING'`
    - When `status = 'LIVE'` and `metrics = null` (no extraction yet): show section header with a "Awaiting first extraction…" placeholder in place of all three cards
@@ -353,8 +355,8 @@ type TranscriptStatus = 'pending' | 'available' | 'unavailable';
 type JobStatus = 'success' | 'partial' | 'failed' | 'skipped';
 
 interface MetricValue {
-  value:      number;       // always present if MetricValue is non-null
-  unit:       string;       // "B" | "%" | "days"
+  value:      number;                   // always present if MetricValue is non-null
+  unit:       'B' | '%' | 'days';       // constrained to known units; claudeParser must validate
   qoq:        number | null;
   yoy:        number | null;
   confidence: number;       // 0–100, Claude self-rating for this metric
