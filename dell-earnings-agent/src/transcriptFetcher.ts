@@ -50,45 +50,15 @@ export function matchesTranscript(
   return pageDay.getTime() >= eventDay.getTime();
 }
 
-async function fetchFromDellIR(
+async function fetchFromMotleyFool(
   eventDate: Date,
   targetQuarter: string,
 ): Promise<TranscriptFetchResult> {
-  const response = await axios.get(
-    'https://investors.delltechnologies.com/news-releases',
-    { timeout: 15_000 },
-  );
-  const $ = cheerio.load(response.data);
-
-  let transcriptUrl: string | null = null;
-  $('a').each((_i, el) => {
-    if (transcriptUrl) return;
-    const text = $(el).text().trim();
-    const href = $(el).attr('href') ?? '';
-    const dateText =
-      $(el).closest('li, article, tr, div').find('time').attr('datetime') ??
-      eventDate.toISOString().slice(0, 10);
-    if (matchesTranscript(text + ' ' + href, dateText, eventDate, targetQuarter)) {
-      transcriptUrl = href.startsWith('http') ? href : `https://investors.delltechnologies.com${href}`;
-    }
+  const searchUrl = 'https://www.fool.com/earnings-call-transcripts/?symbol=DELL';
+  const response = await axios.get(searchUrl, {
+    timeout: 15_000,
+    headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/125.0.0.0 Safari/537.36' },
   });
-
-  if (!transcriptUrl) return { kind: 'not_found_yet' };
-
-  const pageResponse = await axios.get(transcriptUrl, { timeout: 15_000 });
-  const $page = cheerio.load(pageResponse.data);
-  const text = $page('article').text().trim() || $page('main').text().trim();
-  return text ? { kind: 'found', transcript: text } : { kind: 'not_found_yet' };
-}
-
-async function fetchFromSeekingAlpha(
-  eventDate: Date,
-  targetQuarter: string,
-): Promise<TranscriptFetchResult> {
-  const response = await axios.get(
-    'https://seekingalpha.com/symbol/DELL/earnings/transcripts',
-    { timeout: 15_000, headers: { 'User-Agent': 'Mozilla/5.0' } },
-  );
   const $ = cheerio.load(response.data);
 
   let transcriptUrl: string | null = null;
@@ -101,7 +71,7 @@ async function fetchFromSeekingAlpha(
       $(el).parent().text().match(/\d{4}-\d{2}-\d{2}/)?.[0] ??
       eventDate.toISOString().slice(0, 10);
     if (matchesTranscript(text + ' ' + href, dateText, eventDate, targetQuarter)) {
-      transcriptUrl = href.startsWith('http') ? href : `https://seekingalpha.com${href}`;
+      transcriptUrl = href.startsWith('http') ? href : `https://www.fool.com${href}`;
     }
   });
 
@@ -109,13 +79,48 @@ async function fetchFromSeekingAlpha(
 
   const pageResponse = await axios.get(transcriptUrl, {
     timeout: 15_000,
-    headers: { 'User-Agent': 'Mozilla/5.0' },
+    headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/125.0.0.0 Safari/537.36' },
   });
   const $page = cheerio.load(pageResponse.data);
-  const text =
-    $page('article').text().trim() ||
-    $page('[data-test-id="article-content"]').text().trim();
+  $page('script, style, noscript').remove();
+  const text = $page('article').text().trim() || $page('main').text().trim();
   return text ? { kind: 'found', transcript: text } : { kind: 'not_found_yet' };
+}
+
+async function fetchFromEdgarTranscript(
+  eventDate: Date,
+  _targetQuarter: string,
+): Promise<TranscriptFetchResult> {
+  // Dell sometimes files an 8-K with the earnings call transcript as an exhibit
+  const startDt = new Date(eventDate.getTime() - 1 * 86_400_000).toISOString().slice(0, 10);
+  const endDt   = new Date(eventDate.getTime() + 5 * 86_400_000).toISOString().slice(0, 10);
+  const searchUrl = `https://efts.sec.gov/LATEST/search-index?q=%22Dell+Technologies%22+%22earnings+call%22&dateRange=custom&startdt=${startDt}&enddt=${endDt}&forms=8-K`;
+
+  const res = await axios.get(searchUrl, {
+    timeout: 15_000,
+    headers: { 'User-Agent': 'DellEarningsAgent/1.0 (contact: agent@lego2.hwchiu.com)' },
+  });
+  const hits: any[] = res.data?.hits?.hits ?? [];
+
+  for (const hit of hits) {
+    const id: string = hit._id ?? '';
+    const [accession, filename] = id.split(':');
+    if (!filename) continue;
+    const lc = filename.toLowerCase();
+    if (lc.includes('transcript') || lc.includes('exhibit99') || lc.includes('script')) {
+      const accPath = accession.replace(/-/g, '');
+      const url = `https://www.sec.gov/Archives/edgar/data/1571996/${accPath}/${filename}`;
+      const pageResponse = await axios.get(url, {
+        timeout: 15_000,
+        headers: { 'User-Agent': 'DellEarningsAgent/1.0 (contact: agent@lego2.hwchiu.com)' },
+      });
+      const $page = cheerio.load(pageResponse.data);
+      $page('script, style').remove();
+      const text = $page('body').text().trim();
+      if (text) return { kind: 'found', transcript: text };
+    }
+  }
+  return { kind: 'not_found_yet' };
 }
 
 export async function fetchTranscript(
@@ -124,7 +129,7 @@ export async function fetchTranscript(
 ): Promise<TranscriptFetchResult> {
   const results: TranscriptFetchResult[] = [];
 
-  for (const source of [fetchFromDellIR, fetchFromSeekingAlpha]) {
+  for (const source of [fetchFromMotleyFool, fetchFromEdgarTranscript]) {
     try {
       const result = await source(eventDate, targetQuarter);
       if (result.kind === 'found') return result;
