@@ -45,6 +45,9 @@ const L = {
   done:               { zh: '完成',                 en: 'DONE' },
   eventDate:          { zh: '財報日期',              en: 'Event Date' },
   lastUpdated:        { zh: '最後更新',              en: 'Last Updated' },
+  metricsAt:          { zh: '指標更新時間',           en: 'Metrics updated' },
+  transcriptAt:       { zh: '摘要生成時間',           en: 'Summary generated' },
+  fetchedAt:          { zh: '逐字稿取得時間',         en: 'Transcript fetched' },
   countdown:          { zh: '距財報發布',            en: 'Time until earnings' },
   revenue:            { zh: '營收',                 en: 'Revenue' },
   grossMargin:        { zh: '毛利率',                en: 'Gross Margin' },
@@ -396,6 +399,9 @@ export default function EarningsAgentContent() {
               })}
             </div>
           )}
+          {data.metricsUpdatedAt && (
+            <div className="ea-data-ts">🕐 {t('metricsAt', lang)}: {fmtLocale(data.metricsUpdatedAt, lang)}</div>
+          )}
         </section>
       )}
 
@@ -434,6 +440,12 @@ export default function EarningsAgentContent() {
                 )}
               </div>
             </>
+          )}
+          {data.transcriptRawFetchedAt && (
+            <div className="ea-data-ts">🕐 {t('fetchedAt', lang)}: {fmtLocale(data.transcriptRawFetchedAt, lang)}</div>
+          )}
+          {data.transcriptSummaryUpdatedAt && (
+            <div className="ea-data-ts">✨ {t('transcriptAt', lang)}: {fmtLocale(data.transcriptSummaryUpdatedAt, lang)}</div>
           )}
         </section>
       )}
