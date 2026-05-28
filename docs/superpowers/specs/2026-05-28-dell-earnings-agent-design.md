@@ -101,7 +101,7 @@ Each cron tick is recorded as a `JobRecord` in `jobHistory` via `dataStore.appen
 - `error`: non-null only when status = 'failed'
 - `note`: non-null when status = 'partial' or 'skipped'
 
-**jobHistory scope:** Only `metricsCron` ticks generate `JobRecord` entries. `transcriptCron` ticks never create JobRecords — transcript work is reflected only in the `transcriptFetched` boolean on the metrics tick's `JobRecord` when both crons run concurrently. Transcript-only retry ticks (after metricsCron stops) do NOT append to jobHistory. History is frozen (no new entries added) once status transitions to DONE.
+**jobHistory scope:** Only `metricsCron` ticks generate `JobRecord` entries. `transcriptCron` never writes to `jobHistory`. Transcript-only retry ticks (after metricsCron stops) do NOT append to jobHistory. History is frozen (no new entries added) once status transitions to DONE.
 
 The `status` field transitions:
 - `WAITING` → `LIVE`: triggered by the hourly cron when `currentTime >= eventDate`. On transition, `metricsCron` and `transcriptCron` start and **both fire their first tick immediately** (no 10-minute wait).
@@ -238,8 +238,8 @@ This guarantees the agent never enters WAITING with an undefined event date.
 2. Run `eventDateResolver` to determine `eventDate` (Claude → env var → fatal exit); create fresh initial `AgentState`
 3. **Start HTTP server** (only now — API returns valid non-null `eventDate` for all requests)
 4. Start scheduler — branch by loaded status:
-   - `WAITING` (or fresh start with `currentTime < eventDate`): start hourly WAITING cron only
-   - `LIVE` (or fresh start with `currentTime >= eventDate`): transition to LIVE; start `metricsCron` + `transcriptCron`; fire both first ticks immediately (no 10-minute wait)
+   - `WAITING` (persisted or fresh start): re-check `currentTime >= eventDate`; if true, enter LIVE immediately (fire both first ticks now); otherwise start hourly WAITING cron
+   - `LIVE` (persisted or fresh start with `currentTime >= eventDate`): start `metricsCron` + `transcriptCron`; fire both first ticks immediately (no 10-minute wait)
    - `DONE` with retryable transcript (see resume conditions): start `transcriptCron` only using persisted counters; do NOT re-enter LIVE or reset metrics
    - `DONE` with exhausted counters: no crons; serve final state read-only
 
@@ -421,9 +421,11 @@ interface DataStore {
   // executes JS single-threaded, overlapping async cron ticks that await I/O are serialized
   // naturally. If a cron tick is still running when the next fires, the new tick is skipped
   // (log a warning). This skip behavior must be implemented in scheduler.ts using a boolean lock.
+  // appendJobRecord() also bumps lastUpdated to keep the timestamp consistent with any state change.
   setState(patch: Partial<AgentState>): void;
   getPublicState(): EarningsApiResponse;
-  // DataStore generates the jobId internally using _nextJobId; caller supplies all other fields
+  // DataStore generates the jobId internally using _nextJobId; caller supplies all other fields.
+  // Also bumps lastUpdated (same as setState) so jobHistory mutations are reflected in the timestamp.
   appendJobRecord(record: Omit<JobRecord, 'jobId'>): void;
   reset(): void;
 }
