@@ -114,7 +114,7 @@ The `status` field transitions:
 
 **`_lastMetricsSnapshot` update rules:**
 - After every `metricsCron` tick where `metricsExtracted = true` (i.e., at least one non-null metric was stored — regardless of whether job status is `'success'` or `'partial'`), update `_lastMetricsSnapshot` to the current `metrics` value and increment `_consecutivePollCount`.
-- After any tick with status `'failed'` or `'skipped'`, reset `_consecutivePollCount` to 0 and set `_lastMetricsSnapshot = null`. Stable metrics must be confirmed across two consecutive successful polls without interruption.
+- After any tick with `metricsExtracted = false` (status `'failed'`, `'skipped'`, or `'partial'` with all-null metrics), reset `_consecutivePollCount` to 0 and set `_lastMetricsSnapshot = null`. The stabilization counter must reflect only an unbroken sequence of ticks where at least one metric was extracted.
 
 The WAITING `setTimeout` is cancelled once LIVE is entered. The startup fast-path (skip WAITING, enter LIVE immediately) also fires both crons' first ticks immediately on boot.
 
@@ -132,6 +132,8 @@ State is persisted to `state.json` so the agent can resume after a restart witho
 **Base URL:** `http://localhost:3001` (port configurable via `PORT` env var on the agent)
 
 **Frontend URL discovery:** The lego website page reads `process.env.NEXT_PUBLIC_AGENT_URL` at build time. Default value is `http://localhost:3001`. To deploy with a different host, set `NEXT_PUBLIC_AGENT_URL=http://<host>:<port>` in the lego `.env.local` before running `npm run build`.
+
+**CORS:** Enabled for all origins on every endpoint (the lego static site fetches from a different origin).
 
 ### `GET /api/earnings`
 
@@ -182,8 +184,6 @@ Returns current agent state and all collected data.
 
 Returns `{ "ok": true, "status": "<current state>" }`.
 
-**CORS:** Enabled for all origins (the lego static site fetches from a different origin).
-
 ---
 
 ## Data Sources
@@ -206,6 +206,8 @@ The module exposes a single `fetchTranscript(eventDate: Date): Promise<{ kind: '
 - `kind='error'` — network failure, scrape error, or HTTP error; `message` contains the reason
 
 Both `not_found_yet` and `error` are retryable; `scheduler.ts` increments `_transcriptAttempts` for either and declares terminal `transcriptStatus='unavailable'` after 12 total retryable returns. `transcriptFetcher.ts` performs no direct state mutations.
+
+**Multi-source aggregation:** sources are tried in order (Dell IR first, then Seeking Alpha); the function returns the first `kind='found'` result. If one source returns `error` and another returns `not_found_yet`, the function returns `not_found_yet` (precedence: `found` > `not_found_yet` > `error`). Only if all sources return `error` does the function return `error`.
 
 ---
 
