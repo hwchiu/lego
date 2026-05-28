@@ -1,4 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk';
+import { chatComplete } from './aiClient';
 import { TranscriptSummary } from './types';
 
 const SUMMARY_PROMPT = `You are a financial analyst summarizing an earnings call transcript.
@@ -12,17 +12,7 @@ Return ONLY valid JSON with this exact structure:
 Return ONLY the JSON object, no markdown fences, no other text.`;
 
 export async function summarizeTranscript(transcriptText: string): Promise<TranscriptSummary> {
-  const client = new Anthropic();
-  const response = await client.messages.create({
-    model: 'claude-3-5-sonnet-20241022',
-    max_tokens: 2048,
-    messages: [{
-      role: 'user',
-      content: `${SUMMARY_PROMPT}\n\n---\n${transcriptText}`,
-    }],
-  });
-
-  const text = response.content[0]?.type === 'text' ? response.content[0].text.trim() : '';
+  const text = await chatComplete(SUMMARY_PROMPT, transcriptText, 2048);
   const cleaned = text.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
   const parsed = JSON.parse(cleaned);
 

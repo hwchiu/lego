@@ -1,65 +1,59 @@
 // dell-earnings-agent/__tests__/eventDateResolver.test.ts
 import { resolveEventDate } from '../src/eventDateResolver';
-import Anthropic from '@anthropic-ai/sdk';
+import * as aiClient from '../src/aiClient';
 
-jest.mock('@anthropic-ai/sdk');
-const MockAnthropic = Anthropic as jest.MockedClass<typeof Anthropic>;
+jest.mock('../src/aiClient');
+const mockChatComplete = aiClient.chatComplete as jest.MockedFunction<typeof aiClient.chatComplete>;
 
-function mockClaudeResponse(text: string) {
-  MockAnthropic.prototype.messages = {
-    create: jest.fn().mockResolvedValue({
-      content: [{ type: 'text', text }],
-    }),
-  } as any;
+function mockAIResponse(text: string) {
+  mockChatComplete.mockResolvedValue(text);
 }
 
-function mockClaudeFailure() {
-  MockAnthropic.prototype.messages = {
-    create: jest.fn().mockRejectedValue(new Error('API error')),
-  } as any;
+function mockAIFailure() {
+  mockChatComplete.mockRejectedValue(new Error('API error'));
 }
 
 const EXACT_FATAL = 'FATAL: Cannot determine earnings date. Set EARNINGS_DATE=<ISO UTC> in .env';
 
 describe('resolveEventDate', () => {
-  beforeEach(() => MockAnthropic.mockClear());
+  beforeEach(() => mockChatComplete.mockClear());
 
-  it('returns EARNINGS_DATE env var when skipClaude=true', async () => {
+  it('returns EARNINGS_DATE env var when skipAI=true', async () => {
     process.env.EARNINGS_DATE = '2026-05-29T20:30:00Z';
-    const result = await resolveEventDate({ skipClaude: true });
+    const result = await resolveEventDate({ skipAI: true });
     expect(result).toBe('2026-05-29T20:30:00Z');
     delete process.env.EARNINGS_DATE;
   });
 
-  it('throws FATAL with exact message when no env var and skipClaude=true', async () => {
+  it('throws FATAL with exact message when no env var and skipAI=true', async () => {
     delete process.env.EARNINGS_DATE;
-    await expect(resolveEventDate({ skipClaude: true })).rejects.toThrow(EXACT_FATAL);
+    await expect(resolveEventDate({ skipAI: true })).rejects.toThrow(EXACT_FATAL);
   });
 
   it('throws FATAL with exact message when EARNINGS_DATE is not a valid ISO datetime', async () => {
     process.env.EARNINGS_DATE = 'not-a-date';
-    await expect(resolveEventDate({ skipClaude: true })).rejects.toThrow(EXACT_FATAL);
+    await expect(resolveEventDate({ skipAI: true })).rejects.toThrow(EXACT_FATAL);
     delete process.env.EARNINGS_DATE;
   });
 
   it('throws FATAL with exact message when EARNINGS_DATE has no T separator (date-only string)', async () => {
     process.env.EARNINGS_DATE = '2026-05-29';
-    await expect(resolveEventDate({ skipClaude: true })).rejects.toThrow(EXACT_FATAL);
+    await expect(resolveEventDate({ skipAI: true })).rejects.toThrow(EXACT_FATAL);
     delete process.env.EARNINGS_DATE;
   });
 
-  it('returns Claude result and ignores EARNINGS_DATE when Claude succeeds', async () => {
-    process.env.EARNINGS_DATE = '2026-01-01T00:00:00Z';  // different from Claude result
-    mockClaudeResponse('2026-05-29T20:30:00Z');
+  it('returns AI result only when EARNINGS_DATE env var is missing', async () => {
+    delete process.env.EARNINGS_DATE;
+    mockAIResponse('2026-05-29T20:30:00Z');
     const result = await resolveEventDate();
     expect(result).toBe('2026-05-29T20:30:00Z');
-    delete process.env.EARNINGS_DATE;
   });
 
-  it('falls back to EARNINGS_DATE when Claude API call rejects', async () => {
+  it('returns EARNINGS_DATE and skips AI when env var is set', async () => {
     process.env.EARNINGS_DATE = '2026-05-29T20:30:00Z';
-    mockClaudeFailure();
+    // AI should never be called
     const result = await resolveEventDate();
+    expect(mockChatComplete).not.toHaveBeenCalled();
     expect(result).toBe('2026-05-29T20:30:00Z');
     delete process.env.EARNINGS_DATE;
   });

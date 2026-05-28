@@ -42,6 +42,8 @@ export function startScheduler(dataStore: DataStore): void {
   }
 }
 
+const MAX_TIMEOUT_MS = 2_147_483_647; // Node's 32-bit signed int limit for setTimeout
+
 function scheduleWaiting(dataStore: DataStore): void {
   const eventDate = new Date(dataStore.getState().eventDate!);
   const msUntil = eventDate.getTime() - Date.now();
@@ -52,10 +54,17 @@ function scheduleWaiting(dataStore: DataStore): void {
     return;
   }
 
+  // Cap to avoid 32-bit overflow; re-schedule when this fires if still not time
+  const delay = Math.min(msUntil, MAX_TIMEOUT_MS);
   const t = setTimeout(() => {
+    if (Date.now() < eventDate.getTime()) {
+      // Not yet time — re-enter waiting loop
+      scheduleWaiting(dataStore);
+      return;
+    }
     dataStore.setState({ status: 'LIVE' });
     startBothCrons(dataStore);
-  }, msUntil);
+  }, delay);
   if ((t as unknown as { unref?: () => void }).unref) {
     (t as unknown as { unref: () => void }).unref();
   }

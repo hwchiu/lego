@@ -1,23 +1,19 @@
 // dell-earnings-agent/__tests__/claudeParser.test.ts
 import { parseMetrics } from '../src/claudeParser';
-import Anthropic from '@anthropic-ai/sdk';
+import * as aiClient from '../src/aiClient';
 
-jest.mock('@anthropic-ai/sdk');
-const MockAnthropic = Anthropic as jest.MockedClass<typeof Anthropic>;
+jest.mock('../src/aiClient');
+const mockChatComplete = aiClient.chatComplete as jest.MockedFunction<typeof aiClient.chatComplete>;
 
-function mockClaudeResponse(text: string) {
-  MockAnthropic.prototype.messages = {
-    create: jest.fn().mockResolvedValue({
-      content: [{ type: 'text', text }],
-    }),
-  } as any;
+function mockAIResponse(text: string) {
+  mockChatComplete.mockResolvedValue(text);
 }
 
 describe('parseMetrics', () => {
-  beforeEach(() => MockAnthropic.mockClear());
+  beforeEach(() => mockChatComplete.mockClear());
 
   it('parses full valid Claude response', async () => {
-    mockClaudeResponse(JSON.stringify({
+    mockAIResponse(JSON.stringify({
       revenue:     { value: 23.9, unit: 'B',    qoq: 2.3,  yoy: 5.1,  confidence: 95 },
       grossMargin: { value: 22.1, unit: '%',    qoq: -0.4, yoy: 1.2,  confidence: 88 },
       doi:         { value: 34,   unit: 'days', qoq: -2,   yoy: -3,   confidence: 72 },
@@ -32,7 +28,7 @@ describe('parseMetrics', () => {
   });
 
   it('returns null metrics for null fields', async () => {
-    mockClaudeResponse(JSON.stringify({
+    mockAIResponse(JSON.stringify({
       revenue: null, grossMargin: null, doi: null,
       overallConfidence: 20,
     }));
@@ -44,7 +40,7 @@ describe('parseMetrics', () => {
   });
 
   it('strips markdown fences before parsing', async () => {
-    mockClaudeResponse('```json\n' + JSON.stringify({
+    mockAIResponse('```json\n' + JSON.stringify({
       revenue: { value: 10, unit: 'B', qoq: null, yoy: null, confidence: 80 },
       grossMargin: null, doi: null, overallConfidence: 70,
     }) + '\n```');
@@ -53,12 +49,12 @@ describe('parseMetrics', () => {
   });
 
   it('throws on malformed JSON from Claude', async () => {
-    mockClaudeResponse('this is not json at all');
+    mockAIResponse('this is not json at all');
     await expect(parseMetrics('text')).rejects.toThrow();
   });
 
   it('normalises unknown unit to field-appropriate default', async () => {
-    mockClaudeResponse(JSON.stringify({
+    mockAIResponse(JSON.stringify({
       revenue:     { value: 23.9, unit: 'USD billions', qoq: null, yoy: null, confidence: 80 },
       grossMargin: { value: 22.1, unit: 'percent',      qoq: null, yoy: null, confidence: 80 },
       doi:         { value: 34,   unit: 'calendar days', qoq: null, yoy: null, confidence: 80 },
@@ -71,7 +67,7 @@ describe('parseMetrics', () => {
   });
 
   it('clamps confidence to 0–100', async () => {
-    mockClaudeResponse(JSON.stringify({
+    mockAIResponse(JSON.stringify({
       revenue: { value: 10, unit: 'B', qoq: null, yoy: null, confidence: 150 },
       grossMargin: null, doi: null, overallConfidence: -5,
     }));
@@ -80,10 +76,8 @@ describe('parseMetrics', () => {
     expect(result.overallConfidence).toBe(0);
   });
 
-  it('throws when Claude API call rejects', async () => {
-    MockAnthropic.prototype.messages = {
-      create: jest.fn().mockRejectedValue(new Error('API unavailable')),
-    } as any;
+  it('throws when AI call rejects', async () => {
+    mockChatComplete.mockRejectedValue(new Error('API unavailable'));
     await expect(parseMetrics('text')).rejects.toThrow('API unavailable');
   });
 });

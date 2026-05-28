@@ -1,4 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk';
+import { chatComplete } from './aiClient';
 import { EarningsMetrics, MetricValue } from './types';
 
 const EXTRACTION_PROMPT = `You are a financial data extraction assistant.
@@ -50,18 +50,7 @@ export async function parseMetrics(pressReleaseText: string): Promise<{
   metrics: EarningsMetrics;
   overallConfidence: number;
 }> {
-  const client = new Anthropic();
-  const response = await client.messages.create({
-    model: 'claude-3-5-sonnet-20241022',
-    max_tokens: 1024,
-    messages: [{
-      role: 'user',
-      content: `${EXTRACTION_PROMPT}\n\n---\n${pressReleaseText}`,
-    }],
-  });
-
-  const text = response.content[0]?.type === 'text' ? response.content[0].text.trim() : '';
-  // Strip markdown code fences if Claude wraps response despite instructions
+  const text = await chatComplete(EXTRACTION_PROMPT, pressReleaseText, 1024);
   const cleaned = text.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
   const parsed = JSON.parse(cleaned);
 

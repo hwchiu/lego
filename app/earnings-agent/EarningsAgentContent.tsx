@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 
-const AGENT_URL = process.env.NEXT_PUBLIC_AGENT_URL ?? 'http://localhost:3001';
+const AGENT_URL = process.env.NEXT_PUBLIC_AGENT_URL ?? 'http://localhost:3002';
 
 // ---- Mirror of EarningsApiResponse from agent ----
 interface MetricValue {

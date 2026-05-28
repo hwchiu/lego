@@ -1,23 +1,19 @@
 // dell-earnings-agent/__tests__/claudeTranscriptSummarizer.test.ts
 import { summarizeTranscript } from '../src/claudeTranscriptSummarizer';
-import Anthropic from '@anthropic-ai/sdk';
+import * as aiClient from '../src/aiClient';
 
-jest.mock('@anthropic-ai/sdk');
-const MockAnthropic = Anthropic as jest.MockedClass<typeof Anthropic>;
+jest.mock('../src/aiClient');
+const mockChatComplete = aiClient.chatComplete as jest.MockedFunction<typeof aiClient.chatComplete>;
 
-function mockClaudeResponse(text: string) {
-  MockAnthropic.prototype.messages = {
-    create: jest.fn().mockResolvedValue({
-      content: [{ type: 'text', text }],
-    }),
-  } as any;
+function mockAIResponse(text: string) {
+  mockChatComplete.mockResolvedValue(text);
 }
 
 describe('summarizeTranscript', () => {
-  beforeEach(() => MockAnthropic.mockClear());
+  beforeEach(() => mockChatComplete.mockClear());
 
   it('returns structured TranscriptSummary from valid Claude response', async () => {
-    mockClaudeResponse(JSON.stringify({
+    mockAIResponse(JSON.stringify({
       highlights: ['Revenue beat by 3%', 'AI server demand strong'],
       risks:      ['Margin pressure from DRAM costs'],
       outlook:    'Q2 guidance raised on ISG strength.',
@@ -31,7 +27,7 @@ describe('summarizeTranscript', () => {
   });
 
   it('tolerates missing array fields (defaults to empty array)', async () => {
-    mockClaudeResponse(JSON.stringify({
+    mockAIResponse(JSON.stringify({
       highlights: [],
       risks: null,
       outlook: 'Some outlook.',
@@ -43,7 +39,7 @@ describe('summarizeTranscript', () => {
   });
 
   it('strips markdown fences before parsing', async () => {
-    mockClaudeResponse('```json\n' + JSON.stringify({
+    mockAIResponse('```json\n' + JSON.stringify({
       highlights: ['One highlight'],
       risks: [],
       outlook: 'Stable.',
@@ -54,7 +50,7 @@ describe('summarizeTranscript', () => {
   });
 
   it('throws on malformed JSON', async () => {
-    mockClaudeResponse('not json');
+    mockAIResponse('not json');
     await expect(summarizeTranscript('text')).rejects.toThrow();
   });
 });
