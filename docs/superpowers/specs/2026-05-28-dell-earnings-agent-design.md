@@ -211,7 +211,7 @@ Returns `{ "ok": true, "status": "<current state>" }`.
 
 Both fetchers receive `eventDate: Date` and `targetQuarter: string` (e.g. `"Q1 FY2027"`) and must reject content that does not match the target event:
 - **Press release:** accept only items whose title/URL contains **both** a quarter token (one of: `Q1`, `first quarter`, `1st quarter`) **and** a fiscal-year token (one of: `FY2027`, `fiscal 2027`, `fiscal year 2027`), AND whose publish date is within ±3 days of `eventDate` (see date normalization rules below).
-- **Transcript:** accept only items whose title/URL contains **both** a quarter token (same list as above) **and** a year token. For transcripts, the year token list is expanded to also accept plain calendar-year forms (e.g. `2027`) in addition to the fiscal-year token list — since services like Seeking Alpha commonly use `"Q1 2027 Earnings Call"` without the `FY` prefix. The year token must match the fiscal year's calendar year (derived from `targetQuarter`). Page date must be on or after `eventDate` (UTC calendar-date comparison). Older-quarter transcripts on the same page must be skipped.
+- **Transcript:** accept only items whose title/URL contains **both** a quarter token (same list as above) **and** a year token. For transcripts, the accepted year tokens are: all fiscal-year tokens above (`FY2027`, `fiscal 2027`, `fiscal year 2027`) **plus** the plain four-digit year from the FY label (`2027`) **plus** the four-digit calendar year of `eventDate` (e.g. `2026`, derived from `eventDate.getUTCFullYear()`). This covers both Seeking Alpha's `"Q1 2027 Earnings Call"` style and press releases dated in the actual event calendar year. Page date must be on or after `eventDate` (UTC calendar-date comparison). Older-quarter transcripts on the same page must be skipped.
 
 **Token matching normalization:** all title/URL token comparisons are **case-insensitive** and **punctuation-normalized** (strip or replace hyphens, underscores, extra whitespace before comparison). For example, `"Q1-FY2027"`, `"q1 fy2027"`, and `"Q1 FY 2027"` should all match.
 
@@ -223,7 +223,7 @@ Tries sources in priority order; stops at first success:
 
 1. **Dell IR page** (`ir.dell.com/news-events/events-calendar`) — look for a transcript link on the earnings event page
 2. **Seeking Alpha** (`seekingalpha.com/symbol/DELL/earnings/transcripts`) — public transcript page scrape
-3. **Not available** — all sources exhausted; the agent continues showing metrics and the website displays a "Transcript unavailable" message in the transcript section
+3. **Not available** — all sources exhausted for this tick; the fetcher returns `{ kind: 'not_found_yet' }` or `{ kind: 'error' }`. The `unavailable` terminal state is **never set by the fetcher**; it is set by `scheduler.ts` only after 12 total retryable returns.
 
 The module exposes a single `fetchTranscript(eventDate: Date, targetQuarter: string): Promise<{ kind: 'found'; transcript: string } | { kind: 'not_found_yet' } | { kind: 'error'; message: string }>` function. Return semantics:
 - `kind='found'` — transcript text successfully retrieved
@@ -276,6 +276,7 @@ This guarantees the agent never enters WAITING with an undefined event date.
 1. Load `state.json` if it exists and is valid:
    - If loaded state has `eventDate` set and status is `WAITING`, `LIVE`, or `DONE` → skip Claude date resolution; use persisted state
    - If loaded state is `WAITING` and `currentTime >= eventDate` → upgrade status to `LIVE` in memory before HTTP server starts
+   - **Schema defaulting:** if `_lastSnapshotIsSuccess` is missing from loaded state (older `state.json`), default it to `false` — this conservatively treats any existing snapshot as partial-tier, ensuring DONE is not triggered until two fresh success-tier ticks are observed.
    - If `state.json` is missing, corrupted, or `eventDate` is null → proceed to step 2
 2. Run `eventDateResolver` to determine `eventDate` (Claude → env var → fatal exit); create fresh initial `AgentState`
 3. Apply the initial status decision: if `currentTime >= eventDate`, set status to `LIVE` now (do not expose a WAITING state that would immediately flip); otherwise status = `WAITING`
