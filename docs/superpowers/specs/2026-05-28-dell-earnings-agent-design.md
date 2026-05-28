@@ -103,9 +103,15 @@ Each cron tick is recorded as a `JobRecord` in `jobHistory` via `dataStore.appen
 
 **jobHistory scope:** Only `metricsCron` ticks generate `JobRecord` entries. `transcriptCron` never writes to `jobHistory`. Transcript-only retry ticks (after metricsCron stops) do NOT append to jobHistory. History is frozen (no new entries added) once status transitions to DONE.
 
+**Lock-skip behavior:** If a `metricsCron` tick fires while the previous tick is still running (boolean lock is held), the new tick is **silently dropped** — no `JobRecord` is created and no warning is shown to the user. Only the agent log receives a warning. This prevents double-counting in the job history.
+
 The `status` field transitions:
 - `WAITING` → `LIVE`: triggered by the hourly cron when `currentTime >= eventDate`. On transition, `metricsCron` and `transcriptCron` start and **both fire their first tick immediately** (no 10-minute wait).
 - `LIVE` → `DONE`: triggered by `metricsCron` when the **stabilization condition** is met — all three of `revenue`, `grossMargin`, `doi` are non-null AND each metric's `value` field is strictly equal to the corresponding value in `_lastMetricsSnapshot` (i.e., two consecutive polls returned the same numeric value for all three metrics). Only the `value` field is compared; `qoq`, `yoy`, and `confidence` are excluded from the stabilization check.
+
+**`_lastMetricsSnapshot` update rules:**
+- After every `metricsCron` tick that results in status `'success'` or `'partial'` (i.e., any tick where at least one metric was extracted), update `_lastMetricsSnapshot` to the current `metrics` value and increment `_consecutivePollCount`.
+- After any tick with status `'failed'` or `'skipped'`, reset `_consecutivePollCount` to 0 and set `_lastMetricsSnapshot = null`. Stable metrics must be confirmed across two consecutive successful polls without interruption.
 
 The hourly WAITING cron stops once LIVE is entered. The startup fast-path (skip WAITING, enter LIVE immediately) also fires both crons' first ticks immediately on boot.
 
@@ -380,7 +386,7 @@ interface AgentState {
   // Public fields (exposed via GET /api/earnings)
   status:             AgentStatus;
   eventDate:          string | null;   // null only during startup resolution (before WAITING/LIVE/DONE is entered); HTTP server only starts accepting requests after resolution, so API callers always receive a non-null value
-  lastUpdated:        string;                // ISO UTC; set on every setState() call
+  lastUpdated:        string;                // ISO UTC; updated on every setState() call AND every appendJobRecord() call
   metrics:            EarningsMetrics | null;
   metricsConfidence:  number | null;         // overall extraction confidence (0–100), null before first extraction
   metricsUpdatedAt:   string | null;
@@ -399,10 +405,11 @@ interface AgentState {
   _nextJobId:             number;  // counter for sequential job IDs
 }
 
-// GET /api/earnings response type (internal fields stripped)
+// GET /api/earnings response type (internal fields stripped; eventDate narrowed to non-null)
 type EarningsApiResponse = Omit<AgentState,
   '_consecutivePollCount' | '_lastMetricsSnapshot' |
-  '_transcriptAttempts' | '_summaryAttempts' | '_nextJobId'>;
+  '_transcriptAttempts' | '_summaryAttempts' | '_nextJobId' | 'eventDate'>
+  & { eventDate: string };
 
 // Module interfaces
 interface DellIRFetcher {
