@@ -106,6 +106,8 @@ Each cron tick is recorded as a `JobRecord` in `jobHistory` via `dataStore.appen
   - `'success'` — all three metrics non-null AND `metricsConfidence >= 50`
 - `metricsConfidence`: the overall confidence returned by Claude; null when status = 'failed' or 'skipped'
 - `metricsExtracted`: true if at least one non-null metric was stored this tick
+
+**When `metricsExtracted = false`** (status `'failed'`, `'skipped'`, or `'partial'` with all-null metrics): the public fields `metrics`, `metricsConfidence`, and `metricsUpdatedAt` are **left unchanged** (last successfully extracted values are preserved). The tick still writes a `JobRecord` with the appropriate status.
 - `error`: non-null only when status = 'failed'
 - `note`: non-null when status = 'partial' or 'skipped'
 
@@ -206,8 +208,10 @@ Returns `{ "ok": true, "status": "<current state>" }`.
 ### Content Matching Rules
 
 Both fetchers receive `eventDate: Date` and `targetQuarter: string` (e.g. `"Q1 FY2027"`) and must reject content that does not match the target event:
-- **Press release:** accept only items whose title/URL contains the target quarter keyword (e.g. "Q1", "FY2027", "fiscal 2027") AND whose publish date is within ±3 days of `eventDate`.
-- **Transcript:** accept only items whose title/URL contains the target quarter keyword AND whose page date is on or after `eventDate`. Older-quarter transcripts on the same page must be skipped.
+- **Press release:** accept only items whose title/URL contains **both** a quarter token (one of: `Q1`, `first quarter`, `1st quarter`) **and** a fiscal-year token (one of: `FY2027`, `fiscal 2027`, `fiscal year 2027`), AND whose publish date is within ±3 days of `eventDate` (see date normalization rules below).
+- **Transcript:** accept only items whose title/URL contains **both** a quarter token and a fiscal-year token (same lists as above), AND whose page date is on or after `eventDate` (calendar-date comparison). Older-quarter transcripts on the same page must be skipped.
+
+**Date normalization:** when a source page exposes only a calendar date (no time component), compare at day granularity in the source's local timezone (or UTC if unspecified). Do not reject same-day content solely because the time component is unavailable.
 
 ### `transcriptFetcher.ts` — Transcript Source Strategy
 
@@ -217,7 +221,7 @@ Tries sources in priority order; stops at first success:
 2. **Seeking Alpha** (`seekingalpha.com/symbol/DELL/earnings/transcripts`) — public transcript page scrape
 3. **Not available** — all sources exhausted; the agent continues showing metrics and the website displays a "Transcript unavailable" message in the transcript section
 
-The module exposes a single `fetchTranscript(eventDate: Date): Promise<{ kind: 'found'; transcript: string } | { kind: 'not_found_yet' } | { kind: 'error'; message: string }>` function. Return semantics:
+The module exposes a single `fetchTranscript(eventDate: Date, targetQuarter: string): Promise<{ kind: 'found'; transcript: string } | { kind: 'not_found_yet' } | { kind: 'error'; message: string }>` function. Return semantics:
 - `kind='found'` — transcript text successfully retrieved
 - `kind='not_found_yet'` — source pages loaded successfully but no transcript link or content found yet (not yet posted)
 - `kind='error'` — network failure, scrape error, or HTTP error; `message` contains the reason
