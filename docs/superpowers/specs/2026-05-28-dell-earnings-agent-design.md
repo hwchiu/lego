@@ -307,7 +307,7 @@ interface AgentState {
   transcriptStatus:     TranscriptStatus;      // 'pending' | 'available' | 'unavailable'
   transcript:           string | null;         // raw text when transcriptStatus = 'available'
   transcriptSummary:    TranscriptSummary | null;
-  transcriptUpdatedAt:  string | null;
+  transcriptUpdatedAt:  string | null;  // set when transcriptStatus becomes 'available' (raw fetch time)
 
   // Internal fields (persisted to state.json, NOT exposed by API)
   _consecutivePollCount:  number;
@@ -317,7 +317,7 @@ interface AgentState {
 }
 
 // GET /api/earnings response type (internal fields stripped)
-type EarningsApiResponse = Omit<AgentState, '_consecutivePollCount' | '_lastMetricsSnapshot' | '_transcriptAttempts'>;
+type EarningsApiResponse = Omit<AgentState, '_consecutivePollCount' | '_lastMetricsSnapshot' | '_transcriptAttempts' | '_summaryAttempts'>;
 
 // Module interfaces
 interface DellIRFetcher {
