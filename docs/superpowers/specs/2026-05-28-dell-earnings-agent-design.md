@@ -45,20 +45,31 @@ New static page in the lego Next.js app. Fetches the agent REST API client-side 
 
 ```
 STARTUP
-  └─▶ EventDateResolver asks Claude for Dell Q1 FY2027 earnings date
-        └─▶ WAITING  (cron checks every hour if event date has arrived)
-              └─▶ LIVE  (cron polls every 10 minutes)
+  └─▶ EventDateResolver resolves Dell Q1 FY2027 earnings date
+        └─▶ If current time >= eventDate → skip WAITING, enter LIVE immediately
+        └─▶ If current time < eventDate  → WAITING (hourly cron checks if eventDate reached)
+              └─▶ LIVE  (metrics cron: every 10 minutes)
                     ├─▶ DellIRFetcher → fetch press release
                     ├─▶ ClaudeParser  → extract metrics
-                    ├─▶ TranscriptFetcher → fetch transcript
-                    ├─▶ ClaudeTranscriptSummarizer → AI summary
-                    └─▶ DataStore → persist state.json
-                          └─▶ DONE  (when all three metric objects — revenue, grossMargin, doi —
-                                        are non-null from at least 2 consecutive polls with identical
-                                        `value` fields; qoq/yoy may remain null; transcript is
-                                        best-effort and its absence does NOT block DONE;
-                                        polling stops; API keeps serving)
+                    └─▶ DataStore → persist
+                          └─▶ METRICS_DONE when revenue, grossMargin, doi all non-null
+                                            AND identical across 2 consecutive polls
+                                            (metrics cron stops)
 ```
+
+**Transcript lifecycle runs in parallel on the same 10-minute cron, independently of metrics:**
+
+```
+LIVE (transcript cron: every 10 minutes, max 12 attempts = 2 hours)
+  ├─▶ If transcript already captured → skip
+  ├─▶ TranscriptFetcher → fetch transcript (null = not yet available, retry next interval)
+  ├─▶ If transcript fetched → ClaudeTranscriptSummarizer → AI summary → DataStore
+  └─▶ After 12 failed attempts → set transcript = 'unavailable', stop retrying
+```
+
+**DONE state** = METRICS_DONE (transcript cron may still be running). The `status` field transitions:
+- `WAITING` → `LIVE` (on first metrics cron tick after eventDate)
+- `LIVE` → `DONE` (once metrics are stable; transcript continues in background)
 
 State is persisted to `state.json` so the agent can resume after a restart without losing previous poll results.
 
@@ -224,7 +235,7 @@ Client-side data fetching: fetch immediately on component mount, then repeat eve
 |----------|----------|
 | Dell IR page unreachable | Log error, retry on next interval |
 | Press release not yet posted | Keep status LIVE, retry next interval |
-| Transcript not yet available (all sources return null) | Metrics shown without transcript section; retry each interval |
+| Transcript fetch fails 12 consecutive times | Set `transcript = 'unavailable'`, stop transcript cron; UI shows "Transcript unavailable" |
 | Claude returns malformed JSON | Log error, discard response, keep last successful data, retry next interval |
 | Claude returns partial metrics (some fields null) | Store partial data; display available fields; mark missing fields as `null` in API response |
 | Claude API error (rate limit, network, 5xx) | Log error, keep last successful data, retry next interval |
@@ -262,16 +273,23 @@ interface TranscriptSummary {
 }
 
 interface AgentState {
+  // Public fields (exposed via GET /api/earnings)
   status:               AgentStatus;
   eventDate:            string | null;  // ISO UTC
   metrics:              EarningsMetrics | null;
   metricsUpdatedAt:     string | null;
-  transcript:           string | null;
+  transcript:           string | null;  // 'unavailable' after 12 failed attempts
   transcriptSummary:    TranscriptSummary | null;
   transcriptUpdatedAt:  string | null;
-  consecutivePollCount: number;         // for DONE transition logic
-  lastMetricsSnapshot:  EarningsMetrics | null;
+
+  // Internal fields (persisted to state.json, NOT exposed by API)
+  _consecutivePollCount:  number;         // for DONE transition logic
+  _lastMetricsSnapshot:   EarningsMetrics | null;
+  _transcriptAttempts:    number;         // 0–12, for retry-limit logic
 }
+
+// GET /api/earnings response type (internal fields stripped)
+type EarningsApiResponse = Omit<AgentState, '_consecutivePollCount' | '_lastMetricsSnapshot' | '_transcriptAttempts'>;
 
 // Module interfaces
 interface DellIRFetcher {
@@ -285,11 +303,12 @@ interface ClaudeParser {
 interface DataStore {
   getState(): AgentState;
   setState(patch: Partial<AgentState>): void;  // merges patch, persists to state.json synchronously
+  getPublicState(): EarningsApiResponse;       // strips internal _ fields for API response
   reset(): void;                               // clears to initial WAITING state
 }
 ```
 
-`state.json` on disk has the same shape as `AgentState`.
+`state.json` on disk has the same shape as `AgentState` (including `_` prefixed internal fields). `GET /api/earnings` returns `EarningsApiResponse` (internal fields stripped).
 
 **API nullability by status:**
 
