@@ -60,20 +60,30 @@ STARTUP
 **Transcript lifecycle runs in parallel on the same 10-minute cron, independently of metrics:**
 
 ```
-LIVE (transcript cron: every 10 minutes, max 12 attempts = 2 hours)
-  ├─▶ If transcriptStatus is 'available' or 'unavailable' → skip
-  ├─▶ TranscriptFetcher → fetch transcript (null = not yet posted, retry next interval)
-  ├─▶ If transcript fetched:
-  │     → set transcriptStatus = 'available', store raw text
-  │     → ClaudeTranscriptSummarizer → AI summary → DataStore
-  └─▶ After 12 failed attempts → set transcriptStatus = 'unavailable', stop retrying
+LIVE (transcript cron: every 10 minutes)
+  ├─▶ SKIP if transcriptStatus = 'unavailable'              (terminal — stop forever)
+  ├─▶ SKIP if transcriptStatus = 'available'
+  │         AND transcriptSummary is non-null               (fully done — stop forever)
+  │
+  ├─▶ If transcriptStatus = 'pending' (_transcriptAttempts < 12):
+  │     → TranscriptFetcher → fetch transcript
+  │     → if null: increment _transcriptAttempts, retry next interval
+  │     → if fetched: set transcriptStatus = 'available', store raw text, reset _summaryAttempts = 0
+  │     → After 12 failed fetch attempts: set transcriptStatus = 'unavailable', stop cron
+  │
+  └─▶ If transcriptStatus = 'available' AND transcriptSummary is null (_summaryAttempts < 3):
+        → ClaudeTranscriptSummarizer → generate summary
+        → if success: set transcriptSummary, set transcriptUpdatedAt
+        → if error: increment _summaryAttempts, retry next interval
+        → After 3 failed summary attempts: set transcriptSummary = null permanently,
+          UI stays on "Generating summary…" indefinitely (no further retries)
 ```
 
 **DONE state** = METRICS_DONE (transcript cron may still be running). The `status` field transitions:
 - `WAITING` → `LIVE` (on first metrics cron tick after eventDate)
-- `LIVE` → `DONE` (once metrics are stable; transcript cron continues until 'available' or 'unavailable')
+- `LIVE` → `DONE` (once metrics are stable; transcript cron continues until fully done or both counters exhausted)
 
-**Restart when DONE but transcript pending:** On startup, if loaded state is `DONE` and `transcriptStatus` is neither `'available'` nor `'unavailable'`, resume the transcript cron from `_transcriptAttempts` (not from zero).
+**Restart when DONE but transcript pending:** On startup, if loaded state is `DONE` and transcript work is incomplete (transcriptStatus = 'available' but transcriptSummary null, or transcriptStatus = 'pending'), resume the transcript cron using persisted `_transcriptAttempts` and `_summaryAttempts` (not from zero).
 
 State is persisted to `state.json` so the agent can resume after a restart without losing previous poll results.
 
@@ -249,6 +259,7 @@ Client-side data fetching: fetch immediately on component mount, then repeat eve
 | Dell IR page unreachable | Log error, retry on next interval |
 | Press release not yet posted | Keep status LIVE, retry next interval |
 | Transcript fetch fails 12 consecutive times | Set `transcriptStatus = 'unavailable'`, stop transcript cron; UI shows "Transcript unavailable" |
+| Transcript summarization fails 3 consecutive times | Stop summary retries; `transcriptSummary` stays `null`; UI shows "Generating summary…" permanently |
 | Claude returns malformed JSON | Log error, discard response, keep last successful data, retry next interval |
 | Claude returns partial metrics (some fields null) | Store partial data; display available fields; mark missing fields as `null` in API response |
 | Claude API error (rate limit, network, 5xx) | Log error, keep last successful data, retry next interval |
@@ -301,7 +312,8 @@ interface AgentState {
   // Internal fields (persisted to state.json, NOT exposed by API)
   _consecutivePollCount:  number;
   _lastMetricsSnapshot:   EarningsMetrics | null;
-  _transcriptAttempts:    number;              // 0–12
+  _transcriptAttempts:    number;  // 0–12, fetch retry counter
+  _summaryAttempts:       number;  // 0–3, summarization retry counter
 }
 
 // GET /api/earnings response type (internal fields stripped)
