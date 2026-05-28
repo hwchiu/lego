@@ -7,7 +7,7 @@
 
 ## Overview
 
-A Node.js backend agent that autonomously monitors Dell's Q1 FY2027 earnings event. Once the earnings event begins, it fetches the press release and earnings call transcript every 10 minutes, uses Claude to extract financial metrics and generate an AI summary, and exposes the results via a REST API. A new page in the lego website displays the live data.
+A Node.js backend agent that autonomously monitors Dell's Q1 FY2027 earnings event. Once the earnings event begins, it fetches the press release and earnings call transcript every 10 minutes, uses Claude to extract financial metrics (with confidence scores) and generate an AI summary, records each job run with start/end time and confidence, and exposes the results via a REST API. A new page in the lego website displays the live data including job history.
 
 ---
 
@@ -35,8 +35,10 @@ A single Node.js process with TypeScript. Runs as a persistent background server
 New static page in the lego Next.js app. Fetches the agent REST API client-side and displays:
 - Agent status badge (WAITING / LIVE / DONE)
 - Event date and countdown
-- Financial metrics cards (Revenue, Margin, DOI with QoQ/YoY deltas)
+- Financial metrics cards (Revenue, Gross Margin, DOI with QoQ/YoY deltas and per-metric confidence %)
+- Overall extraction confidence badge
 - AI Transcript Summary tab (highlights, risks, outlook, key quotes)
+- Job history log table (every 10-min run: start time, end time, status, overall confidence)
 - Last updated timestamp
 
 ---
@@ -79,7 +81,16 @@ LIVE (transcript cron: every 10 minutes)
           UI stays on "Generating summary…" indefinitely (no further retries)
 ```
 
-**DONE state** = METRICS_DONE (transcript cron may still be running). The `status` field transitions:
+**Metrics cron tick (every 10 minutes):**
+
+Each cron tick is recorded as a `JobRecord` in `jobHistory` via `dataStore.appendJobRecord()`:
+- `startTime`: set at the top of the tick handler
+- `endTime`: set after all work completes (metrics fetch + extraction attempt)
+- `status`: `'success'` if metrics extracted successfully; `'partial'` if some metrics null or confidence < 50; `'failed'` if extraction threw an error
+- `metricsConfidence`: the overall confidence returned by Claude (null on error)
+- `metricsExtracted`: true if any non-null metric was stored this tick
+- `transcriptFetched`: true if a transcript was newly fetched this tick
+- `error`: error message string on failure, null otherwise (transcript cron may still be running). The `status` field transitions:
 - `WAITING` → `LIVE` (on first metrics cron tick after eventDate)
 - `LIVE` → `DONE` (once metrics are stable; transcript cron continues until fully done or both counters exhausted)
 
@@ -105,10 +116,11 @@ Returns current agent state and all collected data.
   "eventDate": "2026-05-29T20:30:00Z",
   "lastUpdated": "2026-05-28T11:40:00Z",
   "metrics": {
-    "revenue":      { "value": 23.9, "unit": "B",    "qoq": 2.3,  "yoy": 5.1  },
-    "grossMargin":  { "value": 22.1, "unit": "%",    "qoq": -0.4, "yoy": 1.2  },
-    "doi":          { "value": 34,   "unit": "days", "qoq": -2,   "yoy": -3   }
+    "revenue":      { "value": 23.9, "unit": "B",    "qoq": 2.3,  "yoy": 5.1,  "confidence": 95 },
+    "grossMargin":  { "value": 22.1, "unit": "%",    "qoq": -0.4, "yoy": 1.2,  "confidence": 88 },
+    "doi":          { "value": 34,   "unit": "days", "qoq": -2,   "yoy": -3,   "confidence": 72 }
   },
+  "metricsConfidence": 85,
   "metricsUpdatedAt": "ISO timestamp or null",
   "transcriptStatus": "pending | available | unavailable",
   "transcript": "full raw transcript text or null",
@@ -118,11 +130,25 @@ Returns current agent state and all collected data.
     "outlook":    "narrative paragraph...",
     "keyQuotes":  ["CEO: ...", "CFO: ..."]
   },
-  "transcriptUpdatedAt": "ISO timestamp or null"
+  "transcriptUpdatedAt": "ISO timestamp or null",
+  "jobHistory": [
+    {
+      "jobId": "job-1",
+      "startTime": "2026-05-29T20:30:00Z",
+      "endTime": "2026-05-29T20:30:45Z",
+      "status": "success | partial | failed",
+      "metricsConfidence": 85,
+      "metricsExtracted": true,
+      "transcriptFetched": false,
+      "error": null
+    }
+  ]
 }
 ```
 
 `lastUpdated` is set by the server on every `setState()` call and reflects the most recent change to any field. It is always non-null after startup.
+
+`jobHistory` accumulates all job records from the start of LIVE state until DONE. Each entry covers one 10-minute cron tick. History is frozen (no new entries added) once status reaches DONE.
 
 ### `GET /api/health`
 
@@ -155,9 +181,12 @@ The module exposes a single `fetchTranscript(eventDate: Date): Promise<string | 
 ### `claudeParser.ts` — Metric Extraction
 
 Sends press release HTML/text to Claude with a structured prompt requesting JSON output:
-- Revenue (value in $B, QoQ %, YoY %)
-- Gross Margin (%, QoQ delta in pp, YoY delta in pp)
-- Days of Inventory Outstanding / DOI (days, QoQ delta in days, YoY delta in days)
+- Revenue (value in $B, QoQ %, YoY %, confidence 0–100)
+- Gross Margin (%, QoQ delta in pp, YoY delta in pp, confidence 0–100)
+- Days of Inventory Outstanding / DOI (days, QoQ delta in days, YoY delta in days, confidence 0–100)
+- Overall extraction confidence (0–100): Claude self-rates how complete and unambiguous the source data was
+
+Claude is instructed to lower confidence when: values are inferred rather than explicitly stated, source text is incomplete, or QoQ/YoY comparisons are unavailable.
 
 Uses `claude-3-5-sonnet-20241022` with structured JSON response format.
 
@@ -234,7 +263,7 @@ app/earnings-agent/
 
 **Layout:**
 1. **Status bar** — agent status badge + event date + last-updated timestamp
-2. **Metrics section** — three cards: Revenue, Gross Margin, DOI. Each shows value, QoQ delta (▲▼ in pp or days, or "N/A" if null), YoY delta (▲▼ or "N/A" if null). Hidden when status is WAITING.
+2. **Metrics section** — three cards: Revenue, Gross Margin, DOI. Each shows value, QoQ delta (▲▼ in pp or days, or "N/A" if null), YoY delta (▲▼ or "N/A" if null), and per-metric confidence badge (e.g., "95% confidence"). An overall confidence badge (from `metricsConfidence`) is shown at the top of the section. Hidden when status is WAITING.
 3. **Transcript Summary section** — rendering driven by `transcriptStatus`:
 
    | `transcriptStatus` | `transcriptSummary` | UI shown |
@@ -244,7 +273,8 @@ app/earnings-agent/
    | `'available'` | `null` | "Generating summary…" placeholder |
    | `'available'` | object | Full tabbed summary (Highlights / Risks / Outlook / Key Quotes) |
 
-4. **Loading/error states** — spinner on initial mount fetch; error banner if agent unreachable.
+4. **Job History section** — table of all cron jobs since LIVE began. Columns: Job ID, Start Time, End Time, Duration, Status (success/partial/failed badge), Overall Confidence, Notes (error message if any). Hidden when `jobHistory` is empty. The section header shows total job count. History is frozen once status = DONE.
+5. **Loading/error states** — spinner on initial mount fetch; error banner if agent unreachable.
 
 Client-side data fetching: fetch immediately on component mount, then repeat every 10 minutes (600,000 ms) via `setInterval`. Both the initial fetch and interval use the same `NEXT_PUBLIC_AGENT_URL` base URL.
 
@@ -261,7 +291,8 @@ Client-side data fetching: fetch immediately on component mount, then repeat eve
 | Transcript fetch fails 12 consecutive times | Set `transcriptStatus = 'unavailable'`, stop transcript cron; UI shows "Transcript unavailable" |
 | Transcript summarization fails 3 consecutive times | Stop summary retries; `transcriptSummary` stays `null`; UI shows "Generating summary…" permanently |
 | Claude returns malformed JSON | Log error, discard response, keep last successful data, retry next interval |
-| Claude returns partial metrics (some fields null) | Store partial data; display available fields; mark missing fields as `null` in API response |
+| Claude returns partial metrics (some fields null) | Store partial data; display available fields; mark missing fields as `null` in API response; job status = 'partial' |
+| Claude returns low-confidence metrics (< 50) | Store data, set job status = 'partial', show confidence badge as warning color on website |
 | Claude API error (rate limit, network, 5xx) | Log error, keep last successful data, retry next interval |
 | Agent server unreachable | Website shows "Agent offline" error banner |
 | Agent restart with valid `state.json` | Load persisted state on startup, resume from last known state and status |
@@ -276,12 +307,14 @@ Client-side data fetching: fetch immediately on component mount, then repeat eve
 // Shared types (src/types.ts)
 type AgentStatus = 'WAITING' | 'LIVE' | 'DONE';
 type TranscriptStatus = 'pending' | 'available' | 'unavailable';
+type JobStatus = 'success' | 'partial' | 'failed';
 
 interface MetricValue {
-  value: number;       // always present if MetricValue is non-null
-  unit: string;        // "B" | "%" | "days"
-  qoq: number | null;  // null if prior-quarter comparison data unavailable
-  yoy: number | null;  // null if prior-year comparison data unavailable
+  value:      number;       // always present if MetricValue is non-null
+  unit:       string;       // "B" | "%" | "days"
+  qoq:        number | null;
+  yoy:        number | null;
+  confidence: number;       // 0–100, Claude self-rating for this metric
 }
 
 interface EarningsMetrics {
@@ -297,42 +330,60 @@ interface TranscriptSummary {
   keyQuotes:  string[];
 }
 
+interface JobRecord {
+  jobId:             string;          // sequential: "job-1", "job-2", …
+  startTime:         string;          // ISO UTC — when cron tick began
+  endTime:           string;          // ISO UTC — when all work for the tick completed
+  status:            JobStatus;       // 'success' | 'partial' | 'failed'
+  metricsConfidence: number | null;   // overall confidence from Claude, null if extraction failed
+  metricsExtracted:  boolean;
+  transcriptFetched: boolean;
+  error:             string | null;   // error message if status = 'failed' or 'partial'
+}
+
 interface AgentState {
   // Public fields (exposed via GET /api/earnings)
-  status:               AgentStatus;
-  eventDate:            string | null;         // ISO UTC
-  lastUpdated:          string;                // ISO UTC; set on every setState() call
-  metrics:              EarningsMetrics | null;
-  metricsUpdatedAt:     string | null;
-  transcriptStatus:     TranscriptStatus;      // 'pending' | 'available' | 'unavailable'
-  transcript:           string | null;         // raw text when transcriptStatus = 'available'
-  transcriptSummary:    TranscriptSummary | null;
-  transcriptUpdatedAt:  string | null;  // set when transcriptStatus becomes 'available' (raw fetch time)
+  status:             AgentStatus;
+  eventDate:          string | null;
+  lastUpdated:        string;                // ISO UTC; set on every setState() call
+  metrics:            EarningsMetrics | null;
+  metricsConfidence:  number | null;         // overall extraction confidence (0–100), null before first extraction
+  metricsUpdatedAt:   string | null;
+  transcriptStatus:   TranscriptStatus;
+  transcript:         string | null;
+  transcriptSummary:  TranscriptSummary | null;
+  transcriptUpdatedAt: string | null;        // set when transcriptStatus becomes 'available' (raw fetch time)
+  jobHistory:         JobRecord[];           // all job records; frozen after DONE
 
   // Internal fields (persisted to state.json, NOT exposed by API)
   _consecutivePollCount:  number;
   _lastMetricsSnapshot:   EarningsMetrics | null;
-  _transcriptAttempts:    number;  // 0–12, fetch retry counter
-  _summaryAttempts:       number;  // 0–3, summarization retry counter
+  _transcriptAttempts:    number;  // 0–12
+  _summaryAttempts:       number;  // 0–3
+  _nextJobId:             number;  // counter for sequential job IDs
 }
 
 // GET /api/earnings response type (internal fields stripped)
-type EarningsApiResponse = Omit<AgentState, '_consecutivePollCount' | '_lastMetricsSnapshot' | '_transcriptAttempts' | '_summaryAttempts'>;
+type EarningsApiResponse = Omit<AgentState,
+  '_consecutivePollCount' | '_lastMetricsSnapshot' |
+  '_transcriptAttempts' | '_summaryAttempts' | '_nextJobId'>;
 
 // Module interfaces
 interface DellIRFetcher {
-  fetchPressRelease(): Promise<string | null>;  // returns press release plain text, or null if not posted
+  fetchPressRelease(): Promise<string | null>;
 }
 
 interface ClaudeParser {
-  parseMetrics(pressReleaseText: string): Promise<EarningsMetrics>;  // throws on unrecoverable error
+  // Returns metrics with per-metric confidence and overall confidence; throws on unrecoverable error
+  parseMetrics(pressReleaseText: string): Promise<{ metrics: EarningsMetrics; overallConfidence: number }>;
 }
 
 interface DataStore {
   getState(): AgentState;
-  setState(patch: Partial<AgentState>): void;  // merges patch, persists to state.json synchronously
-  getPublicState(): EarningsApiResponse;       // strips internal _ fields for API response
-  reset(): void;                               // clears to initial WAITING state
+  setState(patch: Partial<AgentState>): void;
+  getPublicState(): EarningsApiResponse;
+  appendJobRecord(record: JobRecord): void;  // pushes to jobHistory and persists
+  reset(): void;
 }
 ```
 
