@@ -74,9 +74,10 @@ LIVE (transcriptCron: every 10 minutes, separate from metricsCron)
   │
   ├─▶ If transcriptStatus = 'pending' (_transcriptAttempts < 12):
   │     → TranscriptFetcher → fetch transcript
-  │     → if null: increment _transcriptAttempts, retry next interval
-  │     → if fetched: set transcriptStatus = 'available', store raw text, set transcriptRawFetchedAt = now(), reset _summaryAttempts = 0
-  │     → After 12 failed fetch attempts: set transcriptStatus = 'unavailable', stop cron
+  │     → if `kind='not_found_yet'` (source loaded, no transcript link/content yet): increment _transcriptAttempts, retry next interval
+  │     → if `kind='error'` (network / scrape failure): increment _transcriptAttempts, retry next interval
+  │     → if `kind='found'`: set transcriptStatus = 'available', store raw text, set transcriptRawFetchedAt = now(), reset _summaryAttempts = 0
+  │     → After 12 retryable returns (not_found_yet or error): set transcriptStatus = 'unavailable', stop cron
   │
   └─▶ If transcriptStatus = 'available' AND transcriptSummary is null (_summaryAttempts < 3):
         → ClaudeTranscriptSummarizer → generate summary
@@ -112,7 +113,7 @@ The `status` field transitions:
 - `LIVE` → `DONE`: triggered by `metricsCron` when the **stabilization condition** is met — all three of `revenue`, `grossMargin`, `doi` are non-null AND each metric's `value` field is strictly equal to the corresponding value in `_lastMetricsSnapshot` (i.e., two consecutive polls returned the same numeric value for all three metrics). Only the `value` field is compared; `qoq`, `yoy`, and `confidence` are excluded from the stabilization check.
 
 **`_lastMetricsSnapshot` update rules:**
-- After every `metricsCron` tick that results in status `'success'` or `'partial'` (i.e., any tick where at least one metric was extracted), update `_lastMetricsSnapshot` to the current `metrics` value and increment `_consecutivePollCount`.
+- After every `metricsCron` tick where `metricsExtracted = true` (i.e., at least one non-null metric was stored — regardless of whether job status is `'success'` or `'partial'`), update `_lastMetricsSnapshot` to the current `metrics` value and increment `_consecutivePollCount`.
 - After any tick with status `'failed'` or `'skipped'`, reset `_consecutivePollCount` to 0 and set `_lastMetricsSnapshot = null`. Stable metrics must be confirmed across two consecutive successful polls without interruption.
 
 The WAITING `setTimeout` is cancelled once LIVE is entered. The startup fast-path (skip WAITING, enter LIVE immediately) also fires both crons' first ticks immediately on boot.
@@ -199,7 +200,12 @@ Tries sources in priority order; stops at first success:
 2. **Seeking Alpha** (`seekingalpha.com/symbol/DELL/earnings/transcripts`) — public transcript page scrape
 3. **Not available** — all sources exhausted; the agent continues showing metrics and the website displays a "Transcript unavailable" message in the transcript section
 
-The module exposes a single `fetchTranscript(eventDate: Date): Promise<{ kind: 'found'; transcript: string } | { kind: 'unavailable' }>` function. The caller (`scheduler.ts`) owns all state mutations: on `kind === 'found'` it sets `transcriptStatus = 'available'`; on `kind === 'unavailable'` it sets `transcriptStatus = 'unavailable'` and stops the cron. `transcriptFetcher.ts` performs no direct state mutations.
+The module exposes a single `fetchTranscript(eventDate: Date): Promise<{ kind: 'found'; transcript: string } | { kind: 'not_found_yet' } | { kind: 'error'; message: string }>` function. Return semantics:
+- `kind='found'` — transcript text successfully retrieved
+- `kind='not_found_yet'` — source pages loaded successfully but no transcript link or content found yet (not yet posted)
+- `kind='error'` — network failure, scrape error, or HTTP error; `message` contains the reason
+
+Both `not_found_yet` and `error` are retryable; `scheduler.ts` increments `_transcriptAttempts` for either and declares terminal `transcriptStatus='unavailable'` after 12 total retryable returns. `transcriptFetcher.ts` performs no direct state mutations.
 
 ---
 
@@ -333,7 +339,7 @@ Client-side data fetching: fetch immediately on component mount, then repeat eve
 |----------|----------|
 | Dell IR page unreachable | Log error, retry on next interval; JobRecord status = 'failed', error = exception message |
 | Press release not yet posted | Keep status LIVE, retry next interval; JobRecord status = 'skipped', note = "Press release not yet available" |
-| Transcript fetch fails 12 consecutive times | Set `transcriptStatus = 'unavailable'`, stop transcript cron; UI shows "Transcript unavailable"; no JobRecord added (transcript-only tick) |
+| Transcript fetch returns `not_found_yet` or `error` 12 times total | Set `transcriptStatus = 'unavailable'`, stop transcript cron; UI shows "Transcript unavailable"; no JobRecord added (transcript-only tick) |
 | Transcript summarization fails 3 consecutive times | Stop summary retries; `transcriptSummary` stays `null`; UI shows "Generating summary…" permanently; no JobRecord added |
 | Claude returns malformed JSON | Log error, discard response, keep last successful data, retry next interval; JobRecord status = 'failed', error = parse error message |
 | Claude returns partial metrics (any of revenue/grossMargin/doi is null) | Store partial data; JobRecord status = 'partial', note = "<field> unavailable"; metricsExtracted = true if any non-null metric stored |
