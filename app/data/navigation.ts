@@ -109,6 +109,7 @@ export const mainNav: NavItem[] = [
   { label: 'Market News', href: '/market-news', icon: 'news' },
   { label: 'Press Release', href: '/press-release', icon: 'pressRelease' },
   { label: 'Earnings', href: '/earnings', icon: 'earnings', badge: 'Coming Soon', badgeStyle: 'coming-soon' },
+  { label: 'Earnings Monitor', href: '/earnings-agent/', icon: 'target' },
   { label: 'Event Calendar', href: '/event-calendar', icon: 'calendar' },
   {
     label: 'Market Data',
