@@ -202,6 +202,13 @@ Returns `{ "ok": true, "status": "<current state>" }`.
 |------|--------|
 | Earnings date | Claude (web search / knowledge) on agent startup |
 | Press release | ir.dell.com investor relations page |
+
+### Content Matching Rules
+
+Both fetchers receive `eventDate: Date` and `targetQuarter: string` (e.g. `"Q1 FY2027"`) and must reject content that does not match the target event:
+- **Press release:** accept only items whose title/URL contains the target quarter keyword (e.g. "Q1", "FY2027", "fiscal 2027") AND whose publish date is within ±3 days of `eventDate`.
+- **Transcript:** accept only items whose title/URL contains the target quarter keyword AND whose page date is on or after `eventDate`. Older-quarter transcripts on the same page must be skipped.
+
 ### `transcriptFetcher.ts` — Transcript Source Strategy
 
 Tries sources in priority order; stops at first success:
@@ -411,7 +418,7 @@ interface AgentState {
   lastUpdated:        string;                // ISO UTC; updated on every setState() call AND every appendJobRecord() call
   metrics:            EarningsMetrics | null;
   metricsConfidence:  number | null;         // overall extraction confidence (0–100), null before first extraction
-  metricsUpdatedAt:   string | null;
+  metricsUpdatedAt:   string | null;          // ISO UTC; updated whenever metrics are stored (metricsExtracted=true, status 'success' or 'partial'); unchanged on 'failed'/'skipped' ticks
   transcriptStatus:   TranscriptStatus;
   transcript:         string | null;
   transcriptSummary:  TranscriptSummary | null;
@@ -434,7 +441,9 @@ type EarningsApiResponse = Omit<AgentState,
 
 // Module interfaces
 interface DellIRFetcher {
-  fetchPressRelease(): Promise<string | null>;
+  // eventDate and targetQuarter (e.g. "Q1 FY2027") are used to filter press releases/pages
+  // by date proximity and title/URL keyword match, rejecting older or wrong-quarter content.
+  fetchPressRelease(eventDate: Date, targetQuarter: string): Promise<string | null>;
 }
 
 interface ClaudeParser {
@@ -444,11 +453,11 @@ interface ClaudeParser {
 
 interface DataStore {
   getState(): AgentState;
-  // setState and appendJobRecord are synchronous and serialized (no concurrent writes).
-  // Both crons must call these on the Node.js event loop (no worker threads); since Node.js
-  // executes JS single-threaded, overlapping async cron ticks that await I/O are serialized
-  // naturally. If a cron tick is still running when the next fires, the new tick is skipped
-  // (log a warning). This skip behavior must be implemented in scheduler.ts using a boolean lock.
+  // setState and appendJobRecord are synchronous and must only be called from within a
+  // per-cron boolean lock (implemented in scheduler.ts). Node.js's single-threaded event loop
+  // does NOT serialize overlapping async ticks once they await I/O — concurrent ticks can
+  // interleave between awaits. Correctness depends entirely on the explicit lock: if a tick
+  // fires while the prior tick's lock is held, the new tick is skipped (log a warning).
   // appendJobRecord() also bumps lastUpdated to keep the timestamp consistent with any state change.
   setState(patch: Partial<AgentState>): void;
   getPublicState(): EarningsApiResponse;
