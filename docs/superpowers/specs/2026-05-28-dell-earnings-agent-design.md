@@ -188,6 +188,7 @@ LOG_LEVEL=info
 dell-earnings-agent/
 ├── src/
 │   ├── index.ts
+│   ├── types.ts                    ← AgentState, EarningsApiResponse, all shared interfaces
 │   ├── eventDateResolver.ts
 │   ├── scheduler.ts
 │   ├── dellIRFetcher.ts
@@ -217,10 +218,15 @@ app/earnings-agent/
 **Layout:**
 1. **Status bar** — agent status badge + event date + last-updated timestamp
 2. **Metrics section** — three cards: Revenue, Gross Margin, DOI. Each shows value, QoQ delta (▲▼ in pp or days, or "N/A" if null), YoY delta (▲▼ or "N/A" if null). Hidden when status is WAITING.
-3. **Transcript Summary section** — tabbed: Highlights | Risks | Outlook | Key Quotes.
-   - Hidden entirely when both `transcript` and `transcriptSummary` are null.
-   - If `transcript` is non-null but `transcriptSummary` is null: show a "Generating summary…" placeholder (retries happen automatically on next poll).
-   - If both are non-null: show full tabbed summary.
+3. **Transcript Summary section** — rendering driven by the following state matrix:
+
+   | `transcript` value | `transcriptSummary` value | UI shown |
+   |--------------------|---------------------------|----------|
+   | `null` | `null` | Section hidden entirely |
+   | `'unavailable'` | `null` | "Transcript unavailable" message |
+   | raw text string | `null` | "Generating summary…" placeholder |
+   | raw text string | object | Full tabbed summary (Highlights / Risks / Outlook / Key Quotes) |
+
 4. **Loading/error states** — spinner on initial mount fetch; error banner if agent unreachable.
 
 Client-side data fetching: fetch immediately on component mount, then repeat every 10 minutes (600,000 ms) via `setInterval`. Both the initial fetch and interval use the same `NEXT_PUBLIC_AGENT_URL` base URL.
