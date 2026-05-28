@@ -4,4 +4,5 @@ node_modules/
 .next/
 out/
 
-docs/superpowers/*
+docs/superpowers/brainstorm
+docs/superpowers/sessions
