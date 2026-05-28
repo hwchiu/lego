@@ -56,7 +56,11 @@ STARTUP
                     ├─▶ ClaudeParser  → extract metrics
                     └─▶ DataStore → persist; append JobRecord
                           └─▶ METRICS_DONE when revenue, grossMargin, doi all non-null
-                                            AND value fields identical across 2 consecutive polls
+                                            AND value fields identical to _lastMetricsSnapshot
+                                            (current tick has metricsExtracted=true AND all three
+                                             values match the immediately preceding unbroken
+                                             metricsExtracted=true snapshot; any metricsExtracted=false
+                                             tick resets snapshot/counter, breaking the sequence)
                                             (metricsCron stops; transcriptCron continues independently)
 ```
 
@@ -110,7 +114,7 @@ Each cron tick is recorded as a `JobRecord` in `jobHistory` via `dataStore.appen
 
 The `status` field transitions:
 - `WAITING` → `LIVE`: triggered by a one-shot `setTimeout` scheduled to fire exactly at `eventDate` (millisecond precision). On transition, `metricsCron` and `transcriptCron` start and **both fire their first tick immediately** (no 10-minute wait).
-- `LIVE` → `DONE`: triggered by `metricsCron` when the **stabilization condition** is met — all three of `revenue`, `grossMargin`, `doi` are non-null AND each metric's `value` field is strictly equal to the corresponding value in `_lastMetricsSnapshot` (i.e., two consecutive polls returned the same numeric value for all three metrics). Only the `value` field is compared; `qoq`, `yoy`, and `confidence` are excluded from the stabilization check.
+- `LIVE` → `DONE`: triggered by `metricsCron` when the **stabilization condition** is met — the current tick has `metricsExtracted = true`, all three of `revenue`, `grossMargin`, `doi` are non-null, and each metric's `value` field is strictly equal to the corresponding value in `_lastMetricsSnapshot` (set by the immediately preceding unbroken `metricsExtracted = true` tick). Any `metricsExtracted = false` tick resets `_lastMetricsSnapshot` to `null` and `_consecutivePollCount` to 0, breaking the sequence. Only the `value` field is compared; `qoq`, `yoy`, and `confidence` are excluded from the stabilization check.
 
 **`_lastMetricsSnapshot` update rules:**
 - After every `metricsCron` tick where `metricsExtracted = true` (i.e., at least one non-null metric was stored — regardless of whether job status is `'success'` or `'partial'`), update `_lastMetricsSnapshot` to the current `metrics` value and increment `_consecutivePollCount`.
