@@ -80,7 +80,7 @@ LIVE (transcriptCron: every 10 minutes, separate from metricsCron)
   │     → TranscriptFetcher → fetch transcript
   │     → if `kind='not_found_yet'` (source loaded, no transcript link/content yet): increment _transcriptAttempts, retry next interval
   │     → if `kind='error'` (network / scrape failure): increment _transcriptAttempts, retry next interval
-  │     → if `kind='found'`: set transcriptStatus = 'available', store raw text, set transcriptRawFetchedAt = now(), reset _summaryAttempts = 0
+  │     → if `kind='found'`: set transcriptStatus = 'available', store raw text, set transcriptRawFetchedAt = now(), reset _summaryAttempts = 0; **then immediately fall through to the summary branch below in the same tick** (do not wait for the next interval)
   │     → After 12 retryable returns (not_found_yet or error): set transcriptStatus = 'unavailable', stop cron
   │
   └─▶ If transcriptStatus = 'available' AND transcriptSummary is null AND _summaryAttempts < 3:
@@ -119,12 +119,12 @@ The `status` field transitions:
 - `WAITING` → `LIVE`: triggered by a one-shot `setTimeout` scheduled for `eventDate` (fires on or after that time, subject to event-loop delay). On transition, `metricsCron` and `transcriptCron` start and **both fire their first tick immediately** (no 10-minute wait).
 - `LIVE` → `DONE`: triggered by `metricsCron` when the **stabilization condition** is met. Evaluation order within each tick:
   1. **Compare first (pre-update):** check whether `_lastMetricsSnapshot` is non-null, all three of its stored `revenue`, `grossMargin`, `doi` values are non-null, AND the current tick's `revenue`, `grossMargin`, `doi` are all non-null with each metric's `value` strictly equal to the corresponding snapshot `value`.
-  2. **Then update/reset:** if `metricsExtracted = true`, update `_lastMetricsSnapshot` and increment `_consecutivePollCount`; if `metricsExtracted = false`, reset both to `null`/`0`.
+  2. **Then update/reset:** if `metricsExtracted = true`, update `_lastMetricsSnapshot` to the current `metrics`; if `metricsExtracted = false`, reset `_lastMetricsSnapshot = null`.
   This ordering ensures a single tick can never self-match (snapshot reflects the prior tick, not the current one). Only the `value` field is compared; `qoq`, `yoy`, and `confidence` are excluded from the stabilization check.
 
 **`_lastMetricsSnapshot` update rules:**
-- After every `metricsCron` tick where `metricsExtracted = true` (i.e., at least one non-null metric was stored — regardless of whether job status is `'success'` or `'partial'`), update `_lastMetricsSnapshot` to the current `metrics` value and increment `_consecutivePollCount`.
-- After any tick with `metricsExtracted = false` (status `'failed'`, `'skipped'`, or `'partial'` with all-null metrics), reset `_consecutivePollCount` to 0 and set `_lastMetricsSnapshot = null`. The stabilization counter must reflect only an unbroken sequence of ticks where at least one metric was extracted.
+- After every `metricsCron` tick where `metricsExtracted = true` (i.e., at least one non-null metric was stored — regardless of whether job status is `'success'` or `'partial'`), update `_lastMetricsSnapshot` to the current `metrics` value.
+- After any tick with `metricsExtracted = false` (status `'failed'`, `'skipped'`, or `'partial'` with all-null metrics), reset `_lastMetricsSnapshot = null`. Stabilization requires two uninterrupted `metricsExtracted = true` ticks in sequence.
 
 The WAITING `setTimeout` is cancelled once LIVE is entered. The startup fast-path (skip WAITING, enter LIVE immediately) also fires both crons' first ticks immediately on boot.
 
@@ -339,7 +339,7 @@ app/earnings-agent/
 4. **Job History section** — table of all metrics cron jobs since LIVE began. Columns: Job ID, Start Time, End Time, Duration, Status (success/partial/failed/skipped badge), Overall Confidence, Note. Hidden when `jobHistory` is empty. The section header shows total job count. History is frozen once status = DONE; transcript-only ticks after DONE do not appear.
 5. **Loading/error states** — spinner on initial mount fetch; error banner if agent unreachable.
 
-Client-side data fetching: fetch immediately on component mount, then repeat every 10 minutes (600,000 ms) via `setInterval`. Both the initial fetch and interval use the same `NEXT_PUBLIC_AGENT_URL` base URL.
+Client-side data fetching: fetch immediately on component mount, then repeat every 10 minutes (600,000 ms) via `setInterval`. Additionally, schedule a one-shot `setTimeout` to fire at `new Date(eventDate).getTime() - Date.now()` ms (i.e., exactly when the countdown reaches zero) to trigger an immediate refetch — this prevents a page opened just before the event from staying stale in WAITING state for up to 10 minutes. Both the initial fetch, interval, and one-shot use the same `NEXT_PUBLIC_AGENT_URL` base URL.
 
 **i18n:** All UI labels support zh/en via `useLanguage()`. Company names, metric values, and transcript text are not translated.
 
@@ -420,7 +420,6 @@ interface AgentState {
   jobHistory:         JobRecord[];           // all job records; frozen after DONE
 
   // Internal fields (persisted to state.json, NOT exposed by API)
-  _consecutivePollCount:  number;
   _lastMetricsSnapshot:   EarningsMetrics | null;
   _transcriptAttempts:    number;  // 0–12
   _summaryAttempts:       number;  // 0–3
@@ -429,7 +428,7 @@ interface AgentState {
 
 // GET /api/earnings response type (internal fields stripped; eventDate narrowed to non-null)
 type EarningsApiResponse = Omit<AgentState,
-  '_consecutivePollCount' | '_lastMetricsSnapshot' |
+  '_lastMetricsSnapshot' |
   '_transcriptAttempts' | '_summaryAttempts' | '_nextJobId' | 'eventDate'>
   & { eventDate: string };
 
