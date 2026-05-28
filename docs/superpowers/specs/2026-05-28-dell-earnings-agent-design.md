@@ -171,7 +171,7 @@ Returns current agent state and all collected data.
 }
 ```
 
-`lastUpdated` is set by the server on every `setState()` call and reflects the most recent change to any field. It is always non-null after startup.
+`lastUpdated` is updated on every `setState()` call AND every `appendJobRecord()` call, and reflects the most recent change to any field. It is always non-null after startup.
 
 `jobHistory` accumulates all job records from the start of LIVE state until DONE. Each entry covers one 10-minute cron tick. History is frozen (no new entries added) once status reaches DONE.
 
@@ -239,13 +239,15 @@ This guarantees the agent never enters WAITING with an undefined event date.
 
 **Full boot sequence (`index.ts`):**
 1. Load `state.json` if it exists and is valid:
-   - If loaded state has `eventDate` set and status is `WAITING`, `LIVE`, or `DONE` → skip Claude date resolution; use persisted state; go to step 3
+   - If loaded state has `eventDate` set and status is `WAITING`, `LIVE`, or `DONE` → skip Claude date resolution; use persisted state
+   - If loaded state is `WAITING` and `currentTime >= eventDate` → upgrade status to `LIVE` in memory before HTTP server starts
    - If `state.json` is missing, corrupted, or `eventDate` is null → proceed to step 2
 2. Run `eventDateResolver` to determine `eventDate` (Claude → env var → fatal exit); create fresh initial `AgentState`
-3. **Start HTTP server** (only now — API returns valid non-null `eventDate` for all requests)
-4. Start scheduler — branch by loaded status:
-   - `WAITING` (persisted or fresh start): re-check `currentTime >= eventDate`; if true, enter LIVE immediately (fire both first ticks now); otherwise start hourly WAITING cron
-   - `LIVE` (persisted or fresh start with `currentTime >= eventDate`): start `metricsCron` + `transcriptCron`; fire both first ticks immediately (no 10-minute wait)
+3. Apply the initial status decision: if `currentTime >= eventDate`, set status to `LIVE` now (do not expose a WAITING state that would immediately flip); otherwise status = `WAITING`
+4. **Start HTTP server** (only now — state is fully initialized; API always returns the correct status and non-null `eventDate`)
+5. Start scheduler — branch by loaded/resolved status:
+   - `WAITING`: start hourly WAITING cron (eventDate is in the future)
+   - `LIVE` (persisted or just transitioned): start `metricsCron` + `transcriptCron`; fire both first ticks immediately (no 10-minute wait)
    - `DONE` with retryable transcript (see resume conditions): start `transcriptCron` only using persisted counters; do NOT re-enter LIVE or reset metrics
    - `DONE` with exhausted counters: no crons; serve final state read-only
 
@@ -300,7 +302,7 @@ app/earnings-agent/
 **Nav entry:** Added to `app/data/navigation.ts` immediately after the existing `Earnings` entry (line ~111), with label `{ zh: '財報監控', en: 'Earnings Monitor' }`.
 
 **Layout:**
-1. **Status bar** — agent status badge + event date + last-updated timestamp
+1. **Status bar** — agent status badge (WAITING / LIVE / DONE) + event date + last-updated timestamp. When status is `WAITING`, show a live countdown to the event date (days / hours / minutes / seconds, updated every second via `setInterval(1000)`). Countdown is hidden once status transitions to LIVE or DONE.
 2. **Metrics section** — three cards: Revenue, Gross Margin, DOI. Each shows value, QoQ delta (▲▼ in pp or days, or "N/A" if null), YoY delta (▲▼ or "N/A" if null), and per-metric confidence badge (e.g., "95% confidence"). An overall confidence badge (from `metricsConfidence`) is shown at the top of the section.
    - Hidden when `status = 'WAITING'`
    - When `status = 'LIVE'` and `metrics = null` (no extraction yet): show section header with a "Awaiting first extraction…" placeholder in place of all three cards
@@ -454,6 +456,7 @@ interface DataStore {
 | `transcriptSummary` | `null` | object or `null` | object or `null` |
 | `transcriptRawFetchedAt` | `null` | string or `null` | string or `null` |
 | `transcriptSummaryUpdatedAt` | `null` | string or `null` | string or `null` |
+| `jobHistory` | `[]` (empty array) | array (grows each metricsCron tick) | array (frozen, non-empty) |
 
 ## Out of Scope
 - Historical earnings tracking (future iteration)
