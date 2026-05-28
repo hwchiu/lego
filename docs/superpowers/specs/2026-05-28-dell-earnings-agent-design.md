@@ -7,7 +7,7 @@
 
 ## Overview
 
-A Node.js backend agent that autonomously monitors Dell's Q1 FY2027 earnings event. Once the earnings event begins, it fetches the press release and earnings call transcript every 10 minutes, uses Claude to extract financial metrics (with confidence scores) and generate an AI summary, records each job run with start/end time and confidence, and exposes the results via a REST API. A new page in the lego website displays the live data including job history.
+A Node.js backend agent that autonomously monitors Dell's Q1 FY2027 earnings event. Once the earnings event begins, it fetches the press release and earnings call transcript every 10 minutes, uses Claude to extract financial metrics (with confidence scores) and generate an AI summary, records each **metrics cron run** with start/end time and confidence, and exposes the results via a REST API. A new page in the lego website displays the live data including job history.
 
 ---
 
@@ -38,7 +38,7 @@ New static page in the lego Next.js app. Fetches the agent REST API client-side 
 - Financial metrics cards (Revenue, Gross Margin, DOI with QoQ/YoY deltas and per-metric confidence %)
 - Overall extraction confidence badge
 - AI Transcript Summary tab (highlights, risks, outlook, key quotes)
-- Job history log table (every 10-min run: start time, end time, status, overall confidence)
+- Job history log table (every 10-min **metrics cron** run: start time, end time, status, overall confidence)
 - Last updated timestamp
 
 ---
@@ -55,12 +55,12 @@ STARTUP
                     ├─▶ DellIRFetcher → fetch press release
                     ├─▶ ClaudeParser  → extract metrics
                     └─▶ DataStore → persist; append JobRecord
-                          └─▶ METRICS_DONE when revenue, grossMargin, doi all non-null
-                                            AND value fields identical to _lastMetricsSnapshot
-                                            (current tick has metricsExtracted=true AND all three
-                                             values match the immediately preceding unbroken
-                                             metricsExtracted=true snapshot; any metricsExtracted=false
-                                             tick resets snapshot/counter, breaking the sequence)
+                          └─▶ METRICS_DONE when _lastMetricsSnapshot is non-null with all 3
+                                            prior metrics non-null AND current tick revenue,
+                                            grossMargin, doi all non-null with value fields
+                                            identical to snapshot (compare pre-update; snapshot
+                                            is then updated after check; any metricsExtracted=false
+                                            tick resets snapshot/counter)
                                             (metricsCron stops; transcriptCron continues independently)
 ```
 
@@ -114,7 +114,10 @@ Each cron tick is recorded as a `JobRecord` in `jobHistory` via `dataStore.appen
 
 The `status` field transitions:
 - `WAITING` → `LIVE`: triggered by a one-shot `setTimeout` scheduled to fire exactly at `eventDate` (millisecond precision). On transition, `metricsCron` and `transcriptCron` start and **both fire their first tick immediately** (no 10-minute wait).
-- `LIVE` → `DONE`: triggered by `metricsCron` when the **stabilization condition** is met — the current tick has `metricsExtracted = true`, all three of `revenue`, `grossMargin`, `doi` are non-null, and each metric's `value` field is strictly equal to the corresponding value in `_lastMetricsSnapshot` (set by the immediately preceding unbroken `metricsExtracted = true` tick). Any `metricsExtracted = false` tick resets `_lastMetricsSnapshot` to `null` and `_consecutivePollCount` to 0, breaking the sequence. Only the `value` field is compared; `qoq`, `yoy`, and `confidence` are excluded from the stabilization check.
+- `LIVE` → `DONE`: triggered by `metricsCron` when the **stabilization condition** is met. Evaluation order within each tick:
+  1. **Compare first (pre-update):** check whether `_lastMetricsSnapshot` is non-null, all three of its stored `revenue`, `grossMargin`, `doi` values are non-null, AND the current tick's `revenue`, `grossMargin`, `doi` are all non-null with each metric's `value` strictly equal to the corresponding snapshot `value`.
+  2. **Then update/reset:** if `metricsExtracted = true`, update `_lastMetricsSnapshot` and increment `_consecutivePollCount`; if `metricsExtracted = false`, reset both to `null`/`0`.
+  This ordering ensures a single tick can never self-match (snapshot reflects the prior tick, not the current one). Only the `value` field is compared; `qoq`, `yoy`, and `confidence` are excluded from the stabilization check.
 
 **`_lastMetricsSnapshot` update rules:**
 - After every `metricsCron` tick where `metricsExtracted = true` (i.e., at least one non-null metric was stored — regardless of whether job status is `'success'` or `'partial'`), update `_lastMetricsSnapshot` to the current `metrics` value and increment `_consecutivePollCount`.
@@ -274,11 +277,11 @@ Environment variables (`.env` file in `dell-earnings-agent/`):
 ```
 ANTHROPIC_API_KEY=sk-ant-...
 PORT=3001
-EARNINGS_DATE=          # optional override: ISO datetime UTC
+EARNINGS_DATE=          # optional fallback: ISO datetime UTC (used only if Claude cannot determine the date)
 LOG_LEVEL=info
 ```
 
-The poll interval is fixed at **10 minutes** in both `metricsCron` and `transcriptCron`. Each cron fires its first tick immediately on start, then repeats every 600,000 ms via `setInterval` (not a wall-clock `*/10 * * * *` expression) to guarantee exactly 10-minute gaps between ticks regardless of when LIVE starts. The website's polling `setInterval` is also fixed at 600,000 ms. None of these are configurable, to avoid frontend/backend clock drift.
+The poll interval is fixed at **10 minutes** in both `metricsCron` and `transcriptCron`. Each cron fires its first tick immediately on start, then **schedules tick attempts** every 600,000 ms via `setInterval` (not a wall-clock `*/10 * * * *` expression), anchored after the immediate first tick. Lock-skips or slow ticks may cause executed ticks to be more than 10 minutes apart; the 600,000 ms interval governs scheduling only. The website's polling `setInterval` is also fixed at 600,000 ms. None of these are configurable, to avoid frontend/backend clock drift.
 
 ---
 
