@@ -49,7 +49,7 @@ New static page in the lego Next.js app. Fetches the agent REST API client-side 
 STARTUP
   └─▶ EventDateResolver resolves Dell Q1 FY2027 earnings date
         └─▶ If current time >= eventDate → skip WAITING, enter LIVE immediately
-        └─▶ If current time < eventDate  → WAITING (one-shot setTimeout fires exactly at eventDate)
+        └─▶ If current time < eventDate  → WAITING (one-shot setTimeout scheduled for eventDate; fires on or after that time subject to event-loop delay)
               └─▶ LIVE  (metricsCron: every 10 minutes; transcriptCron: every 10 minutes, separate instance)
                     metricsCron:
                     ├─▶ DellIRFetcher → fetch press release
@@ -83,12 +83,15 @@ LIVE (transcriptCron: every 10 minutes, separate from metricsCron)
   │     → if `kind='found'`: set transcriptStatus = 'available', store raw text, set transcriptRawFetchedAt = now(), reset _summaryAttempts = 0
   │     → After 12 retryable returns (not_found_yet or error): set transcriptStatus = 'unavailable', stop cron
   │
-  └─▶ If transcriptStatus = 'available' AND transcriptSummary is null (_summaryAttempts < 3):
+  └─▶ If transcriptStatus = 'available' AND transcriptSummary is null AND _summaryAttempts < 3:
         → ClaudeTranscriptSummarizer → generate summary
-        → if success: set transcriptSummary, set transcriptSummaryUpdatedAt = now()
+        → if success: set transcriptSummary, set transcriptSummaryUpdatedAt = now(), stop transcriptCron
         → if error: increment _summaryAttempts, retry next interval
-        → After 3 failed summary attempts: set transcriptSummary = null permanently,
-          UI stays on "Generating summary…" indefinitely (no further retries)
+        → After 3 failed summary attempts (_summaryAttempts >= 3): **stop transcriptCron**;
+          transcriptSummary stays null permanently; UI stays on "Generating summary…" indefinitely
+
+  └─▶ If transcriptStatus = 'available' AND transcriptSummary is null AND _summaryAttempts >= 3:
+        → **skip tick immediately; no-op** (cron should already be stopped, but guard prevents runaway loops)
 ```
 
 **Metrics cron tick (every 10 minutes):**
@@ -113,7 +116,7 @@ Each cron tick is recorded as a `JobRecord` in `jobHistory` via `dataStore.appen
 **Lock-skip behavior:** If a `metricsCron` tick fires while the previous tick is still running (boolean lock is held), the new tick is **silently dropped** — no `JobRecord` is created and no warning is shown to the user. Only the agent log receives a warning. This prevents double-counting in the job history.
 
 The `status` field transitions:
-- `WAITING` → `LIVE`: triggered by a one-shot `setTimeout` scheduled to fire exactly at `eventDate` (millisecond precision). On transition, `metricsCron` and `transcriptCron` start and **both fire their first tick immediately** (no 10-minute wait).
+- `WAITING` → `LIVE`: triggered by a one-shot `setTimeout` scheduled for `eventDate` (fires on or after that time, subject to event-loop delay). On transition, `metricsCron` and `transcriptCron` start and **both fire their first tick immediately** (no 10-minute wait).
 - `LIVE` → `DONE`: triggered by `metricsCron` when the **stabilization condition** is met. Evaluation order within each tick:
   1. **Compare first (pre-update):** check whether `_lastMetricsSnapshot` is non-null, all three of its stored `revenue`, `grossMargin`, `doi` values are non-null, AND the current tick's `revenue`, `grossMargin`, `doi` are all non-null with each metric's `value` strictly equal to the corresponding snapshot `value`.
   2. **Then update/reset:** if `metricsExtracted = true`, update `_lastMetricsSnapshot` and increment `_consecutivePollCount`; if `metricsExtracted = false`, reset both to `null`/`0`.
