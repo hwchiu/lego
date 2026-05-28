@@ -61,15 +61,19 @@ STARTUP
 
 ```
 LIVE (transcript cron: every 10 minutes, max 12 attempts = 2 hours)
-  ├─▶ If transcript already captured → skip
-  ├─▶ TranscriptFetcher → fetch transcript (null = not yet available, retry next interval)
-  ├─▶ If transcript fetched → ClaudeTranscriptSummarizer → AI summary → DataStore
-  └─▶ After 12 failed attempts → set transcript = 'unavailable', stop retrying
+  ├─▶ If transcriptStatus is 'available' or 'unavailable' → skip
+  ├─▶ TranscriptFetcher → fetch transcript (null = not yet posted, retry next interval)
+  ├─▶ If transcript fetched:
+  │     → set transcriptStatus = 'available', store raw text
+  │     → ClaudeTranscriptSummarizer → AI summary → DataStore
+  └─▶ After 12 failed attempts → set transcriptStatus = 'unavailable', stop retrying
 ```
 
 **DONE state** = METRICS_DONE (transcript cron may still be running). The `status` field transitions:
 - `WAITING` → `LIVE` (on first metrics cron tick after eventDate)
-- `LIVE` → `DONE` (once metrics are stable; transcript continues in background)
+- `LIVE` → `DONE` (once metrics are stable; transcript cron continues until 'available' or 'unavailable')
+
+**Restart when DONE but transcript pending:** On startup, if loaded state is `DONE` and `transcriptStatus` is neither `'available'` nor `'unavailable'`, resume the transcript cron from `_transcriptAttempts` (not from zero).
 
 State is persisted to `state.json` so the agent can resume after a restart without losing previous poll results.
 
@@ -96,6 +100,7 @@ Returns current agent state and all collected data.
     "doi":          { "value": 34,   "unit": "days", "qoq": -2,   "yoy": -3   }
   },
   "metricsUpdatedAt": "ISO timestamp or null",
+  "transcriptStatus": "pending | available | unavailable",
   "transcript": "full raw transcript text or null",
   "transcriptSummary": {
     "highlights": ["...", "..."],
@@ -106,6 +111,8 @@ Returns current agent state and all collected data.
   "transcriptUpdatedAt": "ISO timestamp or null"
 }
 ```
+
+`lastUpdated` is set by the server on every `setState()` call and reflects the most recent change to any field. It is always non-null after startup.
 
 ### `GET /api/health`
 
@@ -218,14 +225,14 @@ app/earnings-agent/
 **Layout:**
 1. **Status bar** — agent status badge + event date + last-updated timestamp
 2. **Metrics section** — three cards: Revenue, Gross Margin, DOI. Each shows value, QoQ delta (▲▼ in pp or days, or "N/A" if null), YoY delta (▲▼ or "N/A" if null). Hidden when status is WAITING.
-3. **Transcript Summary section** — rendering driven by the following state matrix:
+3. **Transcript Summary section** — rendering driven by `transcriptStatus`:
 
-   | `transcript` value | `transcriptSummary` value | UI shown |
-   |--------------------|---------------------------|----------|
-   | `null` | `null` | Section hidden entirely |
+   | `transcriptStatus` | `transcriptSummary` | UI shown |
+   |--------------------|---------------------|----------|
+   | `'pending'` | `null` | Section hidden entirely |
    | `'unavailable'` | `null` | "Transcript unavailable" message |
-   | raw text string | `null` | "Generating summary…" placeholder |
-   | raw text string | object | Full tabbed summary (Highlights / Risks / Outlook / Key Quotes) |
+   | `'available'` | `null` | "Generating summary…" placeholder |
+   | `'available'` | object | Full tabbed summary (Highlights / Risks / Outlook / Key Quotes) |
 
 4. **Loading/error states** — spinner on initial mount fetch; error banner if agent unreachable.
 
@@ -241,7 +248,7 @@ Client-side data fetching: fetch immediately on component mount, then repeat eve
 |----------|----------|
 | Dell IR page unreachable | Log error, retry on next interval |
 | Press release not yet posted | Keep status LIVE, retry next interval |
-| Transcript fetch fails 12 consecutive times | Set `transcript = 'unavailable'`, stop transcript cron; UI shows "Transcript unavailable" |
+| Transcript fetch fails 12 consecutive times | Set `transcriptStatus = 'unavailable'`, stop transcript cron; UI shows "Transcript unavailable" |
 | Claude returns malformed JSON | Log error, discard response, keep last successful data, retry next interval |
 | Claude returns partial metrics (some fields null) | Store partial data; display available fields; mark missing fields as `null` in API response |
 | Claude API error (rate limit, network, 5xx) | Log error, keep last successful data, retry next interval |
@@ -257,6 +264,7 @@ Client-side data fetching: fetch immediately on component mount, then repeat eve
 ```typescript
 // Shared types (src/types.ts)
 type AgentStatus = 'WAITING' | 'LIVE' | 'DONE';
+type TranscriptStatus = 'pending' | 'available' | 'unavailable';
 
 interface MetricValue {
   value: number;       // always present if MetricValue is non-null
@@ -281,17 +289,19 @@ interface TranscriptSummary {
 interface AgentState {
   // Public fields (exposed via GET /api/earnings)
   status:               AgentStatus;
-  eventDate:            string | null;  // ISO UTC
+  eventDate:            string | null;         // ISO UTC
+  lastUpdated:          string;                // ISO UTC; set on every setState() call
   metrics:              EarningsMetrics | null;
   metricsUpdatedAt:     string | null;
-  transcript:           string | null;  // 'unavailable' after 12 failed attempts
+  transcriptStatus:     TranscriptStatus;      // 'pending' | 'available' | 'unavailable'
+  transcript:           string | null;         // raw text when transcriptStatus = 'available'
   transcriptSummary:    TranscriptSummary | null;
   transcriptUpdatedAt:  string | null;
 
   // Internal fields (persisted to state.json, NOT exposed by API)
-  _consecutivePollCount:  number;         // for DONE transition logic
+  _consecutivePollCount:  number;
   _lastMetricsSnapshot:   EarningsMetrics | null;
-  _transcriptAttempts:    number;         // 0–12, for retry-limit logic
+  _transcriptAttempts:    number;              // 0–12
 }
 
 // GET /api/earnings response type (internal fields stripped)
@@ -321,8 +331,10 @@ interface DataStore {
 | Field | WAITING | LIVE | DONE |
 |-------|---------|------|------|
 | `eventDate` | string | string | string |
+| `lastUpdated` | string | string | string |
 | `metrics` | `null` | object (partial ok) | object |
 | `metricsUpdatedAt` | `null` | string | string |
+| `transcriptStatus` | `'pending'` | `'pending'` or `'available'` or `'unavailable'` | any |
 | `transcript` | `null` | string or `null` | string or `null` |
 | `transcriptSummary` | `null` | object or `null` | object or `null` |
 | `transcriptUpdatedAt` | `null` | string or `null` | string or `null` |
