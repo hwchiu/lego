@@ -23,7 +23,7 @@ A single Node.js process with TypeScript. Runs as a persistent background server
 |--------|---------------|
 | `index.ts` | Express server entry point; starts scheduler and API |
 | `eventDateResolver.ts` | Uses Claude to determine Dell Q1 FY2027 earnings date on startup |
-| `scheduler.ts` | node-cron orchestration; manages state transitions |
+| `scheduler.ts` | node-cron orchestration; manages state transitions; implements per-cron boolean lock to skip overlapping ticks |
 | `dellIRFetcher.ts` | Fetches ir.dell.com; extracts press release text |
 | `transcriptFetcher.ts` | Fetches earnings call transcript from Dell IR or Seeking Alpha |
 | `claudeParser.ts` | Structured extraction of Revenue, Margin, DOI, QoQ, YoY from press release |
@@ -98,7 +98,6 @@ Each cron tick is recorded as a `JobRecord` in `jobHistory` via `dataStore.appen
   - `'success'` — all three metrics non-null AND `metricsConfidence >= 50`
 - `metricsConfidence`: the overall confidence returned by Claude; null when status = 'failed' or 'skipped'
 - `metricsExtracted`: true if at least one non-null metric was stored this tick
-- `transcriptFetched`: true if a transcript was newly fetched this tick
 - `error`: non-null only when status = 'failed'
 - `note`: non-null when status = 'partial' or 'skipped'
 
@@ -159,7 +158,6 @@ Returns current agent state and all collected data.
       "status": "success | partial | failed | skipped",
       "metricsConfidence": 85,
       "metricsExtracted": true,
-      "transcriptFetched": false,
       "error": null,
       "note": null
     }
@@ -235,12 +233,15 @@ This guarantees the agent never enters WAITING with an undefined event date.
 
 **Full boot sequence (`index.ts`):**
 1. Load `state.json` if it exists and is valid:
-   - If loaded state has `eventDate` set and status is `WAITING`, `LIVE`, or `DONE` → skip Claude date resolution; use persisted state
+   - If loaded state has `eventDate` set and status is `WAITING`, `LIVE`, or `DONE` → skip Claude date resolution; use persisted state; go to step 3
    - If `state.json` is missing, corrupted, or `eventDate` is null → proceed to step 2
-2. Run `eventDateResolver` to determine `eventDate` (Claude → env var → fatal exit)
-3. Set initial `AgentState` (or merge with loaded state)
-4. **Start HTTP server** (only now — API returns valid non-null `eventDate` for all requests)
-5. Start scheduler: enter WAITING or LIVE based on current time vs eventDate; fire first metrics tick immediately if LIVE
+2. Run `eventDateResolver` to determine `eventDate` (Claude → env var → fatal exit); create fresh initial `AgentState`
+3. **Start HTTP server** (only now — API returns valid non-null `eventDate` for all requests)
+4. Start scheduler — branch by loaded status:
+   - `WAITING` (or fresh start with `currentTime < eventDate`): start hourly WAITING cron only
+   - `LIVE` (or fresh start with `currentTime >= eventDate`): transition to LIVE; start `metricsCron` + `transcriptCron`; fire both first ticks immediately (no 10-minute wait)
+   - `DONE` with retryable transcript (see resume conditions): start `transcriptCron` only using persisted counters; do NOT re-enter LIVE or reset metrics
+   - `DONE` with exhausted counters: no crons; serve final state read-only
 
 ---
 
@@ -251,10 +252,11 @@ Environment variables (`.env` file in `dell-earnings-agent/`):
 ```
 ANTHROPIC_API_KEY=sk-ant-...
 PORT=3001
-POLL_INTERVAL_MINUTES=10
 EARNINGS_DATE=          # optional override: ISO datetime UTC
 LOG_LEVEL=info
 ```
+
+The poll interval is fixed at **10 minutes** (`*/10 * * * *` cron expression) in both `metricsCron` and `transcriptCron`, and the website's `setInterval` is also fixed at 600,000 ms. This is not configurable to avoid frontend/backend clock drift.
 
 ---
 
@@ -293,7 +295,10 @@ app/earnings-agent/
 
 **Layout:**
 1. **Status bar** — agent status badge + event date + last-updated timestamp
-2. **Metrics section** — three cards: Revenue, Gross Margin, DOI. Each shows value, QoQ delta (▲▼ in pp or days, or "N/A" if null), YoY delta (▲▼ or "N/A" if null), and per-metric confidence badge (e.g., "95% confidence"). An overall confidence badge (from `metricsConfidence`) is shown at the top of the section. Hidden when status is WAITING.
+2. **Metrics section** — three cards: Revenue, Gross Margin, DOI. Each shows value, QoQ delta (▲▼ in pp or days, or "N/A" if null), YoY delta (▲▼ or "N/A" if null), and per-metric confidence badge (e.g., "95% confidence"). An overall confidence badge (from `metricsConfidence`) is shown at the top of the section.
+   - Hidden when `status = 'WAITING'`
+   - When `status = 'LIVE'` and `metrics = null` (no extraction yet): show section header with a "Awaiting first extraction…" placeholder in place of all three cards
+   - When `status = 'LIVE'` and a specific metric object is `null` (partial extraction): render that card with a "—" placeholder and no confidence badge
 3. **Transcript Summary section** — rendering driven by `transcriptStatus`:
 
    | `transcriptStatus` | `transcriptSummary` | UI shown |
@@ -326,7 +331,7 @@ Client-side data fetching: fetch immediately on component mount, then repeat eve
 | Claude API error (rate limit, network, 5xx) | Log error, keep last successful data, retry next interval; JobRecord status = 'failed', error = API error message |
 | Agent server unreachable | Website shows "Agent offline" error banner |
 | Agent restart with valid `state.json` | Load persisted state on startup, resume from last known state and status |
-| `state.json` corrupted or unparseable | Log warning, reset to WAITING state, re-resolve event date |
+| `state.json` corrupted or unparseable | Log warning, discard corrupted state, re-run `eventDateResolver`, then apply normal WAITING/LIVE boot decision based on current time |
 | API response with HTTP error | Website shows error banner with status code; retries on next poll cycle |
 
 ---
@@ -362,12 +367,11 @@ interface TranscriptSummary {
 
 interface JobRecord {
   jobId:             string;          // generated by DataStore using _nextJobId: "job-1", "job-2", …
-  startTime:         string;          // ISO UTC — when cron tick began
-  endTime:           string;          // ISO UTC — when all work for the tick completed
+  startTime:         string;          // ISO UTC — when metricsCron tick began
+  endTime:           string;          // ISO UTC — when metricsCron tick completed
   status:            JobStatus;       // 'success' | 'partial' | 'failed' | 'skipped'
   metricsConfidence: number | null;   // overall confidence from Claude (0–100), null if extraction not attempted or failed
   metricsExtracted:  boolean;         // true if at least one non-null metric was stored this tick
-  transcriptFetched: boolean;         // true if a transcript was newly fetched this tick
   error:             string | null;   // non-null only when status = 'failed' (exception/API error)
   note:              string | null;   // non-null when status = 'partial' or 'skipped'; human-readable reason
 }
@@ -412,6 +416,11 @@ interface ClaudeParser {
 
 interface DataStore {
   getState(): AgentState;
+  // setState and appendJobRecord are synchronous and serialized (no concurrent writes).
+  // Both crons must call these on the Node.js event loop (no worker threads); since Node.js
+  // executes JS single-threaded, overlapping async cron ticks that await I/O are serialized
+  // naturally. If a cron tick is still running when the next fires, the new tick is skipped
+  // (log a warning). This skip behavior must be implemented in scheduler.ts using a boolean lock.
   setState(patch: Partial<AgentState>): void;
   getPublicState(): EarningsApiResponse;
   // DataStore generates the jobId internally using _nextJobId; caller supplies all other fields
