@@ -53,10 +53,11 @@ STARTUP
                     ├─▶ TranscriptFetcher → fetch transcript
                     ├─▶ ClaudeTranscriptSummarizer → AI summary
                     └─▶ DataStore → persist state.json
-                          └─▶ DONE  (when metrics are non-null from at least 2 consecutive
-                                        polls with identical values — regardless of transcript
-                                        availability; transcript is best-effort and its absence
-                                        does NOT block DONE; polling stops; API keeps serving)
+                          └─▶ DONE  (when all three metric objects — revenue, grossMargin, doi —
+                                        are non-null from at least 2 consecutive polls with identical
+                                        `value` fields; qoq/yoy may remain null; transcript is
+                                        best-effort and its absence does NOT block DONE;
+                                        polling stops; API keeps serving)
 ```
 
 State is persisted to `state.json` so the agent can resume after a restart without losing previous poll results.
@@ -65,7 +66,9 @@ State is persisted to `state.json` so the agent can resume after a restart witho
 
 ## REST API
 
-**Base URL:** `http://localhost:3001` (configurable via `PORT` env var)
+**Base URL:** `http://localhost:3001` (port configurable via `PORT` env var on the agent)
+
+**Frontend URL discovery:** The lego website page reads `process.env.NEXT_PUBLIC_AGENT_URL` at build time. Default value is `http://localhost:3001`. To deploy with a different host, set `NEXT_PUBLIC_AGENT_URL=http://<host>:<port>` in the lego `.env.local` before running `npm run build`.
 
 ### `GET /api/earnings`
 
@@ -198,15 +201,20 @@ app/earnings-agent/
 ## Website Page Design
 
 **Route:** `/earnings-agent`  
-**Nav entry:** Added to `app/data/navigation.ts` under a relevant section.
+**Nav entry:** Added to `app/data/navigation.ts` immediately after the existing `Earnings` entry (line ~111), with label `{ zh: '財報監控', en: 'Earnings Monitor' }`.
 
 **Layout:**
 1. **Status bar** — agent status badge + event date + last-updated timestamp
-2. **Metrics section** — three cards: Revenue, Gross Margin, DOI. Each shows value, QoQ delta (▲▼ in pp or days), YoY delta (▲▼). Hidden when status is WAITING.
-3. **Transcript Summary section** — tabbed: Highlights | Risks | Outlook | Key Quotes. Hidden when transcript not yet available.
-4. **Loading/error states** — spinner when fetching, error banner if agent unreachable.
+2. **Metrics section** — three cards: Revenue, Gross Margin, DOI. Each shows value, QoQ delta (▲▼ in pp or days, or "N/A" if null), YoY delta (▲▼ or "N/A" if null). Hidden when status is WAITING.
+3. **Transcript Summary section** — tabbed: Highlights | Risks | Outlook | Key Quotes.
+   - Hidden entirely when both `transcript` and `transcriptSummary` are null.
+   - If `transcript` is non-null but `transcriptSummary` is null: show a "Generating summary…" placeholder (retries happen automatically on next poll).
+   - If both are non-null: show full tabbed summary.
+4. **Loading/error states** — spinner on initial mount fetch; error banner if agent unreachable.
 
-Client-side polling: `setInterval` hardcoded to **10 minutes** (600,000 ms). The interval is not configurable from the frontend; the agent's `POLL_INTERVAL_MINUTES` env var controls how often the server refreshes data, while the frontend always re-fetches on the same 10-min cadence to stay current.
+Client-side data fetching: fetch immediately on component mount, then repeat every 10 minutes (600,000 ms) via `setInterval`. Both the initial fetch and interval use the same `NEXT_PUBLIC_AGENT_URL` base URL.
+
+**i18n:** All UI labels support zh/en via `useLanguage()`. Company names, metric values, and transcript text are not translated.
 
 ---
 
@@ -234,10 +242,10 @@ Client-side polling: `setInterval` hardcoded to **10 minutes** (600,000 ms). The
 type AgentStatus = 'WAITING' | 'LIVE' | 'DONE';
 
 interface MetricValue {
-  value: number;
-  unit: string;   // "B" | "%" | "days"
-  qoq: number;    // delta in same unit (pp for %, days for DOI, % for revenue)
-  yoy: number;
+  value: number;       // always present if MetricValue is non-null
+  unit: string;        // "B" | "%" | "days"
+  qoq: number | null;  // null if prior-quarter comparison data unavailable
+  yoy: number | null;  // null if prior-year comparison data unavailable
 }
 
 interface EarningsMetrics {
