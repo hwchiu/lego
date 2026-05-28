@@ -50,19 +50,24 @@ STARTUP
   └─▶ EventDateResolver resolves Dell Q1 FY2027 earnings date
         └─▶ If current time >= eventDate → skip WAITING, enter LIVE immediately
         └─▶ If current time < eventDate  → WAITING (hourly cron checks if eventDate reached)
-              └─▶ LIVE  (metrics cron: every 10 minutes)
+              └─▶ LIVE  (metricsCron: every 10 minutes; transcriptCron: every 10 minutes, separate instance)
+                    metricsCron:
                     ├─▶ DellIRFetcher → fetch press release
                     ├─▶ ClaudeParser  → extract metrics
-                    └─▶ DataStore → persist
+                    └─▶ DataStore → persist; append JobRecord
                           └─▶ METRICS_DONE when revenue, grossMargin, doi all non-null
-                                            AND identical across 2 consecutive polls
-                                            (metrics cron stops)
+                                            AND value fields identical across 2 consecutive polls
+                                            (metricsCron stops; transcriptCron continues independently)
 ```
 
-**Transcript lifecycle runs in parallel on the same 10-minute cron, independently of metrics:**
+**Two independent crons run in parallel during LIVE state:**
+- **`metricsCron`** — fires every 10 minutes; fetches press release, extracts metrics, appends `JobRecord`. Stops when metrics reach DONE condition.
+- **`transcriptCron`** — fires every 10 minutes (same cadence, separate `node-cron` instance); fetches transcript and/or generates summary. Continues independently even after `metricsCron` stops; stops when transcript reaches a terminal state.
+
+**Transcript cron logic:**
 
 ```
-LIVE (transcript cron: every 10 minutes)
+LIVE (transcriptCron: every 10 minutes, separate from metricsCron)
   ├─▶ SKIP if transcriptStatus = 'unavailable'              (terminal — stop forever)
   ├─▶ SKIP if transcriptStatus = 'available'
   │         AND transcriptSummary is non-null               (fully done — stop forever)
@@ -97,11 +102,13 @@ Each cron tick is recorded as a `JobRecord` in `jobHistory` via `dataStore.appen
 - `error`: non-null only when status = 'failed'
 - `note`: non-null when status = 'partial' or 'skipped'
 
-**jobHistory scope:** Only metrics cron ticks generate `JobRecord` entries. Transcript-only retry ticks (after metrics have stabilized) do NOT append to jobHistory. History is frozen (no new entries added) once status transitions to DONE; transcript work continuing after DONE does not produce new job records. (transcript cron may still be running). The `status` field transitions:
-- `WAITING` → `LIVE`: triggered by the hourly cron when `currentTime >= eventDate`. On transition, the metrics cron starts and fires its **first tick immediately** (no 10-minute wait for the first poll).
-- `LIVE` → `DONE` (once metrics are stable; transcript cron continues until fully done or both counters exhausted)
+**jobHistory scope:** Only `metricsCron` ticks generate `JobRecord` entries. `transcriptCron` ticks never create JobRecords — transcript work is reflected only in the `transcriptFetched` boolean on the metrics tick's `JobRecord` when both crons run concurrently. Transcript-only retry ticks (after metricsCron stops) do NOT append to jobHistory. History is frozen (no new entries added) once status transitions to DONE.
 
-The hourly WAITING cron stops once LIVE is entered. The startup fast-path (skip WAITING, enter LIVE immediately) also fires the first metrics tick immediately on boot.
+The `status` field transitions:
+- `WAITING` → `LIVE`: triggered by the hourly cron when `currentTime >= eventDate`. On transition, `metricsCron` and `transcriptCron` start and **both fire their first tick immediately** (no 10-minute wait).
+- `LIVE` → `DONE`: triggered by `metricsCron` when the **stabilization condition** is met — all three of `revenue`, `grossMargin`, `doi` are non-null AND each metric's `value` field is strictly equal to the corresponding value in `_lastMetricsSnapshot` (i.e., two consecutive polls returned the same numeric value for all three metrics). Only the `value` field is compared; `qoq`, `yoy`, and `confidence` are excluded from the stabilization check.
+
+The hourly WAITING cron stops once LIVE is entered. The startup fast-path (skip WAITING, enter LIVE immediately) also fires both crons' first ticks immediately on boot.
 
 **Restart when DONE but transcript pending:** On startup, if loaded state is `DONE` and transcript work is still retryable, resume the transcript cron using persisted counters (not from zero). Resume conditions:
 - `transcriptStatus = 'pending'` AND `_transcriptAttempts < 12` → resume fetch cron
@@ -225,6 +232,15 @@ On startup, calls Claude asking for the Dell Q1 FY2027 earnings release date and
    `FATAL: Cannot determine earnings date. Set EARNINGS_DATE=<ISO UTC> in .env`
 
 This guarantees the agent never enters WAITING with an undefined event date.
+
+**Full boot sequence (`index.ts`):**
+1. Load `state.json` if it exists and is valid:
+   - If loaded state has `eventDate` set and status is `WAITING`, `LIVE`, or `DONE` → skip Claude date resolution; use persisted state
+   - If `state.json` is missing, corrupted, or `eventDate` is null → proceed to step 2
+2. Run `eventDateResolver` to determine `eventDate` (Claude → env var → fatal exit)
+3. Set initial `AgentState` (or merge with loaded state)
+4. **Start HTTP server** (only now — API returns valid non-null `eventDate` for all requests)
+5. Start scheduler: enter WAITING or LIVE based on current time vs eventDate; fire first metrics tick immediately if LIVE
 
 ---
 
@@ -359,7 +375,7 @@ interface JobRecord {
 interface AgentState {
   // Public fields (exposed via GET /api/earnings)
   status:             AgentStatus;
-  eventDate:          string | null;   // null only during the brief startup resolution window; always non-null once WAITING/LIVE/DONE is entered
+  eventDate:          string | null;   // null only during startup resolution (before WAITING/LIVE/DONE is entered); HTTP server only starts accepting requests after resolution, so API callers always receive a non-null value
   lastUpdated:        string;                // ISO UTC; set on every setState() call
   metrics:            EarningsMetrics | null;
   metricsConfidence:  number | null;         // overall extraction confidence (0–100), null before first extraction
@@ -412,7 +428,7 @@ interface DataStore {
 |-------|---------|------|------|
 | `eventDate` | string | string | string |
 | `lastUpdated` | string | string | string |
-| `metrics` | `null` | `null` or partial object (before/during extraction) | object (all three non-null) |
+| `metrics` | `null` | `null` or object (partial or full; null before first extraction) | object (all three non-null, stabilized) |
 | `metricsConfidence` | `null` | `null` or number (null before first extraction) | number |
 | `metricsUpdatedAt` | `null` | `null` or string (null before first extraction) | string |
 | `transcriptStatus` | `'pending'` | `'pending'` or `'available'` or `'unavailable'` | any |
