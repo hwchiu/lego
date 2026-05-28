@@ -1,6 +1,9 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import TopNav from '@/app/components/layout/TopNav';
+import Banner from '@/app/components/layout/Banner';
+import Sidebar from '@/app/components/layout/Sidebar';
 
 const AGENT_URL = process.env.NEXT_PUBLIC_AGENT_URL ?? 'https://lego2.hwchiu.com/earnings-api';
 
@@ -282,17 +285,37 @@ export default function EarningsAgentContent() {
   }, [data?.eventDate]);
 
   if (loading) {
-    return <div className="page-pad"><div className="ea-loading">{t('loading', lang)}</div></div>;
+    return (
+      <>
+        <TopNav />
+        <Banner />
+        <div className="app-body">
+          <Sidebar />
+          <main className="main-content">
+            <div className="page-pad"><div className="ea-loading">{t('loading', lang)}</div></div>
+          </main>
+        </div>
+      </>
+    );
   }
 
   if (error || !data) {
     return (
-      <div className="page-pad">
-        <div className="ea-error-banner">
-          {t('agentOffline', lang)}{error ? `: ${error}` : ''}
+      <>
+        <TopNav />
+        <Banner />
+        <div className="app-body">
+          <Sidebar />
+          <main className="main-content">
+            <div className="page-pad">
+              <div className="ea-error-banner">
+                {t('agentOffline', lang)}{error ? `: ${error}` : ''}
+              </div>
+              <ArchitectureDiagram lang={lang} />
+            </div>
+          </main>
         </div>
-        <ArchitectureDiagram lang={lang} />
-      </div>
+      </>
     );
   }
 
@@ -301,7 +324,13 @@ export default function EarningsAgentContent() {
   const statusMod = data.status === 'LIVE' ? '--live' : data.status === 'DONE' ? '--done' : '--waiting';
 
   return (
-    <div className="page-pad">
+    <>
+      <TopNav />
+      <Banner />
+      <div className="app-body">
+        <Sidebar />
+        <main className="main-content">
+          <div className="page-pad">
 
       {/* ── Status bar ── */}
       <div className="ea-status-bar">
@@ -452,5 +481,8 @@ export default function EarningsAgentContent() {
       <ArchitectureDiagram lang={lang} />
 
     </div>
+        </main>
+      </div>
+    </>
   );
 }
