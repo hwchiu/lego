@@ -53,7 +53,9 @@ STARTUP
                     ├─▶ TranscriptFetcher → fetch transcript
                     ├─▶ ClaudeTranscriptSummarizer → AI summary
                     └─▶ DataStore → persist state.json
-                          └─▶ DONE  (when transcript captured and metrics stable)
+                          └─▶ DONE  (when transcript is captured AND metrics are non-null
+                                        from at least 2 consecutive polls with identical values;
+                                        polling stops; agent continues serving the API)
 ```
 
 State is persisted to `state.json` so the agent can resume after a restart without losing previous poll results.
@@ -74,9 +76,9 @@ Returns current agent state and all collected data.
   "eventDate": "2026-05-29T20:30:00Z",
   "lastUpdated": "2026-05-28T11:40:00Z",
   "metrics": {
-    "revenue":  { "value": 23.9, "unit": "B",    "qoq": 2.3,  "yoy": 5.1  },
-    "margin":   { "value": 22.1, "unit": "%",    "qoq": -0.4, "yoy": 1.2  },
-    "doi":      { "value": 34,   "unit": "days", "qoq": -2,   "yoy": -3   }
+    "revenue":      { "value": 23.9, "unit": "B",    "qoq": 2.3,  "yoy": 5.1  },
+    "grossMargin":  { "value": 22.1, "unit": "%",    "qoq": -0.4, "yoy": 1.2  },
+    "doi":          { "value": 34,   "unit": "days", "qoq": -2,   "yoy": -3   }
   },
   "metricsUpdatedAt": "ISO timestamp or null",
   "transcript": "full raw transcript text or null",
@@ -104,7 +106,15 @@ Returns `{ "ok": true, "status": "<current state>" }`.
 |------|--------|
 | Earnings date | Claude (web search / knowledge) on agent startup |
 | Press release | ir.dell.com investor relations page |
-| Earnings call transcript | ir.dell.com or Seeking Alpha (public transcript) |
+### `transcriptFetcher.ts` — Transcript Source Strategy
+
+Tries sources in priority order; stops at first success:
+
+1. **Dell IR page** (`ir.dell.com/news-events/events-calendar`) — look for a transcript link on the earnings event page
+2. **Seeking Alpha** (`seekingalpha.com/symbol/DELL/earnings/transcripts`) — public transcript page scrape
+3. **Not available** — returns `null`; the agent continues showing metrics without transcript section
+
+The module exposes a single `fetchTranscript(eventDate: Date): Promise<string | null>` function. Callers do not need to know which source succeeded.
 
 ---
 
@@ -113,9 +123,9 @@ Returns `{ "ok": true, "status": "<current state>" }`.
 ### `claudeParser.ts` — Metric Extraction
 
 Sends press release HTML/text to Claude with a structured prompt requesting JSON output:
-- Revenue (value, unit, QoQ %, YoY %)
-- Gross/Operating Margin (value, QoQ %, YoY %)
-- Days of Inventory (DOI) (value, QoQ delta, YoY delta)
+- Revenue (value in $B, QoQ %, YoY %)
+- Gross Margin (%, QoQ delta in pp, YoY delta in pp)
+- Days of Inventory Outstanding / DOI (days, QoQ delta in days, YoY delta in days)
 
 Uses `claude-3-5-sonnet-20241022` with structured JSON response format.
 
@@ -183,11 +193,11 @@ app/earnings-agent/
 
 **Layout:**
 1. **Status bar** — agent status badge + event date + last-updated timestamp
-2. **Metrics section** — three cards: Revenue, Gross Margin, DOI. Each shows value, QoQ delta (▲▼), YoY delta (▲▼). Hidden when status is WAITING.
+2. **Metrics section** — three cards: Revenue, Gross Margin, DOI. Each shows value, QoQ delta (▲▼ in pp or days), YoY delta (▲▼). Hidden when status is WAITING.
 3. **Transcript Summary section** — tabbed: Highlights | Risks | Outlook | Key Quotes. Hidden when transcript not yet available.
 4. **Loading/error states** — spinner when fetching, error banner if agent unreachable.
 
-Client-side polling: `setInterval` at `POLL_INTERVAL_MINUTES * 60 * 1000` (default 10 min).
+Client-side polling: `setInterval` hardcoded to **10 minutes** (600,000 ms). The interval is not configurable from the frontend; the agent's `POLL_INTERVAL_MINUTES` env var controls how often the server refreshes data, while the frontend always re-fetches on the same 10-min cadence to stay current.
 
 ---
 
@@ -197,16 +207,59 @@ Client-side polling: `setInterval` at `POLL_INTERVAL_MINUTES * 60 * 1000` (defau
 |----------|----------|
 | Dell IR page unreachable | Log error, retry on next interval |
 | Press release not yet posted | Keep status LIVE, retry next interval |
-| Transcript not yet available | Metrics shown without transcript section |
-| Claude API error | Log error, keep last successful data, retry next interval |
+| Transcript not yet available (all sources return null) | Metrics shown without transcript section; retry each interval |
+| Claude returns malformed JSON | Log error, discard response, keep last successful data, retry next interval |
+| Claude returns partial metrics (some fields null) | Store partial data; display available fields; mark missing fields as `null` in API response |
+| Claude API error (rate limit, network, 5xx) | Log error, keep last successful data, retry next interval |
 | Agent server unreachable | Website shows "Agent offline" error banner |
-| Agent restart | Loads `state.json` on startup, resumes from last known state |
+| Agent restart with valid `state.json` | Load persisted state on startup, resume from last known state and status |
+| `state.json` corrupted or unparseable | Log warning, reset to WAITING state, re-resolve event date |
+| API response with HTTP error | Website shows error banner with status code; retries on next poll cycle |
 
 ---
 
-## Out of Scope
+## Typed Interfaces
 
-- Authentication on the REST API (local network use only)
+```typescript
+// Shared types (src/types.ts)
+type AgentStatus = 'WAITING' | 'LIVE' | 'DONE';
+
+interface MetricValue {
+  value: number;
+  unit: string;   // "B" | "%" | "days"
+  qoq: number;    // delta in same unit (pp for %, days for DOI, % for revenue)
+  yoy: number;
+}
+
+interface EarningsMetrics {
+  revenue:     MetricValue | null;
+  grossMargin: MetricValue | null;
+  doi:         MetricValue | null;
+}
+
+interface TranscriptSummary {
+  highlights: string[];
+  risks:      string[];
+  outlook:    string;
+  keyQuotes:  string[];
+}
+
+interface AgentState {
+  status:               AgentStatus;
+  eventDate:            string | null;  // ISO UTC
+  metrics:              EarningsMetrics | null;
+  metricsUpdatedAt:     string | null;
+  transcript:           string | null;
+  transcriptSummary:    TranscriptSummary | null;
+  transcriptUpdatedAt:  string | null;
+  consecutivePollCount: number;         // for DONE transition logic
+  lastMetricsSnapshot:  EarningsMetrics | null;
+}
+```
+
+`state.json` on disk has the same shape as `AgentState`.
+
+## Out of Scope
 - Historical earnings tracking (future iteration)
 - Multiple company tracking (future iteration)
 - Push notifications / webhooks
