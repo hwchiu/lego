@@ -86,11 +86,18 @@ LIVE (transcript cron: every 10 minutes)
 Each cron tick is recorded as a `JobRecord` in `jobHistory` via `dataStore.appendJobRecord()`:
 - `startTime`: set at the top of the tick handler
 - `endTime`: set after all work completes (metrics fetch + extraction attempt)
-- `status`: `'success'` if metrics extracted successfully; `'partial'` if some metrics null or confidence < 50; `'failed'` if extraction threw an error
-- `metricsConfidence`: the overall confidence returned by Claude (null on error)
-- `metricsExtracted`: true if any non-null metric was stored this tick
+- `status` rules:
+  - `'skipped'` — press release not yet posted (fetcher returns null); `note` = `"Press release not yet available"`
+  - `'failed'` — unhandled exception or Claude API error; `error` = exception message
+  - `'partial'` — extraction completed but `metricsConfidence < 50` OR any of revenue/grossMargin/doi is null; `note` = brief reason (e.g., `"Confidence 42/100"` or `"doi unavailable"`)
+  - `'success'` — all three metrics non-null AND `metricsConfidence >= 50`
+- `metricsConfidence`: the overall confidence returned by Claude; null when status = 'failed' or 'skipped'
+- `metricsExtracted`: true if at least one non-null metric was stored this tick
 - `transcriptFetched`: true if a transcript was newly fetched this tick
-- `error`: error message string on failure, null otherwise (transcript cron may still be running). The `status` field transitions:
+- `error`: non-null only when status = 'failed'
+- `note`: non-null when status = 'partial' or 'skipped'
+
+**jobHistory scope:** Only metrics cron ticks generate `JobRecord` entries. Transcript-only retry ticks (after metrics have stabilized) do NOT append to jobHistory. History is frozen (no new entries added) once status transitions to DONE; transcript work continuing after DONE does not produce new job records. (transcript cron may still be running). The `status` field transitions:
 - `WAITING` → `LIVE` (on first metrics cron tick after eventDate)
 - `LIVE` → `DONE` (once metrics are stable; transcript cron continues until fully done or both counters exhausted)
 
@@ -130,17 +137,19 @@ Returns current agent state and all collected data.
     "outlook":    "narrative paragraph...",
     "keyQuotes":  ["CEO: ...", "CFO: ..."]
   },
-  "transcriptUpdatedAt": "ISO timestamp or null",
+  "transcriptRawFetchedAt": "ISO timestamp or null",
+  "transcriptSummaryUpdatedAt": "ISO timestamp or null",
   "jobHistory": [
     {
       "jobId": "job-1",
       "startTime": "2026-05-29T20:30:00Z",
       "endTime": "2026-05-29T20:30:45Z",
-      "status": "success | partial | failed",
+      "status": "success | partial | failed | skipped",
       "metricsConfidence": 85,
       "metricsExtracted": true,
       "transcriptFetched": false,
-      "error": null
+      "error": null,
+      "note": null
     }
   ]
 }
@@ -273,7 +282,7 @@ app/earnings-agent/
    | `'available'` | `null` | "Generating summary…" placeholder |
    | `'available'` | object | Full tabbed summary (Highlights / Risks / Outlook / Key Quotes) |
 
-4. **Job History section** — table of all cron jobs since LIVE began. Columns: Job ID, Start Time, End Time, Duration, Status (success/partial/failed badge), Overall Confidence, Notes (error message if any). Hidden when `jobHistory` is empty. The section header shows total job count. History is frozen once status = DONE.
+4. **Job History section** — table of all metrics cron jobs since LIVE began. Columns: Job ID, Start Time, End Time, Duration, Status (success/partial/failed/skipped badge), Overall Confidence, Note. Hidden when `jobHistory` is empty. The section header shows total job count. History is frozen once status = DONE; transcript-only ticks after DONE do not appear.
 5. **Loading/error states** — spinner on initial mount fetch; error banner if agent unreachable.
 
 Client-side data fetching: fetch immediately on component mount, then repeat every 10 minutes (600,000 ms) via `setInterval`. Both the initial fetch and interval use the same `NEXT_PUBLIC_AGENT_URL` base URL.
@@ -286,14 +295,14 @@ Client-side data fetching: fetch immediately on component mount, then repeat eve
 
 | Scenario | Behavior |
 |----------|----------|
-| Dell IR page unreachable | Log error, retry on next interval |
-| Press release not yet posted | Keep status LIVE, retry next interval |
-| Transcript fetch fails 12 consecutive times | Set `transcriptStatus = 'unavailable'`, stop transcript cron; UI shows "Transcript unavailable" |
-| Transcript summarization fails 3 consecutive times | Stop summary retries; `transcriptSummary` stays `null`; UI shows "Generating summary…" permanently |
-| Claude returns malformed JSON | Log error, discard response, keep last successful data, retry next interval |
-| Claude returns partial metrics (some fields null) | Store partial data; display available fields; mark missing fields as `null` in API response; job status = 'partial' |
-| Claude returns low-confidence metrics (< 50) | Store data, set job status = 'partial', show confidence badge as warning color on website |
-| Claude API error (rate limit, network, 5xx) | Log error, keep last successful data, retry next interval |
+| Dell IR page unreachable | Log error, retry on next interval; JobRecord status = 'failed', error = exception message |
+| Press release not yet posted | Keep status LIVE, retry next interval; JobRecord status = 'skipped', note = "Press release not yet available" |
+| Transcript fetch fails 12 consecutive times | Set `transcriptStatus = 'unavailable'`, stop transcript cron; UI shows "Transcript unavailable"; no JobRecord added (transcript-only tick) |
+| Transcript summarization fails 3 consecutive times | Stop summary retries; `transcriptSummary` stays `null`; UI shows "Generating summary…" permanently; no JobRecord added |
+| Claude returns malformed JSON | Log error, discard response, keep last successful data, retry next interval; JobRecord status = 'failed', error = parse error message |
+| Claude returns partial metrics (any of revenue/grossMargin/doi is null) | Store partial data; JobRecord status = 'partial', note = "<field> unavailable"; metricsExtracted = true if any non-null metric stored |
+| Claude returns low-confidence metrics (`metricsConfidence < 50`) | Store data; JobRecord status = 'partial', note = "Confidence <N>/100"; website shows confidence badge in warning color |
+| Claude API error (rate limit, network, 5xx) | Log error, keep last successful data, retry next interval; JobRecord status = 'failed', error = API error message |
 | Agent server unreachable | Website shows "Agent offline" error banner |
 | Agent restart with valid `state.json` | Load persisted state on startup, resume from last known state and status |
 | `state.json` corrupted or unparseable | Log warning, reset to WAITING state, re-resolve event date |
@@ -307,7 +316,7 @@ Client-side data fetching: fetch immediately on component mount, then repeat eve
 // Shared types (src/types.ts)
 type AgentStatus = 'WAITING' | 'LIVE' | 'DONE';
 type TranscriptStatus = 'pending' | 'available' | 'unavailable';
-type JobStatus = 'success' | 'partial' | 'failed';
+type JobStatus = 'success' | 'partial' | 'failed' | 'skipped';
 
 interface MetricValue {
   value:      number;       // always present if MetricValue is non-null
@@ -331,14 +340,15 @@ interface TranscriptSummary {
 }
 
 interface JobRecord {
-  jobId:             string;          // sequential: "job-1", "job-2", …
+  jobId:             string;          // generated by DataStore using _nextJobId: "job-1", "job-2", …
   startTime:         string;          // ISO UTC — when cron tick began
   endTime:           string;          // ISO UTC — when all work for the tick completed
-  status:            JobStatus;       // 'success' | 'partial' | 'failed'
-  metricsConfidence: number | null;   // overall confidence from Claude, null if extraction failed
-  metricsExtracted:  boolean;
-  transcriptFetched: boolean;
-  error:             string | null;   // error message if status = 'failed' or 'partial'
+  status:            JobStatus;       // 'success' | 'partial' | 'failed' | 'skipped'
+  metricsConfidence: number | null;   // overall confidence from Claude (0–100), null if extraction not attempted or failed
+  metricsExtracted:  boolean;         // true if at least one non-null metric was stored this tick
+  transcriptFetched: boolean;         // true if a transcript was newly fetched this tick
+  error:             string | null;   // non-null only when status = 'failed' (exception/API error)
+  note:              string | null;   // non-null when status = 'partial' or 'skipped'; human-readable reason
 }
 
 interface AgentState {
@@ -352,7 +362,8 @@ interface AgentState {
   transcriptStatus:   TranscriptStatus;
   transcript:         string | null;
   transcriptSummary:  TranscriptSummary | null;
-  transcriptUpdatedAt: string | null;        // set when transcriptStatus becomes 'available' (raw fetch time)
+  transcriptRawFetchedAt:  string | null;   // set when transcriptStatus becomes 'available' (raw text fetch time)
+  transcriptSummaryUpdatedAt: string | null; // set when transcriptSummary is successfully populated
   jobHistory:         JobRecord[];           // all job records; frozen after DONE
 
   // Internal fields (persisted to state.json, NOT exposed by API)
@@ -382,7 +393,8 @@ interface DataStore {
   getState(): AgentState;
   setState(patch: Partial<AgentState>): void;
   getPublicState(): EarningsApiResponse;
-  appendJobRecord(record: JobRecord): void;  // pushes to jobHistory and persists
+  // DataStore generates the jobId internally using _nextJobId; caller supplies all other fields
+  appendJobRecord(record: Omit<JobRecord, 'jobId'>): void;
   reset(): void;
 }
 ```
@@ -395,12 +407,14 @@ interface DataStore {
 |-------|---------|------|------|
 | `eventDate` | string | string | string |
 | `lastUpdated` | string | string | string |
-| `metrics` | `null` | object (partial ok) | object |
-| `metricsUpdatedAt` | `null` | string | string |
+| `metrics` | `null` | `null` or partial object (before/during extraction) | object (all three non-null) |
+| `metricsConfidence` | `null` | `null` or number (null before first extraction) | number |
+| `metricsUpdatedAt` | `null` | `null` or string (null before first extraction) | string |
 | `transcriptStatus` | `'pending'` | `'pending'` or `'available'` or `'unavailable'` | any |
 | `transcript` | `null` | string or `null` | string or `null` |
 | `transcriptSummary` | `null` | object or `null` | object or `null` |
-| `transcriptUpdatedAt` | `null` | string or `null` | string or `null` |
+| `transcriptRawFetchedAt` | `null` | string or `null` | string or `null` |
+| `transcriptSummaryUpdatedAt` | `null` | string or `null` | string or `null` |
 
 ## Out of Scope
 - Historical earnings tracking (future iteration)
