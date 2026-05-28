@@ -70,12 +70,12 @@ LIVE (transcript cron: every 10 minutes)
   ├─▶ If transcriptStatus = 'pending' (_transcriptAttempts < 12):
   │     → TranscriptFetcher → fetch transcript
   │     → if null: increment _transcriptAttempts, retry next interval
-  │     → if fetched: set transcriptStatus = 'available', store raw text, reset _summaryAttempts = 0
+  │     → if fetched: set transcriptStatus = 'available', store raw text, set transcriptRawFetchedAt = now(), reset _summaryAttempts = 0
   │     → After 12 failed fetch attempts: set transcriptStatus = 'unavailable', stop cron
   │
   └─▶ If transcriptStatus = 'available' AND transcriptSummary is null (_summaryAttempts < 3):
         → ClaudeTranscriptSummarizer → generate summary
-        → if success: set transcriptSummary, set transcriptUpdatedAt
+        → if success: set transcriptSummary, set transcriptSummaryUpdatedAt = now()
         → if error: increment _summaryAttempts, retry next interval
         → After 3 failed summary attempts: set transcriptSummary = null permanently,
           UI stays on "Generating summary…" indefinitely (no further retries)
@@ -98,10 +98,15 @@ Each cron tick is recorded as a `JobRecord` in `jobHistory` via `dataStore.appen
 - `note`: non-null when status = 'partial' or 'skipped'
 
 **jobHistory scope:** Only metrics cron ticks generate `JobRecord` entries. Transcript-only retry ticks (after metrics have stabilized) do NOT append to jobHistory. History is frozen (no new entries added) once status transitions to DONE; transcript work continuing after DONE does not produce new job records. (transcript cron may still be running). The `status` field transitions:
-- `WAITING` → `LIVE` (on first metrics cron tick after eventDate)
+- `WAITING` → `LIVE`: triggered by the hourly cron when `currentTime >= eventDate`. On transition, the metrics cron starts and fires its **first tick immediately** (no 10-minute wait for the first poll).
 - `LIVE` → `DONE` (once metrics are stable; transcript cron continues until fully done or both counters exhausted)
 
-**Restart when DONE but transcript pending:** On startup, if loaded state is `DONE` and transcript work is incomplete (transcriptStatus = 'available' but transcriptSummary null, or transcriptStatus = 'pending'), resume the transcript cron using persisted `_transcriptAttempts` and `_summaryAttempts` (not from zero).
+The hourly WAITING cron stops once LIVE is entered. The startup fast-path (skip WAITING, enter LIVE immediately) also fires the first metrics tick immediately on boot.
+
+**Restart when DONE but transcript pending:** On startup, if loaded state is `DONE` and transcript work is still retryable, resume the transcript cron using persisted counters (not from zero). Resume conditions:
+- `transcriptStatus = 'pending'` AND `_transcriptAttempts < 12` → resume fetch cron
+- `transcriptStatus = 'available'` AND `transcriptSummary = null` AND `_summaryAttempts < 3` → resume summary cron
+- If `_transcriptAttempts >= 12` or `_summaryAttempts >= 3`, counters are exhausted — do NOT restart; terminal state is already correct.
 
 State is persisted to `state.json` so the agent can resume after a restart without losing previous poll results.
 
@@ -354,7 +359,7 @@ interface JobRecord {
 interface AgentState {
   // Public fields (exposed via GET /api/earnings)
   status:             AgentStatus;
-  eventDate:          string | null;
+  eventDate:          string | null;   // null only during the brief startup resolution window; always non-null once WAITING/LIVE/DONE is entered
   lastUpdated:        string;                // ISO UTC; set on every setState() call
   metrics:            EarningsMetrics | null;
   metricsConfidence:  number | null;         // overall extraction confidence (0–100), null before first extraction
