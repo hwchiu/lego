@@ -84,7 +84,7 @@
 ## Entity Data
 
 > Auto-updated by `scripts/fetch-stock-data.mjs`.
-> Last updated: 2026-05-27T22:10:08.092Z
+> Last updated: 2026-05-28T06:47:24.766Z
 
 Full holding-table data for every tracked symbol. User-added symbols are persisted in `localStorage` under the key `wl-extra-holdings`.
 
@@ -285,11 +285,11 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
   "META": {
     "symbol": "META",
     "price": 635.26,
-    "change": 22.91,
+    "change": 22.92,
     "changePct": 3.74,
     "shares": 35,
     "cost": 290.4,
-    "todayGain": 801.85,
+    "todayGain": 802.2,
     "todayGainPct": 3.74,
     "revenue": "$214.96",
     "revenueQoQ": "N/A",
