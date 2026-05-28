@@ -107,7 +107,9 @@ Each cron tick is recorded as a `JobRecord` in `jobHistory` via `dataStore.appen
 - `metricsConfidence`: the overall confidence returned by Claude; null when status = 'failed' or 'skipped'
 - `metricsExtracted`: true if at least one non-null metric was stored this tick
 
-**When `metricsExtracted = false`** (status `'failed'`, `'skipped'`, or `'partial'` with all-null metrics): the public fields `metrics`, `metricsConfidence`, and `metricsUpdatedAt` are **left unchanged** (last successfully extracted values are preserved). The tick still writes a `JobRecord` with the appropriate status.
+**When `metricsExtracted = false`** (status `'failed'`, `'skipped'`, or `'partial'` with **all metrics null**): the public fields `metrics`, `metricsConfidence`, and `metricsUpdatedAt` are **left unchanged** (last successfully extracted values are preserved). The tick still writes a `JobRecord` with the appropriate status.
+
+**When `metricsExtracted = true`** (status `'success'` or `'partial'` with **at least one non-null metric**): store the partial or full data; update `metrics`, `metricsConfidence`, and `metricsUpdatedAt`.
 - `error`: non-null only when status = 'failed'
 - `note`: non-null when status = 'partial' or 'skipped'
 
@@ -209,9 +211,9 @@ Returns `{ "ok": true, "status": "<current state>" }`.
 
 Both fetchers receive `eventDate: Date` and `targetQuarter: string` (e.g. `"Q1 FY2027"`) and must reject content that does not match the target event:
 - **Press release:** accept only items whose title/URL contains **both** a quarter token (one of: `Q1`, `first quarter`, `1st quarter`) **and** a fiscal-year token (one of: `FY2027`, `fiscal 2027`, `fiscal year 2027`), AND whose publish date is within ±3 days of `eventDate` (see date normalization rules below).
-- **Transcript:** accept only items whose title/URL contains **both** a quarter token and a fiscal-year token (same lists as above), AND whose page date is on or after `eventDate` (calendar-date comparison). Older-quarter transcripts on the same page must be skipped.
+- **Transcript:** accept only items whose title/URL contains **both** a quarter token (same list as above) **and** a year token. For transcripts, the year token list is expanded to also accept plain calendar-year forms (e.g. `2027`) in addition to the fiscal-year token list — since services like Seeking Alpha commonly use `"Q1 2027 Earnings Call"` without the `FY` prefix. The year token must match the fiscal year's calendar year (derived from `targetQuarter`). Page date must be on or after `eventDate` (UTC calendar-date comparison). Older-quarter transcripts on the same page must be skipped.
 
-**Date normalization:** when a source page exposes only a calendar date (no time component), compare at day granularity in the source's local timezone (or UTC if unspecified). Do not reject same-day content solely because the time component is unavailable.
+**Date normalization:** when a source page exposes only a calendar date (no time component), compare at day granularity using **UTC** for all sources. Do not reject same-day content solely because the time component is unavailable.
 
 ### `transcriptFetcher.ts` — Transcript Source Strategy
 
@@ -365,7 +367,8 @@ Client-side data fetching: fetch immediately on component mount, then repeat eve
 | Transcript fetch returns `not_found_yet` or `error` 12 times total | Set `transcriptStatus = 'unavailable'`, stop transcript cron; UI shows "Transcript unavailable"; no JobRecord added (transcript-only tick) |
 | Transcript summarization fails 3 consecutive times | Stop summary retries; `transcriptSummary` stays `null`; UI shows "Generating summary…" permanently; no JobRecord added |
 | Claude returns malformed JSON | Log error, discard response, keep last successful data, retry next interval; JobRecord status = 'failed', error = parse error message |
-| Claude returns partial metrics (any of revenue/grossMargin/doi is null) | Store partial data; JobRecord status = 'partial', note = "<field> unavailable"; metricsExtracted = true if any non-null metric stored |
+| Claude returns partial metrics (some of revenue/grossMargin/doi null, at least one non-null) | Store partial data (`metricsExtracted=true`); update `metrics`/`metricsConfidence`/`metricsUpdatedAt`; JobRecord status = 'partial', note = "<field> unavailable" |
+| Claude returns all-null metrics | Do NOT overwrite public metrics; `metricsExtracted=false`; JobRecord status = 'partial', note = "All metrics null" |
 | Claude returns low-confidence metrics (`metricsConfidence < 50`) | Store data; JobRecord status = 'partial', note = "Confidence <N>/100"; website shows confidence badge in warning color |
 | Claude API error (rate limit, network, 5xx) | Log error, keep last successful data, retry next interval; JobRecord status = 'failed', error = API error message |
 | Agent server unreachable | Website shows "Agent offline" error banner |
