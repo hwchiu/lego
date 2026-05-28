@@ -53,9 +53,10 @@ STARTUP
                     ├─▶ TranscriptFetcher → fetch transcript
                     ├─▶ ClaudeTranscriptSummarizer → AI summary
                     └─▶ DataStore → persist state.json
-                          └─▶ DONE  (when transcript is captured AND metrics are non-null
-                                        from at least 2 consecutive polls with identical values;
-                                        polling stops; agent continues serving the API)
+                          └─▶ DONE  (when metrics are non-null from at least 2 consecutive
+                                        polls with identical values — regardless of transcript
+                                        availability; transcript is best-effort and its absence
+                                        does NOT block DONE; polling stops; API keeps serving)
 ```
 
 State is persisted to `state.json` so the agent can resume after a restart without losing previous poll results.
@@ -142,6 +143,14 @@ Uses `claude-3-5-sonnet-20241022`.
 ### `eventDateResolver.ts` — Date Lookup
 
 On startup, calls Claude asking for the Dell Q1 FY2027 earnings release date and time (UTC). Falls back to a configurable `EARNINGS_DATE` environment variable if Claude cannot determine it.
+
+**Startup boot contract:**
+1. Try Claude → parse ISO datetime from response
+2. If Claude fails or returns unparseable output → read `EARNINGS_DATE` env var
+3. If `EARNINGS_DATE` is also missing or invalid → **agent exits with a non-zero code** and logs:
+   `FATAL: Cannot determine earnings date. Set EARNINGS_DATE=<ISO UTC> in .env`
+
+This guarantees the agent never enters WAITING with an undefined event date.
 
 ---
 
@@ -255,9 +264,35 @@ interface AgentState {
   consecutivePollCount: number;         // for DONE transition logic
   lastMetricsSnapshot:  EarningsMetrics | null;
 }
+
+// Module interfaces
+interface DellIRFetcher {
+  fetchPressRelease(): Promise<string | null>;  // returns press release plain text, or null if not posted
+}
+
+interface ClaudeParser {
+  parseMetrics(pressReleaseText: string): Promise<EarningsMetrics>;  // throws on unrecoverable error
+}
+
+interface DataStore {
+  getState(): AgentState;
+  setState(patch: Partial<AgentState>): void;  // merges patch, persists to state.json synchronously
+  reset(): void;                               // clears to initial WAITING state
+}
 ```
 
 `state.json` on disk has the same shape as `AgentState`.
+
+**API nullability by status:**
+
+| Field | WAITING | LIVE | DONE |
+|-------|---------|------|------|
+| `eventDate` | string | string | string |
+| `metrics` | `null` | object (partial ok) | object |
+| `metricsUpdatedAt` | `null` | string | string |
+| `transcript` | `null` | string or `null` | string or `null` |
+| `transcriptSummary` | `null` | object or `null` | object or `null` |
+| `transcriptUpdatedAt` | `null` | string or `null` | string or `null` |
 
 ## Out of Scope
 - Historical earnings tracking (future iteration)
