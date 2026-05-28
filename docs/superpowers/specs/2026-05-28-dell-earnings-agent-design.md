@@ -55,12 +55,11 @@ STARTUP
                     ├─▶ DellIRFetcher → fetch press release
                     ├─▶ ClaudeParser  → extract metrics
                     └─▶ DataStore → persist; append JobRecord
-                          └─▶ METRICS_DONE when _lastMetricsSnapshot is non-null with all 3
-                                            prior metrics non-null AND current tick revenue,
-                                            grossMargin, doi all non-null with value fields
-                                            identical to snapshot (compare pre-update; snapshot
-                                            is then updated after check; any metricsExtracted=false
-                                            tick resets snapshot/counter)
+                          └─▶ METRICS_DONE when _lastMetricsSnapshot is non-null (success-tier),
+                                            all 3 prior metrics non-null AND current tick is
+                                            'success' (all 3 non-null, confidence≥50) with
+                                            value fields identical (compare pre-update; snapshot
+                                            updated after check; metricsExtracted=false resets)
                                             (metricsCron stops; transcriptCron continues independently)
 ```
 
@@ -100,7 +99,7 @@ Each cron tick is recorded as a `JobRecord` in `jobHistory` via `dataStore.appen
 - `startTime`: set at the top of the tick handler
 - `endTime`: set after all work completes (metrics fetch + extraction attempt)
 - `status` rules:
-  - `'skipped'` — press release not yet posted (fetcher returns null); `note` = `"Press release not yet available"`
+  - `'skipped'` — press release not yet posted (`fetchPressRelease` returns null — source reachable, no matching content yet); `note` = `"Press release not yet available"`
   - `'failed'` — unhandled exception or Claude API error; `error` = exception message
   - `'partial'` — extraction completed but `metricsConfidence < 50` OR any of revenue/grossMargin/doi is null; `note` = brief reason (e.g., `"Confidence 42/100"` or `"doi unavailable"`)
   - `'success'` — all three metrics non-null AND `metricsConfidence >= 50`
@@ -122,13 +121,14 @@ Each cron tick is recorded as a `JobRecord` in `jobHistory` via `dataStore.appen
 The `status` field transitions:
 - `WAITING` → `LIVE`: triggered by a one-shot `setTimeout` scheduled for `eventDate` (fires on or after that time, subject to event-loop delay). On transition, `metricsCron` and `transcriptCron` start and **both fire their first tick immediately** (no 10-minute wait).
 - `LIVE` → `DONE`: triggered by `metricsCron` when the **stabilization condition** is met. Evaluation order within each tick:
-  1. **Compare first (pre-update):** check whether `_lastMetricsSnapshot` is non-null, all three of its stored `revenue`, `grossMargin`, `doi` values are non-null, AND the current tick's `revenue`, `grossMargin`, `doi` are all non-null with each metric's `value` strictly equal to the corresponding snapshot `value`.
-  2. **Then update/reset:** if `metricsExtracted = true`, update `_lastMetricsSnapshot` to the current `metrics`; if `metricsExtracted = false`, reset `_lastMetricsSnapshot = null`.
-  This ordering ensures a single tick can never self-match (snapshot reflects the prior tick, not the current one). Only the `value` field is compared; `qoq`, `yoy`, and `confidence` are excluded from the stabilization check.
+  1. **Compare first (pre-update):** check whether `_lastMetricsSnapshot` is non-null, all three of its stored `revenue`, `grossMargin`, `doi` values are non-null, **and the snapshot was set by a `'success'` tick** (metricsConfidence ≥ 50), AND the current tick also has status `'success'` (all three metrics non-null, metricsConfidence ≥ 50) with each metric's `value` strictly equal to the corresponding snapshot `value`.
+  2. **Then update/reset:** if `metricsExtracted = true`, update `_lastMetricsSnapshot` to the current `metrics` and record whether the tick was `'success'`; if `metricsExtracted = false`, reset `_lastMetricsSnapshot = null`.
+  This ordering ensures a single tick can never self-match (snapshot reflects the prior tick, not the current one). Only the `value` field is compared; `qoq`, `yoy`, and `confidence` are excluded from the value comparison. Both ticks must be `'success'` to prevent early DONE on low-confidence partial ticks.
 
 **`_lastMetricsSnapshot` update rules:**
-- After every `metricsCron` tick where `metricsExtracted = true` (i.e., at least one non-null metric was stored — regardless of whether job status is `'success'` or `'partial'`), update `_lastMetricsSnapshot` to the current `metrics` value.
-- After any tick with `metricsExtracted = false` (status `'failed'`, `'skipped'`, or `'partial'` with all-null metrics), reset `_lastMetricsSnapshot = null`. Stabilization requires two uninterrupted `metricsExtracted = true` ticks in sequence.
+- After every `metricsCron` tick with status `'success'` (all 3 non-null, confidence ≥ 50): update `_lastMetricsSnapshot` to the current `metrics` and mark snapshot as success-tier.
+- After every `metricsCron` tick with `metricsExtracted = true` but status `'partial'`: update `_lastMetricsSnapshot` to the current `metrics` but mark as partial-tier (cannot satisfy stabilization as the snapshot side).
+- After any tick with `metricsExtracted = false` (status `'failed'`, `'skipped'`, or `'partial'` with all-null metrics): reset `_lastMetricsSnapshot = null`.
 
 The WAITING `setTimeout` is cancelled once LIVE is entered. The startup fast-path (skip WAITING, enter LIVE immediately) also fires both crons' first ticks immediately on boot.
 
@@ -212,6 +212,8 @@ Returns `{ "ok": true, "status": "<current state>" }`.
 Both fetchers receive `eventDate: Date` and `targetQuarter: string` (e.g. `"Q1 FY2027"`) and must reject content that does not match the target event:
 - **Press release:** accept only items whose title/URL contains **both** a quarter token (one of: `Q1`, `first quarter`, `1st quarter`) **and** a fiscal-year token (one of: `FY2027`, `fiscal 2027`, `fiscal year 2027`), AND whose publish date is within ±3 days of `eventDate` (see date normalization rules below).
 - **Transcript:** accept only items whose title/URL contains **both** a quarter token (same list as above) **and** a year token. For transcripts, the year token list is expanded to also accept plain calendar-year forms (e.g. `2027`) in addition to the fiscal-year token list — since services like Seeking Alpha commonly use `"Q1 2027 Earnings Call"` without the `FY` prefix. The year token must match the fiscal year's calendar year (derived from `targetQuarter`). Page date must be on or after `eventDate` (UTC calendar-date comparison). Older-quarter transcripts on the same page must be skipped.
+
+**Token matching normalization:** all title/URL token comparisons are **case-insensitive** and **punctuation-normalized** (strip or replace hyphens, underscores, extra whitespace before comparison). For example, `"Q1-FY2027"`, `"q1 fy2027"`, and `"Q1 FY 2027"` should all match.
 
 **Date normalization:** when a source page exposes only a calendar date (no time component), compare at day granularity using **UTC** for all sources. Do not reject same-day content solely because the time component is unavailable.
 
@@ -434,22 +436,23 @@ interface AgentState {
   jobHistory:         JobRecord[];           // all job records; frozen after DONE
 
   // Internal fields (persisted to state.json, NOT exposed by API)
-  _lastMetricsSnapshot:   EarningsMetrics | null;
-  _transcriptAttempts:    number;  // 0–12
-  _summaryAttempts:       number;  // 0–3
-  _nextJobId:             number;  // counter for sequential job IDs
+  _lastMetricsSnapshot:       EarningsMetrics | null;
+  _lastSnapshotIsSuccess:     boolean;   // true if snapshot was set by a 'success' tick (confidence≥50); false if partial-tier
+  _transcriptAttempts:        number;  // 0–12
+  _summaryAttempts:           number;  // 0–3
+  _nextJobId:                 number;  // counter for sequential job IDs
 }
 
 // GET /api/earnings response type (internal fields stripped; eventDate narrowed to non-null)
 type EarningsApiResponse = Omit<AgentState,
-  '_lastMetricsSnapshot' |
+  '_lastMetricsSnapshot' | '_lastSnapshotIsSuccess' |
   '_transcriptAttempts' | '_summaryAttempts' | '_nextJobId' | 'eventDate'>
   & { eventDate: string };
 
 // Module interfaces
 interface DellIRFetcher {
-  // eventDate and targetQuarter (e.g. "Q1 FY2027") are used to filter press releases/pages
-  // by date proximity and title/URL keyword match, rejecting older or wrong-quarter content.
+  // Returns null when source is reachable but no matching press release found yet (→ skipped JobRecord).
+  // Throws on network/HTTP/scrape errors (→ failed JobRecord).
   fetchPressRelease(eventDate: Date, targetQuarter: string): Promise<string | null>;
 }
 
