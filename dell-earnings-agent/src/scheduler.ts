@@ -7,6 +7,7 @@ import { summarizeTranscript } from './claudeTranscriptSummarizer';
 
 const TARGET_QUARTER = 'Q1 FY2027';
 const CRON_MS = 600_000;
+const HOURS_4_MS = 4 * 60 * 60 * 1_000;
 
 /**
  * Pure function — exported for unit testing.
@@ -99,6 +100,19 @@ function startMetricsCron(dataStore: DataStore): void {
       if (state.status === 'DONE') { stopCron(); return; }
 
       const eventDate = new Date(state.eventDate!);
+
+      // === 4-hour hard timeout ===
+      if (Date.now() >= eventDate.getTime() + HOURS_4_MS) {
+        console.log('[metricsCron] 4-hour timeout reached — marking DONE');
+        dataStore.appendJobRecord({
+          startTime, endTime: new Date().toISOString(),
+          status: 'skipped', metricsConfidence: null, metricsExtracted: false,
+          error: null, note: '4-hour timeout: monitoring window closed',
+        });
+        dataStore.setState({ status: 'DONE' });
+        stopCron();
+        return;
+      }
 
       // === Fetch press release ===
       let pressReleaseText: string | null;
@@ -250,6 +264,13 @@ function startTranscriptCron(dataStore: DataStore): void {
     try {
       const current = dataStore.getState();
       const eventDate = new Date(current.eventDate!);
+
+      // === 4-hour hard timeout ===
+      if (Date.now() >= eventDate.getTime() + HOURS_4_MS) {
+        console.log('[transcriptCron] 4-hour timeout reached — stopping');
+        stopCron();
+        return;
+      }
 
       if (current.transcriptStatus === 'pending') {
         if (current._transcriptAttempts >= 12) {
