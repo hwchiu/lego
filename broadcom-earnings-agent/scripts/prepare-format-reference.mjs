@@ -17,6 +17,7 @@ const PROJECT_ROOT = path.resolve(__dirname, '..');
 
 // ─── Token resolution ────────────────────────────────────────────────────────
 function getGitHubToken() {
+  if (process.env.GITHUB_TOKEN) return process.env.GITHUB_TOKEN;
   const envPath = path.join(PROJECT_ROOT, '.env');
   if (existsSync(envPath)) {
     const lines = readFileSync(envPath, 'utf8').split('\n');
@@ -25,11 +26,10 @@ function getGitHubToken() {
       if (m) return m[1].trim();
     }
   }
-  if (process.env.GITHUB_TOKEN) return process.env.GITHUB_TOKEN;
   try {
     return execSync('gh auth token', { encoding: 'utf8' }).trim();
   } catch {
-    throw new Error('GITHUB_TOKEN not found in .env, environment, or gh auth token');
+    throw new Error('GITHUB_TOKEN not found in environment, .env, or gh auth token');
   }
 }
 
@@ -41,24 +41,36 @@ const EDGAR_HEADERS = {
 };
 
 async function fetchRecentEdgar8Ks(count = 3) {
-  // Search last 18 months to guarantee at least 3 quarterly 8-Ks
-  const endDt   = new Date().toISOString().slice(0, 10);
-  const startDt = new Date(Date.now() - 18 * 30 * 86_400_000).toISOString().slice(0, 10);
-  const url = `https://efts.sec.gov/LATEST/search-index?q=%22Broadcom%22&dateRange=custom&startdt=${startDt}&enddt=${endDt}&forms=8-K&entity=${AVGO_CIK}`;
-  console.log('[edgar] Searching:', url);
-  const res = await axios.get(url, { timeout: 20_000, headers: EDGAR_HEADERS });
-  const hits = res.data?.hits?.hits ?? [];
+  // Step 1: get the filing history for Broadcom's CIK
+  const subsUrl = `https://data.sec.gov/submissions/CIK${AVGO_CIK.padStart(10, '0')}.json`;
+  console.log('[edgar] Fetching submissions:', subsUrl);
+  const subsRes = await axios.get(subsUrl, { timeout: 20_000, headers: EDGAR_HEADERS });
+  const recent = subsRes.data?.filings?.recent ?? {};
+  const forms       = recent.form        ?? [];
+  const accessions  = recent.accessionNumber ?? [];
+  const dates       = recent.filingDate  ?? [];
+
+  // Step 2: collect the most recent 8-K accession numbers
   const results = [];
-  for (const hit of hits) {
-    if (results.length >= count) break;
-    const id = hit._id ?? '';
-    const [accession, filename] = id.split(':');
-    if (!filename) continue;
-    const lc = filename.toLowerCase();
-    if (lc.includes('exhibit99') || lc.includes('ex99') || lc.includes('earnings')) {
-      const accPath = accession.replace(/-/g, '');
-      const prUrl = `https://www.sec.gov/Archives/edgar/data/${AVGO_CIK}/${accPath}/${filename}`;
-      results.push({ url: prUrl, accession, filename });
+  for (let i = 0; i < forms.length && results.length < count; i++) {
+    if (forms[i] !== '8-K') continue;
+    const accession = accessions[i];            // e.g. "0001054374-25-000015"
+    const accPath   = accession.replace(/-/g, ''); // e.g. "000105437425000015"
+    const idxUrl = `https://data.sec.gov/Archives/edgar/data/${AVGO_CIK}/${accPath}/${accession}-index.json`;
+    try {
+      const idxRes = await axios.get(idxUrl, { timeout: 15_000, headers: EDGAR_HEADERS });
+      const files  = idxRes.data?.documents ?? [];
+      for (const file of files) {
+        const fn = (file.name ?? '').toLowerCase();
+        const desc = (file.description ?? '').toLowerCase();
+        if (fn.includes('ex99') || fn.includes('exhibit99') || desc.includes('press release')) {
+          const prUrl = `https://www.sec.gov/Archives/edgar/data/${AVGO_CIK}/${accPath}/${file.name}`;
+          results.push({ url: prUrl, accession, filename: file.name, date: dates[i] });
+          break; // one exhibit per 8-K
+        }
+      }
+    } catch (err) {
+      console.warn(`  [edgar] index fetch failed for ${accession}: ${err.message}`);
     }
   }
   return results;
