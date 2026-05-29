@@ -18,11 +18,13 @@ function makeInitialState(): AgentState {
     lastUpdated: new Date().toISOString(),
     metrics: null,
     metricsConfidence: null,
+    metricsCreatedAt: null,
     metricsUpdatedAt: null,
     transcriptStatus: 'pending',
     transcript: null,
     transcriptSummary: null,
     transcriptRawFetchedAt: null,
+    transcriptSummaryCreatedAt: null,
     transcriptSummaryUpdatedAt: null,
     jobHistory: [],
     _lastMetricsSnapshot: null,
@@ -42,6 +44,12 @@ function loadState(): AgentState | null {
     // Schema defaulting for _lastSnapshotIsSuccess (added in later spec revision)
     if (parsed._lastSnapshotIsSuccess === undefined) {
       parsed._lastSnapshotIsSuccess = false;
+    }
+    if (parsed.metricsCreatedAt === undefined) {
+      parsed.metricsCreatedAt = null;
+    }
+    if (parsed.transcriptSummaryCreatedAt === undefined) {
+      parsed.transcriptSummaryCreatedAt = null;
     }
     return parsed;
   } catch (e) {

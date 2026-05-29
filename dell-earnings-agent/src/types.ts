@@ -44,11 +44,13 @@ export interface AgentState {
   lastUpdated:                string;
   metrics:                    EarningsMetrics | null;
   metricsConfidence:          number | null;
+  metricsCreatedAt:           string | null;  // set ONCE on first successful extraction
   metricsUpdatedAt:           string | null;
   transcriptStatus:           TranscriptStatus;
   transcript:                 string | null;
   transcriptSummary:          TranscriptSummary | null;
   transcriptRawFetchedAt:     string | null;
+  transcriptSummaryCreatedAt: string | null;  // set ONCE on first summary generation
   transcriptSummaryUpdatedAt: string | null;
   jobHistory:                 JobRecord[];
 

@@ -181,9 +181,11 @@ function startMetricsCron(dataStore: DataStore): void {
 
       // === Update state ===
       if (metricsExtracted) {
+        const currentState = dataStore.getState();
         dataStore.setState({
           metrics: metrics as EarningsMetrics,
           metricsConfidence: overallConfidence,
+          metricsCreatedAt: currentState.metricsCreatedAt ?? new Date().toISOString(),
           metricsUpdatedAt: new Date().toISOString(),
           _lastMetricsSnapshot: metrics as EarningsMetrics,
           _lastSnapshotIsSuccess: isSuccess,
@@ -234,8 +236,10 @@ function startTranscriptCron(dataStore: DataStore): void {
     if (!state.transcript || state._summaryAttempts >= 3) { stopCron(); return; }
     try {
       const summary = await summarizeTranscript(state.transcript);
+      const currentState = dataStore.getState();
       dataStore.setState({
         transcriptSummary: summary,
+        transcriptSummaryCreatedAt: currentState.transcriptSummaryCreatedAt ?? new Date().toISOString(),
         transcriptSummaryUpdatedAt: new Date().toISOString(),
       });
       stopCron();
