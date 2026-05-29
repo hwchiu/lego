@@ -29240,3 +29240,79 @@ html.dark .pr-archive-tile:hover .pr-archive-tile-title-link {
   .ea-metrics-grid { grid-template-columns: 1fr; }
   .ea-status-bar { flex-direction: column; align-items: flex-start; }
 }
+
+/* ===== EARNINGS AGENT — MULTI-COMPANY LAYOUT ===== */
+
+.ea-multi-layout {
+  display: flex;
+  gap: 0;
+  min-height: 600px;
+  align-items: flex-start;
+}
+
+.ea-company-list {
+  width: 200px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--c-border);
+  padding-right: 12px;
+  margin-right: 20px;
+}
+
+.ea-company-list-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--c-text-3);
+  padding: 0 8px 10px;
+}
+
+.ea-company-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 8px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-align: left;
+  transition: background .15s;
+}
+
+.ea-company-item:hover { background: var(--c-bg); }
+.ea-company-item--active { background: var(--c-bg); }
+
+.ea-company-dot { font-size: 14px; line-height: 1.4; flex-shrink: 0; }
+.ea-company-dot--live    { color: var(--c-pos); }
+.ea-company-dot--done    { color: var(--c-text-3); }
+.ea-company-dot--waiting { color: #f59e0b; }
+
+.ea-company-info { display: flex; flex-direction: column; gap: 1px; }
+.ea-company-ticker { font-weight: 700; font-size: 13px; color: var(--c-text); }
+.ea-company-name { font-size: 11px; color: var(--c-text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
+.ea-company-quarter { font-size: 10px; color: var(--c-text-4); }
+
+.ea-detail-panel { flex: 1; min-width: 0; }
+.ea-detail { width: 100%; }
+
+.ea-detail-header { margin-bottom: 16px; }
+.ea-detail-title { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+.ea-detail-ticker { font-size: 20px; font-weight: 700; color: var(--c-text); }
+.ea-detail-name { font-size: 15px; color: var(--c-text-2); }
+.ea-detail-quarter { font-size: 12px; color: var(--c-text-3); background: var(--c-bg); padding: 2px 8px; border-radius: 12px; }
+.ea-detail-placeholder { color: var(--c-text-3); padding: 40px 0; text-align: center; }
+
+.ea-data-ts-group { margin-top: 10px; display: flex; flex-direction: column; gap: 2px; }
+
+@media (max-width: 768px) {
+  .ea-multi-layout { flex-direction: column; }
+  .ea-company-list {
+    width: 100%; border-right: none; border-bottom: 1px solid var(--c-border);
+    padding-right: 0; margin-right: 0; margin-bottom: 16px;
+    display: flex; flex-wrap: wrap; gap: 4px;
+  }
+  .ea-company-item { width: auto; flex-direction: row; align-items: center; border: 1px solid var(--c-border); }
+  .ea-company-item--active { border-color: var(--c-accent); }
+}
