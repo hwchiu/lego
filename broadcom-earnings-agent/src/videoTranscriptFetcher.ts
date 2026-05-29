@@ -4,12 +4,15 @@ import { spawnSync } from 'child_process';
 import * as fs from 'fs';
 import { LiveContentResult } from './liveTranscriptFetcher';
 
+/** Minimum character count to consider a transcript non-empty / non-truncated */
+const MIN_TRANSCRIPT_LENGTH = 200;
+
 const BROWSER_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/125.0.0.0 Safari/537.36';
 
 /**
  * Convert VTT caption text to plain text:
- * 1. Remove the WEBVTT header and NOTE blocks
- * 2. Remove timestamp lines (lines containing " --> ")
+ * 1. Remove WEBVTT header and block sections (NOTE, STYLE, REGION)
+ * 2. Remove timestamp cue lines (lines containing " --> ")
  * 3. Strip inline HTML tags
  * 4. Deduplicate adjacent identical lines (VTT repeats lines as captions progress)
  * 5. Join with spaces
@@ -17,17 +20,38 @@ const BROWSER_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
 export function parseVttToText(vttContent: string): string {
   const lines = vttContent.split('\n');
   const textLines: string[] = [];
+  let inBlock = false;
+
   for (const raw of lines) {
     const line = raw.trim();
-    if (!line) continue;
+
+    // Blank line ends any active block
+    if (!line) {
+      inBlock = false;
+      continue;
+    }
+
+    // Skip WEBVTT identifier
     if (line.startsWith('WEBVTT')) continue;
-    if (line.startsWith('NOTE')) continue;
+
+    // Enter and skip NOTE / STYLE / REGION blocks
+    if (line.startsWith('NOTE') || line.startsWith('STYLE') || line.startsWith('REGION')) {
+      inBlock = true;
+      continue;
+    }
+
+    if (inBlock) continue;
+
+    // Skip timestamp cue lines
     if (line.includes(' --> ')) continue;
-    // Strip inline HTML tags
+
+    // Strip inline HTML tags (e.g. <c>, <b>, <00:00:00.000>)
     const clean = line.replace(/<[^>]+>/g, '').trim();
     if (!clean) continue;
+
     // Deduplicate adjacent identical lines
     if (textLines.length > 0 && textLines[textLines.length - 1] === clean) continue;
+
     textLines.push(clean);
   }
   return textLines.join(' ');
@@ -171,7 +195,7 @@ export async function fetchVideoTranscript(
       const videoId = await findYouTubeVideoId(eventDate);
       if (videoId) {
         const text = await fetchYouTubeCaptions(videoId);
-        if (text && text.length > 200) return { content: text, source: 'YouTube' };
+        if (text && text.length > MIN_TRANSCRIPT_LENGTH) return { content: text, source: 'YouTube' };
       }
     } catch {
       console.warn('[videoTranscriptFetcher] YouTube strategy failed');
@@ -185,7 +209,7 @@ export async function fetchVideoTranscript(
     const webcastUrl = await findBroadcomWebcastUrl(eventDate);
     if (webcastUrl) {
       const text = await fetchWebcastCaptions(webcastUrl);
-      if (text && text.length > 200) return { content: text, source: 'IR Webcast' };
+      if (text && text.length > MIN_TRANSCRIPT_LENGTH) return { content: text, source: 'IR Webcast' };
     }
   } catch {
     console.warn('[videoTranscriptFetcher] IR Webcast strategy failed');
