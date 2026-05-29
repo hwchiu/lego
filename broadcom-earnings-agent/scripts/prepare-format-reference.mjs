@@ -34,43 +34,37 @@ function getGitHubToken() {
 }
 
 // ─── EDGAR ───────────────────────────────────────────────────────────────────
-const AVGO_CIK = '1054374';
+const AVGO_CIK = '1730168';
 const EDGAR_HEADERS = {
   'User-Agent': 'BroadcomEarningsAgent/1.0 (contact: agent@lego2.hwchiu.com)',
   'Accept':     'application/json, text/html',
 };
 
 async function fetchRecentEdgar8Ks(count = 3) {
-  // Step 1: get the filing history for Broadcom's CIK
+  // Get Broadcom Inc.'s filing history from SEC EDGAR submissions API
   const subsUrl = `https://data.sec.gov/submissions/CIK${AVGO_CIK.padStart(10, '0')}.json`;
   console.log('[edgar] Fetching submissions:', subsUrl);
   const subsRes = await axios.get(subsUrl, { timeout: 20_000, headers: EDGAR_HEADERS });
   const recent = subsRes.data?.filings?.recent ?? {};
-  const forms       = recent.form        ?? [];
-  const accessions  = recent.accessionNumber ?? [];
-  const dates       = recent.filingDate  ?? [];
+  const forms        = recent.form                ?? [];
+  const accessions   = recent.accessionNumber     ?? [];
+  const dates        = recent.filingDate          ?? [];
+  const primaryDocs  = recent.primaryDocument     ?? [];
+  const primaryDescs = recent.primaryDocDescription ?? [];
 
-  // Step 2: collect the most recent 8-K accession numbers
   const results = [];
   for (let i = 0; i < forms.length && results.length < count; i++) {
     if (forms[i] !== '8-K') continue;
-    const accession = accessions[i];            // e.g. "0001054374-25-000015"
-    const accPath   = accession.replace(/-/g, ''); // e.g. "000105437425000015"
-    const idxUrl = `https://data.sec.gov/Archives/edgar/data/${AVGO_CIK}/${accPath}/${accession}-index.json`;
-    try {
-      const idxRes = await axios.get(idxUrl, { timeout: 15_000, headers: EDGAR_HEADERS });
-      const files  = idxRes.data?.documents ?? [];
-      for (const file of files) {
-        const fn = (file.name ?? '').toLowerCase();
-        const desc = (file.description ?? '').toLowerCase();
-        if (fn.includes('ex99') || fn.includes('exhibit99') || desc.includes('press release')) {
-          const prUrl = `https://www.sec.gov/Archives/edgar/data/${AVGO_CIK}/${accPath}/${file.name}`;
-          results.push({ url: prUrl, accession, filename: file.name, date: dates[i] });
-          break; // one exhibit per 8-K
-        }
-      }
-    } catch (err) {
-      console.warn(`  [edgar] index fetch failed for ${accession}: ${err.message}`);
+    const accession = accessions[i];                    // e.g. "0001730168-26-000039"
+    const accPath   = accession.replace(/-/g, '');      // e.g. "000173016826000039"
+    const filename  = primaryDocs[i]  ?? '';
+    const desc      = (primaryDescs[i] ?? '').toLowerCase();
+    const fn        = filename.toLowerCase();
+
+    // Accept the primary doc if it looks like a press release exhibit
+    if (fn.includes('ex99') || fn.includes('exhibit99') || desc.includes('press release') || desc.includes('exhibit 99')) {
+      const prUrl = `https://www.sec.gov/Archives/edgar/data/${AVGO_CIK}/${accPath}/${filename}`;
+      results.push({ url: prUrl, accession, filename, date: dates[i] });
     }
   }
   return results;
