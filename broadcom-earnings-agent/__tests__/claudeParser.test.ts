@@ -57,6 +57,14 @@ describe('parseMetrics — format reference injection', () => {
     expect(systemPrompt).not.toContain('FIELD HINTS');
   });
 
+  it('passes generic prompt when fieldMap is empty', async () => {
+    _setFormatReferenceForTesting({ generatedAt: '2026-05-29T00:00:00Z', fieldMap: {}, fewShotExamples: [] });
+    mockAIResponse(VALID_RESPONSE);
+    await parseMetrics('text');
+    const [systemPrompt] = mockChatComplete.mock.calls[0];
+    expect(systemPrompt).not.toContain('FIELD HINTS');
+  });
+
   it('injects FIELD HINTS section when format reference is available', async () => {
     _setFormatReferenceForTesting({
       generatedAt: '2026-05-29T00:00:00Z',

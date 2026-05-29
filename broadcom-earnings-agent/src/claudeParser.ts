@@ -5,13 +5,13 @@ import { EarningsMetrics, MetricValue } from './types';
 
 // ─── Format reference (loaded once at startup) ────────────────────────────────
 
-interface FieldEntry {
+export interface FieldEntry {
   tableTitle?: string;
   rowLabel:    string;
   unit:        string;
 }
 
-interface FewShotExample {
+export interface FewShotExample {
   quarter:          string;
   rawExcerpt:       string;
   extractedMetrics: unknown;
