@@ -207,7 +207,7 @@ async function main() {
 
       // Extract field map
       const rawFieldMap = await callGitHubModels(token, FIELD_MAP_PROMPT, text);
-      const cleanedFieldMap = rawFieldMap.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+      const cleanedFieldMap = rawFieldMap.trim().replace(/^\s*```(?:json)?\s*/, '').replace(/\s*```\s*$/, '');
       let parsedFieldMap;
       try {
         parsedFieldMap = JSON.parse(cleanedFieldMap);
@@ -228,7 +228,7 @@ async function main() {
 
       // Extract verified metrics for the few-shot example
       const rawMetrics = await callGitHubModels(token, METRICS_PROMPT, text);
-      const cleanedMetrics = rawMetrics.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+      const cleanedMetrics = rawMetrics.trim().replace(/^\s*```(?:json)?\s*/, '').replace(/\s*```\s*$/, '');
       let parsedMetrics;
       try {
         parsedMetrics = JSON.parse(cleanedMetrics);
