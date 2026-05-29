@@ -68,7 +68,7 @@ export async function findYouTubeVideoId(_eventDate: Date): Promise<string | nul
 }
 
 async function fetchYouTubeCaptions(videoId: string): Promise<string | null> {
-  const outputTemplate = `avgo-captions-${videoId}`;
+  const outputTemplate = `/tmp/avgo-captions-${videoId}`;
   const vttPath = `${outputTemplate}.en.vtt`;
 
   // Remove stale file from a previous run
