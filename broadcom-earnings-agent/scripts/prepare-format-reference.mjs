@@ -41,30 +41,48 @@ const EDGAR_HEADERS = {
 };
 
 async function fetchRecentEdgar8Ks(count = 3) {
-  // Get Broadcom Inc.'s filing history from SEC EDGAR submissions API
+  // Step 1: get Broadcom Inc.'s filing history from EDGAR submissions API
   const subsUrl = `https://data.sec.gov/submissions/CIK${AVGO_CIK.padStart(10, '0')}.json`;
   console.log('[edgar] Fetching submissions:', subsUrl);
   const subsRes = await axios.get(subsUrl, { timeout: 20_000, headers: EDGAR_HEADERS });
-  const recent = subsRes.data?.filings?.recent ?? {};
-  const forms        = recent.form                ?? [];
-  const accessions   = recent.accessionNumber     ?? [];
-  const dates        = recent.filingDate          ?? [];
-  const primaryDocs  = recent.primaryDocument     ?? [];
-  const primaryDescs = recent.primaryDocDescription ?? [];
+  const recent      = subsRes.data?.filings?.recent ?? {};
+  const forms       = recent.form               ?? [];
+  const accessions  = recent.accessionNumber    ?? [];
+  const dates       = recent.filingDate         ?? [];
+  const primaryDocs = recent.primaryDocument    ?? [];
 
+  // Step 2: for each 8-K, fetch the cover HTML and follow the ex-99 link
   const results = [];
   for (let i = 0; i < forms.length && results.length < count; i++) {
     if (forms[i] !== '8-K') continue;
-    const accession = accessions[i];                    // e.g. "0001730168-26-000039"
-    const accPath   = accession.replace(/-/g, '');      // e.g. "000173016826000039"
-    const filename  = primaryDocs[i]  ?? '';
-    const desc      = (primaryDescs[i] ?? '').toLowerCase();
-    const fn        = filename.toLowerCase();
+    const accession = accessions[i];                 // "0001730168-26-000039"
+    const accPath   = accession.replace(/-/g, '');   // "000173016826000039"
+    const coverDoc  = primaryDocs[i] ?? '';
+    if (!coverDoc) continue;
 
-    // Accept the primary doc if it looks like a press release exhibit
-    if (fn.includes('ex99') || fn.includes('exhibit99') || desc.includes('press release') || desc.includes('exhibit 99')) {
-      const prUrl = `https://www.sec.gov/Archives/edgar/data/${AVGO_CIK}/${accPath}/${filename}`;
-      results.push({ url: prUrl, accession, filename, date: dates[i] });
+    const coverUrl = `https://www.sec.gov/Archives/edgar/data/${AVGO_CIK}/${accPath}/${coverDoc}`;
+    try {
+      const coverRes = await axios.get(coverUrl, { timeout: 15_000, headers: EDGAR_HEADERS });
+      const coverHtml = typeof coverRes.data === 'string' ? coverRes.data : String(coverRes.data);
+
+      // Find href links to ex-99 exhibits (press releases)
+      const exPattern = /href="([^"#]*(?:ex-?99|exhibit-?99)[^"#]*)"/gi;
+      let match;
+      while ((match = exPattern.exec(coverHtml)) !== null) {
+        let href = match[1].trim();
+        if (!href) continue;
+        // Normalise to absolute URL
+        if (!href.startsWith('http')) {
+          // href may be relative: "avgo-ex991_6.htm" or "../archives/..."
+          href = href.startsWith('/') 
+            ? `https://www.sec.gov${href}`
+            : `https://www.sec.gov/Archives/edgar/data/${AVGO_CIK}/${accPath}/${href.replace(/^.*\//, '')}`;
+        }
+        results.push({ url: href, accession, filename: href.split('/').pop() ?? href, date: dates[i] });
+        break; // one exhibit per filing
+      }
+    } catch (err) {
+      console.warn(`  [edgar] cover fetch failed for ${accession}: ${err.message}`);
     }
   }
   return results;
