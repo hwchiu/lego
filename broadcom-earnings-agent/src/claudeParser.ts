@@ -1,7 +1,55 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import { chatComplete } from './aiClient';
 import { EarningsMetrics, MetricValue } from './types';
 
-const EXTRACTION_PROMPT = `You are a financial data extraction assistant.
+// ─── Format reference (loaded once at startup) ────────────────────────────────
+
+interface FieldEntry {
+  tableTitle?: string;
+  rowLabel:    string;
+  unit:        string;
+}
+
+interface FewShotExample {
+  quarter:          string;
+  rawExcerpt:       string;
+  extractedMetrics: unknown;
+}
+
+export interface FormatReference {
+  generatedAt:    string;
+  fieldMap:       Record<string, FieldEntry>;
+  fewShotExamples: FewShotExample[];
+}
+
+// Resolved relative to compiled dist/claudeParser.js → ../scripts/format-reference.json
+// __dirname in dist/ is <project-root>/dist, so ../scripts resolves to <project-root>/scripts
+const FORMAT_REFERENCE_PATH = path.resolve(__dirname, '..', 'scripts', 'format-reference.json');
+
+let _cachedRef: FormatReference | null | undefined = undefined;
+
+function loadFormatReference(): FormatReference | null {
+  if (_cachedRef !== undefined) return _cachedRef;
+  try {
+    const raw = fs.readFileSync(FORMAT_REFERENCE_PATH, 'utf8');
+    _cachedRef = JSON.parse(raw) as FormatReference;
+    console.log('[claudeParser] Loaded format reference from', FORMAT_REFERENCE_PATH);
+  } catch {
+    console.warn('[claudeParser] format-reference.json not found — using generic prompt');
+    _cachedRef = null;
+  }
+  return _cachedRef;
+}
+
+/** Exposed for testing only — overrides the cached format reference. */
+export function _setFormatReferenceForTesting(ref: FormatReference | null): void {
+  _cachedRef = ref;
+}
+
+// ─── Prompt builder ───────────────────────────────────────────────────────────
+
+const BASE_EXTRACTION_PROMPT = `You are a financial data extraction assistant.
 Extract the following metrics from the provided Broadcom press release text and return ONLY valid JSON.
 Return null for any metric not found or unclear.
 
@@ -20,6 +68,42 @@ Confidence guidelines:
 - <50: value is estimated or source text is ambiguous / incomplete
 
 Return ONLY the JSON object, no markdown fences, no other text.`;
+
+function buildExtractionPrompt(ref: FormatReference | null): string {
+  if (!ref || Object.keys(ref.fieldMap).length === 0) {
+    return BASE_EXTRACTION_PROMPT;
+  }
+
+  const fm = ref.fieldMap;
+  const fieldHints = [
+    fm.revenue     && `- Revenue:        look for row label "${fm.revenue.rowLabel}"`,
+    fm.grossMargin && `- Gross margin:   look for row label "${fm.grossMargin.rowLabel}"`,
+    fm.doi         && `- DOI:            look for row label "${fm.doi.rowLabel}"${fm.doi.tableTitle ? ` in table "${fm.doi.tableTitle}"` : ''}`,
+  ].filter(Boolean).join('\n');
+
+  let shotSection = '';
+  const firstExample = ref.fewShotExamples?.[0];
+  if (firstExample) {
+    shotSection = `
+--- ONE-SHOT EXAMPLE (${firstExample.quarter}) ---
+Input excerpt:
+${firstExample.rawExcerpt}
+
+Expected output:
+${JSON.stringify(firstExample.extractedMetrics, null, 2)}
+--- END EXAMPLE ---
+`;
+  }
+
+  return `${BASE_EXTRACTION_PROMPT}
+
+--- FIELD HINTS (from historical Broadcom reports) ---
+${fieldHints}
+---
+${shotSection}`;
+}
+
+// ─── Core extraction ──────────────────────────────────────────────────────────
 
 type MetricField = 'revenue' | 'grossMargin' | 'doi';
 const FIELD_UNITS: Record<MetricField, MetricValue['unit']> = {
@@ -50,7 +134,9 @@ export async function parseMetrics(pressReleaseText: string): Promise<{
   metrics: EarningsMetrics;
   overallConfidence: number;
 }> {
-  const text = await chatComplete(EXTRACTION_PROMPT, pressReleaseText, 1024);
+  const ref    = loadFormatReference();
+  const prompt = buildExtractionPrompt(ref);
+  const text   = await chatComplete(prompt, pressReleaseText, 1024);
   const cleaned = text.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
   const parsed = JSON.parse(cleaned);
 
