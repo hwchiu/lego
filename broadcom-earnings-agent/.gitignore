@@ -2,3 +2,4 @@ node_modules/
 dist/
 state.json
 .env
+scripts/format-reference.json
