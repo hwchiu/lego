@@ -93,16 +93,20 @@ export async function findYouTubeVideoId(_eventDate: Date): Promise<string | nul
 
 async function fetchYouTubeCaptions(videoId: string): Promise<string | null> {
   const outputTemplate = `/tmp/avgo-captions-${videoId}`;
-  const vttPath = `${outputTemplate}.en.vtt`;
+  const prefix = `avgo-captions-${videoId}`;
 
-  // Remove stale file from a previous run
-  if (fs.existsSync(vttPath)) fs.unlinkSync(vttPath);
+  // Clean up any stale files from a previous run
+  try {
+    fs.readdirSync('/tmp')
+      .filter(f => f.startsWith(prefix) && f.endsWith('.vtt'))
+      .forEach(f => fs.unlinkSync(`/tmp/${f}`));
+  } catch { /* ignore */ }
 
   const result = spawnSync(
     'yt-dlp',
     [
       '--write-auto-sub',
-      '--sub-lang', 'en',
+      '--sub-lang', 'en.*',   // matches en, en-US, en-orig, etc.
       '--skip-download',
       '--quiet',
       '-o', outputTemplate,
@@ -111,8 +115,13 @@ async function fetchYouTubeCaptions(videoId: string): Promise<string | null> {
     { timeout: 60_000 },
   );
 
-  if (result.status !== 0 || !fs.existsSync(vttPath)) return null;
+  if (result.status !== 0) return null;
 
+  // Locate whichever .vtt file yt-dlp wrote (language code varies)
+  const vttFile = fs.readdirSync('/tmp').find(f => f.startsWith(prefix) && f.endsWith('.vtt'));
+  if (!vttFile) return null;
+
+  const vttPath = `/tmp/${vttFile}`;
   const vttContent = fs.readFileSync(vttPath, 'utf8');
   fs.unlinkSync(vttPath);
   return parseVttToText(vttContent) || null;

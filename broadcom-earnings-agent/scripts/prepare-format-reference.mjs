@@ -219,11 +219,16 @@ async function main() {
 
       // Use the first (most recent) successful field map as the canonical one
       if (!fieldMap) {
-        fieldMap = {
-          doi:         { tableTitle: parsedFieldMap.tableTitle, rowLabel: parsedFieldMap.rowLabels?.doi,         unit: 'days' },
-          revenue:     {                                         rowLabel: parsedFieldMap.rowLabels?.revenue,     unit: 'B'    },
-          grossMargin: {                                         rowLabel: parsedFieldMap.rowLabels?.grossMargin, unit: '%'    },
-        };
+        const rl = parsedFieldMap.rowLabels ?? {};
+        if (!rl.revenue || !rl.grossMargin || !rl.doi) {
+          console.warn('  → field map missing rowLabels, skipping as canonical');
+        } else {
+          fieldMap = {
+            doi:         { tableTitle: parsedFieldMap.tableTitle, rowLabel: rl.doi,         unit: 'days' },
+            revenue:     {                                         rowLabel: rl.revenue,     unit: 'B'    },
+            grossMargin: {                                         rowLabel: rl.grossMargin, unit: '%'    },
+          };
+        }
       }
 
       // Extract verified metrics for the few-shot example
