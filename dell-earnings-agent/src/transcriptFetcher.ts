@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { TranscriptFetchResult } from './types';
-import { normalizeText } from './dellIRFetcher';
+import { normalizeText, fetchPressRelease } from './dellIRFetcher';
 
 const QUARTER_TOKENS = ['q1', 'first quarter', '1st quarter'];
 
@@ -123,13 +123,30 @@ async function fetchFromEdgarTranscript(
   return { kind: 'not_found_yet' };
 }
 
+/** Last-resort fallback: use the official EDGAR press release as the source document.
+ *  This is highly reliable (public filing) and contains all key financial metrics. */
+async function fetchFromEdgarPressRelease(
+  eventDate: Date,
+  _targetQuarter: string,
+): Promise<TranscriptFetchResult> {
+  try {
+    const text = await fetchPressRelease(eventDate, _targetQuarter);
+    if (text && text.length > 500) {
+      return { kind: 'found', transcript: `[Source: SEC EDGAR Press Release]\n\n${text}` };
+    }
+  } catch (e) {
+    return { kind: 'error', message: `EDGAR press release fallback failed: ${String(e)}` };
+  }
+  return { kind: 'not_found_yet' };
+}
+
 export async function fetchTranscript(
   eventDate: Date,
   targetQuarter: string,
 ): Promise<TranscriptFetchResult> {
   const results: TranscriptFetchResult[] = [];
 
-  for (const source of [fetchFromMotleyFool, fetchFromEdgarTranscript]) {
+  for (const source of [fetchFromMotleyFool, fetchFromEdgarTranscript, fetchFromEdgarPressRelease]) {
     try {
       const result = await source(eventDate, targetQuarter);
       if (result.kind === 'found') return result;

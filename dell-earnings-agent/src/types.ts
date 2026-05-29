@@ -19,10 +19,11 @@ export interface EarningsMetrics {
 }
 
 export interface TranscriptSummary {
-  highlights: string[];
-  risks:      string[];
-  outlook:    string;
-  keyQuotes:  string[];
+  highlights:        string[];
+  risks:             string[];
+  outlook:           string;
+  keyQuotes:         string[];
+  summaryConfidence: number;   // 0–100: AI self-rated confidence in summary accuracy
 }
 
 export interface JobRecord {

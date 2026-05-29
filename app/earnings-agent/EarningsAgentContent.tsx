@@ -58,6 +58,7 @@ const L = {
   transcriptTitle:    { zh: '法說會摘要',            en: 'Transcript Summary' },
   transcriptUnavail:  { zh: '無法取得法說會逐字稿',   en: 'Transcript unavailable' },
   generating:         { zh: '正在生成摘要…',          en: 'Generating summary…' },
+  summaryConf:        { zh: '摘要信心度',             en: 'Summary confidence' },
   highlights:         { zh: '重點',                 en: 'Highlights' },
   risks:              { zh: '風險',                 en: 'Risks' },
   outlook:            { zh: '展望',                 en: 'Outlook' },
@@ -417,6 +418,14 @@ export default function EarningsAgentContent() {
           )}
           {data.transcriptStatus === 'available' && data.transcriptSummary && (
             <>
+              {typeof (data.transcriptSummary as any).summaryConfidence === 'number' && (
+                <div className="ea-overall-conf ea-overall-conf--transcript">
+                  {t('summaryConf', lang)}:&nbsp;
+                  <span className={`ea-conf-badge ${(data.transcriptSummary as any).summaryConfidence >= 70 ? 'ea-conf-badge--ok' : 'ea-conf-badge--warn'}`}>
+                    {(data.transcriptSummary as any).summaryConfidence}%
+                  </span>
+                </div>
+              )}
               <div className="ea-tabs">
                 {(['highlights', 'risks', 'outlook', 'keyQuotes'] as const).map(tab => (
                   <button
