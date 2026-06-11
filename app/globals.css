@@ -29891,3 +29891,4 @@ html.dark .er-mode-btn--active {
 .er-empty { padding: 40px 20px; text-align: center; color: var(--c-text-4); font-size: 13px; }
 .er-library { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 .er-library-main { flex: 1; overflow-y: auto; border-right: 1px solid var(--c-border); }
+.er-lib-list-empty { padding: 20px 4px; font-size: 12px; color: var(--c-text-4); text-align: center; }

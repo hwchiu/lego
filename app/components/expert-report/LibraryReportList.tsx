@@ -41,7 +41,7 @@ export default function LibraryReportList({
         </div>
       ))}
       {reports.length === 0 && (
-        <div style={{ padding: '20px 4px', fontSize: '12px', color: 'var(--c-text-4)', textAlign: 'center' }}>
+        <div className="er-lib-list-empty">
           No reports in this category
         </div>
       )}

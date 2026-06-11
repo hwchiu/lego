@@ -70,11 +70,10 @@ export default function ExpertReportContent() {
     await expertReportService.requestAccess(reportId);
     const updated = await expertReportService.getReports();
     setAllReports(updated);
-    // Keep selectedReport in sync
-    if (selectedReport?.id === reportId) {
-      const refreshed = updated.find(r => r.id === reportId) ?? null;
-      setSelectedReport(refreshed);
-    }
+    // Use functional update to avoid stale closure if user changes selection during async call
+    setSelectedReport(prev =>
+      prev?.id === reportId ? (updated.find(r => r.id === reportId) ?? null) : prev
+    );
   }
 
   function handleSave(reportId: string) {
