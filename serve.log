@@ -1,4 +1,0 @@
-nohup: ignoring input
- INFO  Accepting connections at http://localhost:4173
- HTTP  6/11/2026 4:03:25 AM 127.0.0.1 GET /lego/expert-report/
- HTTP  6/11/2026 4:03:25 AM 127.0.0.1 Returned 200 in 15 ms

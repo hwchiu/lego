@@ -196,7 +196,9 @@ export default function ExpertReportContent() {
               reports={displayedLibraryReports}
               selectedId={selectedLibraryReport?.id ?? null}
               categoryLabel={categoryLabel}
+              savedReportIds={savedReportIds}
               onSelect={setSelectedLibraryReport}
+              onSave={handleSave}
             />
           </div>
           <PdfViewerPanel
