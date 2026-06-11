@@ -1,12 +1,13 @@
 import { DataStore } from './types';
-import { EarningsMetrics } from './types';
+import { EarningsMetrics, PartialTranscriptEntry } from './types';
 import { fetchPressRelease } from './avgoIRFetcher';
 import { parseMetrics } from './claudeParser';
 import { fetchTranscript } from './transcriptFetcher';
-import { summarizeTranscript } from './claudeTranscriptSummarizer';
+import { summarizeTranscript, summarizePartialTranscript } from './claudeTranscriptSummarizer';
+import { fetchLivePartialContent } from './liveTranscriptFetcher';
 
 const TARGET_QUARTER = 'Q2 FY2026';
-const CRON_MS = 600_000;
+const CRON_MS = 1_200_000;  // 20 minutes
 const HOURS_4_MS = 4 * 60 * 60 * 1_000;
 
 /**
@@ -74,6 +75,7 @@ function scheduleWaiting(dataStore: DataStore): void {
 function startBothCrons(dataStore: DataStore): void {
   startMetricsCron(dataStore);
   startTranscriptCron(dataStore);
+  startLivePartialTranscriptCron(dataStore);
 }
 
 function startMetricsCron(dataStore: DataStore): void {
@@ -332,4 +334,80 @@ function maybeResumeTranscriptCron(dataStore: DataStore): void {
   if (canResumeFetch || canResumeSummary) {
     startTranscriptCron(dataStore);
   }
+}
+
+/**
+ * Polls for partial transcript content every 20 min while status is LIVE.
+ * Each time new content is detected (longer than last fetch), generates a
+ * timestamped "progress so far" summary and appends it to livePartialSummaries.
+ */
+function startLivePartialTranscriptCron(dataStore: DataStore): void {
+  let lock = false;
+  let stopped = false;
+  let handle: ReturnType<typeof setInterval> | null = null;
+
+  function stopCron(): void {
+    stopped = true;
+    Promise.resolve().then(() => {
+      if (handle !== null) { clearInterval(handle); handle = null; }
+    });
+  }
+
+  async function tick(): Promise<void> {
+    if (stopped) return;
+    if (lock) { console.warn('[liveTranscriptCron] lock held — skipping tick'); return; }
+
+    const state = dataStore.getState();
+    if (state.status === 'DONE') { stopCron(); return; }
+    if (state.status !== 'LIVE') return;
+
+    const eventDate = new Date(state.eventDate!);
+    if (Date.now() >= eventDate.getTime() + HOURS_4_MS) {
+      console.log('[liveTranscriptCron] 4-hour window closed — stopping');
+      stopCron();
+      return;
+    }
+
+    lock = true;
+    try {
+      const result = await fetchLivePartialContent(eventDate, TARGET_QUARTER);
+      if (!result) {
+        console.log('[liveTranscriptCron] no live content available yet');
+        return;
+      }
+
+      // Only generate a new summary when content has grown (new material available)
+      if (result.content.length <= state._lastLiveContentLength) {
+        console.log('[liveTranscriptCron] content unchanged — skipping summary');
+        return;
+      }
+
+      console.log(`[liveTranscriptCron] new content from ${result.source} (${result.content.length} chars) — generating partial summary`);
+      const summary = await summarizePartialTranscript(result.content);
+
+      const entry: PartialTranscriptEntry = {
+        capturedAt: new Date().toISOString(),
+        source:     result.source,
+        wordCount:  result.content.split(/\s+/).filter(Boolean).length,
+        summary,
+      };
+
+      const current = dataStore.getState();
+      dataStore.setState({
+        livePartialSummaries:  [...current.livePartialSummaries, entry],
+        _lastLiveContentLength: result.content.length,
+      });
+      console.log(`[liveTranscriptCron] partial summary #${current.livePartialSummaries.length + 1} saved`);
+    } catch (e) {
+      console.error('[liveTranscriptCron] error:', e);
+    } finally {
+      lock = false;
+    }
+  }
+
+  tick().catch(e => console.error('[liveTranscriptCron] initial tick error:', e));
+  handle = setInterval(
+    () => tick().catch(e => console.error('[liveTranscriptCron] tick error:', e)),
+    CRON_MS,
+  );
 }
