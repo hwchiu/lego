@@ -49,7 +49,7 @@ export default function LibrarySidebar({
               onClick={() => onToggleCategory(category)}
               role="button"
               tabIndex={0}
-              onKeyDown={e => e.key === 'Enter' && onToggleCategory(category)}
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggleCategory(category); } }}
             >
               <span className="er-lib-section-chevron">{isOpen ? '▾' : '▸'}</span>
               <span>{category}</span>

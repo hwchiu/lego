@@ -24,6 +24,7 @@ export function createDataStore(
         _transcriptAttempts,
         _summaryAttempts,
         _nextJobId,
+        _lastLiveContentLength,
         eventDate,
         ...rest
       } = state;

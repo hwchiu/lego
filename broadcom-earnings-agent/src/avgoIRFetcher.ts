@@ -75,10 +75,29 @@ export async function fetchPressRelease(
   const $pr = cheerio.load(prResponse.data);
 
   $pr('script, style, noscript').remove();
-  const text =
+
+  // Extract financial tables with row structure preserved so Claude can match labels to values.
+  // Without this, flattened table text loses the "Days of Inventory Outstanding | 52 | 58 | 45"
+  // context, causing Claude to miss DOI on first parse.
+  const tableLines: string[] = [];
+  $pr('table').each((_i, table) => {
+    $pr(table).find('tr').each((_j, row) => {
+      const cells = $pr(row)
+        .find('td, th')
+        .map((_k, cell) => $pr(cell).text().replace(/\s+/g, ' ').trim())
+        .get()
+        .filter(c => c.length > 0);
+      if (cells.length > 0) tableLines.push(cells.join(' | '));
+    });
+  });
+  $pr('table').remove();
+
+  // Get remaining narrative text (tables already removed above)
+  const narrativeText =
     $pr('article').text().trim() ||
     $pr('main').text().trim()    ||
     $pr('body').text().trim();
 
+  const text = [narrativeText, ...tableLines].filter(Boolean).join('\n');
   return text || null;
 }

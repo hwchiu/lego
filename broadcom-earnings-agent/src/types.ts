@@ -26,6 +26,13 @@ export interface TranscriptSummary {
   summaryConfidence: number;   // 0–100: AI self-rated confidence in summary accuracy
 }
 
+export interface PartialTranscriptEntry {
+  capturedAt: string;   // ISO UTC — when this snapshot was taken
+  source:     string;   // e.g. 'Motley Fool', 'Seeking Alpha'
+  wordCount:  number;
+  summary:    TranscriptSummary;
+}
+
 export interface JobRecord {
   jobId:             string;          // "job-1", "job-2", …
   startTime:         string;          // ISO UTC
@@ -52,19 +59,22 @@ export interface AgentState {
   transcriptRawFetchedAt:     string | null;
   transcriptSummaryCreatedAt: string | null;  // set ONCE on first summary generation
   transcriptSummaryUpdatedAt: string | null;
+  livePartialSummaries:       PartialTranscriptEntry[];  // progressive in-call snapshots
   jobHistory:                 JobRecord[];
 
   // Internal fields (persisted to state.json, NOT exposed by API)
-  _lastMetricsSnapshot:   EarningsMetrics | null;
-  _lastSnapshotIsSuccess: boolean;
-  _transcriptAttempts:    number;  // 0–12
-  _summaryAttempts:       number;  // 0–3
-  _nextJobId:             number;
+  _lastMetricsSnapshot:    EarningsMetrics | null;
+  _lastSnapshotIsSuccess:  boolean;
+  _transcriptAttempts:     number;  // 0–12
+  _summaryAttempts:        number;  // 0–3
+  _nextJobId:              number;
+  _lastLiveContentLength:  number;  // tracks content growth for live partial cron
 }
 
 export type EarningsApiResponse = Omit<AgentState,
   '_lastMetricsSnapshot' | '_lastSnapshotIsSuccess' |
-  '_transcriptAttempts' | '_summaryAttempts' | '_nextJobId' | 'eventDate'>
+  '_transcriptAttempts' | '_summaryAttempts' | '_nextJobId' |
+  '_lastLiveContentLength' | 'eventDate'>
   & { eventDate: string };
 
 export type TranscriptFetchResult =

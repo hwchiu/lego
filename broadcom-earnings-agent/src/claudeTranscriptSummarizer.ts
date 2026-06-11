@@ -35,9 +35,29 @@ export async function summarizeTranscript(transcriptText: string): Promise<Trans
     : transcriptText;
 
   const text = await chatComplete(SUMMARY_PROMPT, trimmed, 4096);
-  const cleaned = text.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
-  const parsed = JSON.parse(cleaned);
+  return parseTranscriptSummary(text);
+}
 
+const PARTIAL_SUMMARY_PROMPT = `You are a senior financial analyst covering Broadcom's Q2 FY2026 earnings call.
+The earnings call is CURRENTLY IN PROGRESS. You have been given whatever transcript/content is available SO FAR.
+Summarize what has been discussed up to this point.
+
+Use past tense for things already said. Note this is an in-progress, partial update.
+Return ONLY valid JSON (no markdown fences, no other text):
+{
+  "highlights": ["5-8 key points discussed SO FAR — include exact numbers if available, otherwise describe what was covered"],
+  "risks": ["2-4 concerns, risks, or challenges mentioned so far"],
+  "outlook": "Any forward-looking statements or guidance shared so far (1-2 paragraphs). Write 'None provided yet.' if not discussed.",
+  "keyQuotes": ["3-5 direct executive quotes so far, format: 'FirstName LastName, Title: \\"quote\\"'. Omit if none available."],
+  "summaryConfidence": 60
+}
+
+summaryConfidence (integer 0–100): Rate lower if content is very short, a paywall stub, or lacks financial detail.
+Replace ALL example strings above with real content from the input. Never return the example text literally.`;
+
+function parseTranscriptSummary(raw: string): TranscriptSummary {
+  const cleaned = raw.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
+  const parsed = JSON.parse(cleaned);
   return {
     highlights:        Array.isArray(parsed.highlights)  ? parsed.highlights  : [],
     risks:             Array.isArray(parsed.risks)        ? parsed.risks        : [],
@@ -47,4 +67,14 @@ export async function summarizeTranscript(transcriptText: string): Promise<Trans
       ? Math.max(0, Math.min(100, Math.round(parsed.summaryConfidence)))
       : 50,
   };
+}
+
+/** Generates a live "progress so far" summary during an in-progress earnings call. */
+export async function summarizePartialTranscript(transcriptText: string): Promise<TranscriptSummary> {
+  const trimmed = transcriptText.length > 10_000
+    ? transcriptText.slice(0, 10_000) + '\n...[content in progress]'
+    : transcriptText;
+
+  const text = await chatComplete(PARTIAL_SUMMARY_PROMPT, trimmed, 2048);
+  return parseTranscriptSummary(text);
 }

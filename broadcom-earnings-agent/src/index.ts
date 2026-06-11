@@ -26,12 +26,14 @@ function makeInitialState(): AgentState {
     transcriptRawFetchedAt: null,
     transcriptSummaryCreatedAt: null,
     transcriptSummaryUpdatedAt: null,
+    livePartialSummaries: [],
     jobHistory: [],
     _lastMetricsSnapshot: null,
     _lastSnapshotIsSuccess: false,
     _transcriptAttempts: 0,
     _summaryAttempts: 0,
     _nextJobId: 1,
+    _lastLiveContentLength: 0,
   };
 }
 
@@ -50,6 +52,12 @@ function loadState(): AgentState | null {
     }
     if (parsed.transcriptSummaryCreatedAt === undefined) {
       parsed.transcriptSummaryCreatedAt = null;
+    }
+    if (parsed.livePartialSummaries === undefined) {
+      parsed.livePartialSummaries = [];
+    }
+    if (parsed._lastLiveContentLength === undefined) {
+      parsed._lastLiveContentLength = 0;
     }
     return parsed;
   } catch (e) {
