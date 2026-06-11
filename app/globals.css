@@ -29867,6 +29867,9 @@ html.dark .er-card--selected {
 html.dark .er-card--pending {
   background: #2a2210;
 }
+html.dark .er-card--locked {
+  background: #1e1e20;
+}
 html.dark .er-pdf-panel,
 html.dark .er-pdf-locked-overlay {
   background: var(--c-bg);
