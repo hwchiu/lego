@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { ExpertReport } from '@/app/data/expertReports';
 
 interface ReportCardProps {
@@ -26,13 +26,21 @@ export default function ReportCard({
   onRequestAccess,
 }: ReportCardProps) {
   const [shareCopied, setShareCopied] = useState(false);
+  const shareCopiedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (shareCopiedTimer.current) clearTimeout(shareCopiedTimer.current);
+    };
+  }, []);
 
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation();
     const url = `${window.location.origin}/lego/expert-report/?report=${report.id}`;
     navigator.clipboard.writeText(url).catch(() => {});
+    if (shareCopiedTimer.current) clearTimeout(shareCopiedTimer.current);
     setShareCopied(true);
-    setTimeout(() => setShareCopied(false), 2000);
+    shareCopiedTimer.current = setTimeout(() => setShareCopied(false), 2000);
   };
 
   const handleSave = (e: React.MouseEvent) => {
