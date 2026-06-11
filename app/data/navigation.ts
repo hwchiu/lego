@@ -123,6 +123,7 @@ export const mainNav: NavItem[] = [
     ],
   },
   { label: 'Data Explore', href: '/data-explore', icon: 'dataExplore' },
+  { label: 'Expert Report', href: '/expert-report', icon: 'report' },
 ];
 
 export const supplyChainNav: NavItem[] = [

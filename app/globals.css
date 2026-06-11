@@ -29881,3 +29881,13 @@ html.dark .er-mode-toggle {
 html.dark .er-mode-btn--active {
   background: var(--c-white);
 }
+
+/* Expert Report — missing layout classes */
+.er-mode-bar { padding: 12px 20px 0; flex-shrink: 0; border-bottom: 1px solid var(--c-border); }
+.er-mode-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 5px; margin-left: 6px; border-radius: 9px; background: #4a6cf7; color: #fff; font-size: 11px; font-weight: 600; }
+.er-dashboard { display: flex; flex-direction: column; flex: 1; overflow: hidden; padding: 16px 20px; gap: 12px; }
+.er-split { display: flex; flex: 1; gap: 12px; overflow: hidden; min-height: 0; }
+.er-cards-panel { width: 380px; flex-shrink: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+.er-empty { padding: 40px 20px; text-align: center; color: var(--c-text-4); font-size: 13px; }
+.er-library { display: flex; flex: 1; overflow: hidden; min-height: 0; }
+.er-library-main { flex: 1; overflow-y: auto; border-right: 1px solid var(--c-border); }
