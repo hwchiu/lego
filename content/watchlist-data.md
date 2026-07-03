@@ -84,7 +84,7 @@
 ## Entity Data
 
 > Auto-updated by `scripts/fetch-stock-data.mjs`.
-> Last updated: 2026-07-02T21:52:55.111Z
+> Last updated: 2026-07-03T21:51:16.946Z
 
 Full holding-table data for every tracked symbol. User-added symbols are persisted in `localStorage` under the key `wl-extra-holdings`.
 
@@ -1008,11 +1008,11 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "symbol": "LRCX",
     "price": 351.41,
     "change": -39.85,
-    "changePct": -10.19,
+    "changePct": -10.18,
     "shares": 15,
     "cost": 620.8,
     "todayGain": -597.75,
-    "todayGainPct": -10.19,
+    "todayGainPct": -10.18,
     "revenue": "$21.68",
     "revenueQoQ": "N/A",
     "revenueYoY": "+23.8%",
