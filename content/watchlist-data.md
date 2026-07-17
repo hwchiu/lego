@@ -84,7 +84,7 @@
 ## Entity Data
 
 > Auto-updated by `scripts/fetch-stock-data.mjs`.
-> Last updated: 2026-07-16T21:50:35.006Z
+> Last updated: 2026-07-17T08:45:17.995Z
 
 Full holding-table data for every tracked symbol. User-added symbols are persisted in `localStorage` under the key `wl-extra-holdings`.
 
@@ -234,10 +234,10 @@ Full holding-table data for every tracked symbol. User-added symbols are persist
     "cost": 598,
     "todayGain": -608,
     "todayGainPct": -1.67,
-    "revenue": "€35.33",
+    "revenue": "€33.69",
     "revenueQoQ": "N/A",
-    "revenueYoY": "+21.3%",
-    "grossMargin": "52.7%",
+    "revenueYoY": "+13.2%",
+    "grossMargin": "52.6%",
     "doi": "N/A",
     "nextEarning": "Oct 14, 2026",
     "lastQtrRevenue": "N/A",
