@@ -1,161 +1,188 @@
+export type DownloadStatus = 'download' | 'pending' | 'downloaded';
+
 export interface ExpertReport {
   id: string;
-  title: string;
-  excerpt: string;
-  company: string;       // ticker symbol, e.g. "NVDA"
-  contributor: string;   // analyst name
-  date: string;          // ISO date string, e.g. "2026-06-05"
-  category: string;      // e.g. "Semiconductors"
+  company: string;
+  companyName: string;
+  analystName: string;
+  contributor: string;
+  publishDate: string;
+  updatedAt: string;
+  headline: string;
+  summary: string;
+  category: string;
+  priceUsd: number;
+  pageCount: number;
   downloadCount: number;
-  commentCount: number;
-  previewPdfUrl: string; // partial preview PDF URL
-  fullPdfUrl: string;    // full report PDF URL (owned only)
-  accessState: 'locked' | 'pending' | 'owned';
+  previewPdfUrl: string;
+  fullPdfUrl: string;
+  downloadStatus: DownloadStatus;
 }
 
-// Public sample PDF used as placeholder for all mock reports.
-// Replace with real URLs when integrating the backend.
+export interface ExpertReportQuery {
+  company: string;
+  contributor: string;
+  publishDateStart: string;
+  publishDateEnd: string;
+  headline: string;
+}
+
+export interface ExpertReportOption {
+  value: string;
+  label: string;
+}
+
+export interface ExpertReportSearchResponse {
+  reports: ExpertReport[];
+  companyOptions: ExpertReportOption[];
+  contributorOptions: ExpertReportOption[];
+}
+
 const SAMPLE_PDF = 'https://www.africau.edu/images/default/sample.pdf';
 
 export const expertReports: ExpertReport[] = [
   {
     id: 'rpt-001',
-    title: 'NVIDIA Q2 FY2026 Deep Dive: AI Infrastructure Supercycle',
-    excerpt: 'Examines NVIDIA\'s Q2 results and the structural drivers behind the AI infrastructure demand cycle — data centre capex, H100/H200 supply tightness, and inference workload growth.',
     company: 'NVDA',
-    contributor: 'Sarah Chen',
-    date: '2026-06-05',
+    companyName: 'NVIDIA',
+    analystName: 'Sarah Chen',
+    contributor: 'Morgan Stanley',
+    publishDate: '2026-07-19',
+    updatedAt: '2026-07-20T08:30:00Z',
+    headline: 'NVIDIA Blackwell Demand Check: Enterprise AI Rack Deployments Accelerate Into 2H26',
+    summary: 'Channel check covering Blackwell rack deployment pacing, enterprise adoption signals, and near-term rack mix changes.',
     category: 'Semiconductors',
-    downloadCount: 342,
-    commentCount: 18,
+    priceUsd: 249,
+    pageCount: 38,
+    downloadCount: 182,
     previewPdfUrl: SAMPLE_PDF,
     fullPdfUrl: SAMPLE_PDF,
-    accessState: 'owned',
+    downloadStatus: 'download',
   },
   {
     id: 'rpt-002',
-    title: 'TSMC Margin Expansion: Advanced Node Roadmap to 2028',
-    excerpt: 'Forward-looking analysis on TSMC\'s N2/N3 pricing power, gross margin trajectory, and competitive dynamics with Intel Foundry and Samsung LSI.',
     company: 'TSM',
-    contributor: 'James Liu',
-    date: '2026-06-03',
+    companyName: 'TSMC',
+    analystName: 'James Liu',
+    contributor: 'Goldman Sachs',
+    publishDate: '2026-07-14',
+    updatedAt: '2026-07-18T06:10:00Z',
+    headline: 'TSMC 2nm Capacity Allocation: Smartphone Recovery Meets AI ASIC Upside',
+    summary: 'Examines 2nm allocation mix and how AI ASIC demand changes the 2027 capacity planning baseline.',
     category: 'Semiconductors',
-    downloadCount: 521,
-    commentCount: 34,
+    priceUsd: 199,
+    pageCount: 31,
+    downloadCount: 244,
     previewPdfUrl: SAMPLE_PDF,
     fullPdfUrl: SAMPLE_PDF,
-    accessState: 'owned',
+    downloadStatus: 'downloaded',
   },
   {
     id: 'rpt-003',
-    title: 'Broadcom AI Networking: Post-VMware Synergy Analysis',
-    excerpt: 'Deep dive into Broadcom\'s custom AI accelerator business (XPU) and Ethernet switching TAM expansion post VMware integration.',
     company: 'AVGO',
-    contributor: 'Mike Wang',
-    date: '2026-05-28',
+    companyName: 'Broadcom',
+    analystName: 'Mike Wang',
+    contributor: 'J.P. Morgan',
+    publishDate: '2026-07-08',
+    updatedAt: '2026-07-15T04:45:00Z',
+    headline: 'Broadcom Custom AI Silicon: Networking Attach Rate Remains The Key Margin Lever',
+    summary: 'Looks at the custom AI silicon roadmap and the networking attach assumptions embedded in consensus.',
     category: 'Semiconductors',
-    downloadCount: 189,
-    commentCount: 12,
+    priceUsd: 219,
+    pageCount: 29,
+    downloadCount: 136,
     previewPdfUrl: SAMPLE_PDF,
     fullPdfUrl: SAMPLE_PDF,
-    accessState: 'locked',
+    downloadStatus: 'pending',
   },
   {
     id: 'rpt-004',
-    title: 'AMD MI300X vs H100: Data Centre Workload Benchmark',
-    excerpt: 'Comparative performance-per-dollar analysis of AMD\'s MI300X versus NVIDIA H100 across LLM training, inference, and HPC workloads.',
-    company: 'AMD',
-    contributor: 'Anna Park',
-    date: '2026-05-20',
-    category: 'Semiconductors',
-    downloadCount: 278,
-    commentCount: 22,
+    company: 'MSFT',
+    companyName: 'Microsoft',
+    analystName: 'Anna Park',
+    contributor: 'Bank of America',
+    publishDate: '2026-06-27',
+    updatedAt: '2026-07-02T11:15:00Z',
+    headline: 'Copilot ARPU Watch: Microsoft 365 Seat Expansion and Azure Inference Upsell',
+    summary: 'Tracks enterprise Copilot pricing realization and the downstream effect on Azure inference consumption.',
+    category: 'Cloud / AI',
+    priceUsd: 179,
+    pageCount: 24,
+    downloadCount: 301,
     previewPdfUrl: SAMPLE_PDF,
     fullPdfUrl: SAMPLE_PDF,
-    accessState: 'pending',
+    downloadStatus: 'download',
   },
   {
     id: 'rpt-005',
-    title: 'Intel Foundry 18A: Can It Win Back TSMC Defectors?',
-    excerpt: 'Analysis of Intel\'s 18A process node competitiveness, yield ramp timeline, and potential customer wins from major fabless players.',
-    company: 'INTC',
-    contributor: 'David Kim',
-    date: '2026-05-15',
-    category: 'Semiconductors',
-    downloadCount: 156,
-    commentCount: 9,
+    company: 'AMZN',
+    companyName: 'Amazon',
+    analystName: 'David Kim',
+    contributor: 'Citi Research',
+    publishDate: '2026-06-18',
+    updatedAt: '2026-06-21T09:00:00Z',
+    headline: 'AWS Trainium and Bedrock: Cost Curve Still Supports Margin Expansion',
+    summary: 'Assesses whether Trainium and Bedrock adoption is improving AWS margin quality relative to public peers.',
+    category: 'Cloud / AI',
+    priceUsd: 159,
+    pageCount: 27,
+    downloadCount: 118,
     previewPdfUrl: SAMPLE_PDF,
     fullPdfUrl: SAMPLE_PDF,
-    accessState: 'locked',
+    downloadStatus: 'download',
   },
   {
     id: 'rpt-006',
-    title: 'Microsoft Azure AI: Copilot Monetisation and Margin Outlook',
-    excerpt: 'Examining Azure\'s AI revenue attach rate, Copilot seat growth trajectory, and the path to incremental operating margin improvement in FY2027.',
-    company: 'MSFT',
-    contributor: 'Sarah Chen',
-    date: '2026-06-01',
-    category: 'Cloud / AI',
-    downloadCount: 413,
-    commentCount: 27,
+    company: 'AAPL',
+    companyName: 'Apple',
+    analystName: 'Sarah Chen',
+    contributor: 'UBS',
+    publishDate: '2026-05-29',
+    updatedAt: '2026-06-04T07:25:00Z',
+    headline: 'Apple On-Device AI Monetization: Hardware ASP Tailwind Before Services Catch Up',
+    summary: 'Explores the near-term ASP and margin benefits from on-device AI before service monetization fully lands.',
+    category: 'Consumer',
+    priceUsd: 169,
+    pageCount: 22,
+    downloadCount: 412,
     previewPdfUrl: SAMPLE_PDF,
     fullPdfUrl: SAMPLE_PDF,
-    accessState: 'owned',
+    downloadStatus: 'downloaded',
   },
   {
     id: 'rpt-007',
-    title: 'Amazon AWS: Graviton4 Cost Advantage and GenAI Services TAM',
-    excerpt: 'AWS custom silicon strategy, Graviton4 TCO advantage over x86, and Bedrock/SageMaker competitive positioning versus Azure and Google.',
-    company: 'AMZN',
-    contributor: 'James Liu',
-    date: '2026-05-25',
-    category: 'Cloud / AI',
-    downloadCount: 198,
-    commentCount: 15,
+    company: 'AMD',
+    companyName: 'AMD',
+    analystName: 'James Liu',
+    contributor: 'Morgan Stanley',
+    publishDate: '2026-04-15',
+    updatedAt: '2026-04-23T10:05:00Z',
+    headline: 'AMD MI400 Supply Planning: Rack-Scale Wins Need Better Memory Visibility',
+    summary: 'Covers GPU rack build plans, memory constraints, and OEM enablement into 2027.',
+    category: 'Semiconductors',
+    priceUsd: 189,
+    pageCount: 35,
+    downloadCount: 165,
     previewPdfUrl: SAMPLE_PDF,
     fullPdfUrl: SAMPLE_PDF,
-    accessState: 'locked',
+    downloadStatus: 'download',
   },
   {
     id: 'rpt-008',
-    title: 'Google TPU v5p: Hyperscaler In-House AI Infrastructure Cost Model',
-    excerpt: 'Cost modelling of Google\'s TPU v5p versus GPU alternatives for internal LLM training workloads — implications for third-party chip demand.',
     company: 'GOOGL',
-    contributor: 'Anna Park',
-    date: '2026-05-18',
+    companyName: 'Alphabet',
+    analystName: 'Anna Park',
+    contributor: 'Goldman Sachs',
+    publishDate: '2026-03-06',
+    updatedAt: '2026-03-10T05:40:00Z',
+    headline: 'Alphabet Search AI ROI: TPU Efficiency Gains Offset Higher Query Compute',
+    summary: 'Analyzes the economics of AI search rollouts and TPU efficiency assumptions behind the margin outlook.',
     category: 'Cloud / AI',
-    downloadCount: 334,
-    commentCount: 21,
+    priceUsd: 149,
+    pageCount: 26,
+    downloadCount: 208,
     previewPdfUrl: SAMPLE_PDF,
     fullPdfUrl: SAMPLE_PDF,
-    accessState: 'owned',
-  },
-  {
-    id: 'rpt-009',
-    title: 'Apple Silicon Roadmap: M4 Series and iPhone 17 ASP Implications',
-    excerpt: 'Detailed teardown of Apple\'s M4 chip strategy, iPhone 17 BOM cost changes, and gross margin implications of the in-house modem transition.',
-    company: 'AAPL',
-    contributor: 'Mike Wang',
-    date: '2026-06-02',
-    category: 'Consumer',
-    downloadCount: 602,
-    commentCount: 41,
-    previewPdfUrl: SAMPLE_PDF,
-    fullPdfUrl: SAMPLE_PDF,
-    accessState: 'owned',
-  },
-  {
-    id: 'rpt-010',
-    title: 'Sony PlayStation 6: Launch Economics and Gaming Hardware Cycle',
-    excerpt: 'PS6 BOM estimate, AMD custom APU design-win analysis, and historical correlation between console launches and semiconductor content growth.',
-    company: 'SONY',
-    contributor: 'David Kim',
-    date: '2026-05-10',
-    category: 'Consumer',
-    downloadCount: 87,
-    commentCount: 5,
-    previewPdfUrl: SAMPLE_PDF,
-    fullPdfUrl: SAMPLE_PDF,
-    accessState: 'locked',
+    downloadStatus: 'download',
   },
 ];

@@ -1,10 +1,10 @@
 'use client';
 
+import { useLanguage } from '@/app/contexts/LanguageContext';
 import type { ExpertReport } from '@/app/data/expertReports';
 
 interface PdfViewerPanelProps {
   report: ExpertReport | null;
-  /** 'preview' = Dashboard mode (previewPdfUrl, may be locked). 'full' = Library mode (fullPdfUrl, always owned). */
   viewMode: 'preview' | 'full';
 }
 
@@ -18,36 +18,19 @@ function PdfDocIcon() {
 }
 
 export default function PdfViewerPanel({ report, viewMode }: PdfViewerPanelProps) {
-  // No report selected
+  const { lang } = useLanguage();
+  const labels = {
+    empty: { zh: '選取一筆報告以預覽', en: 'Select a report to preview' },
+    preview: { zh: 'Preview', en: 'Preview' },
+    downloaded: { zh: 'Downloaded', en: 'Downloaded' },
+  };
+
   if (!report) {
     return (
       <div className="er-pdf-panel">
         <div className="er-pdf-empty">
           <PdfDocIcon />
-          <span className="er-pdf-empty-text">Select a report to preview</span>
-        </div>
-      </div>
-    );
-  }
-
-  const isLocked = report.accessState === 'locked' || report.accessState === 'pending';
-
-  // Locked/pending in Dashboard: show overlay instead of iframe
-  if (viewMode === 'preview' && isLocked) {
-    return (
-      <div className="er-pdf-panel">
-        <div className="er-pdf-header">
-          <span className="er-pdf-header-title">{report.title}</span>
-          <span className="er-pdf-ticker">{report.company}</span>
-          <span className="er-pdf-label">Preview</span>
-        </div>
-        <div className="er-pdf-locked-overlay">
-          <div className="er-pdf-locked-icon">🔒</div>
-          <div className="er-pdf-locked-text">
-            {report.accessState === 'pending'
-              ? 'Access request submitted — awaiting approval'
-              : 'Request access to read the full report'}
-          </div>
+          <span className="er-pdf-empty-text">{labels.empty[lang]}</span>
         </div>
       </div>
     );
@@ -58,19 +41,16 @@ export default function PdfViewerPanel({ report, viewMode }: PdfViewerPanelProps
   return (
     <div className="er-pdf-panel">
       <div className="er-pdf-header">
-        <span className="er-pdf-header-title">{report.title}</span>
-        <span className="er-pdf-ticker">{report.company}</span>
-        {viewMode === 'full' ? (
-          <span className="er-owned-badge">✓ Owned</span>
-        ) : (
-          <span className="er-pdf-label">Preview</span>
-        )}
+        <span className="er-pdf-header-title">{report.headline}</span>
+        <span className="er-pdf-label">
+          {viewMode === 'full' ? labels.downloaded[lang] : labels.preview[lang]}
+        </span>
       </div>
       <iframe
         className="er-pdf-iframe"
         src={pdfUrl}
-        title={report.title}
-        aria-label={`PDF viewer: ${report.title}`}
+        title={report.headline}
+        aria-label={`PDF viewer: ${report.headline}`}
       />
     </div>
   );
