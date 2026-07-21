@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import type { ExpertReport } from '@/app/data/expertReports';
+import { useEffect, useMemo, useState } from 'react';
+import type { ExpertReport, ExpertReportQuery, ExpertReportSearchResponse } from '@/app/data/expertReports';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 import { expertReportService } from '@/app/lib/expertReportService';
 import SearchBar from '@/app/components/expert-report/SearchBar';
 import ReportCard from '@/app/components/expert-report/ReportCard';
@@ -11,128 +12,163 @@ import LibraryReportList from '@/app/components/expert-report/LibraryReportList'
 
 type Mode = 'dashboard' | 'library';
 
-interface Filters {
-  company: string;
-  contributor: string;
+const EMPTY_RESPONSE: ExpertReportSearchResponse = {
+  reports: [],
+  companyOptions: [],
+  contributorOptions: [],
+};
+
+function toIsoDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function addMonths(date: Date, months: number): Date {
+  const next = new Date(date);
+  next.setMonth(next.getMonth() + months);
+  return next;
+}
+
+function getDefaultQuery(): ExpertReportQuery {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const start = addMonths(today, -6);
+  return {
+    company: '',
+    contributor: '',
+    publishDateStart: toIsoDate(start),
+    publishDateEnd: toIsoDate(today),
+    headline: '',
+  };
 }
 
 export default function ExpertReportContent() {
+  const { lang } = useLanguage();
   const [mode, setMode] = useState<Mode>('dashboard');
-
-  // Dashboard state
-  const [allReports, setAllReports] = useState<ExpertReport[]>([]);
-  const [filters, setFilters] = useState<Filters>({ company: '', contributor: '' });
-  const [appliedFilters, setAppliedFilters] = useState<Filters>({ company: '', contributor: '' });
+  const [query, setQuery] = useState<ExpertReportQuery>(getDefaultQuery);
+  const [appliedQuery, setAppliedQuery] = useState<ExpertReportQuery>(getDefaultQuery);
+  const [dashboardData, setDashboardData] = useState<ExpertReportSearchResponse>(EMPTY_RESPONSE);
   const [selectedReport, setSelectedReport] = useState<ExpertReport | null>(null);
-  const [savedReportIds, setSavedReportIds] = useState<Set<string>>(new Set());
-
-  // Library state
   const [libraryReports, setLibraryReports] = useState<ExpertReport[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('__all__');
   const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
   const [selectedLibraryReport, setSelectedLibraryReport] = useState<ExpertReport | null>(null);
 
+  const labels = {
+    dashboard: { zh: 'Report Dashboard', en: 'Report Dashboard' },
+    library: { zh: 'My Library', en: 'My Library' },
+    empty: { zh: '沒有符合條件的報告。', en: 'No reports match your search criteria.' },
+    allReports: { zh: 'All Reports', en: 'All Reports' },
+  };
+
+  const minPublishDate = useMemo(() => getDefaultQuery().publishDateStart, []);
+  const maxPublishDate = useMemo(() => getDefaultQuery().publishDateEnd, []);
+
   useEffect(() => {
-    async function load() {
-      const reports = await expertReportService.getReports();
-      setAllReports(reports);
-
-      const lib = await expertReportService.getLibrary();
-      setLibraryReports(lib);
-
-      // Expand the first owned category by default
-      if (lib.length > 0) {
-        setOpenCategories(new Set([lib[0].category]));
-      }
-    }
-    load();
+    void Promise.all([loadDashboard(appliedQuery), loadLibrary()]);
   }, []);
 
-  // Dashboard: filtered reports (client-side)
-  const filteredReports = allReports.filter(r => {
-    const companyMatch = !appliedFilters.company ||
-      r.company.toLowerCase().includes(appliedFilters.company.toLowerCase());
-    const contributorMatch = !appliedFilters.contributor ||
-      r.contributor.toLowerCase().includes(appliedFilters.contributor.toLowerCase());
-    return companyMatch && contributorMatch;
-  });
-
-  function handleSearch() {
-    setAppliedFilters({ company: filters.company, contributor: filters.contributor });
+  async function loadDashboard(nextQuery: ExpertReportQuery) {
+    const nextData = await expertReportService.searchReports(nextQuery);
+    setDashboardData(nextData);
+    setSelectedReport((current) => nextData.reports.find((report) => report.id === current?.id) ?? nextData.reports[0] ?? null);
   }
 
-  function handleReset() {
-    setFilters({ company: '', contributor: '' });
-    setAppliedFilters({ company: '', contributor: '' });
+  async function loadLibrary() {
+    const nextLibrary = await expertReportService.getLibrary();
+    setLibraryReports(nextLibrary);
+    if (nextLibrary.length > 0) {
+      setOpenCategories((current) => {
+        if (current.size > 0) return current;
+        return new Set([nextLibrary[0].category]);
+      });
+    }
+    setSelectedLibraryReport((current) => nextLibrary.find((report) => report.id === current?.id) ?? nextLibrary[0] ?? null);
   }
 
-  async function handleRequestAccess(reportId: string) {
-    await expertReportService.requestAccess(reportId);
-    const updated = await expertReportService.getReports();
-    setAllReports(updated);
-    // Use functional update to avoid stale closure if user changes selection during async call
-    setSelectedReport(prev =>
-      prev?.id === reportId ? (updated.find(r => r.id === reportId) ?? null) : prev
-    );
+  async function handleSearch() {
+    setAppliedQuery(query);
+    await loadDashboard(query);
   }
 
-  function handleSave(reportId: string) {
-    expertReportService.saveReport(reportId, !savedReportIds.has(reportId));
-    setSavedReportIds(prev => {
-      const next = new Set(prev);
-      if (next.has(reportId)) {
-        next.delete(reportId);
-      } else {
-        next.add(reportId);
-      }
-      return next;
-    });
+  async function handleReset() {
+    const defaults = getDefaultQuery();
+    setQuery(defaults);
+    setAppliedQuery(defaults);
+    await loadDashboard(defaults);
   }
 
-  // Library: derive displayed reports from selectedCategory
+  async function handleDownload(reportId: string) {
+    setDashboardData((current) => ({
+      ...current,
+      reports: current.reports.map((report) => (
+        report.id === reportId && report.downloadStatus === 'download'
+          ? { ...report, downloadStatus: 'pending' }
+          : report
+      )),
+    }));
+    setSelectedReport((current) => (
+      current?.id === reportId && current.downloadStatus === 'download'
+        ? { ...current, downloadStatus: 'pending' }
+        : current
+    ));
+    setLibraryReports((current) => current.map((report) => (
+      report.id === reportId && report.downloadStatus === 'download'
+        ? { ...report, downloadStatus: 'pending' }
+        : report
+    )));
+
+    await expertReportService.downloadReport(reportId);
+    await Promise.all([loadDashboard(appliedQuery), loadLibrary()]);
+  }
+
+  function handlePublishDateStartChange(value: string) {
+    setQuery((current) => ({
+      ...current,
+      publishDateStart: value,
+      publishDateEnd: current.publishDateEnd && value && current.publishDateEnd < value ? value : current.publishDateEnd,
+    }));
+  }
+
+  function handlePublishDateEndChange(value: string) {
+    setQuery((current) => ({
+      ...current,
+      publishDateEnd: value,
+      publishDateStart: current.publishDateStart && value && current.publishDateStart > value ? value : current.publishDateStart,
+    }));
+  }
+
+  const categoryLabel = selectedCategory === '__all__' ? labels.allReports[lang] : selectedCategory;
   const displayedLibraryReports = selectedCategory === '__all__'
     ? libraryReports
-    : libraryReports.filter(r => r.category === selectedCategory);
-
-  const categoryLabel = selectedCategory === '__all__' ? 'All Reports' : selectedCategory;
+    : libraryReports.filter((report) => report.category === selectedCategory);
 
   function handleToggleCategory(category: string) {
-    setOpenCategories(prev => {
-      const next = new Set(prev);
-      if (next.has(category)) {
-        next.delete(category);
-      } else {
-        next.add(category);
-      }
+    setOpenCategories((current) => {
+      const next = new Set(current);
+      if (next.has(category)) next.delete(category);
+      else next.add(category);
       return next;
     });
-  }
-
-  function handleModeSwitch(newMode: Mode) {
-    setMode(newMode);
-    if (newMode === 'library') {
-      setSelectedReport(null);
-    } else {
-      setSelectedLibraryReport(null);
-    }
   }
 
   return (
     <div className="er-page">
-      {/* Mode Toggle */}
       <div className="er-mode-bar">
         <div className="er-mode-toggle">
           <button
             className={`er-mode-btn${mode === 'dashboard' ? ' er-mode-btn--active' : ''}`}
-            onClick={() => handleModeSwitch('dashboard')}
+            onClick={() => setMode('dashboard')}
           >
-            Report Dashboard
+            {labels.dashboard[lang]}
           </button>
           <button
             className={`er-mode-btn${mode === 'library' ? ' er-mode-btn--active' : ''}`}
-            onClick={() => handleModeSwitch('library')}
+            onClick={() => setMode('library')}
           >
-            My Library
+            {labels.library[lang]}
             {libraryReports.length > 0 && (
               <span className="er-mode-badge">{libraryReports.length}</span>
             )}
@@ -142,40 +178,43 @@ export default function ExpertReportContent() {
 
       {mode === 'dashboard' && (
         <div className="er-dashboard">
-          {/* Search Bar */}
           <SearchBar
-            company={filters.company}
-            contributor={filters.contributor}
-            resultCount={filteredReports.length}
-            onCompanyChange={v => setFilters(f => ({ ...f, company: v }))}
-            onContributorChange={v => setFilters(f => ({ ...f, contributor: v }))}
+            company={query.company}
+            contributor={query.contributor}
+            publishDateStart={query.publishDateStart}
+            publishDateEnd={query.publishDateEnd}
+            headline={query.headline}
+            companyOptions={dashboardData.companyOptions}
+            contributorOptions={dashboardData.contributorOptions}
+            minDate={minPublishDate}
+            maxDate={maxPublishDate}
+            resultCount={dashboardData.reports.length}
+            onCompanyChange={(value) => setQuery((current) => ({ ...current, company: value }))}
+            onContributorChange={(value) => setQuery((current) => ({ ...current, contributor: value }))}
+            onPublishDateStartChange={handlePublishDateStartChange}
+            onPublishDateEndChange={handlePublishDateEndChange}
+            onHeadlineChange={(value) => setQuery((current) => ({ ...current, headline: value }))}
             onSearch={handleSearch}
             onReset={handleReset}
           />
 
-          {/* Split panel: cards + PDF viewer */}
           <div className="er-split">
             <div className="er-cards-panel">
-              {filteredReports.length === 0 ? (
-                <div className="er-empty">No reports match your search criteria.</div>
+              {dashboardData.reports.length === 0 ? (
+                <div className="er-empty">{labels.empty[lang]}</div>
               ) : (
-                filteredReports.map(r => (
+                dashboardData.reports.map((report) => (
                   <ReportCard
-                    key={r.id}
-                    report={r}
-                    isSelected={selectedReport?.id === r.id}
-                    isSaved={savedReportIds.has(r.id)}
+                    key={report.id}
+                    report={report}
+                    isSelected={selectedReport?.id === report.id}
                     onSelect={setSelectedReport}
-                    onSave={handleSave}
-                    onRequestAccess={handleRequestAccess}
+                    onDownload={handleDownload}
                   />
                 ))
               )}
             </div>
-            <PdfViewerPanel
-              report={selectedReport}
-              viewMode="preview"
-            />
+            <PdfViewerPanel report={selectedReport} viewMode="preview" />
           </div>
         </div>
       )}
@@ -196,15 +235,11 @@ export default function ExpertReportContent() {
               reports={displayedLibraryReports}
               selectedId={selectedLibraryReport?.id ?? null}
               categoryLabel={categoryLabel}
-              savedReportIds={savedReportIds}
               onSelect={setSelectedLibraryReport}
-              onSave={handleSave}
+              onDownload={handleDownload}
             />
           </div>
-          <PdfViewerPanel
-            report={selectedLibraryReport}
-            viewMode="full"
-          />
+          <PdfViewerPanel report={selectedLibraryReport} viewMode="full" />
         </div>
       )}
     </div>
