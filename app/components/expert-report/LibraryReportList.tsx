@@ -38,6 +38,7 @@ export default function LibraryReportList({
           isSelected={report.id === selectedId}
           onSelect={onSelect}
           showActionButton={false}
+          variant="library"
         />
       ))}
 

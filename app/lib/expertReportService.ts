@@ -1,12 +1,14 @@
 import {
   expertReportLibraryFolders,
   expertReports,
+  myLibraryApiResponse,
   type ExpertReport,
   type ExpertReportLibraryResponse,
   type ExpertReportOption,
   type ExpertReportQuery,
   type ExpertReportSearchResponse,
   type LibraryFolder,
+  type MyLibraryApiResponse,
 } from '@/app/data/expertReports';
 
 interface StoredExpertReportState {
@@ -85,12 +87,35 @@ class MockExpertReportService implements ExpertReportService {
   async getLibrary(): Promise<ExpertReportLibraryResponse> {
     this.ensureLoaded();
 
-    return {
-      folders: this.state.folders.map((folder) => ({ ...folder })),
-      reports: this.state.data
-        .filter((report) => report.downloadStatus === 'downloaded')
-        .map((report) => ({ ...report })),
-    };
+    const apiData: MyLibraryApiResponse = myLibraryApiResponse;
+    const folders: LibraryFolder[] = Object.keys(apiData).map((key) => ({
+      id: `folder-${key}`,
+      name: key.charAt(0).toUpperCase() + key.slice(1),
+    }));
+
+    const reports: ExpertReport[] = Object.entries(apiData).flatMap(([key, docs]) =>
+      docs.map((doc) => ({
+        id: doc.research_document_id,
+        company: doc.co_cd,
+        companyName: doc.co_cd,
+        analystName: doc.analyst_name,
+        contributor: doc.contributor.name,
+        publishDate: doc.fileddate.slice(0, 10),
+        updatedAt: doc.fileddate,
+        headline: doc.headline,
+        summary: doc.synopsis,
+        category: key,
+        priceUsd: doc.price,
+        pageCount: doc.metrics.page_count,
+        downloadCount: doc.metrics.downloads,
+        previewPdfUrl: doc.pdf_url,
+        fullPdfUrl: doc.pdf_url,
+        downloadStatus: 'downloaded' as const,
+        libraryFolderId: `folder-${key}`,
+      }))
+    );
+
+    return { folders, reports };
   }
 
   async downloadReport(reportId: string): Promise<void> {

@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { useTheme } from '@/app/contexts/ThemeContext';
 import type { ExpertReport } from '@/app/data/expertReports';
 
 interface PdfViewerPanelProps {
@@ -25,6 +26,7 @@ function PdfDocIcon() {
 
 export default function PdfViewerPanel({ report, viewMode }: PdfViewerPanelProps) {
   const { lang } = useLanguage();
+  const { theme } = useTheme();
   const labels = {
     empty: { zh: '選取一筆報告以預覽', en: 'Select a report to preview' },
     preview: { zh: 'Preview', en: 'Preview' },
@@ -53,7 +55,7 @@ export default function PdfViewerPanel({ report, viewMode }: PdfViewerPanelProps
         </span>
       </div>
       {viewMode === 'full' ? (
-        <LibraryPdfViewerClient fileUrl={pdfUrl} />
+        <LibraryPdfViewerClient fileUrl={pdfUrl} theme={theme} />
       ) : (
         <iframe
           className="er-pdf-iframe"
