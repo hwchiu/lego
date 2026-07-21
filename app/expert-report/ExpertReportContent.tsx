@@ -18,6 +18,17 @@ const EMPTY_RESPONSE: ExpertReportSearchResponse = {
   contributorOptions: [],
 };
 
+function EmptyReportIcon() {
+  return (
+    <svg className="er-empty-icon" width="52" height="52" viewBox="0 0 52 52" fill="none" aria-hidden="true">
+      <rect x="9" y="7" width="26" height="34" rx="4" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M18 18h18M18 25h18M18 32h12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <circle cx="38.5" cy="37.5" r="8.5" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M34.5 37.5h8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function toIsoDate(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -59,7 +70,6 @@ export default function ExpertReportContent() {
   const labels = {
     dashboard: { zh: 'Report Dashboard', en: 'Report Dashboard' },
     library: { zh: 'My Library', en: 'My Library' },
-    empty: { zh: '沒有符合條件的報告。', en: 'No reports match your search criteria.' },
     allReports: { zh: 'All Reports', en: 'All Reports' },
   };
 
@@ -188,7 +198,6 @@ export default function ExpertReportContent() {
             contributorOptions={dashboardData.contributorOptions}
             minDate={minPublishDate}
             maxDate={maxPublishDate}
-            resultCount={dashboardData.reports.length}
             onCompanyChange={(value) => setQuery((current) => ({ ...current, company: value }))}
             onContributorChange={(value) => setQuery((current) => ({ ...current, contributor: value }))}
             onPublishDateStartChange={handlePublishDateStartChange}
@@ -201,7 +210,11 @@ export default function ExpertReportContent() {
           <div className="er-split">
             <div className="er-cards-panel">
               {dashboardData.reports.length === 0 ? (
-                <div className="er-empty">{labels.empty[lang]}</div>
+                <div className="er-empty">
+                  <EmptyReportIcon />
+                  <div className="er-empty-title">No analyst reports available</div>
+                  <div className="er-empty-copy">Try adjusting your query criteria and search again.</div>
+                </div>
               ) : (
                 dashboardData.reports.map((report) => (
                   <ReportCard

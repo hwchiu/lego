@@ -29401,20 +29401,15 @@ html.dark .pr-archive-tile:hover .pr-archive-tile-title-link {
 .er-search-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
 }
 
 .er-search-title {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--c-text);
-}
-
-.er-search-count {
-  font-size: 11px;
-  color: var(--c-text-4);
-  white-space: nowrap;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .er-search-grid {
@@ -29553,6 +29548,12 @@ html.dark .pr-archive-tile:hover .pr-archive-tile-title-link {
 }
 
 .er-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 260px;
   padding: 48px 20px;
   border: 1px dashed var(--c-border-2);
   border-radius: var(--radius);
@@ -29560,6 +29561,24 @@ html.dark .pr-archive-tile:hover .pr-archive-tile-title-link {
   color: var(--c-text-4);
   font-size: 13px;
   text-align: center;
+}
+
+.er-empty-icon {
+  color: var(--c-text-4);
+  opacity: 0.7;
+}
+
+.er-empty-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--c-text-2);
+}
+
+.er-empty-copy {
+  max-width: 280px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--c-text-4);
 }
 
 .er-pdf-panel {
@@ -29632,23 +29651,23 @@ html.dark .pr-archive-tile:hover .pr-archive-tile-title-link {
 .er-card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 14px 16px;
+  gap: 10px;
+  padding: 16px 18px;
   background: var(--c-white);
   border: 1px solid var(--c-border);
-  border-radius: var(--radius-lg);
+  border-radius: 12px;
   cursor: pointer;
   transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
 }
 
 .er-card:hover {
-  border-color: #93c5fd;
-  box-shadow: 0 8px 20px rgba(74, 108, 247, 0.08);
+  border-color: #cfd7e3;
+  box-shadow: 0 6px 18px rgba(17, 24, 39, 0.06);
 }
 
 .er-card--selected {
   border-color: #4a6cf7;
-  box-shadow: 0 10px 24px rgba(74, 108, 247, 0.12);
+  box-shadow: 0 8px 20px rgba(74, 108, 247, 0.1);
 }
 
 .er-card-header {
@@ -29659,22 +29678,23 @@ html.dark .pr-archive-tile:hover .pr-archive-tile-title-link {
 }
 
 .er-card-company {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
+  letter-spacing: 0.02em;
   color: var(--c-text);
 }
 
 .er-card-date {
   flex-shrink: 0;
-  font-size: 11px;
+  font-size: 10px;
   color: var(--c-text-4);
   text-align: right;
 }
 
 .er-card-title {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 700;
-  line-height: 1.45;
+  line-height: 1.5;
   color: var(--c-text);
 }
 
@@ -29683,16 +29703,19 @@ html.dark .pr-archive-tile:hover .pr-archive-tile-title-link {
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
+  padding-top: 8px;
+  border-top: 1px solid #f0f2f5;
 }
 
 .er-card-download-btn {
-  height: 32px;
+  height: 30px;
   margin-left: auto;
-  padding: 0 14px;
+  padding: 0 12px;
   border: 1px solid transparent;
-  border-radius: 8px;
-  font-size: 12px;
+  border-radius: 7px;
+  font-size: 11px;
   font-weight: 700;
+  letter-spacing: 0.02em;
   color: #fff;
   box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.08);
 }
@@ -29727,10 +29750,16 @@ html.dark .pr-archive-tile:hover .pr-archive-tile-title-link {
   display: flex;
   flex: 1 1 320px;
   align-items: center;
-  gap: 14px;
+  gap: 10px 14px;
   flex-wrap: wrap;
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 1.5;
   color: var(--c-text-3);
+}
+
+.er-card-meta span {
+  display: inline-flex;
+  align-items: center;
 }
 
 .er-library {
@@ -29863,7 +29892,7 @@ html.dark .er-pdf-panel {
 
 html.dark .er-card--selected {
   border-color: #6ea8ff;
-  box-shadow: 0 10px 24px rgba(110, 168, 255, 0.18);
+  box-shadow: 0 8px 20px rgba(110, 168, 255, 0.15);
 }
 
 html.dark .er-card-download-btn--download {
@@ -29880,6 +29909,14 @@ html.dark .er-card-download-btn--pending {
 html.dark .er-card-download-btn--downloaded {
   background: #22c55e;
   border-color: #16a34a;
+}
+
+html.dark .er-card-footer {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+html.dark .er-empty {
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 @media (max-width: 1100px) {

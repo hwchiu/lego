@@ -15,7 +15,6 @@ interface SearchBarProps {
   contributorOptions: ExpertReportOption[];
   minDate: string;
   maxDate: string;
-  resultCount: number;
   onCompanyChange: (value: string) => void;
   onContributorChange: (value: string) => void;
   onPublishDateStartChange: (value: string) => void;
@@ -34,6 +33,22 @@ interface SearchableSelectProps {
   onEnter: () => void;
 }
 
+function normalize(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function matchesOption(label: string, query: string): boolean {
+  const normalizedQuery = normalize(query);
+  if (!normalizedQuery) return true;
+  const normalizedLabel = normalize(label);
+  return normalizedQuery.split(' ').every((token) => normalizedLabel.includes(token));
+}
+
 function SearchableSelect({
   label,
   placeholder,
@@ -46,11 +61,8 @@ function SearchableSelect({
   const [open, setOpen] = useState(false);
 
   const filteredOptions = useMemo(() => {
-    const query = value.trim().toLowerCase();
-    if (!query) return options.slice(0, 8);
-    return options
-      .filter((option) => option.label.toLowerCase().includes(query))
-      .slice(0, 8);
+    if (!value.trim()) return options.slice(0, 8);
+    return options.filter((option) => matchesOption(option.label, value)).slice(0, 8);
   }, [options, value]);
 
   useEffect(() => {
@@ -127,7 +139,6 @@ export default function SearchBar({
   contributorOptions,
   minDate,
   maxDate,
-  resultCount,
   onCompanyChange,
   onContributorChange,
   onPublishDateStartChange,
@@ -149,7 +160,6 @@ export default function SearchBar({
     headlinePlaceholder: { zh: '輸入最多 50 個字', en: 'Type up to 50 characters' },
     search: { zh: 'Search', en: 'Search' },
     reset: { zh: 'Reset', en: 'Reset' },
-    reports: { zh: '筆資料', en: 'reports' },
     startPlaceholder: { zh: '選擇開始日期', en: 'Select start date' },
     endPlaceholder: { zh: '選擇結束日期', en: 'Select end date' },
   };
@@ -162,9 +172,6 @@ export default function SearchBar({
     <div className="er-search-bar">
       <div className="er-search-header">
         <div className="er-search-title">{copy.criteria[lang]}</div>
-        <div className="er-search-count">
-          {resultCount} {copy.reports[lang]}
-        </div>
       </div>
 
       <div className="er-search-grid">
