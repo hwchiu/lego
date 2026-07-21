@@ -7,7 +7,8 @@ interface ReportCardProps {
   report: ExpertReport;
   isSelected: boolean;
   onSelect: (report: ExpertReport) => void;
-  onDownload: (reportId: string) => void;
+  onDownload?: (reportId: string) => void;
+  showActionButton?: boolean;
 }
 
 function formatDateTime(value: string, lang: 'zh' | 'en'): string {
@@ -29,6 +30,7 @@ export default function ReportCard({
   isSelected,
   onSelect,
   onDownload,
+  showActionButton = true,
 }: ReportCardProps) {
   const { lang } = useLanguage();
   const labels = {
@@ -76,17 +78,19 @@ export default function ReportCard({
           <span>{labels.pageCount[lang]}: {report.pageCount}</span>
           <span>{report.downloadCount} {labels.downloads[lang]}</span>
         </div>
-        <button
-          className={`er-card-download-btn er-card-download-btn--${report.downloadStatus}`}
-          type="button"
-          disabled={report.downloadStatus !== 'download'}
-          onClick={(event) => {
-            event.stopPropagation();
-            onDownload(report.id);
-          }}
-        >
-          {statusLabel}
-        </button>
+        {showActionButton && onDownload && (
+          <button
+            className={`er-card-download-btn er-card-download-btn--${report.downloadStatus}`}
+            type="button"
+            disabled={report.downloadStatus !== 'download'}
+            onClick={(event) => {
+              event.stopPropagation();
+              onDownload(report.id);
+            }}
+          >
+            {statusLabel}
+          </button>
+        )}
       </div>
     </div>
   );

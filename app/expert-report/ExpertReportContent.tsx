@@ -1,7 +1,12 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import type { ExpertReport, ExpertReportQuery, ExpertReportSearchResponse } from '@/app/data/expertReports';
+import type {
+  ExpertReport,
+  ExpertReportLibraryResponse,
+  ExpertReportQuery,
+  ExpertReportSearchResponse,
+} from '@/app/data/expertReports';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { expertReportService } from '@/app/lib/expertReportService';
 import SearchBar from '@/app/components/expert-report/SearchBar';
@@ -16,6 +21,11 @@ const EMPTY_RESPONSE: ExpertReportSearchResponse = {
   reports: [],
   companyOptions: [],
   contributorOptions: [],
+};
+
+const EMPTY_LIBRARY: ExpertReportLibraryResponse = {
+  folders: [],
+  reports: [],
 };
 
 function EmptyReportIcon() {
@@ -62,9 +72,9 @@ export default function ExpertReportContent() {
   const [appliedQuery, setAppliedQuery] = useState<ExpertReportQuery>(getDefaultQuery);
   const [dashboardData, setDashboardData] = useState<ExpertReportSearchResponse>(EMPTY_RESPONSE);
   const [selectedReport, setSelectedReport] = useState<ExpertReport | null>(null);
-  const [libraryReports, setLibraryReports] = useState<ExpertReport[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>('__all__');
-  const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
+  const [libraryData, setLibraryData] = useState<ExpertReportLibraryResponse>(EMPTY_LIBRARY);
+  const [selectedFolderId, setSelectedFolderId] = useState<string>('__all__');
+  const [openFolderIds, setOpenFolderIds] = useState<Set<string>>(new Set());
   const [selectedLibraryReport, setSelectedLibraryReport] = useState<ExpertReport | null>(null);
 
   const labels = {
@@ -80,6 +90,27 @@ export default function ExpertReportContent() {
     void Promise.all([loadDashboard(appliedQuery), loadLibrary()]);
   }, []);
 
+  const reportsByFolder = useMemo(() => {
+    return libraryData.reports.reduce<Record<string, ExpertReport[]>>((acc, report) => {
+      if (!report.libraryFolderId) return acc;
+      if (!acc[report.libraryFolderId]) acc[report.libraryFolderId] = [];
+      acc[report.libraryFolderId].push(report);
+      return acc;
+    }, {});
+  }, [libraryData.reports]);
+
+  const displayedLibraryReports = selectedFolderId === '__all__'
+    ? libraryData.reports
+    : libraryData.reports.filter((report) => report.libraryFolderId === selectedFolderId);
+
+  const selectedFolderName = selectedFolderId === '__all__'
+    ? labels.allReports[lang]
+    : libraryData.folders.find((folder) => folder.id === selectedFolderId)?.name ?? labels.allReports[lang];
+
+  useEffect(() => {
+    setSelectedLibraryReport((current) => displayedLibraryReports.find((report) => report.id === current?.id) ?? displayedLibraryReports[0] ?? null);
+  }, [displayedLibraryReports]);
+
   async function loadDashboard(nextQuery: ExpertReportQuery) {
     const nextData = await expertReportService.searchReports(nextQuery);
     setDashboardData(nextData);
@@ -88,14 +119,21 @@ export default function ExpertReportContent() {
 
   async function loadLibrary() {
     const nextLibrary = await expertReportService.getLibrary();
-    setLibraryReports(nextLibrary);
-    if (nextLibrary.length > 0) {
-      setOpenCategories((current) => {
-        if (current.size > 0) return current;
-        return new Set([nextLibrary[0].category]);
-      });
-    }
-    setSelectedLibraryReport((current) => nextLibrary.find((report) => report.id === current?.id) ?? nextLibrary[0] ?? null);
+    setLibraryData(nextLibrary);
+    setOpenFolderIds((current) => {
+      const nextIds = nextLibrary.folders.map((folder) => folder.id);
+      if (current.size === 0) {
+        return new Set(nextIds);
+      }
+
+      const nextOpen = new Set(nextIds.filter((folderId) => current.has(folderId)));
+      return nextOpen.size > 0 ? nextOpen : new Set(nextIds.slice(0, 1));
+    });
+    setSelectedFolderId((current) => (
+      current === '__all__' || nextLibrary.folders.some((folder) => folder.id === current)
+        ? current
+        : '__all__'
+    ));
   }
 
   async function handleSearch() {
@@ -124,14 +162,27 @@ export default function ExpertReportContent() {
         ? { ...current, downloadStatus: 'pending' }
         : current
     ));
-    setLibraryReports((current) => current.map((report) => (
-      report.id === reportId && report.downloadStatus === 'download'
-        ? { ...report, downloadStatus: 'pending' }
-        : report
-    )));
 
     await expertReportService.downloadReport(reportId);
     await Promise.all([loadDashboard(appliedQuery), loadLibrary()]);
+  }
+
+  async function handleCreateFolder(name: string) {
+    const folder = await expertReportService.createLibraryFolder(name);
+    await loadLibrary();
+    setSelectedFolderId(folder.id);
+    setOpenFolderIds((current) => new Set([...current, folder.id]));
+  }
+
+  async function handleRenameFolder(folderId: string, name: string) {
+    await expertReportService.renameLibraryFolder(folderId, name);
+    await loadLibrary();
+  }
+
+  async function handleMoveReport(reportId: string, folderId: string) {
+    await expertReportService.moveLibraryReport(reportId, folderId);
+    await loadLibrary();
+    setSelectedFolderId(folderId);
   }
 
   function handlePublishDateStartChange(value: string) {
@@ -150,19 +201,16 @@ export default function ExpertReportContent() {
     }));
   }
 
-  const categoryLabel = selectedCategory === '__all__' ? labels.allReports[lang] : selectedCategory;
-  const displayedLibraryReports = selectedCategory === '__all__'
-    ? libraryReports
-    : libraryReports.filter((report) => report.category === selectedCategory);
-
-  function handleToggleCategory(category: string) {
-    setOpenCategories((current) => {
+  function handleToggleFolder(folderId: string) {
+    setOpenFolderIds((current) => {
       const next = new Set(current);
-      if (next.has(category)) next.delete(category);
-      else next.add(category);
+      if (next.has(folderId)) next.delete(folderId);
+      else next.add(folderId);
       return next;
     });
   }
+
+  const breadcrumbItems = [labels.library[lang], selectedFolderName];
 
   return (
     <div className="er-page">
@@ -179,8 +227,8 @@ export default function ExpertReportContent() {
             onClick={() => setMode('library')}
           >
             {labels.library[lang]}
-            {libraryReports.length > 0 && (
-              <span className="er-mode-badge">{libraryReports.length}</span>
+            {libraryData.reports.length > 0 && (
+              <span className="er-mode-badge">{libraryData.reports.length}</span>
             )}
           </button>
         </div>
@@ -235,21 +283,24 @@ export default function ExpertReportContent() {
       {mode === 'library' && (
         <div className="er-library">
           <LibrarySidebar
-            reports={libraryReports}
+            folders={libraryData.folders}
+            reportsByFolder={reportsByFolder}
             selectedId={selectedLibraryReport?.id ?? null}
-            openCategories={openCategories}
-            selectedCategory={selectedCategory}
+            openFolderIds={openFolderIds}
+            selectedFolderId={selectedFolderId}
             onSelectReport={setSelectedLibraryReport}
-            onToggleCategory={handleToggleCategory}
-            onSelectCategory={setSelectedCategory}
+            onToggleFolder={handleToggleFolder}
+            onSelectFolder={setSelectedFolderId}
+            onCreateFolder={handleCreateFolder}
+            onRenameFolder={handleRenameFolder}
+            onMoveReport={handleMoveReport}
           />
           <div className="er-library-main">
             <LibraryReportList
               reports={displayedLibraryReports}
               selectedId={selectedLibraryReport?.id ?? null}
-              categoryLabel={categoryLabel}
+              breadcrumbItems={breadcrumbItems}
               onSelect={setSelectedLibraryReport}
-              onDownload={handleDownload}
             />
           </div>
           <PdfViewerPanel report={selectedLibraryReport} viewMode="full" />

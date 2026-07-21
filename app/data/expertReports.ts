@@ -1,5 +1,10 @@
 export type DownloadStatus = 'download' | 'pending' | 'downloaded';
 
+export interface LibraryFolder {
+  id: string;
+  name: string;
+}
+
 export interface ExpertReport {
   id: string;
   company: string;
@@ -17,6 +22,7 @@ export interface ExpertReport {
   previewPdfUrl: string;
   fullPdfUrl: string;
   downloadStatus: DownloadStatus;
+  libraryFolderId: string | null;
 }
 
 export interface ExpertReportQuery {
@@ -38,7 +44,18 @@ export interface ExpertReportSearchResponse {
   contributorOptions: ExpertReportOption[];
 }
 
-const SAMPLE_PDF = 'https://www.africau.edu/images/default/sample.pdf';
+export interface ExpertReportLibraryResponse {
+  folders: LibraryFolder[];
+  reports: ExpertReport[];
+}
+
+const SAMPLE_PDF = '/lego/pdfs/expert-report-sample.pdf';
+
+export const expertReportLibraryFolders: LibraryFolder[] = [
+  { id: 'folder-semiconductors', name: 'Semiconductors' },
+  { id: 'folder-cloud-ai', name: 'Cloud / AI' },
+  { id: 'folder-consumer', name: 'Consumer' },
+];
 
 export const expertReports: ExpertReport[] = [
   {
@@ -58,6 +75,7 @@ export const expertReports: ExpertReport[] = [
     previewPdfUrl: SAMPLE_PDF,
     fullPdfUrl: SAMPLE_PDF,
     downloadStatus: 'download',
+    libraryFolderId: null,
   },
   {
     id: 'rpt-002',
@@ -76,6 +94,7 @@ export const expertReports: ExpertReport[] = [
     previewPdfUrl: SAMPLE_PDF,
     fullPdfUrl: SAMPLE_PDF,
     downloadStatus: 'downloaded',
+    libraryFolderId: 'folder-semiconductors',
   },
   {
     id: 'rpt-003',
@@ -94,6 +113,7 @@ export const expertReports: ExpertReport[] = [
     previewPdfUrl: SAMPLE_PDF,
     fullPdfUrl: SAMPLE_PDF,
     downloadStatus: 'pending',
+    libraryFolderId: null,
   },
   {
     id: 'rpt-004',
@@ -111,7 +131,8 @@ export const expertReports: ExpertReport[] = [
     downloadCount: 301,
     previewPdfUrl: SAMPLE_PDF,
     fullPdfUrl: SAMPLE_PDF,
-    downloadStatus: 'download',
+    downloadStatus: 'downloaded',
+    libraryFolderId: 'folder-cloud-ai',
   },
   {
     id: 'rpt-005',
@@ -129,7 +150,8 @@ export const expertReports: ExpertReport[] = [
     downloadCount: 118,
     previewPdfUrl: SAMPLE_PDF,
     fullPdfUrl: SAMPLE_PDF,
-    downloadStatus: 'download',
+    downloadStatus: 'downloaded',
+    libraryFolderId: 'folder-cloud-ai',
   },
   {
     id: 'rpt-006',
@@ -148,6 +170,7 @@ export const expertReports: ExpertReport[] = [
     previewPdfUrl: SAMPLE_PDF,
     fullPdfUrl: SAMPLE_PDF,
     downloadStatus: 'downloaded',
+    libraryFolderId: 'folder-consumer',
   },
   {
     id: 'rpt-007',
@@ -166,6 +189,7 @@ export const expertReports: ExpertReport[] = [
     previewPdfUrl: SAMPLE_PDF,
     fullPdfUrl: SAMPLE_PDF,
     downloadStatus: 'download',
+    libraryFolderId: null,
   },
   {
     id: 'rpt-008',
@@ -183,6 +207,7 @@ export const expertReports: ExpertReport[] = [
     downloadCount: 208,
     previewPdfUrl: SAMPLE_PDF,
     fullPdfUrl: SAMPLE_PDF,
-    downloadStatus: 'download',
+    downloadStatus: 'downloaded',
+    libraryFolderId: 'folder-cloud-ai',
   },
 ];
