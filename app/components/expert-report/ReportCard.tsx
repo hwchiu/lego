@@ -69,6 +69,13 @@ export default function ReportCard({
       <div className="er-card-title">{report.headline}</div>
 
       <div className="er-card-footer">
+        <div className="er-card-meta">
+          <span>{labels.analyst[lang]}: {report.analystName}</span>
+          <span>{labels.contributor[lang]}: {report.contributor}</span>
+          <span>{labels.price[lang]}: {formatPrice(report.priceUsd)}</span>
+          <span>{labels.pageCount[lang]}: {report.pageCount}</span>
+          <span>{report.downloadCount} {labels.downloads[lang]}</span>
+        </div>
         <button
           className={`er-card-download-btn er-card-download-btn--${report.downloadStatus}`}
           type="button"
@@ -80,13 +87,6 @@ export default function ReportCard({
         >
           {statusLabel}
         </button>
-        <div className="er-card-meta">
-          <span>{labels.analyst[lang]}: {report.analystName}</span>
-          <span>{labels.contributor[lang]}: {report.contributor}</span>
-          <span>{labels.price[lang]}: {formatPrice(report.priceUsd)}</span>
-          <span>{labels.pageCount[lang]}: {report.pageCount}</span>
-          <span>{report.downloadCount} {labels.downloads[lang]}</span>
-        </div>
       </div>
     </div>
   );
