@@ -114,7 +114,7 @@ export default function ExpertReportContent() {
   async function loadDashboard(nextQuery: ExpertReportQuery) {
     const nextData = await expertReportService.searchReports(nextQuery);
     setDashboardData(nextData);
-    setSelectedReport((current) => nextData.reports.find((report) => report.id === current?.id) ?? nextData.reports[0] ?? null);
+    setSelectedReport((current) => nextData.reports.find((report) => report.id === current?.id) ?? null);
   }
 
   async function loadLibrary() {
@@ -183,6 +183,10 @@ export default function ExpertReportContent() {
     await expertReportService.moveLibraryReport(reportId, folderId);
     await loadLibrary();
     setSelectedFolderId(folderId);
+  }
+
+  function handleSelectDashboardReport(report: ExpertReport) {
+    setSelectedReport(report);
   }
 
   function handlePublishDateStartChange(value: string) {
@@ -269,7 +273,7 @@ export default function ExpertReportContent() {
                     key={report.id}
                     report={report}
                     isSelected={selectedReport?.id === report.id}
-                    onSelect={setSelectedReport}
+                    onSelect={handleSelectDashboardReport}
                     onDownload={handleDownload}
                   />
                 ))
