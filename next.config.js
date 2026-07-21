@@ -6,6 +6,10 @@ const nextConfig = {
   images: { unoptimized: true },
   trailingSlash: true,
   webpack: (config) => {
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      canvas: false,
+    };
     config.module.rules.push({
       test: /\.md$/,
       type: 'asset/source',
