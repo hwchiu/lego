@@ -13,7 +13,19 @@ export interface ExpertReportService {
 }
 
 function normalize(value: string): string {
-  return value.trim().toLowerCase();
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function matchesFuzzyText(candidate: string, query: string): boolean {
+  const normalizedQuery = normalize(query);
+  if (!normalizedQuery) return true;
+  const candidateText = normalize(candidate);
+  return normalizedQuery.split(' ').every((token) => candidateText.includes(token));
 }
 
 class MockExpertReportService implements ExpertReportService {
@@ -26,14 +38,13 @@ class MockExpertReportService implements ExpertReportService {
     const headlineQuery = normalize(query.headline);
 
     const reports = this.data.filter((report) => {
-      if (companyQuery) {
-        const companyText = `${report.company} ${report.companyName}`.toLowerCase();
-        if (!companyText.includes(companyQuery)) return false;
-      }
-      if (contributorQuery && !report.contributor.toLowerCase().includes(contributorQuery)) {
+      if (companyQuery && !matchesFuzzyText(`${report.companyName} ${report.company}`, companyQuery)) {
         return false;
       }
-      if (headlineQuery && !report.headline.toLowerCase().includes(headlineQuery)) {
+      if (contributorQuery && !matchesFuzzyText(report.contributor, contributorQuery)) {
+        return false;
+      }
+      if (headlineQuery && !matchesFuzzyText(report.headline, headlineQuery)) {
         return false;
       }
       if (query.publishDateStart && report.publishDate < query.publishDateStart) return false;
