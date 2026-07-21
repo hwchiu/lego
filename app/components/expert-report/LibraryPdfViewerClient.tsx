@@ -6,9 +6,10 @@ import { toolbarPlugin, type TransformToolbarSlot } from '@react-pdf-viewer/tool
 
 interface LibraryPdfViewerClientProps {
   fileUrl: string;
+  theme?: 'light' | 'dark';
 }
 
-export default function LibraryPdfViewerClient({ fileUrl }: LibraryPdfViewerClientProps) {
+export default function LibraryPdfViewerClient({ fileUrl, theme = 'light' }: LibraryPdfViewerClientProps) {
   const toolbarPluginInstance = toolbarPlugin();
   const { renderDefaultToolbar } = toolbarPluginInstance;
   const transformToolbarSlot: TransformToolbarSlot = (slot) => ({
@@ -33,6 +34,7 @@ export default function LibraryPdfViewerClient({ fileUrl }: LibraryPdfViewerClie
           fileUrl={fileUrl}
           defaultScale={SpecialZoomLevel.PageFit}
           plugins={[viewerPlugin]}
+          theme={theme}
         />
       </Worker>
     </div>

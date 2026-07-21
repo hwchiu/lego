@@ -9,6 +9,7 @@ interface ReportCardProps {
   onSelect: (report: ExpertReport) => void;
   onDownload?: (reportId: string) => void;
   showActionButton?: boolean;
+  variant?: 'dashboard' | 'library';
 }
 
 function formatDateTime(value: string, lang: 'zh' | 'en'): string {
@@ -31,10 +32,12 @@ export default function ReportCard({
   onSelect,
   onDownload,
   showActionButton = true,
+  variant = 'dashboard',
 }: ReportCardProps) {
   const { lang } = useLanguage();
   const labels = {
     updated: { zh: 'Updated', en: 'Updated' },
+    fileDate: { zh: 'File Date', en: 'File Date' },
     analyst: { zh: 'Analyst', en: 'Analyst' },
     contributor: { zh: 'Contributor', en: 'Contributor' },
     price: { zh: 'Price', en: 'Price' },
@@ -45,11 +48,20 @@ export default function ReportCard({
     downloaded: { zh: 'Downloaded', en: 'Downloaded' },
   };
 
+  const isLibrary = variant === 'library';
+
   const statusLabel = report.downloadStatus === 'pending'
     ? labels.pending[lang]
     : report.downloadStatus === 'downloaded'
       ? labels.downloaded[lang]
       : labels.download[lang];
+
+  const companyDisplay = isLibrary
+    ? report.company
+    : `${report.companyName} (${report.company})`;
+
+  const dateLabel = isLibrary ? labels.fileDate[lang] : labels.updated[lang];
+  const dateValue = formatDateTime(report.updatedAt, lang);
 
   return (
     <div
@@ -61,10 +73,10 @@ export default function ReportCard({
     >
       <div className="er-card-header">
         <div className="er-card-company">
-          {report.companyName} ({report.company})
+          {companyDisplay}
         </div>
         <div className="er-card-date">
-          {labels.updated[lang]} · {formatDateTime(report.updatedAt, lang)}
+          {dateLabel} · {dateValue}
         </div>
       </div>
 
