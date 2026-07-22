@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type {
   ExpertReport,
   ExpertReportLibraryResponse,
@@ -76,11 +76,29 @@ export default function ExpertReportContent() {
   const [selectedFolderId, setSelectedFolderId] = useState<string>('__all__');
   const [openFolderIds, setOpenFolderIds] = useState<Set<string>>(new Set());
   const [selectedLibraryReport, setSelectedLibraryReport] = useState<ExpertReport | null>(null);
+  const [pendingDownloadReport, setPendingDownloadReport] = useState<ExpertReport | null>(null);
+  const downloadTriggerRef = useRef<HTMLElement | null>(null);
 
   const labels = {
     dashboard: { zh: 'Report Dashboard', en: 'Report Dashboard' },
     library: { zh: 'My Library', en: 'My Library' },
     allReports: { zh: 'All Reports', en: 'All Reports' },
+    downloadTitle: { zh: '下載前提醒', en: 'Download reminder' },
+    warningLead: { zh: '警告!本報告受智財權保護，', en: 'Warning! This report is protected by intellectual property rights.' },
+    warningBody: {
+      zh: '若未經授權分享或使用AI分析導致版權爭議，使用者須自行承擔法律責任。',
+      en: 'If unauthorized sharing or AI analysis leads to copyright disputes, the user shall bear the related legal responsibility.',
+    },
+    reminderLead: { zh: '提醒:下載本篇報告預計對公司產生費用', en: 'Reminder: downloading this report is expected to incur a company expense of' },
+    reminderTail: {
+      zh: '，請確認需要此報告後再進行下載。(下載需要一些時間: 約15分鐘，完成後請到My Library查看)。',
+      en: '. Please confirm that you need this report before proceeding. (Downloads take some time: around 15 minutes. Please check My Library when it is finished.)',
+    },
+    cancel: { zh: '取消', en: 'Cancel' },
+    confirmDownload: {
+      zh: '我已閱讀條款並確認下載',
+      en: 'I have read the terms and confirm download',
+    },
   };
 
   const minPublishDate = useMemo(() => getDefaultQuery().publishDateStart, []);
@@ -148,7 +166,12 @@ export default function ExpertReportContent() {
     await loadDashboard(defaults);
   }
 
-  async function handleDownload(reportId: string) {
+  async function handleConfirmDownload() {
+    if (!pendingDownloadReport) return;
+
+    const reportId = pendingDownloadReport.id;
+    setPendingDownloadReport(null);
+    downloadTriggerRef.current = null;
     setDashboardData((current) => ({
       ...current,
       reports: current.reports.map((report) => (
@@ -189,6 +212,20 @@ export default function ExpertReportContent() {
     setSelectedReport(report);
   }
 
+  function handleOpenDownloadWarning(report: ExpertReport) {
+    downloadTriggerRef.current = document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null;
+    setPendingDownloadReport(report);
+  }
+
+  function handleCloseDownloadWarning() {
+    const trigger = downloadTriggerRef.current;
+    setPendingDownloadReport(null);
+    downloadTriggerRef.current = null;
+    requestAnimationFrame(() => trigger?.focus());
+  }
+
   function handlePublishDateStartChange(value: string) {
     setQuery((current) => ({
       ...current,
@@ -215,6 +252,9 @@ export default function ExpertReportContent() {
   }
 
   const breadcrumbItems = [labels.library[lang], selectedFolderName];
+  const pendingDownloadPrice = pendingDownloadReport
+    ? `$${pendingDownloadReport.priceUsd.toLocaleString('en-US')} USD`
+    : '';
 
   return (
     <div className="er-page">
@@ -274,7 +314,7 @@ export default function ExpertReportContent() {
                     report={report}
                     isSelected={selectedReport?.id === report.id}
                     onSelect={handleSelectDashboardReport}
-                    onDownload={handleDownload}
+                    onDownload={handleOpenDownloadWarning}
                   />
                 ))
               )}
@@ -308,6 +348,60 @@ export default function ExpertReportContent() {
             />
           </div>
           <PdfViewerPanel report={selectedLibraryReport} viewMode="full" />
+        </div>
+      )}
+
+      {pendingDownloadReport && (
+        <div
+          className="er-download-modal-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="er-download-modal-title"
+          onClick={handleCloseDownloadWarning}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') handleCloseDownloadWarning();
+          }}
+        >
+          <div className="er-download-modal" onClick={(event) => event.stopPropagation()}>
+            <div className="er-download-modal-header">
+              <div className="er-download-modal-title" id="er-download-modal-title">
+                {labels.downloadTitle[lang]}
+              </div>
+            </div>
+
+            <div className="er-download-modal-body">
+              <p className="er-download-modal-copy">
+                <span>{labels.warningLead[lang]}</span>
+                {lang === 'en' && ' '}
+                <span className="er-download-modal-copy--danger">{labels.warningBody[lang]}</span>
+              </p>
+
+              <p className="er-download-modal-copy">
+                <span>{labels.reminderLead[lang]}</span>
+                {lang === 'en' && ' '}
+                <span className="er-download-modal-copy--price">{pendingDownloadPrice}</span>
+                <span>{labels.reminderTail[lang]}</span>
+              </p>
+            </div>
+
+            <div className="er-download-modal-actions">
+              <button
+                className="er-download-modal-btn er-download-modal-btn--ghost"
+                type="button"
+                autoFocus
+                onClick={handleCloseDownloadWarning}
+              >
+                {labels.cancel[lang]}
+              </button>
+              <button
+                className="er-download-modal-btn er-download-modal-btn--confirm"
+                type="button"
+                onClick={() => void handleConfirmDownload()}
+              >
+                {labels.confirmDownload[lang]}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -7,7 +7,7 @@ interface ReportCardProps {
   report: ExpertReport;
   isSelected: boolean;
   onSelect: (report: ExpertReport) => void;
-  onDownload?: (reportId: string) => void;
+  onDownload?: (report: ExpertReport) => void;
   showActionButton?: boolean;
   variant?: 'dashboard' | 'library';
 }
@@ -97,7 +97,7 @@ export default function ReportCard({
             disabled={report.downloadStatus !== 'download'}
             onClick={(event) => {
               event.stopPropagation();
-              onDownload(report.id);
+              onDownload(report);
             }}
           >
             {statusLabel}
