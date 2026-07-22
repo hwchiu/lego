@@ -29765,6 +29765,98 @@ html.dark .pr-archive-tile:hover .pr-archive-tile-title-link {
   pointer-events: none;
 }
 
+.er-download-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(17, 24, 39, 0.58);
+  backdrop-filter: blur(2px);
+}
+
+.er-download-modal {
+  width: min(100%, 620px);
+  padding: 20px;
+  background: var(--c-white);
+  border: 1px solid var(--c-border);
+  border-radius: 16px;
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.18);
+}
+
+.er-download-modal-header {
+  margin-bottom: 14px;
+}
+
+.er-download-modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--c-text);
+}
+
+.er-download-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.er-download-modal-copy {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--c-text-2);
+}
+
+.er-download-modal-copy--danger {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.er-download-modal-copy--price {
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.er-download-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.er-download-modal-btn {
+  min-height: 38px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, opacity 0.15s;
+}
+
+.er-download-modal-btn--ghost {
+  border: 1px solid var(--c-border-2);
+  background: var(--c-white);
+  color: var(--c-text-3);
+}
+
+.er-download-modal-btn--ghost:hover {
+  border-color: var(--c-text-3);
+  color: var(--c-text);
+}
+
+.er-download-modal-btn--confirm {
+  border: none;
+  background: #2563eb;
+  color: #fff;
+}
+
+.er-download-modal-btn--confirm:hover {
+  background: #1d4ed8;
+}
+
 .er-card-meta {
   display: flex;
   flex: 1 1 320px;
@@ -30062,6 +30154,31 @@ html.dark .er-card-download-btn--downloaded {
   border-color: #16a34a;
 }
 
+html.dark .er-download-modal {
+  background: #0f172a;
+  border-color: rgba(148, 163, 184, 0.24);
+  box-shadow: 0 24px 48px rgba(2, 6, 23, 0.5);
+}
+
+html.dark .er-download-modal-title {
+  color: #f8fafc;
+}
+
+html.dark .er-download-modal-copy {
+  color: #cbd5e1;
+}
+
+html.dark .er-download-modal-btn--ghost {
+  background: transparent;
+  border-color: rgba(148, 163, 184, 0.32);
+  color: #cbd5e1;
+}
+
+html.dark .er-download-modal-btn--ghost:hover {
+  border-color: rgba(148, 163, 184, 0.56);
+  color: #f8fafc;
+}
+
 html.dark .er-card-footer {
   border-top-color: rgba(255, 255, 255, 0.08);
 }
@@ -30127,6 +30244,10 @@ html.dark .er-lib-error {
   .er-card-title {
     font-size: 16px;
   }
+
+  .er-download-modal {
+    padding: 18px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -30158,5 +30279,17 @@ html.dark .er-lib-error {
 
   .er-card-download-btn {
     margin-left: 0;
+  }
+
+  .er-download-modal-overlay {
+    padding: 14px;
+  }
+
+  .er-download-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .er-download-modal-btn {
+    width: 100%;
   }
 }
