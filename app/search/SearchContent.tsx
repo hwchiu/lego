@@ -295,7 +295,7 @@ export default function SearchContent() {
                 <div className="gsearch-filters-bar">
                   <button
                     type="button"
-                    className="gsearch-filters-arrow"
+                    className="cp-nav-tabs-arrow cp-nav-tabs-arrow--left"
                     onClick={() => handleTabScroll(-1)}
                     disabled={!canScrollLeft}
                     aria-label={lang === 'zh' ? '向左捲動類別' : 'Scroll categories left'}
@@ -323,7 +323,7 @@ export default function SearchContent() {
                   </div>
                   <button
                     type="button"
-                    className="gsearch-filters-arrow"
+                    className="cp-nav-tabs-arrow cp-nav-tabs-arrow--right"
                     onClick={() => handleTabScroll(1)}
                     disabled={!canScrollRight}
                     aria-label={lang === 'zh' ? '向右捲動類別' : 'Scroll categories right'}
