@@ -64,6 +64,14 @@ function ClearIcon() {
   );
 }
 
+function ChevronIcon({ direction }: { direction: 'left' | 'right' }) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+      <path d={direction === 'left' ? 'M9 2L4 7l5 5V2z' : 'M5 2l5 5-5 5V2z'} fill="currentColor" />
+    </svg>
+  );
+}
+
 export default function SearchContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -87,6 +95,21 @@ export default function SearchContent() {
   const [results, setResults] = useState<NormalizedSearchResult[]>([]);
   const [total, setTotal] = useState(0);
   const tabsRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateScrollState = useCallback(() => {
+    const el = tabsRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 1);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+  }, []);
+
+  const handleTabScroll = useCallback((direction: 1 | -1) => {
+    const el = tabsRef.current;
+    if (!el) return;
+    el.scrollBy({ left: direction * Math.max(120, el.clientWidth * 0.7), behavior: 'smooth' });
+  }, []);
 
   // Keep the input in sync when the URL changes via back/forward navigation.
   useEffect(() => {
@@ -103,7 +126,14 @@ export default function SearchContent() {
   }, [urlCategory]);
   useEffect(() => {
     tabsRef.current?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-  }, [activeType]);
+    updateScrollState();
+  }, [activeType, updateScrollState]);
+
+  useEffect(() => {
+    updateScrollState();
+    window.addEventListener('resize', updateScrollState);
+    return () => window.removeEventListener('resize', updateScrollState);
+  }, [lang, urlQuery, updateScrollState]);
 
   // Stale-response protection: only the latest request may commit state.
   const requestIdRef = useRef(0);
@@ -262,18 +292,44 @@ export default function SearchContent() {
                   )}
                 </p>
 
-                <div className="gsearch-filters" ref={tabsRef} role="tablist" aria-label={lang === 'zh' ? '搜尋類別，可水平捲動' : 'Search categories, scroll horizontally'}>
-                  {FILTER_TYPES.map((type) => (
-                    <button
-                      key={type}
-                      role="tab"
-                      aria-selected={activeType === type}
-                      className={`search-tab gsearch-filter${activeType === type ? ' active' : ''}`}
-                      onClick={() => handleTypeChange(type)}
-                    >
-                      {FILTER_LABELS[type][lang]}
-                    </button>
-                  ))}
+                <div className="gsearch-filters-bar">
+                  <button
+                    type="button"
+                    className="gsearch-filters-arrow"
+                    onClick={() => handleTabScroll(-1)}
+                    disabled={!canScrollLeft}
+                    aria-label={lang === 'zh' ? '向左捲動類別' : 'Scroll categories left'}
+                  >
+                    <ChevronIcon direction="left" />
+                  </button>
+                  <div
+                    className="gsearch-filters"
+                    ref={tabsRef}
+                    onScroll={updateScrollState}
+                    role="tablist"
+                    aria-label={lang === 'zh' ? '搜尋類別，可水平捲動' : 'Search categories, scroll horizontally'}
+                  >
+                    {FILTER_TYPES.map((type) => (
+                      <button
+                        key={type}
+                        role="tab"
+                        aria-selected={activeType === type}
+                        className={`search-tab gsearch-filter${activeType === type ? ' active' : ''}`}
+                        onClick={() => handleTypeChange(type)}
+                      >
+                        {FILTER_LABELS[type][lang]}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    className="gsearch-filters-arrow"
+                    onClick={() => handleTabScroll(1)}
+                    disabled={!canScrollRight}
+                    aria-label={lang === 'zh' ? '向右捲動類別' : 'Scroll categories right'}
+                  >
+                    <ChevronIcon direction="right" />
+                  </button>
                 </div>
                 {activeType === 'data-explore' && (
                 <div className="gsearch-categories" role="group" aria-label={lang === 'zh' ? '資料探索分類' : 'Data Explore categories'}>
