@@ -30302,8 +30302,7 @@ html.dark .er-lib-error {
 }
 
 .gsearch-page {
-  max-width: 760px;
-  margin: 0 auto;
+  width: 100%;
 }
 
 .gsearch-heading {
@@ -30314,8 +30313,16 @@ html.dark .er-lib-error {
 }
 
 .gsearch-input-wrap {
-  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin-bottom: 20px;
+}
+
+.gsearch-query-control {
+  position: relative;
+  flex: 1;
+  min-width: 0;
 }
 
 .gsearch-input-icon {
@@ -30369,6 +30376,24 @@ html.dark .er-lib-error {
 .gsearch-input-clear:hover {
   background: var(--c-border);
   color: var(--c-text);
+}
+
+.gsearch-period {
+  flex: 0 0 190px;
+  width: 190px;
+  height: 52px;
+  padding: 0 12px;
+  border: 1px solid var(--c-border-2);
+  border-radius: var(--radius-lg);
+  background: var(--c-bg);
+  color: var(--c-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.gsearch-period:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
 }
 
 .gsearch-summary {
@@ -30621,6 +30646,12 @@ html.dark .gsearch-item {
     font-size: 14px;
   }
 
+  .gsearch-period {
+    height: 46px;
+    flex-basis: 170px;
+    width: 170px;
+  }
+
   .gsearch-item {
     flex-direction: column;
     align-items: stretch;
@@ -30628,6 +30659,18 @@ html.dark .gsearch-item {
 
   .gsearch-item-arrow {
     display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .gsearch-input-wrap {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gsearch-period {
+    flex-basis: auto;
+    width: 100%;
   }
 }
 
