@@ -86,12 +86,14 @@ test('filterResultsByType supports the extended search tabs', () => {
   const results = [
     makeResult({ id: 'report', type: 'analyst-report' }),
     makeResult({ id: 'ai-news', type: 'ai-news' }),
-    makeResult({ id: 'transcript', type: 'transcript' }),
+    makeResult({ id: 'transcript', type: 'ir-transcript' }),
+    makeResult({ id: 'explore', type: 'data-explore' }),
   ];
 
   assert.deepEqual(filterResultsByType(results, 'analyst-report').map(({ id }) => id), ['report']);
   assert.deepEqual(filterResultsByType(results, 'ai-news').map(({ id }) => id), ['ai-news']);
-  assert.deepEqual(filterResultsByType(results, 'transcript').map(({ id }) => id), ['transcript']);
+  assert.deepEqual(filterResultsByType(results, 'ir-transcript').map(({ id }) => id), ['transcript']);
+  assert.deepEqual(filterResultsByType(results, 'data-explore').map(({ id }) => id), ['explore']);
   assert.equal(filterResultsByType(results, 'all'), results);
 });
 
