@@ -65,7 +65,9 @@ function normalize(item: SearchResultItem): NormalizedSearchResult {
     type: item.doc_type === 'transcript' ? 'ir-transcript' : item.doc_type,
     title: item.title,
     description: item.content,
-    url: normalizeResultUrl(item.url),
+    url: item.doc_type === 'transcript' && item.co_cd
+      ? `/company-profile/${encodeURIComponent(item.co_cd)}/?tab=IR%20Transcript`
+      : normalizeResultUrl(item.url),
     tags: [item.company_short_name].filter(Boolean),
     category: item.category,
     date: item.datetime,

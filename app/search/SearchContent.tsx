@@ -7,8 +7,9 @@ import Banner from '@/app/components/layout/Banner';
 import Sidebar from '@/app/components/layout/Sidebar';
 import SearchResultRow from '@/app/components/search/SearchResultRow';
 import { useLanguage } from '@/app/contexts/LanguageContext';
-import { search, POPULAR_SEARCHES, type NormalizedSearchResult, type SearchResultType } from '@/app/lib/globalSearch';
-import { filterResultsByPeriod, paginateResults, type SearchTimePeriod } from '@/app/lib/searchRanking';
+import { search, POPULAR_SEARCHES, SEARCH_DATA_EXPLORE_CATEGORIES, type NormalizedSearchResult, type SearchResultType } from '@/app/lib/globalSearch';
+import { PROFILE_TABS, filterResultsByPeriod, paginateResults, type SearchTimePeriod } from '@/app/lib/searchRanking';
+import { CATEGORIES } from '@/app/data/dataExplore';
 import { getPaginationRange } from '@/app/lib/paginationUtils';
 
 const PAGE_SIZE = 12;
@@ -21,7 +22,8 @@ const FILTER_TYPES: SearchResultType[] = [
   'news',
   'analyst-report',
   'ai-news',
-  'transcript',
+  ...PROFILE_TABS.map(([type]) => type),
+  'data-explore',
 ];
 const TIME_PERIODS: SearchTimePeriod[] = ['all', 'day', 'week', 'month', 'year'];
 
@@ -32,7 +34,16 @@ const FILTER_LABELS: Record<SearchResultType, { zh: string; en: string }> = {
   news: { zh: '新聞', en: 'News' },
   'analyst-report': { zh: '分析師報告', en: 'Analyst Report' },
   'ai-news': { zh: 'AI 新聞', en: 'AI News' },
-  transcript: { zh: '逐字稿', en: 'Transcript' },
+  'fin-summary': { zh: '財務摘要', en: 'FIN. Summary' },
+  'fin-statement': { zh: '財務報表', en: 'FIN. Statement' },
+  'ir-transcript': { zh: 'IR 逐字稿', en: 'IR Transcript' },
+  'ai-transcript': { zh: 'AI 逐字稿', en: 'AI Transcript' },
+  'pre-earning-call': { zh: '法說會預覽', en: 'Pre-Earning Call' },
+  'ir-material': { zh: 'IR 資料', en: 'IR Material' },
+  investment: { zh: '投資', en: 'Investment' },
+  acquisition: { zh: '併購', en: 'Acquisition' },
+  funding: { zh: '募資', en: 'Funding' },
+  'data-explore': { zh: '資料探索', en: 'Data Explore' },
 };
 
 const TIME_PERIOD_LABELS: Record<SearchTimePeriod, { zh: string; en: string }> = {
@@ -62,16 +73,20 @@ export default function SearchContent() {
   const urlType = (searchParams.get('type') as SearchResultType | null) ?? 'all';
   const requestedPeriod = searchParams.get('period') as SearchTimePeriod | null;
   const urlPeriod = requestedPeriod && TIME_PERIODS.includes(requestedPeriod) ? requestedPeriod : 'all';
+  const requestedCategory = searchParams.get('category') ?? '';
+  const urlCategory = SEARCH_DATA_EXPLORE_CATEGORIES.some((slug) => slug === requestedCategory) ? requestedCategory : '';
 
   const [inputValue, setInputValue] = useState(urlQuery);
   const [activeType, setActiveType] = useState<SearchResultType>(
     FILTER_TYPES.includes(urlType) ? urlType : 'all',
   );
   const [activePeriod, setActivePeriod] = useState<SearchTimePeriod>(urlPeriod);
+  const [activeCategory, setActiveCategory] = useState(urlCategory);
   const [page, setPage] = useState(0);
   const [state, setState] = useState<SearchState>(urlQuery ? 'loading' : 'idle');
   const [results, setResults] = useState<NormalizedSearchResult[]>([]);
   const [total, setTotal] = useState(0);
+  const tabsRef = useRef<HTMLDivElement>(null);
 
   // Keep the input in sync when the URL changes via back/forward navigation.
   useEffect(() => {
@@ -83,6 +98,12 @@ export default function SearchContent() {
   useEffect(() => {
     setActivePeriod(urlPeriod);
   }, [urlPeriod]);
+  useEffect(() => {
+    setActiveCategory(urlCategory);
+  }, [urlCategory]);
+  useEffect(() => {
+    tabsRef.current?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }, [activeType]);
 
   // Stale-response protection: only the latest request may commit state.
   const requestIdRef = useRef(0);
@@ -92,6 +113,7 @@ export default function SearchContent() {
     setPage(0);
 
     if (!q) {
+      ++requestIdRef.current;
       setState('idle');
       setResults([]);
       setTotal(0);
@@ -104,7 +126,9 @@ export default function SearchContent() {
     search({ query: q, type: activeType })
       .then((res) => {
         if (requestIdRef.current !== requestId) return; // stale response, ignore
-        const filteredResults = filterResultsByPeriod(res.results, activePeriod);
+        const filteredResults = filterResultsByPeriod(res.results, activePeriod)
+          .filter((result) => activeType !== 'data-explore' || !activeCategory ||
+            result.url === `/data-explore/${activeCategory}/`);
         setResults(filteredResults);
         setTotal(filteredResults.length);
         setState(filteredResults.length > 0 ? 'results' : 'no_results');
@@ -113,15 +137,16 @@ export default function SearchContent() {
         if (requestIdRef.current !== requestId) return;
         setState('error');
       });
-  }, [urlQuery, activeType, activePeriod]);
+  }, [urlQuery, activeType, activePeriod, activeCategory]);
 
-  const navigate = useCallback((q: string, type: SearchResultType, period: SearchTimePeriod) => {
+  const navigate = useCallback((q: string, type: SearchResultType, period: SearchTimePeriod, category = activeCategory) => {
     const params = new URLSearchParams();
     if (q) params.set('q', q);
     if (type !== 'all') params.set('type', type);
     if (period !== 'all') params.set('period', period);
-    router.push(`/search${params.toString() ? `?${params.toString()}` : ''}`);
-  }, [router]);
+    if (type === 'data-explore' && category) params.set('category', category);
+    router.push(`/search/${params.toString() ? `?${params.toString()}` : ''}`);
+  }, [router, activeCategory]);
 
   // Debounced live update as the user edits the query directly on this page.
   useEffect(() => {
@@ -138,13 +163,18 @@ export default function SearchContent() {
 
   const handleTypeChange = useCallback((type: SearchResultType) => {
     setActiveType(type);
-    navigate(urlQuery.trim(), type, activePeriod);
+    navigate(urlQuery.trim(), type, activePeriod, '');
   }, [urlQuery, activePeriod, navigate]);
 
   const handlePeriodChange = useCallback((period: SearchTimePeriod) => {
     setActivePeriod(period);
     navigate(urlQuery.trim(), activeType, period);
   }, [urlQuery, activeType, navigate]);
+
+  const handleCategoryChange = useCallback((category: string) => {
+    setActiveCategory(category);
+    navigate(urlQuery.trim(), activeType, activePeriod, category);
+  }, [urlQuery, activeType, activePeriod, navigate]);
 
   const totalPages = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
   const visibleResults = useMemo(() => paginateResults(results, page, PAGE_SIZE), [results, page]);
@@ -232,7 +262,7 @@ export default function SearchContent() {
                   )}
                 </p>
 
-                <div className="gsearch-filters" role="tablist">
+                <div className="gsearch-filters" ref={tabsRef} role="tablist" aria-label={lang === 'zh' ? '搜尋類別，可水平捲動' : 'Search categories, scroll horizontally'}>
                   {FILTER_TYPES.map((type) => (
                     <button
                       key={type}
@@ -245,6 +275,18 @@ export default function SearchContent() {
                     </button>
                   ))}
                 </div>
+                {activeType === 'data-explore' && (
+                <div className="gsearch-categories" role="group" aria-label={lang === 'zh' ? '資料探索分類' : 'Data Explore categories'}>
+                  <button type="button" className={`search-category-btn${!activeCategory ? ' active' : ''}`} aria-pressed={!activeCategory} onClick={() => handleCategoryChange('')}>
+                    {lang === 'zh' ? '全部分類' : 'All categories'}
+                  </button>
+                  {CATEGORIES.filter(({ slug }) => SEARCH_DATA_EXPLORE_CATEGORIES.some((enabled) => enabled === slug)).map((category) => (
+                    <button key={category.slug} type="button" className={`search-category-btn${activeCategory === category.slug ? ' active' : ''}`} aria-pressed={activeCategory === category.slug} onClick={() => handleCategoryChange(category.slug)}>
+                      {category.label}
+                    </button>
+                  ))}
+                </div>
+                )}
 
                 {state === 'loading' && (
                   <div className="gsearch-status" role="status">
@@ -270,13 +312,27 @@ export default function SearchContent() {
 
                 {state === 'results' && (
                   <>
-                    <ul className="gsearch-list">
-                      {visibleResults.map((result) => (
-                        <li key={`${result.type}-${result.id}`}>
-                          <SearchResultRow result={result} query={trimmedQuery} lang={lang} />
-                        </li>
-                      ))}
-                    </ul>
+                    {activeType === 'data-explore' && !activeCategory ? (
+                      CATEGORIES.filter(({ slug }) => SEARCH_DATA_EXPLORE_CATEGORIES.some((enabled) => enabled === slug)).map((category) => {
+                        const items = visibleResults.filter((result) => result.url === `/data-explore/${category.slug}/`);
+                        return items.length > 0 && (
+                          <section key={category.slug} className="gsearch-category-section">
+                            <h2 className="gsearch-category-heading">{category.label}</h2>
+                            <ul className="gsearch-list">
+                              {items.map((result) => <li key={result.id}><SearchResultRow result={result} query={trimmedQuery} lang={lang} /></li>)}
+                            </ul>
+                          </section>
+                        );
+                      })
+                    ) : (
+                      <ul className="gsearch-list">
+                        {visibleResults.map((result) => (
+                          <li key={`${result.type}-${result.id}`}>
+                            <SearchResultRow result={result} query={trimmedQuery} lang={lang} />
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                     {totalPages > 1 && (
                       <nav className="cp-news-tab-pagination" aria-label={lang === 'zh' ? '搜尋結果分頁' : 'Search result pages'}>
                         <button

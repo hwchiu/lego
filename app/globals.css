@@ -30422,16 +30422,48 @@ html.dark .er-lib-error {
   border-bottom: 1px solid var(--c-border);
   margin-bottom: 16px;
   overflow-x: auto;
-  scrollbar-width: none;
+  max-width: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-border-2) transparent;
+  scroll-padding-inline: 12px;
 }
 
 .gsearch-filters::-webkit-scrollbar {
-  display: none;
+  height: 6px;
+}
+
+.gsearch-filters::-webkit-scrollbar-thumb {
+  background: var(--c-border-2);
+  border-radius: var(--radius-sm);
 }
 
 .gsearch-filter {
+  flex: 0 0 auto;
   font-size: 13.5px;
   padding: 9px 14px;
+}
+
+.gsearch-filter:focus-visible,
+.gsearch-categories button:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: -2px;
+}
+
+.gsearch-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 18px;
+}
+
+.gsearch-category-section + .gsearch-category-section {
+  margin-top: 24px;
+}
+
+.gsearch-category-heading {
+  color: var(--c-text-2);
+  font-size: 15px;
+  margin: 0 0 10px;
 }
 
 .gsearch-status {
@@ -30616,6 +30648,17 @@ html.dark .gsearch-item {
 }
 
 @media (max-width: 768px) {
+  .gsearch-filters {
+    margin-inline: -8px;
+    padding-inline: 8px;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+  }
+
+  .gsearch-filter {
+    scroll-snap-align: start;
+  }
+
   .gsearch-heading {
     font-size: 19px;
   }
