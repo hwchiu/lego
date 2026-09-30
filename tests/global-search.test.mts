@@ -4,6 +4,7 @@ import {
   scoreResult,
   splitHighlightSegments,
   normalizeResultUrl,
+  filterResultsByPeriod,
   type NormalizedSearchResult,
 } from '../app/lib/searchRanking.ts';
 
@@ -63,4 +64,16 @@ test('normalizeResultUrl resolves protocol-less domains and leaves relative path
   assert.equal(normalizeResultUrl('//example.com'), 'https://example.com');
   assert.equal(normalizeResultUrl('/company-profile/AAPL/'), '/company-profile/AAPL/');
   assert.equal(normalizeResultUrl('https://example.com'), 'https://example.com');
+});
+
+test('filterResultsByPeriod keeps undated results and filters dated results at the selected cutoff', () => {
+  const now = Date.parse('2026-09-30T00:00:00Z');
+  const results = [
+    makeResult({ id: 'recent', date: '2026-09-25T00:00:00Z' }),
+    makeResult({ id: 'old', date: '2026-09-22T00:00:00Z' }),
+    makeResult({ id: 'company', type: 'company', date: '' }),
+  ];
+
+  assert.deepEqual(filterResultsByPeriod(results, 'week', now).map(({ id }) => id), ['recent', 'company']);
+  assert.equal(filterResultsByPeriod(results, 'all', now), results);
 });

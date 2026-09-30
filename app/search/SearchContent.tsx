@@ -8,17 +8,27 @@ import Sidebar from '@/app/components/layout/Sidebar';
 import SearchResultRow from '@/app/components/search/SearchResultRow';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { search, POPULAR_SEARCHES, type NormalizedSearchResult, type SearchResultType } from '@/app/lib/globalSearch';
+import { filterResultsByPeriod, type SearchTimePeriod } from '@/app/lib/searchRanking';
 
 const PAGE_SIZE = 12;
 const DEBOUNCE_MS = 250;
 
 const FILTER_TYPES: SearchResultType[] = ['all', 'company', 'event', 'news'];
+const TIME_PERIODS: SearchTimePeriod[] = ['all', 'day', 'week', 'month', 'year'];
 
 const FILTER_LABELS: Record<SearchResultType, { zh: string; en: string }> = {
   all: { zh: '全部', en: 'All' },
   company: { zh: '公司', en: 'Company' },
   event: { zh: '活動', en: 'Event' },
   news: { zh: '新聞', en: 'News' },
+};
+
+const TIME_PERIOD_LABELS: Record<SearchTimePeriod, { zh: string; en: string }> = {
+  all: { zh: '不限時間', en: 'Any time' },
+  day: { zh: '最近 24 小時', en: 'Past 24 hours' },
+  week: { zh: '最近一週', en: 'Past week' },
+  month: { zh: '最近一個月', en: 'Past month' },
+  year: { zh: '最近一年', en: 'Past year' },
 };
 
 type SearchState = 'idle' | 'loading' | 'results' | 'no_results' | 'error';
@@ -38,16 +48,18 @@ export default function SearchContent() {
 
   const urlQuery = searchParams.get('q') ?? '';
   const urlType = (searchParams.get('type') as SearchResultType | null) ?? 'all';
+  const requestedPeriod = searchParams.get('period') as SearchTimePeriod | null;
+  const urlPeriod = requestedPeriod && TIME_PERIODS.includes(requestedPeriod) ? requestedPeriod : 'all';
 
   const [inputValue, setInputValue] = useState(urlQuery);
   const [activeType, setActiveType] = useState<SearchResultType>(
     FILTER_TYPES.includes(urlType) ? urlType : 'all',
   );
+  const [activePeriod, setActivePeriod] = useState<SearchTimePeriod>(urlPeriod);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [state, setState] = useState<SearchState>(urlQuery ? 'loading' : 'idle');
   const [results, setResults] = useState<NormalizedSearchResult[]>([]);
   const [total, setTotal] = useState(0);
-  const [counts, setCounts] = useState<Record<SearchResultType, number>>({ all: 0, company: 0, event: 0, news: 0 });
 
   // Keep the input in sync when the URL changes via back/forward navigation.
   useEffect(() => {
@@ -56,6 +68,9 @@ export default function SearchContent() {
   useEffect(() => {
     setActiveType(FILTER_TYPES.includes(urlType) ? urlType : 'all');
   }, [urlType]);
+  useEffect(() => {
+    setActivePeriod(urlPeriod);
+  }, [urlPeriod]);
 
   // Stale-response protection: only the latest request may commit state.
   const requestIdRef = useRef(0);
@@ -68,7 +83,6 @@ export default function SearchContent() {
       setState('idle');
       setResults([]);
       setTotal(0);
-      setCounts({ all: 0, company: 0, event: 0, news: 0 });
       return;
     }
 
@@ -78,21 +92,22 @@ export default function SearchContent() {
     search({ query: q, type: activeType })
       .then((res) => {
         if (requestIdRef.current !== requestId) return; // stale response, ignore
-        setResults(res.results);
-        setTotal(res.total);
-        setCounts(res.counts);
-        setState(res.total > 0 ? 'results' : 'no_results');
+        const filteredResults = filterResultsByPeriod(res.results, activePeriod);
+        setResults(filteredResults);
+        setTotal(filteredResults.length);
+        setState(filteredResults.length > 0 ? 'results' : 'no_results');
       })
       .catch(() => {
         if (requestIdRef.current !== requestId) return;
         setState('error');
       });
-  }, [urlQuery, activeType]);
+  }, [urlQuery, activeType, activePeriod]);
 
-  const navigate = useCallback((q: string, type: SearchResultType) => {
+  const navigate = useCallback((q: string, type: SearchResultType, period: SearchTimePeriod) => {
     const params = new URLSearchParams();
     if (q) params.set('q', q);
     if (type !== 'all') params.set('type', type);
+    if (period !== 'all') params.set('period', period);
     router.push(`/search${params.toString() ? `?${params.toString()}` : ''}`);
   }, [router]);
 
@@ -100,20 +115,24 @@ export default function SearchContent() {
   useEffect(() => {
     const trimmed = inputValue.trim();
     if (trimmed === urlQuery.trim()) return;
-    const timer = setTimeout(() => navigate(trimmed, activeType), DEBOUNCE_MS);
+    const timer = setTimeout(() => navigate(trimmed, activeType, activePeriod), DEBOUNCE_MS);
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValue]);
+  }, [inputValue, urlQuery, activeType, activePeriod, navigate]);
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
-    navigate(inputValue.trim(), activeType);
-  }, [inputValue, activeType, navigate]);
+    navigate(inputValue.trim(), activeType, activePeriod);
+  }, [inputValue, activeType, activePeriod, navigate]);
 
   const handleTypeChange = useCallback((type: SearchResultType) => {
     setActiveType(type);
-    navigate(urlQuery.trim(), type);
-  }, [urlQuery, navigate]);
+    navigate(urlQuery.trim(), type, activePeriod);
+  }, [urlQuery, activePeriod, navigate]);
+
+  const handlePeriodChange = useCallback((period: SearchTimePeriod) => {
+    setActivePeriod(period);
+    navigate(urlQuery.trim(), activeType, period);
+  }, [urlQuery, activeType, navigate]);
 
   const visibleResults = useMemo(() => results.slice(0, visibleCount), [results, visibleCount]);
   const canLoadMore = visibleCount < results.length;
@@ -121,6 +140,7 @@ export default function SearchContent() {
   const labels = {
     heading: { zh: '搜尋', en: 'Search' },
     placeholder: { zh: '搜尋公司、活動或新聞…', en: 'Search companies, topics, or posts…' },
+    periodLabel: { zh: '篩選搜尋時間', en: 'Filter search by time' },
     resultsFor: { zh: '搜尋結果：', en: 'Search results for ' },
     results: { zh: '筆結果', en: 'results' },
     loadMore: { zh: '載入更多', en: 'Load more' },
@@ -144,33 +164,48 @@ export default function SearchContent() {
             <h1 className="gsearch-heading">{labels.heading[lang]}</h1>
 
             <form className="gsearch-input-wrap" onSubmit={handleSubmit}>
-              <svg className="gsearch-input-icon" width="18" height="18" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-                <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1.5" />
-                <path d="M10.5 10.5L14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
-              <label htmlFor="gsearch-input" className="sr-only">
-                {labels.placeholder[lang]}
+              <div className="gsearch-query-control">
+                <svg className="gsearch-input-icon" width="18" height="18" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+                  <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M10.5 10.5L14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+                <label htmlFor="gsearch-input" className="sr-only">
+                  {labels.placeholder[lang]}
+                </label>
+                <input
+                  id="gsearch-input"
+                  className="gsearch-input"
+                  type="text"
+                  placeholder={labels.placeholder[lang]}
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  autoComplete="off"
+                  autoFocus
+                />
+                {inputValue && (
+                  <button
+                    type="button"
+                    className="gsearch-input-clear"
+                    aria-label={lang === 'zh' ? '清除搜尋字詞' : 'Clear search'}
+                    onClick={() => setInputValue('')}
+                  >
+                    <ClearIcon />
+                  </button>
+                )}
+              </div>
+              <label htmlFor="gsearch-period" className="sr-only">
+                {labels.periodLabel[lang]}
               </label>
-              <input
-                id="gsearch-input"
-                className="gsearch-input"
-                type="text"
-                placeholder={labels.placeholder[lang]}
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                autoComplete="off"
-                autoFocus
-              />
-              {inputValue && (
-                <button
-                  type="button"
-                  className="gsearch-input-clear"
-                  aria-label={lang === 'zh' ? '清除搜尋字詞' : 'Clear search'}
-                  onClick={() => setInputValue('')}
-                >
-                  <ClearIcon />
-                </button>
-              )}
+              <select
+                id="gsearch-period"
+                className="gsearch-period"
+                value={activePeriod}
+                onChange={(event) => handlePeriodChange(event.target.value as SearchTimePeriod)}
+              >
+                {TIME_PERIODS.map((period) => (
+                  <option key={period} value={period}>{TIME_PERIOD_LABELS[period][lang]}</option>
+                ))}
+              </select>
             </form>
 
             {trimmedQuery ? (
@@ -193,7 +228,7 @@ export default function SearchContent() {
                       className={`search-tab gsearch-filter${activeType === type ? ' active' : ''}`}
                       onClick={() => handleTypeChange(type)}
                     >
-                      {FILTER_LABELS[type][lang]} {counts[type]}
+                      {FILTER_LABELS[type][lang]}
                     </button>
                   ))}
                 </div>

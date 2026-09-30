@@ -6,6 +6,7 @@
 
 export type SearchDocType = 'news' | 'company' | 'event';
 export type SearchResultType = 'all' | SearchDocType;
+export type SearchTimePeriod = 'all' | 'day' | 'week' | 'month' | 'year';
 
 export interface NormalizedSearchResult {
   id: string;
@@ -18,6 +19,28 @@ export interface NormalizedSearchResult {
   date: string;
   source: string;
   score: number;
+}
+
+const SEARCH_PERIOD_MS: Record<Exclude<SearchTimePeriod, 'all'>, number> = {
+  day: 24 * 60 * 60 * 1000,
+  week: 7 * 24 * 60 * 60 * 1000,
+  month: 30 * 24 * 60 * 60 * 1000,
+  year: 365 * 24 * 60 * 60 * 1000,
+};
+
+export function filterResultsByPeriod(
+  results: NormalizedSearchResult[],
+  period: SearchTimePeriod,
+  now = Date.now(),
+): NormalizedSearchResult[] {
+  if (period === 'all') return results;
+
+  const cutoff = now - SEARCH_PERIOD_MS[period];
+  return results.filter((result) => {
+    if (!result.date) return true;
+    const timestamp = Date.parse(result.date);
+    return Number.isFinite(timestamp) && timestamp >= cutoff;
+  });
 }
 
 // Matches protocol-less domain strings (e.g. "example.com/path") so external
