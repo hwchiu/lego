@@ -8,12 +8,21 @@ import Sidebar from '@/app/components/layout/Sidebar';
 import SearchResultRow from '@/app/components/search/SearchResultRow';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { search, POPULAR_SEARCHES, type NormalizedSearchResult, type SearchResultType } from '@/app/lib/globalSearch';
-import { filterResultsByPeriod, type SearchTimePeriod } from '@/app/lib/searchRanking';
+import { filterResultsByPeriod, paginateResults, type SearchTimePeriod } from '@/app/lib/searchRanking';
+import { getPaginationRange } from '@/app/lib/paginationUtils';
 
 const PAGE_SIZE = 12;
 const DEBOUNCE_MS = 250;
 
-const FILTER_TYPES: SearchResultType[] = ['all', 'company', 'event', 'news'];
+const FILTER_TYPES: SearchResultType[] = [
+  'all',
+  'company',
+  'event',
+  'news',
+  'analyst-report',
+  'ai-news',
+  'transcript',
+];
 const TIME_PERIODS: SearchTimePeriod[] = ['all', 'day', 'week', 'month', 'year'];
 
 const FILTER_LABELS: Record<SearchResultType, { zh: string; en: string }> = {
@@ -21,6 +30,9 @@ const FILTER_LABELS: Record<SearchResultType, { zh: string; en: string }> = {
   company: { zh: '公司', en: 'Company' },
   event: { zh: '活動', en: 'Event' },
   news: { zh: '新聞', en: 'News' },
+  'analyst-report': { zh: '分析師報告', en: 'Analyst Report' },
+  'ai-news': { zh: 'AI 新聞', en: 'AI News' },
+  transcript: { zh: '逐字稿', en: 'Transcript' },
 };
 
 const TIME_PERIOD_LABELS: Record<SearchTimePeriod, { zh: string; en: string }> = {
@@ -56,7 +68,7 @@ export default function SearchContent() {
     FILTER_TYPES.includes(urlType) ? urlType : 'all',
   );
   const [activePeriod, setActivePeriod] = useState<SearchTimePeriod>(urlPeriod);
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [page, setPage] = useState(0);
   const [state, setState] = useState<SearchState>(urlQuery ? 'loading' : 'idle');
   const [results, setResults] = useState<NormalizedSearchResult[]>([]);
   const [total, setTotal] = useState(0);
@@ -77,7 +89,7 @@ export default function SearchContent() {
 
   useEffect(() => {
     const q = urlQuery.trim();
-    setVisibleCount(PAGE_SIZE);
+    setPage(0);
 
     if (!q) {
       setState('idle');
@@ -134,8 +146,8 @@ export default function SearchContent() {
     navigate(urlQuery.trim(), activeType, period);
   }, [urlQuery, activeType, navigate]);
 
-  const visibleResults = useMemo(() => results.slice(0, visibleCount), [results, visibleCount]);
-  const canLoadMore = visibleCount < results.length;
+  const totalPages = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
+  const visibleResults = useMemo(() => paginateResults(results, page, PAGE_SIZE), [results, page]);
 
   const labels = {
     heading: { zh: '搜尋', en: 'Search' },
@@ -143,7 +155,8 @@ export default function SearchContent() {
     periodLabel: { zh: '篩選搜尋時間', en: 'Filter search by time' },
     resultsFor: { zh: '搜尋結果：', en: 'Search results for ' },
     results: { zh: '筆結果', en: 'results' },
-    loadMore: { zh: '載入更多', en: 'Load more' },
+    previous: { zh: '‹ 上一頁', en: '‹ Prev' },
+    next: { zh: '下一頁 ›', en: 'Next ›' },
     noResultsTitle: { zh: '找不到', en: 'No results for ' },
     noResultsHint: { zh: '請嘗試其他關鍵字，或探索熱門主題。', en: 'Try another keyword or explore popular topics.' },
     discoverTitle: { zh: '搜尋 LEGO', en: 'Search LEGO' },
@@ -264,12 +277,41 @@ export default function SearchContent() {
                         </li>
                       ))}
                     </ul>
-                    {canLoadMore && (
-                      <div className="gsearch-load-more-wrap">
-                        <button className="cp-back-btn gsearch-load-more-btn" onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}>
-                          {labels.loadMore[lang]}
+                    {totalPages > 1 && (
+                      <nav className="cp-news-tab-pagination" aria-label={lang === 'zh' ? '搜尋結果分頁' : 'Search result pages'}>
+                        <button
+                          type="button"
+                          className="cp-news-tab-page-btn"
+                          onClick={() => setPage((current) => Math.max(0, current - 1))}
+                          disabled={page === 0}
+                        >
+                          {labels.previous[lang]}
                         </button>
-                      </div>
+                        {getPaginationRange(page, totalPages).map((item) =>
+                          typeof item === 'string' ? (
+                            <span key={item} className="cp-news-tab-page-ellipsis">…</span>
+                          ) : (
+                            <button
+                              key={item}
+                              type="button"
+                              className={`cp-news-tab-page-btn${page === item ? ' active' : ''}`}
+                              onClick={() => setPage(item)}
+                              aria-label={`${lang === 'zh' ? '第' : 'Page'} ${item + 1}${lang === 'zh' ? '頁' : ''}`}
+                              aria-current={page === item ? 'page' : undefined}
+                            >
+                              {item + 1}
+                            </button>
+                          ),
+                        )}
+                        <button
+                          type="button"
+                          className="cp-news-tab-page-btn"
+                          onClick={() => setPage((current) => Math.min(totalPages - 1, current + 1))}
+                          disabled={page >= totalPages - 1}
+                        >
+                          {labels.next[lang]}
+                        </button>
+                      </nav>
                     )}
                   </>
                 )}

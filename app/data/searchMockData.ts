@@ -1,6 +1,6 @@
 /** Mock Elasticsearch search results for simulating the global search API. */
 
-export type SearchDocType = 'news' | 'company' | 'event';
+export type SearchDocType = 'news' | 'company' | 'event' | 'analyst-report' | 'ai-news' | 'transcript';
 
 export interface SearchResultItem {
   doc_type: SearchDocType;
@@ -30,6 +30,45 @@ export const MOCK_SEARCH_RESULTS: SearchResultItem[] = [
     url: '',
     source: '',
     id: '',
+  },
+  {
+    doc_type: 'analyst-report',
+    co_cd: 'AAPL',
+    company_name: 'Apple Inc.',
+    company_short_name: 'Apple',
+    title: 'Apple Services Growth Supports a Resilient Outlook',
+    content: 'Analyst report reviewing Apple Services momentum, device demand, margins, and the next twelve-month outlook.',
+    datetime: '2026-09-24T09:00:00Z',
+    category: 'Equity Research',
+    url: '/expert-report/',
+    source: 'MIC Research',
+    id: 'analyst_aapl_20260924_001',
+  },
+  {
+    doc_type: 'ai-news',
+    co_cd: 'AAPL',
+    company_name: 'Apple Inc.',
+    company_short_name: 'Apple',
+    title: 'AI Brief: Apple Expands On-Device Intelligence Features',
+    content: 'AI-generated news summary covering Apple Intelligence rollout, developer adoption, and implications for the device ecosystem.',
+    datetime: '2026-09-29T08:30:00Z',
+    category: 'AI News',
+    url: '/market-news/',
+    source: 'MIC AI',
+    id: 'ai_news_aapl_20260929_001',
+  },
+  {
+    doc_type: 'transcript',
+    co_cd: 'AAPL',
+    company_name: 'Apple Inc.',
+    company_short_name: 'Apple',
+    title: 'Apple FY2026 Q3 Earnings Call Transcript',
+    content: 'Management discusses quarterly performance, product demand, Services growth, capital allocation, and forward guidance.',
+    datetime: '2026-08-01T21:00:00Z',
+    category: 'Earnings Call',
+    url: '/company-profile/AAPL/',
+    source: 'Apple Investor Relations',
+    id: 'transcript_aapl_20260801_001',
   },
   {
     doc_type: 'company',
@@ -312,10 +351,10 @@ interface EsApiItem {
 
 function mapEsApiItem(item: EsApiItem): SearchResultItem {
   const rawDocType = (item.doc_type ?? item.docType ?? '').toLowerCase();
-  const docType: SearchDocType =
-    rawDocType === 'company' || rawDocType === 'event' || rawDocType === 'news'
-      ? rawDocType
-      : 'news';
+  const supportedTypes: SearchDocType[] = ['company', 'event', 'news', 'analyst-report', 'ai-news', 'transcript'];
+  const docType: SearchDocType = supportedTypes.includes(rawDocType as SearchDocType)
+    ? rawDocType as SearchDocType
+    : 'news';
 
   const rawDate = item.datetime ?? item.date ?? '';
   const datetime = rawDate && rawDate.includes('T') ? rawDate : (rawDate ? `${rawDate}T00:00:00` : '');

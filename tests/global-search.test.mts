@@ -5,6 +5,8 @@ import {
   splitHighlightSegments,
   normalizeResultUrl,
   filterResultsByPeriod,
+  filterResultsByType,
+  paginateResults,
   type NormalizedSearchResult,
 } from '../app/lib/searchRanking.ts';
 
@@ -76,4 +78,24 @@ test('filterResultsByPeriod keeps undated results and filters dated results at t
 
   assert.deepEqual(filterResultsByPeriod(results, 'week', now).map(({ id }) => id), ['recent', 'company']);
   assert.equal(filterResultsByPeriod(results, 'all', now), results);
+});
+
+test('filterResultsByType supports the extended search tabs', () => {
+  const results = [
+    makeResult({ id: 'report', type: 'analyst-report' }),
+    makeResult({ id: 'ai-news', type: 'ai-news' }),
+    makeResult({ id: 'transcript', type: 'transcript' }),
+  ];
+
+  assert.deepEqual(filterResultsByType(results, 'analyst-report').map(({ id }) => id), ['report']);
+  assert.deepEqual(filterResultsByType(results, 'ai-news').map(({ id }) => id), ['ai-news']);
+  assert.deepEqual(filterResultsByType(results, 'transcript').map(({ id }) => id), ['transcript']);
+  assert.equal(filterResultsByType(results, 'all'), results);
+});
+
+test('paginateResults returns only the requested 0-based page', () => {
+  const results = Array.from({ length: 25 }, (_, index) => makeResult({ id: String(index) }));
+
+  assert.deepEqual(paginateResults(results, 0, 12).map(({ id }) => id), results.slice(0, 12).map(({ id }) => id));
+  assert.deepEqual(paginateResults(results, 2, 12).map(({ id }) => id), ['24']);
 });
