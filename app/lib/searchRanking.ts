@@ -4,7 +4,7 @@
  * `node --test` without a bundler.
  */
 
-export type SearchDocType = 'news' | 'company' | 'event';
+export type SearchDocType = 'news' | 'company' | 'event' | 'analyst-report' | 'ai-news' | 'transcript';
 export type SearchResultType = 'all' | SearchDocType;
 export type SearchTimePeriod = 'all' | 'day' | 'week' | 'month' | 'year';
 
@@ -41,6 +41,22 @@ export function filterResultsByPeriod(
     const timestamp = Date.parse(result.date);
     return Number.isFinite(timestamp) && timestamp >= cutoff;
   });
+}
+
+export function filterResultsByType(
+  results: NormalizedSearchResult[],
+  type: SearchResultType,
+): NormalizedSearchResult[] {
+  return type === 'all' ? results : results.filter((result) => result.type === type);
+}
+
+export function paginateResults(
+  results: NormalizedSearchResult[],
+  page: number,
+  pageSize: number,
+): NormalizedSearchResult[] {
+  const start = page * pageSize;
+  return results.slice(start, start + pageSize);
 }
 
 // Matches protocol-less domain strings (e.g. "example.com/path") so external

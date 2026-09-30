@@ -30391,9 +30391,10 @@ html.dark .er-lib-error {
   cursor: pointer;
 }
 
-.gsearch-period:focus-visible {
-  outline: 2px solid var(--c-accent);
-  outline-offset: 2px;
+.gsearch-period:focus {
+  border-color: var(--c-dark);
+  background: var(--c-white);
+  outline: none;
 }
 
 .gsearch-summary {
@@ -30482,32 +30483,10 @@ html.dark .er-lib-error {
   min-width: 0;
 }
 
-.gsearch-item-badge {
+.gsearch-item-type-icon {
+  display: inline-flex;
   flex-shrink: 0;
   margin-top: 2px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 3px 7px;
-  border-radius: 3px;
-  color: var(--c-text-3);
-  background: var(--c-bg);
-}
-
-.gsearch-item-badge--company {
-  color: var(--c-badge-pr-text);
-  background: var(--c-badge-pr-bg);
-}
-
-.gsearch-item-badge--event {
-  color: var(--c-badge-event-text);
-  background: var(--c-badge-event-bg);
-}
-
-.gsearch-item-badge--news {
-  color: var(--c-badge-news-text);
-  background: var(--c-badge-news-bg);
 }
 
 .gsearch-item-body {
