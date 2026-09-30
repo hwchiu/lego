@@ -7,7 +7,12 @@
  * top of that shared data source so the two surfaces never diverge.
  */
 import { getElshResult, type SearchResultItem } from '@/app/data/searchMockData';
+import { COMPANY_MASTER_DATA } from '@/app/data/companyMaster';
+import { CATEGORIES } from '@/app/data/dataExplore';
 import {
+  PROFILE_TABS,
+  profileTabResults,
+  dataExploreResults,
   normalizeResultUrl,
   filterResultsByType,
   scoreResult,
@@ -35,6 +40,7 @@ export interface SearchResponse {
 
 /** Popular searches shown in the header dropdown and the empty-query discovery state. */
 export const POPULAR_SEARCHES = ['INTC', 'AAPL', 'NVDA'];
+export const SEARCH_DATA_EXPLORE_CATEGORIES = ['news-summary', 'capital-markets'] as const;
 
 function normalize(item: SearchResultItem): NormalizedSearchResult {
   if (item.doc_type === 'company') {
@@ -56,10 +62,12 @@ function normalize(item: SearchResultItem): NormalizedSearchResult {
 
   return {
     id: item.id,
-    type: item.doc_type,
+    type: item.doc_type === 'transcript' ? 'ir-transcript' : item.doc_type,
     title: item.title,
     description: item.content,
-    url: normalizeResultUrl(item.url),
+    url: item.doc_type === 'transcript' && item.co_cd
+      ? `/company-profile/${encodeURIComponent(item.co_cd)}/?tab=IR%20Transcript`
+      : normalizeResultUrl(item.url),
     tags: [item.company_short_name].filter(Boolean),
     category: item.category,
     date: item.datetime,
@@ -68,15 +76,8 @@ function normalize(item: SearchResultItem): NormalizedSearchResult {
   };
 }
 
-const EMPTY_COUNTS: Record<SearchResultType, number> = {
-  all: 0,
-  company: 0,
-  event: 0,
-  news: 0,
-  'analyst-report': 0,
-  'ai-news': 0,
-  transcript: 0,
-};
+const SEARCH_TYPES: SearchResultType[] = ['all', 'company', 'event', 'news', 'analyst-report', 'ai-news', ...PROFILE_TABS.map(([type]) => type), 'data-explore'];
+const EMPTY_COUNTS = Object.fromEntries(SEARCH_TYPES.map((type) => [type, 0])) as Record<SearchResultType, number>;
 
 /**
  * Conceptually `search({ query, type, limit, offset })`, backed by the same
@@ -89,20 +90,19 @@ export async function search(options: SearchOptions): Promise<SearchResponse> {
   }
 
   const raw = await getElshResult(query);
-  const ranked = raw
-    .map(normalize)
+  const ranked = [
+    ...raw.map(normalize),
+    ...profileTabResults(COMPANY_MASTER_DATA, query),
+    ...dataExploreResults(CATEGORIES, SEARCH_DATA_EXPLORE_CATEGORIES, query),
+  ]
     .map((r) => ({ ...r, score: scoreResult(r, query) }))
     .sort((a, b) => b.score - a.score || (b.date || '').localeCompare(a.date || ''));
 
-  const counts: Record<SearchResultType, number> = {
-    all: ranked.length,
-    company: ranked.filter((r) => r.type === 'company').length,
-    event: ranked.filter((r) => r.type === 'event').length,
-    news: ranked.filter((r) => r.type === 'news').length,
-    'analyst-report': ranked.filter((r) => r.type === 'analyst-report').length,
-    'ai-news': ranked.filter((r) => r.type === 'ai-news').length,
-    transcript: ranked.filter((r) => r.type === 'transcript').length,
-  };
+  const counts = { ...EMPTY_COUNTS };
+  for (const result of ranked) {
+    counts.all++;
+    counts[result.type]++;
+  }
 
   const filtered = filterResultsByType(ranked, options.type ?? 'all');
 

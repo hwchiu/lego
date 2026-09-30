@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import type { NormalizedSearchResult, SearchResultType } from '@/app/lib/globalSearch';
 import { splitHighlightSegments } from '@/app/lib/globalSearch';
+import { PROFILE_TABS } from '@/app/lib/searchRanking';
 
 interface SearchResultRowProps {
   result: NormalizedSearchResult;
@@ -16,7 +17,16 @@ const TYPE_LABELS: Record<Exclude<SearchResultType, 'all'>, { zh: string; en: st
   news: { zh: '新聞', en: 'NEWS' },
   'analyst-report': { zh: '分析師報告', en: 'ANALYST REPORT' },
   'ai-news': { zh: 'AI 新聞', en: 'AI NEWS' },
-  transcript: { zh: '逐字稿', en: 'TRANSCRIPT' },
+  'fin-summary': { zh: '財務摘要', en: 'FIN. SUMMARY' },
+  'fin-statement': { zh: '財務報表', en: 'FIN. STATEMENT' },
+  'ir-transcript': { zh: 'IR 逐字稿', en: 'IR TRANSCRIPT' },
+  'ai-transcript': { zh: 'AI 逐字稿', en: 'AI TRANSCRIPT' },
+  'pre-earning-call': { zh: '法說會預覽', en: 'PRE-EARNING CALL' },
+  'ir-material': { zh: 'IR 資料', en: 'IR MATERIAL' },
+  investment: { zh: '投資', en: 'INVESTMENT' },
+  acquisition: { zh: '併購', en: 'ACQUISITION' },
+  funding: { zh: '募資', en: 'FUNDING' },
+  'data-explore': { zh: '資料探索', en: 'DATA EXPLORE' },
 };
 
 function Highlighted({ text, query }: { text: string; query: string }) {
@@ -83,7 +93,7 @@ function SearchTypeIcon({ type, label }: { type: NormalizedSearchResult['type'];
     );
   }
 
-  if (type === 'transcript') {
+  if (PROFILE_TABS.some(([tabType]) => tabType === type)) {
     return (
       <span className={className} role="img" aria-label={label}>
         <svg viewBox="0 0 28 28" fill="none" width="28" height="28" aria-hidden="true">

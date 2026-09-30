@@ -4,7 +4,20 @@
  * `node --test` without a bundler.
  */
 
-export type SearchDocType = 'news' | 'company' | 'event' | 'analyst-report' | 'ai-news' | 'transcript';
+export const PROFILE_TABS = [
+  ['fin-summary', 'FIN. Summary', 'IS_FIN_ALIVE'],
+  ['fin-statement', 'FIN. Statement', 'IS_FIN_ALIVE'],
+  ['ir-transcript', 'IR Transcript', 'IS_TRANSCRIPT_ALIVE'],
+  ['ai-transcript', 'AI Transcript', 'IS_AI_TRANSCRIPT_ALIVE'],
+  ['pre-earning-call', 'Pre-Earning Call', 'IS_PRE_EARNING_CALL'],
+  ['ir-material', 'IR Material', 'IS_IR_ALIVE'],
+  ['investment', 'Investment', 'IS_INVEST_ALIVE'],
+  ['acquisition', 'Acquisition', 'IS_ACQ_ALIVE'],
+  ['funding', 'Funding', 'IS_FUND_ALIVE'],
+] as const;
+
+export type ProfileTabType = (typeof PROFILE_TABS)[number][0];
+export type SearchDocType = 'news' | 'company' | 'event' | 'analyst-report' | 'ai-news' | 'data-explore' | ProfileTabType;
 export type SearchResultType = 'all' | SearchDocType;
 export type SearchTimePeriod = 'all' | 'day' | 'week' | 'month' | 'year';
 
@@ -19,6 +32,67 @@ export interface NormalizedSearchResult {
   date: string;
   source: string;
   score: number;
+}
+
+interface SearchCompany {
+  CO_CD: string;
+  CO_NAME: string;
+  CO_SHORT_NAME: string;
+  IS_FIN_ALIVE: 'Y' | 'N';
+  IS_TRANSCRIPT_ALIVE: 'Y' | 'N';
+  IS_AI_TRANSCRIPT_ALIVE: 'Y' | 'N';
+  IS_PRE_EARNING_CALL: 'Y' | 'N';
+  IS_IR_ALIVE: 'Y' | 'N';
+  IS_INVEST_ALIVE: 'Y' | 'N';
+  IS_ACQ_ALIVE: 'Y' | 'N';
+  IS_FUND_ALIVE: 'Y' | 'N';
+}
+
+interface SearchCategory {
+  slug: string;
+  label: string;
+  items: { id: string; title: string; summary: string; tags: string[]; source: string; date: string }[];
+}
+
+export function profileTabResults(companies: SearchCompany[], query: string): NormalizedSearchResult[] {
+  const q = query.trim().toLocaleLowerCase();
+  if (!q) return [];
+  return companies.flatMap((company) => {
+    if (![company.CO_CD, company.CO_NAME, company.CO_SHORT_NAME].some((value) => value.toLocaleLowerCase().includes(q))) return [];
+    return PROFILE_TABS.filter(([, , flag]) => company[flag] === 'Y').map(([type, tab]) => ({
+      id: `${company.CO_CD}:${type}`,
+      type,
+      title: `${company.CO_SHORT_NAME || company.CO_NAME} — ${tab}`,
+      description: company.CO_NAME,
+      url: `/company-profile/${encodeURIComponent(company.CO_CD)}/?tab=${encodeURIComponent(tab)}`,
+      tags: [company.CO_CD],
+      category: tab,
+      date: '',
+      source: '',
+      score: 0,
+    }));
+  });
+}
+
+export function dataExploreResults(categories: SearchCategory[], enabledSlugs: readonly string[], query: string): NormalizedSearchResult[] {
+  const q = query.trim().toLocaleLowerCase();
+  if (!q) return [];
+  return categories.filter(({ slug }) => enabledSlugs.includes(slug)).flatMap((category) =>
+    category.items.filter((item) =>
+      [item.title, item.summary, ...item.tags].some((value) => value.toLocaleLowerCase().includes(q)),
+    ).map((item) => ({
+      id: `${category.slug}:${item.id}`,
+      type: 'data-explore' as const,
+      title: item.title,
+      description: item.summary,
+      url: `/data-explore/${category.slug}/`,
+      tags: item.tags,
+      category: category.label,
+      date: item.date,
+      source: item.source,
+      score: 0,
+    })),
+  );
 }
 
 const SEARCH_PERIOD_MS: Record<Exclude<SearchTimePeriod, 'all'>, number> = {
