@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import {
   scoreResult,
   splitHighlightSegments,
@@ -27,6 +28,15 @@ function makeResult(overrides: Partial<NormalizedSearchResult> = {}): Normalized
     ...overrides,
   };
 }
+
+test('search filter arrows match the company-profile tab arrow styling', () => {
+  const source = readFileSync(new URL('../app/search/SearchContent.tsx', import.meta.url), 'utf8');
+
+  assert.match(source, /className="cp-nav-tabs-arrow cp-nav-tabs-arrow--left"/);
+  assert.match(source, /className="cp-nav-tabs-arrow cp-nav-tabs-arrow--right"/);
+  assert.match(source, /<svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1\.8"/);
+  assert.match(source, /direction === 'left' \? 'M9 2L4 7l5 5' : 'M5 2l5 5-5 5'/);
+});
 
 test('scoreResult ranks exact title match above prefix/contains/tag/category/description matches', () => {
   const exact = scoreResult(makeResult({ title: 'Kubernetes' }), 'kubernetes');

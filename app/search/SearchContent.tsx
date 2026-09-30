@@ -66,8 +66,8 @@ function ClearIcon() {
 
 function ChevronIcon({ direction }: { direction: 'left' | 'right' }) {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
-      <path d={direction === 'left' ? 'M9 2L4 7l5 5V2z' : 'M5 2l5 5-5 5V2z'} fill="currentColor" />
+    <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d={direction === 'left' ? 'M9 2L4 7l5 5' : 'M5 2l5 5-5 5'} />
     </svg>
   );
 }
