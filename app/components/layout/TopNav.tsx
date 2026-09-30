@@ -757,7 +757,20 @@ export default function TopNav() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setFocused(true)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              const q = query.trim();
+              if (!q) return;
+              e.preventDefault();
+              setFocused(false);
+              router.push(`/search?q=${encodeURIComponent(q)}`);
+            } else if (e.key === 'Escape') {
+              setFocused(false);
+              e.currentTarget.blur();
+            }
+          }}
           autoComplete="off"
+          aria-label="Search company or ticker"
         />
 
         {showDropdown && (
@@ -969,17 +982,26 @@ export default function TopNav() {
 
                 </div>
 
-                {/* See all results button — Coming Soon */}
+                {/* See all results button — opens the full Search Results Page */}
                 <div className="search-see-all-wrap">
-                  <button className="search-see-all-btn" disabled aria-disabled="true">
+                  <button
+                    className="search-see-all-btn"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => {
+                      const q = (debouncedQuery || query.trim());
+                      if (!q) return;
+                      setFocused(false);
+                      router.push(`/search?q=${encodeURIComponent(q)}`);
+                    }}
+                  >
                     <span>
                       {lang === 'zh' ? '查看所有結果：' : 'See all results for '}
                       {/* fallback keeps current input visible during debounce delay */}
                       <span className="search-see-all-query">&ldquo;{debouncedQuery || query.trim()}&rdquo;</span>
                     </span>
-                    <span className="search-see-all-coming-soon">
-                      {lang === 'zh' ? '即將上線' : 'Coming Soon'}
-                    </span>
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                      <path d="M2.5 6h7M6.5 3l3 3-3 3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
                   </button>
                 </div>
               </>
